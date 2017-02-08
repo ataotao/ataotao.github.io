@@ -73,3 +73,58 @@ GitHub Pages + HEXO 搭建blog
     categories    分类    
 
     permalink     url中的名字     文件名 
+
+# 在github上建立gh-pages分支
+
+- 为什么要建立gh-pages分支呢，因为github项目的静态页面解析需要这个名字的分支
+
+    //进入到你想要上传的文件夹下：
+    cd text
+
+    //git初始化
+    git init
+
+    //创建gh-pages分支
+    git checkout --orphan gh-pages
+
+    //添加文件到暂存区
+    git add .
+
+    //添加信息
+    git commit -m "This is add message"
+
+    //或者不写上面的git add .直接写 git commit -a -m \"First pages commit\"这个-a参数我查了之后说是对git add .的替代，但我不建议大家使用。
+
+    //添加仓库
+    git remote add origin git@github.com:username/project.git
+
+    //部署你的项目到github
+    git push origin gh-pages
+
+# git命令
+
+    //查看分支
+    git branch
+    git branch -a //本地分支
+    git branch -r //远程分支
+
+    //建立分支
+    git branch 分支名
+
+    //切换分支
+    git checkout 分支名
+
+    git pull
+    git commit
+
+    //add 全部
+    git add -A
+    //git add . ：他会监控工作区的状态树，使用它会把工作时的所有变化提交到暂存区，包括文件内容修改(modified)以及新文件(new)，但不包括被删除的文件。
+    //git add -u ：他仅监控已经被add的文件（即tracked file），他会将被修改的文件提交到暂存区。add -u 不会提交新文件（untracked file）。（git add --update的缩写）
+    //git add -A ：是上面两个功能的合集（git add --all的缩写）
+
+    //本地的同步成远程的文件
+    git reset --hard origin
+
+    //恢复某个文件
+    git checkout xxx.js
