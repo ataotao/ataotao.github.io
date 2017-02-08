@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="//ataotao.github.io/"/>
-  <updated>2017-02-08T07:50:46.173Z</updated>
+  <updated>2017-02-08T06:48:40.000Z</updated>
   <id>//ataotao.github.io/</id>
   
   <author>
@@ -16,18 +16,18 @@
   <generator uri="http://hexo.io/">Hexo</generator>
   
   <entry>
-    <title>测试1</title>
-    <link href="//ataotao.github.io/2017/02/08/My-Gallery/"/>
-    <id>//ataotao.github.io/2017/02/08/My-Gallery/</id>
+    <title>Hello World</title>
+    <link href="//ataotao.github.io/2017/02/08/hello-world/"/>
+    <id>//ataotao.github.io/2017/02/08/hello-world/</id>
     <published>2017-02-08T06:48:40.000Z</published>
-    <updated>2017-02-08T07:50:46.173Z</updated>
+    <updated>2017-02-08T06:48:40.000Z</updated>
     
-    <content type="html"><![CDATA[<p>测试1</p>
+    <content type="html"><![CDATA[<p><img src="/assets/img/01.jpg" alt=""> </p>
 ]]></content>
     
     <summary type="html">
     
-      &lt;p&gt;测试1&lt;/p&gt;
+      &lt;p&gt;&lt;img src=&quot;/assets/img/01.jpg&quot; alt=&quot;&quot;&gt; &lt;/p&gt;
 
     
     </summary>
@@ -35,78 +35,7 @@
       <category term="随笔" scheme="//ataotao.github.io/categories/%E9%9A%8F%E7%AC%94/"/>
     
     
-      <category term="js" scheme="//ataotao.github.io/tags/js/"/>
-    
       <category term="写作" scheme="//ataotao.github.io/tags/%E5%86%99%E4%BD%9C/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>tags/相册/</title>
-    <link href="//ataotao.github.io/2017/02/08/tags-%E7%9B%B8%E5%86%8C/"/>
-    <id>//ataotao.github.io/2017/02/08/tags-相册/</id>
-    <published>2017-02-08T06:48:40.000Z</published>
-    <updated>2017-02-08T07:49:42.660Z</updated>
-    
-    <content type="html"><![CDATA[<!--<video controls="" autoplay="" name="media"><source src="/assets/video/yilia-mobile.mp4" type="video/mp4"></video>-->
-<!--![](/assets/img/01.jpg)-->
-<p>测试</p>
-]]></content>
-    
-    <summary type="html">
-    
-      &lt;!--&lt;video controls=&quot;&quot; autoplay=&quot;&quot; name=&quot;media&quot;&gt;&lt;source src=&quot;/assets/video/yilia-mobile.mp4&quot; type=&quot;video/mp4&quot;&gt;&lt;/video&gt;--&gt;
-&lt;!--![](/assets/im
-    
-    </summary>
-    
-      <category term="随笔" scheme="//ataotao.github.io/categories/%E9%9A%8F%E7%AC%94/"/>
-    
-    
-      <category term="js" scheme="//ataotao.github.io/tags/js/"/>
-    
-      <category term="写作" scheme="//ataotao.github.io/tags/%E5%86%99%E4%BD%9C/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>filename</title>
-    <link href="//ataotao.github.io/2017/02/08/filename/"/>
-    <id>//ataotao.github.io/2017/02/08/filename/</id>
-    <published>2017-02-08T03:41:02.000Z</published>
-    <updated>2017-02-08T03:41:02.520Z</updated>
-    
-    <summary type="html">
-    
-    </summary>
-    
-    
-  </entry>
-  
-  <entry>
-    <title>Hello World</title>
-    <link href="//ataotao.github.io/2017/02/08/hello-world/"/>
-    <id>//ataotao.github.io/2017/02/08/hello-world/</id>
-    <published>2017-02-08T03:24:23.911Z</published>
-    <updated>2017-02-08T03:24:45.130Z</updated>
-    
-    <content type="html"><![CDATA[<p>Welcome to <a href="https://hexo.io/" target="_blank" rel="external">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="external">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="external">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="external">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo new <span class="string">"My New Post"</span></div></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="external">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo server</div></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="external">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo generate</div></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/generating.html" target="_blank" rel="external">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo deploy</div></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/deployment.html" target="_blank" rel="external">Deployment</a></p>
-]]></content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;Welcome to &lt;a href=&quot;https://hexo.io/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;Hexo&lt;/a&gt;! This is your very first post. Check &lt;a href=&quot;https://hexo.
-    
-    </summary>
-    
     
   </entry>
   
