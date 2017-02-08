@@ -114,8 +114,14 @@ GitHub Pages + HEXO 搭建blog
     //切换分支
     git checkout 分支名
 
+    //拉取
     git pull
-    git commit
+
+    //提交
+    git commit -m "This is add message"
+
+    //推送
+    git push origin gh-pages
 
     //add 全部
     git add -A
