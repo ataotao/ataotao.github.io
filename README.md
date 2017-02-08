@@ -116,12 +116,15 @@ GitHub Pages + HEXO 搭建blog
 
     //拉取
     git pull
+    git pull origin gh-pages
+    git pull origin master
 
     //提交
     git commit -m "This is add message"
 
     //推送
     git push origin gh-pages
+    git push origin master
 
     //add 全部
     git add -A
