@@ -38,23 +38,25 @@
     <link href="//ataotao.github.io/2017/02/08/tags-%E7%9B%B8%E5%86%8C/"/>
     <id>//ataotao.github.io/2017/02/08/tags-相册/</id>
     <published>2017-02-08T06:48:40.000Z</published>
-    <updated>2017-02-08T07:39:54.609Z</updated>
+    <updated>2017-02-08T07:45:55.549Z</updated>
     
     <content type="html"><![CDATA[<!--<video controls="" autoplay="" name="media"><source src="/assets/video/yilia-mobile.mp4" type="video/mp4"></video>-->
-<p><img src="/assets/img/01.jpg" alt=""></p>
+<!--![](/assets/img/01.jpg)-->
 ]]></content>
     
     <summary type="html">
     
       &lt;!--&lt;video controls=&quot;&quot; autoplay=&quot;&quot; name=&quot;media&quot;&gt;&lt;source src=&quot;/assets/video/yilia-mobile.mp4&quot; type=&quot;video/mp4&quot;&gt;&lt;/video&gt;--&gt;
-&lt;p&gt;&lt;img src=&quot;/asse
+&lt;!--![](/assets/im
     
     </summary>
+    
+      <category term="随笔" scheme="//ataotao.github.io/categories/%E9%9A%8F%E7%AC%94/"/>
     
     
       <category term="js" scheme="//ataotao.github.io/tags/js/"/>
     
-      <category term="html5" scheme="//ataotao.github.io/tags/html5/"/>
+      <category term="写作" scheme="//ataotao.github.io/tags/%E5%86%99%E4%BD%9C/"/>
     
   </entry>
   
