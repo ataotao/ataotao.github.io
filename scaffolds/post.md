@@ -4,4 +4,5 @@ date: {{ date }}
 tags:
 categories:
     随笔
+    Javascript
 ---
