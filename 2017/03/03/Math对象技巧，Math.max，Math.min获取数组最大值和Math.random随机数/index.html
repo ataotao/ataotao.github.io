@@ -6,18 +6,33 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="//ataotao.github.io">
-  <title>testpage | 淘七淘八</title>
+  <title>Math对象技巧，Math.max，Math.min获取数组最大值和Math.random随机数 | 淘七淘八</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="testpage">
-<meta property="og:type" content="website">
-<meta property="og:title" content="testpage">
-<meta property="og:url" content="//ataotao.github.io/testpage/index.html">
+  <meta name="description" content="Math对象技巧，Math.max，Math.min获取数组最大值和Math.random随机数#Math.max，Math.min 求最大值、最小值
+//最大值 最小值
+var max = Math.max(3, 54, 32, 16);
+console.log(max); //54
+var min = Math.min(3, 54, 32, 16);
+console.log(min); //3">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Math对象技巧，Math.max，Math.min获取数组最大值和Math.random随机数">
+<meta property="og:url" content="//ataotao.github.io/2017/03/03/Math对象技巧，Math.max，Math.min获取数组最大值和Math.random随机数/index.html">
 <meta property="og:site_name" content="淘七淘八">
-<meta property="og:description" content="testpage">
-<meta property="og:updated_time" content="2017-02-28T01:25:20.304Z">
+<meta property="og:description" content="Math对象技巧，Math.max，Math.min获取数组最大值和Math.random随机数#Math.max，Math.min 求最大值、最小值
+//最大值 最小值
+var max = Math.max(3, 54, 32, 16);
+console.log(max); //54
+var min = Math.min(3, 54, 32, 16);
+console.log(min); //3">
+<meta property="og:updated_time" content="2017-03-03T01:42:14.396Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="testpage">
-<meta name="twitter:description" content="testpage">
+<meta name="twitter:title" content="Math对象技巧，Math.max，Math.min获取数组最大值和Math.random随机数">
+<meta name="twitter:description" content="Math对象技巧，Math.max，Math.min获取数组最大值和Math.random随机数#Math.max，Math.min 求最大值、最小值
+//最大值 最小值
+var max = Math.max(3, 54, 32, 16);
+console.log(max); //54
+var min = Math.min(3, 54, 32, 16);
+console.log(min); //3">
   
     <link rel="alternative" href="/atom.xml" title="淘七淘八" type="application/atom+xml">
   
@@ -161,28 +176,83 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="page-undefined" class="article article-type-page " itemscope itemprop="blogPost">
+            <article id="post-Math对象技巧，Math.max，Math.min获取数组最大值和Math.random随机数" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 class="article-title" itemprop="name">
-      testpage
+      Math对象技巧，Math.max，Math.min获取数组最大值和Math.random随机数
     </h1>
   
 
         
-        <a href="/testpage/index.html" class="archive-article-date">
-  	<time datetime="2017-02-08T08:06:18.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-02-08</time>
+        <a href="/2017/03/03/Math对象技巧，Math.max，Math.min获取数组最大值和Math.random随机数/" class="archive-article-date">
+  	<time datetime="2017-03-03T01:39:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-03-03</time>
 </a>
         
       </header>
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>testpage</p>
+        <h1 id="Math对象技巧，Math-max，Math-min获取数组最大值和Math-random随机数"><a href="#Math对象技巧，Math-max，Math-min获取数组最大值和Math-random随机数" class="headerlink" title="Math对象技巧，Math.max，Math.min获取数组最大值和Math.random随机数"></a>Math对象技巧，Math.max，Math.min获取数组最大值和Math.random随机数</h1><p>#Math.max，Math.min 求最大值、最小值</p>
+<pre><code>//最大值 最小值
+var max = Math.max(3, 54, 32, 16);
+console.log(max); //54
+var min = Math.min(3, 54, 32, 16);
+console.log(min); //3
 
+var values = [1, 2, 3, 4, 5, 6, 7, 8];
+var arrMax = Math.max.apply(Math, values);
+var arrMin = Math.min.apply(Math, values);
+console.log(arrMax); //8
+console.log(arrMin); //1
+</code></pre><p>#Math.ceil Math.floor Math.round舍入方法</p>
+<pre><code>// 舍入方法
+
+/*
+* Math.ceil()执行向上舍入，即它总是将数值向上舍入为最接近的整数；
+* Math.floor()执行向下舍入，即它总是将数值向下舍入为最接近的整数；
+* Math.round()执行标准舍入，即它总是将数值四舍五入为最接近的整数（这也是我们在数学课
+*/
+
+console.log(Math.ceil(25.9)); //26
+console.log(Math.ceil(25.5)); //26
+console.log(Math.ceil(25.1)); //26
+
+console.log(Math.round(25.9)); //26
+console.log(Math.round(25.5)); //26
+console.log(Math.round(25.1)); //25
+
+console.log(Math.floor(25.9)); //25
+console.log(Math.floor(25.5)); //25
+console.log(Math.floor(25.1)); //25
+</code></pre><p>#Math.random()随机数</p>
+<pre><code>// 套用下面的公式，就可以利用Math.random()从某个整数范围内随机选择一个值。
+//var 值 = Math.floor(Math.random() * 可能值的总数 + 第一个可能的值)
+
+//选择一个1到10 之间的数值
+var num1 = Math.floor(Math.random() * 10 + 1);
+
+// 选择一个介于2 到10 之间的值
+var num2 = Math.floor(Math.random() * 9 + 2);
+
+// 整合方法
+function selectFrom(lowerValue, upperValue) {
+    var choices = upperValue - lowerValue + 1;
+    return Math.floor(Math.random() * choices + lowerValue);
+}
+var num = selectFrom(2, 10);
+console.log(num); // 介于 2 和10 之间（包括 2 和 10）的一个数值
+</code></pre><p>#Math.random()应用</p>
+<pre><code>// 函数selectFrom()接受两个参数：应该返回的最小值和最大值。而用最大值减最小值再加1 得到了可能值的总数，然后它又把这些数值套用到了前面的公式中。
+// 这样，通过调用selectFrom(2,10)就可以得到一个介于2 和10 之间（包括2 和10）的数值了。
+// 利用这个函数，可以方便地从数组中随机取出一项
+var colors = [&quot;red&quot;, &quot;green&quot;, &quot;blue&quot;, &quot;yellow&quot;, &quot;black&quot;, &quot;purple&quot;, &quot;brown&quot;];
+var color = colors[selectFrom(0, colors.length - 1)];
+console.log(color); // 可能是数组中包含的任何一个字符串
+</code></pre>
       
 
       
@@ -216,7 +286,49 @@
     <div class="article-info article-info-index">
       
       
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">Math对象</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Javascript</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">随机数</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">Math.random</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">Math.max</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">Math.min</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
       
+	<div class="article-category tagcloud">
+		<i class="icon-book icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="/categories/Javascript/" class="article-tag-list-link color1">Javascript</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
 
       
 
@@ -266,7 +378,7 @@
     <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAK4AAACuCAAAAACKZ2kyAAAByElEQVR42u3aMW7DMAwFUN//0inQKUPtfJKK7AJPk+FA8lMGQiR1HPF4/Y735/eRzKr+Ohq4uLhj7utynC19xs3fX/8Fp38HLi7uRu48eCVbTZ4/2HBxcR/GrW4jmYWLi/vfuVVQby4uLu5zuEnyk4SwpNiRrLYgV8PFxR1wewXTtc9fr+/i4uIu6kokQS05yiz7Oi4u7hbudZuk1xbtpVKFoxIuLu4Wbq+okf86v1+Bi4u7k9traSSlz+o1i6i0iouLexO32gjpfT4/t3wIZLi4uF/gTg4feWtkkvAsaKjg4uIWudVLlkkgy0sk+dHnyPu6uLi4Y26yRH4Y6m1jWUzFxcVdxJ0URCYllTyh+qMsgouL+2Vur3U6Z/VSKVxc3D3c3pWs3od7hRJcXNz93FG2NLhOkVdtoyubuLi4S7mTskX1w9XkBxcX915uteV5nfasDY64uLh3cXspUO/9KBTi4uJu4VYDSv6mWuxY3DfGxcUdc6ul0uphKFmncEkLFxd3I7fXNJ1sshk0cXFxH8ZNPlw9PZXPYri4uI/nVufmjZPT9XFxcTdyq0XSeZqUNFxHZRFcXNwBt3cQidqi8dxkY7i4uFu4P46IyC/mqeNcAAAAAElFTkSuQmCC" alt="微信分享二维码">
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAQ4AAAEOCAAAAABd2qZ5AAAD7klEQVR42u3aS27cQAwFwNz/0g4QZOeM/B7Jib0orYxgpO4uBaD4+fUrvj7+XK/+/dX1/ITPv0z+fr73+a6zCwcOHDhwBEd9PlL+6PyufK2P+Eqwnl8bDhw4cOC44sgPlgfRNngnx8hfQ/JicODAgQPH93Js0qrnpz2vuMHFgQMHDhw/maNNvZ6x2hrdczI2SyZx4MCBA8f7OPJyWx4yZ6E0T9U2+z+oleLAgQMHji7S1YXCn/z3G+c7cODAgQPHaFAgSZbalOkq0O7HIP7eiwMHDhw41hz7st1+EGFWFtzvrTgeDhw4cOAoOZLg1P4mGTKYpY6zVlNyIhw4cODAsedoBwVmzZtkwC7fdLtu3hLDgQMHDhy3HEmJLdnWO0JjUhbM0V/eiwMHDhw41hx5a6cdQZs1nzZNrHy39egDDhw4cOCIOdqEKmkCJU/In9MWE2chPErhcODAgQNHNwlQh65NqtZucTaud9D6woEDBw4cJUee3mwCYc43K03Oyn9RFw4HDhw4cCw42sSsPUA73DD7ashfHg4cOHDgeAfHvqW0H4PbD8/NXnD0XYADBw4cONYc7aM3ZcH2BWxStTqRw4EDBw4cI45NeS5frL33Nl0sXiEOHDhw4DjiqKceyns3Q2//dZAOBw4cOHCsOZIftQvPyou3BcF2/zhw4MCB45YjKeq1JbzNkERO3O45+n+BAwcOHDgWHHnpLR87yH/TNp9mR80LiDhw4MCB44pjlqrl2eEmFdww1cVKHDhw4MBxxJFvoi3JbVK19mlJavfFc3DgwIEDxxHHLDhdjdDNEsX2RUYJJA4cOHDgOOJIAmqeLM0CYZsiHoTVz3vGgQMHDhynHG0ilLeUNoGzDaWzT4RiSRw4cODAEXO0y8zG0TZNo81HQHQ6HDhw4MBxxLEJnPliszC8/zv5XHg5KocDBw4cOEYc7W1tYMvH8hLu9t8/4gsHDhw4cOw5kiZNssysINgG5uGYQpn+4cCBAweODcfsQe3wQdvQKkYQytD7xXlx4MCBA8cRxybUtSibRHHzeqI948CBAweOI478EUkyNmss5YMIm+LjFzvHgQMHDhxrjnzrm3TrKkzOdpsHeBw4cODAsef4KK9ZgtS2iPK21rDP9moVHDhw4MCx5tiEuvw3s+Jjsum8jDhrYuHAgQMHjhlHElw3ow9tAJ4BzQItDhw4cOB4H0cbXDcJW1u2S9Kw/AsiajvhwIEDB45v5WiP3Rb+ZslkHmiL7wIcOHDgwHHKsQ+ieeNnf+x2FA8HDhw4cNxybA6cB858lVmrKX+dqwwSBw4cOHBMIuDq0bOUbxbC25dxAIQDBw4cOP697m+yBHvuQi64IgAAAABJRU5ErkJggg==" alt="微信分享二维码">
     </div>
 </div>
 
@@ -278,6 +390,16 @@
 </article>
 
   
+<nav id="article-nav">
+  
+  
+    <a href="/2017/02/28/一些常用的git命令/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">一些常用的git命令</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
 
 
 
@@ -286,7 +408,7 @@
   
   <div class="duoshuo">
 	<!-- 多说评论框 start -->
-	<div class="ds-thread" data-thread-key="undefined" data-title="testpage" data-url="//ataotao.github.io/testpage/index.html"></div>
+	<div class="ds-thread" data-thread-key="Math对象技巧，Math.max，Math.min获取数组最大值和Math.random随机数" data-title="Math对象技巧，Math.max，Math.min获取数组最大值和Math.random随机数" data-url="//ataotao.github.io/2017/03/03/Math对象技巧，Math.max，Math.min获取数组最大值和Math.random随机数/"></div>
 	<!-- 多说评论框 end -->
 	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
 	<script type="text/javascript">
@@ -328,7 +450,7 @@
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: false,
+		isPost: true,
 		isArchive: false,
 		isTag: false,
 		isCategory: false,
