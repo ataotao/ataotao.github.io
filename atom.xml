@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="//ataotao.github.io/"/>
-  <updated>2017-03-11T01:48:08.168Z</updated>
+  <updated>2017-03-11T01:51:24.050Z</updated>
   <id>//ataotao.github.io/</id>
   
   <author>
@@ -20,7 +20,7 @@
     <link href="//ataotao.github.io/2017/03/11/NodeJs%E8%AE%BE%E7%BD%AE%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F%E7%9A%84%E5%87%A0%E7%A7%8D%E6%96%B9%E5%BC%8F/"/>
     <id>//ataotao.github.io/2017/03/11/NodeJs设置环境变量的几种方式/</id>
     <published>2017-03-11T01:24:56.000Z</published>
-    <updated>2017-03-11T01:48:08.168Z</updated>
+    <updated>2017-03-11T01:51:24.050Z</updated>
     
     <content type="html"><![CDATA[<h1 id="方法一：-执行的时候设置"><a href="#方法一：-执行的时候设置" class="headerlink" title="方法一： 执行的时候设置"></a>方法一： 执行的时候设置</h1><pre><code><figure class="highlight mel"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">npm start --production</div><div class="line"><span class="comment">// app.js</span></div><div class="line">console.<span class="keyword">log</span>(process.<span class="keyword">env</span>.NODE_ENV);</div><div class="line">production</div></pre></td></tr></table></figure>
 </code></pre><h1 id="方法二：-package-json文件里面配置"><a href="#方法二：-package-json文件里面配置" class="headerlink" title="方法二： package.json文件里面配置"></a>方法二： package.json文件里面配置</h1><pre><code><figure class="highlight xquery"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="string">"scripts"</span>: &#123;</div><div class="line">    <span class="string">"start"</span>: <span class="string">"set NODE_ENV = development &amp;&amp; node ./bin/www"</span>,</div><div class="line">    <span class="string">"dev"</span>: <span class="string">"set NODE_ENV = development &amp;&amp; node app"</span></div><div class="line">&#125;,</div></pre></td></tr></table></figure>
@@ -48,7 +48,7 @@
     <link href="//ataotao.github.io/2017/03/03/Math%E5%AF%B9%E8%B1%A1%E6%8A%80%E5%B7%A7%EF%BC%8CMath.max%EF%BC%8CMath.min%E8%8E%B7%E5%8F%96%E6%95%B0%E7%BB%84%E6%9C%80%E5%A4%A7%E5%80%BC%E5%92%8CMath.random%E9%9A%8F%E6%9C%BA%E6%95%B0/"/>
     <id>//ataotao.github.io/2017/03/03/Math对象技巧，Math.max，Math.min获取数组最大值和Math.random随机数/</id>
     <published>2017-03-03T01:39:00.000Z</published>
-    <updated>2017-03-11T01:48:08.167Z</updated>
+    <updated>2017-03-11T01:51:24.049Z</updated>
     
     <content type="html"><![CDATA[<h1 id="Math对象技巧，Math-max，Math-min获取数组最大值和Math-random随机数"><a href="#Math对象技巧，Math-max，Math-min获取数组最大值和Math-random随机数" class="headerlink" title="Math对象技巧，Math.max，Math.min获取数组最大值和Math.random随机数"></a>Math对象技巧，Math.max，Math.min获取数组最大值和Math.random随机数</h1><p>#Math.max，Math.min 求最大值、最小值</p>
 <pre><code>//最大值 最小值
@@ -136,7 +136,7 @@ console.log(color); // 可能是数组中包含的任何一个字符串
     <link href="//ataotao.github.io/2017/02/28/%E4%B8%80%E4%BA%9B%E5%B8%B8%E7%94%A8%E7%9A%84git%E5%91%BD%E4%BB%A4/"/>
     <id>//ataotao.github.io/2017/02/28/一些常用的git命令/</id>
     <published>2017-02-28T01:09:24.000Z</published>
-    <updated>2017-03-11T01:48:08.219Z</updated>
+    <updated>2017-03-11T01:51:24.052Z</updated>
     
     <content type="html"><![CDATA[<h1 id="查看所有分支的详细日志"><a href="#查看所有分支的详细日志" class="headerlink" title="查看所有分支的详细日志"></a>查看所有分支的详细日志</h1><pre><code>git log --all --decorate --graph
 </code></pre><p>它用线段表示分支的合并情况，还能看到标签：</p>
@@ -269,7 +269,7 @@ git checkout xxx.js
     <link href="//ataotao.github.io/2017/02/09/javascript-deepClone/"/>
     <id>//ataotao.github.io/2017/02/09/javascript-deepClone/</id>
     <published>2017-02-09T01:03:12.000Z</published>
-    <updated>2017-03-11T01:48:08.218Z</updated>
+    <updated>2017-03-11T01:51:24.051Z</updated>
     
     <content type="html"><![CDATA[<h5 id="对象拷贝方式有很多种，但是如何能够不抛弃对象的constructor，而且相互对象的引用也会完整copy，不受影响，请看下面代码："><a href="#对象拷贝方式有很多种，但是如何能够不抛弃对象的constructor，而且相互对象的引用也会完整copy，不受影响，请看下面代码：" class="headerlink" title="对象拷贝方式有很多种，但是如何能够不抛弃对象的constructor，而且相互对象的引用也会完整copy，不受影响，请看下面代码："></a>对象拷贝方式有很多种，但是如何能够不抛弃对象的<code>constructor</code>，而且相互对象的引用也会完整copy，不受影响，请看下面代码：</h5><p><code>深拷贝</code>：对于深拷贝，针对成员变量存在指针的情况，不仅仅是简单的指针赋值，而是<strong>重新分配内存空间</strong><br><code>浅拷贝</code>：只是拷贝了指针，使得两个指针指向同一个地址</p>
 <p>知乎上有一个答案，这个方法可以拷贝对象和数组</p>
@@ -287,9 +287,9 @@ git checkout xxx.js
       <category term="Javascript" scheme="//ataotao.github.io/categories/Javascript/"/>
     
     
-      <category term="js" scheme="//ataotao.github.io/tags/js/"/>
-    
       <category term="Javascript" scheme="//ataotao.github.io/tags/Javascript/"/>
+    
+      <category term="js" scheme="//ataotao.github.io/tags/js/"/>
     
       <category term="深拷贝" scheme="//ataotao.github.io/tags/%E6%B7%B1%E6%8B%B7%E8%B4%9D/"/>
     
