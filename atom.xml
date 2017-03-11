@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="//ataotao.github.io/"/>
-  <updated>2017-03-03T01:42:14.396Z</updated>
+  <updated>2017-03-11T01:29:11.438Z</updated>
   <id>//ataotao.github.io/</id>
   
   <author>
@@ -14,6 +14,34 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>NodeJs设置环境变量的几种方式</title>
+    <link href="//ataotao.github.io/2017/03/11/NodeJs%E8%AE%BE%E7%BD%AE%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F%E7%9A%84%E5%87%A0%E7%A7%8D%E6%96%B9%E5%BC%8F/"/>
+    <id>//ataotao.github.io/2017/03/11/NodeJs设置环境变量的几种方式/</id>
+    <published>2017-03-11T01:24:56.000Z</published>
+    <updated>2017-03-11T01:29:11.438Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="方法一：-执行的时候设置"><a href="#方法一：-执行的时候设置" class="headerlink" title="方法一： 执行的时候设置"></a>方法一： 执行的时候设置</h1><pre><code><figure class="highlight mel"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">npm start --production</div><div class="line"><span class="comment">// app.js</span></div><div class="line">console.<span class="keyword">log</span>(process.<span class="keyword">env</span>.NODE_ENV);</div><div class="line">production</div></pre></td></tr></table></figure>
+</code></pre><h1 id="方法二：-package-json文件里面配置"><a href="#方法二：-package-json文件里面配置" class="headerlink" title="方法二： package.json文件里面配置"></a>方法二： package.json文件里面配置</h1><pre><code><figure class="highlight xquery"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="string">"scripts"</span>: &#123;</div><div class="line">    <span class="string">"start"</span>: <span class="string">"set NODE_ENV = development &amp;&amp; node ./bin/www"</span>,</div><div class="line">    <span class="string">"dev"</span>: <span class="string">"set NODE_ENV = development &amp;&amp; node app"</span></div><div class="line">&#125;,</div></pre></td></tr></table></figure>
+</code></pre>]]></content>
+    
+    <summary type="html">
+    
+      &lt;h1 id=&quot;方法一：-执行的时候设置&quot;&gt;&lt;a href=&quot;#方法一：-执行的时候设置&quot; class=&quot;headerlink&quot; title=&quot;方法一： 执行的时候设置&quot;&gt;&lt;/a&gt;方法一： 执行的时候设置&lt;/h1&gt;&lt;pre&gt;&lt;code&gt;&lt;figure class=&quot;highlig
+    
+    </summary>
+    
+      <category term="Nodejs" scheme="//ataotao.github.io/categories/Nodejs/"/>
+    
+    
+      <category term="Nodejs" scheme="//ataotao.github.io/tags/Nodejs/"/>
+    
+      <category term="环境变量" scheme="//ataotao.github.io/tags/%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F/"/>
+    
+      <category term="js" scheme="//ataotao.github.io/tags/js/"/>
+    
+  </entry>
   
   <entry>
     <title>Math对象技巧，Math.max，Math.min获取数组最大值和Math.random随机数</title>
@@ -89,9 +117,9 @@ console.log(color); // 可能是数组中包含的任何一个字符串
       <category term="Javascript" scheme="//ataotao.github.io/categories/Javascript/"/>
     
     
-      <category term="Math对象" scheme="//ataotao.github.io/tags/Math%E5%AF%B9%E8%B1%A1/"/>
-    
       <category term="Javascript" scheme="//ataotao.github.io/tags/Javascript/"/>
+    
+      <category term="Math对象" scheme="//ataotao.github.io/tags/Math%E5%AF%B9%E8%B1%A1/"/>
     
       <category term="随机数" scheme="//ataotao.github.io/tags/%E9%9A%8F%E6%9C%BA%E6%95%B0/"/>
     
@@ -259,11 +287,11 @@ git checkout xxx.js
       <category term="Javascript" scheme="//ataotao.github.io/categories/Javascript/"/>
     
     
+      <category term="js" scheme="//ataotao.github.io/tags/js/"/>
+    
       <category term="Javascript" scheme="//ataotao.github.io/tags/Javascript/"/>
     
       <category term="深拷贝" scheme="//ataotao.github.io/tags/%E6%B7%B1%E6%8B%B7%E8%B4%9D/"/>
-    
-      <category term="js" scheme="//ataotao.github.io/tags/js/"/>
     
   </entry>
   

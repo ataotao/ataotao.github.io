@@ -61,6 +61,8 @@
 	        
 				<li><a href="/categories/Javascript/">Javascript</a></li>
 	        
+				<li><a href="/categories/NodeJs/">NodeJs</a></li>
+	        
 				<li><a href="/categories/git/">Git</a></li>
 	        
 				<li><a href="/categories/随笔/">随笔</a></li>
@@ -123,6 +125,8 @@
 			
 				
 			
+				
+			
 			
 			
 			<nav class="header-nav">
@@ -139,13 +143,15 @@
 				<ul style="width: 70%">
 				
 				
-					<li style="width: 25%"><a href="/">主页</a></li>
+					<li style="width: 20%"><a href="/">主页</a></li>
 		        
-					<li style="width: 25%"><a href="/categories/Javascript/">Javascript</a></li>
+					<li style="width: 20%"><a href="/categories/Javascript/">Javascript</a></li>
 		        
-					<li style="width: 25%"><a href="/categories/git/">Git</a></li>
+					<li style="width: 20%"><a href="/categories/NodeJs/">NodeJs</a></li>
 		        
-					<li style="width: 25%"><a href="/categories/随笔/">随笔</a></li>
+					<li style="width: 20%"><a href="/categories/git/">Git</a></li>
+		        
+					<li style="width: 20%"><a href="/categories/随笔/">随笔</a></li>
 		        
 				</ul>
 			</nav>
@@ -161,6 +167,88 @@
           </div>
           <div id="js-content" class="content-ll">
             
+  
+    <article id="post-NodeJs设置环境变量的几种方式" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/03/11/NodeJs设置环境变量的几种方式/">NodeJs设置环境变量的几种方式</a>
+    </h1>
+  
+
+        
+        <a href="/2017/03/11/NodeJs设置环境变量的几种方式/" class="archive-article-date">
+  	<time datetime="2017-03-11T01:24:56.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-03-11</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="方法一：-执行的时候设置"><a href="#方法一：-执行的时候设置" class="headerlink" title="方法一： 执行的时候设置"></a>方法一： 执行的时候设置</h1><pre><code><figure class="highlight mel"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">npm start --production</div><div class="line"><span class="comment">// app.js</span></div><div class="line">console.<span class="keyword">log</span>(process.<span class="keyword">env</span>.NODE_ENV);</div><div class="line">production</div></pre></td></tr></table></figure>
+</code></pre><h1 id="方法二：-package-json文件里面配置"><a href="#方法二：-package-json文件里面配置" class="headerlink" title="方法二： package.json文件里面配置"></a>方法二： package.json文件里面配置</h1><pre><code><figure class="highlight xquery"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="string">"scripts"</span>: &#123;</div><div class="line">    <span class="string">"start"</span>: <span class="string">"set NODE_ENV = development &amp;&amp; node ./bin/www"</span>,</div><div class="line">    <span class="string">"dev"</span>: <span class="string">"set NODE_ENV = development &amp;&amp; node app"</span></div><div class="line">&#125;,</div></pre></td></tr></table></figure>
+</code></pre>
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">Nodejs</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">环境变量</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">js</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+	<div class="article-category tagcloud">
+		<i class="icon-book icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="/categories/Nodejs/" class="article-tag-list-link color2">Nodejs</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2017/03/11/NodeJs设置环境变量的几种方式/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+
+
+
+
+
+
+
   
     <article id="post-Math对象技巧，Math.max，Math.min获取数组最大值和Math.random随机数" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
@@ -251,11 +339,11 @@ console.log(color); // 可能是数组中包含的任何一个字符串
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">Math对象</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Javascript</a>
         		</li>
       		 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Javascript</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">Math对象</a>
         		</li>
       		 
         		<li class="article-tag-list-item">
@@ -531,15 +619,15 @@ git checkout xxx.js
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">js</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
         			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Javascript</a>
         		</li>
       		 
         		<li class="article-tag-list-item">
         			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">深拷贝</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">js</a>
         		</li>
       		
 		</ul>
@@ -741,11 +829,35 @@ git checkout xxx.js
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">Math对象</a>
+                <a href="javascript:void(0)" class="js-tag color2">Nodejs</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">环境变量</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">js</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">Javascript</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">深拷贝</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">写作</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">git</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">Math对象</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -762,22 +874,6 @@ git checkout xxx.js
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">Math.min</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">深拷贝</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">js</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">git</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">写作</a>
               </li>
             
             <div class="clearfix"></div>

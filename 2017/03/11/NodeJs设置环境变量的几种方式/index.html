@@ -6,17 +6,21 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="//ataotao.github.io">
-  <title>Tag: 写作 | 淘七淘八</title>
+  <title>NodeJs设置环境变量的几种方式 | 淘七淘八</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="一些记录">
-<meta property="og:type" content="website">
-<meta property="og:title" content="淘七淘八">
-<meta property="og:url" content="//ataotao.github.io/tags/写作/index.html">
+  <meta name="description" content="方法一： 执行的时候设置1234npm start --production// app.jsconsole.log(process.env.NODE_ENV);production
+方法二： package.json文件里面配置1234&quot;scripts&quot;: &amp;#123;    &quot;start&quot;: &quot;set NODE_ENV = development &amp;amp;&amp;amp; node ./bin/w">
+<meta property="og:type" content="article">
+<meta property="og:title" content="NodeJs设置环境变量的几种方式">
+<meta property="og:url" content="//ataotao.github.io/2017/03/11/NodeJs设置环境变量的几种方式/index.html">
 <meta property="og:site_name" content="淘七淘八">
-<meta property="og:description" content="一些记录">
+<meta property="og:description" content="方法一： 执行的时候设置1234npm start --production// app.jsconsole.log(process.env.NODE_ENV);production
+方法二： package.json文件里面配置1234&quot;scripts&quot;: &amp;#123;    &quot;start&quot;: &quot;set NODE_ENV = development &amp;amp;&amp;amp; node ./bin/w">
+<meta property="og:updated_time" content="2017-03-11T01:29:11.438Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="淘七淘八">
-<meta name="twitter:description" content="一些记录">
+<meta name="twitter:title" content="NodeJs设置环境变量的几种方式">
+<meta name="twitter:description" content="方法一： 执行的时候设置1234npm start --production// app.jsconsole.log(process.env.NODE_ENV);production
+方法二： package.json文件里面配置1234&quot;scripts&quot;: &amp;#123;    &quot;start&quot;: &quot;set NODE_ENV = development &amp;amp;&amp;amp; node ./bin/w">
   
     <link rel="alternative" href="/atom.xml" title="淘七淘八" type="application/atom+xml">
   
@@ -166,71 +170,192 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-  
+            <article id="post-NodeJs设置环境变量的几种方式" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
     
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2017" class="archive-year">2017</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/02/08/hello-world/" class="archive-article-date">
-  	<time datetime="2017-02-08T06:48:40.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-02-08</time>
-</a>
-        </div>
-    	 
+      <header class="article-header">
+        
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2017/02/08/hello-world/">Hello World</a>
+    <h1 class="article-title" itemprop="name">
+      NodeJs设置环境变量的几种方式
     </h1>
   
 
-        <div class="article-info info-on-right">
-          
+        
+        <a href="/2017/03/11/NodeJs设置环境变量的几种方式/" class="archive-article-date">
+  	<time datetime="2017-03-11T01:24:56.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-03-11</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="方法一：-执行的时候设置"><a href="#方法一：-执行的时候设置" class="headerlink" title="方法一： 执行的时候设置"></a>方法一： 执行的时候设置</h1><pre><code><figure class="highlight mel"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">npm start --production</div><div class="line"><span class="comment">// app.js</span></div><div class="line">console.<span class="keyword">log</span>(process.<span class="keyword">env</span>.NODE_ENV);</div><div class="line">production</div></pre></td></tr></table></figure>
+</code></pre><h1 id="方法二：-package-json文件里面配置"><a href="#方法二：-package-json文件里面配置" class="headerlink" title="方法二： package.json文件里面配置"></a>方法二： package.json文件里面配置</h1><pre><code><figure class="highlight xquery"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="string">"scripts"</span>: &#123;</div><div class="line">    <span class="string">"start"</span>: <span class="string">"set NODE_ENV = development &amp;&amp; node ./bin/www"</span>,</div><div class="line">    <span class="string">"dev"</span>: <span class="string">"set NODE_ENV = development &amp;&amp; node app"</span></div><div class="line">&#125;,</div></pre></td></tr></table></figure>
+</code></pre>
+      
+
+      
+        <div class="page-reward">
+          <a href="javascript:;" class="page-reward-btn tooltip-top">
+            <div class="tooltip tooltip-east">
+            <span class="tooltip-item">
+              赏
+            </span>
+            <span class="tooltip-content">
+              <span class="tooltip-text">
+                <span class="tooltip-inner">
+                  <p class="reward-p"><i class="icon icon-quo-left"></i>谢谢你请我吃糖果<i class="icon icon-quo-right"></i></p>
+                  <div class="reward-box">
+                    
+                    
+                    <div class="reward-box-item">
+                      <img class="reward-img" src="/assets/img/wechat-pay.gif">
+                      <span class="reward-type">微信</span>
+                    </div>
+                    
+                  </div>
+                </span>
+              </span>
+            </span>
+          </div>
+          </a>
+        </div>
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">写作</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">Nodejs</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">环境变量</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">js</a>
         		</li>
       		
 		</ul>
 	</div>
 
-          
+      
 	<div class="article-category tagcloud">
 		<i class="icon-book icon"></i>
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="/categories/随笔/" class="article-tag-list-link color3">随笔</a>
+        			<a href="/categories/Nodejs/" class="article-tag-list-link color2">Nodejs</a>
         		</li>
       		
 		</ul>
 	</div>
 
 
+      
+
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
         </div>
-        <div class="clearfix"></div>
-    </header>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACuElEQVR42u3awW4bMQwE0Pz/T7dATz3U6xlSilPg7clwkrWeAizlIb++4uvXn+vVO69++vf16v3nv331zuELDw8Pb7T05w/OXyeLft6sfEOTzcLDw8O7x3suBgl+tjXPj/vkPm8seHh4eB/lJQfozVk3/x08PDy8/4WXP8rzpbdUPDw8vJ/D2xyanz8yLw+b4ONA1oKHh4cX89oG2E94fbG/h4eHh7foqm+KRP7ob98pVouHh4d3gZffOnk0J8NS+aE8Hx14szY8PDy8o7yzzfu8MTYbLKgHtvDw8PAu8PJHf1s88nHVPCBuCw8eHh7e9/BOtcQ2Da3ZeEHRBsPDw8Nb85LGUnKYzpv37WDWqrOHh4eHd4GXR7F186mMgPMNHW4EHh4e3jVe+yjPf5pHDO12RxuBh4eHt+a1mPzg24LbclLMlOHh4eEd5c0iifzonLem2gqWjxHg4eHhneW1Q1d5jDsLZ2fFY5VP4OHh4Y14LaNFbgYI2td4eHh438NLPmwTKLQlZBZ5/OPfgIeHh/chXtKsygtMHstuWnRfszqDh4eHd3ToavZ9/96AQv4PwMPDwzvLexbPhp/yYpNsVr6ql+MCeHh4eBd4sxbU/iHeFps6CMbDw8O7wNsUiXYgIJ8C2xchPDw8vHu82fjUbIBgNpqQUIvMAw8PD+8ob9+8n0UJs4A4+ls8PDy8C7xTgWxymN60vlZsPDw8vKO89kZtHLCJd6ND8zMYDw8P7zIvB+RXe+e25fYmnsDDw8O7wGsXemPAtG2D1WEEHh4e3gXeLIZoRwTaRleyldEd8PDw8K7x8kVsykMb+OZhxJvvDXh4eHgf4s1mmfJTfFKW6jXg4eHh/TBeO6SVRA+H22Z4eHh413jtB7QxwWbEqj2U4+Hh4d3mtQ2wWejQxhNtEVpdeHh4eCnvN0xOac7OCGOuAAAAAElFTkSuQmCC" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
+
+  
+<nav id="article-nav">
   
   
-    </div></section>
+    <a href="/2017/03/03/Math对象技巧，Math.max，Math.min获取数组最大值和Math.random随机数/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">Math对象技巧，Math.max，Math.min获取数组最大值和Math.random随机数</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+
+
+
+
+  
+  <div class="duoshuo">
+	<!-- 多说评论框 start -->
+	<div class="ds-thread" data-thread-key="NodeJs设置环境变量的几种方式" data-title="NodeJs设置环境变量的几种方式" data-url="//ataotao.github.io/2017/03/11/NodeJs设置环境变量的几种方式/"></div>
+	<!-- 多说评论框 end -->
+	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+	<script type="text/javascript">
+	var duoshuoQuery = {short_name:"ataotao"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		 || document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+	<!-- 多说公共JS代码 end -->
+</div>
+
   
 
-    
+
 
 
           </div>
@@ -253,9 +378,9 @@
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: false,
+		isPost: true,
 		isArchive: false,
-		isTag: true,
+		isTag: false,
 		isCategory: false,
 		open_in_new: true,
 		root: "/",
