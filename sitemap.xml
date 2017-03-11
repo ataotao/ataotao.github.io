@@ -2,37 +2,37 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>//ataotao.github.io/2017/03/11/NodeJs%E8%AE%BE%E7%BD%AE%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F%E7%9A%84%E5%87%A0%E7%A7%8D%E6%96%B9%E5%BC%8F/</loc>
-    
-    <lastmod>2017-03-11T01:39:24.536Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>//ataotao.github.io/2017/03/03/Math%E5%AF%B9%E8%B1%A1%E6%8A%80%E5%B7%A7%EF%BC%8CMath.max%EF%BC%8CMath.min%E8%8E%B7%E5%8F%96%E6%95%B0%E7%BB%84%E6%9C%80%E5%A4%A7%E5%80%BC%E5%92%8CMath.random%E9%9A%8F%E6%9C%BA%E6%95%B0/</loc>
-    
-    <lastmod>2017-03-03T01:42:14.396Z</lastmod>
-    
-  </url>
-  
-  <url>
     <loc>//ataotao.github.io/testpage/index.html</loc>
     
-    <lastmod>2017-02-28T01:25:20.304Z</lastmod>
+    <lastmod>2017-03-11T01:48:08.248Z</lastmod>
     
   </url>
   
   <url>
     <loc>//ataotao.github.io/2017/02/28/%E4%B8%80%E4%BA%9B%E5%B8%B8%E7%94%A8%E7%9A%84git%E5%91%BD%E4%BB%A4/</loc>
     
-    <lastmod>2017-02-28T01:25:20.279Z</lastmod>
+    <lastmod>2017-03-11T01:48:08.219Z</lastmod>
     
   </url>
   
   <url>
     <loc>//ataotao.github.io/2017/02/09/javascript-deepClone/</loc>
     
-    <lastmod>2017-02-28T01:25:20.278Z</lastmod>
+    <lastmod>2017-03-11T01:48:08.218Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>//ataotao.github.io/2017/03/11/NodeJs%E8%AE%BE%E7%BD%AE%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F%E7%9A%84%E5%87%A0%E7%A7%8D%E6%96%B9%E5%BC%8F/</loc>
+    
+    <lastmod>2017-03-11T01:48:08.168Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>//ataotao.github.io/2017/03/03/Math%E5%AF%B9%E8%B1%A1%E6%8A%80%E5%B7%A7%EF%BC%8CMath.max%EF%BC%8CMath.min%E8%8E%B7%E5%8F%96%E6%95%B0%E7%BB%84%E6%9C%80%E5%A4%A7%E5%80%BC%E5%92%8CMath.random%E9%9A%8F%E6%9C%BA%E6%95%B0/</loc>
+    
+    <lastmod>2017-03-11T01:48:08.167Z</lastmod>
     
   </url>
   
