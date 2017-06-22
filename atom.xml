@@ -176,9 +176,9 @@ console.log(color); // 可能是数组中包含的任何一个字符串
       <category term="Javascript" scheme="//ataotao.github.io/categories/Javascript/"/>
     
     
-      <category term="Math对象" scheme="//ataotao.github.io/tags/Math%E5%AF%B9%E8%B1%A1/"/>
-    
       <category term="Javascript" scheme="//ataotao.github.io/tags/Javascript/"/>
+    
+      <category term="Math对象" scheme="//ataotao.github.io/tags/Math%E5%AF%B9%E8%B1%A1/"/>
     
       <category term="随机数" scheme="//ataotao.github.io/tags/%E9%9A%8F%E6%9C%BA%E6%95%B0/"/>
     
