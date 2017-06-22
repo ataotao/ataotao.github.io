@@ -24,7 +24,7 @@ window.mobilecheck = function() {
 window.mobilecheck = function() {
   var check = false;
   (function(a){if(/(android|bbd+|meego).+mobile|avantgo|bada/|blackberry|blazer|compal|elaine|fennec|hiptop|iemob">
-<meta property="og:updated_time" content="2017-06-22T06:15:13.996Z">
+<meta property="og:updated_time" content="2017-06-22T06:18:16.793Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="JavaScript 检测是不是手机浏览器">
 <meta name="twitter:description" content="用正则表达式：
@@ -217,11 +217,19 @@ window.mobilecheck = function() {
 }
 </code></pre><h3 id="原始方法"><a href="#原始方法" class="headerlink" title="原始方法"></a>原始方法</h3><ul>
 <li><p>检测useragent：</p>
-<p>  function detectmob() {<br>   if( navigator.userAgent.match(/Android/i)<br>   || navigator.userAgent.match(/webOS/i)<br>   || navigator.userAgent.match(/iPhone/i)<br>   || navigator.userAgent.match(/iPad/i)<br>   || navigator.userAgent.match(/iPod/i)<br>   || navigator.userAgent.match(/BlackBerry/i)<br>   || navigator.userAgent.match(/Windows Phone/i)<br>   ){</p>
-<pre><code>  return true;
+<p>  function detectmob() {</p>
+<pre><code>if( navigator.userAgent.match(/Android/i)
+    || navigator.userAgent.match(/webOS/i)
+    || navigator.userAgent.match(/iPhone/i)
+    || navigator.userAgent.match(/iPad/i)
+    || navigator.userAgent.match(/iPod/i)
+    || navigator.userAgent.match(/BlackBerry/i)
+    || navigator.userAgent.match(/Windows Phone/i)
+){
+    return true;
 }
-</code></pre><p>   else {</p>
-<pre><code>  return false;
+else {
+    return false;
 }
 </code></pre><p>  }</p>
 </li>
