@@ -24,7 +24,7 @@ window.mobilecheck = function() {
 window.mobilecheck = function() {
   var check = false;
   (function(a){if(/(android|bbd+|meego).+mobile|avantgo|bada/|blackberry|blazer|compal|elaine|fennec|hiptop|iemob">
-<meta property="og:updated_time" content="2017-06-22T06:18:16.793Z">
+<meta property="og:updated_time" content="2017-06-22T06:20:52.172Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="JavaScript 检测是不是手机浏览器">
 <meta name="twitter:description" content="用正则表达式：
@@ -216,25 +216,23 @@ window.mobilecheck = function() {
   return check;
 }
 </code></pre><h3 id="原始方法"><a href="#原始方法" class="headerlink" title="原始方法"></a>原始方法</h3><ul>
-<li><p>检测useragent：</p>
-<p>  function detectmob() {</p>
-<pre><code>if( navigator.userAgent.match(/Android/i)
-    || navigator.userAgent.match(/webOS/i)
-    || navigator.userAgent.match(/iPhone/i)
-    || navigator.userAgent.match(/iPad/i)
-    || navigator.userAgent.match(/iPod/i)
-    || navigator.userAgent.match(/BlackBerry/i)
-    || navigator.userAgent.match(/Windows Phone/i)
-){
-    return true;
-}
-else {
-    return false;
-}
-</code></pre><p>  }</p>
-</li>
+<li>检测useragent：</li>
 </ul>
-
+<pre><code>function detectmob() {
+    if (navigator.userAgent.match(/Android/i) ||
+        navigator.userAgent.match(/webOS/i) ||
+        navigator.userAgent.match(/iPhone/i) ||
+        navigator.userAgent.match(/iPad/i) ||
+        navigator.userAgent.match(/iPod/i) ||
+        navigator.userAgent.match(/BlackBerry/i) ||
+        navigator.userAgent.match(/Windows Phone/i)
+    ) {
+        return true;
+    } else {
+        return false;
+    }
+}
+</code></pre>
       
 
       
@@ -498,6 +496,10 @@ else {
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">写作</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">Math对象</a>
               </li>
              
@@ -527,10 +529,6 @@ else {
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">js</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">写作</a>
               </li>
              
               <li class="article-tag-list-item">

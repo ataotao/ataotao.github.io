@@ -202,25 +202,23 @@
   return check;
 }
 </code></pre><h3 id="原始方法"><a href="#原始方法" class="headerlink" title="原始方法"></a>原始方法</h3><ul>
-<li><p>检测useragent：</p>
-<p>  function detectmob() {</p>
-<pre><code>if( navigator.userAgent.match(/Android/i)
-    || navigator.userAgent.match(/webOS/i)
-    || navigator.userAgent.match(/iPhone/i)
-    || navigator.userAgent.match(/iPad/i)
-    || navigator.userAgent.match(/iPod/i)
-    || navigator.userAgent.match(/BlackBerry/i)
-    || navigator.userAgent.match(/Windows Phone/i)
-){
-    return true;
-}
-else {
-    return false;
-}
-</code></pre><p>  }</p>
-</li>
+<li>检测useragent：</li>
 </ul>
-
+<pre><code>function detectmob() {
+    if (navigator.userAgent.match(/Android/i) ||
+        navigator.userAgent.match(/webOS/i) ||
+        navigator.userAgent.match(/iPhone/i) ||
+        navigator.userAgent.match(/iPad/i) ||
+        navigator.userAgent.match(/iPod/i) ||
+        navigator.userAgent.match(/BlackBerry/i) ||
+        navigator.userAgent.match(/Windows Phone/i)
+    ) {
+        return true;
+    } else {
+        return false;
+    }
+}
+</code></pre>
       
 
       
@@ -953,6 +951,10 @@ git checkout xxx.js
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">写作</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">Math对象</a>
               </li>
              
@@ -982,10 +984,6 @@ git checkout xxx.js
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">js</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">写作</a>
               </li>
              
               <li class="article-tag-list-item">
