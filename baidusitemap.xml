@@ -5,7 +5,7 @@
     
   <url>
     <loc>//ataotao.github.io/2017/06/24/%E6%A8%A1%E6%8B%9F%E5%BB%B6%E8%BF%9F%E8%8E%B7%E5%8F%96%E5%88%9D%E5%A7%8B%E5%8C%96%E6%9C%AA%E7%9F%A5%E5%AF%B9%E8%B1%A1%E7%9A%84%E6%96%B9%E6%B3%95/</loc>
-    <lastmod>2017-06-24T01:56:47.880Z</lastmod>
+    <lastmod>2017-06-24T01:58:06.737Z</lastmod>
     <data>
         <display>
         <title>通过try catch模拟延迟获取未知对象的方法</title>
@@ -82,9 +82,9 @@
         <title>Javascript递归方式完美实现对象、数组深拷贝</title>
         <pubTime>2017-02-09T01:03:12.000Z</pubTime>
         
-        <tag>js</tag>
-         
         <tag>Javascript</tag>
+         
+        <tag>js</tag>
          
         <tag>深拷贝</tag>
          
@@ -130,9 +130,9 @@
         <title>Math对象技巧，Math.max，Math.min获取数组最大值和Math.random随机数</title>
         <pubTime>2017-03-03T01:39:00.000Z</pubTime>
         
-        <tag>Math对象</tag>
-         
         <tag>Javascript</tag>
+         
+        <tag>Math对象</tag>
          
         <tag>随机数</tag>
          
