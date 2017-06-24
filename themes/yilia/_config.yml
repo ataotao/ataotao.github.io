@@ -55,16 +55,8 @@ alipay:
 weixin: /assets/img/wechat-pay.gif
 
 # Miscellaneous
-baidu_analytics: '<script>
-var _hmt = _hmt || [];
-(function() {
-  var hm = document.createElement("script");
-  hm.src = "https://hm.baidu.com/hm.js?a4d5525974c946da5b94242381c3f2a5";
-  var s = document.getElementsByTagName("script")[0];
-  s.parentNode.insertBefore(hm, s);
-})();
-</script>'
-google_analytics: ''
+baidu_analytics: 'a4d5525974c946da5b94242381c3f2a5'
+google_analytics: 'UA-101471656-1'
 favicon: /favicon.png
 
 #你的头像url
