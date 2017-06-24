@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="//ataotao.github.io/"/>
-  <updated>2017-06-22T06:20:52.172Z</updated>
+  <updated>2017-06-24T01:55:42.014Z</updated>
   <id>//ataotao.github.io/</id>
   
   <author>
@@ -14,6 +14,56 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>通过try catch模拟延迟获取未知对象的方法</title>
+    <link href="//ataotao.github.io/2017/06/24/%E6%A8%A1%E6%8B%9F%E5%BB%B6%E8%BF%9F%E8%8E%B7%E5%8F%96%E5%88%9D%E5%A7%8B%E5%8C%96%E6%9C%AA%E7%9F%A5%E5%AF%B9%E8%B1%A1%E7%9A%84%E6%96%B9%E6%B3%95/"/>
+    <id>//ataotao.github.io/2017/06/24/模拟延迟获取初始化未知对象的方法/</id>
+    <published>2017-06-24T01:50:31.000Z</published>
+    <updated>2017-06-24T01:55:42.014Z</updated>
+    
+    <content type="html"><![CDATA[<h2 id="有时候一些初始化数据异步获取，当页面初始化完成，但是数据还未正常初始化，导致页面错误，可以用下面的简单递归方式获取"><a href="#有时候一些初始化数据异步获取，当页面初始化完成，但是数据还未正常初始化，导致页面错误，可以用下面的简单递归方式获取" class="headerlink" title="有时候一些初始化数据异步获取，当页面初始化完成，但是数据还未正常初始化，导致页面错误，可以用下面的简单递归方式获取"></a>有时候一些初始化数据异步获取，当页面初始化完成，但是数据还未正常初始化，导致页面错误，可以用下面的简单递归方式获取</h2><pre><code>//模拟数据延迟
+var a;
+setTimeout(function () {
+    a = {
+        name: 1,
+        age: 2
+    };
+}, 5000); //延迟5秒初始化数据
+
+//递归自动执行
+(function () {
+    try {
+        // a不是对象时会抛出错误
+        a.name;
+    } catch (e) {
+        //延迟再试一次~
+        setTimeout(arguments.callee, 50);
+        return;
+    }
+    // 没有错误就表示数据获取正常 5秒后正常打印数据
+    console.log(a);
+})();
+</code></pre>]]></content>
+    
+    <summary type="html">
+    
+      &lt;h2 id=&quot;有时候一些初始化数据异步获取，当页面初始化完成，但是数据还未正常初始化，导致页面错误，可以用下面的简单递归方式获取&quot;&gt;&lt;a href=&quot;#有时候一些初始化数据异步获取，当页面初始化完成，但是数据还未正常初始化，导致页面错误，可以用下面的简单递归方式获取&quot; clas
+    
+    </summary>
+    
+      <category term="Javascript" scheme="//ataotao.github.io/categories/Javascript/"/>
+    
+    
+      <category term="Javascript" scheme="//ataotao.github.io/tags/Javascript/"/>
+    
+      <category term="延迟获取对象" scheme="//ataotao.github.io/tags/%E5%BB%B6%E8%BF%9F%E8%8E%B7%E5%8F%96%E5%AF%B9%E8%B1%A1/"/>
+    
+      <category term="未知对象获取" scheme="//ataotao.github.io/tags/%E6%9C%AA%E7%9F%A5%E5%AF%B9%E8%B1%A1%E8%8E%B7%E5%8F%96/"/>
+    
+      <category term="延迟获取数据" scheme="//ataotao.github.io/tags/%E5%BB%B6%E8%BF%9F%E8%8E%B7%E5%8F%96%E6%95%B0%E6%8D%AE/"/>
+    
+  </entry>
   
   <entry>
     <title>JavaScript 检测是不是手机浏览器</title>
@@ -176,9 +226,9 @@ console.log(color); // 可能是数组中包含的任何一个字符串
       <category term="Javascript" scheme="//ataotao.github.io/categories/Javascript/"/>
     
     
-      <category term="Math对象" scheme="//ataotao.github.io/tags/Math%E5%AF%B9%E8%B1%A1/"/>
-    
       <category term="Javascript" scheme="//ataotao.github.io/tags/Javascript/"/>
+    
+      <category term="Math对象" scheme="//ataotao.github.io/tags/Math%E5%AF%B9%E8%B1%A1/"/>
     
       <category term="随机数" scheme="//ataotao.github.io/tags/%E9%9A%8F%E6%9C%BA%E6%95%B0/"/>
     
