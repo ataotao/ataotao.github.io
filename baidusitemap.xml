@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>//ataotao.github.io/2018/10/24/JavaScript%20%E6%A3%80%E6%B5%8B%E6%98%AF%E4%B8%8D%E6%98%AF%E6%89%8B%E6%9C%BA%E6%B5%8F%E8%A7%88%E5%99%A8/</loc>
+    <lastmod>2018-10-24T09:39:13.341Z</lastmod>
+  </url>  <url>
     <loc>//ataotao.github.io/2018/10/24/React%E5%86%85%E8%81%94SVG%E8%83%8C%E6%99%AF%E5%9B%BE%E7%9A%84%E5%AE%9E%E7%8E%B0/</loc>
-    <lastmod>2018-10-24T03:58:26.856Z</lastmod>
+    <lastmod>2018-10-24T03:58:26.857Z</lastmod>
   </url>  <url>
     <loc>//ataotao.github.io/2017/06/24/%E6%A8%A1%E6%8B%9F%E5%BB%B6%E8%BF%9F%E8%8E%B7%E5%8F%96%E5%88%9D%E5%A7%8B%E5%8C%96%E6%9C%AA%E7%9F%A5%E5%AF%B9%E8%B1%A1%E7%9A%84%E6%96%B9%E6%B3%95/</loc>
     <lastmod>2018-10-24T03:40:46.140Z</lastmod>
@@ -18,9 +21,6 @@
   </url>  <url>
     <loc>//ataotao.github.io/2017/03/03/Math%E5%AF%B9%E8%B1%A1%E6%8A%80%E5%B7%A7%EF%BC%8CMath.max%EF%BC%8CMath.min%E8%8E%B7%E5%8F%96%E6%95%B0%E7%BB%84%E6%9C%80%E5%A4%A7%E5%80%BC%E5%92%8CMath.random%E9%9A%8F%E6%9C%BA%E6%95%B0/</loc>
     <lastmod>2018-10-24T03:40:46.092Z</lastmod>
-  </url>  <url>
-    <loc>//ataotao.github.io/2017/06/22/JavaScript%20%E6%A3%80%E6%B5%8B%E6%98%AF%E4%B8%8D%E6%98%AF%E6%89%8B%E6%9C%BA%E6%B5%8F%E8%A7%88%E5%99%A8/</loc>
-    <lastmod>2018-10-24T03:40:46.077Z</lastmod>
   </url>  <url>
     <loc>//ataotao.github.io/2017/02/08/hello-world/</loc>
     <lastmod>2017-02-08T06:48:40.000Z</lastmod>
