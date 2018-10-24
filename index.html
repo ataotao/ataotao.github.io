@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html>
-<head>
+<head><meta name="generator" content="Hexo 3.8.0">
   <meta charset="utf-8">
   
   <meta name="renderer" content="webkit">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" >
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <link rel="dns-prefetch" href="//ataotao.github.io">
   <title>淘七淘八</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -14,6 +14,7 @@
 <meta property="og:url" content="//ataotao.github.io/index.html">
 <meta property="og:site_name" content="淘七淘八">
 <meta property="og:description" content="一些记录">
+<meta property="og:locale" content="zh-CN">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="淘七淘八">
 <meta name="twitter:description" content="一些记录">
@@ -67,7 +68,7 @@ var _hmt = _hmt || [];
   });
 </script>
 </head>
-
+</html>
 <body>
   <div id="container" q-class="show:isCtnShow">
     <canvas id="anm-canvas" class="anm-canvas"></canvas>
@@ -200,7 +201,91 @@ var _hmt = _hmt || [];
           <div id="js-content" class="content-ll">
             
   
-    <article id="post-模拟延迟获取初始化未知对象的方法" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-React内联SVG背景图的实现" class="article article-type-post  article-index" itemscope="" itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/10/24/React内联SVG背景图的实现/">React内联SVG背景图的实现</a>
+    </h1>
+  
+
+        
+        <a href="/2018/10/24/React内联SVG背景图的实现/" class="archive-article-date">
+  	<time datetime="2018-10-24T03:43:33.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-10-24</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="内联SVG背景图像在React-js中的实现"><a href="#内联SVG背景图像在React-js中的实现" class="headerlink" title="内联SVG背景图像在React.js中的实现"></a>内联SVG背景图像在React.js中的实现</h1><p>遇到一个需求，后台返回验证码是一个内联的svg字符串，如果通过 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">- 背景图像的实现方式</span><br></pre></td></tr></table></figure></p>
+<pre><code>const captchaSvg = window.encodeURIComponent(captchaImg);
+&lt;div style={backgroundImage:`url(data:image/svg+xml;charset=UTF-8,${captchaSvg})`, backgroundSize: &apos;100% 100%&apos;, width:200, height:50} /&gt;
+</code></pre><p><code>`</code></p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">React</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">SVG</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">内联SVG</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+	<div class="article-category tagcloud">
+		<i class="icon-book icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="/categories/React/" class="article-tag-list-link color1">React</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2018/10/24/React内联SVG背景图的实现/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+
+
+
+
+
+
+
+  
+    <article id="post-模拟延迟获取初始化未知对象的方法" class="article article-type-post  article-index" itemscope="" itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
@@ -307,7 +392,7 @@ setTimeout(function () {
 
 
   
-    <article id="post-JavaScript 检测是不是手机浏览器" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-JavaScript 检测是不是手机浏览器" class="article article-type-post  article-index" itemscope="" itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
@@ -417,7 +502,7 @@ setTimeout(function () {
 
 
   
-    <article id="post-NodeJs设置环境变量的几种方式" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-NodeJs设置环境变量的几种方式" class="article article-type-post  article-index" itemscope="" itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
@@ -437,8 +522,8 @@ setTimeout(function () {
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h1 id="方法一：-执行的时候设置"><a href="#方法一：-执行的时候设置" class="headerlink" title="方法一： 执行的时候设置"></a>方法一： 执行的时候设置</h1><pre><code><figure class="highlight mel"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">npm start --production</div><div class="line"><span class="comment">// app.js</span></div><div class="line">console.<span class="keyword">log</span>(process.<span class="keyword">env</span>.NODE_ENV);</div><div class="line">production</div></pre></td></tr></table></figure>
-</code></pre><h1 id="方法二：-package-json文件里面配置"><a href="#方法二：-package-json文件里面配置" class="headerlink" title="方法二： package.json文件里面配置"></a>方法二： package.json文件里面配置</h1><pre><code><figure class="highlight xquery"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="string">"scripts"</span>: &#123;</div><div class="line">    <span class="string">"start"</span>: <span class="string">"set NODE_ENV = development &amp;&amp; node ./bin/www"</span>,</div><div class="line">    <span class="string">"dev"</span>: <span class="string">"set NODE_ENV = development &amp;&amp; node app"</span></div><div class="line">&#125;,</div></pre></td></tr></table></figure>
+        <h1 id="方法一：-执行的时候设置"><a href="#方法一：-执行的时候设置" class="headerlink" title="方法一： 执行的时候设置"></a>方法一： 执行的时候设置</h1><pre><code><figure class="highlight mel"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">npm start --production</span><br><span class="line"><span class="comment">// app.js</span></span><br><span class="line">console.<span class="keyword">log</span>(process.<span class="keyword">env</span>.NODE_ENV);</span><br><span class="line">production</span><br></pre></td></tr></table></figure>
+</code></pre><h1 id="方法二：-package-json文件里面配置"><a href="#方法二：-package-json文件里面配置" class="headerlink" title="方法二： package.json文件里面配置"></a>方法二： package.json文件里面配置</h1><pre><code><figure class="highlight xquery"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">"scripts"</span>: &#123;</span><br><span class="line">    <span class="string">"start"</span>: <span class="string">"set NODE_ENV = development &amp;&amp; node ./bin/www"</span>,</span><br><span class="line">    <span class="string">"dev"</span>: <span class="string">"set NODE_ENV = development &amp;&amp; node app"</span></span><br><span class="line">&#125;,</span><br></pre></td></tr></table></figure>
 </code></pre>
       
 
@@ -452,15 +537,15 @@ setTimeout(function () {
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">js</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
         			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">Nodejs</a>
         		</li>
       		 
         		<li class="article-tag-list-item">
         			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">环境变量</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">js</a>
         		</li>
       		
 		</ul>
@@ -499,7 +584,7 @@ setTimeout(function () {
 
 
   
-    <article id="post-Math对象技巧，Math.max，Math.min获取数组最大值和Math.random随机数" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-Math对象技巧，Math.max，Math.min获取数组最大值和Math.random随机数" class="article article-type-post  article-index" itemscope="" itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
@@ -588,11 +673,11 @@ console.log(color); // 可能是数组中包含的任何一个字符串
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Javascript</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">Math对象</a>
         		</li>
       		 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">Math对象</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Javascript</a>
         		</li>
       		 
         		<li class="article-tag-list-item">
@@ -647,7 +732,7 @@ console.log(color); // 可能是数组中包含的任何一个字符串
 
 
   
-    <article id="post-一些常用的git命令" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-一些常用的git命令" class="article article-type-post  article-index" itemscope="" itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
@@ -731,7 +816,7 @@ git show --name-status &lt;commit&gt;
 </code></pre><p>Git就会在/backups目录下生成project1.bundle文件，里面包含着.git目录下的一切被引用的对象，包括所有commit、标签、分支。这个文件是压缩的，非常小。你可以定期备份，当要还原的时候，只要clone即可：</p>
 <pre><code>git clone /backups/project1.bundle project1
 </code></pre><p>（完）</p>
-<p>原文链接：<a href="https://zhanzhenzhen.github.io/2017_02_26/" target="_blank" rel="external">https://zhanzhenzhen.github.io/2017_02_26/</a></p>
+<p>原文链接：<a href="https://zhanzhenzhen.github.io/2017_02_26/" target="_blank" rel="noopener">https://zhanzhenzhen.github.io/2017_02_26/</a></p>
 <h1 id="在github上建立gh-pages分支"><a href="#在github上建立gh-pages分支" class="headerlink" title="在github上建立gh-pages分支"></a>在github上建立gh-pages分支</h1><ul>
 <li><p>为什么要建立gh-pages分支呢，因为github项目的静态页面解析需要这个名字的分支</p>
 <p>  //进入到你想要上传的文件夹下：<br>  cd text</p>
@@ -740,7 +825,7 @@ git show --name-status &lt;commit&gt;
 <p>  //添加文件到暂存区<br>  git add .</p>
 <p>  //添加信息<br>  git commit -m “This is add message”</p>
 <p>  //或者不写上面的git add .直接写 git commit -a -m \”First pages commit\”这个-a参数我查了之后说是对git add .的替代，但我不建议大家使用。</p>
-<p>  //添加仓库<br>  git remote add origin git@github.com:username/project.git</p>
+<p>  //添加仓库<br>  git remote add origin <a href="mailto:git@github.com" target="_blank" rel="noopener">git@github.com</a>:username/project.git</p>
 <p>  //部署你的项目到github<br>  git push origin gh-pages</p>
 </li>
 </ul>
@@ -830,7 +915,7 @@ git checkout xxx.js
 
 
   
-    <article id="post-javascript-deepClone" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-javascript-deepClone" class="article article-type-post  article-index" itemscope="" itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
@@ -852,9 +937,9 @@ git checkout xxx.js
       
         <h5 id="对象拷贝方式有很多种，但是如何能够不抛弃对象的constructor，而且相互对象的引用也会完整copy，不受影响，请看下面代码："><a href="#对象拷贝方式有很多种，但是如何能够不抛弃对象的constructor，而且相互对象的引用也会完整copy，不受影响，请看下面代码：" class="headerlink" title="对象拷贝方式有很多种，但是如何能够不抛弃对象的constructor，而且相互对象的引用也会完整copy，不受影响，请看下面代码："></a>对象拷贝方式有很多种，但是如何能够不抛弃对象的<code>constructor</code>，而且相互对象的引用也会完整copy，不受影响，请看下面代码：</h5><p><code>深拷贝</code>：对于深拷贝，针对成员变量存在指针的情况，不仅仅是简单的指针赋值，而是<strong>重新分配内存空间</strong><br><code>浅拷贝</code>：只是拷贝了指针，使得两个指针指向同一个地址</p>
 <p>知乎上有一个答案，这个方法可以拷贝对象和数组</p>
-<pre><code><figure class="highlight haxe"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> cloneObj = <span class="function"><span class="keyword">function</span></span>(obj)&#123;</div><div class="line">    <span class="keyword">var</span> str, <span class="keyword">new</span><span class="type">obj</span> = obj.constructor === <span class="keyword">Array</span> ? [] : <span class="type"></span>&#123;&#125;;</div><div class="line">    <span class="keyword">if</span>(typeof obj !== <span class="string">'object'</span>)&#123;</div><div class="line">        <span class="keyword">return</span>;</div><div class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span>(window.JSON)&#123;</div><div class="line">        str = JSON.stringify(obj), <span class="comment">//系列化对象</span></div><div class="line">        <span class="keyword">new</span><span class="type">obj</span> = JSON.parse(str); <span class="comment">//还原</span></div><div class="line">    &#125; <span class="keyword">else</span> &#123;</div><div class="line">        <span class="keyword">for</span>(<span class="keyword">var</span> i <span class="keyword">in</span> obj)&#123;</div><div class="line">            <span class="keyword">new</span><span class="type">obj</span>[i] = typeof obj[i] === <span class="string">'object'</span> ? </div><div class="line">            cloneObj(obj[i]) : <span class="type">obj</span>[i]; </div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">return</span> <span class="keyword">new</span><span class="type">obj</span>;</div><div class="line">&#125;;</div></pre></td></tr></table></figure>
+<pre><code><figure class="highlight haxe"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> cloneObj = <span class="function"><span class="keyword">function</span></span>(obj)&#123;</span><br><span class="line">    <span class="keyword">var</span> str, <span class="keyword">new</span><span class="type">obj</span> = obj.constructor === <span class="keyword">Array</span> ? [] : <span class="type"></span>&#123;&#125;;</span><br><span class="line">    <span class="keyword">if</span>(typeof obj !== <span class="string">'object'</span>)&#123;</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span>(window.JSON)&#123;</span><br><span class="line">        str = JSON.stringify(obj), <span class="comment">//系列化对象</span></span><br><span class="line">        <span class="keyword">new</span><span class="type">obj</span> = JSON.parse(str); <span class="comment">//还原</span></span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">var</span> i <span class="keyword">in</span> obj)&#123;</span><br><span class="line">            <span class="keyword">new</span><span class="type">obj</span>[i] = typeof obj[i] === <span class="string">'object'</span> ? </span><br><span class="line">            cloneObj(obj[i]) : <span class="type">obj</span>[i]; </span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span><span class="type">obj</span>;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
 </code></pre><p>这个方法<code>遇到环或者是其他类型的数据</code>就咯屁了，网上大部分深克隆的答案都没考虑<code>循环引用问题以及不能toJSON的对象</code>问题。<br>自虐一下，放出一个完美方案，虽然某些类型不太可能遇到，采用这方案更加不容易出错</p>
-<pre><code><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//完美解决方案</span></div><div class="line"><span class="keyword">var</span> http = <span class="built_in">require</span>(<span class="string">'http'</span>);</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">deepClone</span>(<span class="params">initialObj, finalObj</span>) </span>&#123;</div><div class="line">    <span class="keyword">return</span> _deepClone(initialObj, finalObj, &#123;</div><div class="line">    <span class="attr">k</span>: [],</div><div class="line">    <span class="attr">v</span>: []</div><div class="line">    &#125;);</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">_deepClone</span>(<span class="params">initialObj, finalObj, conflict</span>) </span>&#123;</div><div class="line">    <span class="keyword">var</span> i;</div><div class="line">    <span class="keyword">if</span> (initialObj &amp;&amp; <span class="keyword">typeof</span> initialObj === <span class="string">"object"</span> &amp;&amp; (i = [<span class="built_in">Object</span>, <span class="built_in">Array</span>].indexOf(initialObj.constructor)) != <span class="number">-1</span>) &#123;</div><div class="line">    <span class="keyword">if</span> (!finalObj) &#123;</div><div class="line">        finalObj = initialObj.constructor === <span class="built_in">Array</span> ? [] : &#123;&#125;;</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">if</span> (conflict) &#123;</div><div class="line">        i = conflict.k.indexOf(initialObj);</div><div class="line">        <span class="keyword">if</span> (i != <span class="number">-1</span>) &#123;</div><div class="line">        <span class="keyword">return</span> conflict.v[i];</div><div class="line">        &#125;</div><div class="line">        conflict.k.push(initialObj);</div><div class="line">        conflict.v.push(finalObj);</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">for</span> (<span class="keyword">var</span> key <span class="keyword">in</span> initialObj) &#123;</div><div class="line">        finalObj[key] = _deepClone(initialObj[key], finalObj[key], conflict);</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">return</span> finalObj;</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">return</span> initialObj;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">//测试数据</span></div><div class="line"><span class="keyword">var</span> a = &#123;</div><div class="line">    <span class="string">"n"</span>: <span class="number">1</span></div><div class="line">&#125;;</div><div class="line">a.x = a; <span class="comment">//环引用</span></div><div class="line"></div><div class="line"><span class="keyword">var</span> b = deepClone(a);</div><div class="line"></div><div class="line"><span class="built_in">console</span>.log(b, b.x === b);  <span class="comment">//查看拷贝对象，x属性为环引用，一直循环</span></div><div class="line"></div><div class="line"><span class="comment">//各种不同类型数据拷贝</span></div><div class="line"><span class="built_in">console</span>.log(deepClone(<span class="number">1</span>));  </div><div class="line"><span class="built_in">console</span>.log(deepClone(<span class="keyword">new</span> <span class="built_in">Date</span>()));  </div><div class="line"><span class="built_in">console</span>.log(deepClone(<span class="regexp">/regex/i</span>));</div><div class="line"><span class="built_in">console</span>.log(deepClone(<span class="literal">false</span>));</div><div class="line"><span class="built_in">console</span>.log(deepClone(<span class="literal">undefined</span>));</div><div class="line"><span class="comment">//测试数据 end</span></div></pre></td></tr></table></figure>
+<pre><code><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//完美解决方案</span></span><br><span class="line"><span class="keyword">var</span> http = <span class="built_in">require</span>(<span class="string">'http'</span>);</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">deepClone</span>(<span class="params">initialObj, finalObj</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> _deepClone(initialObj, finalObj, &#123;</span><br><span class="line">    k: [],</span><br><span class="line">    v: []</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">_deepClone</span>(<span class="params">initialObj, finalObj, conflict</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> i;</span><br><span class="line">    <span class="keyword">if</span> (initialObj &amp;&amp; <span class="keyword">typeof</span> initialObj === <span class="string">"object"</span> &amp;&amp; (i = [<span class="built_in">Object</span>, <span class="built_in">Array</span>].indexOf(initialObj.constructor)) != <span class="number">-1</span>) &#123;</span><br><span class="line">    <span class="keyword">if</span> (!finalObj) &#123;</span><br><span class="line">        finalObj = initialObj.constructor === <span class="built_in">Array</span> ? [] : &#123;&#125;;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (conflict) &#123;</span><br><span class="line">        i = conflict.k.indexOf(initialObj);</span><br><span class="line">        <span class="keyword">if</span> (i != <span class="number">-1</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> conflict.v[i];</span><br><span class="line">        &#125;</span><br><span class="line">        conflict.k.push(initialObj);</span><br><span class="line">        conflict.v.push(finalObj);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">var</span> key <span class="keyword">in</span> initialObj) &#123;</span><br><span class="line">        finalObj[key] = _deepClone(initialObj[key], finalObj[key], conflict);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> finalObj;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> initialObj;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//测试数据</span></span><br><span class="line"><span class="keyword">var</span> a = &#123;</span><br><span class="line">    <span class="string">"n"</span>: <span class="number">1</span></span><br><span class="line">&#125;;</span><br><span class="line">a.x = a; <span class="comment">//环引用</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> b = deepClone(a);</span><br><span class="line"></span><br><span class="line"><span class="built_in">console</span>.log(b, b.x === b);  <span class="comment">//查看拷贝对象，x属性为环引用，一直循环</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//各种不同类型数据拷贝</span></span><br><span class="line"><span class="built_in">console</span>.log(deepClone(<span class="number">1</span>));  </span><br><span class="line"><span class="built_in">console</span>.log(deepClone(<span class="keyword">new</span> <span class="built_in">Date</span>()));  </span><br><span class="line"><span class="built_in">console</span>.log(deepClone(<span class="regexp">/regex/i</span>));</span><br><span class="line"><span class="built_in">console</span>.log(deepClone(<span class="literal">false</span>));</span><br><span class="line"><span class="built_in">console</span>.log(deepClone(<span class="literal">undefined</span>));</span><br><span class="line"><span class="comment">//测试数据 end</span></span><br></pre></td></tr></table></figure>
 </code></pre>
       
 
@@ -872,11 +957,11 @@ git checkout xxx.js
         		</li>
       		 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">js</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">深拷贝</a>
         		</li>
       		 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">深拷贝</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">js</a>
         		</li>
       		
 		</ul>
@@ -915,7 +1000,7 @@ git checkout xxx.js
 
 
   
-    <article id="post-hello-world" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-hello-world" class="article article-type-post  article-index" itemscope="" itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
@@ -999,7 +1084,7 @@ git checkout xxx.js
   <div class="outer">
     <div id="footer-info">
     	<div class="footer-left">
-    		&copy; 2017 Ataotao
+    		&copy; 2018 Ataotao
     	</div>
       	<div class="footer-right">
       		<a href="http://hexo.io/" target="_blank">Hexo</a>  Theme <a href="https://github.com/litten/hexo-theme-yilia" target="_blank">Yilia</a> by Litten
@@ -1078,19 +1163,11 @@ git checkout xxx.js
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Javascript</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">检查浏览器</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">PC、手机检查</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">Math对象</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">Javascript</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1110,19 +1187,15 @@ git checkout xxx.js
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">Nodejs</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">环境变量</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">js</a>
+                <a href="javascript:void(0)" class="js-tag color3">写作</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">深拷贝</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">js</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1138,11 +1211,35 @@ git checkout xxx.js
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">写作</a>
+                <a href="javascript:void(0)" class="js-tag color1">React</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">SVG</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">内联SVG</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">检查浏览器</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">PC、手机检查</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">git</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">Nodejs</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">环境变量</a>
               </li>
             
             <div class="clearfix"></div>
@@ -1150,7 +1247,7 @@ git checkout xxx.js
         </div>
         <ul class="search-ul">
           <p q-show="jsonFail" style="padding: 20px; font-size: 12px;">
-            缺失模块。<br/>1、在博客根目录（注意不是yilia根目录）执行以下命令：<br/> npm i hexo-generator-json-content --save<br/><br/>
+            缺失模块。<br>1、在博客根目录（注意不是yilia根目录）执行以下命令：<br> npm i hexo-generator-json-content --save<br><br>
             2、在根目录_config.yml里添加配置：
 <pre style="font-size: 12px;" q-show="jsonFail">
   jsonContent:

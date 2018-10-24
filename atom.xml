@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>淘七淘八</title>
+  
   <subtitle>陶之家</subtitle>
   <link href="/atom.xml" rel="self"/>
   
   <link href="//ataotao.github.io/"/>
-  <updated>2017-06-24T01:58:06.737Z</updated>
+  <updated>2018-10-24T03:55:56.572Z</updated>
   <id>//ataotao.github.io/</id>
   
   <author>
@@ -16,45 +17,54 @@
   <generator uri="http://hexo.io/">Hexo</generator>
   
   <entry>
+    <title>React内联SVG背景图的实现</title>
+    <link href="//ataotao.github.io/2018/10/24/React%E5%86%85%E8%81%94SVG%E8%83%8C%E6%99%AF%E5%9B%BE%E7%9A%84%E5%AE%9E%E7%8E%B0/"/>
+    <id>//ataotao.github.io/2018/10/24/React内联SVG背景图的实现/</id>
+    <published>2018-10-24T03:43:33.000Z</published>
+    <updated>2018-10-24T03:55:56.572Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="内联SVG背景图像在React-js中的实现"><a href="#内联SVG背景图像在React-js中的实现" class="headerlink" title="内联SVG背景图像在React.js中的实现"></a>内联SVG背景图像在React.js中的实现</h1><p>遇到一个需求，后台返回验证码是一个内联的svg字符串，如果通过 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">- 背景图像的实现方式</span><br></pre></td></tr></table></figure></p><pre><code>const captchaSvg = window.encodeURIComponent(captchaImg);&lt;div style={backgroundImage:`url(data:image/svg+xml;charset=UTF-8,${captchaSvg})`, backgroundSize: &apos;100% 100%&apos;, width:200, height:50} /&gt;</code></pre><p><code>`</code></p>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;h1 id=&quot;内联SVG背景图像在React-js中的实现&quot;&gt;&lt;a href=&quot;#内联SVG背景图像在React-js中的实现&quot; class=&quot;headerlink&quot; title=&quot;内联SVG背景图像在React.js中的实现&quot;&gt;&lt;/a&gt;内联SVG背景图像在React.js中的
+      
+    
+    </summary>
+    
+      <category term="React" scheme="//ataotao.github.io/categories/React/"/>
+    
+    
+      <category term="React" scheme="//ataotao.github.io/tags/React/"/>
+    
+      <category term="SVG" scheme="//ataotao.github.io/tags/SVG/"/>
+    
+      <category term="内联SVG" scheme="//ataotao.github.io/tags/%E5%86%85%E8%81%94SVG/"/>
+    
+  </entry>
+  
+  <entry>
     <title>通过try catch模拟延迟获取未知对象的方法</title>
     <link href="//ataotao.github.io/2017/06/24/%E6%A8%A1%E6%8B%9F%E5%BB%B6%E8%BF%9F%E8%8E%B7%E5%8F%96%E5%88%9D%E5%A7%8B%E5%8C%96%E6%9C%AA%E7%9F%A5%E5%AF%B9%E8%B1%A1%E7%9A%84%E6%96%B9%E6%B3%95/"/>
     <id>//ataotao.github.io/2017/06/24/模拟延迟获取初始化未知对象的方法/</id>
     <published>2017-06-24T01:50:31.000Z</published>
-    <updated>2017-06-24T01:58:06.737Z</updated>
+    <updated>2018-10-24T03:40:46.140Z</updated>
     
-    <content type="html"><![CDATA[<p>有时候一些初始化数据异步获取，当页面<code>初始化</code>完成，但是数据还未正常初始化，导致页面错误，可以用下面的简单递归方式获取</p>
-<pre><code>//模拟数据延迟
-var a;
-setTimeout(function () {
-    a = {
-        name: 1,
-        age: 2
-    };
-}, 5000); //延迟5秒初始化数据
-
-//递归自动执行
-(function () {
-    try {
-        // a不是对象时会抛出错误
-        a.name;
-    } catch (e) {
-        //延迟再试一次~
-        setTimeout(arguments.callee, 50);
-        return;
-    }
-    // 没有错误就表示数据获取正常 5秒后正常打印数据
-    console.log(a);
-})();
-</code></pre>]]></content>
+    <content type="html"><![CDATA[<p>有时候一些初始化数据异步获取，当页面<code>初始化</code>完成，但是数据还未正常初始化，导致页面错误，可以用下面的简单递归方式获取</p><pre><code>//模拟数据延迟var a;setTimeout(function () {    a = {        name: 1,        age: 2    };}, 5000); //延迟5秒初始化数据//递归自动执行(function () {    try {        // a不是对象时会抛出错误        a.name;    } catch (e) {        //延迟再试一次~        setTimeout(arguments.callee, 50);        return;    }    // 没有错误就表示数据获取正常 5秒后正常打印数据    console.log(a);})();</code></pre>]]></content>
     
     <summary type="html">
     
-      &lt;p&gt;有时候一些初始化数据异步获取，当页面&lt;code&gt;初始化&lt;/code&gt;完成，但是数据还未正常初始化，导致页面错误，可以用下面的简单递归方式获取&lt;/p&gt;
+      
+      
+        &lt;p&gt;有时候一些初始化数据异步获取，当页面&lt;code&gt;初始化&lt;/code&gt;完成，但是数据还未正常初始化，导致页面错误，可以用下面的简单递归方式获取&lt;/p&gt;
 &lt;pre&gt;&lt;code&gt;//模拟数据延迟
 var a;
 setTimeout(function () {
     a = {
 
+      
     
     </summary>
     
@@ -76,46 +86,19 @@ setTimeout(function () {
     <link href="//ataotao.github.io/2017/06/22/JavaScript%20%E6%A3%80%E6%B5%8B%E6%98%AF%E4%B8%8D%E6%98%AF%E6%89%8B%E6%9C%BA%E6%B5%8F%E8%A7%88%E5%99%A8/"/>
     <id>//ataotao.github.io/2017/06/22/JavaScript 检测是不是手机浏览器/</id>
     <published>2017-06-22T06:11:00.000Z</published>
-    <updated>2017-06-22T06:20:52.172Z</updated>
+    <updated>2018-10-24T03:40:46.077Z</updated>
     
-    <content type="html"><![CDATA[<h3 id="用正则表达式："><a href="#用正则表达式：" class="headerlink" title="用正则表达式："></a>用正则表达式：</h3><ul>
-<li>是手机浏览器返回true，不是返回false</li>
-</ul>
-<pre><code>window.mobilecheck = function() {
-  var check = false;
-  (function(a){if(/(android|bbd+|meego).+mobile|avantgo|bada/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|mobile.+firefox|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)/|plucker|pocket|psp|series(4|6)0|symbian|treo|up.(browser|link)|vodafone|wap|windows ce|xda|xiino/i.test(a)||/1207|6310|6590|3gso|4thp|50[1-6]i|770s|802s|a wa|abac|ac(er|oo|s-)|ai(ko|rn)|al(av|ca|co)|amoi|an(ex|ny|yw)|aptu|ar(ch|go)|as(te|us)|attw|au(di|-m|r |s )|avan|be(ck|ll|nq)|bi(lb|rd)|bl(ac|az)|br(e|v)w|bumb|bw-(n|u)|c55/|capi|ccwa|cdm-|cell|chtm|cldc|cmd-|co(mp|nd)|craw|da(it|ll|ng)|dbte|dc-s|devi|dica|dmob|do(c|p)o|ds(12|-d)|el(49|ai)|em(l2|ul)|er(ic|k0)|esl8|ez([4-7]0|os|wa|ze)|fetc|fly(-|_)|g1 u|g560|gene|gf-5|g-mo|go(.w|od)|gr(ad|un)|haie|hcit|hd-(m|p|t)|hei-|hi(pt|ta)|hp( i|ip)|hs-c|ht(c(-| |_|a|g|p|s|t)|tp)|hu(aw|tc)|i-(20|go|ma)|i230|iac( |-|/)|ibro|idea|ig01|ikom|im1k|inno|ipaq|iris|ja(t|v)a|jbro|jemu|jigs|kddi|keji|kgt( |/)|klon|kpt |kwc-|kyo(c|k)|le(no|xi)|lg( g|/(k|l|u)|50|54|-[a-w])|libw|lynx|m1-w|m3ga|m50/|ma(te|ui|xo)|mc(01|21|ca)|m-cr|me(rc|ri)|mi(o8|oa|ts)|mmef|mo(01|02|bi|de|do|t(-| |o|v)|zz)|mt(50|p1|v )|mwbp|mywa|n10[0-2]|n20[2-3]|n30(0|2)|n50(0|2|5)|n7(0(0|1)|10)|ne((c|m)-|on|tf|wf|wg|wt)|nok(6|i)|nzph|o2im|op(ti|wv)|oran|owg1|p800|pan(a|d|t)|pdxg|pg(13|-([1-8]|c))|phil|pire|pl(ay|uc)|pn-2|po(ck|rt|se)|prox|psio|pt-g|qa-a|qc(07|12|21|32|60|-[2-7]|i-)|qtek|r380|r600|raks|rim9|ro(ve|zo)|s55/|sa(ge|ma|mm|ms|ny|va)|sc(01|h-|oo|p-)|sdk/|se(c(-|0|1)|47|mc|nd|ri)|sgh-|shar|sie(-|m)|sk-0|sl(45|id)|sm(al|ar|b3|it|t5)|so(ft|ny)|sp(01|h-|v-|v )|sy(01|mb)|t2(18|50)|t6(00|10|18)|ta(gt|lk)|tcl-|tdg-|tel(i|m)|tim-|t-mo|to(pl|sh)|ts(70|m-|m3|m5)|tx-9|up(.b|g1|si)|utst|v400|v750|veri|vi(rg|te)|vk(40|5[0-3]|-v)|vm40|voda|vulc|vx(52|53|60|61|70|80|81|83|85|98)|w3c(-| )|webc|whit|wi(g |nc|nw)|wmlb|wonu|x700|yas-|your|zeto|zte-/i.test(a.substr(0,4)))check = true})(navigator.userAgent||navigator.vendor||window.opera);
-  return check;
-}
-</code></pre><h3 id="如果要包含平板，代码如下："><a href="#如果要包含平板，代码如下：" class="headerlink" title="如果要包含平板，代码如下："></a>如果要包含平板，代码如下：</h3><pre><code> window.mobileAndTabletcheck = function() {
-  var check = false;
-  (function(a){if(/(android|bbd+|meego).+mobile|avantgo|bada/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|mobile.+firefox|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)/|plucker|pocket|psp|series(4|6)0|symbian|treo|up.(browser|link)|vodafone|wap|windows ce|xda|xiino|android|ipad|playbook|silk/i.test(a)||/1207|6310|6590|3gso|4thp|50[1-6]i|770s|802s|a wa|abac|ac(er|oo|s-)|ai(ko|rn)|al(av|ca|co)|amoi|an(ex|ny|yw)|aptu|ar(ch|go)|as(te|us)|attw|au(di|-m|r |s )|avan|be(ck|ll|nq)|bi(lb|rd)|bl(ac|az)|br(e|v)w|bumb|bw-(n|u)|c55/|capi|ccwa|cdm-|cell|chtm|cldc|cmd-|co(mp|nd)|craw|da(it|ll|ng)|dbte|dc-s|devi|dica|dmob|do(c|p)o|ds(12|-d)|el(49|ai)|em(l2|ul)|er(ic|k0)|esl8|ez([4-7]0|os|wa|ze)|fetc|fly(-|_)|g1 u|g560|gene|gf-5|g-mo|go(.w|od)|gr(ad|un)|haie|hcit|hd-(m|p|t)|hei-|hi(pt|ta)|hp( i|ip)|hs-c|ht(c(-| |_|a|g|p|s|t)|tp)|hu(aw|tc)|i-(20|go|ma)|i230|iac( |-|/)|ibro|idea|ig01|ikom|im1k|inno|ipaq|iris|ja(t|v)a|jbro|jemu|jigs|kddi|keji|kgt( |/)|klon|kpt |kwc-|kyo(c|k)|le(no|xi)|lg( g|/(k|l|u)|50|54|-[a-w])|libw|lynx|m1-w|m3ga|m50/|ma(te|ui|xo)|mc(01|21|ca)|m-cr|me(rc|ri)|mi(o8|oa|ts)|mmef|mo(01|02|bi|de|do|t(-| |o|v)|zz)|mt(50|p1|v )|mwbp|mywa|n10[0-2]|n20[2-3]|n30(0|2)|n50(0|2|5)|n7(0(0|1)|10)|ne((c|m)-|on|tf|wf|wg|wt)|nok(6|i)|nzph|o2im|op(ti|wv)|oran|owg1|p800|pan(a|d|t)|pdxg|pg(13|-([1-8]|c))|phil|pire|pl(ay|uc)|pn-2|po(ck|rt|se)|prox|psio|pt-g|qa-a|qc(07|12|21|32|60|-[2-7]|i-)|qtek|r380|r600|raks|rim9|ro(ve|zo)|s55/|sa(ge|ma|mm|ms|ny|va)|sc(01|h-|oo|p-)|sdk/|se(c(-|0|1)|47|mc|nd|ri)|sgh-|shar|sie(-|m)|sk-0|sl(45|id)|sm(al|ar|b3|it|t5)|so(ft|ny)|sp(01|h-|v-|v )|sy(01|mb)|t2(18|50)|t6(00|10|18)|ta(gt|lk)|tcl-|tdg-|tel(i|m)|tim-|t-mo|to(pl|sh)|ts(70|m-|m3|m5)|tx-9|up(.b|g1|si)|utst|v400|v750|veri|vi(rg|te)|vk(40|5[0-3]|-v)|vm40|voda|vulc|vx(52|53|60|61|70|80|81|83|85|98)|w3c(-| )|webc|whit|wi(g |nc|nw)|wmlb|wonu|x700|yas-|your|zeto|zte-/i.test(a.substr(0,4)))check = true})(navigator.userAgent||navigator.vendor||window.opera);
-  return check;
-}
-</code></pre><h3 id="原始方法"><a href="#原始方法" class="headerlink" title="原始方法"></a>原始方法</h3><ul>
-<li>检测useragent：</li>
-</ul>
-<pre><code>function detectmob() {
-    if (navigator.userAgent.match(/Android/i) ||
-        navigator.userAgent.match(/webOS/i) ||
-        navigator.userAgent.match(/iPhone/i) ||
-        navigator.userAgent.match(/iPad/i) ||
-        navigator.userAgent.match(/iPod/i) ||
-        navigator.userAgent.match(/BlackBerry/i) ||
-        navigator.userAgent.match(/Windows Phone/i)
-    ) {
-        return true;
-    } else {
-        return false;
-    }
-}
-</code></pre>]]></content>
+    <content type="html"><![CDATA[<h3 id="用正则表达式："><a href="#用正则表达式：" class="headerlink" title="用正则表达式："></a>用正则表达式：</h3><ul><li>是手机浏览器返回true，不是返回false</li></ul><pre><code>window.mobilecheck = function() {  var check = false;  (function(a){if(/(android|bbd+|meego).+mobile|avantgo|bada/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|mobile.+firefox|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)/|plucker|pocket|psp|series(4|6)0|symbian|treo|up.(browser|link)|vodafone|wap|windows ce|xda|xiino/i.test(a)||/1207|6310|6590|3gso|4thp|50[1-6]i|770s|802s|a wa|abac|ac(er|oo|s-)|ai(ko|rn)|al(av|ca|co)|amoi|an(ex|ny|yw)|aptu|ar(ch|go)|as(te|us)|attw|au(di|-m|r |s )|avan|be(ck|ll|nq)|bi(lb|rd)|bl(ac|az)|br(e|v)w|bumb|bw-(n|u)|c55/|capi|ccwa|cdm-|cell|chtm|cldc|cmd-|co(mp|nd)|craw|da(it|ll|ng)|dbte|dc-s|devi|dica|dmob|do(c|p)o|ds(12|-d)|el(49|ai)|em(l2|ul)|er(ic|k0)|esl8|ez([4-7]0|os|wa|ze)|fetc|fly(-|_)|g1 u|g560|gene|gf-5|g-mo|go(.w|od)|gr(ad|un)|haie|hcit|hd-(m|p|t)|hei-|hi(pt|ta)|hp( i|ip)|hs-c|ht(c(-| |_|a|g|p|s|t)|tp)|hu(aw|tc)|i-(20|go|ma)|i230|iac( |-|/)|ibro|idea|ig01|ikom|im1k|inno|ipaq|iris|ja(t|v)a|jbro|jemu|jigs|kddi|keji|kgt( |/)|klon|kpt |kwc-|kyo(c|k)|le(no|xi)|lg( g|/(k|l|u)|50|54|-[a-w])|libw|lynx|m1-w|m3ga|m50/|ma(te|ui|xo)|mc(01|21|ca)|m-cr|me(rc|ri)|mi(o8|oa|ts)|mmef|mo(01|02|bi|de|do|t(-| |o|v)|zz)|mt(50|p1|v )|mwbp|mywa|n10[0-2]|n20[2-3]|n30(0|2)|n50(0|2|5)|n7(0(0|1)|10)|ne((c|m)-|on|tf|wf|wg|wt)|nok(6|i)|nzph|o2im|op(ti|wv)|oran|owg1|p800|pan(a|d|t)|pdxg|pg(13|-([1-8]|c))|phil|pire|pl(ay|uc)|pn-2|po(ck|rt|se)|prox|psio|pt-g|qa-a|qc(07|12|21|32|60|-[2-7]|i-)|qtek|r380|r600|raks|rim9|ro(ve|zo)|s55/|sa(ge|ma|mm|ms|ny|va)|sc(01|h-|oo|p-)|sdk/|se(c(-|0|1)|47|mc|nd|ri)|sgh-|shar|sie(-|m)|sk-0|sl(45|id)|sm(al|ar|b3|it|t5)|so(ft|ny)|sp(01|h-|v-|v )|sy(01|mb)|t2(18|50)|t6(00|10|18)|ta(gt|lk)|tcl-|tdg-|tel(i|m)|tim-|t-mo|to(pl|sh)|ts(70|m-|m3|m5)|tx-9|up(.b|g1|si)|utst|v400|v750|veri|vi(rg|te)|vk(40|5[0-3]|-v)|vm40|voda|vulc|vx(52|53|60|61|70|80|81|83|85|98)|w3c(-| )|webc|whit|wi(g |nc|nw)|wmlb|wonu|x700|yas-|your|zeto|zte-/i.test(a.substr(0,4)))check = true})(navigator.userAgent||navigator.vendor||window.opera);  return check;}</code></pre><h3 id="如果要包含平板，代码如下："><a href="#如果要包含平板，代码如下：" class="headerlink" title="如果要包含平板，代码如下："></a>如果要包含平板，代码如下：</h3><pre><code> window.mobileAndTabletcheck = function() {  var check = false;  (function(a){if(/(android|bbd+|meego).+mobile|avantgo|bada/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|mobile.+firefox|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)/|plucker|pocket|psp|series(4|6)0|symbian|treo|up.(browser|link)|vodafone|wap|windows ce|xda|xiino|android|ipad|playbook|silk/i.test(a)||/1207|6310|6590|3gso|4thp|50[1-6]i|770s|802s|a wa|abac|ac(er|oo|s-)|ai(ko|rn)|al(av|ca|co)|amoi|an(ex|ny|yw)|aptu|ar(ch|go)|as(te|us)|attw|au(di|-m|r |s )|avan|be(ck|ll|nq)|bi(lb|rd)|bl(ac|az)|br(e|v)w|bumb|bw-(n|u)|c55/|capi|ccwa|cdm-|cell|chtm|cldc|cmd-|co(mp|nd)|craw|da(it|ll|ng)|dbte|dc-s|devi|dica|dmob|do(c|p)o|ds(12|-d)|el(49|ai)|em(l2|ul)|er(ic|k0)|esl8|ez([4-7]0|os|wa|ze)|fetc|fly(-|_)|g1 u|g560|gene|gf-5|g-mo|go(.w|od)|gr(ad|un)|haie|hcit|hd-(m|p|t)|hei-|hi(pt|ta)|hp( i|ip)|hs-c|ht(c(-| |_|a|g|p|s|t)|tp)|hu(aw|tc)|i-(20|go|ma)|i230|iac( |-|/)|ibro|idea|ig01|ikom|im1k|inno|ipaq|iris|ja(t|v)a|jbro|jemu|jigs|kddi|keji|kgt( |/)|klon|kpt |kwc-|kyo(c|k)|le(no|xi)|lg( g|/(k|l|u)|50|54|-[a-w])|libw|lynx|m1-w|m3ga|m50/|ma(te|ui|xo)|mc(01|21|ca)|m-cr|me(rc|ri)|mi(o8|oa|ts)|mmef|mo(01|02|bi|de|do|t(-| |o|v)|zz)|mt(50|p1|v )|mwbp|mywa|n10[0-2]|n20[2-3]|n30(0|2)|n50(0|2|5)|n7(0(0|1)|10)|ne((c|m)-|on|tf|wf|wg|wt)|nok(6|i)|nzph|o2im|op(ti|wv)|oran|owg1|p800|pan(a|d|t)|pdxg|pg(13|-([1-8]|c))|phil|pire|pl(ay|uc)|pn-2|po(ck|rt|se)|prox|psio|pt-g|qa-a|qc(07|12|21|32|60|-[2-7]|i-)|qtek|r380|r600|raks|rim9|ro(ve|zo)|s55/|sa(ge|ma|mm|ms|ny|va)|sc(01|h-|oo|p-)|sdk/|se(c(-|0|1)|47|mc|nd|ri)|sgh-|shar|sie(-|m)|sk-0|sl(45|id)|sm(al|ar|b3|it|t5)|so(ft|ny)|sp(01|h-|v-|v )|sy(01|mb)|t2(18|50)|t6(00|10|18)|ta(gt|lk)|tcl-|tdg-|tel(i|m)|tim-|t-mo|to(pl|sh)|ts(70|m-|m3|m5)|tx-9|up(.b|g1|si)|utst|v400|v750|veri|vi(rg|te)|vk(40|5[0-3]|-v)|vm40|voda|vulc|vx(52|53|60|61|70|80|81|83|85|98)|w3c(-| )|webc|whit|wi(g |nc|nw)|wmlb|wonu|x700|yas-|your|zeto|zte-/i.test(a.substr(0,4)))check = true})(navigator.userAgent||navigator.vendor||window.opera);  return check;}</code></pre><h3 id="原始方法"><a href="#原始方法" class="headerlink" title="原始方法"></a>原始方法</h3><ul><li>检测useragent：</li></ul><pre><code>function detectmob() {    if (navigator.userAgent.match(/Android/i) ||        navigator.userAgent.match(/webOS/i) ||        navigator.userAgent.match(/iPhone/i) ||        navigator.userAgent.match(/iPad/i) ||        navigator.userAgent.match(/iPod/i) ||        navigator.userAgent.match(/BlackBerry/i) ||        navigator.userAgent.match(/Windows Phone/i)    ) {        return true;    } else {        return false;    }}</code></pre>]]></content>
     
     <summary type="html">
     
-      &lt;h3 id=&quot;用正则表达式：&quot;&gt;&lt;a href=&quot;#用正则表达式：&quot; class=&quot;headerlink&quot; title=&quot;用正则表达式：&quot;&gt;&lt;/a&gt;用正则表达式：&lt;/h3&gt;&lt;ul&gt;
+      
+      
+        &lt;h3 id=&quot;用正则表达式：&quot;&gt;&lt;a href=&quot;#用正则表达式：&quot; class=&quot;headerlink&quot; title=&quot;用正则表达式：&quot;&gt;&lt;/a&gt;用正则表达式：&lt;/h3&gt;&lt;ul&gt;
 &lt;li&gt;是手机浏览器返回true，不是返回false&lt;/li&gt;
 &lt;/ul&gt;
 &lt;pre&gt;&lt;code
+      
     
     </summary>
     
@@ -135,26 +118,27 @@ setTimeout(function () {
     <link href="//ataotao.github.io/2017/03/11/NodeJs%E8%AE%BE%E7%BD%AE%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F%E7%9A%84%E5%87%A0%E7%A7%8D%E6%96%B9%E5%BC%8F/"/>
     <id>//ataotao.github.io/2017/03/11/NodeJs设置环境变量的几种方式/</id>
     <published>2017-03-11T01:24:56.000Z</published>
-    <updated>2017-03-11T01:51:24.050Z</updated>
+    <updated>2018-10-24T03:40:46.095Z</updated>
     
-    <content type="html"><![CDATA[<h1 id="方法一：-执行的时候设置"><a href="#方法一：-执行的时候设置" class="headerlink" title="方法一： 执行的时候设置"></a>方法一： 执行的时候设置</h1><pre><code><figure class="highlight mel"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">npm start --production</div><div class="line"><span class="comment">// app.js</span></div><div class="line">console.<span class="keyword">log</span>(process.<span class="keyword">env</span>.NODE_ENV);</div><div class="line">production</div></pre></td></tr></table></figure>
-</code></pre><h1 id="方法二：-package-json文件里面配置"><a href="#方法二：-package-json文件里面配置" class="headerlink" title="方法二： package.json文件里面配置"></a>方法二： package.json文件里面配置</h1><pre><code><figure class="highlight xquery"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="string">"scripts"</span>: &#123;</div><div class="line">    <span class="string">"start"</span>: <span class="string">"set NODE_ENV = development &amp;&amp; node ./bin/www"</span>,</div><div class="line">    <span class="string">"dev"</span>: <span class="string">"set NODE_ENV = development &amp;&amp; node app"</span></div><div class="line">&#125;,</div></pre></td></tr></table></figure>
-</code></pre>]]></content>
+    <content type="html"><![CDATA[<h1 id="方法一：-执行的时候设置"><a href="#方法一：-执行的时候设置" class="headerlink" title="方法一： 执行的时候设置"></a>方法一： 执行的时候设置</h1><pre><code><figure class="highlight mel"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">npm start --production</span><br><span class="line"><span class="comment">// app.js</span></span><br><span class="line">console.<span class="keyword">log</span>(process.<span class="keyword">env</span>.NODE_ENV);</span><br><span class="line">production</span><br></pre></td></tr></table></figure></code></pre><h1 id="方法二：-package-json文件里面配置"><a href="#方法二：-package-json文件里面配置" class="headerlink" title="方法二： package.json文件里面配置"></a>方法二： package.json文件里面配置</h1><pre><code><figure class="highlight xquery"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">"scripts"</span>: &#123;</span><br><span class="line">    <span class="string">"start"</span>: <span class="string">"set NODE_ENV = development &amp;&amp; node ./bin/www"</span>,</span><br><span class="line">    <span class="string">"dev"</span>: <span class="string">"set NODE_ENV = development &amp;&amp; node app"</span></span><br><span class="line">&#125;,</span><br></pre></td></tr></table></figure></code></pre>]]></content>
     
     <summary type="html">
     
-      &lt;h1 id=&quot;方法一：-执行的时候设置&quot;&gt;&lt;a href=&quot;#方法一：-执行的时候设置&quot; class=&quot;headerlink&quot; title=&quot;方法一： 执行的时候设置&quot;&gt;&lt;/a&gt;方法一： 执行的时候设置&lt;/h1&gt;&lt;pre&gt;&lt;code&gt;&lt;figure class=&quot;highlig
+      
+      
+        &lt;h1 id=&quot;方法一：-执行的时候设置&quot;&gt;&lt;a href=&quot;#方法一：-执行的时候设置&quot; class=&quot;headerlink&quot; title=&quot;方法一： 执行的时候设置&quot;&gt;&lt;/a&gt;方法一： 执行的时候设置&lt;/h1&gt;&lt;pre&gt;&lt;code&gt;&lt;figure class=&quot;highlig
+      
     
     </summary>
     
       <category term="Nodejs" scheme="//ataotao.github.io/categories/Nodejs/"/>
     
     
+      <category term="js" scheme="//ataotao.github.io/tags/js/"/>
+    
       <category term="Nodejs" scheme="//ataotao.github.io/tags/Nodejs/"/>
     
       <category term="环境变量" scheme="//ataotao.github.io/tags/%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F/"/>
-    
-      <category term="js" scheme="//ataotao.github.io/tags/js/"/>
     
   </entry>
   
@@ -163,78 +147,25 @@ setTimeout(function () {
     <link href="//ataotao.github.io/2017/03/03/Math%E5%AF%B9%E8%B1%A1%E6%8A%80%E5%B7%A7%EF%BC%8CMath.max%EF%BC%8CMath.min%E8%8E%B7%E5%8F%96%E6%95%B0%E7%BB%84%E6%9C%80%E5%A4%A7%E5%80%BC%E5%92%8CMath.random%E9%9A%8F%E6%9C%BA%E6%95%B0/"/>
     <id>//ataotao.github.io/2017/03/03/Math对象技巧，Math.max，Math.min获取数组最大值和Math.random随机数/</id>
     <published>2017-03-03T01:39:00.000Z</published>
-    <updated>2017-03-11T01:51:24.049Z</updated>
+    <updated>2018-10-24T03:40:46.092Z</updated>
     
-    <content type="html"><![CDATA[<h1 id="Math对象技巧，Math-max，Math-min获取数组最大值和Math-random随机数"><a href="#Math对象技巧，Math-max，Math-min获取数组最大值和Math-random随机数" class="headerlink" title="Math对象技巧，Math.max，Math.min获取数组最大值和Math.random随机数"></a>Math对象技巧，Math.max，Math.min获取数组最大值和Math.random随机数</h1><p>#Math.max，Math.min 求最大值、最小值</p>
-<pre><code>//最大值 最小值
-var max = Math.max(3, 54, 32, 16);
-console.log(max); //54
-var min = Math.min(3, 54, 32, 16);
-console.log(min); //3
-
-var values = [1, 2, 3, 4, 5, 6, 7, 8];
-var arrMax = Math.max.apply(Math, values);
-var arrMin = Math.min.apply(Math, values);
-console.log(arrMax); //8
-console.log(arrMin); //1
-</code></pre><p>#Math.ceil Math.floor Math.round舍入方法</p>
-<pre><code>// 舍入方法
-
-/*
-* Math.ceil()执行向上舍入，即它总是将数值向上舍入为最接近的整数；
-* Math.floor()执行向下舍入，即它总是将数值向下舍入为最接近的整数；
-* Math.round()执行标准舍入，即它总是将数值四舍五入为最接近的整数（这也是我们在数学课
-*/
-
-console.log(Math.ceil(25.9)); //26
-console.log(Math.ceil(25.5)); //26
-console.log(Math.ceil(25.1)); //26
-
-console.log(Math.round(25.9)); //26
-console.log(Math.round(25.5)); //26
-console.log(Math.round(25.1)); //25
-
-console.log(Math.floor(25.9)); //25
-console.log(Math.floor(25.5)); //25
-console.log(Math.floor(25.1)); //25
-</code></pre><p>#Math.random()随机数</p>
-<pre><code>// 套用下面的公式，就可以利用Math.random()从某个整数范围内随机选择一个值。
-//var 值 = Math.floor(Math.random() * 可能值的总数 + 第一个可能的值)
-
-//选择一个1到10 之间的数值
-var num1 = Math.floor(Math.random() * 10 + 1);
-
-// 选择一个介于2 到10 之间的值
-var num2 = Math.floor(Math.random() * 9 + 2);
-
-// 整合方法
-function selectFrom(lowerValue, upperValue) {
-    var choices = upperValue - lowerValue + 1;
-    return Math.floor(Math.random() * choices + lowerValue);
-}
-var num = selectFrom(2, 10);
-console.log(num); // 介于 2 和10 之间（包括 2 和 10）的一个数值
-</code></pre><p>#Math.random()应用</p>
-<pre><code>// 函数selectFrom()接受两个参数：应该返回的最小值和最大值。而用最大值减最小值再加1 得到了可能值的总数，然后它又把这些数值套用到了前面的公式中。
-// 这样，通过调用selectFrom(2,10)就可以得到一个介于2 和10 之间（包括2 和10）的数值了。
-// 利用这个函数，可以方便地从数组中随机取出一项
-var colors = [&quot;red&quot;, &quot;green&quot;, &quot;blue&quot;, &quot;yellow&quot;, &quot;black&quot;, &quot;purple&quot;, &quot;brown&quot;];
-var color = colors[selectFrom(0, colors.length - 1)];
-console.log(color); // 可能是数组中包含的任何一个字符串
-</code></pre>]]></content>
+    <content type="html"><![CDATA[<h1 id="Math对象技巧，Math-max，Math-min获取数组最大值和Math-random随机数"><a href="#Math对象技巧，Math-max，Math-min获取数组最大值和Math-random随机数" class="headerlink" title="Math对象技巧，Math.max，Math.min获取数组最大值和Math.random随机数"></a>Math对象技巧，Math.max，Math.min获取数组最大值和Math.random随机数</h1><p>#Math.max，Math.min 求最大值、最小值</p><pre><code>//最大值 最小值var max = Math.max(3, 54, 32, 16);console.log(max); //54var min = Math.min(3, 54, 32, 16);console.log(min); //3var values = [1, 2, 3, 4, 5, 6, 7, 8];var arrMax = Math.max.apply(Math, values);var arrMin = Math.min.apply(Math, values);console.log(arrMax); //8console.log(arrMin); //1</code></pre><p>#Math.ceil Math.floor Math.round舍入方法</p><pre><code>// 舍入方法/** Math.ceil()执行向上舍入，即它总是将数值向上舍入为最接近的整数；* Math.floor()执行向下舍入，即它总是将数值向下舍入为最接近的整数；* Math.round()执行标准舍入，即它总是将数值四舍五入为最接近的整数（这也是我们在数学课*/console.log(Math.ceil(25.9)); //26console.log(Math.ceil(25.5)); //26console.log(Math.ceil(25.1)); //26console.log(Math.round(25.9)); //26console.log(Math.round(25.5)); //26console.log(Math.round(25.1)); //25console.log(Math.floor(25.9)); //25console.log(Math.floor(25.5)); //25console.log(Math.floor(25.1)); //25</code></pre><p>#Math.random()随机数</p><pre><code>// 套用下面的公式，就可以利用Math.random()从某个整数范围内随机选择一个值。//var 值 = Math.floor(Math.random() * 可能值的总数 + 第一个可能的值)//选择一个1到10 之间的数值var num1 = Math.floor(Math.random() * 10 + 1);// 选择一个介于2 到10 之间的值var num2 = Math.floor(Math.random() * 9 + 2);// 整合方法function selectFrom(lowerValue, upperValue) {    var choices = upperValue - lowerValue + 1;    return Math.floor(Math.random() * choices + lowerValue);}var num = selectFrom(2, 10);console.log(num); // 介于 2 和10 之间（包括 2 和 10）的一个数值</code></pre><p>#Math.random()应用</p><pre><code>// 函数selectFrom()接受两个参数：应该返回的最小值和最大值。而用最大值减最小值再加1 得到了可能值的总数，然后它又把这些数值套用到了前面的公式中。// 这样，通过调用selectFrom(2,10)就可以得到一个介于2 和10 之间（包括2 和10）的数值了。// 利用这个函数，可以方便地从数组中随机取出一项var colors = [&quot;red&quot;, &quot;green&quot;, &quot;blue&quot;, &quot;yellow&quot;, &quot;black&quot;, &quot;purple&quot;, &quot;brown&quot;];var color = colors[selectFrom(0, colors.length - 1)];console.log(color); // 可能是数组中包含的任何一个字符串</code></pre>]]></content>
     
     <summary type="html">
     
-      &lt;h1 id=&quot;Math对象技巧，Math-max，Math-min获取数组最大值和Math-random随机数&quot;&gt;&lt;a href=&quot;#Math对象技巧，Math-max，Math-min获取数组最大值和Math-random随机数&quot; class=&quot;headerlink&quot; tit
+      
+      
+        &lt;h1 id=&quot;Math对象技巧，Math-max，Math-min获取数组最大值和Math-random随机数&quot;&gt;&lt;a href=&quot;#Math对象技巧，Math-max，Math-min获取数组最大值和Math-random随机数&quot; class=&quot;headerlink&quot; tit
+      
     
     </summary>
     
       <category term="Javascript" scheme="//ataotao.github.io/categories/Javascript/"/>
     
     
-      <category term="Javascript" scheme="//ataotao.github.io/tags/Javascript/"/>
-    
       <category term="Math对象" scheme="//ataotao.github.io/tags/Math%E5%AF%B9%E8%B1%A1/"/>
+    
+      <category term="Javascript" scheme="//ataotao.github.io/tags/Javascript/"/>
     
       <category term="随机数" scheme="//ataotao.github.io/tags/%E9%9A%8F%E6%9C%BA%E6%95%B0/"/>
     
@@ -251,124 +182,16 @@ console.log(color); // 可能是数组中包含的任何一个字符串
     <link href="//ataotao.github.io/2017/02/28/%E4%B8%80%E4%BA%9B%E5%B8%B8%E7%94%A8%E7%9A%84git%E5%91%BD%E4%BB%A4/"/>
     <id>//ataotao.github.io/2017/02/28/一些常用的git命令/</id>
     <published>2017-02-28T01:09:24.000Z</published>
-    <updated>2017-03-11T01:51:24.052Z</updated>
+    <updated>2018-10-24T03:40:46.128Z</updated>
     
-    <content type="html"><![CDATA[<h1 id="查看所有分支的详细日志"><a href="#查看所有分支的详细日志" class="headerlink" title="查看所有分支的详细日志"></a>查看所有分支的详细日志</h1><pre><code>git log --all --decorate --graph
-</code></pre><p>它用线段表示分支的合并情况，还能看到标签：</p>
-<pre><code>* commit ca0fd229e12d51a6429e6a91a094063bbc00ea56 (HEAD -&gt; master, origin/master, origin/HEAD)
-| Author: Geoffrey Booth &lt;webmaster@geoffreybooth.com&gt;
-| Date:   Wed Feb 22 10:53:09 2017 -0800
-| 
-|     Update v2 NPM installation instructions
-|    
-*   commit a9bd53d77f075953170a820615b627ddeeb85ed0
-|\  Merge: 91e3f72 f8ce1a8
-| | Author: Jeremy Ashkenas &lt;jashkenas@gmail.com&gt;
-| | Date:   Wed Feb 22 13:16:44 2017 -0500
-| | 
-| |     Merge pull request #4448 from GeoffreyBooth/2-docs-on-master
-| |     
-| |     2 docs on master
-| |   
-| * commit f8ce1a8183f53a13c5bd14039654e0860c617dbd
-| | Author: Geoffrey &lt;webmaster@geoffreybooth.com&gt;
-| | Date:   Tue Feb 21 20:58:31 2017 -0800
-| | 
-| |     Teaser for CoffeeScript 2, link to 2 docs
-| |   
-| * commit cee1076e1d459b9aeeca735a2817410ef0a28bf0
-|/  Author: Geoffrey Booth &lt;webmaster@geoffreybooth.com&gt;
-</code></pre><h1 id="恢复一个文件"><a href="#恢复一个文件" class="headerlink" title="恢复一个文件"></a>恢复一个文件</h1><pre><code>git checkout &lt;file-path&gt;
-</code></pre><h1 id="清除工作目录中所有更改"><a href="#清除工作目录中所有更改" class="headerlink" title="清除工作目录中所有更改"></a>清除工作目录中所有更改</h1><pre><code>git reset --hard &amp;&amp; git clean -df
-</code></pre><h1 id="完全恢复工作目录"><a href="#完全恢复工作目录" class="headerlink" title="完全恢复工作目录"></a>完全恢复工作目录</h1><pre><code>git reset --hard &amp;&amp; git clean -dfx
-</code></pre><p>它会使工作目录恢复成“全新”状态，即：刚clone之后的状态。</p>
-<p>注意，它会清除所有的 ignored files。</p>
-<h1 id="（优雅地）回滚到原来的"><a href="#（优雅地）回滚到原来的" class="headerlink" title="（优雅地）回滚到原来的"></a>（优雅地）回滚到原来的<commit></commit></h1><pre><code>git revert -n &lt;commit&gt;..HEAD
-</code></pre><p>然后再commit即可。</p>
-<p>这和 git reset 以及rebase都不同，它不修改历史（不删除原来的commit），而是用新的commit来抵消。这是很好的方式，大多数情况下都最好用revert来撤销。</p>
-<p>姑且把它称之为“软回滚”吧。</p>
-<h1 id="（强硬地）回滚到原来的"><a href="#（强硬地）回滚到原来的" class="headerlink" title="（强硬地）回滚到原来的"></a>（强硬地）回滚到原来的<commit></commit></h1><pre><code>git reset --hard &lt;commit&gt;
-</code></pre><p>它会把HEAD指向这个commit，所以相当于把之后的commit全“删”了（不过并没真正删除，只有在定期的垃圾回收时刻才真正删除）。</p>
-<p>不建议这样做。历史应该尽量保留，除非里面有敏感信息。</p>
-<h1 id="删除早期的commit以节省（远程或本地）空间"><a href="#删除早期的commit以节省（远程或本地）空间" class="headerlink" title="删除早期的commit以节省（远程或本地）空间"></a>删除早期的commit以节省（远程或本地）空间</h1><pre><code>git rebase -i --root
-</code></pre><p>几年以前的commits，你可能想把它们都删除了（不建议，但是如果有个大文件在里面占据了很大容量，而现在没有这个文件了，那这些commits就是个包袱）。这个方法不但会删掉commits，还会改变之后所有commits的hash值，所以请慎用！</p>
-<p>运行后，会出来一编辑器，列出从第一个commit开始的所有commits，你只要把pick改成s，这个commit就会被“挤”掉（合并到上一个commit中）。我们举个例子，当运行此命令后，出现：</p>
-<p>pick bbb2b0b init<br>pick 8ec6fb8 aaa<br>pick a1d84fc bbb<br>pick b36a6da ccc<br>你想删除第二个和第三个commit（也就是把它们都合并到第一个commit中），那就改成这样（千万不可直接删除行，否则可能会导致丢失不想删除的文件）：</p>
-<p>pick bbb2b0b init<br>s 8ec6fb8 aaa<br>s a1d84fc bbb<br>pick b36a6da ccc<br>保存退出后，在最后还会出现一编辑器，是用来输入这个合并后的 commit message 的。</p>
-<p>不过这还无法立即释放本地空间，如果要立即释放，要把所有东西从reflog里删除：</p>
-<pre><code>git reflog expire --all --expire=now
-</code></pre><p>然后再清理：</p>
-<pre><code>git gc --prune=all
-</code></pre><p>清空reflog和清理的步骤可以不做，push的时候远程仓库会自动删除这些已被删除的commit，然后别人clone或pull的时候也就不会下载这些多余文件了。</p>
-<p>push的时候要这样：</p>
-<pre><code>push -f
-</code></pre><p>否则远程计算机会拒绝。因为我们已经修改或删除了已被push的commit，所以必须强制，才能让远程计算机也修改或删除这些commit。</p>
-<h1 id="列出变动的文件，但不包括详细内容"><a href="#列出变动的文件，但不包括详细内容" class="headerlink" title="列出变动的文件，但不包括详细内容"></a>列出变动的文件，但不包括详细内容</h1><pre><code>git diff --name-status
-git diff --name-status &lt;commit&gt; &lt;commit&gt;
-</code></pre><p>当变化很大，详细内容有无数行的时候，就很好用。</p>
-<h1 id="显示某个commit中某个文件的内容"><a href="#显示某个commit中某个文件的内容" class="headerlink" title="显示某个commit中某个文件的内容"></a>显示某个commit中某个文件的内容</h1><pre><code>git show &lt;commit&gt;:&lt;path&gt;
-</code></pre><p>例如 git show f6f207a:README.txt。</p>
-<h1 id="显示某个commit的更改"><a href="#显示某个commit的更改" class="headerlink" title="显示某个commit的更改"></a>显示某个commit的更改</h1><pre><code>git show &lt;commit&gt;
-git show --name-status &lt;commit&gt;
-</code></pre><p>和diff非常相似，但命令更简洁些。</p>
-<h1 id="打包备份"><a href="#打包备份" class="headerlink" title="打包备份"></a>打包备份</h1><pre><code>git bundle create &lt;backup-file-path&gt; --all
-</code></pre><p>例如：</p>
-<pre><code>git bundle create /backups/project1.bundle --all
-</code></pre><p>Git就会在/backups目录下生成project1.bundle文件，里面包含着.git目录下的一切被引用的对象，包括所有commit、标签、分支。这个文件是压缩的，非常小。你可以定期备份，当要还原的时候，只要clone即可：</p>
-<pre><code>git clone /backups/project1.bundle project1
-</code></pre><p>（完）</p>
-<p>原文链接：<a href="https://zhanzhenzhen.github.io/2017_02_26/" target="_blank" rel="external">https://zhanzhenzhen.github.io/2017_02_26/</a></p>
-<h1 id="在github上建立gh-pages分支"><a href="#在github上建立gh-pages分支" class="headerlink" title="在github上建立gh-pages分支"></a>在github上建立gh-pages分支</h1><ul>
-<li><p>为什么要建立gh-pages分支呢，因为github项目的静态页面解析需要这个名字的分支</p>
-<p>  //进入到你想要上传的文件夹下：<br>  cd text</p>
-<p>  //git初始化<br>  git init</p>
-<p>  //创建gh-pages分支<br>  git checkout –orphan gh-pages</p>
-<p>  //添加文件到暂存区<br>  git add .</p>
-<p>  //添加信息<br>  git commit -m “This is add message”</p>
-<p>  //或者不写上面的git add .直接写 git commit -a -m \”First pages commit\”这个-a参数我查了之后说是对git add .的替代，但我不建议大家使用。</p>
-<p>  //添加仓库<br>  git remote add origin git@github.com:username/project.git</p>
-<p>  //部署你的项目到github<br>  git push origin gh-pages</p>
-</li>
-</ul>
-<h1 id="git命令"><a href="#git命令" class="headerlink" title="git命令"></a>git命令</h1><pre><code>//查看分支
-git branch
-git branch -a //本地分支
-git branch -r //远程分支
-
-//建立分支
-git branch 分支名
-
-//切换分支
-git checkout 分支名
-
-//拉取
-git pull
-git pull origin gh-pages
-git pull origin master
-
-//提交
-git commit -m &quot;This is add message&quot;
-
-//推送
-git push origin gh-pages
-git push origin master
-
-//add 全部
-git add -A
-//git add . ：他会监控工作区的状态树，使用它会把工作时的所有变化提交到暂存区，包括文件内容修改(modified)以及新文件(new)，但不包括被删除的文件。
-//git add -u ：他仅监控已经被add的文件（即tracked file），他会将被修改的文件提交到暂存区。add -u 不会提交新文件（untracked file）。（git add --update的缩写）
-//git add -A ：是上面两个功能的合集（git add --all的缩写）
-
-//本地的同步成远程的文件
-git reset --hard origin
-
-//恢复某个文件
-git checkout xxx.js
-</code></pre>]]></content>
+    <content type="html"><![CDATA[<h1 id="查看所有分支的详细日志"><a href="#查看所有分支的详细日志" class="headerlink" title="查看所有分支的详细日志"></a>查看所有分支的详细日志</h1><pre><code>git log --all --decorate --graph</code></pre><p>它用线段表示分支的合并情况，还能看到标签：</p><pre><code>* commit ca0fd229e12d51a6429e6a91a094063bbc00ea56 (HEAD -&gt; master, origin/master, origin/HEAD)| Author: Geoffrey Booth &lt;webmaster@geoffreybooth.com&gt;| Date:   Wed Feb 22 10:53:09 2017 -0800| |     Update v2 NPM installation instructions|    *   commit a9bd53d77f075953170a820615b627ddeeb85ed0|\  Merge: 91e3f72 f8ce1a8| | Author: Jeremy Ashkenas &lt;jashkenas@gmail.com&gt;| | Date:   Wed Feb 22 13:16:44 2017 -0500| | | |     Merge pull request #4448 from GeoffreyBooth/2-docs-on-master| |     | |     2 docs on master| |   | * commit f8ce1a8183f53a13c5bd14039654e0860c617dbd| | Author: Geoffrey &lt;webmaster@geoffreybooth.com&gt;| | Date:   Tue Feb 21 20:58:31 2017 -0800| | | |     Teaser for CoffeeScript 2, link to 2 docs| |   | * commit cee1076e1d459b9aeeca735a2817410ef0a28bf0|/  Author: Geoffrey Booth &lt;webmaster@geoffreybooth.com&gt;</code></pre><h1 id="恢复一个文件"><a href="#恢复一个文件" class="headerlink" title="恢复一个文件"></a>恢复一个文件</h1><pre><code>git checkout &lt;file-path&gt;</code></pre><h1 id="清除工作目录中所有更改"><a href="#清除工作目录中所有更改" class="headerlink" title="清除工作目录中所有更改"></a>清除工作目录中所有更改</h1><pre><code>git reset --hard &amp;&amp; git clean -df</code></pre><h1 id="完全恢复工作目录"><a href="#完全恢复工作目录" class="headerlink" title="完全恢复工作目录"></a>完全恢复工作目录</h1><pre><code>git reset --hard &amp;&amp; git clean -dfx</code></pre><p>它会使工作目录恢复成“全新”状态，即：刚clone之后的状态。</p><p>注意，它会清除所有的 ignored files。</p><h1 id="（优雅地）回滚到原来的"><a href="#（优雅地）回滚到原来的" class="headerlink" title="（优雅地）回滚到原来的"></a>（优雅地）回滚到原来的<commit></commit></h1><pre><code>git revert -n &lt;commit&gt;..HEAD</code></pre><p>然后再commit即可。</p><p>这和 git reset 以及rebase都不同，它不修改历史（不删除原来的commit），而是用新的commit来抵消。这是很好的方式，大多数情况下都最好用revert来撤销。</p><p>姑且把它称之为“软回滚”吧。</p><h1 id="（强硬地）回滚到原来的"><a href="#（强硬地）回滚到原来的" class="headerlink" title="（强硬地）回滚到原来的"></a>（强硬地）回滚到原来的<commit></commit></h1><pre><code>git reset --hard &lt;commit&gt;</code></pre><p>它会把HEAD指向这个commit，所以相当于把之后的commit全“删”了（不过并没真正删除，只有在定期的垃圾回收时刻才真正删除）。</p><p>不建议这样做。历史应该尽量保留，除非里面有敏感信息。</p><h1 id="删除早期的commit以节省（远程或本地）空间"><a href="#删除早期的commit以节省（远程或本地）空间" class="headerlink" title="删除早期的commit以节省（远程或本地）空间"></a>删除早期的commit以节省（远程或本地）空间</h1><pre><code>git rebase -i --root</code></pre><p>几年以前的commits，你可能想把它们都删除了（不建议，但是如果有个大文件在里面占据了很大容量，而现在没有这个文件了，那这些commits就是个包袱）。这个方法不但会删掉commits，还会改变之后所有commits的hash值，所以请慎用！</p><p>运行后，会出来一编辑器，列出从第一个commit开始的所有commits，你只要把pick改成s，这个commit就会被“挤”掉（合并到上一个commit中）。我们举个例子，当运行此命令后，出现：</p><p>pick bbb2b0b init<br>pick 8ec6fb8 aaa<br>pick a1d84fc bbb<br>pick b36a6da ccc<br>你想删除第二个和第三个commit（也就是把它们都合并到第一个commit中），那就改成这样（千万不可直接删除行，否则可能会导致丢失不想删除的文件）：</p><p>pick bbb2b0b init<br>s 8ec6fb8 aaa<br>s a1d84fc bbb<br>pick b36a6da ccc<br>保存退出后，在最后还会出现一编辑器，是用来输入这个合并后的 commit message 的。</p><p>不过这还无法立即释放本地空间，如果要立即释放，要把所有东西从reflog里删除：</p><pre><code>git reflog expire --all --expire=now</code></pre><p>然后再清理：</p><pre><code>git gc --prune=all</code></pre><p>清空reflog和清理的步骤可以不做，push的时候远程仓库会自动删除这些已被删除的commit，然后别人clone或pull的时候也就不会下载这些多余文件了。</p><p>push的时候要这样：</p><pre><code>push -f</code></pre><p>否则远程计算机会拒绝。因为我们已经修改或删除了已被push的commit，所以必须强制，才能让远程计算机也修改或删除这些commit。</p><h1 id="列出变动的文件，但不包括详细内容"><a href="#列出变动的文件，但不包括详细内容" class="headerlink" title="列出变动的文件，但不包括详细内容"></a>列出变动的文件，但不包括详细内容</h1><pre><code>git diff --name-statusgit diff --name-status &lt;commit&gt; &lt;commit&gt;</code></pre><p>当变化很大，详细内容有无数行的时候，就很好用。</p><h1 id="显示某个commit中某个文件的内容"><a href="#显示某个commit中某个文件的内容" class="headerlink" title="显示某个commit中某个文件的内容"></a>显示某个commit中某个文件的内容</h1><pre><code>git show &lt;commit&gt;:&lt;path&gt;</code></pre><p>例如 git show f6f207a:README.txt。</p><h1 id="显示某个commit的更改"><a href="#显示某个commit的更改" class="headerlink" title="显示某个commit的更改"></a>显示某个commit的更改</h1><pre><code>git show &lt;commit&gt;git show --name-status &lt;commit&gt;</code></pre><p>和diff非常相似，但命令更简洁些。</p><h1 id="打包备份"><a href="#打包备份" class="headerlink" title="打包备份"></a>打包备份</h1><pre><code>git bundle create &lt;backup-file-path&gt; --all</code></pre><p>例如：</p><pre><code>git bundle create /backups/project1.bundle --all</code></pre><p>Git就会在/backups目录下生成project1.bundle文件，里面包含着.git目录下的一切被引用的对象，包括所有commit、标签、分支。这个文件是压缩的，非常小。你可以定期备份，当要还原的时候，只要clone即可：</p><pre><code>git clone /backups/project1.bundle project1</code></pre><p>（完）</p><p>原文链接：<a href="https://zhanzhenzhen.github.io/2017_02_26/" target="_blank" rel="noopener">https://zhanzhenzhen.github.io/2017_02_26/</a></p><h1 id="在github上建立gh-pages分支"><a href="#在github上建立gh-pages分支" class="headerlink" title="在github上建立gh-pages分支"></a>在github上建立gh-pages分支</h1><ul><li><p>为什么要建立gh-pages分支呢，因为github项目的静态页面解析需要这个名字的分支</p><p>  //进入到你想要上传的文件夹下：<br>  cd text</p><p>  //git初始化<br>  git init</p><p>  //创建gh-pages分支<br>  git checkout –orphan gh-pages</p><p>  //添加文件到暂存区<br>  git add .</p><p>  //添加信息<br>  git commit -m “This is add message”</p><p>  //或者不写上面的git add .直接写 git commit -a -m \”First pages commit\”这个-a参数我查了之后说是对git add .的替代，但我不建议大家使用。</p><p>  //添加仓库<br>  git remote add origin <a href="mailto:git@github.com" target="_blank" rel="noopener">git@github.com</a>:username/project.git</p><p>  //部署你的项目到github<br>  git push origin gh-pages</p></li></ul><h1 id="git命令"><a href="#git命令" class="headerlink" title="git命令"></a>git命令</h1><pre><code>//查看分支git branchgit branch -a //本地分支git branch -r //远程分支//建立分支git branch 分支名//切换分支git checkout 分支名//拉取git pullgit pull origin gh-pagesgit pull origin master//提交git commit -m &quot;This is add message&quot;//推送git push origin gh-pagesgit push origin master//add 全部git add -A//git add . ：他会监控工作区的状态树，使用它会把工作时的所有变化提交到暂存区，包括文件内容修改(modified)以及新文件(new)，但不包括被删除的文件。//git add -u ：他仅监控已经被add的文件（即tracked file），他会将被修改的文件提交到暂存区。add -u 不会提交新文件（untracked file）。（git add --update的缩写）//git add -A ：是上面两个功能的合集（git add --all的缩写）//本地的同步成远程的文件git reset --hard origin//恢复某个文件git checkout xxx.js</code></pre>]]></content>
     
     <summary type="html">
     
-      &lt;h1 id=&quot;查看所有分支的详细日志&quot;&gt;&lt;a href=&quot;#查看所有分支的详细日志&quot; class=&quot;headerlink&quot; title=&quot;查看所有分支的详细日志&quot;&gt;&lt;/a&gt;查看所有分支的详细日志&lt;/h1&gt;&lt;pre&gt;&lt;code&gt;git log --all --decorate -
+      
+      
+        &lt;h1 id=&quot;查看所有分支的详细日志&quot;&gt;&lt;a href=&quot;#查看所有分支的详细日志&quot; class=&quot;headerlink&quot; title=&quot;查看所有分支的详细日志&quot;&gt;&lt;/a&gt;查看所有分支的详细日志&lt;/h1&gt;&lt;pre&gt;&lt;code&gt;git log --all --decorate -
+      
     
     </summary>
     
@@ -384,18 +207,16 @@ git checkout xxx.js
     <link href="//ataotao.github.io/2017/02/09/javascript-deepClone/"/>
     <id>//ataotao.github.io/2017/02/09/javascript-deepClone/</id>
     <published>2017-02-09T01:03:12.000Z</published>
-    <updated>2017-03-11T01:51:24.051Z</updated>
+    <updated>2018-10-24T03:40:46.098Z</updated>
     
-    <content type="html"><![CDATA[<h5 id="对象拷贝方式有很多种，但是如何能够不抛弃对象的constructor，而且相互对象的引用也会完整copy，不受影响，请看下面代码："><a href="#对象拷贝方式有很多种，但是如何能够不抛弃对象的constructor，而且相互对象的引用也会完整copy，不受影响，请看下面代码：" class="headerlink" title="对象拷贝方式有很多种，但是如何能够不抛弃对象的constructor，而且相互对象的引用也会完整copy，不受影响，请看下面代码："></a>对象拷贝方式有很多种，但是如何能够不抛弃对象的<code>constructor</code>，而且相互对象的引用也会完整copy，不受影响，请看下面代码：</h5><p><code>深拷贝</code>：对于深拷贝，针对成员变量存在指针的情况，不仅仅是简单的指针赋值，而是<strong>重新分配内存空间</strong><br><code>浅拷贝</code>：只是拷贝了指针，使得两个指针指向同一个地址</p>
-<p>知乎上有一个答案，这个方法可以拷贝对象和数组</p>
-<pre><code><figure class="highlight haxe"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> cloneObj = <span class="function"><span class="keyword">function</span></span>(obj)&#123;</div><div class="line">    <span class="keyword">var</span> str, <span class="keyword">new</span><span class="type">obj</span> = obj.constructor === <span class="keyword">Array</span> ? [] : <span class="type"></span>&#123;&#125;;</div><div class="line">    <span class="keyword">if</span>(typeof obj !== <span class="string">'object'</span>)&#123;</div><div class="line">        <span class="keyword">return</span>;</div><div class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span>(window.JSON)&#123;</div><div class="line">        str = JSON.stringify(obj), <span class="comment">//系列化对象</span></div><div class="line">        <span class="keyword">new</span><span class="type">obj</span> = JSON.parse(str); <span class="comment">//还原</span></div><div class="line">    &#125; <span class="keyword">else</span> &#123;</div><div class="line">        <span class="keyword">for</span>(<span class="keyword">var</span> i <span class="keyword">in</span> obj)&#123;</div><div class="line">            <span class="keyword">new</span><span class="type">obj</span>[i] = typeof obj[i] === <span class="string">'object'</span> ? </div><div class="line">            cloneObj(obj[i]) : <span class="type">obj</span>[i]; </div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">return</span> <span class="keyword">new</span><span class="type">obj</span>;</div><div class="line">&#125;;</div></pre></td></tr></table></figure>
-</code></pre><p>这个方法<code>遇到环或者是其他类型的数据</code>就咯屁了，网上大部分深克隆的答案都没考虑<code>循环引用问题以及不能toJSON的对象</code>问题。<br>自虐一下，放出一个完美方案，虽然某些类型不太可能遇到，采用这方案更加不容易出错</p>
-<pre><code><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//完美解决方案</span></div><div class="line"><span class="keyword">var</span> http = <span class="built_in">require</span>(<span class="string">'http'</span>);</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">deepClone</span>(<span class="params">initialObj, finalObj</span>) </span>&#123;</div><div class="line">    <span class="keyword">return</span> _deepClone(initialObj, finalObj, &#123;</div><div class="line">    <span class="attr">k</span>: [],</div><div class="line">    <span class="attr">v</span>: []</div><div class="line">    &#125;);</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">_deepClone</span>(<span class="params">initialObj, finalObj, conflict</span>) </span>&#123;</div><div class="line">    <span class="keyword">var</span> i;</div><div class="line">    <span class="keyword">if</span> (initialObj &amp;&amp; <span class="keyword">typeof</span> initialObj === <span class="string">"object"</span> &amp;&amp; (i = [<span class="built_in">Object</span>, <span class="built_in">Array</span>].indexOf(initialObj.constructor)) != <span class="number">-1</span>) &#123;</div><div class="line">    <span class="keyword">if</span> (!finalObj) &#123;</div><div class="line">        finalObj = initialObj.constructor === <span class="built_in">Array</span> ? [] : &#123;&#125;;</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">if</span> (conflict) &#123;</div><div class="line">        i = conflict.k.indexOf(initialObj);</div><div class="line">        <span class="keyword">if</span> (i != <span class="number">-1</span>) &#123;</div><div class="line">        <span class="keyword">return</span> conflict.v[i];</div><div class="line">        &#125;</div><div class="line">        conflict.k.push(initialObj);</div><div class="line">        conflict.v.push(finalObj);</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">for</span> (<span class="keyword">var</span> key <span class="keyword">in</span> initialObj) &#123;</div><div class="line">        finalObj[key] = _deepClone(initialObj[key], finalObj[key], conflict);</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">return</span> finalObj;</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">return</span> initialObj;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">//测试数据</span></div><div class="line"><span class="keyword">var</span> a = &#123;</div><div class="line">    <span class="string">"n"</span>: <span class="number">1</span></div><div class="line">&#125;;</div><div class="line">a.x = a; <span class="comment">//环引用</span></div><div class="line"></div><div class="line"><span class="keyword">var</span> b = deepClone(a);</div><div class="line"></div><div class="line"><span class="built_in">console</span>.log(b, b.x === b);  <span class="comment">//查看拷贝对象，x属性为环引用，一直循环</span></div><div class="line"></div><div class="line"><span class="comment">//各种不同类型数据拷贝</span></div><div class="line"><span class="built_in">console</span>.log(deepClone(<span class="number">1</span>));  </div><div class="line"><span class="built_in">console</span>.log(deepClone(<span class="keyword">new</span> <span class="built_in">Date</span>()));  </div><div class="line"><span class="built_in">console</span>.log(deepClone(<span class="regexp">/regex/i</span>));</div><div class="line"><span class="built_in">console</span>.log(deepClone(<span class="literal">false</span>));</div><div class="line"><span class="built_in">console</span>.log(deepClone(<span class="literal">undefined</span>));</div><div class="line"><span class="comment">//测试数据 end</span></div></pre></td></tr></table></figure>
-</code></pre>]]></content>
+    <content type="html"><![CDATA[<h5 id="对象拷贝方式有很多种，但是如何能够不抛弃对象的constructor，而且相互对象的引用也会完整copy，不受影响，请看下面代码："><a href="#对象拷贝方式有很多种，但是如何能够不抛弃对象的constructor，而且相互对象的引用也会完整copy，不受影响，请看下面代码：" class="headerlink" title="对象拷贝方式有很多种，但是如何能够不抛弃对象的constructor，而且相互对象的引用也会完整copy，不受影响，请看下面代码："></a>对象拷贝方式有很多种，但是如何能够不抛弃对象的<code>constructor</code>，而且相互对象的引用也会完整copy，不受影响，请看下面代码：</h5><p><code>深拷贝</code>：对于深拷贝，针对成员变量存在指针的情况，不仅仅是简单的指针赋值，而是<strong>重新分配内存空间</strong><br><code>浅拷贝</code>：只是拷贝了指针，使得两个指针指向同一个地址</p><p>知乎上有一个答案，这个方法可以拷贝对象和数组</p><pre><code><figure class="highlight haxe"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> cloneObj = <span class="function"><span class="keyword">function</span></span>(obj)&#123;</span><br><span class="line">    <span class="keyword">var</span> str, <span class="keyword">new</span><span class="type">obj</span> = obj.constructor === <span class="keyword">Array</span> ? [] : <span class="type"></span>&#123;&#125;;</span><br><span class="line">    <span class="keyword">if</span>(typeof obj !== <span class="string">'object'</span>)&#123;</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span>(window.JSON)&#123;</span><br><span class="line">        str = JSON.stringify(obj), <span class="comment">//系列化对象</span></span><br><span class="line">        <span class="keyword">new</span><span class="type">obj</span> = JSON.parse(str); <span class="comment">//还原</span></span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">var</span> i <span class="keyword">in</span> obj)&#123;</span><br><span class="line">            <span class="keyword">new</span><span class="type">obj</span>[i] = typeof obj[i] === <span class="string">'object'</span> ? </span><br><span class="line">            cloneObj(obj[i]) : <span class="type">obj</span>[i]; </span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span><span class="type">obj</span>;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></code></pre><p>这个方法<code>遇到环或者是其他类型的数据</code>就咯屁了，网上大部分深克隆的答案都没考虑<code>循环引用问题以及不能toJSON的对象</code>问题。<br>自虐一下，放出一个完美方案，虽然某些类型不太可能遇到，采用这方案更加不容易出错</p><pre><code><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//完美解决方案</span></span><br><span class="line"><span class="keyword">var</span> http = <span class="built_in">require</span>(<span class="string">'http'</span>);</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">deepClone</span>(<span class="params">initialObj, finalObj</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> _deepClone(initialObj, finalObj, &#123;</span><br><span class="line">    k: [],</span><br><span class="line">    v: []</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">_deepClone</span>(<span class="params">initialObj, finalObj, conflict</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> i;</span><br><span class="line">    <span class="keyword">if</span> (initialObj &amp;&amp; <span class="keyword">typeof</span> initialObj === <span class="string">"object"</span> &amp;&amp; (i = [<span class="built_in">Object</span>, <span class="built_in">Array</span>].indexOf(initialObj.constructor)) != <span class="number">-1</span>) &#123;</span><br><span class="line">    <span class="keyword">if</span> (!finalObj) &#123;</span><br><span class="line">        finalObj = initialObj.constructor === <span class="built_in">Array</span> ? [] : &#123;&#125;;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (conflict) &#123;</span><br><span class="line">        i = conflict.k.indexOf(initialObj);</span><br><span class="line">        <span class="keyword">if</span> (i != <span class="number">-1</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> conflict.v[i];</span><br><span class="line">        &#125;</span><br><span class="line">        conflict.k.push(initialObj);</span><br><span class="line">        conflict.v.push(finalObj);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">var</span> key <span class="keyword">in</span> initialObj) &#123;</span><br><span class="line">        finalObj[key] = _deepClone(initialObj[key], finalObj[key], conflict);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> finalObj;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> initialObj;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//测试数据</span></span><br><span class="line"><span class="keyword">var</span> a = &#123;</span><br><span class="line">    <span class="string">"n"</span>: <span class="number">1</span></span><br><span class="line">&#125;;</span><br><span class="line">a.x = a; <span class="comment">//环引用</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> b = deepClone(a);</span><br><span class="line"></span><br><span class="line"><span class="built_in">console</span>.log(b, b.x === b);  <span class="comment">//查看拷贝对象，x属性为环引用，一直循环</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//各种不同类型数据拷贝</span></span><br><span class="line"><span class="built_in">console</span>.log(deepClone(<span class="number">1</span>));  </span><br><span class="line"><span class="built_in">console</span>.log(deepClone(<span class="keyword">new</span> <span class="built_in">Date</span>()));  </span><br><span class="line"><span class="built_in">console</span>.log(deepClone(<span class="regexp">/regex/i</span>));</span><br><span class="line"><span class="built_in">console</span>.log(deepClone(<span class="literal">false</span>));</span><br><span class="line"><span class="built_in">console</span>.log(deepClone(<span class="literal">undefined</span>));</span><br><span class="line"><span class="comment">//测试数据 end</span></span><br></pre></td></tr></table></figure></code></pre>]]></content>
     
     <summary type="html">
     
-      &lt;h5 id=&quot;对象拷贝方式有很多种，但是如何能够不抛弃对象的constructor，而且相互对象的引用也会完整copy，不受影响，请看下面代码：&quot;&gt;&lt;a href=&quot;#对象拷贝方式有很多种，但是如何能够不抛弃对象的constructor，而且相互对象的引用也会完整copy，不受
+      
+      
+        &lt;h5 id=&quot;对象拷贝方式有很多种，但是如何能够不抛弃对象的constructor，而且相互对象的引用也会完整copy，不受影响，请看下面代码：&quot;&gt;&lt;a href=&quot;#对象拷贝方式有很多种，但是如何能够不抛弃对象的constructor，而且相互对象的引用也会完整copy，不受
+      
     
     </summary>
     
@@ -404,9 +225,9 @@ git checkout xxx.js
     
       <category term="Javascript" scheme="//ataotao.github.io/tags/Javascript/"/>
     
-      <category term="js" scheme="//ataotao.github.io/tags/js/"/>
-    
       <category term="深拷贝" scheme="//ataotao.github.io/tags/%E6%B7%B1%E6%8B%B7%E8%B4%9D/"/>
+    
+      <category term="js" scheme="//ataotao.github.io/tags/js/"/>
     
   </entry>
   
@@ -417,13 +238,14 @@ git checkout xxx.js
     <published>2017-02-08T06:48:40.000Z</published>
     <updated>2017-02-08T06:48:40.000Z</updated>
     
-    <content type="html"><![CDATA[<h2 id="新创立了hexo-site"><a href="#新创立了hexo-site" class="headerlink" title="新创立了hexo-site"></a>新创立了hexo-site</h2><!--<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=450 src="//music.163.com/outchain/player?type=0&id=489669263&auto=1&height=430"></iframe>-->
-<p><img src="/assets/img/01.jpg" alt=""> </p>
-]]></content>
+    <content type="html"><![CDATA[<h2 id="新创立了hexo-site"><a href="#新创立了hexo-site" class="headerlink" title="新创立了hexo-site"></a>新创立了hexo-site</h2><!--<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=450 src="//music.163.com/outchain/player?type=0&id=489669263&auto=1&height=430"></iframe>--><p><img src="/assets/img/01.jpg" alt=""> </p>]]></content>
     
     <summary type="html">
     
-      &lt;h2 id=&quot;新创立了hexo-site&quot;&gt;&lt;a href=&quot;#新创立了hexo-site&quot; class=&quot;headerlink&quot; title=&quot;新创立了hexo-site&quot;&gt;&lt;/a&gt;新创立了hexo-site&lt;/h2&gt;&lt;!--&lt;iframe frameborder=&quot;no&quot; 
+      
+      
+        &lt;h2 id=&quot;新创立了hexo-site&quot;&gt;&lt;a href=&quot;#新创立了hexo-site&quot; class=&quot;headerlink&quot; title=&quot;新创立了hexo-site&quot;&gt;&lt;/a&gt;新创立了hexo-site&lt;/h2&gt;&lt;!--&lt;iframe frameborder=&quot;no&quot; 
+      
     
     </summary>
     

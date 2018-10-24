@@ -6,18 +6,20 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <link rel="dns-prefetch" href="//ataotao.github.io">
-  <title>Tag: 延迟获取数据 | 淘七淘八</title>
+  <title>React内联SVG背景图的实现 | 淘七淘八</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="一些记录">
-<meta property="og:type" content="website">
-<meta property="og:title" content="淘七淘八">
-<meta property="og:url" content="//ataotao.github.io/tags/延迟获取数据/index.html">
+  <meta name="description" content="内联SVG背景图像在React.js中的实现遇到一个需求，后台返回验证码是一个内联的svg字符串，如果通过 12- 背景图像的实现方式 const captchaSvg = window.encodeURIComponent(captchaImg); &amp;lt;div style={backgroundImage:`url(data:image/svg+xml;charset=UTF-8,${cap">
+<meta name="keywords" content="React,SVG,内联SVG">
+<meta property="og:type" content="article">
+<meta property="og:title" content="React内联SVG背景图的实现">
+<meta property="og:url" content="//ataotao.github.io/2018/10/24/React内联SVG背景图的实现/index.html">
 <meta property="og:site_name" content="淘七淘八">
-<meta property="og:description" content="一些记录">
+<meta property="og:description" content="内联SVG背景图像在React.js中的实现遇到一个需求，后台返回验证码是一个内联的svg字符串，如果通过 12- 背景图像的实现方式 const captchaSvg = window.encodeURIComponent(captchaImg); &amp;lt;div style={backgroundImage:`url(data:image/svg+xml;charset=UTF-8,${cap">
 <meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2018-10-24T03:55:56.572Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="淘七淘八">
-<meta name="twitter:description" content="一些记录">
+<meta name="twitter:title" content="React内联SVG背景图的实现">
+<meta name="twitter:description" content="内联SVG背景图像在React.js中的实现遇到一个需求，后台返回验证码是一个内联的svg字符串，如果通过 12- 背景图像的实现方式 const captchaSvg = window.encodeURIComponent(captchaImg); &amp;lt;div style={backgroundImage:`url(data:image/svg+xml;charset=UTF-8,${cap">
   
     <link rel="alternative" href="/atom.xml" title="淘七淘八" type="application/atom+xml">
   
@@ -199,83 +201,194 @@ var _hmt = _hmt || [];
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-  
+            <article id="post-React内联SVG背景图的实现" class="article article-type-post " itemscope="" itemprop="blogPost">
+  <div class="article-inner">
     
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2017" class="archive-year">2017</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/06/24/模拟延迟获取初始化未知对象的方法/" class="archive-article-date">
-  	<time datetime="2017-06-24T01:50:31.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-06-24</time>
-</a>
-        </div>
-    	 
+      <header class="article-header">
+        
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2017/06/24/模拟延迟获取初始化未知对象的方法/">通过try catch模拟延迟获取未知对象的方法</a>
+    <h1 class="article-title" itemprop="name">
+      React内联SVG背景图的实现
     </h1>
   
 
-        <div class="article-info info-on-right">
-          
+        
+        <a href="/2018/10/24/React内联SVG背景图的实现/" class="archive-article-date">
+  	<time datetime="2018-10-24T03:43:33.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-10-24</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="内联SVG背景图像在React-js中的实现"><a href="#内联SVG背景图像在React-js中的实现" class="headerlink" title="内联SVG背景图像在React.js中的实现"></a>内联SVG背景图像在React.js中的实现</h1><p>遇到一个需求，后台返回验证码是一个内联的svg字符串，如果通过 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">- 背景图像的实现方式</span><br></pre></td></tr></table></figure></p>
+<pre><code>const captchaSvg = window.encodeURIComponent(captchaImg);
+&lt;div style={backgroundImage:`url(data:image/svg+xml;charset=UTF-8,${captchaSvg})`, backgroundSize: &apos;100% 100%&apos;, width:200, height:50} /&gt;
+</code></pre><p><code>`</code></p>
+
+      
+
+      
+        <div class="page-reward">
+          <a href="javascript:;" class="page-reward-btn tooltip-top">
+            <div class="tooltip tooltip-east">
+            <span class="tooltip-item">
+              赏
+            </span>
+            <span class="tooltip-content">
+              <span class="tooltip-text">
+                <span class="tooltip-inner">
+                  <p class="reward-p"><i class="icon icon-quo-left"></i>谢谢你请我吃糖果<i class="icon icon-quo-right"></i></p>
+                  <div class="reward-box">
+                    
+                    
+                    <div class="reward-box-item">
+                      <img class="reward-img" src="/assets/img/wechat-pay.gif">
+                      <span class="reward-type">微信</span>
+                    </div>
+                    
+                  </div>
+                </span>
+              </span>
+            </span>
+          </div>
+          </a>
+        </div>
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Javascript</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">React</a>
         		</li>
       		 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">延迟获取对象</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">SVG</a>
         		</li>
       		 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">未知对象获取</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">延迟获取数据</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">内联SVG</a>
         		</li>
       		
 		</ul>
 	</div>
 
-          
+      
 	<div class="article-category tagcloud">
 		<i class="icon-book icon"></i>
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="/categories/Javascript/" class="article-tag-list-link color1">Javascript</a>
+        			<a href="/categories/React/" class="article-tag-list-link color1">React</a>
         		</li>
       		
 		</ul>
 	</div>
 
 
+      
+
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
         </div>
-        <div class="clearfix"></div>
-    </header>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACuklEQVR42u3awYrbQBAEUP//T28g5LCQyK7q1tgbeDqJxZb0ZkHTru7HIz6+fh/fz78fV3//+zN/X6294+PEgYeHhzd69OePddf65bDni5IvJR4eHt453mYzuHqsq/PnmPb8hQUPDw/vo7xkk5gV1vln8PDw8P5H3vPvJiFF/Yh4eHh4P5KXhBFtZJB8tz0OZi14eHh4MW/WAPvs+fH+Hh4eHt6oq568cPcjAic2jz9Xw8PDwzvAm4UFOSwZQciL9dnAAR4eHt57eCfa/+0StIt4uc3g4eHh3cpLXtz5KzgvwfPRhLbQv/zFgIeHh/dG3ixgzQcI8qvV41l4eHh4B3h3vdA3MW4+FpAnDI979ys8PDy8UYncDlrlja7ZIhYFPR4eHt6tvPZHftvsnz3oLMIo8mk8PDy8Na8NZ2fBwazBlowgXCrw8PDwDvBaRtumakv2dsArL+Xx8PDw7uK1EWo+UpCEwrNNonhOPDw8vMO8WYjQDhBsSud6sAAPDw/vAC8ftNrEu21jrC3Wi6ErPDw8vDVv045KXtCbIDgp5V/8G/Dw8PAO8GZFarsZ5Mu3iTBetL7w8PDwbuIVa1DePl+mvESui3U8PDy8w7xNKytpX7VDAMkd8fDw8N7P29yybe3vG2N4eHh4P4c3K2eTWCG5QhvstlfDw8PDu5fX/sifxbVtzDEb8PrHUuLh4eEd5uXlb/6ZBJn8ZXhfPDw8vAO8fAPYlLlt4Dtrd63Sazw8PLyY91UeybdmaWo+iJAPHODh4eGd4O13ldmgVUtq2294eHh4p3nv2QxmY1ibOBgPDw/vNG9T/s4aYJuGWbHj4eHh4X2Ul7fz83j33k3lxTQZHh4e3kd5m+hh3yrLQ2c8PDy8c7xNGNEWwbMmWTuMhYeHh3eON2uAJS/3/OFmIcUNQwN4eHh4He8XUSL5Ptr1+jEAAAAASUVORK5CYII=" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
+
+  
+<nav id="article-nav">
   
   
-    </div></section>
+    <a href="/2017/06/24/模拟延迟获取初始化未知对象的方法/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">通过try catch模拟延迟获取未知对象的方法</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+
+
+
+
+  
+  <div class="duoshuo">
+	<!-- 多说评论框 start -->
+	<div class="ds-thread" data-thread-key="React内联SVG背景图的实现" data-title="React内联SVG背景图的实现" data-url="//ataotao.github.io/2018/10/24/React内联SVG背景图的实现/"></div>
+	<!-- 多说评论框 end -->
+	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+	<script type="text/javascript">
+	var duoshuoQuery = {short_name:"ataotao"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		 || document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+	<!-- 多说公共JS代码 end -->
+</div>
+
   
 
-    
+
 
 
           </div>
@@ -298,9 +411,9 @@ var _hmt = _hmt || [];
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: false,
+		isPost: true,
 		isArchive: false,
-		isTag: true,
+		isTag: false,
 		isCategory: false,
 		open_in_new: true,
 		root: "/",

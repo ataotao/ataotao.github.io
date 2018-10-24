@@ -1,59 +1,25 @@
 <!DOCTYPE html>
 <html>
-<head>
+<head><meta name="generator" content="Hexo 3.8.0">
   <meta charset="utf-8">
   
   <meta name="renderer" content="webkit">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" >
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <link rel="dns-prefetch" href="//ataotao.github.io">
   <title>通过try catch模拟延迟获取未知对象的方法 | 淘七淘八</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="有时候一些初始化数据异步获取，当页面初始化完成，但是数据还未正常初始化，导致页面错误，可以用下面的简单递归方式获取
-//模拟数据延迟
-var a;
-setTimeout(function () {
-    a = {
-        name: 1,
-        age: 2
-    };
-}, 5000); //延迟5秒初始化数据
-
-//递归自动执行
-(function () {
-    t">
+  <meta name="description" content="有时候一些初始化数据异步获取，当页面初始化完成，但是数据还未正常初始化，导致页面错误，可以用下面的简单递归方式获取 //模拟数据延迟 var a; setTimeout(function () {     a = {         name: 1,         age: 2     }; }, 5000); //延迟5秒初始化数据  //递归自动执行 (function () {     t">
+<meta name="keywords" content="Javascript,延迟获取对象,未知对象获取,延迟获取数据">
 <meta property="og:type" content="article">
 <meta property="og:title" content="通过try catch模拟延迟获取未知对象的方法">
 <meta property="og:url" content="//ataotao.github.io/2017/06/24/模拟延迟获取初始化未知对象的方法/index.html">
 <meta property="og:site_name" content="淘七淘八">
-<meta property="og:description" content="有时候一些初始化数据异步获取，当页面初始化完成，但是数据还未正常初始化，导致页面错误，可以用下面的简单递归方式获取
-//模拟数据延迟
-var a;
-setTimeout(function () {
-    a = {
-        name: 1,
-        age: 2
-    };
-}, 5000); //延迟5秒初始化数据
-
-//递归自动执行
-(function () {
-    t">
-<meta property="og:updated_time" content="2017-06-24T01:58:06.737Z">
+<meta property="og:description" content="有时候一些初始化数据异步获取，当页面初始化完成，但是数据还未正常初始化，导致页面错误，可以用下面的简单递归方式获取 //模拟数据延迟 var a; setTimeout(function () {     a = {         name: 1,         age: 2     }; }, 5000); //延迟5秒初始化数据  //递归自动执行 (function () {     t">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2018-10-24T03:40:46.140Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="通过try catch模拟延迟获取未知对象的方法">
-<meta name="twitter:description" content="有时候一些初始化数据异步获取，当页面初始化完成，但是数据还未正常初始化，导致页面错误，可以用下面的简单递归方式获取
-//模拟数据延迟
-var a;
-setTimeout(function () {
-    a = {
-        name: 1,
-        age: 2
-    };
-}, 5000); //延迟5秒初始化数据
-
-//递归自动执行
-(function () {
-    t">
+<meta name="twitter:description" content="有时候一些初始化数据异步获取，当页面初始化完成，但是数据还未正常初始化，导致页面错误，可以用下面的简单递归方式获取 //模拟数据延迟 var a; setTimeout(function () {     a = {         name: 1,         age: 2     }; }, 5000); //延迟5秒初始化数据  //递归自动执行 (function () {     t">
   
     <link rel="alternative" href="/atom.xml" title="淘七淘八" type="application/atom+xml">
   
@@ -104,7 +70,7 @@ var _hmt = _hmt || [];
   });
 </script>
 </head>
-
+</html>
 <body>
   <div id="container" q-class="show:isCtnShow">
     <canvas id="anm-canvas" class="anm-canvas"></canvas>
@@ -235,7 +201,7 @@ var _hmt = _hmt || [];
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-模拟延迟获取初始化未知对象的方法" class="article article-type-post " itemscope itemprop="blogPost">
+            <article id="post-模拟延迟获取初始化未知对象的方法" class="article article-type-post " itemscope="" itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
@@ -410,6 +376,15 @@ setTimeout(function () {
   
 <nav id="article-nav">
   
+    <a href="/2018/10/24/React内联SVG背景图的实现/" id="article-nav-newer" class="article-nav-link-wrap">
+      <i class="icon-circle-left"></i>
+      <div class="article-nav-title">
+        
+          React内联SVG背景图的实现
+        
+      </div>
+    </a>
+  
   
     <a href="/2017/06/22/JavaScript 检测是不是手机浏览器/" id="article-nav-older" class="article-nav-link-wrap">
       <div class="article-nav-title">JavaScript 检测是不是手机浏览器</div>
@@ -455,7 +430,7 @@ setTimeout(function () {
   <div class="outer">
     <div id="footer-info">
     	<div class="footer-left">
-    		&copy; 2017 Ataotao
+    		&copy; 2018 Ataotao
     	</div>
       	<div class="footer-right">
       		<a href="http://hexo.io/" target="_blank">Hexo</a>  Theme <a href="https://github.com/litten/hexo-theme-yilia" target="_blank">Yilia</a> by Litten
@@ -534,19 +509,11 @@ setTimeout(function () {
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Javascript</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">检查浏览器</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">PC、手机检查</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">Math对象</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">Javascript</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -566,19 +533,15 @@ setTimeout(function () {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">Nodejs</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">环境变量</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">js</a>
+                <a href="javascript:void(0)" class="js-tag color3">写作</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">深拷贝</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">js</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -594,11 +557,35 @@ setTimeout(function () {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">写作</a>
+                <a href="javascript:void(0)" class="js-tag color1">React</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">SVG</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">内联SVG</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">检查浏览器</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">PC、手机检查</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">git</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">Nodejs</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">环境变量</a>
               </li>
             
             <div class="clearfix"></div>
@@ -606,7 +593,7 @@ setTimeout(function () {
         </div>
         <ul class="search-ul">
           <p q-show="jsonFail" style="padding: 20px; font-size: 12px;">
-            缺失模块。<br/>1、在博客根目录（注意不是yilia根目录）执行以下命令：<br/> npm i hexo-generator-json-content --save<br/><br/>
+            缺失模块。<br>1、在博客根目录（注意不是yilia根目录）执行以下命令：<br> npm i hexo-generator-json-content --save<br><br>
             2、在根目录_config.yml里添加配置：
 <pre style="font-size: 12px;" q-show="jsonFail">
   jsonContent:
