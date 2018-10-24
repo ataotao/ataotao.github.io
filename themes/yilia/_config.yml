@@ -4,8 +4,9 @@ menu:
   主页: /
   # 测试: /testpage/
   Javascript: /categories/Javascript/
-  NodeJs: /categories/Nodejs/
+  React: /categories/React/
   Git: /categories/git/
+  NodeJs: /categories/Nodejs/
   随笔: /categories/随笔/
 
 # SubNav
