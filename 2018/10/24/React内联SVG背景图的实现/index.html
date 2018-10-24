@@ -8,18 +8,18 @@
   <link rel="dns-prefetch" href="//ataotao.github.io">
   <title>React内联SVG背景图的实现 | 淘七淘八</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="内联SVG背景图像在React.js中的实现遇到一个需求，后台返回验证码是一个内联的svg字符串，如果通过 12- 背景图像的实现方式 const captchaSvg = window.encodeURIComponent(captchaImg); &amp;lt;div style={backgroundImage:`url(data:image/svg+xml;charset=UTF-8,${cap">
+  <meta name="description" content="内联SVG背景图像在React.js中的实现遇到一个需求，后台返回验证码是一个内联的svg字符串，如果通过 dangerouslySetInnerHTML 方式直接插入到页面，不方便调整尺寸; 背景图像的实现方式 12const captchaSvg = window.encodeURIComponent(captchaImg);&amp;lt;div style=&amp;#123;backgroundImag">
 <meta name="keywords" content="React,SVG,内联SVG">
 <meta property="og:type" content="article">
 <meta property="og:title" content="React内联SVG背景图的实现">
 <meta property="og:url" content="//ataotao.github.io/2018/10/24/React内联SVG背景图的实现/index.html">
 <meta property="og:site_name" content="淘七淘八">
-<meta property="og:description" content="内联SVG背景图像在React.js中的实现遇到一个需求，后台返回验证码是一个内联的svg字符串，如果通过 12- 背景图像的实现方式 const captchaSvg = window.encodeURIComponent(captchaImg); &amp;lt;div style={backgroundImage:`url(data:image/svg+xml;charset=UTF-8,${cap">
+<meta property="og:description" content="内联SVG背景图像在React.js中的实现遇到一个需求，后台返回验证码是一个内联的svg字符串，如果通过 dangerouslySetInnerHTML 方式直接插入到页面，不方便调整尺寸; 背景图像的实现方式 12const captchaSvg = window.encodeURIComponent(captchaImg);&amp;lt;div style=&amp;#123;backgroundImag">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2018-10-24T03:55:56.572Z">
+<meta property="og:updated_time" content="2018-10-24T03:58:26.856Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="React内联SVG背景图的实现">
-<meta name="twitter:description" content="内联SVG背景图像在React.js中的实现遇到一个需求，后台返回验证码是一个内联的svg字符串，如果通过 12- 背景图像的实现方式 const captchaSvg = window.encodeURIComponent(captchaImg); &amp;lt;div style={backgroundImage:`url(data:image/svg+xml;charset=UTF-8,${cap">
+<meta name="twitter:description" content="内联SVG背景图像在React.js中的实现遇到一个需求，后台返回验证码是一个内联的svg字符串，如果通过 dangerouslySetInnerHTML 方式直接插入到页面，不方便调整尺寸; 背景图像的实现方式 12const captchaSvg = window.encodeURIComponent(captchaImg);&amp;lt;div style=&amp;#123;backgroundImag">
   
     <link rel="alternative" href="/atom.xml" title="淘七淘八" type="application/atom+xml">
   
@@ -221,11 +221,9 @@ var _hmt = _hmt || [];
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h1 id="内联SVG背景图像在React-js中的实现"><a href="#内联SVG背景图像在React-js中的实现" class="headerlink" title="内联SVG背景图像在React.js中的实现"></a>内联SVG背景图像在React.js中的实现</h1><p>遇到一个需求，后台返回验证码是一个内联的svg字符串，如果通过 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">- 背景图像的实现方式</span><br></pre></td></tr></table></figure></p>
-<pre><code>const captchaSvg = window.encodeURIComponent(captchaImg);
-&lt;div style={backgroundImage:`url(data:image/svg+xml;charset=UTF-8,${captchaSvg})`, backgroundSize: &apos;100% 100%&apos;, width:200, height:50} /&gt;
-</code></pre><p><code>`</code></p>
-
+        <h1 id="内联SVG背景图像在React-js中的实现"><a href="#内联SVG背景图像在React-js中的实现" class="headerlink" title="内联SVG背景图像在React.js中的实现"></a>内联SVG背景图像在React.js中的实现</h1><p>遇到一个需求，后台返回验证码是一个内联的svg字符串，如果通过 <code>dangerouslySetInnerHTML</code> 方式直接插入到页面，不方便调整尺寸;</p>
+<p>背景图像的实现方式</p>
+<figure class="highlight arduino"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> captchaSvg = window.encodeURIComponent(captchaImg);</span><br><span class="line">&lt;div style=&#123;backgroundImage:`url(data:<span class="built_in">image</span>/svg+xml;charset=UTF<span class="number">-8</span>,$&#123;captchaSvg&#125;)`, backgroundSize: <span class="string">'100% 100%'</span>, <span class="built_in">width</span>:<span class="number">200</span>, <span class="built_in">height</span>:<span class="number">50</span>&#125; /&gt;</span><br></pre></td></tr></table></figure>
       
 
       
@@ -477,11 +475,31 @@ var _hmt = _hmt || [];
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">Math对象</a>
+                <a href="javascript:void(0)" class="js-tag color1">Javascript</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Javascript</a>
+                <a href="javascript:void(0)" class="js-tag color1">检查浏览器</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">PC、手机检查</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">Nodejs</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">环境变量</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">js</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">Math对象</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -501,15 +519,19 @@ var _hmt = _hmt || [];
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">写作</a>
+                <a href="javascript:void(0)" class="js-tag color1">React</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">深拷贝</a>
+                <a href="javascript:void(0)" class="js-tag color4">SVG</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">js</a>
+                <a href="javascript:void(0)" class="js-tag color1">内联SVG</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">git</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -525,35 +547,11 @@ var _hmt = _hmt || [];
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">React</a>
+                <a href="javascript:void(0)" class="js-tag color3">写作</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">SVG</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">内联SVG</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">检查浏览器</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">PC、手机检查</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">git</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">Nodejs</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">环境变量</a>
+                <a href="javascript:void(0)" class="js-tag color4">深拷贝</a>
               </li>
             
             <div class="clearfix"></div>

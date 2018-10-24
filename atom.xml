@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="//ataotao.github.io/"/>
-  <updated>2018-10-24T03:55:56.572Z</updated>
+  <updated>2018-10-24T03:58:26.856Z</updated>
   <id>//ataotao.github.io/</id>
   
   <author>
@@ -21,9 +21,9 @@
     <link href="//ataotao.github.io/2018/10/24/React%E5%86%85%E8%81%94SVG%E8%83%8C%E6%99%AF%E5%9B%BE%E7%9A%84%E5%AE%9E%E7%8E%B0/"/>
     <id>//ataotao.github.io/2018/10/24/React内联SVG背景图的实现/</id>
     <published>2018-10-24T03:43:33.000Z</published>
-    <updated>2018-10-24T03:55:56.572Z</updated>
+    <updated>2018-10-24T03:58:26.856Z</updated>
     
-    <content type="html"><![CDATA[<h1 id="内联SVG背景图像在React-js中的实现"><a href="#内联SVG背景图像在React-js中的实现" class="headerlink" title="内联SVG背景图像在React.js中的实现"></a>内联SVG背景图像在React.js中的实现</h1><p>遇到一个需求，后台返回验证码是一个内联的svg字符串，如果通过 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">- 背景图像的实现方式</span><br></pre></td></tr></table></figure></p><pre><code>const captchaSvg = window.encodeURIComponent(captchaImg);&lt;div style={backgroundImage:`url(data:image/svg+xml;charset=UTF-8,${captchaSvg})`, backgroundSize: &apos;100% 100%&apos;, width:200, height:50} /&gt;</code></pre><p><code>`</code></p>]]></content>
+    <content type="html"><![CDATA[<h1 id="内联SVG背景图像在React-js中的实现"><a href="#内联SVG背景图像在React-js中的实现" class="headerlink" title="内联SVG背景图像在React.js中的实现"></a>内联SVG背景图像在React.js中的实现</h1><p>遇到一个需求，后台返回验证码是一个内联的svg字符串，如果通过 <code>dangerouslySetInnerHTML</code> 方式直接插入到页面，不方便调整尺寸;</p><p>背景图像的实现方式</p><figure class="highlight arduino"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> captchaSvg = window.encodeURIComponent(captchaImg);</span><br><span class="line">&lt;div style=&#123;backgroundImage:`url(data:<span class="built_in">image</span>/svg+xml;charset=UTF<span class="number">-8</span>,$&#123;captchaSvg&#125;)`, backgroundSize: <span class="string">'100% 100%'</span>, <span class="built_in">width</span>:<span class="number">200</span>, <span class="built_in">height</span>:<span class="number">50</span>&#125; /&gt;</span><br></pre></td></tr></table></figure>]]></content>
     
     <summary type="html">
     
@@ -134,11 +134,11 @@ setTimeout(function () {
       <category term="Nodejs" scheme="//ataotao.github.io/categories/Nodejs/"/>
     
     
-      <category term="js" scheme="//ataotao.github.io/tags/js/"/>
-    
       <category term="Nodejs" scheme="//ataotao.github.io/tags/Nodejs/"/>
     
       <category term="环境变量" scheme="//ataotao.github.io/tags/%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F/"/>
+    
+      <category term="js" scheme="//ataotao.github.io/tags/js/"/>
     
   </entry>
   
@@ -163,9 +163,9 @@ setTimeout(function () {
       <category term="Javascript" scheme="//ataotao.github.io/categories/Javascript/"/>
     
     
-      <category term="Math对象" scheme="//ataotao.github.io/tags/Math%E5%AF%B9%E8%B1%A1/"/>
-    
       <category term="Javascript" scheme="//ataotao.github.io/tags/Javascript/"/>
+    
+      <category term="Math对象" scheme="//ataotao.github.io/tags/Math%E5%AF%B9%E8%B1%A1/"/>
     
       <category term="随机数" scheme="//ataotao.github.io/tags/%E9%9A%8F%E6%9C%BA%E6%95%B0/"/>
     
@@ -225,9 +225,9 @@ setTimeout(function () {
     
       <category term="Javascript" scheme="//ataotao.github.io/tags/Javascript/"/>
     
-      <category term="深拷贝" scheme="//ataotao.github.io/tags/%E6%B7%B1%E6%8B%B7%E8%B4%9D/"/>
-    
       <category term="js" scheme="//ataotao.github.io/tags/js/"/>
+    
+      <category term="深拷贝" scheme="//ataotao.github.io/tags/%E6%B7%B1%E6%8B%B7%E8%B4%9D/"/>
     
   </entry>
   
