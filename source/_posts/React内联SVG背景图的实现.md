@@ -12,9 +12,9 @@ tags:
 内联SVG背景图像在React.js中的实现
 =====================================
 
-遇到一个需求，后台返回验证码是一个内联的svg字符串，如果通过 ```dangerouslySetInnerHTML={{__html: captchaSvg }}``` 直接插入到页面，不方便调整尺寸;
+遇到一个需求，后台返回验证码是一个内联的svg字符串，如果通过 `dangerouslySetInnerHTML` 方式直接插入到页面，不方便调整尺寸;
 
-- 背景图像的实现方式
+背景图像的实现方式
 
 ```
     const captchaSvg = window.encodeURIComponent(captchaImg);
