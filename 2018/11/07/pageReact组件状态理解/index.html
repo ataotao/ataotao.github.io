@@ -6,18 +6,20 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <link rel="dns-prefetch" href="//ataotao.github.io">
-  <title>Archives: 2017/2 | 淘七淘八</title>
+  <title>React组件状态的理解 | 淘七淘八</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="一些记录">
-<meta property="og:type" content="website">
-<meta property="og:title" content="淘七淘八">
-<meta property="og:url" content="//ataotao.github.io/archives/2017/02/index.html">
+  <meta name="description" content="有状态的组件没有渲染，有渲染的组件没有状态 “有状态的组件没有渲染”：包含实际业务状态的组件不应该进行视图的渲染，而是应该将实际业务状态传递给子孙组件，让子孙组件来进行视图渲染；  “有渲染的组件没有状态”：能够进行视图渲染的组件，不要包含实际的业务状态，而是通过接受父辈的参数来进行渲染；这样的话，有渲染的组件没有实际的业务状态，就与实际的业务解耦了，能够更好的服务于其他的有状态的组件，实现组件的">
+<meta name="keywords" content="React,组件状态">
+<meta property="og:type" content="article">
+<meta property="og:title" content="React组件状态的理解">
+<meta property="og:url" content="//ataotao.github.io/2018/11/07/pageReact组件状态理解/index.html">
 <meta property="og:site_name" content="淘七淘八">
-<meta property="og:description" content="一些记录">
+<meta property="og:description" content="有状态的组件没有渲染，有渲染的组件没有状态 “有状态的组件没有渲染”：包含实际业务状态的组件不应该进行视图的渲染，而是应该将实际业务状态传递给子孙组件，让子孙组件来进行视图渲染；  “有渲染的组件没有状态”：能够进行视图渲染的组件，不要包含实际的业务状态，而是通过接受父辈的参数来进行渲染；这样的话，有渲染的组件没有实际的业务状态，就与实际的业务解耦了，能够更好的服务于其他的有状态的组件，实现组件的">
 <meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2018-11-07T01:33:31.673Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="淘七淘八">
-<meta name="twitter:description" content="一些记录">
+<meta name="twitter:title" content="React组件状态的理解">
+<meta name="twitter:description" content="有状态的组件没有渲染，有渲染的组件没有状态 “有状态的组件没有渲染”：包含实际业务状态的组件不应该进行视图的渲染，而是应该将实际业务状态传递给子孙组件，让子孙组件来进行视图渲染；  “有渲染的组件没有状态”：能够进行视图渲染的组件，不要包含实际的业务状态，而是通过接受父辈的参数来进行渲染；这样的话，有渲染的组件没有实际的业务状态，就与实际的业务解耦了，能够更好的服务于其他的有状态的组件，实现组件的">
   
     <link rel="alternative" href="/atom.xml" title="淘七淘八" type="application/atom+xml">
   
@@ -205,177 +207,193 @@ var _hmt = _hmt || [];
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-  
+            <article id="post-pageReact组件状态理解" class="article article-type-post " itemscope="" itemprop="blogPost">
+  <div class="article-inner">
     
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2017" class="archive-year">2017</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/02/28/一些常用的git命令/" class="archive-article-date">
-  	<time datetime="2017-02-28T01:09:24.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-02-28</time>
-</a>
-        </div>
-    	 
+      <header class="article-header">
+        
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2017/02/28/一些常用的git命令/">一些常用的git命令</a>
+    <h1 class="article-title" itemprop="name">
+      React组件状态的理解
     </h1>
   
 
-        <div class="article-info info-on-right">
-          
+        
+        <a href="/2018/11/07/pageReact组件状态理解/" class="archive-article-date">
+  	<time datetime="2018-11-07T01:28:27.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-11-07</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="有状态的组件没有渲染，有渲染的组件没有状态"><a href="#有状态的组件没有渲染，有渲染的组件没有状态" class="headerlink" title="有状态的组件没有渲染，有渲染的组件没有状态"></a>有状态的组件没有渲染，有渲染的组件没有状态</h1><ul>
+<li><p>“有状态的组件没有渲染”：<br>包含实际业务状态的组件不应该进行视图的渲染，而是应该将实际业务状态传递给子孙组件，让子孙组件来进行视图渲染；</p>
+</li>
+<li><p>“有渲染的组件没有状态”：<br>能够进行视图渲染的组件，不要包含实际的业务状态，而是通过接受父辈的参数来进行渲染；<br>这样的话，有渲染的组件没有实际的业务状态，就与实际的业务解耦了，能够更好的服务于其他的有状态的组件，实现组件的复用。</p>
+</li>
+</ul>
+<p>via：  <a href="https://www.zhihu.com/people/hileix/activities" target="_blank" rel="noopener">热爱</a> <a href="https://zhuanlan.zhihu.com/p/48264713" target="_blank" rel="noopener">对React Hooks的一些思考</a></p>
+
+      
+
+      
+        <div class="page-reward">
+          <a href="javascript:;" class="page-reward-btn tooltip-top">
+            <div class="tooltip tooltip-east">
+            <span class="tooltip-item">
+              赏
+            </span>
+            <span class="tooltip-content">
+              <span class="tooltip-text">
+                <span class="tooltip-inner">
+                  <p class="reward-p"><i class="icon icon-quo-left"></i>谢谢你请我吃糖果<i class="icon icon-quo-right"></i></p>
+                  <div class="reward-box">
+                    
+                    
+                    <div class="reward-box-item">
+                      <img class="reward-img" src="/assets/img/wechat-pay.gif">
+                      <span class="reward-type">微信</span>
+                    </div>
+                    
+                  </div>
+                </span>
+              </span>
+            </span>
+          </div>
+          </a>
+        </div>
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">git</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/git/" class="article-tag-list-link color4">git</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/02/09/javascript-deepClone/" class="archive-article-date">
-  	<time datetime="2017-02-09T01:03:12.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-02-09</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2017/02/09/javascript-deepClone/">Javascript递归方式完美实现对象、数组深拷贝</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Javascript</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">React</a>
         		</li>
       		 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">深拷贝</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">js</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">组件状态</a>
         		</li>
       		
 		</ul>
 	</div>
 
-          
+      
 	<div class="article-category tagcloud">
 		<i class="icon-book icon"></i>
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="/categories/Javascript/" class="article-tag-list-link color1">Javascript</a>
+        			<a href="/categories/React/" class="article-tag-list-link color1">React</a>
         		</li>
       		
 		</ul>
 	</div>
 
 
+      
+
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
         </div>
-        <div class="clearfix"></div>
-    </header>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACw0lEQVR42u3aQW4CMQwF0N7/0q3UVSVo5tseA4vHCg0w5AUpNj/5+oof37+Pv88fr5xf/Xvl8c7nT53vcMMDDw8PrzX08+3yK+dBP77zPJ5kii+mAA8PD2+NlxeDfOgJuDdNyZjx8PDwPoF3/lS1Lc7b7mQ8eHh4eJ/Mm4cLSWONh4eH9/m83iJe/VSvQc9LDh4eHt5reJNF+V3P1/f38PDw8Fq76tUIdX50YDK2J6PFw8PDW+DdtcmUBL6TeCIpCYV/DHh4eHgDXi84mIS5+XGBvEP+9w54eHh4a7x7m+BquzzJEC7GhoeHh7fMu7ddnoTFSdgR/RnAw8PDW+P1blQNc/PiMTlSUMgw8PDw8G5asXtha9Lm9ia0Cr74Fjw8PLwFXm+h75WKfFnPt+iazT0eHh5ekVc9YpW8f7IxVv2Wi5KAh4eHdyuvVzcmBw56G2z5NhgeHh7eNq8aJVS3xPIAt9eyR8e28PDw8BZ4c2SveEzihuo04eHh4W3wqptJk7ghjyHmRQIPDw/vXl51u70XEFRLRe+eT6YGDw8Pb4GXx6b57fKSMIl3C0ey8PDw8G7lVQOFfCJyUi+SiI524eHh4b2Ql7TL+SGD3n1yEh4eHt4reUlJ6DXEvSa7Gnk0JwUPDw9vgZdkGOfnk1b7PDXJq4XfEA8PD6/I6y3ieQGoHr3KI4moYODh4eEt85Jgotc654e0qocSLqYPDw8Pb4GXRAB5SJGXjV6oUS0keHh4eBu87+KjOh3VZnpSkC7CCDw8PLybeNUt+d5Gfp4oT5rmajnBw8PDm/B6Ee2of2818b3oBA8PD2+PN2mF86MDvYMIo6KFh4eH91be5JhUdWOsF3NcbH3h4eHhvZXXa46rC301rh211Hh4eHhFXjWMKIcC8fXJq09+MDw8PLwF3nwrq7rE50cEzsjmbh4eHh5en/cDXxOxhuva7ooAAAAASUVORK5CYII=" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/02/08/hello-world/" class="archive-article-date">
-  	<time datetime="2017-02-08T06:48:40.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-02-08</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2017/02/08/hello-world/">Hello World</a>
-    </h1>
-  
 
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">写作</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/随笔/" class="article-tag-list-link color3">随笔</a>
-        		</li>
-      		
-		</ul>
-	</div>
+  
+<nav id="article-nav">
+  
+  
+    <a href="/2018/10/24/JavaScript 检测是不是手机浏览器/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">通过MessageChannel实现深拷贝</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
 
 
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
+
+
+
+
   
-  
-    </div></section>
+  <div class="duoshuo">
+	<!-- 多说评论框 start -->
+	<div class="ds-thread" data-thread-key="pageReact组件状态理解" data-title="React组件状态的理解" data-url="//ataotao.github.io/2018/11/07/pageReact组件状态理解/"></div>
+	<!-- 多说评论框 end -->
+	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+	<script type="text/javascript">
+	var duoshuoQuery = {short_name:"ataotao"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		 || document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+	<!-- 多说公共JS代码 end -->
+</div>
+
   
 
-    
+
 
 
           </div>
@@ -398,8 +416,8 @@ var _hmt = _hmt || [];
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: false,
-		isArchive: true,
+		isPost: true,
+		isArchive: false,
 		isTag: false,
 		isCategory: false,
 		open_in_new: true,

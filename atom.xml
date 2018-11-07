@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="//ataotao.github.io/"/>
-  <updated>2018-10-24T09:39:13.341Z</updated>
+  <updated>2018-11-07T01:33:31.673Z</updated>
   <id>//ataotao.github.io/</id>
   
   <author>
@@ -15,6 +15,33 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>React组件状态的理解</title>
+    <link href="//ataotao.github.io/2018/11/07/pageReact%E7%BB%84%E4%BB%B6%E7%8A%B6%E6%80%81%E7%90%86%E8%A7%A3/"/>
+    <id>//ataotao.github.io/2018/11/07/pageReact组件状态理解/</id>
+    <published>2018-11-07T01:28:27.000Z</published>
+    <updated>2018-11-07T01:33:31.673Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="有状态的组件没有渲染，有渲染的组件没有状态"><a href="#有状态的组件没有渲染，有渲染的组件没有状态" class="headerlink" title="有状态的组件没有渲染，有渲染的组件没有状态"></a>有状态的组件没有渲染，有渲染的组件没有状态</h1><ul><li><p>“有状态的组件没有渲染”：<br>包含实际业务状态的组件不应该进行视图的渲染，而是应该将实际业务状态传递给子孙组件，让子孙组件来进行视图渲染；</p></li><li><p>“有渲染的组件没有状态”：<br>能够进行视图渲染的组件，不要包含实际的业务状态，而是通过接受父辈的参数来进行渲染；<br>这样的话，有渲染的组件没有实际的业务状态，就与实际的业务解耦了，能够更好的服务于其他的有状态的组件，实现组件的复用。</p></li></ul><p>via：  <a href="https://www.zhihu.com/people/hileix/activities" target="_blank" rel="noopener">热爱</a> <a href="https://zhuanlan.zhihu.com/p/48264713" target="_blank" rel="noopener">对React Hooks的一些思考</a></p>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;h1 id=&quot;有状态的组件没有渲染，有渲染的组件没有状态&quot;&gt;&lt;a href=&quot;#有状态的组件没有渲染，有渲染的组件没有状态&quot; class=&quot;headerlink&quot; title=&quot;有状态的组件没有渲染，有渲染的组件没有状态&quot;&gt;&lt;/a&gt;有状态的组件没有渲染，有渲染的组件没有状态&lt;/
+      
+    
+    </summary>
+    
+      <category term="React" scheme="//ataotao.github.io/categories/React/"/>
+    
+    
+      <category term="React" scheme="//ataotao.github.io/tags/React/"/>
+    
+      <category term="组件状态" scheme="//ataotao.github.io/tags/%E7%BB%84%E4%BB%B6%E7%8A%B6%E6%80%81/"/>
+    
+  </entry>
   
   <entry>
     <title>通过MessageChannel实现深拷贝</title>
@@ -160,9 +187,9 @@ setTimeout(function () {
       <category term="Javascript" scheme="//ataotao.github.io/categories/Javascript/"/>
     
     
-      <category term="Math对象" scheme="//ataotao.github.io/tags/Math%E5%AF%B9%E8%B1%A1/"/>
-    
       <category term="Javascript" scheme="//ataotao.github.io/tags/Javascript/"/>
+    
+      <category term="Math对象" scheme="//ataotao.github.io/tags/Math%E5%AF%B9%E8%B1%A1/"/>
     
       <category term="随机数" scheme="//ataotao.github.io/tags/%E9%9A%8F%E6%9C%BA%E6%95%B0/"/>
     
@@ -222,9 +249,9 @@ setTimeout(function () {
     
       <category term="Javascript" scheme="//ataotao.github.io/tags/Javascript/"/>
     
-      <category term="js" scheme="//ataotao.github.io/tags/js/"/>
-    
       <category term="深拷贝" scheme="//ataotao.github.io/tags/%E6%B7%B1%E6%8B%B7%E8%B4%9D/"/>
+    
+      <category term="js" scheme="//ataotao.github.io/tags/js/"/>
     
   </entry>
   
