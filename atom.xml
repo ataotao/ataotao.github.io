@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="//ataotao.github.io/"/>
-  <updated>2018-11-07T01:33:31.673Z</updated>
+  <updated>2018-11-07T01:56:20.342Z</updated>
   <id>//ataotao.github.io/</id>
   
   <author>
@@ -15,6 +15,31 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>一些使 JavaScript 更加简洁的小技巧</title>
+    <link href="//ataotao.github.io/2018/11/07/%E4%B8%80%E4%BA%9B%E4%BD%BF-JavaScript-%E6%9B%B4%E5%8A%A0%E7%AE%80%E6%B4%81%E7%9A%84%E5%B0%8F%E6%8A%80%E5%B7%A7/"/>
+    <id>//ataotao.github.io/2018/11/07/一些使-JavaScript-更加简洁的小技巧/</id>
+    <published>2018-11-07T01:51:17.000Z</published>
+    <updated>2018-11-07T01:56:20.342Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="一些使-JavaScript-更加简洁的小技巧"><a href="#一些使-JavaScript-更加简洁的小技巧" class="headerlink" title="一些使 JavaScript 更加简洁的小技巧"></a>一些使 JavaScript 更加简洁的小技巧</h1><p>1.清空或截断数组<br>在不重新给数组赋值的情况下，清空或截断数组的最简单方法是更改​​其 length 属性值：</p><figure class="highlight lsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">const arr = [<span class="number">11</span>, <span class="number">22</span>, <span class="number">33</span>, <span class="number">44</span>, <span class="number">55</span>, <span class="number">66</span>];</span><br><span class="line"><span class="comment">// truncanting</span></span><br><span class="line">arr.length = <span class="number">3</span>;</span><br><span class="line">console.log(arr); <span class="comment">//=&gt; [11, 22, 33]</span></span><br><span class="line"><span class="comment">// clearing</span></span><br><span class="line">arr.length = <span class="number">0</span>;</span><br><span class="line">console.log(arr); <span class="comment">//=&gt; []</span></span><br><span class="line">console.log(arr[<span class="number">2</span>]); <span class="comment">//=&gt; undefined</span></span><br></pre></td></tr></table></figure><p>2.使用对象解构(destructuring)模拟命名参数<br>当您需要将一组可选变量传递给某个函数时，你很可能已经在使用配置对象了，如下所示：</p><figure class="highlight arduino"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">doSomething(&#123; foo: <span class="string">'Hello'</span>, bar: <span class="string">'Hey!'</span>, baz: <span class="number">42</span> &#125;);</span><br><span class="line">function doSomething(<span class="built_in">config</span>) &#123;</span><br><span class="line">    <span class="keyword">const</span> foo = <span class="built_in">config</span>.foo !== undefined ? <span class="built_in">config</span>.foo : <span class="string">'Hi'</span>;</span><br><span class="line">    <span class="keyword">const</span> bar = <span class="built_in">config</span>.bar !== undefined ? <span class="built_in">config</span>.bar : <span class="string">'Yo!'</span>;</span><br><span class="line">    <span class="keyword">const</span> baz = <span class="built_in">config</span>.baz !== undefined ? <span class="built_in">config</span>.baz : <span class="number">13</span>;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>这是一个古老但有效的模式，它试图在 JavaScript 中模拟命名参数。 函数调用看起来很好。 另一方面，配置对象处理逻辑不必要地冗长。 使用ES2015 对象解构，您可以绕过这个缺点：</p><figure class="highlight actionscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">doSomething</span><span class="params">(&#123; foo = <span class="string">'Hi'</span>, bar = <span class="string">'Yo!'</span>, baz = 13 &#125;)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>如果你需要使配置对象也可选，也很简单：</p><figure class="highlight actionscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">doSomething</span><span class="params">(&#123; foo = <span class="string">'Hi'</span>, bar = <span class="string">'Yo!'</span>, baz = 13 &#125; = &#123;&#125;)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>3.使用对象解构来处理数组<br>可以使用对象解构将数组项分配给各个变量：</p><figure class="highlight stata"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> csvFileLine = '1997,John <span class="keyword">Doe</span>,<span class="keyword">US</span>,john@<span class="keyword">doe</span>.com,New York';</span><br><span class="line"><span class="keyword">const</span> &#123; 2: country, 4: state &#125; = csvFileLine.<span class="keyword">split</span>(',');</span><br></pre></td></tr></table></figure><p>4.switch 语句中使用范围值<br>注意：经过一番思考后，我决定将这个技巧与本文中的其他技巧区分开来。 这不是一种节省时间的技术，不适用于现实生活中的代码。 请记住：“If”语句在这种情况下总是更好。</p><p>与这篇文章中的其他提示不同，它更像是一种好奇探索而不是真正使用的东西。</p><p>但是，出于历史原因，我会在本文中保留它。</p><p>这是在 switch 语句中使用范围值的简单技巧：</p><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">getWaterState</span>(<span class="params">tempInCelsius</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">let</span> state;</span><br><span class="line">    <span class="keyword">switch</span> (<span class="literal">true</span>) &#123;</span><br><span class="line">        <span class="keyword">case</span> (tempInCelsius &lt; = <span class="number">0</span>): state = <span class="string">'Solid'</span>; <span class="keyword">break</span>; <span class="keyword">case</span> (tempInCelsius &gt; <span class="number">0</span> &amp;&amp; tempInCelsius &lt; <span class="number">100</span>): </span><br><span class="line">        state = <span class="string">'Liquid'</span>;</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">default</span>: </span><br><span class="line">        state = <span class="string">'Gas'</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> state;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>5.使用 async/await 来 await多个async函数<br>可以使用 Promise.all 来 await 多个 async（异步）函数。</p><figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">await</span> <span class="selector-tag">Promise</span><span class="selector-class">.all</span>(<span class="selector-attr">[anAsyncCall(), thisIsAlsoAsync(), oneMore()]</span>)</span><br></pre></td></tr></table></figure><p>6.创建纯(pure)对象<br>您可以创建一个 100％ 纯对象，它不会从 Object 继承任何属性或方法（例如，constructor，toString() 等）。</p><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> pureObject = <span class="built_in">Object</span>.create(<span class="literal">null</span>);</span><br><span class="line"><span class="built_in">console</span>.log(pureObject); <span class="comment">//=&gt; &#123;&#125;</span></span><br><span class="line"><span class="built_in">console</span>.log(pureObject.constructor); <span class="comment">//=&gt; undefined</span></span><br><span class="line"><span class="built_in">console</span>.log(pureObject.toString); <span class="comment">//=&gt; undefined</span></span><br><span class="line"><span class="built_in">console</span>.log(pureObject.hasOwnProperty); <span class="comment">//=&gt; undefined</span></span><br></pre></td></tr></table></figure><p>7.格式化JSON代码<br>JSON.stringify 不仅可以简单地将对象转化为字符串。你也可以用它来格式化JSON输出：</p><figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">const obj = &#123; </span><br><span class="line"><span class="symbol">    foo:</span> &#123; <span class="string">bar:</span> [<span class="number">11</span>, <span class="number">22</span>, <span class="number">33</span>, <span class="number">44</span>], <span class="string">baz:</span> &#123; <span class="string">bing:</span> <span class="literal">true</span>, <span class="string">boom:</span> <span class="string">'Hello'</span> &#125; &#125; </span><br><span class="line">&#125;;</span><br><span class="line"><span class="comment">// The third parameter is the number of spaces used to </span></span><br><span class="line"><span class="comment">// beautify the JSON output.</span></span><br><span class="line">JSON.stringify(obj, <span class="literal">null</span>, <span class="number">4</span>); </span><br><span class="line"><span class="comment">// =&gt;"&#123;</span></span><br><span class="line"><span class="comment">// =&gt;    "foo": &#123;</span></span><br><span class="line"><span class="comment">// =&gt;        "bar": [</span></span><br><span class="line"><span class="comment">// =&gt;            11,</span></span><br><span class="line"><span class="comment">// =&gt;            22,</span></span><br><span class="line"><span class="comment">// =&gt;            33,</span></span><br><span class="line"><span class="comment">// =&gt;            44</span></span><br><span class="line"><span class="comment">// =&gt;        ],</span></span><br><span class="line"><span class="comment">// =&gt;        "baz": &#123;</span></span><br><span class="line"><span class="comment">// =&gt;            "bing": true,</span></span><br><span class="line"><span class="comment">// =&gt;            "boom": "Hello"</span></span><br><span class="line"><span class="comment">// =&gt;        &#125;</span></span><br><span class="line"><span class="comment">// =&gt;    &#125;</span></span><br><span class="line"><span class="comment">// =&gt;&#125;"</span></span><br></pre></td></tr></table></figure><p>8.从数组中删除重复元素(数组去重)<br>通过使用通过使用集合语法和 Spread(展开)运算符，您可以轻松地从数组中删除重复项：</p><figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> removeDuplicateItems = arr =&gt; [...<span class="keyword">new</span> <span class="built_in">Set</span>(arr)];</span><br><span class="line">removeDuplicateItems([<span class="number">42</span>, <span class="string">'foo'</span>, <span class="number">42</span>, <span class="string">'foo'</span>, <span class="keyword">true</span>, <span class="keyword">true</span>]);</span><br><span class="line"><span class="comment">//=&gt; [42, "foo", true]</span></span><br></pre></td></tr></table></figure><p>9.平铺多维数组<br>使用 Spread(展开)，可以很容易去平铺嵌套多维数组：</p><figure class="highlight lsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">const arr = [<span class="number">11</span>, [<span class="number">22</span>, <span class="number">33</span>], [<span class="number">44</span>, <span class="number">55</span>], <span class="number">66</span>];</span><br><span class="line">const flatArr = [].concat(...arr); <span class="comment">//=&gt; [11, 22, 33, 44, 55, 66]</span></span><br></pre></td></tr></table></figure><p>可惜，上面的方法仅仅适用于二维数组。不过，通过递归，我们可以平铺任意维度的嵌套数组。</p><figure class="highlight inform7"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">unction flattenArray(arr) &#123;</span><br><span class="line">const flattened = <span class="comment">[]</span>.concat(...arr);</span><br><span class="line">return flattened.some(item =&gt; Array.isArray(item)) ? </span><br><span class="line">flattenArray(flattened) : flattened;</span><br><span class="line">&#125;</span><br><span class="line">const arr = <span class="comment">[11, <span class="comment">[22, 33]</span>, <span class="comment">[44, <span class="comment">[55, 66, <span class="comment">[77, <span class="comment">[88]</span>]</span>, 99]</span>]</span>]</span>;</span><br><span class="line">const flatArr = flattenArray(arr); </span><br><span class="line">//=&gt; <span class="comment">[11, 22, 33, 44, 55, 66, 77, 88, 99]</span></span><br></pre></td></tr></table></figure><p>就是这些啦！我希望这些巧妙的小技巧可以帮助你编写更好，更漂亮的 JavaScript 。</p><p>via: <a href="http://www.css88.com/archives/9868" target="_blank" rel="noopener">css88.com</a><br>英文原文：<a href="https://medium.freecodecamp.org/9-neat-javascript-tricks-e2742f2735c3" target="_blank" rel="noopener">https://medium.freecodecamp.org/9-neat-javascript-tricks-e2742f2735c3</a></p>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;h1 id=&quot;一些使-JavaScript-更加简洁的小技巧&quot;&gt;&lt;a href=&quot;#一些使-JavaScript-更加简洁的小技巧&quot; class=&quot;headerlink&quot; title=&quot;一些使 JavaScript 更加简洁的小技巧&quot;&gt;&lt;/a&gt;一些使 JavaScript 更加
+      
+    
+    </summary>
+    
+      <category term="Javascript" scheme="//ataotao.github.io/categories/Javascript/"/>
+    
+    
+      <category term="Javascript" scheme="//ataotao.github.io/tags/Javascript/"/>
+    
+  </entry>
   
   <entry>
     <title>React组件状态的理解</title>
@@ -40,6 +65,70 @@
       <category term="React" scheme="//ataotao.github.io/tags/React/"/>
     
       <category term="组件状态" scheme="//ataotao.github.io/tags/%E7%BB%84%E4%BB%B6%E7%8A%B6%E6%80%81/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>将多维数组递归降维成一维数组的巧妙实现</title>
+    <link href="//ataotao.github.io/2018/10/25/%E5%B0%86%E5%A4%9A%E7%BB%B4%E6%95%B0%E7%BB%84%E9%80%92%E5%BD%92%E9%99%8D%E7%BB%B4%E6%88%90%E4%B8%80%E7%BB%B4%E6%95%B0%E7%BB%84%E7%9A%84%E5%B7%A7%E5%A6%99%E5%AE%9E%E7%8E%B0/"/>
+    <id>//ataotao.github.io/2018/10/25/将多维数组递归降维成一维数组的巧妙实现/</id>
+    <published>2018-10-24T23:10:01.000Z</published>
+    <updated>2018-11-07T01:34:48.884Z</updated>
+    
+    <content type="html"><![CDATA[<h3 id="将多维数组递归降维成一维数组的巧妙实现"><a href="#将多维数组递归降维成一维数组的巧妙实现" class="headerlink" title="将多维数组递归降维成一维数组的巧妙实现"></a>将多维数组递归降维成一维数组的巧妙实现</h3><p>思路：只要为数组，就递归调用函数通过reduce展开</p><figure class="highlight inform7"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">const ﬂattenDeep = (arr) =&gt; Array.isArray(arr)</span><br><span class="line">    ? arr.reduce((a, b) =&gt; <span class="comment">[...ﬂattenDeep(a), ...ﬂattenDeep(b)]</span>, <span class="comment">[]</span>)</span><br><span class="line">    : <span class="comment">[arr]</span>;</span><br><span class="line">const data = ﬂattenDeep(<span class="comment">[1, <span class="comment">[<span class="comment">[2]</span>, <span class="comment">[3, <span class="comment">[4]</span>]</span>, 5]</span>]</span>);</span><br><span class="line">console.log(data);</span><br></pre></td></tr></table></figure>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;h3 id=&quot;将多维数组递归降维成一维数组的巧妙实现&quot;&gt;&lt;a href=&quot;#将多维数组递归降维成一维数组的巧妙实现&quot; class=&quot;headerlink&quot; title=&quot;将多维数组递归降维成一维数组的巧妙实现&quot;&gt;&lt;/a&gt;将多维数组递归降维成一维数组的巧妙实现&lt;/h3&gt;&lt;p&gt;思路
+      
+    
+    </summary>
+    
+      <category term="Javascript" scheme="//ataotao.github.io/categories/Javascript/"/>
+    
+    
+      <category term="Javascript" scheme="//ataotao.github.io/tags/Javascript/"/>
+    
+      <category term="数组降维" scheme="//ataotao.github.io/tags/%E6%95%B0%E7%BB%84%E9%99%8D%E7%BB%B4/"/>
+    
+      <category term="一维数组" scheme="//ataotao.github.io/tags/%E4%B8%80%E7%BB%B4%E6%95%B0%E7%BB%84/"/>
+    
+      <category term="多维数组" scheme="//ataotao.github.io/tags/%E5%A4%9A%E7%BB%B4%E6%95%B0%E7%BB%84/"/>
+    
+      <category term="递归" scheme="//ataotao.github.io/tags/%E9%80%92%E5%BD%92/"/>
+    
+      <category term="ﬂattenDeep" scheme="//ataotao.github.io/tags/%EF%AC%82attenDeep/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>精准计算浮点数原生解决方法</title>
+    <link href="//ataotao.github.io/2018/10/25/%E7%B2%BE%E5%87%86%E8%AE%A1%E7%AE%97%E6%B5%AE%E7%82%B9%E6%95%B0%E5%8E%9F%E7%94%9F%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95/"/>
+    <id>//ataotao.github.io/2018/10/25/精准计算浮点数原生解决方法/</id>
+    <published>2018-10-24T23:01:00.000Z</published>
+    <updated>2018-11-07T01:34:48.884Z</updated>
+    
+    <content type="html"><![CDATA[<h3 id="精准计算浮点数原生解决方法"><a href="#精准计算浮点数原生解决方法" class="headerlink" title="精准计算浮点数原生解决方法"></a>精准计算浮点数原生解决方法</h3><p>原生解决0.1 + 0.2 = 0.30000000000000004的方式</p><figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">parseFloat</span>((0<span class="selector-class">.1</span> + 0<span class="selector-class">.2</span>)<span class="selector-class">.toFixed</span>(10))</span><br></pre></td></tr></table></figure>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;h3 id=&quot;精准计算浮点数原生解决方法&quot;&gt;&lt;a href=&quot;#精准计算浮点数原生解决方法&quot; class=&quot;headerlink&quot; title=&quot;精准计算浮点数原生解决方法&quot;&gt;&lt;/a&gt;精准计算浮点数原生解决方法&lt;/h3&gt;&lt;p&gt;原生解决0.1 + 0.2 = 0.30000000
+      
+    
+    </summary>
+    
+      <category term="Javascript" scheme="//ataotao.github.io/categories/Javascript/"/>
+    
+    
+      <category term="Javascript" scheme="//ataotao.github.io/tags/Javascript/"/>
+    
+      <category term="浮点数计算" scheme="//ataotao.github.io/tags/%E6%B5%AE%E7%82%B9%E6%95%B0%E8%AE%A1%E7%AE%97/"/>
+    
+      <category term="精准" scheme="//ataotao.github.io/tags/%E7%B2%BE%E5%87%86/"/>
     
   </entry>
   
