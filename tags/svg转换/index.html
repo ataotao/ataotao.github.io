@@ -6,20 +6,18 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <link rel="dns-prefetch" href="//ataotao.github.io">
-  <title>通过MessageChannel实现深拷贝 | 淘七淘八</title>
+  <title>Tag: svg转换 | 淘七淘八</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="如果拷贝的对象不包含函数，可以使用 MessageChannel来实现Channel Messaging API的Channel Messaging接口允许我们创建一个新的消息通道，并通过它的两个MessagePort 属性发送数据。 123456789101112131415161718192021222324const arr = [&apos;arr&apos;];const obj = &amp;#123;  a:">
-<meta name="keywords" content="Javascript,深拷贝,MessageChannel">
-<meta property="og:type" content="article">
-<meta property="og:title" content="通过MessageChannel实现深拷贝">
-<meta property="og:url" content="//ataotao.github.io/2018/10/24/JavaScript 检测是不是手机浏览器/index.html">
+  <meta name="description" content="一些记录">
+<meta property="og:type" content="website">
+<meta property="og:title" content="淘七淘八">
+<meta property="og:url" content="//ataotao.github.io/tags/svg转换/index.html">
 <meta property="og:site_name" content="淘七淘八">
-<meta property="og:description" content="如果拷贝的对象不包含函数，可以使用 MessageChannel来实现Channel Messaging API的Channel Messaging接口允许我们创建一个新的消息通道，并通过它的两个MessagePort 属性发送数据。 123456789101112131415161718192021222324const arr = [&apos;arr&apos;];const obj = &amp;#123;  a:">
+<meta property="og:description" content="一些记录">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2018-10-24T09:39:13.341Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="通过MessageChannel实现深拷贝">
-<meta name="twitter:description" content="如果拷贝的对象不包含函数，可以使用 MessageChannel来实现Channel Messaging API的Channel Messaging接口允许我们创建一个新的消息通道，并通过它的两个MessagePort 属性发送数据。 123456789101112131415161718192021222324const arr = [&apos;arr&apos;];const obj = &amp;#123;  a:">
+<meta name="twitter:title" content="淘七淘八">
+<meta name="twitter:description" content="一些记录">
   
     <link rel="alternative" href="/atom.xml" title="淘七淘八" type="application/atom+xml">
   
@@ -207,81 +205,56 @@ var _hmt = _hmt || [];
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-JavaScript 检测是不是手机浏览器" class="article article-type-post " itemscope="" itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
+            
   
-    <h1 class="article-title" itemprop="name">
-      通过MessageChannel实现深拷贝
+  
+    
+    
+      
+      
+      <section class="archives-wrap">
+        <div class="archive-year-wrap">
+          <a href="/archives/2018" class="archive-year">2018</a>
+        </div>
+        <div class="archives">
+    
+    <article class="archive-article archive-type-post">
+  <div class="archive-article-inner">
+    <header class="archive-article-header">
+      	<div class="article-meta">
+	      	<a href="/2018/11/17/svg转base64/" class="archive-article-date">
+  	<time datetime="2018-11-17T03:57:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-11-17</time>
+</a>
+        </div>
+    	 
+  
+    <h1 itemprop="name">
+      <a class="archive-article-title" href="/2018/11/17/svg转base64/">svg转base64，svg, png, jpeg</a>
     </h1>
   
 
-        
-        <a href="/2018/10/24/JavaScript 检测是不是手机浏览器/" class="archive-article-date">
-  	<time datetime="2018-10-24T09:32:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-10-24</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="如果拷贝的对象不包含函数，可以使用-MessageChannel来实现"><a href="#如果拷贝的对象不包含函数，可以使用-MessageChannel来实现" class="headerlink" title="如果拷贝的对象不包含函数，可以使用 MessageChannel来实现"></a>如果拷贝的对象不包含函数，可以使用 MessageChannel来实现</h3><p>Channel Messaging API的Channel Messaging接口允许我们创建一个新的消息通道，并通过它的两个MessagePort 属性发送数据。</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> arr = [<span class="string">'arr'</span>];</span><br><span class="line"><span class="keyword">const</span> obj = &#123;</span><br><span class="line">  a: <span class="number">1</span>,</span><br><span class="line">  s: <span class="literal">undefined</span>,</span><br><span class="line">  r: <span class="literal">null</span>,</span><br><span class="line">  b: &#123;</span><br><span class="line">    c: arr</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">structuralClone</span>(<span class="params">oldData, callback</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">const</span> &#123; port1, port2 &#125; = <span class="keyword">new</span> MessageChannel();</span><br><span class="line">  port2.onmessage = <span class="function"><span class="params">ev</span> =&gt;</span> callback(ev.data);</span><br><span class="line">  port1.postMessage(oldData);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 注意该方法是异步的</span></span><br><span class="line"><span class="comment">// 可以处理 undefned 和循环引用对象</span></span><br><span class="line">structuralClone(obj, <span class="function"><span class="keyword">function</span> (<span class="params">newData</span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">'newData === obj'</span>, newData === obj, newData);</span><br><span class="line">  <span class="comment">// newData.b.c与arr的引用关系被解除了</span></span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">'newData.b.c === arr'</span>, newData.b.c === arr, newData.b.c);</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">'obj.b.c  === arr'</span>, obj.b.c === arr, obj.b.c);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
-      
-
-      
-        <div class="page-reward">
-          <a href="javascript:;" class="page-reward-btn tooltip-top">
-            <div class="tooltip tooltip-east">
-            <span class="tooltip-item">
-              赏
-            </span>
-            <span class="tooltip-content">
-              <span class="tooltip-text">
-                <span class="tooltip-inner">
-                  <p class="reward-p"><i class="icon icon-quo-left"></i>谢谢你请我吃糖果<i class="icon icon-quo-right"></i></p>
-                  <div class="reward-box">
-                    
-                    
-                    <div class="reward-box-item">
-                      <img class="reward-img" src="/assets/img/wechat-pay.gif">
-                      <span class="reward-type">微信</span>
-                    </div>
-                    
-                  </div>
-                </span>
-              </span>
-            </span>
-          </div>
-          </a>
-        </div>
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
+        <div class="article-info info-on-right">
+          
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Javascript</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">svg</a>
         		</li>
       		 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">深拷贝</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">base64</a>
         		</li>
       		 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">MessageChannel</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">svg转换</a>
         		</li>
       		
 		</ul>
 	</div>
 
-      
+          
 	<div class="article-category tagcloud">
 		<i class="icon-book icon"></i>
 		<ul class="article-tag-list">
@@ -294,113 +267,17 @@ var _hmt = _hmt || [];
 	</div>
 
 
-      
-
-      
-        
-<div class="share-btn share-icons tooltip-left">
-  <div class="tooltip tooltip-east">
-    <span class="tooltip-item">
-      <a href="javascript:;" class="share-sns share-outer">
-        <i class="icon icon-share"></i>
-      </a>
-    </span>
-    <span class="tooltip-content">
-      <div class="share-wrap">
-        <div class="share-icons">
-          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
-            <i class="icon icon-weibo"></i>
-          </a>
-          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
-            <i class="icon icon-weixin"></i>
-          </a>
-          <a class="qq share-sns" href="javascript:;" data-type="qq">
-            <i class="icon icon-qq"></i>
-          </a>
-          <a class="douban share-sns" href="javascript:;" data-type="douban">
-            <i class="icon icon-douban"></i>
-          </a>
-          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
-            <i class="icon icon-qzone"></i>
-          </a>
-          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
-            <i class="icon icon-facebook"></i>
-          </a>
-          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
-            <i class="icon icon-twitter"></i>
-          </a>
-          <a class="google share-sns" href="javascript:;" data-type="google">
-            <i class="icon icon-google"></i>
-          </a>
         </div>
-      </div>
-    </span>
-  </div>
-</div>
-
-<div class="page-modal wx-share js-wx-box">
-    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
-    <p>扫一扫，分享到微信</p>
-    <div class="wx-qrcode">
-      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACuElEQVR42u3aQW7jMBAEQP//0w6w2MMCWdndHFLQoXQKLMVm6UAOeub1iq/3n+vq83/v/n7y6pP2O6+e33Dh4eHhLS396sp5VwvKX8HVM/n3/2edeHh4eMd4nw+DZKHzxSVryNeMh4eH9wTe3pI3+a+1gwoPDw/vOby2OM7ZORUPDw/vObwkPigigI8vpY2Jk9e9IWvBw8PD61ZSNMCe8PfB/h4eHh7eoKueHBJrxW4SZOTF+uVq8fDw8A7w8jGptrDOo961Ia082MXDw8O7h7er+TRnr72mLwcDHh4e3oD3OQDNg4D8aMkD2UkxjYeHh3eOd24TXyumJ0X8lxEEPDw8vE28ZEQgH5BKiu+1lv/iXTw8PLxbeEnJ20YVbcleRLSffwUPDw/vAK8tcNvhgLUn87K+KNbx8PDwtvJ2RQzv8ZVv9EVRjoeHh3eYNymUJ2Fue44lEQYeHh7ead6upv68nTY6BvDw8PAO8/Iyt11W8g1rwUQR9eLh4eEd4CWx7DzezVtrbQARUfHw8PAO8NaaW2t7b3ucJCssSm08PDy8Ma8NGtrxqb3DB3mh//dzPDw8vAO8PGiYx7XtXt0eJHh4eHj38Nq4NtnQk0/yoYS2xL8sqfHw8PC28trmUzsI1Y5zTQYa8PDw8O7kTRpOk3GEycHz5QjBw8PDu4W3tvTNDf7y7uWhhYeHh3eAlxevk0GByTDWWkmNh4eHd47XDgdEheygYdaOIBQpNR4eHt4tvLVGVLKJr7Xc6nAEDw8P7wAvv3JGPkQ1b4O9dl14eHh4JW9t+84HpNqGVjuMFbXB8PDw8A7wJtFqHuau3V3b+fHw8PCewGsL6Dk4GQ7YdjDg4eHhHeNNIow2RF4LNUYHAx4eHl7M21X4To6QNpUtSmo8PDy8rbxJ8Jr/wHxBG0YE8PDw8Ka8HwVDGDwZdYjqAAAAAElFTkSuQmCC" alt="微信分享二维码">
-    </div>
-</div>
-
-<div class="mask js-mask"></div>
-      
-      <div class="clearfix"></div>
-    </div>
+        <div class="clearfix"></div>
+    </header>
   </div>
 </article>
-
-  
-<nav id="article-nav">
-  
-    <a href="/2018/10/25/精准计算浮点数原生解决方法/" id="article-nav-newer" class="article-nav-link-wrap">
-      <i class="icon-circle-left"></i>
-      <div class="article-nav-title">
-        
-          精准计算浮点数原生解决方法
-        
-      </div>
-    </a>
   
   
-    <a href="/2018/10/24/React内联SVG背景图的实现/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">React内联SVG背景图的实现</div>
-      <i class="icon-circle-right"></i>
-    </a>
-  
-</nav>
-
-
-
-
-
-
-  
-  <div class="duoshuo">
-	<!-- 多说评论框 start -->
-	<div class="ds-thread" data-thread-key="JavaScript 检测是不是手机浏览器" data-title="通过MessageChannel实现深拷贝" data-url="//ataotao.github.io/2018/10/24/JavaScript 检测是不是手机浏览器/"></div>
-	<!-- 多说评论框 end -->
-	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
-	<script type="text/javascript">
-	var duoshuoQuery = {short_name:"ataotao"};
-	(function() {
-		var ds = document.createElement('script');
-		ds.type = 'text/javascript';ds.async = true;
-		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
-		ds.charset = 'UTF-8';
-		(document.getElementsByTagName('head')[0] 
-		 || document.getElementsByTagName('body')[0]).appendChild(ds);
-	})();
-	</script>
-	<!-- 多说公共JS代码 end -->
-</div>
-
+    </div></section>
   
 
-
+    
 
 
           </div>
@@ -423,9 +300,9 @@ var _hmt = _hmt || [];
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: true,
+		isPost: false,
 		isArchive: false,
-		isTag: false,
+		isTag: true,
 		isCategory: false,
 		open_in_new: true,
 		root: "/",
