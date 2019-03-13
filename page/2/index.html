@@ -207,7 +207,155 @@ var _hmt = _hmt || [];
           <div id="js-content" class="content-ll">
             
   
-    <article id="post-一些常用的git命令" class="article article-type-post  article-index" itemscope="" itemprop="blogPost">
+    <article id="post-Math对象技巧，Math.max，Math.min获取数组最大值和Math.random随机数" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/03/03/Math对象技巧，Math.max，Math.min获取数组最大值和Math.random随机数/">Math对象技巧，Math.max，Math.min获取数组最大值和Math.random随机数</a>
+    </h1>
+  
+
+        
+        <a href="/2017/03/03/Math对象技巧，Math.max，Math.min获取数组最大值和Math.random随机数/" class="archive-article-date">
+  	<time datetime="2017-03-03T01:39:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-03-03</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="Math对象技巧，Math-max，Math-min获取数组最大值和Math-random随机数"><a href="#Math对象技巧，Math-max，Math-min获取数组最大值和Math-random随机数" class="headerlink" title="Math对象技巧，Math.max，Math.min获取数组最大值和Math.random随机数"></a>Math对象技巧，Math.max，Math.min获取数组最大值和Math.random随机数</h1><p>#Math.max，Math.min 求最大值、最小值</p>
+<pre><code>//最大值 最小值
+var max = Math.max(3, 54, 32, 16);
+console.log(max); //54
+var min = Math.min(3, 54, 32, 16);
+console.log(min); //3
+
+var values = [1, 2, 3, 4, 5, 6, 7, 8];
+var arrMax = Math.max.apply(Math, values);
+var arrMin = Math.min.apply(Math, values);
+console.log(arrMax); //8
+console.log(arrMin); //1
+</code></pre><p>#Math.ceil Math.floor Math.round舍入方法</p>
+<pre><code>// 舍入方法
+
+/*
+* Math.ceil()执行向上舍入，即它总是将数值向上舍入为最接近的整数；
+* Math.floor()执行向下舍入，即它总是将数值向下舍入为最接近的整数；
+* Math.round()执行标准舍入，即它总是将数值四舍五入为最接近的整数（这也是我们在数学课
+*/
+
+console.log(Math.ceil(25.9)); //26
+console.log(Math.ceil(25.5)); //26
+console.log(Math.ceil(25.1)); //26
+
+console.log(Math.round(25.9)); //26
+console.log(Math.round(25.5)); //26
+console.log(Math.round(25.1)); //25
+
+console.log(Math.floor(25.9)); //25
+console.log(Math.floor(25.5)); //25
+console.log(Math.floor(25.1)); //25
+</code></pre><p>#Math.random()随机数</p>
+<pre><code>// 套用下面的公式，就可以利用Math.random()从某个整数范围内随机选择一个值。
+//var 值 = Math.floor(Math.random() * 可能值的总数 + 第一个可能的值)
+
+//选择一个1到10 之间的数值
+var num1 = Math.floor(Math.random() * 10 + 1);
+
+// 选择一个介于2 到10 之间的值
+var num2 = Math.floor(Math.random() * 9 + 2);
+
+// 整合方法
+function selectFrom(lowerValue, upperValue) {
+    var choices = upperValue - lowerValue + 1;
+    return Math.floor(Math.random() * choices + lowerValue);
+}
+var num = selectFrom(2, 10);
+console.log(num); // 介于 2 和10 之间（包括 2 和 10）的一个数值
+</code></pre><p>#Math.random()应用</p>
+<pre><code>// 函数selectFrom()接受两个参数：应该返回的最小值和最大值。而用最大值减最小值再加1 得到了可能值的总数，然后它又把这些数值套用到了前面的公式中。
+// 这样，通过调用selectFrom(2,10)就可以得到一个介于2 和10 之间（包括2 和10）的数值了。
+// 利用这个函数，可以方便地从数组中随机取出一项
+var colors = [&quot;red&quot;, &quot;green&quot;, &quot;blue&quot;, &quot;yellow&quot;, &quot;black&quot;, &quot;purple&quot;, &quot;brown&quot;];
+var color = colors[selectFrom(0, colors.length - 1)];
+console.log(color); // 可能是数组中包含的任何一个字符串
+</code></pre>
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">Math对象</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Javascript</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">随机数</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">Math.random</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">Math.max</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">Math.min</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+	<div class="article-category tagcloud">
+		<i class="icon-book icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="/categories/Javascript/" class="article-tag-list-link color1">Javascript</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2017/03/03/Math对象技巧，Math.max，Math.min获取数组最大值和Math.random随机数/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+
+
+
+
+
+
+
+  
+    <article id="post-一些常用的git命令" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
@@ -390,7 +538,7 @@ git checkout xxx.js
 
 
   
-    <article id="post-javascript-deepClone" class="article article-type-post  article-index" itemscope="" itemprop="blogPost">
+    <article id="post-javascript-deepClone" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
@@ -432,11 +580,11 @@ git checkout xxx.js
         		</li>
       		 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">深拷贝</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">js</a>
         		</li>
       		 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">js</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">深拷贝</a>
         		</li>
       		
 		</ul>
@@ -475,7 +623,7 @@ git checkout xxx.js
 
 
   
-    <article id="post-hello-world" class="article article-type-post  article-index" itemscope="" itemprop="blogPost">
+    <article id="post-hello-world" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
@@ -496,7 +644,7 @@ git checkout xxx.js
     <div class="article-entry" itemprop="articleBody">
       
         <h2 id="新创立了hexo-site"><a href="#新创立了hexo-site" class="headerlink" title="新创立了hexo-site"></a>新创立了hexo-site</h2><!--<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=450 src="//music.163.com/outchain/player?type=0&id=489669263&auto=1&height=430"></iframe>-->
-<p><img src="/assets/img/01.jpg" alt=""> </p>
+<p><img src="/assets/img/01.jpg" alt> </p>
 
       
 
@@ -563,7 +711,7 @@ git checkout xxx.js
   <div class="outer">
     <div id="footer-info">
     	<div class="footer-left">
-    		&copy; 2018 Ataotao
+    		&copy; 2019 Ataotao
     	</div>
       	<div class="footer-right">
       		<a href="http://hexo.io/" target="_blank">Hexo</a>  Theme <a href="https://github.com/litten/hexo-theme-yilia" target="_blank">Yilia</a> by Litten
@@ -642,31 +790,11 @@ git checkout xxx.js
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Javascript</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">深拷贝</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">MessageChannel</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">React</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">SVG</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">内联SVG</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">Math对象</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">Javascript</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -686,23 +814,27 @@ git checkout xxx.js
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">写作</a>
+                <a href="javascript:void(0)" class="js-tag color5">函数防抖</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">js</a>
+                <a href="javascript:void(0)" class="js-tag color5">函数节流</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">svg</a>
+                <a href="javascript:void(0)" class="js-tag color3">防抖</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">base64</a>
+                <a href="javascript:void(0)" class="js-tag color3">节流</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">svg转换</a>
+                <a href="javascript:void(0)" class="js-tag color4">debounce</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">throttle</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -714,27 +846,31 @@ git checkout xxx.js
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">js</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">写作</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">深拷贝</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">React</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">组件状态</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">git</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">数组降维</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">一维数组</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">多维数组</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">递归</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">ﬂattenDeep</a>
+                <a href="javascript:void(0)" class="js-tag color5">MessageChannel</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -758,7 +894,43 @@ git checkout xxx.js
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">组件状态</a>
+                <a href="javascript:void(0)" class="js-tag color5">数组降维</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">一维数组</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">多维数组</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">递归</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">ﬂattenDeep</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">svg</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">base64</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">svg转换</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">SVG</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">内联SVG</a>
               </li>
             
             <div class="clearfix"></div>
