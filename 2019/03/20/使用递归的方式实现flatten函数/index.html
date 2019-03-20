@@ -6,18 +6,20 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <link rel="dns-prefetch" href="//ataotao.github.io">
-  <title>Tag: 内联SVG | 淘七淘八</title>
+  <title>使用递归的方式实现flatten函数 | 淘七淘八</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="一些记录">
-<meta property="og:type" content="website">
-<meta property="og:title" content="淘七淘八">
-<meta property="og:url" content="//ataotao.github.io/tags/内联SVG/index.html">
+  <meta name="description" content="方法一12345678910111213141516var arr = [1, 2, 3, [4, 5, [[6, [7, [8]]]]],[6, [7, [8]]]];function flatten(array) &amp;#123;    let init = [];    return (function _flatten(array) &amp;#123;        for (let i = 0;">
+<meta name="keywords" content="Javascript,递归,flatten">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用递归的方式实现flatten函数">
+<meta property="og:url" content="//ataotao.github.io/2019/03/20/使用递归的方式实现flatten函数/index.html">
 <meta property="og:site_name" content="淘七淘八">
-<meta property="og:description" content="一些记录">
+<meta property="og:description" content="方法一12345678910111213141516var arr = [1, 2, 3, [4, 5, [[6, [7, [8]]]]],[6, [7, [8]]]];function flatten(array) &amp;#123;    let init = [];    return (function _flatten(array) &amp;#123;        for (let i = 0;">
 <meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-03-20T06:48:19.880Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="淘七淘八">
-<meta name="twitter:description" content="一些记录">
+<meta name="twitter:title" content="使用递归的方式实现flatten函数">
+<meta name="twitter:description" content="方法一12345678910111213141516var arr = [1, 2, 3, [4, 5, [[6, [7, [8]]]]],[6, [7, [8]]]];function flatten(array) &amp;#123;    let init = [];    return (function _flatten(array) &amp;#123;        for (let i = 0;">
   
     <link rel="alternative" href="/atom.xml" title="淘七淘八" type="application/atom+xml">
   
@@ -205,79 +207,191 @@ var _hmt = _hmt || [];
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-  
+            <article id="post-使用递归的方式实现flatten函数" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
     
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2018" class="archive-year">2018</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2018/10/24/React内联SVG背景图的实现/" class="archive-article-date">
-  	<time datetime="2018-10-24T03:43:33.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-10-24</time>
-</a>
-        </div>
-    	 
+      <header class="article-header">
+        
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2018/10/24/React内联SVG背景图的实现/">React内联SVG背景图的实现</a>
+    <h1 class="article-title" itemprop="name">
+      使用递归的方式实现flatten函数
     </h1>
   
 
-        <div class="article-info info-on-right">
-          
+        
+        <a href="/2019/03/20/使用递归的方式实现flatten函数/" class="archive-article-date">
+  	<time datetime="2019-03-20T06:46:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-03-20</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="方法一"><a href="#方法一" class="headerlink" title="方法一"></a>方法一</h3><figure class="highlight xquery"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">var arr = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, [<span class="number">4</span>, <span class="number">5</span>, [[<span class="number">6</span>, [<span class="number">7</span>, [<span class="number">8</span>]]]]],[<span class="number">6</span>, [<span class="number">7</span>, [<span class="number">8</span>]]]];</span><br><span class="line"><span class="keyword">function</span> flatten(<span class="keyword">array</span>) &#123;</span><br><span class="line">    <span class="keyword">let</span> init = [];</span><br><span class="line">    <span class="keyword">return</span> (<span class="keyword">function</span> _flatten(<span class="keyword">array</span>) &#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i &lt; <span class="keyword">array</span>.length; i++) &#123;</span><br><span class="line">            const <span class="type">item</span> = <span class="keyword">array</span>[i];</span><br><span class="line">            <span class="keyword">if</span> (Object.prototype.toString.call(<span class="type">item</span>) === <span class="string">'[object Array]'</span>) &#123;</span><br><span class="line">                init<span class="built_in">.concat</span>(_flatten(<span class="type">item</span>));</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                init.push(<span class="type">item</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> init;</span><br><span class="line">    &#125;(<span class="keyword">array</span>));</span><br><span class="line">&#125;</span><br><span class="line">console.log(flatten(arr));</span><br></pre></td></tr></table></figure>
+<h3 id="方法二-es6实现"><a href="#方法二-es6实现" class="headerlink" title="方法二 es6实现"></a>方法二 es6实现</h3><figure class="highlight inform7"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">const arr = <span class="comment">[1, 2, 3, <span class="comment">[4, 5, <span class="comment">[<span class="comment">[6, <span class="comment">[7, <span class="comment">[8]</span>]</span>]</span>]</span>]</span>,<span class="comment">[6, <span class="comment">[7, <span class="comment">[8]</span>]</span>]</span>]</span>;</span><br><span class="line">const flatten = array =&gt; array.reduce((init, item) =&gt; (Array.isArray(item) ? <span class="comment">[...init, ...flatten(item)]</span> : <span class="comment">[...init, item]</span>), <span class="comment">[]</span>);</span><br><span class="line">console.log(flatten(arr));</span><br></pre></td></tr></table></figure>
+      
+
+      
+        <div class="page-reward">
+          <a href="javascript:;" class="page-reward-btn tooltip-top">
+            <div class="tooltip tooltip-east">
+            <span class="tooltip-item">
+              赏
+            </span>
+            <span class="tooltip-content">
+              <span class="tooltip-text">
+                <span class="tooltip-inner">
+                  <p class="reward-p"><i class="icon icon-quo-left"></i>谢谢你请我吃糖果<i class="icon icon-quo-right"></i></p>
+                  <div class="reward-box">
+                    
+                    
+                    <div class="reward-box-item">
+                      <img class="reward-img" src="/assets/img/wechat-pay.gif">
+                      <span class="reward-type">微信</span>
+                    </div>
+                    
+                  </div>
+                </span>
+              </span>
+            </span>
+          </div>
+          </a>
+        </div>
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">React</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Javascript</a>
         		</li>
       		 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">SVG</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">递归</a>
         		</li>
       		 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">内联SVG</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">flatten</a>
         		</li>
       		
 		</ul>
 	</div>
 
-          
+      
 	<div class="article-category tagcloud">
 		<i class="icon-book icon"></i>
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="/categories/React/" class="article-tag-list-link color1">React</a>
+        			<a href="/categories/Javascript/" class="article-tag-list-link color1">Javascript</a>
         		</li>
       		
 		</ul>
 	</div>
 
 
+      
+
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
         </div>
-        <div class="clearfix"></div>
-    </header>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACuElEQVR42u3aQW4bMRAEQP3/0w6Qq7Or7pmlokPtybAsikUD5Kg5r1f8/Px9fv8m+f3svVfP68SDh4eHN5r6/XD3073/m3yKyaLkc8bDw8M7zUs+bDPpZHLJrp7PGQ8PD+8beLPtO9/c2wXCw8PD+35eHjHMSvBNwY2Hh4f3eV4SRuShbRK5tsHH8awFDw8P78At0vf8fPB+Dw8PD29xq36/4W625mffdTkaHh4e3gFeErbmRfCsdSCPFdpwBA8PD+8Eb7bVzgKLtkBvo95/jIOHh4f3QV77wfnxMBu5jX3x8PDwPsNrJ91+2H7Tr48rPDw8vMO82cGQF9yz8PeBhgA8PDy8R3l5o8AmFMgPhvzVvODGw8PDe5Z3/7ZZgZtv4nW4UB5meHh4eOd47YXWLFBomxVy2OXi4uHh4R3gzb6/J40Cbbiwv37LX8XDw8Pb8NqiOSm19+1TbQvXq/0n4uHh4S14s0HzGDfBz5oPZqU8Hh4e3gnevpydNRC0C5GPgIeHh/csLw9A2zWbhaptcPzmvXh4eHgf4bWXTLMrtLaZtS2+8fDw8M7xkhJ2c9m/2fRz3puR8fDw8A7z8lghuRibZSHtcr8ZHw8PD+8YL59o3lIw28rbxqziewMeHh7empdfU7Xb9D4UbmGrWzg8PDy8kpc3DeRNUbMSeROFXLYO4OHh4T3K28ev+YQ2wUf7D6gBeHh4eDEvjxWSIyGJMJ4tzYc9ZXh4eHiP8pK4djb1ZFHytqqorMfDw8M7wMufGWBWmm9K9uKbBB4eHt6C17YFzArx2aLkR9Hl+Hh4eHjHeHn0MItl8+ihLZHf/D0eHh7ef+UlF/ntUTFbxOJowcPDw/sC3iZ0mAWyswMGDw8P7zSvvZpqi+9zzQerWz48PDy8EW92AZZfRyWtA+3F2MMPHh4eXvr8AVmdK/BPzbPQAAAAAElFTkSuQmCC" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
+
+  
+<nav id="article-nav">
   
   
-    </div></section>
+    <a href="/2019/03/13/JS的节流、函数防抖 原理及使用场景/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">JS的节流、函数防抖 原理及使用场景</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+
+
+
+
+  
+  <div class="duoshuo">
+	<!-- 多说评论框 start -->
+	<div class="ds-thread" data-thread-key="使用递归的方式实现flatten函数" data-title="使用递归的方式实现flatten函数" data-url="//ataotao.github.io/2019/03/20/使用递归的方式实现flatten函数/"></div>
+	<!-- 多说评论框 end -->
+	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+	<script type="text/javascript">
+	var duoshuoQuery = {short_name:"ataotao"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		 || document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+	<!-- 多说公共JS代码 end -->
+</div>
+
   
 
-    
+
 
 
           </div>
@@ -300,9 +414,9 @@ var _hmt = _hmt || [];
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: false,
+		isPost: true,
 		isArchive: false,
-		isTag: true,
+		isTag: false,
 		isCategory: false,
 		open_in_new: true,
 		root: "/",
