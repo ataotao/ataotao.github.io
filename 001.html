@@ -1,0 +1,4748 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>函数思维脚手架 · 初三五步训练器</title>
+<style>
+:root{
+  --ink:#1b2430; --ink2:#45526180; --muted:#6b7684; --line:#e3ded4;
+  --paper:#faf8f4; --card:#ffffff; --brand:#1f6f5c; --brand-d:#155043; --brand-l:#e8f3ef;
+  --accent:#3d6ea8; --warn:#b4690e; --warn-bg:#fdf3e3; --bad:#a32b2b; --bad-bg:#fbeceb;
+  --ok:#1f7a4d; --ok-bg:#e9f6ee; --radius:14px;
+  --sh:0 1px 2px rgba(27,36,48,.05),0 6px 20px -12px rgba(27,36,48,.18);
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0; background:var(--paper); color:var(--ink);
+  font-family:"PingFang SC","Hiragino Sans GB","Microsoft YaHei",system-ui,-apple-system,"Segoe UI",sans-serif;
+  font-size:16px; line-height:1.75;
+}
+h1,h2,h3,p,ul,ol{margin:0}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
+input{font:inherit;color:inherit}
+.app{max-width:920px;margin:0 auto;padding:0 16px 64px}
+
+/* ---------- 顶栏 ---------- */
+.appbar{display:flex;align-items:center;gap:12px;padding:18px 0 14px;border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:center;gap:11px;min-width:0}
+.logo{width:38px;height:38px;flex:0 0 38px;border-radius:11px;background:var(--brand);color:#fff;
+  display:grid;place-items:center;font:italic 700 21px/1 Georgia,serif}
+.brand h1{font-size:17px;line-height:1.25;letter-spacing:.02em}
+.brand p{font-size:12px;color:var(--muted);line-height:1.4}
+.bar-right{margin-left:auto;display:flex;align-items:center;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.chip{font-size:12px;padding:3px 10px;border-radius:999px;background:var(--brand-l);color:var(--brand-d);white-space:nowrap}
+
+/* ---------- 通用 ---------- */
+.btn{padding:9px 18px;border-radius:10px;background:#fff;border:1px solid var(--line);
+  font-size:14px;font-weight:600;transition:.15s;white-space:nowrap}
+.btn:hover{border-color:#c9c2b4;background:#fdfcf9}
+.btn-primary{background:var(--brand);border-color:var(--brand);color:#fff}
+.btn-primary:hover{background:var(--brand-d);border-color:var(--brand-d)}
+.btn-ghost{padding:7px 12px;border-radius:9px;font-size:13px;color:var(--muted)}
+.btn-ghost:hover{background:#efece4;color:var(--ink)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn-mini{padding:5px 11px;font-size:12.5px;border-radius:8px;border:1px solid var(--line);background:#fff}
+.screen{margin-top:22px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--sh);padding:20px 22px;margin-bottom:14px}
+.tag{display:inline-block;font-size:12px;font-weight:700;letter-spacing:.03em;color:var(--brand-d);
+  background:var(--brand-l);padding:2px 9px;border-radius:6px}
+.tag-soft{display:inline-block;font-size:12px;color:var(--muted);background:#f2efe8;padding:2px 9px;border-radius:6px}
+.tag-warn{background:var(--warn-bg);color:var(--warn)}
+.tag-bad{background:var(--bad-bg);color:var(--bad)}
+.row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.muted{color:var(--muted)}
+.small{font-size:13px}
+.tiny{font-size:12px}
+.spacer{flex:1}
+hr.sep{border:0;border-top:1px dashed var(--line);margin:16px 0}
+
+/* ---------- 首页 ---------- */
+.hero{padding:26px 24px 22px;background:linear-gradient(180deg,#fff,#fbf9f5);border:1px solid var(--line);
+  border-radius:16px;box-shadow:var(--sh)}
+.hero h2{font-size:22px;line-height:1.45;letter-spacing:.01em}
+.hero .why{margin-top:12px;font-size:14.5px;color:var(--muted);max-width:66ch}
+.hero .why b{color:var(--ink)}
+.flow{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:18px 0 4px}
+.flow div{background:#fff;border:1px solid var(--line);border-radius:10px;padding:9px 8px;text-align:center}
+.flow b{display:block;font-size:12px;color:var(--brand);letter-spacing:.05em}
+.flow span{font-size:13px;font-weight:600;display:block;margin-top:1px}
+.flow i{display:block;font-size:11px;color:var(--muted);font-style:normal;line-height:1.45;margin-top:2px}
+.modes{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px}
+.mode{text-align:left;background:#fff;border:1px solid var(--line);border-radius:var(--radius);
+  padding:16px 18px;box-shadow:var(--sh);transition:.16s;display:flex;flex-direction:column}
+.mode:hover{border-color:var(--brand);transform:translateY(-1px)}
+.mode.rec{border-color:var(--brand);background:linear-gradient(180deg,#f6fbf9,#fff)}
+.mode h3{font-size:15.5px;display:flex;align-items:center;gap:8px}
+.mode p{font-size:13px;color:var(--muted);margin-top:6px;line-height:1.6}
+.mode .go{font-size:12.5px;color:var(--brand);font-weight:700;margin-top:auto;padding-top:10px;display:block}
+.rec-box{margin-top:16px;padding:14px 16px;border-radius:12px;background:#fff;border:1px solid var(--line)}
+
+/* ---------- 五步导轨 ---------- */
+.rail{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap}
+.rail .n{flex:1;min-width:96px;padding:7px 9px;border-radius:9px;background:#fff;border:1px solid var(--line);
+  font-size:12px;color:var(--muted);display:flex;align-items:center;gap:6px;white-space:nowrap;overflow:hidden}
+.rail .n b{width:17px;height:17px;flex:0 0 17px;border-radius:50%;background:#eee9df;color:var(--muted);
+  font-size:11px;display:grid;place-items:center;font-weight:700}
+.rail .n.done{color:var(--ok);border-color:#cfe6d8;background:var(--ok-bg)}
+.rail .n.done b{background:var(--ok);color:#fff}
+.rail .n.now{border-color:var(--brand);color:var(--brand-d);background:var(--brand-l);font-weight:700}
+.rail .n.now b{background:var(--brand);color:#fff}
+
+/* ---------- 题干 ---------- */
+.stem{font-size:15.5px;line-height:1.95;white-space:pre-wrap}
+.stem b{color:var(--brand-d)}
+.qhead{display:flex;gap:8px;align-items:center;margin-bottom:11px;flex-wrap:wrap}
+.stepbadge{width:26px;height:26px;flex:0 0 26px;border-radius:8px;background:var(--brand);color:#fff;
+  display:grid;place-items:center;font-weight:700;font-size:14px}
+.step-hd{display:flex;gap:11px;align-items:flex-start}
+.step-hd h2{font-size:16px}
+.step-hd p{font-size:12.5px;color:var(--muted);margin-top:1px}
+.ask{font-size:15px;font-weight:600;margin:14px 0 10px;line-height:1.7}
+.ask em{font-style:normal;color:var(--brand-d);background:linear-gradient(transparent 62%,#d9ece5 62%)}
+
+/* ---------- 选项 ---------- */
+.opts{display:flex;flex-direction:column;gap:8px}
+.opt{display:flex;gap:11px;align-items:flex-start;text-align:left;padding:11px 14px;border-radius:11px;
+  border:1.5px solid var(--line);background:#fff;font-size:14.5px;line-height:1.65;transition:.13s}
+.opt:hover{border-color:#bfd6cd;background:#fcfdfc}
+.opt .k{width:20px;height:20px;flex:0 0 20px;border-radius:6px;background:#f0ede6;color:var(--muted);
+  font-size:12px;font-weight:700;display:grid;place-items:center;margin-top:2px}
+.opt.sel{border-color:var(--brand);background:var(--brand-l)}
+.opt.sel .k{background:var(--brand);color:#fff}
+.opt.ok{border-color:#9dd3b4;background:var(--ok-bg)}
+.opt.ok .k{background:var(--ok);color:#fff}
+.opt.no{border-color:#e5b3af;background:var(--bad-bg)}
+.opt.no .k{background:var(--bad);color:#fff}
+.opt.dim{opacity:.55}
+.opt .why{display:block;font-size:13px;color:var(--muted);margin-top:5px}
+.plotgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.plotcell{border:1.5px solid var(--line);border-radius:11px;background:#fff;padding:6px;text-align:center;transition:.13s;position:relative}
+.plotcell:hover{border-color:#bfd6cd}
+.plotcell.sel{border-color:var(--brand);background:var(--brand-l)}
+.plotcell.ok{border-color:#9dd3b4;background:var(--ok-bg)}
+.plotcell.no{border-color:#e5b3af;background:var(--bad-bg)}
+.plotcell svg{display:block;width:100%;height:auto}
+.plotcell .cap{position:absolute;top:5px;left:8px;font-size:11.5px;font-weight:700;color:var(--muted)}
+.plotbig{background:#fff;border:1px solid var(--line);border-radius:11px;padding:8px;max-width:420px}
+.plotbig svg{display:block;width:100%;height:auto}
+
+/* 排序题 */
+.pool{display:flex;flex-direction:column;gap:7px}
+.pool .item{text-align:left;padding:9px 13px;border-radius:10px;border:1.5px dashed #d9d3c7;background:#fdfcf9;font-size:14px;line-height:1.6}
+.pool .item:hover{border-color:var(--brand);background:var(--brand-l)}
+.pool .item.used{opacity:.35;border-style:solid}
+.seq{display:flex;flex-direction:column;gap:6px;margin-bottom:10px;min-height:46px;padding:8px;border-radius:11px;background:#f7f5f0;border:1px solid var(--line)}
+.seq .s{display:flex;gap:10px;align-items:flex-start;text-align:left;background:#fff;border:1px solid var(--line);
+  border-radius:9px;padding:8px 11px;font-size:14px;line-height:1.6}
+.seq .s .no{font-weight:700;color:var(--brand);font-size:12.5px;flex:0 0 auto;margin-top:2px}
+.seq .empty{font-size:13px;color:var(--muted);padding:4px}
+.seq.ok{border-color:#9dd3b4;background:var(--ok-bg)}
+.seq.no{border-color:#e5b3af;background:var(--bad-bg)}
+
+/* 试卷 / 题库管理 */
+.packlist{display:flex;flex-direction:column;gap:6px;margin-top:8px}
+.prow{display:grid;grid-template-columns:40px 20px 1fr auto;gap:10px;align-items:center;text-align:left;
+  padding:9px 12px;border:1px solid var(--line);border-radius:10px;background:#fff;font-size:13.5px;line-height:1.5}
+button.prow:hover{border-color:#bfd6cd;background:#fcfdfc}
+.prow.static{background:#fbfaf7}
+.prow.mng{grid-template-columns:52px 1fr auto}
+.prow.okrow{border-color:#cfe6d8;background:#f6fbf8}
+.prow.norow{border-color:#f0d5d2;background:#fdf7f6}
+.prow.half{border-color:#ecd9bc;background:#fdfaf4}
+.pno{font-weight:700;color:var(--muted);font-size:12px;text-align:center}
+.pmark{text-align:center;font-weight:700;color:var(--brand)}
+.prow.norow .pmark{color:var(--bad)}
+.prow.half .pmark{color:var(--warn)}
+.ptxt{min-width:0;overflow:hidden;text-overflow:ellipsis}
+.pmeta{font-size:11.5px;color:var(--muted);white-space:nowrap;text-align:right}
+.ta{width:100%;min-height:120px;margin-top:10px;border:1px solid var(--line);border-radius:10px;padding:10px;
+  font-family:ui-monospace,Consolas,"Courier New",monospace;font-size:12.5px;background:#fdfcf9;resize:vertical;line-height:1.6}
+.ta:focus{outline:none;border-color:var(--brand);box-shadow:0 0 0 3px #d9ece5}
+code{font-family:ui-monospace,Consolas,monospace;background:#f2efe8;padding:1px 5px;border-radius:4px;font-size:12.5px}
+
+/* 填空 */
+.blank{display:inline-flex;align-items:center;gap:6px;margin:4px 10px 4px 0;font-size:15px}
+.blank input{width:88px;padding:7px 9px;border-radius:8px;border:1.5px solid var(--line);background:#fff;text-align:center;font-variant-numeric:tabular-nums}
+.blank input:focus{outline:none;border-color:var(--brand);box-shadow:0 0 0 3px #d9ece5}
+.blank input.ok{border-color:#9dd3b4;background:var(--ok-bg)}
+.blank input.no{border-color:#e5b3af;background:var(--bad-bg)}
+.fields{display:flex;flex-direction:column;gap:10px}
+.field{border:1px dashed var(--line);border-radius:11px;padding:10px 13px;background:#fdfcf9}
+.field .lab{font-size:13.5px;font-weight:600;margin-bottom:6px}
+.choices-inline{display:flex;flex-wrap:wrap;gap:7px}
+.choices-inline button{padding:6px 13px;border-radius:9px;border:1.5px solid var(--line);background:#fff;font-size:14px}
+.choices-inline button.sel{border-color:var(--brand);background:var(--brand-l);font-weight:700}
+.choices-inline button.ok{border-color:#9dd3b4;background:var(--ok-bg)}
+.choices-inline button.no{border-color:#e5b3af;background:var(--bad-bg)}
+
+/* 反馈 */
+.fb{margin-top:12px;padding:12px 15px;border-radius:11px;font-size:14px;line-height:1.75;border:1px solid}
+.fb.ok{background:var(--ok-bg);border-color:#c6e3d3}
+.fb.no{background:var(--bad-bg);border-color:#eccfcc}
+.fb.soft{background:var(--warn-bg);border-color:#f0dcbc}
+.fb h4{font-size:13.5px;margin-bottom:4px;display:flex;gap:7px;align-items:center}
+.fb .lab{font-weight:700}
+.fb ul{margin:6px 0 0 18px;padding:0}
+.fb li{margin:2px 0}
+.fb .cont{margin-top:10px;display:flex;gap:8px;flex-wrap:wrap}
+.hintbox{margin-top:10px;padding:11px 14px;border-radius:10px;background:#f4f1ea;border-left:3px solid #d6cbb4;font-size:13.5px;line-height:1.7;color:#4a4436}
+.hintbox b{color:var(--warn)}
+.hintbox div+div{margin-top:8px;padding-top:8px;border-top:1px dashed #ded6c6}
+.tools{margin-top:12px;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+
+/* 解析 */
+.sol{font-size:14.5px;line-height:1.9}
+.sol li{margin:7px 0}
+.sol .key{background:#f7f5f0;border-radius:9px;padding:10px 13px;font-size:13.5px;margin-top:12px;border-left:3px solid var(--brand)}
+
+/* 变式 */
+details.var{border:1px solid var(--line);border-radius:11px;padding:11px 14px;background:#fdfcf9;margin-top:8px}
+details.var summary{cursor:pointer;font-size:14px;font-weight:600;list-style:none;display:flex;gap:8px;align-items:center}
+details.var summary::-webkit-details-marker{display:none}
+details.var summary::before{content:"▸";color:var(--brand);font-size:12px}
+details.var[open] summary::before{content:"▾"}
+details.var .body{margin-top:10px;font-size:13.8px;line-height:1.8}
+details.var .vs{margin:8px 0;padding:9px 12px;background:#fff;border:1px dashed var(--line);border-radius:9px;font-size:13px}
+details.var .vs b{color:var(--brand-d)}
+
+/* 变式题库 · 引导模式 */
+.libq{border:1px solid var(--line);border-radius:12px;padding:14px 16px;background:#fff;margin-top:10px}
+.libq h3{font-size:15px;margin:0 0 7px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.libstem{font-size:14px;line-height:1.85;white-space:pre-wrap;color:var(--ink)}
+.libbox{margin-top:10px;padding:10px 13px;border-radius:10px;background:#fdfcf9;border:1px dashed var(--line);font-size:13.2px;line-height:1.8}
+.libbox b{color:var(--brand-d)}
+.libhint{margin-top:10px;padding:9px 12px;border-left:3px solid var(--warn);background:var(--warn-bg);border-radius:0 10px 10px 0;font-size:13px;line-height:1.7}
+.libguide3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
+.libguide3 div{background:#f7fbf9;border:1px solid var(--line);border-radius:10px;padding:9px 11px;font-size:12.8px;line-height:1.65}
+.libguide3 b{display:block;color:var(--brand-d);margin-bottom:3px}
+.libstat{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:12px}
+@media(max-width:700px){.libguide3{grid-template-columns:1fr}}
+
+/* ---------- 报告 ---------- */
+.tbl{border-collapse:collapse;margin:12px 0;font-size:14px;min-width:240px}
+.tbl th,.tbl td{border:1px solid var(--line);padding:6px 14px;text-align:center;font-variant-numeric:tabular-nums}
+.tbl th{background:#f6f3ed;font-weight:600;color:var(--ink2)}
+.btn-mini.sel{border-color:var(--brand);background:var(--brand-l);color:var(--brand-d);font-weight:700}
+.dimrow{display:grid;grid-template-columns:150px 1fr 78px;gap:10px;align-items:center;padding:7px 0;border-bottom:1px dashed var(--line)}
+.dimrow:last-child{border-bottom:0}
+.dimname{font-size:13.5px;font-weight:600}
+.dimname span{display:block;font-size:11.5px;color:var(--muted);font-weight:400}
+.bar{height:9px;border-radius:99px;background:#efece4;overflow:hidden}
+.bar i{display:block;height:100%;border-radius:99px;background:var(--brand);transition:width .5s}
+.bar i.low{background:var(--bad)} .bar i.mid{background:var(--warn)}
+.dimpct{text-align:right;font-size:13px;font-variant-numeric:tabular-nums;color:var(--muted)}
+.dimpct b{color:var(--ink);font-size:14px}
+.rx{border-left:3px solid var(--brand);background:#f7fbf9;padding:12px 15px;border-radius:0 10px 10px 0;margin-top:10px}
+.rx h4{font-size:14px;margin-bottom:5px;color:var(--brand-d)}
+.rx ul{margin:4px 0 0 18px;font-size:13.5px;line-height:1.85}
+.wrongitem{padding:9px 0;border-bottom:1px dashed var(--line);font-size:13.5px}
+.wrongitem:last-child{border-bottom:0}
+.empty-state{text-align:center;color:var(--muted);font-size:13.5px;padding:22px 0}
+
+/* ---------- 页脚 / 打印 ---------- */
+.foot{margin-top:26px;font-size:12px;color:var(--muted);text-align:center;line-height:1.8}
+.printcard{display:none}
+@media (max-width:700px){
+  .modes{grid-template-columns:1fr}
+  .flow{grid-template-columns:1fr 1fr}
+  .plotgrid{grid-template-columns:1fr 1fr}
+  .dimrow{grid-template-columns:104px 1fr 64px}
+  .card{padding:16px 15px}
+  body{font-size:15.5px}
+  .stem{font-size:15px}
+  .appbar{flex-wrap:wrap}
+  .bar-right{width:100%;margin-left:0;justify-content:flex-start;gap:2px}
+  .bar-right .btn-ghost{padding:5px 7px;font-size:12.5px}
+  .chip{font-size:11.5px;padding:3px 8px}
+}
+@media print{
+  body{background:#fff}
+  .app{display:none}
+  .printcard{display:block;padding:10mm;font-size:12pt}
+  .printcard h2{font-size:16pt;margin-bottom:4mm}
+  .printcard table{border-collapse:collapse;width:100%;margin-top:4mm}
+  .printcard td{border:1px solid #999;padding:2.4mm 3mm;vertical-align:top;font-size:11pt;line-height:1.5}
+  .printcard td:first-child{width:26mm;font-weight:700;background:#f2f2f2;text-align:center}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="appbar">
+    <div class="brand">
+      <div class="logo">f</div>
+      <div>
+        <h1>函数思维脚手架</h1>
+        <p>初三五步流程训练器 · 先走流程，再落笔</p>
+      </div>
+    </div>
+    <div class="bar-right" id="barr">
+      <span class="chip" id="modechip" hidden></span>
+      <button class="btn-ghost" data-act="home">首页</button>
+      <button class="btn-ghost" data-act="papers">试卷练习</button>
+      <button class="btn-ghost" data-act="library">变式题库</button>
+      <button class="btn-ghost" data-act="report">训练报告</button>
+      <button class="btn-ghost" data-act="manage">题库管理</button>
+      <button class="btn-ghost" data-act="print">打印五步卡</button>
+    </div>
+  </header>
+  <main id="screen" class="screen"></main>
+  <footer class="foot">
+    五步流程：读条件 → 画图像 → 选模型 → 定步骤 → 检验<br>
+    提示分三级，点开之前先自己想 20 秒；走完五步再落笔，错也要错在纸上。
+  </footer>
+</div>
+
+<div id="printcard" class="printcard">
+  <h2>函数解题五步卡</h2>
+  <table>
+    <tr><td>① 读条件</td><td>把题里每句话翻译成一个条件：等式？不等式？范围？把"已知 / 所求 / 隐含"分三栏写下来。</td></tr>
+    <tr><td>② 画图像</td><td>画草图，标出：开口方向或 k 的正负、与两轴的交点、对称轴、顶点、有范围的画边界。</td></tr>
+    <tr><td>③ 选模型</td><td>这题属于哪一类？求解析式→待定系数；求交点→联立方程；求最值→顶点或区间端点；比大小→图象高低。</td></tr>
+    <tr><td>④ 定步骤</td><td>把大目标拆成 3～5 个小步，每步写清"用什么、得什么"，再动笔算。</td></tr>
+    <tr><td>⑤ 检验</td><td>代回原式；看范围与端点是否取到；看单位与正负是否合理；含参题检验是否满足前提（Δ&gt;0、k≠0）。</td></tr>
+  </table>
+  <p style="margin-top:5mm;font-size:10.5pt">卡住时先问三句：这题给的条件都翻译完没有？图长什么样？我现在要找的中间量是什么？</p>
+</div>
+
+<script>
+/* =========================================================
+   五步训练器 · 数据层
+   维度：trans 读条件 / graph 画图像 / model 选模型 / plan 定步骤 / check 检验
+   ========================================================= */
+var DIMS = [
+  {key:'trans', short:'读条件', name:'条件翻译', tip:'把每句话变成一个能用的数学条件'},
+  {key:'graph', short:'画图像', name:'图形表征', tip:'画草图，让“变化”看得见'},
+  {key:'model', short:'选模型', name:'方法检索', tip:'判断这是哪一类问题，第一反应是什么'},
+  {key:'plan',  short:'定步骤', name:'拆解规划', tip:'把大目标拆成有序的小步'},
+  {key:'check', short:'检验',   name:'回头验证', tip:'回代、看范围、看单位'}
+];
+var DIMNAME = {trans:'条件翻译', graph:'图形表征', model:'方法检索', plan:'拆解规划', check:'回头验证', repr:'四种表示转换'};
+
+var RX = {
+  trans:{title:'你的断点在第 1 步：题读得懂，但条件没翻译成式子', acts:[
+    '做题前先画三栏：题目原话｜翻译成的数学式子｜这条用在哪一步。填不满三栏就先别算。',
+    '每句话后面问一句：这句话给我的是等式、不等式，还是一个取值范围？',
+    '攒一张“…→数学语言”对照表：图象经过某点→坐标满足解析式；与 x 轴交点→令 y=0；两图象交点→联立方程；k>0→图象在一、三象限。'
+  ]},
+  graph:{title:'你的断点在第 2 步：脑子里没有图，只能硬算', acts:[
+    '每题动笔前先画草图（不用准）：标开口方向或 k 的正负、与两轴的交点、对称轴、顶点、边界范围。',
+    '拿 5 道做过的题，只做“画图”这一步，不许求解——把画图练成条件反射。',
+    '做工具里的“四种表示转换”闪练，重点练 式→图、图→式、表→式。'
+  ]},
+  model:{title:'你的断点在第 3 步：不知道该用哪个方法', acts:[
+    '做“入口卡片”：看到求解析式→待定系数；看到交点/根→判别式与韦达；看到最值→顶点或区间端点；看到比大小→看图高低；看到平移→上加下减动 b、左加右减动 x。',
+    '每做完一题，在题号旁写一行“这题的入口是哪句话”，只写一句。',
+    '同一母题连做 2 个变式，但只找入口、不动笔算。'
+  ]},
+  plan:{title:'你的断点在第 4 步：会想不会落笔，写着写着就乱了', acts:[
+    '落笔前用 30 秒写步骤提纲（3～5 行），再开始算。提纲错了，计算再准也没用。',
+    '看解析时先遮住答案，只找“第几步是关键转折”，把它圈出来。',
+    '卡住时先写一句话：“我现在要找的中间量是什么”，把目标写下来再动笔。'
+  ]},
+  check:{title:'你的断点在第 5 步：算完就走，错误没人拦', acts:[
+    '每题结束做三检：代回原式、看范围与端点、看单位与正负。',
+    '含参题必须检验前提：Δ>0、k≠0、m 的取值范围、x 是否在区间内。',
+    '养成“特殊值验算”：x=0、x=1 代进去看一眼，比重新算一遍快得多。'
+  ]},
+  repr:{title:'四种表示之间的转换还不熟', acts:[
+    '每天 5 分钟闪练：给式子选图、给图写式子、给表格判类型。',
+    '记牢三句：k 定走向、b 定 y 轴截距、|k| 定离轴远近；反比例看象限定符号；二次看对称轴定 b。',
+    '转换时嘴里念出来：“这个式子的图象是……，因为 k 是正的。”'
+  ]}
+};
+
+var BANK = [
+/* ---------------- 1 一次函数 · 待定系数 ---------------- */
+{
+  id:'q1', topic:'一次函数', method:'待定系数法', title:'由两点求一次函数解析式',
+  stem:'已知一次函数 y = kx + b 的图象经过 A(-1, 3)、B(2, 0) 两点。\n(1) 求这个一次函数的解析式；\n(2) 判断点 C(4, -2) 是否在这个函数的图象上。',
+  graph:{rev:99, f:function(x){return -x+2;}, marks:[{x:-1,y:3,l:'A'},{x:2,y:0,l:'B'},{x:4,y:-2,l:'C'}]},
+  steps:[
+    {dim:'trans', type:'multi',
+     ask:'下面哪些是“能直接变成式子”的条件？把该用的都选出来。',
+     opts:[
+       {t:'图象经过 A(-1, 3)', ok:true, why:'代入就得到一个方程：-k + b = 3。'},
+       {t:'图象经过 B(2, 0)', ok:true, why:'代入得到第二个方程：2k + b = 0。'},
+       {t:'它是一次函数，形如 y = kx + b', ok:true, why:'隐含 k ≠ 0，图象是一条直线。'},
+       {t:'要判断点 C(4, -2) 在不在图象上', ok:true, why:'所求：把 x = 4 代进去，看算出来是不是 -2。'},
+       {t:'x 是自变量，所以 x 一定大于 0', ok:false, why:'一次函数的自变量 x 可以取任意实数，题目没有这个限制——别自己加条件。'}
+     ],
+     hint:['一句话一句话读，每句话问自己：它给了我一个什么式子？',
+           '“经过某点”= 这个点的坐标满足解析式；“判断某点在不在图象上”= 把横坐标代进去，看纵坐标对不对。',
+           '“经过 A”“经过 B”“是一次函数 y = kx + b”三条都能直接变成式子，分别给出 -k+b=3、2k+b=0 和 k≠0。'],
+     explain:'能变成式子的条件才是“可用条件”。读题时给每句话标一个符号：=、≠、>、<，或者“无”。'},
+    {dim:'graph', type:'img',
+     ask:'把 A(-1, 3)、B(2, 0) 画到坐标系里，哪一幅标对了？',
+     opts:[
+       {ok:true, plot:{marks:[{x:-1,y:3,l:'A'},{x:2,y:0,l:'B'}]}, why:'A 在第二象限（横 -1、纵 3），B 在 x 轴上（2, 0）。'},
+       {ok:false, plot:{marks:[{x:1,y:3,l:'A'},{x:-2,y:0,l:'B'}]}, why:'横坐标的符号反了：A 的横坐标是 -1，不是 1。'},
+       {ok:false, plot:{marks:[{x:-1,y:-3,l:'A'},{x:2,y:0,l:'B'}]}, why:'纵坐标的符号错了：A 的纵坐标是 3，不是 -3。'},
+       {ok:false, plot:{marks:[{x:3,y:-1,l:'A'},{x:0,y:2,l:'B'}]}, why:'这是把横、纵坐标写反了。坐标 (x, y) 里，前一个是横坐标。'}
+     ],
+     hint:['画点的口诀：先沿 x 轴走横坐标，再竖直走纵坐标。',
+           'A(-1, 3)：横坐标 -1 在 y 轴左边，纵坐标 3 在 x 轴上方，所以 A 在第二象限。',
+           'B(2, 0) 纵坐标是 0，所以它一定落在 x 轴上，位置在原点右边 2 格。'],
+     explain:'画点错，后面全错。这个动作要练到不用想：先横后竖。'},
+    {dim:'model', type:'choice',
+     ask:'要求出 y = kx + b 里的 k 和 b，最直接的模型是？',
+     opts:[
+       {t:'设 y = kx + b，把两点分别代入，解关于 k、b 的方程组', ok:true, why:'两个未知数两个方程，正好解出来。'},
+       {t:'看 k 的正负，用增减性判断', ok:false, why:'增减性只能比较大小，给不出具体的数值。'},
+       {t:'把两点画出来，用尺子量斜率', ok:false, why:'图象是为了看懂关系，不是用来量数据；描点法只能得到近似值。'},
+       {t:'用勾股定理求 A、B 的距离，再求 k', ok:false, why:'距离和 k 没有关系。k 是“纵坐标的变化量 ÷ 横坐标的变化量”。'}
+     ],
+     hint:['题目里有“待定”的字母 k、b，要求它们——这叫“待定系数”。',
+           '两点坐标能变成两个方程，两个方程能解两个未知数。',
+           '固定动作：设 → 代 → 解 → 写。这四步是“求解析式”类题目的万能入口。'],
+     explain:'“求解析式”四个字 = 待定系数法。这是初中最值钱的一个模型。'},
+    {dim:'plan', type:'order',
+     items:['设 y = kx + b（k ≠ 0）',
+            '把 A(-1, 3) 代入：-k + b = 3',
+            '把 B(2, 0) 代入：2k + b = 0',
+            '解方程组，得 k = -1、b = 2',
+            '写出解析式 y = -x + 2'],
+     disp:[3,0,4,1,2],
+     ask:'把解题步骤排成正确顺序（点一下加进来，再点一下去掉）',
+     hint:['先看看：哪一步必须先有未知数，才能“代入”？',
+           '两个点要各代一次，才能得到两个方程；两个方程才解得出一对数。',
+           '顺序：设式子 → A 代入 → B 代入 → 解方程组 → 写答案。'],
+     explain:'流程题不是背答案，是背顺序。顺序错了，后面全乱。'},
+    {dim:'check', type:'choice',
+     ask:'算出 y = -x + 2 之后，怎么用最少的力气确认它没错？',
+     opts:[
+       {t:'把 A、B 两点的坐标分别代回 y = -x + 2，看是不是都成立', ok:true, why:'两秒钟就能验完，而且换了一条路径（从式子回到点）。'},
+       {t:'从第一步开始再算一遍', ok:false, why:'重走同一条路，错了还会再错一次，而且费时间。'},
+       {t:'看 k 是不是整数，是整数就对了', ok:false, why:'k、b 完全可以是分数，整数不是判据。'},
+       {t:'检查图象画得直不直', ok:false, why:'图象只是示意图，画得直不直不说明式子对不对。'}
+     ],
+     hint:['检验的原则：换一条路径，不要重复刚才的算法。',
+           '你从“点”算出了“式子”，那就从“式子”回到“点”验一次。',
+           '把 A(-1, 3) 代进去：y = 1 + 2 = 3，对上了。'],
+     explain:'检验要换路径：式子 → 点。代回原来给的点，两秒验完。'},
+  ],
+  final:{
+    prompt:'现在自己落笔，把答案写出来。',
+    fields:[
+      {type:'coef', label:'(1) 一次函数的解析式', tpl:'y = {0}x + {1}', ans:[-1,2]},
+      {type:'choice', label:'(2) 点 C(4, -2)', options:['在图象上','不在图象上'], ans:0}
+    ],
+    solution:[
+      '① 设：设 y = kx + b（k ≠ 0）。',
+      '② 代：A(-1, 3) 代入得 -k + b = 3；B(2, 0) 代入得 2k + b = 0。',
+      '③ 解：两式相减得 -3k = 3，所以 k = -1，再代回得 b = 2。',
+      '④ 写：y = -x + 2。',
+      '⑤ 检：把 C(4, -2) 的横坐标代入，y = -4 + 2 = -2，与纵坐标相同，所以点 C 在图象上。'
+    ],
+    key:'解析式一定，整条直线就定了。以后凡是“求解析式”，都走 设→代→解→写。'
+  },
+  variants:[
+    {label:'变式 1', change:'“经过 A(-1,3)、B(2,0)” 改成 “与 x 轴交于 (2,0)、与 y 轴交于 (0,2)”',
+     same:'还是求一次函数解析式，还是待定系数法',
+     stem:'已知一次函数的图象与 x 轴交于点 (2, 0)，与 y 轴交于点 (0, 2)，求它的解析式。',
+     answer:'y = -x + 2。与 y 轴的交点直接给出 b = 2，再代入 (2,0) 得 k = -1。',
+     note:'条件从“两点”变成“两个截距”，设→代→解→写 一步都没变。'},
+    {label:'变式 2', change:'把“判断点 C 在不在”换成“已知点 C(4, t) 在图象上，求 t”',
+     same:'“点在图象上”= 坐标满足解析式，正着用是检验，反着用是求值',
+     stem:'已知一次函数 y = -x + 2 的图象经过点 C(4, t)，求 t 的值。',
+     answer:'t = -2。',
+     note:'同一句话能正用也能反用，这就是“举一反三”的实质。'}
+  ]
+},
+
+/* ---------------- 2 一次函数 · 图象与平移 ---------------- */
+{
+  id:'q2', topic:'一次函数', method:'图象与平移', title:'一次函数的象限、点、平移',
+  stem:'已知直线 l 是一次函数 y = 2x - 3 的图象。\n(1) 直线 l 经过哪几个象限？\n(2) 若点 P(m, 5) 在直线 l 上，求 m 的值；\n(3) 将直线 l 向上平移 4 个单位长度，求平移后直线的解析式。',
+  graph:{rev:99},
+  steps:[
+    {dim:'trans', type:'multi',
+     ask:'从 y = 2x - 3 这个式子里，你能直接读出哪些信息？',
+     opts:[
+       {t:'k = 2 > 0，图象从左到右上升', ok:true, why:'k 的正负决定走向：k>0 上升，k<0 下降。'},
+       {t:'b = -3 < 0，与 y 轴交于 (0, -3)', ok:true, why:'x = 0 时 y = b。'},
+       {t:'与 x 轴交于 (1.5, 0)', ok:true, why:'令 y = 0：2x - 3 = 0，x = 1.5。'},
+       {t:'图象不经过第二象限', ok:true, why:'k>0、b<0，直线过一、三、四象限。'},
+       {t:'向上平移 4 个单位，就是把 x 加上 4', ok:false, why:'上下平移改变的是“整个图象的高度”，动的是 y（也就是 b）；左右平移才动 x。'}
+     ],
+     hint:['一个 y = kx + b 里，k 管走向、b 管它跟 y 轴的交点，还能算出跟 x 轴的交点。',
+           '把 x = 0 代进去得到 y 轴交点；把 y = 0 代进去得到 x 轴交点。',
+           'k = 2 > 0 上升；b = -3 所以交 y 轴于 (0, -3)；再和 x 轴交于 (1.5, 0)，画出来就知道过一、三、四象限。'],
+     explain:'做题前先把解析式“榨干”：k、b、两个截距，四个信息一个别漏。'},
+    {dim:'graph', type:'img',
+     ask:'下面哪一幅是 y = 2x - 3 的图象？',
+     opts:[
+       {ok:true, plot:{f:function(x){return 2*x-3;}}, why:'k = 2 上升、b = -3 交 y 轴负半轴，两个特征都对。'},
+       {ok:false, plot:{f:function(x){return 2*x+3;}}, why:'截距看错了：b = -3，直线应交 y 轴于负半轴。'},
+       {ok:false, plot:{f:function(x){return -2*x-3;}}, why:'k 的符号看错：k = 2 > 0，直线从左到右应该上升。'},
+       {ok:false, plot:{f:function(x){return 0.5*x-3;}}, why:'斜率不对：k = 2 表示“向右 1 格、向上 2 格”，这幅图太平。'}
+     ],
+     hint:['先定两件事：往哪走（k 的正负）、从哪儿出发（b 的正负）。',
+           'k = 2 > 0 上升，b = -3 < 0 交 y 轴于负半轴。',
+           '上升 + 交负半轴，只有一幅图同时满足。'],
+     explain:'读图象先抓两个特征：走向和 y 轴截距。90% 的图象选择题靠这两点就能排除三个。'},
+    {dim:'model', type:'choice',
+     ask:'求“向上平移 4 个单位后的解析式”，用哪个模型最快？',
+     opts:[
+       {t:'上下平移只改 b：上加下减，k 不变，得 y = 2x + 1', ok:true, why:'每个点的纵坐标都加 4，所以 b 从 -3 变 1，k 不变。'},
+       {t:'平移后 k 变成 2 + 4 = 6', ok:false, why:'平移不改变倾斜程度，k 不变。'},
+       {t:'重新找两个点，再用待定系数法', ok:false, why:'能做，但要先算出平移后的两个点，绕远了；理解平移规律更快。'},
+       {t:'把式子里的 x 换成 x + 4', ok:false, why:'“x 加 4”是向左平移 4 个单位，方向反了。'}
+     ],
+     hint:['平移后，图象上每个点怎么动？想一个具体的点试试。',
+           '取 (0, -3)，向上 4 格变成 (0, 1)——所以新直线交 y 轴于 (0, 1)。',
+           'k 没变、b 变 1：y = 2x + 1。口诀：上加下减动 b，左加右减动 x。'],
+     explain:'口诀要懂“为什么”再用：上下平移，每个点的纵坐标都变，所以只有 b 变。'},
+    {dim:'plan', type:'order',
+     items:['从式子读出 k = 2、b = -3：直线上升，交 y 轴于 (0, -3)',
+            '画草图，标出与 x 轴的交点 (1.5, 0)',
+            '由图判断象限：一、三、四',
+            '把 y = 5 代入得 2m - 3 = 5，解得 m = 4',
+            '平移：向上 4 个单位，b 由 -3 变 1，得 y = 2x + 1'],
+     disp:[1,0,4,2,3],
+     ask:'把解题步骤排成正确顺序（点一下加进来，再点一下去掉）',
+     hint:['三个小问，先用哪一条信息把它们串起来？',
+           '先读懂式子里的 k、b，再画草图，图一出来象限就定了。',
+           '顺序：读 k、b → 画草图 → 判象限 → 代点求 m → 用平移规律得新式子。'],
+     explain:'一个解析式能问三件事：位置（象限）、点（代入）、变形（平移）。三件事共用同一张草图。'},
+    {dim:'check', type:'choice',
+     ask:'为什么向上平移 4 个单位，b 就从 -3 变成 1？',
+     opts:[
+       {t:'因为每个点的纵坐标都加了 4：原来 x = 0 时 y = -3，现在变成 1', ok:true, why:'一句话解释清楚了，也顺便检验了平移结果。'},
+       {t:'因为 k 也加了 4', ok:false, why:'k 没变，斜率还是 2，直线还是那么陡。'},
+       {t:'因为是向上，所以 b 变小', ok:false, why:'向上是“加”，b 变大。'},
+       {t:'因为平移后直线过原点了', ok:false, why:'平移后交 y 轴于 (0, 1)，并不过原点。'}
+     ],
+     hint:['拿直线上一个具体的点试一试，看它平移到哪儿。',
+           '取 x = 0 的那个点 (0, -3)，向上 4 格后变成 (0, 1)。',
+           'b 就是 x = 0 时的函数值，它从 -3 变 1，所以新式子是 y = 2x + 1。'],
+     explain:'检验平移：取 x = 0 看函数值怎么变，再取 x = 1 确认斜率没变。'}
+  ],
+  final:{
+    prompt:'落笔写答案。',
+    fields:[
+      {type:'choice', label:'(1) 直线 l 经过的象限', options:['一、二、三','一、三、四','二、三、四','一、二、四'], ans:1},
+      {type:'num', label:'(2) m =', ans:4},
+      {type:'coef', label:'(3) 平移后的解析式', tpl:'y = {0}x + {1}', ans:[2,1]}
+    ],
+    solution:[
+      '① k = 2 > 0，直线上升；b = -3 < 0，交 y 轴于 (0, -3)，与 x 轴交于 (1.5, 0)，所以过一、三、四象限。',
+      '② 点 P(m, 5) 在直线上：2m - 3 = 5，得 m = 4。',
+      '③ 向上平移 4 个单位，b 由 -3 变 1，得 y = 2x + 1。'
+    ],
+    key:'k 定走向、b 定高度。掌握这两句，一次函数的图象题不用背口诀。'
+  },
+  variants:[
+    {label:'变式 1', change:'“向上平移 4” 改成 “向下平移 3”',
+     same:'上加下减，k 始终不变',
+     stem:'将 y = 2x - 3 的图象向下平移 3 个单位长度，求新直线的解析式。',
+     answer:'y = 2x - 6。',
+     note:'注意：只有一个字母在动，就是 b。'},
+    {label:'变式 2', change:'把“点 P(m, 5)” 改成 “点 P(1, n)”',
+     same:'点在图象上 = 代入成立，未知数换了个位置而已',
+     stem:'若点 P(1, n) 在直线 y = 2x - 3 上，求 n 的值。',
+     answer:'n = -1。',
+     note:'“代进去算”这一个动作，能解决一大类题。'}
+  ]
+},
+
+/* ---------------- 3 反比例函数 · |k| 的几何意义 ---------------- */
+{
+  id:'q3', topic:'反比例函数', method:'k 的几何意义', title:'矩形面积求 k',
+  stem:'如图，点 P 是反比例函数 y = k/x（k > 0）图象上的一点，过点 P 分别作 x 轴、y 轴的垂线，垂足为 A、B，矩形 OAPB 的面积为 6。\n求 k 的值。',
+  graph:{rev:1, f:function(x){return 6/x;}, rects:[{x:2,y:3}], marks:[{x:2,y:3,l:'P'},{x:2,y:0,l:'A'},{x:0,y:3,l:'B'}],
+         x0:-7,x1:7,y0:-7,y1:7,sx:1,sy:1,w:340,h:270},
+  steps:[
+    {dim:'trans', type:'multi',
+     ask:'“矩形 OAPB 的面积为 6”可以翻译成哪些式子？',
+     opts:[
+       {t:'矩形的长是 |x|、宽是 |y|（用 P 的坐标表示）', ok:true, why:'P 到两轴的距离就是横、纵坐标的绝对值。'},
+       {t:'面积 = |x| · |y| = 6', ok:true, why:'长乘宽。'},
+       {t:'因为 P 在 y = k/x 上，所以 xy = k', ok:true, why:'把 y = k/x 两边乘 x 就得到。'},
+       {t:'所以 |k| = 6', ok:true, why:'面积 = |xy| = |k|。'},
+       {t:'所以 k 一定等于 6', ok:false, why:'只能得到 |k| = 6；还要靠 k > 0 才能确定 k = 6。绝对值这一步不能省。'}
+     ],
+     hint:['矩形是斜着放的，它的两条边分别是什么？',
+           'P(x, y) 到 x 轴的距离是 |y|，到 y 轴的距离是 |x|，所以面积是 |xy|。',
+           '而 y = k/x 等价于 xy = k，所以矩形面积 = |k|。题目说面积 6，得 |k| = 6。'],
+     explain:'“面积 + 双曲线”第一反应就是 |k| 的几何意义：矩形面积 = |k|。'},
+    {dim:'graph', type:'img',
+     ask:'哪一幅图符合题意（P 在第一象限，矩形面积为 6）？',
+     opts:[
+       {ok:true, plot:{f:function(x){return 6/x;}, rects:[{x:2,y:3}], marks:[{x:2,y:3,l:'P'}],
+                        x0:-7,x1:7,y0:-7,y1:7,sx:1,sy:1,w:300,h:240},
+        why:'k = 6，矩形 2×3 = 6，全对。'},
+       {ok:false, plot:{f:function(x){return 3/x;}, rects:[{x:1,y:3}], marks:[{x:1,y:3,l:'P'}],
+                        x0:-7,x1:7,y0:-7,y1:7,sx:1,sy:1,w:300,h:240},
+        why:'面积只有 3，不是 6。'},
+       {ok:false, plot:{f:function(x){return 12/x;}, rects:[{x:2,y:6}], marks:[{x:2,y:6,l:'P'}],
+                        x0:-7,x1:7,y0:-7,y1:7,sx:1,sy:1,w:300,h:240},
+        why:'面积是 12，比 6 大一倍。'},
+       {ok:false, plot:{f:function(x){return -6/x;}, rects:[{x:2,y:-3}], marks:[{x:2,y:-3,l:'P'}],
+                        x0:-7,x1:7,y0:-7,y1:7,sx:1,sy:1,w:300,h:240},
+        why:'k < 0 时图象在二、四象限，与题目 k > 0 矛盾。'}
+     ],
+     hint:['先定象限：k > 0 的双曲线在哪两个象限？',
+           'k > 0，图象在第一、三象限，所以 P 在第一象限。',
+           '再看面积：矩形 2×3 就是 6，所以 P 可以取 (2, 3)。'],
+     explain:'反比例函数的图只有两个“参数”：k 的符号（定象限）、|k|（定离轴远近）。'},
+    {dim:'model', type:'choice',
+     ask:'求 k 的值，最快的模型是？',
+     opts:[
+       {t:'用 |k| 的几何意义：矩形面积 = |k|，再由 k > 0 定符号', ok:true, why:'一步到位，还顺带用上了 k > 0。'},
+       {t:'设 P(a, b)，代入解析式硬求 a、b', ok:false, why:'两个未知数只有一个方程，解不出具体 a、b，而且没必要。'},
+       {t:'用两点求一次函数的方法', ok:false, why:'这是反比例函数，不是直线。'},
+       {t:'用勾股定理求 OP 的长', ok:false, why:'OP 的长度和矩形面积没有直接关系。'}
+     ],
+     hint:['先问：题目里哪个量能直接和 k 挂钩？',
+           '双曲线有一个“专属捷径”：从图象上任一点向两轴作垂线，围成的矩形面积恒等于 |k|。',
+           '面积 6 = |k|，再由 k > 0 得 k = 6。'],
+     explain:'反比例函数的两条捷径：|k| = 矩形面积；k 的符号 = 所在象限。'},
+    {dim:'plan', type:'order',
+     items:['设 P(x, y)，则 PA = |y|，PB = |x|',
+            '矩形面积 = |x| · |y| = |xy|',
+            '因为 P 在 y = k/x 上，所以 xy = k',
+            '得到 |k| = 6',
+            '由 k > 0 得 k = 6'],
+     disp:[1,0,3,2,4],
+     ask:'把推理步骤排成正确顺序（点一下加进来，再点一下去掉）',
+     hint:['几何量 → 坐标 → 解析式，这条链子的顺序不能乱。',
+           '先把矩形的边用坐标表示，才能写出面积。',
+           '顺序：设坐标 → 表示面积 → 用 xy = k 替换 → 得 |k| → 用 k>0 定符号。'],
+     explain:'几何量 → 坐标 → 解析式，这条翻译链是反比例函数题的通用路线。'},
+    {dim:'check', type:'choice',
+     ask:'为什么最后只能写 k = 6，不能写 k = ±6？',
+     opts:[
+       {t:'面积只能得到 |k| = 6，题目又给了 k > 0，所以取 6', ok:true, why:'要找“符号由谁决定”。'},
+       {t:'因为 k 一定是正数', ok:false, why:'k 可以是负数，只是本题图象在一、三象限才取正。'},
+       {t:'因为面积不能是负数，所以 k 不能是负数', ok:false, why:'面积推不出 k 的正负：k < 0 时矩形面积仍然是 6。'},
+       {t:'因为 y = k/x 中 k 必须大于 0', ok:false, why:'k < 0 时图象在二、四象限，函数照样存在。'}
+     ],
+     hint:['哪一步出现了绝对值？绝对值丢掉了什么信息？',
+           '|xy| = 6 只说明距离是 6，没说明在哪两个象限。',
+           '象限由 k 的符号决定，题目已经给了 k > 0，所以取正。'],
+     explain:'凡是有绝对值的地方，都要回头找“符号由谁决定”。'}
+  ],
+  final:{
+    prompt:'落笔写答案。',
+    fields:[{type:'num', label:'k =', ans:6}],
+    solution:[
+      '设 P(x, y)，则 PA = |y|，PB = |x|，矩形 OAPB 的面积 = |x|·|y| = |xy|。',
+      '因为 P 在 y = k/x 上，所以 xy = k，于是面积 = |k|。',
+      '由面积 = 6 得 |k| = 6；又 k > 0，所以 k = 6。'
+    ],
+    key:'从图象上一点向两轴作垂线围成的矩形面积恒等于 |k|——这个结论要能自己推一遍，而不是背。'
+  },
+  variants:[
+    {label:'变式 1', change:'面积 6 改成 3，并且图象在第二、四象限',
+     same:'还是 |k| = 面积，还是先绝对值、再定符号',
+     stem:'点 P 在反比例函数 y = k/x 的图象上（图象在第二、四象限），过 P 向两轴作垂线，矩形面积为 3，求 k。',
+     answer:'k = -3。',
+     note:'同一句结论，符号一变答案就变——这就是含绝对值的地方必须检查的地方。'},
+    {label:'变式 2', change:'“矩形”改成“△OAP”（只连一条垂线）',
+     same:'还是 |k| 的几何意义，只是面积成了矩形的一半',
+     stem:'点 P 在 y = k/x（k > 0）上，PA ⊥ x 轴于 A，若 △OAP 的面积为 6，求 k。',
+     answer:'k = 12。三角形面积 = |k|/2 = 6。',
+     note:'图形一变，面积和 |k| 的倍数关系就变；记住来源，不怕变形。'}
+  ]
+},
+
+/* ---------------- 4 一次函数与反比例函数 · 交点与不等式 ---------------- */
+{
+  id:'q4', topic:'函数综合', method:'图象法解不等式', title:'交点、不等式解集与面积',
+  stem:'如图，一次函数 y = -x + 5 的图象与反比例函数 y = 6/x 的图象交于 A(2, 3)、B(3, 2) 两点。\n(1) 求不等式 -x + 5 > 6/x 的解集；\n(2) 求 △AOB 的面积（O 为坐标原点）。',
+  graph:{rev:1, f:function(x){return -x+5;}, f2:function(x){return 6/x;},
+         marks:[{x:2,y:3,l:'A'},{x:3,y:2,l:'B'}],
+         x0:-7,x1:8,y0:-7,y1:8,sx:2,sy:2,w:340,h:280},
+  steps:[
+    {dim:'trans', type:'multi',
+     ask:'要求 -x + 5 > 6/x 的解集，先要知道哪些事？',
+     opts:[
+       {t:'这条不等式就是“直线的 y 大于双曲线的 y”', ok:true, why:'把两边都看成函数值，就能用图象比高低。'},
+       {t:'双曲线有两支，x > 0 和 x < 0 要分开看', ok:true, why:'这是这类题最容易漏的地方。'},
+       {t:'先要求出两个图象的交点坐标', ok:true, why:'交点是“谁在上谁在下”的分界点。'},
+       {t:'A(2, 3)、B(3, 2) 的横坐标 2 和 3 是分界点', ok:true, why:'在它们之间和之外，高低关系相反。'},
+       {t:'不等式没有等号，所以解集里不能取 2 和 3', ok:true, why:'端点处两图象相等，不满足“大于”。'},
+       {t:'x 一定在 2 和 3 之间', ok:false, why:'漏了 x < 0 那一支：那里直线在上方，也满足不等式。'}
+     ],
+     hint:['不等式两边正好是两个函数，比大小 = 看图谁高。',
+           '双曲线被 y 轴分成两支，两支要分别判断。',
+           '在 2 与 3 之间直线在上方；而 x < 0 时直线为正、双曲线为负，直线也在上方。'],
+     explain:'凡是不等式两边都是函数，第一反应就是“图象法”，而不是解不等式。'},
+    {dim:'graph', type:'img',
+     ask:'哪一幅图正确画出了两个函数的图象并标对了交点？',
+     opts:[
+       {ok:true, plot:{f:function(x){return -x+5;}, f2:function(x){return 6/x;},
+                        marks:[{x:2,y:3,l:'A'},{x:3,y:2,l:'B'}],
+                        x0:-7,x1:8,y0:-7,y1:8,sx:2,sy:2,w:300,h:240}, why:'两支双曲线、直线上升下降方向、交点位置都对。'},
+       {ok:false, plot:{f:function(x){return -x+5;}, f2:function(x){return -6/x;},
+                        marks:[{x:2,y:3,l:'A'},{x:3,y:2,l:'B'}],
+                        x0:-7,x1:8,y0:-7,y1:8,sx:2,sy:2,w:300,h:240}, why:'双曲线画到二、四象限去了——6/x 的 k > 0，应在第一、三象限。'},
+       {ok:false, plot:{f:function(x){return x-5;}, f2:function(x){return 6/x;},
+                        marks:[{x:2,y:3,l:'A'},{x:3,y:2,l:'B'}],
+                        x0:-7,x1:8,y0:-7,y1:8,sx:2,sy:2,w:300,h:240}, why:'直线方向错了：y = -x + 5 的 k = -1，应该下降。'},
+       {ok:false, plot:{f:function(x){return -x+5;}, f2:function(x){return 6/x;},
+                        marks:[{x:-2,y:3,l:'A'},{x:-3,y:2,l:'B'}],
+                        x0:-7,x1:8,y0:-7,y1:8,sx:2,sy:2,w:300,h:240}, why:'交点标错位置了：A、B 在第一象限，横坐标是正的 2 和 3。'}
+     ],
+     hint:['先定每一段图象的“身份”：直线的 k 是负的，双曲线的 k 是正的。',
+           'k = -1 的直线下降；k = 6 > 0 的双曲线在第一、三象限。',
+           '交点 A(2,3)、B(3,2) 都在第一象限，所以标的点必须都在第一象限。'],
+     explain:'同一张图上画两个函数，先各自定“身份”（走向、象限），再找它们的公共点。'},
+    {dim:'model', type:'choice',
+     ask:'求这个不等式的解集，最稳妥的方法是？',
+     opts:[
+       {t:'图象法：看直线在双曲线上方时的 x 范围，分两支写', ok:true, why:'不会漏、不会错符号。'},
+       {t:'两边同乘 x，化成整式不等式直接解', ok:false, why:'x 可能是负数，乘 x 要变号，必须分类讨论，特别容易漏。'},
+       {t:'把 A、B 两点代入不等式检验', ok:false, why:'只能检验个别数值，求不出整个解集。'},
+       {t:'用一次函数的增减性判断', ok:false, why:'两个函数增减性不同，没法直接比。'}
+     ],
+     hint:['想想代数解法会踩哪个坑：不等式两边乘同一个数，什么时候要变号？',
+           'x 的正负不知道，所以“两边乘 x”这件事本身就不安全。',
+           '图象法的优点：谁在上方一目了然，两支分开看就不漏。'],
+     explain:'含分式的不等式，图象法最快最稳；真要代数解，必须分 x > 0、x < 0 讨论。'},
+    {dim:'plan', type:'order',
+     items:['联立 y = -x + 5 与 y = 6/x，解得 A(2, 3)、B(3, 2)',
+            '画出两支双曲线与直线，标出交点',
+            'x > 0 时：在 A、B 之间，直线在上方，得 2 < x < 3',
+            'x < 0 时：直线为正、双曲线为负，直线在上方，得 x < 0',
+            '合并写解集：x < 0 或 2 < x < 3'],
+     disp:[1,3,0,4,2],
+     ask:'把解题步骤排成正确顺序（点一下加进来，再点一下去掉）',
+     hint:['先有图还是先有交点？想想哪个更能帮你判断高低。',
+           '交点是分界，没有交点就不知道从哪儿开始分。',
+           '顺序：求交点 → 画图标点 → 分两支判高低 → 合并写解集。'],
+     explain:'“分两支”是这类题的命门：双曲线不是一条连续的线，不能一口气比完。'},
+    {dim:'check', type:'choice',
+     ask:'写完“x < 0 或 2 < x < 3”，怎么检验最有效？',
+     opts:[
+       {t:'每一段各取一个数代进去：x = -1 和 x = 2.5 应成立，x = 1 和 x = 4 应不成立', ok:true, why:'每段都验，还验了“不该成立”的区间。'},
+       {t:'把端点 2、3 代进去看是否相等', ok:false, why:'端点处相等只能说明分界对，检验不了区间内部。'},
+       {t:'只检验 x = 2.5', ok:false, why:'只验了一段，另一段可能写错。'},
+       {t:'检查不等号有没有写反', ok:false, why:'那只是检查书写，不检查结论。'}
+     ],
+     hint:['解集是“分段”的，每一段都要各自验一个数。',
+           '还要找几个“不该成立”的点，看它们确实不成立。',
+           'x = -1：左边 6、右边 -6，成立；x = 2.5：2.5 > 2.4，成立；x = 1：4 < 6，不成立；x = 4：1 < 1.5，不成立。全对。'],
+     explain:'分段结论，每段取点检验，再验一个“不该成立”的点，才算真检完。'}
+  ],
+  final:{
+    prompt:'落笔写答案。',
+    fields:[
+      {type:'choice', label:'(1) 不等式的解集', options:['2 < x < 3','x < 0 或 2 < x < 3','x < 0','0 < x < 2 或 x > 3'], ans:1},
+      {type:'coef', label:'(2) △AOB 的面积', tpl:'S = {0}', ans:[2.5]}
+    ],
+    solution:[
+      '① 联立 -x + 5 = 6/x，得 x² - 5x + 6 = 0，x = 2 或 3，所以 A(2,3)、B(3,2)。',
+      '② 直线与 y 轴交于 C(0, 5)，OC = 5。',
+      '   S△AOB = S△BOC - S△AOC = ½×5×3 - ½×5×2 = 2.5。',
+      '③ 不等式：x > 0 时在 A、B 之间直线在上，得 2 < x < 3；x < 0 时直线在上，得 x < 0。',
+      '   所以解集是 x < 0 或 2 < x < 3。'
+    ],
+    key:'两个图象比大小，先求交点，再分区间看高低，最后合并——这套动作在二次函数与一次函数比较时同样能用。'
+  },
+  variants:[
+    {label:'变式 1', change:'不等号方向改成 -x + 5 < 6/x',
+     same:'还是分两支看图，只是高低关系反过来',
+     stem:'其他条件不变，求不等式 -x + 5 < 6/x 的解集。',
+     answer:'0 < x < 2 或 x > 3。',
+     note:'符号一反过来，答案就是原来答案的“补集”（在定义域内）。'},
+    {label:'变式 2', change:'把“求面积”改成“求线段 AB 的长”',
+     same:'还是先求交点，再用坐标算距离',
+     stem:'其他条件不变，求线段 AB 的长度。',
+     answer:'AB = √[(3-2)² + (2-3)²] = √2。',
+     note:'交点坐标一旦求出，后面求长度、求面积都是“用坐标算”。'}
+  ]
+},
+
+/* ---------------- 5 二次函数 · 实际最值 ---------------- */
+{
+  id:'q5', topic:'二次函数', method:'实际应用最值', title:'利润最大问题',
+  stem:'某商店销售一种学习用品，进价 40 元/件。经调查，当售价为 x 元/件时，每天可卖出 (60 - x) 件（40 ≤ x ≤ 60）。\n(1) 写出每天利润 w（元）与售价 x（元/件）之间的函数关系式；\n(2) 售价定为多少时，每天利润最大？最大利润是多少？',
+  graph:{rev:99, f:function(x){return -(x-50)*(x-50)+100;},
+         marks:[{x:50,y:100,l:'顶点(50,100)'}],
+         x0:35,x1:65,y0:-15,y1:115,sx:10,sy:50,w:340,h:260},
+  steps:[
+    {dim:'trans', type:'multi',
+     ask:'把题里的条件逐条翻译，哪些是对的？',
+     opts:[
+       {t:'每件利润 = 售价 - 进价 = x - 40', ok:true, why:'先算单件的。'},
+       {t:'每天利润 = 每件利润 × 每天卖出的件数', ok:true, why:'利润的总量模型。'},
+       {t:'w = (x - 40)(60 - x)', ok:true, why:'两个量相乘。'},
+       {t:'40 ≤ x ≤ 60 是自变量的取值范围，答案必须落在这个范围内', ok:true, why:'最值有可能在端点取到，必须看范围。'},
+       {t:'售价越高，利润一定越大', ok:false, why:'售价高则卖得少，利润先增后减，是抛物线——这正是要求最值的原因。'}
+     ],
+     hint:['利润涉及几个量？先把它们一个个写出来。',
+           '单件赚多少 × 卖了多少件 = 总利润。',
+           '每件赚 x - 40，卖出 60 - x 件，所以 w = (x - 40)(60 - x)，并注明 40 ≤ x ≤ 60。'],
+     explain:'应用题翻译完，一定要写出取值范围——最值题一半的错都错在范围上。'},
+    {dim:'graph', type:'img',
+     ask:'w 与 x 的关系大致是哪一幅图（x 取 40～60）？',
+     opts:[
+       {ok:true, plot:{f:function(x){return -(x-50)*(x-50)+100;}, marks:[{x:50,y:100,l:''}],
+                        x0:35,x1:65,y0:-15,y1:115,sx:10,sy:50,w:300,h:220},
+        why:'开口向下、顶点在 x = 50，且 x = 40、60 时 w = 0。'},
+       {ok:false, plot:{f:function(x){return 0.4*(x-50)*(x-50);},
+                        x0:35,x1:65,y0:-15,y1:115,sx:10,sy:50,w:300,h:220},
+        why:'开口方向错了：售价从 40 涨到 50 时利润是变大的，所以开口应该向下。'},
+       {ok:false, plot:{f:function(x){return -(x-45)*(x-45)+100;},
+                        x0:35,x1:65,y0:-15,y1:115,sx:10,sy:50,w:300,h:220},
+        why:'顶点偏左了：对称轴应该在 x = 50（40 与 60 的正中间）。'},
+       {ok:false, plot:{f:function(x){return -10*x+600;},
+                        x0:35,x1:65,y0:-15,y1:115,sx:10,sy:50,w:300,h:220},
+        why:'利润是两个量相乘，是二次函数，不是直线。'}
+     ],
+     hint:['先把 w = (x-40)(60-x) 化简，看它是几次函数。',
+           '两个一次式相乘，展开后是二次函数，且二次项系数为负，所以开口向下。',
+           'x = 40 时销量 20 件但一件不赚，w = 0；x = 60 时销量 0，w = 0；顶点在中间 x = 50。'],
+     explain:'建模之后先“看形状”：两个量相乘 → 抛物线；再看端点值。'},
+    {dim:'model', type:'choice',
+     ask:'求 (2) 的最大利润，正确的模型是？',
+     opts:[
+       {t:'把 w 化成顶点式，先看顶点横坐标是否落在 40 ≤ x ≤ 60 内，再取值', ok:true, why:'有范围的二次函数最值，必须“先配方、再判范围”。'},
+       {t:'直接令 w = 0，解出 x', ok:false, why:'w = 0 是“不赚钱”的售价，不是最大利润。'},
+       {t:'取 x = 60，因为售价越高越赚钱', ok:false, why:'x = 60 时一件卖 60 元，但销量是 0，利润为 0。'},
+       {t:'用一次函数的性质，x 越大 w 越大', ok:false, why:'w 是二次函数，不是一次函数。'}
+     ],
+     hint:['有范围的二次函数，最大值一定在顶点取吗？',
+           '顶点不一定在范围内，所以要“先求顶点，再看范围”。',
+           'w = -(x-50)² + 100，顶点 (50, 100)，而 50 在 40～60 内，所以最大利润就是 100。'],
+     explain:'最值三步：配方 → 找顶点 → 判断顶点是否在范围内（不在就取端点）。'},
+    {dim:'plan', type:'order',
+     items:['设售价为 x 元，则每件利润 x - 40，销量 60 - x',
+            '写 w = (x - 40)(60 - x)，注明 40 ≤ x ≤ 60',
+            '展开配方：w = -(x - 50)² + 100',
+            '顶点 (50, 100)，且 50 在 40 ≤ x ≤ 60 内',
+            '答：售价 50 元时利润最大，最大利润 100 元'],
+     disp:[2,0,4,3,1],
+     ask:'把解题步骤排成正确顺序（点一下加进来，再点一下去掉）',
+     hint:['应用题的骨架是“设—列—化—判—答”。',
+           '先设未知数，才能列式子；式子列出来才能化简。',
+           '顺序：设 x → 列 w → 配方 → 判顶点在不在范围内 → 答（带单位）。'],
+     explain:'应用题的步骤就是“设—列—化—判—答”，答里必须带单位和范围。'},
+    {dim:'check', type:'choice',
+     ask:'算完最大利润 100 元，怎么检验这个结论？',
+     opts:[
+       {t:'算 x = 49、x = 51 时 w = 99，都比 100 小；再算 x = 40、60 时 w = 0', ok:true, why:'附近更小 + 端点更小，顶点确实是最大。'},
+       {t:'把 50 - 40 和 60 - 50 再算一遍', ok:false, why:'重复计算不能证明“最大”。'},
+       {t:'看 100 是不是整数', ok:false, why:'是不是整数和最大最小值无关。'},
+       {t:'把 x = 50 代回原式算一遍', ok:false, why:'只能验证这个值算对了，不能证明它是最大值。'}
+     ],
+     hint:['证明“最大”，要证明“别的都比它小”。',
+           '顶点两侧各取一个点，看是不是都比顶点小。',
+           'x = 49：w = 9 × 11 = 99；x = 51：w = 11 × 9 = 99，都比 100 小，开口又向下，所以 100 是最大值。'],
+     explain:'验最值：附近更小、远端更小，或者确认配方后二次项系数为负且顶点在区间内。'}
+  ],
+  final:{
+    prompt:'落笔写答案。',
+    fields:[
+      {type:'num', label:'(2) 售价 x =（元/件）', ans:50},
+      {type:'num', label:'最大利润 w =（元）', ans:100}
+    ],
+    solution:[
+      '① w = (x - 40)(60 - x) = -x² + 100x - 2400（40 ≤ x ≤ 60）。',
+      '② 配方：w = -(x - 50)² + 100。',
+      '③ 因为 50 在 40 ≤ x ≤ 60 内，且二次项系数 -1 < 0，所以 x = 50 时 w 取最大值 100。',
+      '④ 答：售价定为 50 元/件时，每天利润最大，最大利润是 100 元。'
+    ],
+    key:'应用题的最大值不总在顶点：先配方，再问一句“顶点在这个范围里吗”。'
+  },
+  variants:[
+    {label:'变式 1', change:'进价改成 30 元，销量仍是 60 - x，范围 30 ≤ x ≤ 60',
+     same:'还是“单件利润 × 销量”，还是配方后判范围',
+     stem:'进价 30 元/件，售价 x 元时每天卖出 (60 - x) 件（30 ≤ x ≤ 60），求最大利润。',
+     answer:'w = (x-30)(60-x) = -(x-45)² + 225，售价 45 元时最大利润 225 元。',
+     note:'顶点位置会跟着进价移动，所以不能背“50 元时最大”。'},
+    {label:'变式 2', change:'销量改成 (100 - 2x)',
+     same:'还是列式 → 配方 → 判范围',
+     stem:'进价 40 元/件，售价 x 元时每天卖出 (100 - 2x) 件（40 ≤ x ≤ 50），求最大利润。',
+     answer:'w = (x-40)(100-2x) = -2(x-45)² + 50，售价 45 元时最大利润 50 元。',
+     note:'销量前的系数变了，配方时先提公因式，别把 -2 丢了。'}
+  ]
+},
+
+/* ---------------- 6 二次函数 · 图象信息 ---------------- */
+{
+  id:'q6', topic:'二次函数', method:'图象与系数符号', title:'a、b、c 与 a±b+c 的符号',
+  stem:'二次函数 y = ax² + bx + c 的图象如图：开口向下，与 x 轴交于点 (-1, 0) 和 (3, 0)，与 y 轴交于点 (0, 3)，顶点为 (1, 4)。\n(1) 判断 a、b、c 的符号；\n(2) 判断 a - b + c 与 4a + 2b + c 的符号。',
+  graph:{rev:0, f:function(x){return -(x+1)*(x-3);},
+         marks:[{x:-1,y:0,l:'(-1,0)'},{x:3,y:0,l:'(3,0)'},{x:0,y:3,l:'(0,3)'},{x:1,y:4,l:'顶点'}],
+         x0:-4,x1:6,y0:-4,y1:7,sx:1,sy:1,w:340,h:260},
+  steps:[
+    {dim:'trans', type:'multi',
+     ask:'从图上能直接读出哪些信息？',
+     opts:[
+       {t:'开口向下，所以 a < 0', ok:true, why:'开口方向只看 a 的符号。'},
+       {t:'与 y 轴交于 (0, 3)，所以 c = 3 > 0', ok:true, why:'x = 0 时 y = c。'},
+       {t:'与 x 轴交于 -1 和 3，所以对称轴是 x = 1', ok:true, why:'对称轴在两交点正中间：(-1+3)/2 = 1。'},
+       {t:'顶点 (1, 4) 说明 x = 1 时函数取最大值 4', ok:true, why:'开口向下，顶点就是最高点。'},
+       {t:'a - b + c 就是 x = -1 时的函数值', ok:true, why:'把 x = -1 代进 y = ax²+bx+c 就是 a-b+c。'},
+       {t:'因为图象过 (0, 3)，所以 b = 3', ok:false, why:'过 (0,3) 给出的是 c = 3；b 要靠对称轴或另一点求。'}
+     ],
+     hint:['开口方向、与两轴的交点、顶点，图上哪些点是“确定的”？',
+           'x = 0 时的函数值是 c；对称轴是 -b/(2a)；顶点是最高（低）点。',
+           'a - b + c 这种式子的读法：把它看成“把 x = -1 代进去”。'],
+     explain:'读图先读确定的点：与两轴的交点、顶点；再把 a±b+c 这类式子看成某点的函数值。'},
+    {dim:'graph', type:'choice',
+     ask:'a - b + c 表示图象上哪个点的纵坐标？',
+     opts:[
+       {t:'x = -1 的点，即 (-1, 0)', ok:true, why:'把 x = -1 代入：a·1 + b·(-1) + c = a - b + c。'},
+       {t:'x = 1 的点 (1, 4)', ok:false, why:'x = 1 时是 a + b + c = 4。'},
+       {t:'x = 2 的点', ok:false, why:'x = 2 时是 4a + 2b + c。'},
+       {t:'x = 0 的点 (0, 3)', ok:false, why:'x = 0 时是 c = 3。'}
+     ],
+     hint:['把这个式子当成“某个 x 代进去”的结果，找那个 x。',
+           'x² 的系数对上了吗？a - b + c 里的 b 是负号，说明 x = -1。',
+           'x = -1 时 y = a - b + c，而图上这个点是 (-1, 0)，所以 a - b + c = 0。'],
+     explain:'看到 a±b+c 就代 x = ±1，看到 4a±2b+c 就代 x = ±2。这是二次函数最常用的一次“翻译”。'},
+    {dim:'model', type:'choice',
+     ask:'判断 b 的符号，用哪个关系最快？',
+     opts:[
+       {t:'对称轴 x = -b/(2a) = 1，又 a < 0，所以 b = -2a > 0', ok:true, why:'a、b 通过对称轴绑在一起。'},
+       {t:'看图象与 y 轴的交点', ok:false, why:'那给出的是 c，不是 b。'},
+       {t:'看顶点纵坐标 4', ok:false, why:'顶点纵坐标是 (4ac - b²)/(4a)，用它判断 b 要绕很远。'},
+       {t:'b 决定抛物线开口的大小', ok:false, why:'开口大小由 |a| 决定，与 b 无关。'}
+     ],
+     hint:['对称轴公式里有 a 也有 b，这就是它们的“绑定关系”。',
+           '对称轴 x = -b/(2a)。现在对称轴是 1、a 是负数，能解出 b。',
+           '1 = -b/(2a) → b = -2a；a < 0，所以 b > 0。'],
+     explain:'a、b 通过对称轴绑在一起：x = -b/(2a)。a 定了，b 的符号就定了。'},
+    {dim:'plan', type:'order',
+     items:['读开口方向 → a < 0',
+            '读与 y 轴交点 (0, 3) → c = 3 > 0',
+            '读对称轴 x = 1 → b = -2a > 0',
+            '把 a - b + c 看成 x = -1 时的函数值 → 图上为 0',
+            '把 4a + 2b + c 看成 x = 2 时的函数值 → x = 2 的点在 x 轴上方，为正'],
+     disp:[3,1,0,4,2],
+     ask:'把判断顺序排好（点一下加进来，再点一下去掉）',
+     hint:['a、b、c 三个字母，各有一处“专属位置”，先找最容易的。',
+           '开口定 a，y 轴交点定 c，对称轴定 b——按这个顺序最省力。',
+           '顺序：a（开口）→ c（y 轴）→ b（对称轴）→ 代 x = -1 → 代 x = 2。'],
+     explain:'“代值”是二次函数符号判断的核心动作：把字母式变成图上某个点的高度。'},
+    {dim:'check', type:'choice',
+     ask:'这题怎么自检？',
+     opts:[
+       {t:'用求出的 a = -1、b = 2、c = 3 写出 y = -x² + 2x + 3，逐条验算符号', ok:true, why:'把“符号判断”变成“计算核对”，最稳。'},
+       {t:'再看一遍图', ok:false, why:'图已经看过了，再看不会产生新信息。'},
+       {t:'背口诀就行，不用验', ok:false, why:'口诀在条件变化时会失效。'},
+       {t:'检查 a、b、c 是不是整数', ok:false, why:'符号判断和是不是整数无关。'}
+     ],
+     hint:['能不能把这题变成一道“算数题”？',
+           '由三条件：f(0) = 3、f(-1) = 0、顶点横坐标 1，可以解出 a、b、c。',
+           '解得 a = -1、b = 2、c = 3，代进去验：a-b+c = -1-2+3 = 0，4a+2b+c = -4+4+3 = 3 > 0，与图一致。'],
+     explain:'图象题也能反求解析式自检：能求出系数，就把符号问题变成计算问题。'}
+  ],
+  final:{
+    prompt:'落笔写答案。',
+    fields:[
+      {type:'choice', label:'a 的符号', options:['a > 0','a < 0','a = 0'], ans:1},
+      {type:'choice', label:'b 的符号', options:['b > 0','b < 0','b = 0'], ans:0},
+      {type:'choice', label:'c 的符号', options:['c > 0','c < 0','c = 0'], ans:0},
+      {type:'choice', label:'a - b + c 的值', options:['> 0','< 0','= 0'], ans:2},
+      {type:'choice', label:'4a + 2b + c 的值', options:['> 0','< 0','= 0'], ans:0}
+    ],
+    solution:[
+      '① 开口向下 → a < 0；与 y 轴交于 (0,3) → c = 3 > 0。',
+      '② 对称轴 x = -b/(2a) = 1，得 b = -2a；因为 a < 0，所以 b > 0。',
+      '③ a - b + c 是 x = -1 时的函数值，图上 (-1, 0) 在 x 轴上，所以 a - b + c = 0。',
+      '④ 4a + 2b + c 是 x = 2 时的函数值，图上 x = 2 对应的点在 x 轴上方，所以大于 0。',
+      '   验算：由三点可解出 a = -1、b = 2、c = 3，4a+2b+c = -4+4+3 = 3 > 0，一致。'
+    ],
+    key:'系数符号题的三把钥匙：开口看 a、y 轴看 c、对称轴看 b；a±b+c 一律代成某个点的函数值。'
+  },
+  variants:[
+    {label:'变式 1', change:'把图改成“开口向上、顶点 (1, -4)、交 y 轴负半轴”',
+     same:'还是开口看 a、y 轴看 c、对称轴看 b',
+     stem:'二次函数 y = ax² + bx + c 开口向上，顶点为 (1, -4)，与 y 轴交于负半轴，判断 a、b、c 的符号。',
+     answer:'a > 0，b < 0（b = -2a < 0），c < 0。',
+     note:'b 的符号反过来了，因为 a 变正了：b = -2a。'},
+    {label:'变式 2', change:'把“4a + 2b + c”换成“4a - 2b + c”',
+     same:'还是“代值”：4a - 2b + c 就是 x = -2 时的函数值',
+     stem:'在原题图象下，判断 4a - 2b + c 的符号。',
+     answer:'x = -2 时 y = -(-2+1)(-2-3) = -(-1)(-5) = -5 < 0。',
+     note:'字母式 → 图上某点，这一步会了，符号题就全通了。'}
+  ]
+},
+
+/* ---------------- 7 二次函数 · 含参判别式与韦达 ---------------- */
+{
+  id:'q7', topic:'二次函数', method:'判别式与韦达定理', title:'含参二次函数与 x 轴交点',
+  stem:'已知二次函数 y = x² - 2mx + 3m（m 为常数，m ≠ 0）。\n(1) 若它的图象与 x 轴有两个不同的交点，求 m 的取值范围；\n(2) 若图象与 x 轴两个交点之间的距离为 4，求 m 的值。',
+  graph:{rev:99},
+  steps:[
+    {dim:'trans', type:'multi',
+     ask:'“图象与 x 轴有两个不同的交点”可以翻译成哪些式子？',
+     opts:[
+       {t:'方程 x² - 2mx + 3m = 0 有两个不相等的实数根', ok:true, why:'交点就是令 y = 0 得到的根。'},
+       {t:'判别式 Δ > 0', ok:true, why:'两个不相等实根的充要条件。'},
+       {t:'Δ = (-2m)² - 4×1×3m = 4m² - 12m', ok:true, why:'具体算出判别式。'},
+       {t:'两交点横坐标满足 x₁ + x₂ = 2m，x₁x₂ = 3m', ok:true, why:'韦达定理，求“距离”时要用。'},
+       {t:'两交点距离 = |x₁ - x₂| = √Δ / |a|', ok:true, why:'这是求交点距离的通法。'},
+       {t:'有两个交点，就一定有一个是原点', ok:false, why:'只有 c = 3m = 0（即 m = 0）时才过原点，而题设 m ≠ 0。'}
+     ],
+     hint:['“图象与 x 轴的交点”和“方程的根”是什么关系？',
+           '令 y = 0，图象就变成了方程；交点个数就是根的个数。',
+           '两位不相等实根 ⟺ Δ > 0；距离则用 |x₁ - x₂| = √Δ / |a|。'],
+     explain:'“交点”就是“方程的根”。函数题和方程题之间，就是这一句翻译。'},
+    {dim:'graph', type:'img',
+     ask:'下面哪一幅图对应 Δ > 0 的情形？',
+     opts:[
+       {ok:true, plot:{f:function(x){return x*x-1;}, x0:-4,x1:4,y0:-4,y1:5,sx:1,sy:1,w:300,h:220},
+        why:'开口向上且与 x 轴有两个交点——这就是 Δ > 0。'},
+       {ok:false, plot:{f:function(x){return x*x;}, x0:-4,x1:4,y0:-4,y1:5,sx:1,sy:1,w:300,h:220},
+        why:'与 x 轴只有一个交点（相切），那是 Δ = 0。'},
+       {ok:false, plot:{f:function(x){return x*x+1;}, x0:-4,x1:4,y0:-4,y1:5,sx:1,sy:1,w:300,h:220},
+        why:'与 x 轴没有交点，那是 Δ < 0。'},
+       {ok:false, plot:{f:function(x){return -(x-1)*(x-1);}, x0:-4,x1:4,y0:-4,y1:5,sx:1,sy:1,w:300,h:220},
+        why:'虽然看起来只碰一下，那是相切（Δ = 0），而且是开口向下。'}
+     ],
+     hint:['Δ > 0、Δ = 0、Δ < 0 分别对应抛物线和 x 轴的几种“接触方式”？',
+           'Δ > 0 → 两个交点；Δ = 0 → 一个交点（相切）；Δ < 0 → 没有交点。',
+           '找“穿过 x 轴两次”的那一幅。'],
+     explain:'Δ 的三种情况对应三种接触方式：两个交点、相切、相离。记住图，比记符号快。'},
+    {dim:'model', type:'choice',
+     ask:'求 m 的取值范围，用哪个模型？',
+     opts:[
+       {t:'交点个数 → 判别式：令 Δ > 0 解出 m', ok:true, why:'“几个交点”问的就是 Δ 的符号。'},
+       {t:'画图看', ok:false, why:'m 未知，画不出具体的图，图只能示意。'},
+       {t:'用顶点坐标公式', ok:false, why:'顶点坐标和交点个数没有直接关系（要配合开口方向）。'},
+       {t:'令 y = 0 后直接解方程', ok:false, why:'解出来会带根号，还要保证根存在；不如先用 Δ 判断。'}
+     ],
+     hint:['题目问的是“有没有交点、有几个”，这正好是判别式管的范围。',
+           '交点个数 ↔ Δ 的符号，一一对应。',
+           'Δ = 4m² - 12m > 0，即 4m(m - 3) > 0，得 m < 0 或 m > 3。'],
+     explain:'含参 + 交点个数 → 判别式；含参 + 交点距离 → 韦达定理。两条路要分清。'},
+    {dim:'plan', type:'order',
+     items:['令 y = 0，得方程 x² - 2mx + 3m = 0',
+            'Δ = 4m² - 12m > 0，解得 m < 0 或 m > 3',
+            '交点距离 = √Δ / |a| = 2√(m² - 3m)',
+            '令 2√(m² - 3m) = 4，得 m² - 3m = 4',
+            '解得 m = 4 或 m = -1，再检验是否满足 m < 0 或 m > 3'],
+     disp:[2,0,4,1,3],
+     ask:'把解题步骤排成正确顺序（点一下加进来，再点一下去掉）',
+     hint:['第一问的范围，第二问要不要用？',
+           '第二问求出的 m 必须让“有两个交点”成立，否则要舍去。',
+           '顺序：令 y=0 → 用 Δ 求范围 → 用距离公式 → 解方程 → 回代检验。'],
+     explain:'第二问算出两个值要都留着吗？必须回到第一问的范围过一遍闸门——这一步最容易被跳过。'},
+    {dim:'check', type:'choice',
+     ask:'求出 m = 4 或 m = -1 之后，一定要做什么？',
+     opts:[
+       {t:'把两个值分别代回 Δ > 0（即 m < 0 或 m > 3）检验是否都成立', ok:true, why:'4 > 3 成立，-1 < 0 成立，所以两个都留。'},
+       {t:'取大的那个，舍去小的', ok:false, why:'没有“取大舍小”的规则，要看是否满足前提。'},
+       {t:'两个都舍去，因为 m 不能是负数', ok:false, why:'m < 0 是允许的，题设只要求 m ≠ 0。'},
+       {t:'再算一遍距离公式', ok:false, why:'验算公式不能解决“这个值合不合法”。'}
+     ],
+     hint:['题目还有一个“前提条件”，答案必须过这一关。',
+           '前提就是第一问的范围：m < 0 或 m > 3。',
+           'm = 4 满足 m > 3；m = -1 满足 m < 0，所以两个都保留。'],
+     explain:'含参题的最后一个动作永远是：把答案送回题目条件里过一遍闸门。'}
+  ],
+  final:{
+    prompt:'落笔写答案（第 2 问的两个 m 值都要填）。',
+    fields:[
+      {type:'choice', label:'(1) m 的取值范围', options:['0 < m < 3','m < 0 或 m > 3','m > 3','m < 0'], ans:1},
+      {type:'num', label:'(2) 较小的 m =', ans:-1},
+      {type:'num', label:'(2) 较大的 m =', ans:4}
+    ],
+    solution:[
+      '① 令 y = 0：x² - 2mx + 3m = 0。',
+      '② Δ = 4m² - 12m > 0，即 4m(m - 3) > 0，解得 m < 0 或 m > 3。',
+      '③ 两交点距离 = |x₁ - x₂| = √Δ / |a| = √(4m² - 12m) = 2√(m² - 3m)。',
+      '④ 由 2√(m² - 3m) = 4 得 m² - 3m = 4，解得 m = 4 或 m = -1。',
+      '⑤ 检验：4 > 3 成立，-1 < 0 成立，所以 m = 4 或 m = -1。'
+    ],
+    key:'含参题的收尾动作：算完必须回题目条件检验，否则答案会多出来或少掉。'
+  },
+  variants:[
+    {label:'变式 1', change:'“两个不同交点”改成“只有一个交点”',
+     same:'还是判别式，只是 Δ 的符号换成等号',
+     stem:'y = x² - 2mx + 3m（m ≠ 0）的图象与 x 轴只有一个交点，求 m。',
+     answer:'Δ = 0 → m = 0 或 3；又 m ≠ 0，所以 m = 3。',
+     note:'注意最后那个 m ≠ 0 的闸门，它专门用来扣掉一个答案。'},
+    {label:'变式 2', change:'函数改成 y = x² - 2mx + m² - 1',
+     same:'配方后交点距离是定值，与 m 无关',
+     stem:'y = x² - 2mx + m² - 1 的图象与 x 轴两交点间的距离是多少？',
+     answer:'y = (x - m)² - 1，交点为 (m-1, 0)、(m+1, 0)，距离恒为 2。',
+     note:'先配方再求交点，比用韦达更快——“先看图/先配方”是二次函数的好习惯。'}
+  ]
+},
+
+/* ---------------- 8 分段函数 · 图象信息 ---------------- */
+{
+  id:'q8', topic:'函数图象', method:'分段函数与行程图', title:'折线图读速度',
+  stem:'小明从家骑自行车去图书馆：先匀速骑行 10 分钟到书店，此时离家 2000 米；在书店停留 5 分钟；再匀速骑行 5 分钟到达图书馆，此时离家 3000 米。\n图中折线表示他离家的距离 s（米）与时间 t（分钟）之间的关系。\n(1) 第 15 分钟到第 20 分钟，他的骑行速度是多少？\n(2) 从出发到抵达图书馆，全程的平均速度是多少？\n(3) 哪一段时间内，s 与 t 成正比例函数关系？',
+  graph:{rev:1, poly:[[0,0],[10,2000],[15,2000],[20,3000]],
+         marks:[{x:10,y:2000,l:'(10,2000)'},{x:15,y:2000,l:''},{x:20,y:3000,l:'(20,3000)'}],
+         x0:0,x1:22,y0:0,y1:3200,sx:5,sy:1000,w:340,h:270},
+  steps:[
+    {dim:'trans', type:'multi',
+     ask:'把题目里的话翻译成折线上的东西，哪些是对的？',
+     opts:[
+       {t:'“匀速骑行 10 分钟到书店，离家 2000 米” → 折线从 (0,0) 到 (10,2000)', ok:true, why:'起点 (0,0)：出发时离家 0 米。'},
+       {t:'“停留 5 分钟” → 折线是水平的：s 不变，t 增加', ok:true, why:'人没动，距离当然不变。'},
+       {t:'“再骑 5 分钟到图书馆，离家 3000 米” → 从 (15,2000) 到 (20,3000)', ok:true, why:'停留结束时是第 15 分钟。'},
+       {t:'每一段的“陡”与“缓”表示速度的大小', ok:true, why:'斜率越大走得越快。'},
+       {t:'“全程”指的是 20 分钟、3000 米', ok:true, why:'到图书馆就结束了。'},
+       {t:'折线本身的长度就是总路程', ok:false, why:'看的是“竖直高度”（s 的变化）；水平段虽然折线在走，人却没走路。'}
+     ],
+     hint:['图上的横轴、纵轴分别是什么？',
+           '横轴是时间，纵轴是离家的距离。人停下时距离不变。',
+           '出发 (0,0) → (10,2000) → 停 5 分钟到 (15,2000) → 到 (20,3000)。'],
+     explain:'行程图只读三件事：起点、每一段的倾斜程度（速度）、水平段（停留）。'},
+    {dim:'graph', type:'img',
+     ask:'哪一幅折线图符合题意？',
+     opts:[
+       {ok:true, plot:{poly:[[0,0],[10,2000],[15,2000],[20,3000]], x0:0,x1:22,y0:0,y1:3200,sx:5,sy:1000,w:300,h:220},
+        why:'三段全对：10 分钟到 2000 米、停 5 分钟、再 5 分钟到 3000 米。'},
+       {ok:false, plot:{poly:[[0,0],[10,2000],[20,3000]], x0:0,x1:22,y0:0,y1:3200,sx:5,sy:1000,w:300,h:220},
+        why:'漏了停留段：第 10～15 分钟 s 应该不变，折线应水平。'},
+       {ok:false, plot:{poly:[[0,0],[5,2000],[10,2000],[20,3000]], x0:0,x1:22,y0:0,y1:3200,sx:5,sy:1000,w:300,h:220},
+        why:'时间点错了：2000 米是第 10 分钟才到的，不是第 5 分钟。'},
+       {ok:false, plot:{poly:[[0,0],[10,1500],[15,1500],[20,3000]], x0:0,x1:22,y0:0,y1:3200,sx:5,sy:1000,w:300,h:220},
+        why:'距离错了：书店离家 2000 米，不是 1500 米。'}
+     ],
+     hint:['先把三个关键点写下来：(0,0)、(10,2000)、(15,2000)、(20,3000)。',
+           '四个点连起来就是折线，中间那段是水平的。',
+           '对着选项看：有没有水平段、2000 米出现在第几分钟、终点是不是 (20,3000)。'],
+     explain:'画（或读）折线图，先抓关键点，再连线段——不要一边读一边猜。'},
+    {dim:'model', type:'choice',
+     ask:'第 (1) 问求“第 15 到 20 分钟的速度”，用哪个模型？',
+     opts:[
+       {t:'速度 = 这一段的 s 变化量 ÷ t 变化量，也就是这一段的斜率', ok:true, why:'也就是 200 米/分钟。'},
+       {t:'速度 = 总路程 ÷ 总时间', ok:false, why:'那是全程平均速度，第 (2) 问才用。'},
+       {t:'速度 = 折线的长度 ÷ 时间', ok:false, why:'折线长度没有实际意义。'},
+       {t:'速度不变，等于第一段的速度', ok:false, why:'每一段要单独算，可能不一样。'}
+     ],
+     hint:['“某一段的速度”和“全程平均速度”是两个不同的模型，别混。',
+           '某一段：只看这一段的起止两点。',
+           '第 15 分钟在 (15,2000)，第 20 分钟在 (20,3000)，速度 = (3000-2000)/(20-15) = 200。'],
+     explain:'“某一段”和“全程平均”是两个模型。混淆这两个，是行程图最典型的失分点。'},
+    {dim:'plan', type:'order',
+     items:['读图，标出四个关键点 (0,0)、(10,2000)、(15,2000)、(20,3000)',
+            '第 15～20 分钟：s 从 2000 增到 3000，用了 5 分钟',
+            '速度 = (3000 - 2000) ÷ (20 - 15) = 200（米/分钟）',
+            '全程平均速度 = 3000 ÷ 20 = 150（米/分钟）',
+            '0 ≤ t ≤ 10 这一段的图象过原点且是直线，所以 s 与 t 成正比例'],
+     disp:[3,0,4,2,1],
+     ask:'把解题步骤排成正确顺序（点一下加进来，再点一下去掉）',
+     hint:['先做哪一步，后面三个小问才都能用上？',
+           '把关键点标出来，三个问题都能从图上直接回答。',
+           '顺序：标关键点 → 算某一段速度 → 算平均速度 → 判断正比例段。'],
+     explain:'分段函数题先把关键点圈出来，再逐段算，最后回答“哪一段”。'},
+    {dim:'check', type:'choice',
+     ask:'怎么检验算出来的全程平均速度 150 米/分钟？',
+     opts:[
+       {t:'它必须小于最快那一段的 200，且大于 0；再用 3000 ÷ 150 确实等于 20 分钟', ok:true, why:'数量级合理 + 反向验算，两条都过。'},
+       {t:'再算一遍 3000 ÷ 20', ok:false, why:'重复同一个算式，错了还是错。'},
+       {t:'看 150 是不是整数', ok:false, why:'速度和是不是整数无关。'},
+       {t:'用尺子量图上那一段的斜率', ok:false, why:'示意图量不准，只能估个大概。'}
+     ],
+     hint:['平均速度一定比最快的速度小，比最慢的速度大——先看这个关系。',
+           '最快的一段是 200 米/分钟，平均速度 150 应该在它下面。',
+           '再用反向验算：150 × 20 = 3000 米，正好是全程。'],
+     explain:'物理量的检验看两条：数量级合理、单位一致。平均速度一定不超过最快那一段。'}
+  ],
+  final:{
+    prompt:'落笔写答案。',
+    fields:[
+      {type:'num', label:'(1) 速度 =（米/分钟）', ans:200},
+      {type:'num', label:'(2) 全程平均速度 =（米/分钟）', ans:150},
+      {type:'choice', label:'(3) s 与 t 成正比例的时段', options:['0 ≤ t ≤ 10','10 ≤ t ≤ 15','15 ≤ t ≤ 20','0 ≤ t ≤ 20'], ans:0}
+    ],
+    solution:[
+      '① 关键点：(0,0)、(10,2000)、(15,2000)、(20,3000)。',
+      '② 第 15～20 分钟：(3000 - 2000) ÷ (20 - 15) = 200（米/分钟）。',
+      '③ 全程平均速度：3000 ÷ 20 = 150（米/分钟）。',
+      '④ 正比例要求图象是过原点的直线：只有 0 ≤ t ≤ 10 这一段满足。'
+    ],
+    key:'折线图的三件事：关键点、斜率（速度）、水平段（停留）。正比例只认“过原点的直线段”。'
+  },
+  variants:[
+    {label:'变式 1', change:'“停留 5 分钟”改成“停留 10 分钟”',
+     same:'还是读关键点、算斜率、算平均',
+     stem:'其他条件不变，若在书店停留 10 分钟，求到达图书馆的时刻和全程平均速度。',
+     answer:'到达时刻第 25 分钟；平均速度 3000 ÷ 25 = 120（米/分钟）。',
+     note:'停留时间变长，平均速度变小——想一想为什么。'},
+    {label:'变式 2', change:'把问题改成“哪段时间他的速度为 0”',
+     same:'速度为 0 就是水平段，s 不变',
+     stem:'在原题图象中，哪段时间内他的速度为 0？',
+     answer:'10 ≤ t ≤ 15（停留的 5 分钟）。',
+     note:'同一张图能问速度、问停留、问平均——模型不变，问法在变。'}
+  ]
+}
+];
+
+/* =========================================================
+   变式练习 · 每个变式的结构化答案
+   键：`<母题 id>-<变式下标>`（如 q3-0 = 第 3 组第 1 个变式）
+   ========================================================= */
+var VARIANT_FIELDS = {
+  'q1-0': [{type:'coef', label:'解析式', tpl:'y = {0}x + {1}', ans:[-1, 2]}],
+  'q1-1': [{type:'num', label:'t =', ans:-2}],
+  'q2-0': [{type:'coef', label:'新直线的解析式', tpl:'y = {0}x + {1}', ans:[2, -6]}],
+  'q2-1': [{type:'num', label:'n =', ans:-1}],
+  'q3-0': [{type:'num', label:'k =', ans:-3}],
+  'q3-1': [{type:'num', label:'k =', ans:12}],
+  'q4-0': [{type:'choice', label:'不等式的解集',
+            options:['0 < x < 2 或 x > 3', 'x < 0 或 2 < x < 3', '2 < x < 3', 'x < 0 或 x > 3'], ans:0}],
+  'q4-1': [{type:'choice', label:'线段 AB 的长', options:['√2', '2', '√5', '2√2'], ans:0}],
+  'q5-0': [{type:'num', label:'最大利润（元）=', ans:225}],
+  'q5-1': [{type:'num', label:'最大利润（元）=', ans:50}],
+  'q6-0': [{type:'choice', label:'a、b、c 的符号',
+            options:['a > 0，b < 0，c < 0', 'a > 0，b > 0，c < 0', 'a > 0，b < 0，c > 0', 'a < 0，b < 0，c < 0'], ans:0}],
+  'q6-1': [{type:'choice', label:'4a − 2b + c', options:['小于 0', '大于 0', '等于 0'], ans:0}],
+  'q7-0': [{type:'num', label:'m =', ans:3}],
+  'q7-1': [{type:'num', label:'两交点间的距离 =', ans:2}],
+  'q8-0': [{type:'num', label:'到达图书馆的时刻（分钟）=', ans:25},
+           {type:'num', label:'全程平均速度（米/分钟）=', ans:120}],
+  'q8-1': [{type:'choice', label:'速度为 0 的时间段',
+            options:['10 ≤ t ≤ 15', '5 ≤ t ≤ 10', '15 ≤ t ≤ 20', '0 ≤ t ≤ 10'], ans:0}]
+};
+BANK.forEach(function(q, qi){
+  q.variants.forEach(function(v, vi){
+    var f = VARIANT_FIELDS[q.id + '-' + vi];
+    if(f) v.fields = f;
+  });
+});
+
+/* =========================================================
+   试卷题库（整题练习）· 内置包
+   字段说明见 使用说明.md
+   ========================================================= */
+var PACKS = [
+  {
+    "id": "pk-fanbi-2708",
+    "name": "第27章《反比例函数》单元测（第8周周练）",
+    "source": "题库/第8周周练作业第27章《反比例函数》.pdf",
+    "exam": "GD3 九上数学 第二十七章 单元测试卷",
+    "note": "已按老师答卷核对校正（3 题选 B、9 题选 A、12 题答卷示例 k = -1、14 题补入，答案 6）；第 8、14 题的图形用文字/近似图代替。",
+    "questions": [
+      {
+        "id": "b1",
+        "no": "1",
+        "group": "选择",
+        "type": "choice",
+        "diff": 1,
+        "focus": "trans",
+        "ask": "下列函数中，y 是关于 x 的反比例函数的是（　）",
+        "opts": [
+          "y = -3x + 6",
+          "y = x²",
+          "y = 5/x²",
+          "y = 6/x"
+        ],
+        "ans": 3,
+        "tip": "反比例函数的定义只有一条：能写成 y = k/x（k≠0）。",
+        "solution": [
+          "反比例函数必须是 y = k/x 的形式：x 在分母上，而且分母里 x 的次数是 1。",
+          "A 是一次函数；B 是二次函数；C 的分母是 x²，是\"y 与 x² 成反比例\"，不是反比例函数；只有 D 符合。"
+        ]
+      },
+      {
+        "id": "b2",
+        "no": "2",
+        "group": "选择",
+        "type": "choice",
+        "diff": 1,
+        "focus": "model",
+        "ask": "若点 (1, -3) 在反比例函数 y = k/x 的图象上，则 k 的值是（　）",
+        "opts": [
+          "-3",
+          "3",
+          "-1/3",
+          "1/3"
+        ],
+        "ans": 0,
+        "tip": "\"点在图象上\"= 坐标满足解析式，代入就好。",
+        "solution": [
+          "把 x = 1、y = -3 代入 y = k/x：-3 = k/1，所以 k = -3。",
+          "更快的写法：y = k/x 等价于 k = xy，直接把横纵坐标相乘。"
+        ]
+      },
+      {
+        "id": "b3",
+        "no": "3",
+        "group": "选择",
+        "type": "choice",
+        "diff": 2,
+        "focus": "graph",
+        "ask": "已知反比例函数 y = (2m + 3)/x，当 x > 0 时，y 随 x 的增大而增大，那么 m 的取值范围是（　）",
+        "opts": [
+          "m > -3/2",
+          "m < -3/2",
+          "m > 3/2",
+          "m < 3/2"
+        ],
+        "ans": 1,
+        "tip": "先想：k 的正负分别对应\"每个象限内\"怎样的增减性？",
+        "solution": [
+          "k > 0 时，在每个象限内 y 随 x 增大而减小；k < 0 时，在每个象限内 y 随 x 增大而增大。",
+          "题意是\"y 随 x 增大而增大\"，所以 k = 2m + 3 < 0，得 m < -3/2，选 B。",
+          "注意：x > 0 只是限定在第一象限这一支上，不影响 k 的符号判断。"
+        ]
+      },
+      {
+        "id": "b4",
+        "no": "4",
+        "group": "选择",
+        "type": "choice",
+        "diff": 2,
+        "focus": "graph",
+        "ask": "某工厂建一个容积 V(m³) 一定的污水处理池，池的底面积 S(m²) 与其深度 h(m) 满足 V = Sh（V≠0），则 S 关于 h 的函数图象大致是（　）",
+        "opts": [
+          {
+            "t": "过原点的直线（上升）",
+            "plot": {
+              "expr": "3x",
+              "x0": -0.5,
+              "x1": 4,
+              "y0": -0.5,
+              "y1": 12,
+              "sx": 1,
+              "sy": 4,
+              "w": 240,
+              "h": 180
+            }
+          },
+          {
+            "t": "下降的直线",
+            "plot": {
+              "expr": "-2x+8",
+              "x0": -0.5,
+              "x1": 6,
+              "y0": -0.5,
+              "y1": 9,
+              "sx": 1,
+              "sy": 2,
+              "w": 240,
+              "h": 180
+            }
+          },
+          {
+            "t": "第一象限内的双曲线",
+            "plot": {
+              "expr": "6/x",
+              "x0": 0.1,
+              "x1": 6,
+              "y0": -0.5,
+              "y1": 9,
+              "sx": 1,
+              "sy": 2,
+              "w": 240,
+              "h": 180
+            }
+          },
+          {
+            "t": "开口向上的抛物线",
+            "plot": {
+              "expr": "0.6x^2",
+              "x0": -0.5,
+              "x1": 4,
+              "y0": -0.5,
+              "y1": 9,
+              "sx": 1,
+              "sy": 2,
+              "w": 240,
+              "h": 180
+            }
+          }
+        ],
+        "ans": 2,
+        "tip": "先把式子变形，看 S 是 h 的几次\"反比例\"。",
+        "solution": [
+          "由 V = Sh 得 S = V/h（V 是常数，V≠0），所以 S 与 h 成反比例。",
+          "又 S > 0、h > 0，图象只在第一象限，是双曲线的一支，选 C。",
+          "这类\"实际情境\"的图象题，一定要同时看两件事：函数类型 + 自变量的实际范围。"
+        ]
+      },
+      {
+        "id": "b5",
+        "no": "5",
+        "group": "选择",
+        "type": "choice",
+        "diff": 2,
+        "focus": "trans",
+        "ask": "如图，B(3, -3)，C(5, 0)，以 OC、CB 为边作平行四边形 OABC，则经过点 A 的反比例函数的解析式为（　）",
+        "opts": [
+          "y = 6/x",
+          "y = -6/x",
+          "y = 9/x",
+          "y = -9/x"
+        ],
+        "ans": 0,
+        "tip": "平行四边形对边平行且相等 → 用向量（或平移）求 A 的坐标。",
+        "solution": [
+          "平行四边形 OABC 中，OA ∥ CB 且 OA = CB，所以 A = O + (B - C) = (0,0) + (3-5, -3-0) = (-2, -3)。",
+          "（也可以从 AB = OC = (5,0) 验证：A + (5,0) = (3,-3) = B，正确。）",
+          "A(-2,-3) 在 y = k/x 上，所以 k = xy = 6，解析式为 y = 6/x。"
+        ]
+      },
+      {
+        "id": "b6",
+        "no": "6",
+        "group": "选择",
+        "type": "choice",
+        "diff": 2,
+        "focus": "graph",
+        "ask": "双曲线 y = 1/x 上有三个点 (x₁,y₁)、(x₂,y₂)、(x₃,y₃)，其中 x₁ < x₂ < 0 < x₃，则 y₁、y₂、y₃ 的大小关系是（　）",
+        "opts": [
+          "y₁ < y₂ < y₃",
+          "y₃ < y₁ < y₂",
+          "y₂ < y₁ < y₃",
+          "y₃ < y₂ < y₁"
+        ],
+        "ans": 2,
+        "tip": "两支分开比：先定正负，再在同一支内比大小。",
+        "solution": [
+          "x₃ > 0，点在第一象限，y₃ > 0；x₁、x₂ 都小于 0，两点在第三象限，y₁、y₂ 都是负数。",
+          "所以 y₃ 最大，先排除 A、D。",
+          "第三象限这一支上，k = 1 > 0，y 随 x 增大而减小：x₁ < x₂，所以 y₁ > y₂。",
+          "合起来：y₂ < y₁ < y₃，选 C。"
+        ]
+      },
+      {
+        "id": "b7",
+        "no": "7",
+        "group": "选择",
+        "type": "choice",
+        "diff": 3,
+        "focus": "model",
+        "ask": "如图，一次函数 y = ax + b 与反比例函数 y = k/x 的图象交于点 A(1, 2)、B(m, -1)，则 ax + b ≥ k/x 的解集是（　）",
+        "opts": [
+          "x < -2 或 0 < x < 1",
+          "x ≤ -2 或 0 < x ≤ 1",
+          "-2 < x < 0 或 x > 1",
+          "-2 ≤ x < 0 或 x ≥ 1"
+        ],
+        "ans": 3,
+        "tip": "比大小 = 看图谁在上方；端点能不能取，看不带等号的那一边。",
+        "solution": [
+          "先补全条件：B(m,-1) 在 y = k/x 上，而 A(1,2) 给出 k = 2，所以 -1 = 2/m，m = -2，B(-2,-1)。",
+          "直线过 A(1,2)、B(-2,-1)，斜率 1，得 y = x + 1。",
+          "不等式 x + 1 ≥ 2/x。x < 0 时两边乘 x 变号：(x+1)x ≤ 2 → x² + x - 2 ≤ 0 → -2 ≤ x < 0。",
+          "x > 0 时：(x+1)x ≥ 2 → x² + x - 2 ≥ 0 → x ≥ 1。合并得 -2 ≤ x < 0 或 x ≥ 1，选 D。",
+          "图象法更直观：在 x < 0 那一支，直线在双曲线上方直到 x = -2；x > 0 时从 x = 1 起直线在上方。"
+        ]
+      },
+      {
+        "id": "b8",
+        "no": "8",
+        "group": "选择",
+        "type": "choice",
+        "diff": 3,
+        "focus": "plan",
+        "ask": "如图，点 A、B 在双曲线 y = 3/x（x>0）上，点 C 在双曲线 y = 1/x（x>0）上。若 AC ∥ y 轴，BC ∥ x 轴，且 AC = BC，则 AB 的长为（　）",
+        "opts": [
+          "√2",
+          "2√2",
+          "4",
+          "3√2"
+        ],
+        "ans": 1,
+        "tip": "平行于坐标轴 → 设一个字母就能表示三个点的坐标。",
+        "solution": [
+          "设 C(a, 1/a)（a > 0）。AC ∥ y 轴，所以 A 的横坐标也是 a，A(a, 3/a)。",
+          "BC ∥ x 轴，所以 B 的纵坐标与 C 相同，为 1/a；B 在 y = 3/x 上，所以 B(3a, 1/a)。",
+          "AC = 3/a - 1/a = 2/a，BC = 3a - a = 2a。由 AC = BC 得 2/a = 2a，a² = 1，a = 1。",
+          "于是 A(1,3)、B(3,1)，AB = √[(3-1)² + (1-3)²] = 2√2，选 B。"
+        ]
+      },
+      {
+        "id": "b9",
+        "no": "9",
+        "group": "选择",
+        "type": "choice",
+        "diff": 2,
+        "focus": "trans",
+        "ask": "某段高架桥上车辆的行驶速度 y（千米/时）与每百米拥有车的数量 x（辆）的关系如图：当 x ≥ 10 时，y 与 x 成反比例。当行驶速度低于 20 千米/时时交通拥堵，为避免拥堵，x 应满足的范围是（　）",
+        "plot": {
+          "poly": [
+            [
+              0,
+              80
+            ],
+            [
+              10,
+              80
+            ],
+            [
+              12,
+              66.7
+            ],
+            [
+              15,
+              53.3
+            ],
+            [
+              20,
+              40
+            ],
+            [
+              25,
+              32
+            ],
+            [
+              30,
+              26.7
+            ],
+            [
+              35,
+              22.9
+            ],
+            [
+              40,
+              20
+            ],
+            [
+              48,
+              16.7
+            ],
+            [
+              56,
+              14.3
+            ]
+          ],
+          "x0": 0,
+          "x1": 60,
+          "y0": 0,
+          "y1": 100,
+          "sx": 10,
+          "sy": 20,
+          "w": 320,
+          "h": 220,
+          "marks": [
+            {
+              "x": 10,
+              "y": 80,
+              "l": "(10,80)"
+            },
+            {
+              "x": 40,
+              "y": 20,
+              "l": "(40,20)"
+            }
+          ]
+        },
+        "opts": [
+          "x ≤ 40",
+          "x ≥ 40",
+          "x > 40",
+          "x < 40"
+        ],
+        "ans": 0,
+        "tip": "先把 k 求出来，再把\"避免拥堵\"翻译成 y ≥ 20（注意两边乘 x 时不等号方向）。",
+        "solution": [
+          "x ≥ 10 时 y = k/x，过点 (10, 80)，所以 k = 800，y = 800/x。",
+          "避免拥堵 = 不出现\"低于 20\"的情况，要求 y ≥ 20；x ≤ 10 时 y = 80，本身就满足。",
+          "x ≥ 10 时解 800/x ≥ 20：两边乘 x（x > 0）得 800 ≥ 20x，即 x ≤ 40。",
+          "所以 0 ≤ x ≤ 40，选 A。易错点：800/x ≥ 20 乘 x 后得 x ≤ 40，不是 x ≥ 40。"
+        ]
+      },
+      {
+        "id": "b10",
+        "no": "10",
+        "group": "选择",
+        "type": "choice",
+        "diff": 3,
+        "focus": "model",
+        "ask": "直线 y = x + 2 与反比例函数 y = k/x 的图象有唯一公共点；若直线 y = x + m 与 y = k/x 的图象有 2 个公共点，则 m 的取值范围是（　）",
+        "opts": [
+          "m > 2",
+          "-2 < m < 2",
+          "m < -2",
+          "m > 2 或 m < -2"
+        ],
+        "ans": 3,
+        "tip": "\"唯一公共点\"就是联立后的一元二次方程 Δ = 0。",
+        "solution": [
+          "联立 x + 2 = k/x，得 x² + 2x - k = 0。唯一公共点 → Δ = 4 + 4k = 0 → k = -1。",
+          "所以双曲线是 y = -1/x。再联立 x + m = -1/x，得 x² + mx + 1 = 0。",
+          "要有 2 个公共点，就要 Δ = m² - 4 > 0，即 m > 2 或 m < -2，选 D。"
+        ]
+      },
+      {
+        "id": "b11",
+        "no": "11",
+        "group": "填空",
+        "type": "fill",
+        "diff": 1,
+        "focus": "model",
+        "ask": "反比例函数 y = k/x 的图象经过点 (3, 2)，则该函数的图象分别在第 ______ 象限。",
+        "fields": [
+          {
+            "type": "choice",
+            "label": "图象所在象限",
+            "options": [
+              "第一、三象限",
+              "第二、四象限",
+              "第一、二象限",
+              "第三、四象限"
+            ],
+            "ans": 0
+          }
+        ],
+        "tip": "k = xy，先算 k，再看符号。",
+        "solution": [
+          "k = xy = 3 × 2 = 6 > 0。",
+          "k > 0 的双曲线位于第一、三象限。"
+        ]
+      },
+      {
+        "id": "b12",
+        "no": "12",
+        "group": "填空",
+        "type": "fill",
+        "diff": 1,
+        "focus": "graph",
+        "ask": "若双曲线 y = (k - 3)/x 位于第二、四象限内，则 k 的值可以是 ______。（写出一个即可）",
+        "fields": [
+          {
+            "type": "choice",
+            "label": "k 应满足（答案不唯一）",
+            "options": [
+              "k > 3",
+              "k < 3",
+              "k = 3",
+              "k > 0"
+            ],
+            "ans": 1
+          }
+        ],
+        "tip": "第二、四象限 ⟺ k < 0，注意这里的\"k\"是分子 (k-3)。",
+        "solution": [
+          "图象在第二、四象限，说明分子小于 0，即 k - 3 < 0，所以 k < 3（且 k ≠ 3）。",
+          "答案不唯一，任何小于 3 的数都可以；老师答卷填的是 k = -1（0、2 等同样正确）。"
+        ]
+      },
+      {
+        "id": "b13",
+        "no": "13",
+        "group": "填空",
+        "type": "fill",
+        "diff": 2,
+        "focus": "trans",
+        "ask": "若直线 y = -2x 与双曲线 y = k/x 的一个交点坐标为 (-1, 2)，则另一个交点的坐标为 ______。",
+        "fields": [
+          {
+            "type": "coef",
+            "label": "另一个交点",
+            "tpl": "({0}, {1})",
+            "ans": [
+              1,
+              -2
+            ]
+          }
+        ],
+        "tip": "正比例函数与反比例函数的两个交点关于原点对称。",
+        "solution": [
+          "把 (-1,2) 代入 y = k/x 得 k = -2，双曲线为 y = -2/x。",
+          "y = -2x 与 y = -2/x 的图象都关于原点对称，所以另一个交点与 (-1,2) 关于原点对称，即 (1,-2)。",
+          "（也可以直接联立：-2x = -2/x → x² = 1 → x = 1 时 y = -2。）"
+        ]
+      },
+      {
+        "id": "b14",
+        "no": "14",
+        "group": "填空",
+        "type": "fill",
+        "diff": 3,
+        "focus": "plan",
+        "ask": "如图，过点 P(3, 4) 作 PC ⊥ x 轴于点 C，PD ⊥ y 轴于点 D，PC、PD 分别交反比例函数 y = 6/x（x>0）的图象于点 A、B，则图中阴影部分的面积是 ______。",
+        "plot": {
+          "expr": "6/x",
+          "x0": 0.3,
+          "x1": 8,
+          "y0": -0.5,
+          "y1": 5.5,
+          "sx": 1,
+          "sy": 1,
+          "w": 320,
+          "h": 280,
+          "marks": [
+            {
+              "x": 1.5,
+              "y": 4,
+              "l": "B"
+            },
+            {
+              "x": 3,
+              "y": 2,
+              "l": "A"
+            },
+            {
+              "x": 3,
+              "y": 4,
+              "l": "P"
+            },
+            {
+              "x": 0,
+              "y": 4,
+              "l": "D"
+            },
+            {
+              "x": 3,
+              "y": 0,
+              "l": "C"
+            }
+          ]
+        },
+        "fields": [
+          {
+            "type": "num",
+            "label": "阴影面积 =",
+            "ans": 6
+          }
+        ],
+        "tip": "先把 A、B、C、D、P 的坐标都写出来，再用\"矩形 − 两个直角三角形\"算。",
+        "solution": [
+          "PC：x = 3，与 y = 6/x 交于 A(3, 2)；PD：y = 4，与 y = 6/x 交于 B(3/2, 4)。",
+          "C(3,0)、D(0,4)，矩形 ODPC 的面积 = 3 × 4 = 12。",
+          "阴影 = 12 − S△OBD − S△OAC = 12 − ½×4×(3/2) − ½×3×2 = 12 − 3 − 3 = 6。",
+          "也可以直接按四边形 O-B-P-A 算：矩形 ODPC 扣掉左上、右下两个直角三角形，结果同样是 6。"
+        ]
+      },
+      {
+        "id": "b15",
+        "no": "15",
+        "group": "填空",
+        "type": "fill",
+        "diff": 3,
+        "focus": "plan",
+        "ask": "反比例函数 y = 6/x 的图象与一次函数 y = x - 4 的图象交于点 (a, b)，则 1/a - 1/b 的值为 ______。",
+        "fields": [
+          {
+            "type": "num",
+            "label": "1/a - 1/b =",
+            "ans": -0.6666666666666666
+          }
+        ],
+        "tip": "不要真的去解 a、b，先看 1/a - 1/b 能不能用 ab 和 a - b 表示。",
+        "solution": [
+          "交点在两条图象上：ab = 6（来自 y = 6/x），且 b = a - 4，即 a - b = 4。",
+          "1/a - 1/b = (b - a)/(ab) = -4/6 = -2/3。",
+          "这类题的关键是\"整体代换\"：不求出 a、b，直接用它们的和差积。"
+        ]
+      },
+      {
+        "id": "b16",
+        "no": "16",
+        "group": "解答",
+        "type": "solve",
+        "diff": 1,
+        "focus": "trans",
+        "ask": "已知 y 与 x 成反比例，且当 x = 1 时，y = 1。\n(1) 求 y 与 x 的函数关系式；\n(2) 当 x = 3 时，求 y 的值。",
+        "fields": [
+          {
+            "type": "coef",
+            "label": "(1) 关系式",
+            "tpl": "y = {0}/x",
+            "ans": [
+              1
+            ]
+          },
+          {
+            "type": "num",
+            "label": "(2) y =",
+            "ans": 0.3333333333333333
+          }
+        ],
+        "tip": "\"y 与 x 成反比例\"就是设 y = k/x，一个条件定一个 k。",
+        "solution": [
+          "设 y = k/x（k ≠ 0）。把 x = 1、y = 1 代入，得 k = 1，所以 y = 1/x。",
+          "当 x = 3 时，y = 1/3。"
+        ]
+      },
+      {
+        "id": "b17",
+        "no": "17",
+        "group": "解答",
+        "type": "solve",
+        "diff": 2,
+        "focus": "plan",
+        "ask": "蓄电池的电压为定值。使用此电源时，电流 I(A) 是电阻 R(Ω) 的反比例函数，其图象如图（过点 M(4, 9)）。\n(1) 求这个反比例函数的解析式；\n(2) 当 R = 10 Ω 时，电流是 4 A 吗？为什么？",
+        "fields": [
+          {
+            "type": "coef",
+            "label": "(1) 解析式",
+            "tpl": "I = {0}/R",
+            "ans": [
+              36
+            ]
+          },
+          {
+            "type": "choice",
+            "label": "(2) R = 10 Ω 时电流是 4 A 吗",
+            "options": [
+              "是，4 A",
+              "不是，应为 3.6 A",
+              "不是，应为 0.9 A",
+              "无法确定"
+            ],
+            "ans": 1
+          }
+        ],
+        "tip": "物理里的\"电压定值\"就是这里的 k，用图象上的点把它求出来。",
+        "solution": [
+          "设 I = U/R。图象过 M(4, 9)，所以 U = IR = 36，即 I = 36/R。",
+          "当 R = 10 时，I = 36/10 = 3.6(A)，不是 4 A。",
+          "所以\"电流是 4 A\"这个说法不对，应为 3.6 A。"
+        ]
+      },
+      {
+        "id": "b18",
+        "no": "18",
+        "group": "解答",
+        "type": "solve",
+        "diff": 3,
+        "focus": "plan",
+        "ask": "如图，反比例函数 y = k/x（x>0）与一次函数 y = x + 1 的图象交于点 A(2, m)，B 是反比例函数图象上一点，BC ⊥ x 轴于点 C，交一次函数的图象于点 D，连接 AB。\n(1) 求反比例函数的解析式；\n(2) 当 OC = 4 时，求 △ABD 的面积。",
+        "fields": [
+          {
+            "type": "coef",
+            "label": "(1) 解析式",
+            "tpl": "y = {0}/x",
+            "ans": [
+              6
+            ]
+          },
+          {
+            "type": "num",
+            "label": "(2) S△ABD =",
+            "ans": 3.5
+          }
+        ],
+        "tip": "第(2)问先用 OC = 4 把 B、C、D 三个点全部算出来，再挑一条\"竖直的底\"。",
+        "solution": [
+          "A(2,m) 在 y = x + 1 上，得 m = 3，所以 A(2,3)，k = 6，反比例函数为 y = 6/x。",
+          "OC = 4：C(4,0)。B 在 y = 6/x 上且横坐标 4，得 B(4, 1.5)；D 在 y = x+1 上且横坐标 4，得 D(4,5)。",
+          "BD 是竖直的线段，长 5 - 1.5 = 3.5；A 到直线 x = 4 的距离是 4 - 2 = 2。",
+          "S△ABD = ½ × 3.5 × 2 = 3.5。"
+        ]
+      },
+      {
+        "id": "b19",
+        "no": "19",
+        "group": "解答",
+        "type": "solve",
+        "diff": 3,
+        "focus": "plan",
+        "ask": "如图，函数 y = m/x（x>0）的图象经过点 A(2, 2)。\n(1) 求 m 的值；\n(2) 过点 A 作 x 轴的平行线 l，直线 y = 2x + b 与直线 l 交于点 B，与函数 y = m/x（x>0）的图象交于点 C，与 x 轴交于点 D。当 C 是线段 BD 的中点时，求 b 的值。",
+        "fields": [
+          {
+            "type": "num",
+            "label": "(1) m =",
+            "ans": 4
+          },
+          {
+            "type": "num",
+            "label": "(2) b =",
+            "ans": -7
+          }
+        ],
+        "tip": "\"中点\"要翻译成坐标关系：C 的坐标 = B、D 坐标的平均数。",
+        "solution": [
+          "A(2,2) 在 y = m/x 上，得 m = 4。",
+          "l 是过 A 的水平线，y = 2。B 在 l 与 y = 2x + b 上：2 = 2x + b，B((2-b)/2, 2)。",
+          "D 在 y = 2x + b 与 x 轴上：0 = 2x + b，D(-b/2, 0)。",
+          "C 是 BD 中点，所以 C 的纵坐标 = (2 + 0)/2 = 1；C 又在 y = 4/x 上，故 C(4, 1)。",
+          "把 C(4,1) 代入 y = 2x + b：1 = 8 + b，b = -7。"
+        ]
+      },
+      {
+        "id": "b20",
+        "no": "20",
+        "group": "解答",
+        "type": "solve",
+        "diff": 3,
+        "focus": "model",
+        "ask": "如图，直线 y = -2x + 2 与 x 轴、y 轴分别相交于 A、B 两点，双曲线 y = k/x 在第一象限的图象经过正方形 ABCD 的顶点 D。\n(1) 求双曲线的解析式；\n(2) 将正方形 ABCD 沿 x 轴向左平移 m 个单位长度，此时点 C 的对应点 C′ 恰好落在双曲线上，求 m 的值。",
+        "fields": [
+          {
+            "type": "coef",
+            "label": "(1) 双曲线",
+            "tpl": "y = {0}/x",
+            "ans": [
+              3
+            ]
+          },
+          {
+            "type": "num",
+            "label": "(2) m =",
+            "ans": 1
+          }
+        ],
+        "tip": "正方形 → 把边 AB 旋转 90°，就能从 A、B 求出 C、D。",
+        "solution": [
+          "令 y = 0 得 A(1,0)；令 x = 0 得 B(0,2)。",
+          "AB 的向量是 (-1, 2)，边长 √5。正方形 ABCD 中 BC ⊥ AB 且长度相等，(AB) 顺时针转 90° 得 (2, 1)。",
+          "所以 C = B + (2,1) = (2,3)，D = A + (2,1) = (3,1)。",
+          "D(3,1) 在 y = k/x 上，k = 3，双曲线 y = 3/x。",
+          "C(2,3) 左移 m 后为 (2-m, 3)，在 y = 3/x 上：3 = 3/(2-m)，得 m = 1。"
+        ]
+      },
+      {
+        "id": "b21",
+        "no": "21",
+        "group": "解答",
+        "type": "solve",
+        "diff": 3,
+        "focus": "graph",
+        "ask": "某饮水机接通电源就进入自动程序：开机加热时每分钟上升 10℃，加热到 100℃ 停止加热，水温开始下降，此时水温 y(℃) 与开机后用时 x(min) 成反比例，直至水温降至 20℃ 时自动开机加热，重复上述程序。若在水温为 20℃ 时接通电源，图象如图。\n(1) 填空：a = ______，b = ______；\n(2) 求 y 关于 x 的函数关系式；\n(3) 饮水机有多少时间能使水温保持在 50℃ 及以上？",
+        "plot": {
+          "poly": [
+            [
+              0,
+              20
+            ],
+            [
+              8,
+              100
+            ],
+            [
+              40,
+              20
+            ]
+          ],
+          "x0": 0,
+          "x1": 44,
+          "y0": 0,
+          "y1": 115,
+          "sx": 4,
+          "sy": 20,
+          "w": 340,
+          "h": 240,
+          "marks": [
+            {
+              "x": 8,
+              "y": 100,
+              "l": "a"
+            },
+            {
+              "x": 40,
+              "y": 20,
+              "l": "b"
+            }
+          ]
+        },
+        "fields": [
+          {
+            "type": "num",
+            "label": "(1) a =",
+            "ans": 8
+          },
+          {
+            "type": "num",
+            "label": "(1) b =",
+            "ans": 40
+          },
+          {
+            "type": "num",
+            "label": "(3) 保持 50℃ 及以上的时间 =（分钟）",
+            "ans": 13
+          }
+        ],
+        "tip": "分三段看：升温段是一次函数，降温段是反比例，两个\"连接点\"是关键。",
+        "solution": [
+          "升温段：从 20℃ 起每分钟升 10℃，到 100℃ 用 (100-20)/10 = 8 分钟，所以 a = 8。",
+          "降温段：设 y = k/x（这里\"与开机后用时成反比例\"指降温过程中的 x），过 (8, 100)，得 k = 800，y = 800/x。",
+          "降到 20℃ 时：20 = 800/x，x = 40，所以 b = 40。",
+          "y = 20 + 10x（0 ≤ x ≤ 8）与 y = 800/x（x ≥ 8）。",
+          "保温时间：升温段 20+10x ≥ 50 → x ≥ 3，即 3～8 共 5 分钟；降温段 800/x ≥ 50 → x ≤ 16，即 8～16 共 8 分钟。合计 13 分钟。"
+        ]
+      },
+      {
+        "id": "b22",
+        "no": "22",
+        "group": "解答",
+        "type": "solve",
+        "diff": 3,
+        "focus": "plan",
+        "ask": "如图，直线 y₁ = -x + 4，y₂ = (3/4)x + b 都与双曲线 y = k/x 交于点 A(1, m)，这两条直线分别与 x 轴交于 B、C 两点。\n(1) 求双曲线的解析式；\n(2) 直接写出当 x > 0 时，不等式 (3/4)x + b > k/x 的解集；\n(3) 若点 P 在 x 轴上，连接 AP 把 △ABC 的面积分成 1 : 3 两部分，求此时点 P 的坐标。",
+        "fields": [
+          {
+            "type": "coef",
+            "label": "(1) 双曲线",
+            "tpl": "y = {0}/x",
+            "ans": [
+              3
+            ]
+          },
+          {
+            "type": "choice",
+            "label": "(2) 解集（x > 0）",
+            "options": [
+              "0 < x < 1",
+              "x > 1",
+              "x > 3",
+              "1 < x < 3"
+            ],
+            "ans": 1
+          },
+          {
+            "type": "coef",
+            "label": "(3) P 的横坐标（两个中较大的一个）",
+            "tpl": "x = {0}",
+            "ans": [
+              2.25
+            ]
+          }
+        ],
+        "tip": "第(3)问：高相同，面积比就是底边比。",
+        "solution": [
+          "A(1,m) 在 y₁ = -x + 4 上，得 m = 3，A(1,3)，k = 3，双曲线 y = 3/x。",
+          "A(1,3) 在 y₂ 上：3 = 3/4 + b，b = 9/4。",
+          "(2) x>0 时 (3/4)x + 9/4 > 3/x，两边乘 4x 得 3x² + 9x > 12，即 x² + 3x - 4 > 0，(x+4)(x-1) > 0，x > 1。",
+          "B(4,0)，C(-3,0)，BC = 7，A 到 x 轴距离 3，S△ABC = 10.5。",
+          "AP 把 △ABC 分成 △ABP 与 △ACP，两三角形高相同，面积比 = BP : PC。",
+          "BP:PC = 1:3 → BP = 7/4，P(9/4, 0)；BP:PC = 3:1 → BP = 21/4，P(-5/4, 0)。"
+        ]
+      },
+      {
+        "id": "b23",
+        "no": "23",
+        "group": "解答",
+        "type": "solve",
+        "diff": 3,
+        "focus": "check",
+        "ask": "函数复习课后，小勤对函数 y = (x-1)/(x+1) 的图象与性质进行如下探究：\n(1) 【初步感知】自变量 x 的取值范围是 ______；\n(2) 【画出图象】①列表：x = -3, -2, -5/3, -3/2, n, 0, 1, 2, 3 对应的 y = 2, 3, 4, m, -3, -1, 0, 1/3, 1/2，则 m = ______，n = ______；\n(3) 【研究性质】y = (x-1)/(x+1) = -2/(x+1) + 1 的图象是将反比例函数 y = -2/x 的图象向左平移 ____ 个单位，再向上平移 ____ 个单位得到的，对称中心为 ______；\n(4) 【拓展应用】当 -3 ≤ x ≤ 3（x ≠ -1）时，关于 x 的方程 kx + 1 = (x-1)/(x+1) 有实数解，直接写出 k 的取值范围。",
+        "fields": [
+          {
+            "type": "choice",
+            "label": "(1) x 的取值范围",
+            "options": [
+              "x ≠ 0",
+              "x ≠ -1",
+              "x ≠ 1",
+              "x 为任意实数"
+            ],
+            "ans": 1
+          },
+          {
+            "type": "num",
+            "label": "(2) m =",
+            "ans": 5
+          },
+          {
+            "type": "coef",
+            "label": "(2) n =",
+            "tpl": "{0}",
+            "ans": [
+              -0.5
+            ]
+          }
+        ],
+        "tip": "这个函数 = 反比例函数平移而来：先变形，再看平移。",
+        "solution": [
+          "(1) 分母 x + 1 ≠ 0，所以 x ≠ -1。",
+          "(2) x = -3/2 时 y = (-5/2)/(-1/2) = 5，所以 m = 5；y = -3 时 (x-1)/(x+1) = -3，解得 x = -1/2，所以 n = -1/2。",
+          "(3) y = -2/(x+1) + 1：把 y = -2/x 的图象向左平移 1 个单位、再向上平移 1 个单位；对称中心是 (-1, 1)。",
+          "(4) 由 kx + 1 = (x-1)/(x+1)（x ≠ -1）整理得 kx² + kx + 2 = 0（x = -1 时两边分别为 0 和 -2，不成立，故不用另扣）。",
+          "k = 0 时 2 = 0 无解，所以 k ≠ 0，于是 x² + x + 2/k = 0。设 f(x) = x² + x，在 [-3,3] 上 f 的范围是 [-1/4, 12]。",
+          "要求 -2/k ∈ [-1/4, 12]：k > 0 时得 k ≥ 8；k < 0 时得 k ≤ -1/6。",
+          "所以 k ≤ -1/6 或 k ≥ 8。"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "pk-hanshu-1014",
+    "name": "数学练习卷（10 月 14 日）",
+    "source": "题库/数学函数练习卷【问卷】.pdf",
+    "exam": "10 月 14 日 数学练习（选择 8 + 填空 4 + 解答 4）",
+    "note": "第 8 题的四个选项图请对照原卷看；本工具用文字描述各选项。已按老师答卷核对校正（8=D、11 题边长 2、13(4) 求 m=7、16(3) 两个点）。",
+    "questions": [
+      {
+        "id": "a1",
+        "no": "1",
+        "group": "选择",
+        "type": "choice",
+        "diff": 1,
+        "focus": "trans",
+        "ask": "下列函数是 y 关于 x 的反比例函数的是（　）",
+        "opts": [
+          "y = 1/(x-1)",
+          "y = 1/x²",
+          "y = 3/x",
+          "y = -x/4"
+        ],
+        "ans": 2,
+        "tip": "定义只有一条：能写成 y = k/x，k ≠ 0。",
+        "solution": [
+          "反比例函数必须是 y = k/x（k ≠ 0）：分子是常数，分母只有 x 的一次项。",
+          "A 的分母是 x - 1（整体平移过的），不是 y = k/x；B 的分母是 x²；D 是正比例函数；只有 C 符合。"
+        ]
+      },
+      {
+        "id": "a2",
+        "no": "2",
+        "group": "选择",
+        "type": "choice",
+        "diff": 1,
+        "focus": "model",
+        "ask": "将抛物线 y = x² + 1 向左平移 2 个单位，再向下平移 3 个单位，所得抛物线是（　）",
+        "opts": [
+          "y = (x+2)² - 3",
+          "y = (x+2)² - 2",
+          "y = (x-2)² - 3",
+          "y = (x-2)² - 2"
+        ],
+        "ans": 1,
+        "tip": "左加右减动 x，上加下减动常数。分两步做，别一步到底。",
+        "solution": [
+          "向左平移 2：把 x 换成 x + 2，得 y = (x+2)² + 1。",
+          "再向下平移 3：常数减 3，得 y = (x+2)² - 2。",
+          "口诀只在\"懂了为什么\"之后才有用：左移是让图象上每个点的横坐标变小，所以要 x + 2 才能补偿。"
+        ]
+      },
+      {
+        "id": "a3",
+        "no": "3",
+        "group": "选择",
+        "type": "choice",
+        "diff": 2,
+        "focus": "graph",
+        "ask": "根据表格数据，方程 x² + 3x - 5 = 0 的一个解 x 的取值范围为（　）",
+        "table": {
+          "head": [
+            "x",
+            "1.1",
+            "1.2",
+            "1.3",
+            "1.4"
+          ],
+          "rows": [
+            [
+              "x²+3x-5",
+              "-0.49",
+              "0.04",
+              "0.59",
+              "1.16"
+            ]
+          ]
+        },
+        "opts": [
+          "1 < x < 1.1",
+          "1.1 < x < 1.2",
+          "1.2 < x < 1.3",
+          "1.3 < x < 1.4"
+        ],
+        "ans": 1,
+        "tip": "方程的解 = 函数值为 0 的 x；表格里看哪两个数\"变号\"。",
+        "solution": [
+          "设 y = x² + 3x - 5，方程的解就是 y = 0 时的 x。",
+          "x = 1.1 时 y = -0.49 < 0；x = 1.2 时 y = 0.04 > 0。",
+          "函数值在 1.1 与 1.2 之间由负变正，说明中间必有一处 y = 0，所以解在 1.1 < x < 1.2 之间。"
+        ]
+      },
+      {
+        "id": "a4",
+        "no": "4",
+        "group": "选择",
+        "type": "choice",
+        "diff": 2,
+        "focus": "graph",
+        "ask": "汽车紧急刹车后前行的距离 s（米）与行驶时间 t（秒）的关系是 s = 30t - 5t²，则该车从开始刹车到停下来一共用时（　）",
+        "opts": [
+          "1/12 秒",
+          "1/6 秒",
+          "3 秒",
+          "6 秒"
+        ],
+        "ans": 2,
+        "tip": "\"停下来\" = 距离不再增加 = 抛物线取到最高点。",
+        "solution": [
+          "s = 30t - 5t² = -5(t - 3)² + 45，是开口向下的抛物线，顶点在 t = 3。",
+          "t = 3 时 s 最大（45 米），之后 s 不再增加，说明车停下来了，用时 3 秒。",
+          "容易错的是令 s = 0 解出 t = 6——那是\"回到出发点\"，不是刹车过程。"
+        ]
+      },
+      {
+        "id": "a5",
+        "no": "5",
+        "group": "选择",
+        "type": "choice",
+        "diff": 3,
+        "focus": "plan",
+        "ask": "如图，一抛物线型拱桥，当拱顶到水面的距离为 2m 时，水面宽度为 4m，那么水位上涨 1m 时，水面的宽度为（　）m",
+        "plot": {
+          "expr": "-0.5x^2+2",
+          "x0": -3.2,
+          "x1": 3.2,
+          "y0": -1,
+          "y1": 2.8,
+          "sx": 1,
+          "sy": 1,
+          "w": 320,
+          "h": 200,
+          "marks": [
+            {
+              "x": -2,
+              "y": 0,
+              "l": ""
+            },
+            {
+              "x": 2,
+              "y": 0,
+              "l": ""
+            }
+          ]
+        },
+        "opts": [
+          "2√2",
+          "√2",
+          "√6 - 2",
+          "2√6 - 2"
+        ],
+        "ans": 0,
+        "tip": "建坐标系：以拱顶正下方为原点、水面为 x 轴，先把抛物线求出来。",
+        "solution": [
+          "以水面为 x 轴、拱顶正下方为原点建系，则拱顶是 (0, 2)，水面宽 4m 说明过 (-2, 0)、(2, 0)。",
+          "设 y = ax² + 2，代入 (2,0)：0 = 4a + 2，a = -1/2，所以 y = -x²/2 + 2。",
+          "水位上涨 1m，即水面变为 y = 1：1 = -x²/2 + 2，x² = 2，x = ±√2。",
+          "宽度 = 2√2，选 A。"
+        ]
+      },
+      {
+        "id": "a6",
+        "no": "6",
+        "group": "选择",
+        "type": "choice",
+        "diff": 3,
+        "focus": "graph",
+        "ask": "如图是二次函数 y = ax² + bx + c 的图象，对称轴是直线 x = -1，下列结论正确的是（　）",
+        "plot": {
+          "expr": "-(x+1)^2+3",
+          "x0": -4.2,
+          "x1": 2.2,
+          "y0": -3,
+          "y1": 4,
+          "sx": 1,
+          "sy": 1,
+          "w": 320,
+          "h": 220
+        },
+        "opts": [
+          "b² - 4ac < 0",
+          "a + b + c > 0",
+          "b = 2a",
+          "abc < 0"
+        ],
+        "ans": 2,
+        "tip": "a±b+c 这类式子，永远先翻译成\"x = ±1 时的函数值\"。",
+        "solution": [
+          "开口向下 → a < 0；对称轴 x = -b/(2a) = -1 → b = 2a < 0；图象与 x 轴有两个交点 → Δ = b² - 4ac > 0，A 错。",
+          "x = 1 时从图上看函数值为负（图象在 x = 1 处已在 x 轴下方），所以 a + b + c < 0，B 错。",
+          "b = 2a 由对称轴直接得到，C 对。",
+          "与 y 轴交点在正半轴 → c > 0，于是 abc = (-)(-)(+) > 0，D 错。"
+        ]
+      },
+      {
+        "id": "a7",
+        "no": "7",
+        "group": "选择",
+        "type": "choice",
+        "diff": 3,
+        "focus": "trans",
+        "ask": "某农场建长方形养鸡场，一边靠墙（墙长 18m），墙对面有一个 2m 宽的门，另外三边用木栏围成，木栏长 30m。若鸡场的宽为 x m，面积为 S m²，则 S 与 x 的关系式为（　）",
+        "opts": [
+          "S = x(32 - 2x)（7 ≤ x ≤ 16）",
+          "S = x(32 - 2x)（7 ≤ x ≤ 15）",
+          "S = x(30 - 2x)（6 ≤ x ≤ 15）",
+          "S = x(30 - 2x)（6 ≤ x ≤ 14）"
+        ],
+        "ans": 1,
+        "tip": "门那一边不用木栏——先把\"木栏都花在哪\"数清楚，再列范围。",
+        "solution": [
+          "设宽（垂直于墙的边）为 x，平行于墙的一边设为 y。",
+          "三边用木栏，其中平行于墙的那一边有 2m 的门，所以木栏长 = 2x + (y - 2) = 30，得 y = 32 - 2x。",
+          "S = xy = x(32 - 2x)。",
+          "范围：y ≤ 18（墙只有 18m）→ 32 - 2x ≤ 18 → x ≥ 7；门宽 2m 要放得下 → y ≥ 2 → x ≤ 15。所以 7 ≤ x ≤ 15。"
+        ]
+      },
+      {
+        "id": "a8",
+        "no": "8",
+        "group": "选择",
+        "type": "choice",
+        "diff": 3,
+        "focus": "plan",
+        "ask": "如图，Rt△ABC 中 ∠C = 90°，AC = 8，BC = 6，动点 P 从 B 沿 BA 向 A 匀速运动，同时动点 Q 从 A 出发沿 AC → CB 向 B 匀速运动，速度相同，到各自终点停止。点 Q 运动的路程为 x，△BPQ 的面积为 y，则能反映 y 与 x 关系的图象是（　）",
+        "opts": [
+          "图 A：峰值 24 在 x = 8，之后一条直线降到 0（峰值应为 19.2，错）",
+          "图 B：峰值 24 在 x = 8，之后曲线降到 0（峰值应为 19.2，错）",
+          "图 C：峰值 19.2 在 x = 8，8～10 段用直线直连到 16，再直线降到 0（8～10 段应是曲线，错）",
+          "图 D：峰值 19.2 在 x = 8，8～10 段是向下弯的曲线到 16，再直线降到 0（对）"
+        ],
+        "ans": 3,
+        "tip": "分段：Q 在 AC 上和 Q 在 CB 上，两种情形要分开算。",
+        "solution": [
+          "AB = 10（6-8-10）。设 C 为原点，A(8,0)，B(0,6)，则 P 与 Q 的路程都是 x，x 最大 14。",
+          "① 0 ≤ x ≤ 8：Q 在 AC 上 (8-x, 0)，P 在 BA 上 (0.8x, 6-0.6x)，算得 y = 0.3x²，x = 8 时 y = 19.2。",
+          "② 8 < x ≤ 10：Q 在 CB 上 (0, x-8)，P 仍在 BA 上，此时 B、Q 都在 y 轴上，y = ½·(14-x)·0.8x = 0.4x(14-x) = -0.4x² + 5.6x，x = 8 时 19.2，x = 10 时 16；这一段是开口向下的抛物线弧（x = 9 时 y = 18，高于两端点直连线的 17.6），所以 8～10 段不能画成直线。",
+          "③ 10 < x ≤ 14：P 已停在 A，y = ½·(14-x)·8 = 4(14-x)，从 16 直线降到 0，x = 10 处是折点。",
+          "所以图象是「上升的曲线 → 19.2（x = 8）→ 向下弯的弧到 16（x = 10）→ 直线降到 0（x = 14）」，选 D。"
+        ]
+      },
+      {
+        "id": "a9",
+        "no": "9",
+        "group": "填空",
+        "type": "fill",
+        "diff": 1,
+        "focus": "model",
+        "ask": "若点 P(3, 2) 在反比例函数 y = (k+1)/x 的图象上，则 k = ______。",
+        "fields": [
+          {
+            "type": "num",
+            "label": "k =",
+            "ans": 5
+          }
+        ],
+        "tip": "先算分子，再减 1。",
+        "solution": [
+          "点在图象上：2 = (k+1)/3，得 k + 1 = 6，k = 5。"
+        ]
+      },
+      {
+        "id": "a10",
+        "no": "10",
+        "group": "填空",
+        "type": "fill",
+        "diff": 3,
+        "focus": "trans",
+        "ask": "若两条抛物线开口方向相同、与 x 轴有相同交点，则它们所围成的封闭曲线称为\"月牙线\"。如图是由抛物线 y₁ = -(1/4)x² + 1 和抛物线 y₂ = -(1/2)x² + k 组成的\"月牙线\"，则 k 的值为 ______。",
+        "fields": [
+          {
+            "type": "num",
+            "label": "k =",
+            "ans": 2
+          }
+        ],
+        "tip": "\"交点相同\"→ 令 y = 0 解出的两个 x 相同。",
+        "solution": [
+          "y₁ = 0 时：-(1/4)x² + 1 = 0，x² = 4，x = ±2。",
+          "y₂ = 0 时：-(1/2)x² + k = 0，x² = 2k，x = ±√(2k)。",
+          "交点相同说明 √(2k) = 2，2k = 4，k = 2。"
+        ]
+      },
+      {
+        "id": "a11",
+        "no": "11",
+        "group": "填空",
+        "type": "fill",
+        "diff": 3,
+        "focus": "plan",
+        "ask": "如图，正方形 ABCD 的边长是 2，正方形 EFGH 的顶点分别在 AB、BC、CD、AD 上。设正方形 EFGH 的面积是 S，AE 的长是 x（x > 0），则当 x = ______ 时，S 取得最小值 ______。",
+        "fields": [
+          {
+            "type": "num",
+            "label": "x =",
+            "ans": 1
+          },
+          {
+            "type": "num",
+            "label": "S 的最小值 =",
+            "ans": 2
+          }
+        ],
+        "tip": "四个角上的直角三角形全等，边长用 x 和 2-x 表示。",
+        "solution": [
+          "正方形 ABCD 边长 2，AE = x，则 BE = 2 - x；四个角上的直角三角形全等（可证），且 AH = BE = 2 - x。",
+          "EFGH 的边是小直角三角形的斜边，两条直角边分别是 x 和 2 - x，所以 S = x² + (2-x)²。",
+          "S = 2x² - 4x + 4 = 2(x - 1)² + 2。",
+          "所以 x = 1 时 S 最小，最小值为 2（此时内接正方形面积正好是原正方形面积的一半）。"
+        ]
+      },
+      {
+        "id": "a12",
+        "no": "12",
+        "group": "填空",
+        "type": "fill",
+        "diff": 3,
+        "focus": "check",
+        "selfCheck": true,
+        "ask": "将二次函数 y = -x² + 2x + 3 的图象在 x 轴上方的部分沿 x 轴翻折，所得新函数的图象如图（实线部分）。\n(1) 若直线 y = m 与新图象有 4 个公共点，则 m 的取值范围是 ______；\n(2) 当直线 y = x + b 与新图象有 4 个公共点时，b 的取值范围是 ______。",
+        "tip": "翻折后图象变成\"中间一段开口向上的 V 形 + 外侧两段开口向下\"。先画图，再让直线去扫。",
+        "solution": [
+          "y = -x² + 2x + 3 = -(x-1)² + 4，与 x 轴交于 (-1,0)、(3,0)，顶点 (1,4)。",
+          "x 轴上方的部分（-1 < x < 3）翻折后变成 y = x² - 2x - 3（开口向上，顶点 (1,-4)）；其余部分不变。",
+          "新图象：中间一段开口向上的抛物线（最低点 -4），两外侧各一段开口向下的抛物线（在 x 轴下方，向 -∞ 延伸）。",
+          "(1) 水平线 y = m：当 -4 < m < 0 时，中间那段交 2 点、外侧各交 1 点，共 4 个点。所以 -4 < m < 0。",
+          "(2) 斜率 1 的直线：与左右两段外侧各至多 1 点，与中间段至多 2 点。",
+          "左侧段：x² - x + (b-3) = 0 的较小根要小于 -1 → b < 1；右侧段：较大根要大于 3 → b < -3；",
+          "中间段：x² - 3x - (3+b) = 0 要有两个根都落在 (-1,3) → -21/4 < b < -3。",
+          "取交集：-21/4 < b < -3。"
+        ]
+      },
+      {
+        "id": "a13",
+        "no": "13",
+        "group": "解答",
+        "type": "solve",
+        "diff": 2,
+        "focus": "graph",
+        "ask": "如图，是反比例函数 y = (m-3)/x 的图象的一支（在第一象限），根据图象回答问题：\n(1) 常数 m 的取值范围是 ______；图象的另一支在第 ______ 象限；\n(2) 在每个象限内 y 随 x 的增大而 ______；\n(3) 在该函数图象上取点 A(x₁,y₁)、B(x₂,y₂)、C(x₃,y₃)，如果 x₁ < 0 < x₂ < x₃，比较 y₁、y₂、y₃ 的大小；\n(4) 若点 C(-1,-4) 在该反比例函数的图象上，求 m 的值。",
+        "fields": [
+          {
+            "type": "choice",
+            "label": "(1) m 的取值范围",
+            "options": [
+              "m > 3",
+              "m < 3",
+              "m > 0",
+              "m ≠ 3"
+            ],
+            "ans": 0
+          },
+          {
+            "type": "choice",
+            "label": "(1) 另一支在",
+            "options": [
+              "第一象限",
+              "第二象限",
+              "第三象限",
+              "第四象限"
+            ],
+            "ans": 2
+          },
+          {
+            "type": "choice",
+            "label": "(3) y₁、y₂、y₃ 的大小",
+            "options": [
+              "y₁ < y₂ < y₃",
+              "y₂ < y₃ < y₁",
+              "y₁ < y₃ < y₂",
+              "y₃ < y₁ < y₂"
+            ],
+            "ans": 2
+          },
+          {
+            "type": "num",
+            "label": "(4) m =",
+            "ans": 7
+          }
+        ],
+        "tip": "图象在第一象限 → k > 0；同一支内才能直接比大小。",
+        "solution": [
+          "(1) 图象一支在第一象限，说明 k = m - 3 > 0，所以 m > 3；另一支在第三象限。",
+          "(2) k > 0 时，在每个象限内 y 随 x 的增大而减小。",
+          "(3) x₁ < 0 时点在第三象限，y₁ < 0；x₂、x₃ 在第一象限，都在 0 上方，且这一支上 y 随 x 增大而减小，x₂ < x₃ 得 y₂ > y₃。所以 y₁ < y₃ < y₂。",
+          "(4) 把 C(-1,-4) 代入：-4 = (m-3)/(-1)，得 m - 3 = 4，所以 m = 7（此时解析式为 y = 4/x）。"
+        ]
+      },
+      {
+        "id": "a14",
+        "no": "14",
+        "group": "解答",
+        "type": "solve",
+        "diff": 3,
+        "focus": "plan",
+        "ask": "如图，要建一个矩形场地，一面靠墙（墙长 8m），另三边用篱笆围成，篱笆总长 20m。设垂直于墙的一边 AD 为 x m，矩形场地的面积为 S m²。\n(1) S 与 x 的函数关系式：S = ______，x 的取值范围是 ______；\n(2) 若矩形场地的面积为 42 m²，求矩形的长与宽；\n(3) 求矩形场地面积的最大值，并写出此时的长与宽。",
+        "fields": [
+          {
+            "type": "coef",
+            "label": "(1) S =",
+            "tpl": "{0}x² + {1}x",
+            "ans": [
+              -2,
+              20
+            ]
+          },
+          {
+            "type": "choice",
+            "label": "(1) x 的取值范围",
+            "options": [
+              "0 < x < 10",
+              "6 ≤ x < 10",
+              "6 ≤ x ≤ 10",
+              "0 < x ≤ 10"
+            ],
+            "ans": 1
+          },
+          {
+            "type": "num",
+            "label": "(2) 平行于墙的边 =（m）",
+            "ans": 6
+          },
+          {
+            "type": "num",
+            "label": "(2) 垂直于墙的边 =（m）",
+            "ans": 7
+          },
+          {
+            "type": "num",
+            "label": "(3) 面积最大值 =（m²）",
+            "ans": 48
+          }
+        ],
+        "tip": "先由\"篱笆总长 20\"写出另一边，再由\"墙长 8\"卡范围——最大值往往不在顶点。",
+        "solution": [
+          "(1) 平行于墙的一边为 20 - 2x，所以 S = x(20 - 2x) = -2x² + 20x。",
+          "范围：20 - 2x ≤ 8（墙只有 8m）→ x ≥ 6；20 - 2x > 0 → x < 10。所以 6 ≤ x < 10。",
+          "(2) -2x² + 20x = 42 → x² - 10x + 21 = 0 → x = 3 或 7；由 x ≥ 6 取 x = 7，此时 20 - 2x = 6。矩形为 7m × 6m（按长 > 宽写作长 7m、宽 6m：垂直于墙的边 7m，平行于墙的边 6m）。",
+          "(3) S = -2(x-5)² + 50，开口向下，顶点 x = 5 不在 [6,10) 内，所以这一段上 S 随 x 增大而减小，x = 6 时最大：S = 48。此时宽 6m、长 8m。"
+        ]
+      },
+      {
+        "id": "a15",
+        "no": "15",
+        "group": "解答",
+        "type": "solve",
+        "diff": 3,
+        "focus": "model",
+        "ask": "某商品进价每件 40 元，售价每件 50 元时每月可卖 210 件；售价每上涨 1 元，每月少卖 10 件，且每件售价不能超过 60 元。设每件售价上涨 x 元（x 为正整数），每月销售利润为 w 元。\n(1) 求 w 与 x 的函数关系式，并写出 x 的取值范围；\n(2) 售价定为多少元时月利润最大？最大月利润是多少？\n(3) 售价定为多少元时月利润恰为 2280 元？并直接写出售价 m 在什么范围时月利润不低于 2280 元。",
+        "fields": [
+          {
+            "type": "coef",
+            "label": "(1) w =",
+            "tpl": "{0}x² + {1}x + {2}",
+            "ans": [
+              -10,
+              110,
+              2100
+            ]
+          },
+          {
+            "type": "choice",
+            "label": "(2) 售价应定为",
+            "options": [
+              "55 元",
+              "56 元",
+              "55 元或 56 元",
+              "60 元"
+            ],
+            "ans": 2
+          },
+          {
+            "type": "num",
+            "label": "(2) 最大月利润 =（元）",
+            "ans": 2400
+          },
+          {
+            "type": "choice",
+            "label": "(3) 利润恰为 2280 元时的售价",
+            "options": [
+              "52 元或 59 元",
+              "52 元",
+              "59 元",
+              "50 元或 60 元"
+            ],
+            "ans": 0
+          },
+          {
+            "type": "choice",
+            "label": "(3) 利润不低于 2280 元时 m 的范围",
+            "options": [
+              "52 ≤ m ≤ 59",
+              "52 < m < 59",
+              "50 ≤ m ≤ 60",
+              "m ≥ 52"
+            ],
+            "ans": 0
+          }
+        ],
+        "tip": "\"上涨 x 元\"要一路涨价上涨：每件利润 10+x，销量 210-10x。",
+        "solution": [
+          "(1) 每件利润 10 + x，每月销量 210 - 10x，w = (10+x)(210-10x) = -10x² + 110x + 2100。",
+          "x 为正整数且 50 + x ≤ 60：所以 1 ≤ x ≤ 10（x 取整数）。",
+          "(2) w = -10(x - 5.5)² + 2402.5，顶点 x = 5.5 不是整数，取最近的 x = 5 或 6：都等于 2400。",
+          "所以售价 55 元或 56 元时，最大月利润 2400 元。",
+          "(3) -10x² + 110x + 2100 = 2280 → x² - 11x + 18 = 0 → x = 2 或 9，售价 52 元或 59 元。",
+          "抛物线开口向下，w ≥ 2280 对应 2 ≤ x ≤ 9，即 52 ≤ m ≤ 59。"
+        ]
+      },
+      {
+        "id": "a16",
+        "no": "16",
+        "group": "解答",
+        "type": "solve",
+        "diff": 3,
+        "focus": "plan",
+        "ask": "如图，抛物线 y = ax² + bx + 3 与 x 轴交于 A(-1, 0)、B(3, 0)，与 y 轴交于点 C。点 P 为抛物线上一动点。\n(1) 求抛物线的解析式；\n(2) 若 △BCP 的面积为 3，且点 P 在第一象限，求点 P 的坐标；\n(3) 当 ∠ACP 与 Rt△ACO 的一个内角相等时，求点 P 的坐标。",
+        "fields": [
+          {
+            "type": "coef",
+            "label": "(1) 解析式",
+            "tpl": "y = {0}x² + {1}x + {2}",
+            "ans": [
+              -1,
+              2,
+              3
+            ]
+          },
+          {
+            "type": "choice",
+            "label": "(2) 满足条件的 P",
+            "options": [
+              "(1,4) 或 (2,3)",
+              "(1,3) 或 (2,4)",
+              "(2,3) 或 (3,0)",
+              "(1,4) 或 (3,0)"
+            ],
+            "ans": 0
+          },
+          {
+            "type": "choice",
+            "label": "(3) 满足 ∠ACP 条件的 P",
+            "options": [
+              "(11/4, 15/16) 或 (7/3, 20/9)",
+              "(11/4, 15/16)、(7/3, 20/9)、(2/3, 35/9)、(2,3)",
+              "(7/3, 20/9) 或 (2,3)",
+              "(11/4, 15/16) 或 (2,3)"
+            ],
+            "ans": 0
+          }
+        ],
+        "tip": "(2) 用点到直线的距离或「水平宽 × 铅垂高」；(3) 先算出三个内角，再按射线方向筛选——只算「两直线夹角」会多出解。",
+        "solution": [
+          "(1) 用交点式：y = a(x+1)(x-3)。令 x = 0 得 3 = -3a，a = -1，所以 y = -x² + 2x + 3，C(0,3)。",
+          "(2) B(3,0)、C(0,3)，BC：y = -x + 3。设 P(t, -t²+2t+3)（0 < t < 3）。",
+          "P 到 BC 的距离 = |t² - 3t|/√2。S = ½ × 3√2 × |t²-3t|/√2 = (3/2)|t²-3t| = 3，得 |t²-3t| = 2。",
+          "第一象限内 t² - 3t < 0，所以 3t - t² = 2，t = 1 或 2。P(1,4) 或 P(2,3)。",
+          "(3) Rt△ACO 中，∠ACO ≈ 18.43°（tan = 1/3）、∠CAO ≈ 71.57°（tan = 3）、∠AOC = 90°。",
+          "① ∠ACP = ∠AOC = 90°：CP ⊥ CA，CP 斜率 -1/3，与抛物线交于 x = 7/3（另一交点 x = 0 就是点 C，舍），得 P(7/3, 20/9)。",
+          "② ∠ACP = ∠CAO（tan = 3）：射线 CP 与 CA 成 71.57°，取向右下的射线得斜率 -3/4，与抛物线交于 x = 11/4，得 P(11/4, 15/16)；斜率为 0 的那条射线朝左，与抛物线没有别的交点。",
+          "③ ∠ACP = ∠ACO（tan = 1/3）：CP 只能是 CA 关于 CO 的对称线（斜率 4/3），与抛物线只交于 x = 0（点 C）和 x = 2/3；而 x = 2/3 时 ∠ACP ≈ 161.57°（在 CA 的另一侧），故无满足条件的点。",
+          "所以满足条件的 P 只有两个：(11/4, 15/16) 或 (7/3, 20/9)。"
+        ]
+      }
+    ]
+  }
+];
+var DRILLS = [
+  {id:'d1', ask:'y = -2x + 1 的图象是哪一个？',
+   opts:[
+     {plot:{f:function(x){return -2*x+1;}}, ok:true, why:'k = -2 < 0 下降，b = 1 交 y 轴于正半轴。'},
+     {plot:{f:function(x){return 2*x+1;}}, ok:false, why:'k 的符号反了：这里是上升的。'},
+     {plot:{f:function(x){return -2*x-1;}}, ok:false, why:'b 的符号反了：应该交 y 轴于 +1。'},
+     {plot:{f:function(x){return -0.5*x+1;}}, ok:false, why:'斜率不对：k = -2 应该更陡。'}
+   ],
+   why:'看两条：k 的符号定走向，b 定 y 轴截距。'},
+  {id:'d2', ask:'图中的直线，解析式是哪一个？', stemPlot:{f:function(x){return -x-2;}, x0:-5,x1:5,y0:-5,y1:5,sx:1,sy:1,w:300,h:230},
+   opts:[
+     {t:'y = -x - 2', ok:true, why:'下降（k<0），交 y 轴于 (0,-2)，所以 b = -2。'},
+     {t:'y = x - 2', ok:false, why:'这条是上升的，与图不符。'},
+     {t:'y = -x + 2', ok:false, why:'这条与 y 轴交于 (0,2)，在 x 轴上方。'},
+     {t:'y = -2x', ok:false, why:'这条过原点，与图不符。'}
+   ],
+   why:'先看走向定 k 的符号，再看与 y 轴交点定 b。'},
+  {id:'d3', ask:'下表中最可能是什么函数？', table:{head:['x','1','2','3','6'], rows:[['y','6','3','2','1']]},
+   opts:[
+     {t:'一次函数', ok:false, why:'x 与 y 的和、差都不是固定的，y 不是随 x 均匀变化的。'},
+     {t:'反比例函数', ok:true, why:'xy 恒等于 6，所以 y = 6/x。'},
+     {t:'二次函数', ok:false, why:'二次函数的 y 变化量是“差的差”，这里不是。'},
+     {t:'都不是', ok:false, why:'xy 恒定就是反比例函数的标志。'}
+   ],
+   why:'表格题的技巧：算 xy 是否恒定（反比例），或算 y 的差是否恒定（一次函数）。'},
+  {id:'d4', ask:'y = 2/x 中，“y 随 x 增大而减小”这句话在什么范围内成立？',
+   opts:[
+     {t:'整个定义域内都成立', ok:false, why:'x 从负数跨到正数时，y 会从负数跳到正数，不是一直减小。'},
+     {t:'在每个分支内成立（x > 0 时、x < 0 时各自成立）', ok:true, why:'反比例函数的增减性必须说“在每一个象限内”。'},
+     {t:'只在 x > 0 时成立', ok:false, why:'x < 0 的那一支同样也是越向右越小。'},
+     {t:'永远不成立', ok:false, why:'每一支内部确实是减小的。'}
+   ],
+   why:'反比例函数两支断开，说增减性必须限定“在每个象限内”。'},
+  {id:'d5', ask:'y = (x - 2)² + 3 的顶点和最小值是？',
+   opts:[
+     {t:'顶点 (2, 3)，最小值 3', ok:true, why:'顶点式 y = a(x-h)² + k 直接读出 (h, k)，a > 0 所以是最小值。'},
+     {t:'顶点 (-2, 3)，最小值 3', ok:false, why:'符号看错：是 (x - 2)，顶点横坐标是 +2。'},
+     {t:'顶点 (2, -3)，最小值 -3', ok:false, why:'常数项是 +3，不是 -3。'},
+     {t:'顶点 (2, 3)，最大值 3', ok:false, why:'a = 1 > 0，开口向上，开口向上取最小值。'}
+   ],
+   why:'顶点式 y = a(x-h)² + k：顶点 (h,k)，a>0 取最小值，a<0 取最大值。'},
+  {id:'d6', ask:'下表是二次函数，它的对称轴是哪一条？', table:{head:['x','0','1','2','3','4'], rows:[['y','3','0','-1','0','3']]},
+   opts:[
+     {t:'x = 2', ok:true, why:'x = 1 和 x = 3 时 y 都是 0，x = 0 和 x = 4 时 y 都是 3，关于 x = 2 对称。'},
+     {t:'x = 1', ok:false, why:'x = 1 时 y = 0，但那只是与 x 轴的一个交点。'},
+     {t:'y 轴（x = 0）', ok:false, why:'x = 0 时 y = 3，不是最低点。'},
+     {t:'x = -1', ok:false, why:'表里最小值在 x = 2。'}
+   ],
+   why:'找对称轴：找两组“函数值相同”的 x，取中点。'},
+  {id:'d7', ask:'图中直线的 k、b 分别是什么符号？', stemPlot:{f:function(x){return 1.2*x+2;}, x0:-5,x1:5,y0:-5,y1:6,sx:1,sy:1,w:300,h:230},
+   opts:[
+     {t:'k > 0，b > 0', ok:true, why:'上升说明 k>0，交 y 轴于正半轴说明 b>0。'},
+     {t:'k > 0，b < 0', ok:false, why:'交 y 轴于正半轴，所以 b>0。'},
+     {t:'k < 0，b > 0', ok:false, why:'直线上升，k 应该是正的。'},
+     {t:'k < 0，b < 0', ok:false, why:'走向和截距都看反了。'}
+   ],
+   why:'k 看升降，b 看与 y 轴的交点。两个动作分开做。'},
+  {id:'d8', ask:'y = x² - 4x + 3 与 x 轴的交点坐标是？',
+   opts:[
+     {t:'(1, 0) 和 (3, 0)', ok:true, why:'x² - 4x + 3 = (x-1)(x-3)，令其为 0。'},
+     {t:'(-1, 0) 和 (-3, 0)', ok:false, why:'因式分解的符号错了：应该是 (x-1)(x-3)。'},
+     {t:'(0, 3)', ok:false, why:'那是与 y 轴的交点，不是与 x 轴的交点。'},
+     {t:'(2, -1)', ok:false, why:'那是顶点坐标。'}
+   ],
+   why:'与 x 轴交点 = 令 y = 0 解方程；与 y 轴交点 = 令 x = 0。'},
+  {id:'d9', ask:'y = -3/x 的图象在哪些象限？',
+   opts:[
+     {t:'第一、三象限', ok:false, why:'k > 0 才在一、三象限；这里 k = -3 < 0。'},
+     {t:'第二、四象限', ok:true, why:'k < 0，图象在二、四象限。'},
+     {t:'只在第二象限', ok:false, why:'反比例函数有两支。'},
+     {t:'第一、二象限', ok:false, why:'反比例函数的两支只能在相对的两个象限。'}
+   ],
+   why:'反比例函数：k>0 在一、三象限，k<0 在二、四象限。'},
+  {id:'d10', ask:'y = 3x - 6 与 x 轴的交点坐标是？',
+   opts:[
+     {t:'(2, 0)', ok:true, why:'令 y = 0：3x - 6 = 0，x = 2。'},
+     {t:'(-2, 0)', ok:false, why:'解方程符号错了：3x = 6 得 x = 2。'},
+     {t:'(0, -6)', ok:false, why:'那是与 y 轴的交点。'},
+     {t:'(6, 0)', ok:false, why:'把 b 当成交点了。'}
+   ],
+   why:'与 x 轴的交点：令 y = 0 解出 x；与 y 轴的交点：令 x = 0 得 b。'},
+  {id:'d11', ask:'y = 2x² 与 y = 0.5x² 的图象，哪个开口更“窄”？',
+   opts:[
+     {t:'y = 2x²', ok:true, why:'|a| 越大开口越小（越窄）。'},
+     {t:'y = 0.5x²', ok:false, why:'|a| = 0.5 比较小，开口更宽。'},
+     {t:'一样宽', ok:false, why:'a 不同，开口大小不同。'},
+     {t:'无法比较', ok:false, why:'开口大小只由 |a| 决定，可以比较。'}
+   ],
+   why:'|a| 越大，开口越小（越窄）；|a| 越小，开口越大（越宽）。'},
+  {id:'d12', ask:'下表对应的二次函数，图象是哪一个？', table:{head:['x','-1','0','1','2'], rows:[['y','5','2','1','2']]},
+   opts:[
+     {plot:{f:function(x){return (x-1)*(x-1)+1;}, x0:-3,x1:5,y0:-2,y1:7,sx:1,sy:1,w:280,h:210}, ok:true,
+      why:'顶点 (1,1)，且过 (-1,5)、(0,2)、(2,2)——完全吻合。'},
+     {plot:{f:function(x){return (x+1)*(x+1)+1;}, x0:-3,x1:5,y0:-2,y1:7,sx:1,sy:1,w:280,h:210}, ok:false,
+      why:'顶点跑到 x = -1 了，与表不符（表里最小值在 x = 1）。'},
+     {plot:{f:function(x){return -(x-1)*(x-1)+1;}, x0:-3,x1:5,y0:-2,y1:7,sx:1,sy:1,w:280,h:210}, ok:false,
+      why:'开口向下了，而表里的值都是正的且两端变大。'},
+     {plot:{f:function(x){return (x-1)*(x-1)-1;}, x0:-3,x1:5,y0:-2,y1:7,sx:1,sy:1,w:280,h:210}, ok:false,
+      why:'顶点纵坐标错了：表里最小值是 1，不是 -1。'}
+   ],
+   why:'表格 → 图象：先找最小（大）值定顶点，再看左右对称。'}
+];
+/* =========================================================
+   极简函数图像绘制器（纯 SVG，无外部依赖）
+   cfg: {x0,x1,y0,y1,sx,sy,w,h,f,f2,poly,marks,rects}
+   ========================================================= */
+/* ---- 安全的表达式求值（给题库包用：expr:'2x-3' / '-(x+1)^2+3' / '6/x'） ---- */
+function compileExpr(src){
+  var s = String(src).replace(/\s+/g, ''), i = 0;
+  function peek(){ return s[i]; }
+  function parseExpr(){
+    var node = parseTerm();
+    while(peek() === '+' || peek() === '-'){
+      var op = s[i++];
+      node = {op:op, a:node, b:parseTerm()};
+    }
+    return node;
+  }
+  function parseTerm(){
+    var node = parseUnary();
+    for(;;){
+      var c = peek();
+      if(c === '*' || c === '/'){
+        i++;
+        node = {op:c, a:node, b:parseUnary()};
+      }else if(c === 'x' || c === '('){            /* 隐含乘号：0.5x^2、2(x+1) */
+        node = {op:'*', a:node, b:parseUnary()};
+      }else break;
+    }
+    return node;
+  }
+  function parseUnary(){
+    if(peek() === '-'){ i++; return {op:'neg', a:parseUnary()}; }
+    if(peek() === '+'){ i++; return parseUnary(); }
+    return parsePower();
+  }
+  function parsePower(){
+    var base = parseAtom();
+    if(peek() === '^'){ i++; return {op:'^', a:base, b:parseUnary()}; }
+    return base;
+  }
+  function parseAtom(){
+    var c = peek();
+    if(c === '('){
+      i++;
+      var v = parseExpr();
+      if(peek() === ')') i++;
+      return v;
+    }
+    if(c === 'x'){ i++; return {v:'x'}; }
+    if(c && /[0-9.]/.test(c)){
+      var st = i;
+      while(i < s.length && /[0-9.]/.test(s[i])) i++;
+      return parseFloat(s.slice(st, i));
+    }
+    var m = /^[a-z]+/.exec(s.slice(i));
+    if(m){
+      var name = m[0];
+      i += name.length;
+      var arg = null;
+      if(peek() === '('){
+        i++;
+        arg = parseExpr();
+        if(peek() === ')') i++;
+      }
+      return {fn:name, a:arg};
+    }
+    throw new Error('无法识别的字符：' + c);
+  }
+  var ast = parseExpr();
+  if(i < s.length) throw new Error('多余的字符：' + s.slice(i));
+  return function(x){ return evalNode(ast, x); };
+}
+function evalNode(n, x){
+  if(typeof n === 'number') return n;
+  if(n.v === 'x') return x;
+  if(n.op === 'neg') return -evalNode(n.a, x);
+  if(n.fn){
+    var a = n.a ? evalNode(n.a, x) : 0;
+    if(n.fn === 'sqrt') return Math.sqrt(a);
+    if(n.fn === 'abs') return Math.abs(a);
+    return NaN;
+  }
+  var p = evalNode(n.a, x), q = evalNode(n.b, x);
+  if(n.op === '+') return p + q;
+  if(n.op === '-') return p - q;
+  if(n.op === '*') return p * q;
+  if(n.op === '/') return p / q;
+  if(n.op === '^') return Math.pow(p, q);
+  return NaN;
+}
+var _exprCache = {};
+function exprFn(spec){
+  if(!spec) return null;
+  if(typeof spec === 'function') return spec;
+  if(typeof spec !== 'string') return null;
+  if(_exprCache[spec] !== undefined) return _exprCache[spec];
+  var f = null;
+  try{ f = compileExpr(spec); }catch(e){ f = null; }
+  _exprCache[spec] = f;
+  return f;
+}
+
+var PLOT_SEQ = 0;
+function numOr(v, d){ return (typeof v === 'number' && isFinite(v)) ? v : d; }
+function tickText(v){
+  var r = Math.round(v * 100) / 100;
+  return String(r);
+}
+function plotSVG(cfg){
+  if(!cfg) return '';
+  var w = cfg.w || 300, h = cfg.h || 230;
+  var x0 = numOr(cfg.x0, -5), x1 = numOr(cfg.x1, 5);
+  var y0 = numOr(cfg.y0, -5), y1 = numOr(cfg.y1, 5);
+  var sx = cfg.sx > 0 ? cfg.sx : 1, sy = cfg.sy > 0 ? cfg.sy : 1;
+  var padL = 30, padR = 14, padT = 12, padB = 24;
+  var iw = Math.max(10, w - padL - padR), ih = Math.max(10, h - padT - padB);
+  var X = function(v){ return padL + (v - x0) / (x1 - x0) * iw; };
+  var Y = function(v){ return padT + (y1 - v) / (y1 - y0) * ih; };
+  var id = 'pc' + (++PLOT_SEQ);
+  var o = [];
+  o.push('<svg viewBox="0 0 ' + w + ' ' + h + '" xmlns="http://www.w3.org/2000/svg">');
+  o.push('<defs><clipPath id="' + id + '"><rect x="' + padL + '" y="' + padT + '" width="' + iw.toFixed(1) + '" height="' + ih.toFixed(1) + '"/></clipPath></defs>');
+
+  /* 网格 */
+  var v, X0, Y0;
+  for(v = Math.ceil(x0 / sx - 1e-9) * sx; v <= x1 + 1e-9; v += sx){
+    X0 = X(v);
+    if(X0 < padL - .5 || X0 > padL + iw + .5) continue;
+    if(Math.abs(v) < 1e-9) continue;
+    o.push('<line x1="' + X0.toFixed(1) + '" y1="' + padT + '" x2="' + X0.toFixed(1) + '" y2="' + (padT + ih) + '" stroke="#efece5" stroke-width="1"/>');
+  }
+  for(v = Math.ceil(y0 / sy - 1e-9) * sy; v <= y1 + 1e-9; v += sy){
+    Y0 = Y(v);
+    if(Y0 < padT - .5 || Y0 > padT + ih + .5) continue;
+    if(Math.abs(v) < 1e-9) continue;
+    o.push('<line x1="' + padL + '" y1="' + Y0.toFixed(1) + '" x2="' + (padL + iw) + '" y2="' + Y0.toFixed(1) + '" stroke="#efece5" stroke-width="1"/>');
+  }
+
+  /* 坐标轴 */
+  var axY = (y0 <= 0 && y1 >= 0) ? Y(0) : padT + ih;
+  var axX = (x0 <= 0 && x1 >= 0) ? X(0) : padL;
+  o.push('<line x1="' + padL + '" y1="' + axY.toFixed(1) + '" x2="' + (padL + iw).toFixed(1) + '" y2="' + axY.toFixed(1) + '" stroke="#8a93a0" stroke-width="1.4"/>');
+  o.push('<line x1="' + axX.toFixed(1) + '" y1="' + padT + '" x2="' + axX.toFixed(1) + '" y2="' + (padT + ih).toFixed(1) + '" stroke="#8a93a0" stroke-width="1.4"/>');
+  o.push('<polygon points="' + (padL + iw - 5) + ',' + (axY - 3.5) + ' ' + (padL + iw) + ',' + axY + ' ' + (padL + iw - 5) + ',' + (axY + 3.5) + '" fill="#8a93a0"/>');
+  o.push('<polygon points="' + (axX - 3.5) + ',' + (padT + 5) + ' ' + axX + ',' + padT + ' ' + (axX + 3.5) + ',' + (padT + 5) + '" fill="#8a93a0"/>');
+
+  /* 刻度文字 */
+  var ty = (axY + 12 > padT + ih) ? padT + ih - 4 : axY + 12;
+  for(v = Math.ceil(x0 / sx - 1e-9) * sx; v <= x1 + 1e-9; v += sx){
+    if(Math.abs(v) < 1e-9) continue;
+    X0 = X(v);
+    if(X0 < padL + 2 || X0 > padL + iw - 2) continue;
+    o.push('<text x="' + X0.toFixed(1) + '" y="' + ty.toFixed(1) + '" font-size="9" fill="#8b93a0" text-anchor="middle">' + tickText(v) + '</text>');
+  }
+  var tx = (axX - 5 < padL + 8) ? padL + 2 : axX - 5;
+  var anchor = (axX - 5 < padL + 8) ? 'start' : 'end';
+  for(v = Math.ceil(y0 / sy - 1e-9) * sy; v <= y1 + 1e-9; v += sy){
+    if(Math.abs(v) < 1e-9) continue;
+    Y0 = Y(v);
+    if(Y0 < padT + 7 || Y0 > padT + ih - 2) continue;
+    o.push('<text x="' + tx.toFixed(1) + '" y="' + (Y0 + 3).toFixed(1) + '" font-size="9" fill="#8b93a0" text-anchor="' + anchor + '">' + tickText(v) + '</text>');
+  }
+  if(x0 <= 0 && x1 >= 0 && y0 <= 0 && y1 >= 0){
+    o.push('<text x="' + (axX + 4).toFixed(1) + '" y="' + (axY + 11).toFixed(1) + '" font-size="9" fill="#8b93a0">O</text>');
+  }
+
+  /* 内容 */
+  o.push('<g clip-path="url(#' + id + ')">');
+
+  (cfg.rects || []).forEach(function(r){
+    var rx = Math.min(X(0), X(r.x)), ry = Math.min(Y(0), Y(r.y));
+    var rw = Math.abs(X(r.x) - X(0)), rh = Math.abs(Y(r.y) - Y(0));
+    o.push('<rect x="' + rx.toFixed(1) + '" y="' + ry.toFixed(1) + '" width="' + rw.toFixed(1) + '" height="' + rh.toFixed(1) + '" fill="#1f6f5c" fill-opacity=".08" stroke="#1f6f5c" stroke-opacity=".55" stroke-dasharray="4 3" stroke-width="1.2"/>');
+  });
+
+  function curvePath(fn){
+    var d = '', started = false, prevSy = null, N = 420, i, x, y, sxx, syy;
+    for(i = 0; i <= N; i++){
+      x = x0 + (x1 - x0) * i / N;
+      try { y = fn(x); } catch(e){ y = NaN; }
+      if(typeof y !== 'number' || !isFinite(y) || y > y1 + 1e4 || y < y0 - 1e4){ started = false; prevSy = null; continue; }
+      sxx = X(x); syy = Y(y);
+      if(!started){ d += 'M' + sxx.toFixed(1) + ' ' + syy.toFixed(1) + ' '; started = true; }
+      else if(prevSy !== null && Math.abs(syy - prevSy) > ih * 0.7){ d += 'M' + sxx.toFixed(1) + ' ' + syy.toFixed(1) + ' '; }
+      else { d += 'L' + sxx.toFixed(1) + ' ' + syy.toFixed(1) + ' '; }
+      prevSy = syy;
+    }
+    return d;
+  }
+  [cfg.f, cfg.f2, exprFn(cfg.expr), exprFn(cfg.expr2)].forEach(function(fn){
+    if(typeof fn !== 'function') return;
+    var d = curvePath(fn);
+    if(d) o.push('<path d="' + d + '" fill="none" stroke="#1f6f5c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>');
+  });
+
+  if(cfg.poly && cfg.poly.length){
+    var pd = '', pts = cfg.poly;
+    for(var i = 0; i < pts.length; i++){
+      pd += (i === 0 ? 'M' : 'L') + X(pts[i][0]).toFixed(1) + ' ' + Y(pts[i][1]).toFixed(1) + ' ';
+    }
+    o.push('<path d="' + pd + '" fill="none" stroke="#1f6f5c" stroke-width="2.2" stroke-linejoin="round"/>');
+    pts.forEach(function(p){
+      o.push('<circle cx="' + X(p[0]).toFixed(1) + '" cy="' + Y(p[1]).toFixed(1) + '" r="2.6" fill="#1f6f5c"/>');
+    });
+  }
+
+  (cfg.marks || []).forEach(function(m){
+    if(typeof m.x !== 'number' || typeof m.y !== 'number') return;
+    var cx = X(m.x), cy = Y(m.y);
+    if(cx < padL - 6 || cx > padL + iw + 6 || cy < padT - 6 || cy > padT + ih + 6) return;
+    o.push('<circle cx="' + cx.toFixed(1) + '" cy="' + cy.toFixed(1) + '" r="3.4" fill="#c2571a" stroke="#fff" stroke-width="1.4"/>');
+  });
+  o.push('</g>');
+
+  (cfg.marks || []).forEach(function(m){
+    if(!m.l) return;
+    if(typeof m.x !== 'number' || typeof m.y !== 'number') return;
+    var cx = X(m.x), cy = Y(m.y);
+    if(cx < padL - 6 || cx > padL + iw + 6 || cy < padT - 6 || cy > padT + ih + 6) return;
+    var right = cx > padL + iw - 46;
+    o.push('<text x="' + (right ? cx - 6 : cx + 6).toFixed(1) + '" y="' + (cy - 6).toFixed(1) + '" font-size="10" font-weight="600" fill="#a8460f" text-anchor="' + (right ? 'end' : 'start') + '">' + m.l + '</text>');
+  });
+
+  o.push('</svg>');
+  return o.join('');
+}
+/* =========================================================
+   引擎
+   ========================================================= */
+function esc(s){
+  return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+function $(sel){ return document.querySelector(sel); }
+
+/* ---------- 存储 ---------- */
+var DBKEY = 'fn_scaffold_v1';
+var DB = {log:[], recs:[], drill:[], paper:[], packs:[], lib:{}, vrec:[]};
+function loadDB(){
+  try{
+    var raw = localStorage.getItem(DBKEY);
+    if(raw){
+      var o = JSON.parse(raw);
+      if(o && typeof o === 'object'){
+        DB.log = o.log || []; DB.recs = o.recs || []; DB.drill = o.drill || [];
+        DB.paper = o.paper || []; DB.packs = o.packs || []; DB.lib = o.lib || {};
+        DB.vrec = o.vrec || [];
+      }
+    }
+  }catch(e){ /* file:// 下可能不可用，忽略即可 */ }
+}
+function saveDB(){
+  try{ localStorage.setItem(DBKEY, JSON.stringify(DB)); }catch(e){}
+}
+
+/* ---------- 状态 ---------- */
+var S = {
+  screen:'home', mode:'', queue:[], qi:0, qs:null,
+  di:0, dSel:null, dOk:null, dRight:0, dWrong:[],
+  packId:null, pq:null, importMsg:'',
+  libI:0, libOpen:{}, libList:false, vs:null,
+  sess:{n:0, ok:0, dims:{}}
+};
+function curQ(){ return BANK.filter(function(q){ return q.id === S.queue[S.qi]; })[0]; }
+
+/* ---------- 数值工具 ---------- */
+function parseNum(s){
+  var t = String(s == null ? '' : s)
+    .replace(/[\uFF10-\uFF19]/g, function(c){ return String.fromCharCode(c.charCodeAt(0) - 0xFEE0); })
+    .replace(/[\u2212\u2013\u2014]/g, '-')
+    .replace(/[\u00D7\u00B7]/g, '*')
+    .replace(/\u00F7/g, '/')
+    .replace(/[\s,\uFF0C]/g, '');
+  if(!t) return NaN;
+  var m = t.match(/^(-?\d+(?:\.\d+)?)\/(-?\d+(?:\.\d+)?)$/);
+  if(m) return parseFloat(m[1]) / parseFloat(m[2]);
+  if(!/^-?(?:\d+\.?\d*|\.\d+)$/.test(t)) return NaN;
+  return parseFloat(t);
+}
+function numEq(s, ans){
+  var v = parseNum(s);
+  if(isNaN(v)) return false;
+  return Math.abs(v - ans) <= 1e-6 * Math.max(1, Math.abs(ans));
+}
+
+/* ---------- 统计 ---------- */
+function stats(){
+  var by = {};
+  DIMS.forEach(function(d){ by[d.key] = {n:0, ok:0}; });
+  by.repr = {n:0, ok:0};
+  DB.log.forEach(function(l){
+    if(!by[l.dim]) by[l.dim] = {n:0, ok:0};
+    by[l.dim].n++;
+    if(l.ok) by[l.dim].ok++;
+  });
+  return by;
+}
+function pct(o){ return o.n ? Math.round(o.ok / o.n * 100) : null; }
+function weakestDim(st){
+  var best = null;
+  DIMS.forEach(function(d){
+    var o = st[d.key];
+    if(!o || o.n < 2) return;
+    if(best === null || o.ok / o.n < st[best].ok / st[best].n) best = d.key;
+  });
+  if(st.repr && st.repr.n >= 2 && best){
+    if(st.repr.ok / st.repr.n < st[best].ok / st[best].n) best = 'repr';
+  }
+  return best;
+}
+
+/* =========================================================
+   渲染
+   ========================================================= */
+function render(){
+  var el = $('#screen');
+  var chip = $('#modechip');
+  var names = {guide:'引导训练', drill:'闪练 · 四种表示', library:'变式题库', report:'训练报告'};
+  if(S.screen === 'train' || S.screen === 'done' || S.screen === 'drill' || S.screen === 'drillsum'){
+    chip.hidden = false;
+    chip.textContent = (names[S.mode] || '训练') + (S.screen === 'train' ? ' · 第 ' + (S.qi + 1) + '/' + S.queue.length + ' 题' : '');
+  } else if(S.screen === 'paper' || S.screen === 'pack' || S.screen === 'paperq'){
+    var pk = S.packId ? findPack(S.packId) : null;
+    chip.hidden = false;
+    chip.textContent = (S.screen === 'paperq' && S.pq) ? ('试卷练习 · 第 ' + (S.pq.idx + 1) + '/' + pk.questions.length + ' 题')
+                     : (S.screen === 'pack' ? '试卷练习 · 题目列表' : '试卷练习');
+  } else if(S.screen === 'manage'){
+    chip.hidden = false;
+    chip.textContent = '题库管理';
+  } else if(S.screen === 'library' || S.screen === 'libpick' || S.screen === 'libq'){
+    chip.hidden = false;
+    if(S.screen === 'libq' && S.vs && BANK[S.vs.qi]){
+      chip.textContent = '变式练习 · 第 ' + (S.vs.qi + 1) + '/' + BANK.length + ' 组 · ' +
+                         BANK[S.vs.qi].variants[S.vs.vi].label;
+    }else{
+      chip.textContent = S.screen === 'libpick' ? '变式题库 · 选择变式' : '变式题库';
+    }
+  } else {
+    chip.hidden = true;
+  }
+  if(S.screen === 'home') el.innerHTML = viewHome();
+  else if(S.screen === 'train') el.innerHTML = viewTrain();
+  else if(S.screen === 'done') el.innerHTML = viewDone();
+  else if(S.screen === 'library') el.innerHTML = viewLibrary();
+  else if(S.screen === 'libpick') el.innerHTML = viewLibPick();
+  else if(S.screen === 'libq') el.innerHTML = viewLibQ();
+  else if(S.screen === 'report') el.innerHTML = viewReport();
+  else if(S.screen === 'drill') el.innerHTML = viewDrill();
+  else if(S.screen === 'drillsum') el.innerHTML = viewDrillSum();
+  else if(S.screen === 'paper') el.innerHTML = viewPaper();
+  else if(S.screen === 'pack') el.innerHTML = viewPack();
+  else if(S.screen === 'paperq') el.innerHTML = viewPaperQ();
+  else if(S.screen === 'manage') el.innerHTML = viewManage();
+  window.scrollTo(0, 0);
+}
+
+/* ---------- 首页 ---------- */
+function viewHome(){
+  var st = stats(), total = 0, ok = 0;
+  Object.keys(st).forEach(function(k){ total += st[k].n; ok += st[k].ok; });
+  var weak = weakestDim(st);
+  var h = [];
+  h.push('<section class="hero">');
+  h.push('<h2>听课能懂，做题拉跨——断的不是脑子，是那条“从条件到答案”的流程。</h2>');
+  h.push('<p class="why">听课是跟着老师走一遍；做题得自己完成 <b>读条件 → 画图像 → 选模型 → 定步骤 → 检验</b> 这条链。' +
+         '链子断在哪一环，光靠多刷题补不上。这个工具把每道题拆成五问：答错立刻告诉你断在第几步，答对再往下走，最后才让你落笔。</p>');
+  h.push('<div class="flow">');
+  DIMS.forEach(function(d, i){
+    h.push('<div><b>第 ' + (i + 1) + ' 步</b><span>' + d.short + '</span><i>' + d.tip + '</i></div>');
+  });
+  h.push('</div></section>');
+
+  h.push('<div class="modes">');
+  h.push('<button class="mode rec" data-act="start" data-mode="guide"><h3>引导训练 <span class="tag">推荐</span></h3>' +
+         '<p>8 组母题（一次函数 / 反比例 / 二次函数 / 分段图象），每题五问。走完五步才允许落笔，答错会说清错在哪一步。</p>' +
+         '<span class="go">开始 →</span></button>');
+  h.push('<button class="mode" data-act="papers"><h3>试卷练习 <span class="tag-soft">新</span></h3>' +
+         '<p>两份卷子（反比例单元测 + 10 月 14 日练习）共 39 题：原题重现、自动判分、分步解析。做完学校的卷子来这里对答案、看思路。</p>' +
+         '<span class="go">进入 →</span></button>');
+  h.push('<button class="mode" data-act="start" data-mode="drill"><h3>闪练 · 四种表示</h3>' +
+         '<p>12 道快题，练“式子 ↔ 图象 ↔ 表格”的来回转换。一轮约 5 分钟，专治“会算但看不懂图”。</p>' +
+         '<span class="go">开始 →</span></button>');
+  h.push('<button class="mode" data-act="library"><h3>变式题库 <span class="tag-soft">选变式 · 自动判分</span></h3>' +
+         '<p>8 组母题 × 2 个变式。选一个变式直接开练：先自己做、提交判分，再对照“变了什么、没变什么”；' +
+         '做错的单独重做——这是从“会一道”到“会一类”的桥。</p>' +
+         '<span class="go">开始 →</span></button>');
+  h.push('<button class="mode" data-act="report"><h3>训练报告</h3>' +
+         '<p>五个环节各自的命中率，指出你最容易断在哪一步，并给出对应的三条训练动作。</p>' +
+         '<span class="go">查看 →</span></button>');
+  h.push('</div>');
+
+  h.push('<div class="rec-box">');
+  if(total === 0){
+    h.push('<div class="small muted">还没有任何记录。建议第一次这样做：点「引导训练」，只做 2 题（约 15 分钟）——' +
+           '重点不是做对，而是把五步走顺。</div>');
+  }else{
+    h.push('<div class="row small"><span class="tag">累计</span>' +
+           '<span>已判断 <b>' + total + '</b> 个环节，一次答对 <b>' + ok + '</b> 个（' + Math.round(ok / total * 100) + '%）</span>' +
+           '<span class="spacer"></span><span class="muted tiny">落笔 ' + DB.recs.length + ' 题 · 试卷 ' + (DB.paper||[]).length + ' 题</span></div>');
+    if(weak && pct(st[weak]) < 80){
+      h.push('<div class="small" style="margin-top:8px">最容易断的一步：<b>' + DIMNAME[weak] + '</b> —— ' + RX[weak].title.replace(/^你的断点在第 \d 步：/, '') + '</div>');
+    }else{
+      h.push('<div class="small" style="margin-top:8px">五个环节的一次答对率都在 80% 以上。<b>接下来练综合度</b>：去变式题库只做变式，再限时做整题。</div>');
+    }
+    h.push('<div class="tools" style="margin-top:10px"><button class="btn-mini" data-act="report">看完整报告</button>' +
+           '<button class="btn-mini" data-act="reset">清空记录</button></div>');
+  }
+  h.push('</div>');
+  h.push('<p class="tiny muted" style="margin-top:18px;line-height:1.9">用法建议：每天 1 题引导训练 + 1 轮闪练（约 20 分钟），连续 5 天。' +
+         '做题时把纸放在旁边，工具只负责“问”，落笔和计算必须在纸上完成；学校发了卷子，就整张做完再录进「试卷练习」对答案。</p>');
+  return h.join('');
+}
+
+/* ---------- 五步导轨 ---------- */
+function railHTML(active){
+  var h = ['<div class="rail">'];
+  DIMS.forEach(function(d, i){
+    var cls = i < active ? 'done' : (i === active ? 'now' : '');
+    h.push('<div class="n ' + cls + '"><b>' + (i + 1) + '</b>' + d.short + '</div>');
+  });
+  h.push('</div>');
+  return h.join('');
+}
+
+/* ---------- 选项渲染 ---------- */
+function optListHTML(st, qs, fb){
+  var h = ['<div class="opts">'], i, o, cls;
+  for(i = 0; i < st.opts.length; i++){
+    o = st.opts[i]; cls = 'opt';
+    if(fb){
+      if(qs.sel.indexOf(i) >= 0){
+        cls += qs.fb.ok && o.ok ? ' ok' : (o.ok ? ' ok' : ' no');
+      }else if(qs.fb.reveal && o.ok){
+        cls += ' ok';
+      }
+    }else if(qs.sel.indexOf(i) >= 0){
+      cls += ' sel';
+    }
+    h.push('<button class="' + cls + '" data-opt="' + i + '"><span class="k">' + 'ABCDEFG'[i] + '</span><span>' +
+           esc(o.t) + (fb && qs.fb.reveal && o.ok ? '<span class="why">' + esc(o.why || '') + '</span>' : '') + '</span></button>');
+  }
+  h.push('</div>');
+  return h.join('');
+}
+function imgListHTML(st, qs, fb){
+  var h = ['<div class="plotgrid">'], i, o, cls;
+  for(i = 0; i < st.opts.length; i++){
+    o = st.opts[i]; cls = 'plotcell';
+    if(fb){
+      if(qs.sel.indexOf(i) >= 0) cls += o.ok ? ' ok' : ' no';
+      else if(qs.fb.reveal && o.ok) cls += ' ok';
+    }else if(qs.sel.indexOf(i) >= 0){
+      cls += ' sel';
+    }
+    h.push('<button class="' + cls + '" data-opt="' + i + '"><span class="cap">' + 'ABCD'[i] + '</span>' + plotSVG(o.plot) + '</button>');
+  }
+  h.push('</div>');
+  return h.join('');
+}
+function orderHTML(st, qs, fb){
+  var h = [], i, idx;
+  var seqCls = 'seq';
+  if(fb) seqCls += qs.fb.reveal ? ' ok' : ' no';
+  h.push('<div class="' + seqCls + '">');
+  if(!qs.order.length) h.push('<div class="empty">还没排。按顺序点下面的步骤，第一步先点。</div>');
+  for(i = 0; i < qs.order.length; i++){
+    idx = qs.order[i];
+    h.push('<button class="s" data-ord="' + i + '"><span class="no">' + (i + 1) + '.</span><span>' + esc(st.items[idx]) + '</span></button>');
+  }
+  h.push('</div>');
+  if(fb && qs.fb.reveal){
+    h.push('<div class="seq ok" style="margin-top:8px">');
+    for(i = 0; i < st.items.length; i++){
+      h.push('<div class="s"><span class="no">' + (i + 1) + '.</span><span>' + esc(st.items[i]) + '</span></div>');
+    }
+    h.push('</div>');
+    return h.join('');
+  }
+  h.push('<div class="pool">');
+  for(i = 0; i < st.disp.length; i++){
+    idx = st.disp[i];
+    var used = qs.order.indexOf(idx) >= 0;
+    h.push('<button class="item' + (used ? ' used' : '') + '" data-ord-add="' + idx + '">' + esc(st.items[idx]) + '</button>');
+  }
+  h.push('</div>');
+  return h.join('');
+}
+function numInputHTML(st, qs){
+  return '<div class="blank"><span>答案 =</span><input id="stepnum" inputmode="decimal" ' +
+         'value="' + esc(qs.val || '') + '" placeholder="填数或分数" data-stepnum="1"></div>';
+}
+
+/* ---------- 题目视图 ---------- */
+function viewTrain(){
+  var q = curQ(), qs = S.qs;
+  var st = q.steps[qs.step];
+  var fb = qs.phase === 'fb';
+  var h = [];
+  h.push(railHTML(qs.phase === 'final' || qs.phase === 'sol' ? 5 : qs.step));
+  h.push('<div class="card"><div class="qhead"><span class="tag">第 ' + (S.qi + 1) + ' / ' + S.queue.length + ' 题</span>' +
+         '<span class="tag-soft">' + esc(q.topic) + ' · ' + esc(q.method) + '</span></div>' +
+         '<div class="stem">' + esc(q.stem) + '</div>');
+  if(q.graph && (q.graph.rev === undefined || qs.step >= q.graph.rev || qs.phase === 'sol')){
+    h.push('<div class="plotbig" style="margin-top:12px">' + plotSVG(q.graph) + '</div>');
+  }
+  h.push('</div>');
+
+  if(qs.phase === 'final') return h.join('') + viewFinalCard(q, qs);
+  if(qs.phase === 'sol') return h.join('') + viewSolutionCard(q, qs);
+
+  h.push('<div class="card">');
+  h.push('<div class="step-hd"><div class="stepbadge">' + (qs.step + 1) + '</div><div>' +
+         '<h2>第 ' + (qs.step + 1) + ' 步 · ' + DIMNAME[st.dim] + '</h2>' +
+         '<p>' + DIMS.filter(function(d){ return d.key === st.dim; })[0].tip + '</p></div></div>');
+  h.push('<p class="ask">' + esc(st.ask) + '</p>');
+
+  if(st.type === 'multi' || st.type === 'choice') h.push(optListHTML(st, qs, fb));
+  else if(st.type === 'img') h.push(imgListHTML(st, qs, fb));
+  else if(st.type === 'order') h.push(orderHTML(st, qs, fb));
+  else if(st.type === 'num') h.push(numInputHTML(st, qs));
+
+  if(qs.hint > 0){
+    h.push('<div class="hintbox">');
+    for(var k = 0; k < Math.min(qs.hint, st.hint.length); k++){
+      h.push('<div><b>提示 ' + (k + 1) + '：</b>' + esc(st.hint[k]) + '</div>');
+    }
+    h.push('</div>');
+  }
+  if(fb) h.push(fbHTML(st, qs));
+
+  h.push('<div class="tools">');
+  if(!fb){
+    h.push('<button class="btn btn-primary" data-act="submit">提交这一步</button>');
+    if(qs.hint < st.hint.length) h.push('<button class="btn" data-act="hint">给个提示（' + qs.hint + '/' + st.hint.length + '）</button>');
+    h.push('<span class="spacer"></span>');
+  }else{
+    if(qs.fb.reveal || qs.fb.ok) h.push('<button class="btn btn-primary" data-act="next">' + (qs.step === 4 ? '进入落笔' : '下一步') + '</button>');
+    else h.push('<button class="btn btn-primary" data-act="retry">再想一次</button>');
+    h.push('<span class="spacer"></span>');
+  }
+  h.push('<button class="btn-ghost" data-act="skip">跳过这题</button>');
+  h.push('</div></div>');
+  return h.join('');
+}
+
+function fbHTML(st, qs){
+  var f = qs.fb;
+  if(f.ok){
+    return '<div class="fb ok"><h4>✓ 对。这一步你在做的是：' + DIMNAME[st.dim] + '</h4>' +
+           '<div>' + esc(st.explain) + '</div></div>';
+  }
+  if(f.reveal){
+    var correct = '';
+    if(st.type === 'multi'){
+      correct = st.opts.filter(function(o){ return o.ok; }).map(function(o){ return '✓ ' + o.t; }).join('<br>');
+    }else if(st.type === 'choice'){
+      var ci = st.opts.map(function(o, i){ return o.ok ? i : -1; }).filter(function(i){ return i >= 0; })[0];
+      correct = '✓ ' + esc(st.opts[ci].t) + '<br><span class="small muted">' + esc(st.opts[ci].why || '') + '</span>';
+    }else if(st.type === 'img'){
+      var ii = st.opts.map(function(o, i){ return o.ok ? i : -1; }).filter(function(i){ return i >= 0; })[0];
+      correct = '正确的一幅是 ' + 'ABCD'[ii] + '。<br><span class="small muted">' + esc(st.opts[ii].why || '') + '</span>';
+    }else if(st.type === 'order'){
+      correct = '正确顺序见上方绿框。';
+    }else{
+      correct = '正确答案：' + esc(st.answer);
+    }
+    return '<div class="fb no"><h4>这一步的正确答案</h4><div>' + correct + '</div>' +
+           '<div style="margin-top:8px"><span class="lab">为什么：</span>' + esc(f.diag || '') + '</div>' +
+           '<div style="margin-top:8px"><span class="lab">这一步的关键：</span>' + esc(st.explain) + '</div></div>';
+  }
+  return '<div class="fb soft"><h4>先停一下，别急着往下走</h4><div>' + esc(f.diag) + '</div>' +
+         '<div class="small" style="margin-top:6px">再想 20 秒；想不出来就点「给个提示」。</div></div>';
+}
+
+/* ---------- 落笔 ---------- */
+function viewFinalCard(q, qs){
+  var f = q.final, h = [];
+  h.push('<div class="card">');
+  h.push('<div class="step-hd"><div class="stepbadge">✎</div><div><h2>落笔 · 自己写答案</h2>' +
+         '<p>五步已经走完，现在不看提示，在纸上算完再填进来</p></div></div>');
+  h.push('<p class="ask">' + esc(f.prompt) + '</p>');
+  h.push('<div class="fields">');
+  f.fields.forEach(function(fd, i){
+    h.push('<div class="field"><div class="lab">' + esc(fd.label) + '</div>');
+    if(fd.type === 'coef'){
+      var parts = fd.tpl.split(/(\{\d+\})/), key;
+      h.push('<div class="blank" style="font-size:16px">');
+      parts.forEach(function(p){
+        var m = p.match(/^\{(\d+)\}$/);
+        if(m){
+          key = i + '.' + m[1];
+          h.push('<input inputmode="decimal" data-f="' + key + '" value="' + esc(qs.ent[key] || '') + '" placeholder="?"' +
+                 (qs.fAttempt > 0 && !numEq(qs.ent[key], fd.ans[+m[1]]) ? ' class="no"' : '') + '>');
+        }else if(p){
+          h.push('<span>' + esc(p) + '</span>');
+        }
+      });
+      h.push('</div>');
+    }else if(fd.type === 'num'){
+      key = i + '.0';
+      h.push('<div class="blank"><input inputmode="decimal" data-f="' + key + '" value="' + esc(qs.ent[key] || '') + '" placeholder="?"' +
+             (qs.fAttempt > 0 && !numEq(qs.ent[key], fd.ans) ? ' class="no"' : '') + '></div>');
+    }else if(fd.type === 'choice'){
+      key = i + '.0';
+      h.push('<div class="choices-inline">');
+      fd.options.forEach(function(op, oi){
+        var cls = '';
+        if(qs.ent[key] === oi) cls = 'sel';
+        h.push('<button class="' + cls + '" data-ch="' + key + '" data-ci="' + oi + '">' + esc(op) + '</button>');
+      });
+      h.push('</div>');
+    }
+    h.push('</div>');
+  });
+  h.push('</div>');
+  if(qs.fAttempt > 0){
+    h.push('<div class="fb soft" style="margin-top:12px"><h4>还有 ' + qs.fWrong + ' 处不对</h4>' +
+           '<div>红色格子是算错或者填错的地方。回纸上再算一遍——错在哪一步？是翻译错了、算式列错了，还是计算错了？</div></div>');
+  }
+  h.push('<div class="tools"><button class="btn btn-primary" data-act="fsubmit">提交答案</button>' +
+         '<button class="btn" data-act="freveal">直接看解析</button><span class="spacer"></span>' +
+         '<button class="btn-ghost" data-act="skip">跳过这题</button></div>');
+  h.push('</div>');
+  return h.join('');
+}
+
+/* ---------- 解析 ---------- */
+function viewSolutionCard(q, qs){
+  var f = q.final, h = [];
+  var allOk = qs.fOk;
+  h.push('<div class="card">');
+  h.push('<div class="qhead"><span class="tag ' + (allOk ? '' : 'tag-bad') + '">' + (allOk ? '✓ 落笔全对' : '✗ 落笔有错') + '</span>' +
+         '<span class="tag-soft">' + esc(q.title) + '</span></div>');
+  h.push('<div class="sol"><div style="font-size:15px;font-weight:600;margin-bottom:6px">参考答案</div>');
+  h.push('<ul style="list-style:none;margin:0;padding:0">');
+  f.fields.forEach(function(fd){
+    var t = fd.tpl ? fd.tpl : '';
+    if(fd.type === 'coef'){
+      fd.ans.forEach(function(a, k){ t = t.replace('{' + k + '}', a); });
+      t = t.replace(/\+\s*-/g, '− ').replace(/(^|[^0-9.])1x/g, '$1x');
+      h.push('<li><b>' + esc(fd.label) + '：</b>' + esc(t) + '</li>');
+    }else if(fd.type === 'num'){
+      h.push('<li><b>' + esc(fd.label) + '</b> ' + esc(fd.ans) + '</li>');
+    }else{
+      h.push('<li><b>' + esc(fd.label) + '：</b>' + esc(fd.options[fd.ans]) + '</li>');
+    }
+  });
+  h.push('</ul>');
+  h.push('<hr class="sep"><div style="font-size:15px;font-weight:600;margin-bottom:6px">分步解析</div><ol>');
+  f.solution.forEach(function(s){ h.push('<li>' + esc(s) + '</li>'); });
+  h.push('</ol><div class="key"><b>本题关键：</b>' + esc(f.key) + '</div></div>');
+  h.push('</div>');
+
+  if(q.variants && q.variants.length){
+    h.push('<div class="card"><div class="step-hd" style="margin-bottom:8px"><div class="stepbadge">◈</div><div>' +
+           '<h2>举一反三：同一母题的变式</h2><p>先自己想 1 分钟，再展开对照——重点看“什么变了、什么没变”</p></div></div>');
+    q.variants.forEach(function(v){
+      h.push('<details class="var"><summary>' + esc(v.label) + '　' + esc(v.change) + '</summary><div class="body">' +
+             '<div><b>题目：</b>' + esc(v.stem) + '</div>' +
+             '<div class="vs"><b>变了：</b>' + esc(v.change) + '<br><b>没变：</b>' + esc(v.same) + '</div>' +
+             '<div><b>答案：</b>' + esc(v.answer) + '</div>' +
+             '<div class="small muted" style="margin-top:6px">' + esc(v.note) + '</div></div></details>');
+    });
+    h.push('</div>');
+  }
+
+  h.push('<div class="card"><div class="small muted" style="margin-bottom:8px">这题你卡在哪一步？（记下来，报告里会用到）</div><div class="row">');
+  DIMS.forEach(function(d){
+    h.push('<button class="btn-mini' + (qs.stuck === d.key ? ' sel' : '') + '" data-act="stuck" data-dim="' + d.key + '">' + d.short + '</button>');
+  });
+  h.push('<button class="btn-mini' + (qs.stuck === 'none' ? ' sel' : '') + '" data-act="stuck" data-dim="none">没卡</button>');
+  h.push('</div>');
+  h.push('<div class="tools" style="margin-top:14px"><button class="btn btn-primary" data-act="qnext">' +
+         (S.qi + 1 >= S.queue.length ? '完成训练' : '下一题') + '</button>' +
+         '<button class="btn" data-act="home">回首页</button></div></div>');
+  return h.join('');
+}
+
+/* ---------- 结束页 ---------- */
+function viewDone(){
+  var s = S.sess, nm = Object.keys(s.dims).sort(function(a, b){ return s.dims[b] - s.dims[a]; });
+  var h = [];
+  h.push('<div class="card"><div class="qhead"><span class="tag">训练完成</span></div>' +
+         '<h2 style="font-size:19px;margin-bottom:10px">走完 ' + s.n + ' 题的完整流程</h2>' +
+         '<div class="small">落笔全对 <b>' + s.ok + '</b> 题；' +
+         '<span class="muted">错的题不是白做的——报告已经记下卡在哪一步。</span></div>');
+  if(nm.length){
+    h.push('<div class="rx"><h4>本次最容易断的一步</h4><div>' + DIMNAME[nm[0]] + '</div>' +
+           '<ul>' + RX[nm[0]].acts.map(function(a){ return '<li>' + esc(a) + '</li>'; }).join('') + '</ul></div>');
+  }
+  h.push('<div class="tools" style="margin-top:16px"><button class="btn btn-primary" data-act="report">看训练报告</button>' +
+         '<button class="btn" data-act="start" data-mode="guide">再来一轮</button>' +
+         '<button class="btn" data-act="home">回首页</button></div></div>');
+  return h.join('');
+}
+
+/* ---------- 变式题库 ---------- */
+function libStat(qi, vi){ return (DB.lib || {})['q' + qi + 'v' + vi] || 0; }
+function libSetStat(qi, vi, v){
+  DB.lib = DB.lib || {};
+  var k = 'q' + qi + 'v' + vi;
+  if(DB.lib[k] === v) delete DB.lib[k]; else DB.lib[k] = v;
+  saveDB(); render();
+}
+function libCounts(){
+  var clear = 0, unsure = 0, total = 0;
+  BANK.forEach(function(q, i){
+    q.variants.forEach(function(v, j){
+      total++;
+      var st = libStat(i, j);
+      if(st === 1) clear++; else if(st === 2) unsure++;
+    });
+  });
+  return {clear:clear, unsure:unsure, total:total};
+}
+function libTag(qi, vi){
+  var st = libStat(qi, vi);
+  if(st === 1) return '<span class="tag">已说清</span>';
+  if(st === 2) return '<span class="tag-soft">还没底</span>';
+  return '<span class="tiny muted">未练</span>';
+}
+function viewLibrary(){
+  return S.libList ? viewLibraryList() : viewLibraryGuide();
+}
+
+function viewLibraryGuide(){
+  var n = BANK.length;
+  var qi = Math.min(Math.max(S.libI || 0, 0), n - 1);
+  var q = BANK[qi], c = libCounts(), open = S.libOpen || {};
+  var pctClear = Math.round(c.clear / c.total * 100);
+  var h = [];
+  h.push('<div class="card"><div class="step-hd"><div class="stepbadge">◈</div><div>' +
+         '<h2>变式题库 · 一组一组闯</h2>' +
+         '<p>不用从头看到尾。每次只做一组：先读母题，再把两个变式“变了什么、没变什么”各说一句，最后对照。</p>' +
+         '</div></div>');
+  h.push('<div class="libguide3">' +
+         '<div><b>① 先看母题</b>遮住答案，自己说：这题在求什么？走哪五步？（约 30 秒）</div>' +
+         '<div><b>② 再看变式</b>先别展开，只说一句“条件/问法变了什么”（约 30 秒）</div>' +
+         '<div><b>③ 对照自评</b>展开对照；说清了点「已说清 ✓」，没底点「还没底 ?」，下次只做没底的</div>' +
+         '</div>');
+  h.push('<div class="libstat"><div class="bar" style="flex:1;min-width:150px"><i style="width:' + pctClear + '%"></i></div>' +
+         '<span class="small muted">已练 <b>' + libPracticed() + '</b>/' + c.total +
+         ' · 已说清 <b>' + c.clear + '</b>/' + c.total +
+         (c.unsure ? ' · 还没底 ' + c.unsure + ' 个' : '') + '</span></div>');
+  h.push('<div class="tools" style="margin-top:10px">' +
+         '<button class="btn btn-primary" data-act="libpick">选一个变式，直接练 →</button>' +
+         '<button class="btn-mini" data-act="liblist">浏览全部（列表速查）</button>' +
+         ((c.clear + c.unsure) ? '<button class="btn-mini" data-act="libclear">清空本模块记录</button>' : '') +
+         '</div></div>');
+
+  /* 母题 */
+  h.push('<div class="libq"><h3><span class="tag">母题 ' + (qi + 1) + '</span>' + esc(q.topic) + ' ｜ ' + esc(q.title) +
+         ' <span class="tiny muted">' + esc(q.method) + '</span></h3>');
+  h.push('<div class="libstem">' + esc(q.stem) + '</div>');
+  if(q.graph && q.graph.rev !== 99){
+    h.push('<div class="plotbig" style="margin-top:8px">' + plotSVG(q.graph) + '</div>');
+  }
+  h.push('<div class="tools"><button class="btn-mini" data-act="librev" data-k="steps">' +
+         (open.steps ? '收起五步要点' : '看五步要点（我卡在哪一步）') + '</button>' +
+         '<button class="btn-mini" data-act="librev" data-k="ans">' +
+         (open.ans ? '收起母题答案' : '看母题答案') + '</button></div>');
+  if(open.steps){
+    h.push('<div class="libbox">' + q.steps.map(function(s){
+      return '<b>' + DIMNAME[s.dim] + '</b>：' + esc(s.explain);
+    }).join('<br>') + '</div>');
+  }
+  if(open.ans) h.push('<div class="libbox"><b>答案</b><br>' + esc(q.final.key) + '</div>');
+  h.push('</div>');
+
+  /* 变式 */
+  q.variants.forEach(function(v, vi){
+    var key = 'v' + vi, rev = !!open[key], st = libStat(qi, vi);
+    h.push('<div class="libq"><h3><span class="tag-soft">' + esc(v.label) + '</span>' + libTag(qi, vi) + '</h3>');
+    h.push('<div class="libstem">' + esc(v.stem) + '</div>');
+    if(!rev){
+      h.push('<div class="libhint">先别展开：和母题比，<b>哪里变了？哪里没变？</b>各说一句话；也可以直接点「练这个变式」自己做一遍。</div>');
+      h.push('<div class="tools">' +
+             '<button class="btn btn-primary" data-act="libpractice" data-q="' + qi + '" data-v="' + vi + '">练这个变式 →</button>' +
+             '<button class="btn" data-act="librev" data-k="' + key + '">对照：变了什么 / 答案</button></div>');
+    }else{
+      h.push('<div class="libbox"><b>变了：</b>' + esc(v.change) + '<br><b>没变：</b>' + esc(v.same) +
+             '<br><b>答案：</b>' + esc(v.answer) + (v.note ? '<br><b>一句话：</b>' + esc(v.note) : '') + '</div>');
+      h.push('<div class="tools">' +
+             '<button class="btn btn-primary" data-act="libpractice" data-q="' + qi + '" data-v="' + vi + '">练这个变式 →</button>' +
+             '<button class="btn-mini' + (st === 1 ? ' sel' : '') + '" data-act="libself" data-q="' + qi +
+             '" data-v="' + vi + '" data-ok="1">已说清 ✓</button>' +
+             '<button class="btn-mini' + (st === 2 ? ' sel' : '') + '" data-act="libself" data-q="' + qi +
+             '" data-v="' + vi + '" data-ok="2">还没底 ?</button></div>');
+    }
+    h.push('</div>');
+  });
+
+  h.push('<div class="tools" style="margin-top:14px">' +
+         '<button class="btn" data-act="libprev">← 上一组</button>' +
+         '<span class="small muted">第 ' + (qi + 1) + ' / ' + n + ' 组</span>' +
+         '<button class="btn btn-primary" data-act="libnext">' + (qi + 1 >= n ? '回到第 1 组' : '下一组 →') +
+         '</button><span class="spacer"></span><button class="btn-ghost" data-act="home">回首页</button></div>');
+  if(c.clear + c.unsure >= c.total){
+    h.push('<div class="fb ok" style="margin-top:12px"><h4>✓ 16 个变式都过了一遍</h4><div>下一步：去「试卷练习」限时做整题；' +
+           '做错的题回来找对应母题，只看没人底的那几个变式。</div><div class="cont">' +
+           '<button class="btn-mini" data-act="papers">去试卷练习</button>' +
+           '<button class="btn-mini" data-act="start" data-mode="guide">再走一轮引导</button></div></div>');
+  }
+  return h.join('');
+}
+
+function viewLibraryList(){
+  var h = [];
+  h.push('<div class="card"><div class="step-hd"><div class="stepbadge">◈</div><div><h2>变式题库 · 全部列表</h2>' +
+         '<p>这是速查模式：把 8 组母题和 16 个变式的“变了 / 没变 / 答案”摊开对照，适合复习和讲给别人听。</p></div></div>' +
+         '<p class="small muted" style="margin-top:10px">想真正练“举一反三”，请回到「一组一组闯」：先自己说，再展开。</p>' +
+         '<div class="tools"><button class="btn-mini" data-act="libguide">← 回到一组一组闯</button></div></div>');
+  BANK.forEach(function(q, i){
+    h.push('<div class="card"><details class="var"><summary>' + esc(q.topic) + ' ｜ ' + esc(q.title) + '（' + esc(q.method) + '）</summary>');
+    h.push('<div class="body"><div style="white-space:pre-wrap"><b>题目：</b>' + esc(q.stem) + '</div>');
+    if(q.graph && q.graph.rev !== 99){
+      h.push('<div class="plotbig" style="margin-top:10px">' + plotSVG(q.graph) + '</div>');
+    }
+    h.push('<div class="vs"><b>五步要点</b><br>' + q.steps.map(function(s){
+      return '· ' + DIMNAME[s.dim] + '：' + esc(s.explain);
+    }).join('<br>') + '</div>');
+    h.push('<div><b>答案：</b>' + esc(q.final.key) + '</div>');
+    q.variants.forEach(function(v, vi){
+      h.push('<div class="vs"><b>' + esc(v.label) + '｜变了：</b>' + esc(v.change) + '<br><b>题目：</b>' + esc(v.stem) +
+             '<br><b>答案：</b>' + esc(v.answer) + '<br><b>没变：</b>' + esc(v.same) + '</div>');
+      h.push('<div class="tools" style="margin:-2px 0 10px"><button class="btn-mini" data-act="libpractice" ' +
+             'data-q="' + i + '" data-v="' + vi + '">练这个变式 →</button></div>');
+    });
+    h.push('</div></details></div>');
+  });
+  return h.join('');
+}
+
+/* ---------- 变式练习：选一个变式，直接开练 ---------- */
+function libPracticed(){
+  var seen = {};
+  (DB.vrec || []).forEach(function(r){ seen['q' + r.qi + 'v' + r.vi] = 1; });
+  return Object.keys(seen).length;
+}
+function curVariant(){
+  var vs = S.vs;
+  if(!vs || !BANK[vs.qi] || !BANK[vs.qi].variants[vs.vi]) return null;
+  return {q: BANK[vs.qi], v: BANK[vs.qi].variants[vs.vi]};
+}
+function startLibQ(qi, vi){
+  S.vs = {qi: qi, vi: vi, ent: {}, phase: 'ask', ok: null};
+  S.screen = 'libq';
+  render();
+}
+function variantAnswerText(v){
+  var f = v.fields || [];
+  if(!f.length) return v.answer || '';
+  return f.map(function(fd){ return (fd.label ? fd.label + ' ' : '') + answerText(fd); }).join('；');
+}
+function vsSubmit(){
+  var cur = curVariant(), vs = S.vs;
+  if(!cur || !vs || vs.phase !== 'ask') return;
+  var fields = cur.v.fields || [];
+  if(!fields.length){ vsReveal(); return; }
+  if(!Object.keys(vs.ent || {}).length){ flash('先把答案填上（可以填分数，如 1/2）。'); return; }
+  var g = gradeFields(fields, vs.ent);
+  vs.phase = 'done';
+  vs.ok = g.ok;
+  vs.wrong = g.wrong.length;
+  DB.vrec = DB.vrec || [];
+  DB.vrec.push({ts: Date.now(), qi: vs.qi, vi: vs.vi, ok: g.ok});
+  DB.lib = DB.lib || {};
+  DB.lib['q' + vs.qi + 'v' + vs.vi] = g.ok ? 1 : 2;
+  saveDB();
+  render();
+}
+function vsReveal(){
+  var vs = S.vs;
+  if(!vs) return;
+  vs.phase = 'done';
+  vs.ok = null;
+  render();
+}
+function vsRetry(){
+  var vs = S.vs;
+  if(!vs) return;
+  vs.ent = {};
+  vs.phase = 'ask';
+  vs.ok = null;
+  render();
+}
+function vsNext(){
+  var vs = S.vs;
+  if(!vs) return;
+  var qi = vs.qi, vi = vs.vi + 1;
+  if(vi >= BANK[qi].variants.length){
+    qi = (qi + 1) % BANK.length;
+    vi = 0;
+  }
+  startLibQ(qi, vi);
+}
+function vsBack(){
+  S.screen = 'library';
+  render();
+}
+
+function viewLibPick(){
+  var practiced = libPracticed(), c = libCounts();
+  var h = [];
+  h.push('<div class="card"><div class="step-hd"><div class="stepbadge">◈</div><div>' +
+         '<h2>选一个变式，直接开练</h2>' +
+         '<p>点任意一个变式就进入练习：先自己做，提交后自动判分；做错立刻能看“变了什么、没变什么”。</p></div></div>');
+  h.push('<div class="libstat"><div class="bar" style="flex:1;min-width:150px"><i style="width:' +
+         Math.round(c.clear / c.total * 100) + '%"></i></div>' +
+         '<span class="small muted">已练 <b>' + practiced + '</b>/' + c.total +
+         ' · 已说清 <b>' + c.clear + '</b>/' + c.total + '</span></div>');
+  h.push('<div class="tools" style="margin-top:10px">' +
+         '<button class="btn-mini" data-act="libguide">← 回到一组一组闯</button>' +
+         '<button class="btn-mini" data-act="liblist">浏览全部（列表速查）</button></div></div>');
+  BANK.forEach(function(q, qi){
+    h.push('<div class="card"><div class="qhead"><span class="tag">第 ' + (qi + 1) + ' 组</span>' +
+           '<span class="tag-soft">' + esc(q.topic) + ' · ' + esc(q.title) + '</span></div>');
+    h.push('<div class="packlist">');
+    q.variants.forEach(function(v, vi){
+      var st = libStat(qi, vi);
+      var mark = st === 1 ? '✓' : (st === 2 ? '✗' : '·');
+      var cls = st === 1 ? 'okrow' : (st === 2 ? 'norow' : '');
+      h.push('<button class="prow ' + cls + '" data-act="libpractice" data-q="' + qi + '" data-v="' + vi + '">' +
+             '<span class="pno">' + esc(v.label.replace(/\D/g, '') || (vi + 1)) + '</span>' +
+             '<span class="pmark">' + mark + '</span>' +
+             '<span class="ptxt">' + esc(v.stem.slice(0, 40)) + (v.stem.length > 40 ? '…' : '') + '</span>' +
+             '<span class="pmeta">' + (v.fields ? '可判分' : '看答案') + '</span></button>');
+    });
+    h.push('</div></div>');
+  });
+  return h.join('');
+}
+
+function viewLibQ(){
+  var cur = curVariant();
+  if(!cur){ S.screen = 'library'; return viewLibrary(); }
+  var q = cur.q, v = cur.v, vs = S.vs;
+  var fields = v.fields || [];
+  var done = vs.phase === 'done';
+  var h = [];
+  h.push('<div class="rail">' +
+         '<div class="n now"><b>' + (vs.qi + 1) + '</b>第 ' + (vs.qi + 1) + ' / ' + BANK.length + ' 组</div>' +
+         '<div class="n"><b>' + esc(v.label) + '</b>' + esc(q.topic) + ' · ' + esc(q.method) + '</div>' +
+         '<div class="n"><b>已练</b>' + libPracticed() + ' / ' + libCounts().total + '</div></div>');
+  h.push('<div class="card"><div class="qhead"><span class="tag">变式练习</span>' +
+         '<span class="tag-soft">' + esc(q.topic) + ' · ' + esc(v.label) + '</span>' +
+         '<span class="spacer"></span><button class="btn-mini" data-act="vsback">← 回变式题库</button></div>');
+  h.push('<div class="small muted" style="margin-bottom:8px">母题 Q' + (vs.qi + 1) + '：' + esc(q.title) +
+         '（' + esc(q.method) + '）。先自己做，再对照“变了什么”。</div>');
+  h.push('<div class="stem">' + esc(v.stem) + '</div>');
+  if(fields.length){
+    h.push('<div style="margin-top:14px">' + fieldsHTML(fields, vs.ent || {}, done && vs.ok === false) + '</div>');
+    if(!done && fields.some(function(fd){ return fd.type === 'num' || fd.type === 'coef'; })){
+      h.push('<div class="tiny muted" style="margin-top:6px">可以填分数（如 1/2）或小数；先算再填，别边算边改。</div>');
+    }
+  }else{
+    h.push('<div class="fb soft" style="margin-top:14px"><h4>这道变式暂无自动判分</h4>' +
+           '<div class="small">先在纸上做，再点「直接看答案」对照。</div></div>');
+  }
+
+  if(done){
+    if(vs.ok === true){
+      h.push('<div class="fb ok"><h4>✓ 答对了</h4><div class="small">说明这个变式“改了什么”你抓住了。把下面的“变了 / 没变”说给家长听一遍，就算过。</div></div>');
+    }else if(vs.ok === false){
+      h.push('<div class="fb no"><h4>✗ 还差一点</h4><div class="small">正确答案：<b>' + esc(variantAnswerText(v)) +
+             '</b><br>红格子是错的地方，回纸上重算这一步，再对照下面的“变了 / 没变”。</div></div>');
+    }else{
+      h.push('<div class="fb soft"><h4>已展开答案</h4><div class="small">先自己算过一遍，再看答案，对照才有用。</div></div>');
+    }
+    h.push('<div class="libbox"><b>变了：</b>' + esc(v.change) +
+           '<br><b>没变：</b>' + esc(v.same) +
+           '<br><b>答案：</b>' + esc(v.answer) +
+           (v.note ? '<br><b>一句话：</b>' + esc(v.note) : '') + '</div>');
+    h.push('<div class="tools">' +
+           '<button class="btn btn-primary" data-act="vsnext">练下一个变式 →</button>' +
+           '<button class="btn" data-act="vsretry">重做这个变式</button>' +
+           '<span class="spacer"></span><button class="btn-ghost" data-act="vsback">回这一组</button></div>');
+  }else{
+    h.push('<div class="tools">' +
+           '<button class="btn btn-primary" data-act="vssubmit">提交答案</button>' +
+           '<button class="btn" data-act="vsreveal">直接看答案</button>' +
+           '<span class="spacer"></span><button class="btn-ghost" data-act="vsback">返回</button></div>');
+  }
+  h.push('</div>');
+  return h.join('');
+}
+
+/* ---------- 闪练 ---------- */
+function viewDrill(){
+  var d = DRILLS[S.di], answered = S.dOk !== null;
+  var h = [];
+  h.push('<div class="rail"><div class="n now"><b>' + (S.di + 1) + '</b>第 ' + (S.di + 1) + ' / ' + DRILLS.length + ' 题</div>' +
+         '<div class="n done"><b>✓</b>已对 ' + S.dRight + '</div></div>');
+  h.push('<div class="card"><p class="ask" style="margin-top:0">' + esc(d.ask) + '</p>');
+  if(d.stemPlot) h.push('<div class="plotbig" style="margin:10px 0">' + plotSVG(d.stemPlot) + '</div>');
+  if(d.table) h.push(tableHTML(d.table));
+  var isImg = d.opts.some(function(o){ return !!o.plot; });
+  if(isImg){
+    h.push('<div class="plotgrid">');
+    d.opts.forEach(function(o, i){
+      var cls = 'plotcell';
+      if(S.dOk !== null){
+        if(i === S.dSel) cls += o.ok ? ' ok' : ' no';
+        else if(o.ok) cls += ' ok';
+      }
+      h.push('<button class="' + cls + '" data-dopt="' + i + '"><span class="cap">' + 'ABCD'[i] + '</span>' + plotSVG(o.plot) + '</button>');
+    });
+    h.push('</div>');
+  }else{
+    h.push('<div class="opts">');
+    d.opts.forEach(function(o, i){
+      var cls = 'opt';
+      if(S.dOk !== null){
+        if(i === S.dSel) cls += o.ok ? ' ok' : ' no';
+        else if(o.ok) cls += ' ok';
+      }
+      h.push('<button class="' + cls + '" data-dopt="' + i + '"><span class="k">' + 'ABCD'[i] + '</span><span>' + esc(o.t) + '</span></button>');
+    });
+    h.push('</div>');
+  }
+  if(answered){
+    h.push('<div class="fb ' + (S.dOk ? 'ok' : 'no') + '"><h4>' + (S.dOk ? '✓ 对' : '✗ 不对') + '</h4><div>' + esc(d.why) + '</div></div>');
+    h.push('<div class="tools"><button class="btn btn-primary" data-act="dnext">' +
+           (S.di + 1 >= DRILLS.length ? '看结果' : '下一题') + '</button><span class="spacer"></span>' +
+           '<button class="btn-ghost" data-act="home">回首页</button></div>');
+  }else{
+    h.push('<div class="tools"><button class="btn-ghost" data-act="dcancel">退出闪练</button></div>');
+  }
+  h.push('</div>');
+  return h.join('');
+}
+function tableHTML(t){
+  var h = ['<table class="tbl"><thead><tr>'];
+  (t.head || []).forEach(function(c){ h.push('<th>' + esc(c) + '</th>'); });
+  h.push('</tr></thead><tbody>');
+  t.rows.forEach(function(r){
+    h.push('<tr>');
+    r.forEach(function(c){ h.push('<td>' + esc(c) + '</td>'); });
+    h.push('</tr>');
+  });
+  h.push('</tbody></table>');
+  return h.join('');
+}
+function viewDrillSum(){
+  var total = DRILLS.length, wrong = S.dWrong.length;
+  var h = [];
+  h.push('<div class="card"><div class="qhead"><span class="tag">闪练完成</span></div>');
+  h.push('<h2 style="font-size:19px">对 ' + S.dRight + ' / ' + total + ' 题</h2>');
+  if(wrong === 0){
+    h.push('<p class="small" style="margin-top:8px">四种表示转换已经比较稳。下一步去「引导训练」，把流程用到整道题上。</p>');
+  }else{
+    h.push('<p class="small" style="margin-top:8px">错的 ' + wrong + ' 题就是你的“表征盲区”，把下面的解析再看一遍，' +
+           '然后重做一轮——同一个错误连犯两次，说明是概念没通，不是粗心。</p>');
+    h.push('<div class="rx"><h4>错题回顾</h4><ul>');
+    S.dWrong.forEach(function(id){
+      var d = DRILLS.filter(function(x){ return x.id === id; })[0];
+      h.push('<li><b>' + esc(d.ask) + '</b><br><span class="muted">' + esc(d.why) + '</span></li>');
+    });
+    h.push('</ul></div>');
+  }
+  h.push('<div class="tools" style="margin-top:14px"><button class="btn btn-primary" data-act="start" data-mode="drill">再来一轮</button>' +
+         '<button class="btn" data-act="start" data-mode="guide">去做引导训练</button>' +
+         '<button class="btn" data-act="home">回首页</button></div></div>');
+  return h.join('');
+}
+
+/* ---------- 报告 ---------- */
+function viewReport(){
+  var st = stats(), total = 0, ok = 0;
+  Object.keys(st).forEach(function(k){ total += st[k].n; ok += st[k].ok; });
+  var h = [];
+  if(total === 0){
+    h.push('<div class="card"><div class="empty-state">还没有数据。<br>先做 1～2 题引导训练，报告才有东西可看。</div>' +
+           '<div class="row" style="justify-content:center"><button class="btn btn-primary" data-act="start" data-mode="guide">去引导训练</button></div></div>');
+    return h.join('');
+  }
+  h.push('<div class="card"><div class="qhead"><span class="tag">训练报告</span><span class="tag-soft">累计 ' + total + ' 个判断</span></div>');
+  h.push('<div class="small muted">每个环节只看“第一次就答对”的比例——提示之后答对不算会。</div>');
+  h.push('<div style="margin-top:14px">');
+  var keys = DIMS.map(function(d){ return d.key; });
+  keys.push('repr');
+  keys.forEach(function(k){
+    var o = st[k], p = pct(o);
+    if(!o.n){
+      h.push('<div class="dimrow"><div class="dimname">' + DIMNAME[k] + '</div><div class="bar"><i style="width:0"></i></div><div class="dimpct">未测</div></div>');
+      return;
+    }
+    var cls = p < 60 ? 'low' : (p < 80 ? 'mid' : '');
+    h.push('<div class="dimrow"><div class="dimname">' + DIMNAME[k] + '<span>' + o.ok + ' / ' + o.n + '</span></div>' +
+           '<div class="bar"><i class="' + cls + '" style="width:' + p + '%"></i></div>' +
+           '<div class="dimpct"><b>' + p + '%</b></div></div>');
+  });
+  h.push('</div>');
+  h.push('<div class="small muted" style="margin-top:10px">总体一次答对率：<b>' + Math.round(ok / total * 100) + '%</b>　' +
+         '落笔全对：<b>' + DB.recs.filter(function(r){ return r.ok; }).length + ' / ' + DB.recs.length + '</b></div>');
+  var prAll = DB.paper || [];
+  if(prAll.length){
+    var prG = prAll.filter(function(r){ return r.ok !== null; });
+    var prR = prG.filter(function(r){ return r.ok; }).length;
+    h.push('<div class="small muted" style="margin-top:4px">试卷练习：已做 <b>' + prAll.length + '</b> 题　判定 ' + prG.length +
+           ' 题，正确率 <b>' + (prG.length ? Math.round(prR / prG.length * 100) : 0) + '%</b></div>');
+  }
+  h.push('</div>');
+
+  var weak = weakestDim(st);
+  if(weak && pct(st[weak]) < 80){
+    h.push('<div class="card"><div class="qhead"><span class="tag">诊断</span></div>');
+    h.push('<h2 style="font-size:17px">' + esc(RX[weak].title) + '</h2>');
+    h.push('<div class="rx"><h4>接下来一周，只练这三件事</h4><ul>');
+    RX[weak].acts.forEach(function(a){ h.push('<li>' + esc(a) + '</li>'); });
+    h.push('</ul></div>');
+    h.push('<div class="tools" style="margin-top:12px"><button class="btn btn-primary" data-act="start" data-mode="guide">去练这一步</button>' +
+           '<button class="btn" data-act="start" data-mode="drill">做一轮闪练</button></div></div>');
+  }else if(weak){
+    h.push('<div class="card"><div class="qhead"><span class="tag">诊断</span></div>');
+    h.push('<h2 style="font-size:17px">五个环节都比较稳：现在缺的不是流程，是“综合度”和“稳定性”</h2>');
+    h.push('<div class="rx"><h4>下一步做这三件事</h4><ul>' +
+           '<li>去「变式题库」，挑 3 组只看变式：先自己想“变了什么”，再展开对照。</li>' +
+           '<li>找一道原来做错的整题，遮住答案重新走一遍五步，看能不能在 8 分钟内走完。</li>' +
+           '<li>开始限时：把卷子里的函数题连着做，练“换题不换流程”的稳定度。</li>' +
+           '</ul></div>');
+    h.push('<div class="tools" style="margin-top:12px"><button class="btn btn-primary" data-act="library">去变式题库</button>' +
+           '<button class="btn" data-act="start" data-mode="guide">再走一轮引导</button></div></div>');
+  }
+
+  var wrongPaper = (DB.paper || []).filter(function(r){ return r.ok === false; }).slice().reverse().slice(0, 8);
+  if(wrongPaper.length){
+    h.push('<div class="card"><div class="qhead"><span class="tag tag-bad">试卷错题本</span>' +
+           '<span class="tiny muted">做完学校的卷子，错题会自动进这里</span></div>');
+    wrongPaper.forEach(function(r){
+      var pk = findPack(r.pack), q = null;
+      if(pk) q = pk.questions.filter(function(x){ return x.id === r.qid; })[0];
+      if(!q) return;
+      h.push('<div class="wrongitem"><div class="row"><b>第 ' + esc(q.no || '') + ' 题</b>' +
+             '<span class="tag-soft">' + esc(pk.name) + '</span>' +
+             (q.focus ? '<span class="tag-soft">' + focusTag(q.focus) + '</span>' : '') + '</div>' +
+             '<div class="tiny muted" style="margin-top:3px">' + esc((q.ask || '').split('\n')[0].slice(0, 50)) + '…</div>' +
+             '<div class="tiny muted">' + esc(q.tip || '') + '</div></div>');
+    });
+    h.push('<div class="tools" style="margin-top:10px"><button class="btn-mini" data-act="papers">去试卷练习</button></div></div>');
+  }
+
+  var recs = DB.recs.slice().reverse().slice(0, 10);
+  if(recs.length){
+    h.push('<div class="card"><div class="qhead"><span class="tag">最近做的题</span></div>');
+    recs.forEach(function(r){
+      var q = BANK.filter(function(x){ return x.id === r.qid; })[0];
+      if(!q) return;
+      h.push('<div class="wrongitem"><div class="row"><b>' + esc(q.title) + '</b>' +
+             '<span class="tag-soft">' + esc(q.topic) + '</span>' +
+             (r.ok ? '<span class="tag">落笔全对</span>' : '<span class="tag tag-bad">落笔有错</span>') + '</div>');
+      if(r.failed && r.failed.length){
+        h.push('<div class="tiny muted" style="margin-top:4px">卡在：' + r.failed.map(function(k){ return DIMNAME[k]; }).join('、') + '</div>');
+      }
+      if(r.stuck){
+        h.push('<div class="tiny muted">自评卡点：' + (r.stuck === 'none' ? '没卡住' : DIMNAME[r.stuck]) + '</div>');
+      }
+      h.push('</div>');
+    });
+    h.push('</div>');
+  }
+
+  h.push('<div class="card"><div class="row"><button class="btn-mini" data-act="export">导出记录</button>' +
+         '<button class="btn-mini" data-act="reset">清空记录</button><span class="spacer"></span>' +
+         '<span class="tiny muted">记录只存在这台电脑的浏览器里</span></div></div>');
+  return h.join('');
+}
+
+/* =========================================================
+   试卷题库（整题练习）+ 题库管理
+   ========================================================= */
+function allPacks(){
+  var out = PACKS.slice();
+  (DB.packs || []).forEach(function(p){
+    var i = -1;
+    for(var k = 0; k < out.length; k++) if(out[k].id === p.id){ i = k; break; }
+    if(i >= 0) out[i] = p; else out.push(p);      /* 同一 id 视为“覆盖”，不重复出现 */
+  });
+  return out;
+}
+function isBuiltinPack(id){
+  var inBuiltin = PACKS.some(function(x){ return x.id === id; });
+  var overridden = (DB.packs || []).some(function(x){ return x.id === id; });
+  return inBuiltin && !overridden;
+}
+function findPack(id){
+  var all = allPacks();
+  for(var i = 0; i < all.length; i++) if(all[i].id === id) return all[i];
+  return null;
+}
+function packStat(p){
+  var recs = (DB.paper || []).filter(function(r){ return r.pack === p.id; });
+  var map = {}, right = 0, graded = 0, done = 0;
+  recs.forEach(function(r){
+    if(!map[r.qid]) done++;
+    map[r.qid] = r;
+    if(r.ok !== null){ graded++; if(r.ok) right++; }
+  });
+  return {total:p.questions.length, done:Math.min(done, p.questions.length), right:right, graded:graded, map:map};
+}
+function focusTag(k){ return DIMNAME[k] || '综合'; }
+function stars(n){ n = n || 2; return '★★★'.slice(0, n) + '☆☆☆'.slice(0, 3 - n); }
+
+/* ---------- 通用字段渲染（落笔 / 试卷题共用） ---------- */
+function fieldsHTML(fields, ent, showWrong){
+  var h = ['<div class="fields">'];
+  fields.forEach(function(fd, i){
+    h.push('<div class="field"><div class="lab">' + esc(fd.label) + '</div>');
+    if(fd.type === 'coef'){
+      var parts = fd.tpl.split(/(\{\d+\})/);
+      h.push('<div class="blank" style="font-size:16px">');
+      parts.forEach(function(p){
+        var m = p.match(/^\{(\d+)\}$/);
+        if(m){
+          var key = i + '.' + m[1], k = +m[1];
+          h.push('<input inputmode="decimal" data-f="' + key + '" value="' + esc(ent[key] || '') + '" placeholder="?"' +
+                 (showWrong && !numEq(ent[key], fd.ans[k]) ? ' class="no"' : '') + '>');
+        }else if(p){
+          h.push('<span>' + esc(p) + '</span>');
+        }
+      });
+      h.push('</div>');
+    }else if(fd.type === 'num'){
+      var key2 = i + '.0';
+      h.push('<div class="blank"><input inputmode="decimal" data-f="' + key2 + '" value="' + esc(ent[key2] || '') + '" placeholder="?"' +
+             (showWrong && !numEq(ent[key2], fd.ans) ? ' class="no"' : '') + '></div>');
+    }else if(fd.type === 'choice'){
+      var key3 = i + '.0';
+      h.push('<div class="choices-inline">');
+      fd.options.forEach(function(op, oi){
+        var cls = '';
+        if(ent[key3] === oi) cls = 'sel';
+        if(showWrong && ent[key3] === oi && oi !== fd.ans) cls = 'no';
+        h.push('<button class="' + cls + '" data-ch="' + key3 + '" data-ci="' + oi + '">' + esc(op) + '</button>');
+      });
+      h.push('</div>');
+    }
+    h.push('</div>');
+  });
+  h.push('</div>');
+  return h.join('');
+}
+function readFields(fields, ent){
+  return fields.map(function(fd, i){
+    if(fd.type === 'coef'){
+      return fd.ans.map(function(a, k){ return ent[i + '.' + k]; });
+    }
+    return ent[i + '.0'];
+  });
+}
+function gradeFields(fields, ent){
+  var got = readFields(fields, ent), wrong = [];
+  fields.forEach(function(fd, i){ if(!checkField(fd, got[i])) wrong.push(i); });
+  return {ok:wrong.length === 0, wrong:wrong, got:got};
+}
+function fmtNum(v){
+  if(typeof v !== 'number' || !isFinite(v)) return String(v);
+  if(Number.isInteger(v)) return String(v);
+  var d = Math.round(v * 10000) / 10000;
+  if(Math.abs(d - v) < 1e-9) return String(d);                 /* 有限小数直接显示 */
+  for(var q = 2; q <= 20; q++){                                /* 否则找一个简单的分数 */
+    var p = v * q;
+    if(Math.abs(p - Math.round(p)) < 1e-9) return Math.round(p) + '/' + q;
+  }
+  return String(d);
+}
+function answerText(fd){
+  if(fd.type === 'coef'){
+    var t = fd.tpl;
+    fd.ans.forEach(function(a, k){ t = t.replace('{' + k + '}', fmtNum(a)); });
+    return t.replace(/\+\s*-/g, '− ').replace(/(^|[^0-9.])1x/g, '$1x');
+  }
+  if(fd.type === 'num') return fmtNum(fd.ans);
+  if(fd.type === 'choice') return fd.options[fd.ans];
+  return '';
+}
+
+/* ---------- 试卷列表 ---------- */
+function viewPaper(){
+  var h = [];
+  h.push('<div class="card"><div class="step-hd"><div class="stepbadge">▤</div><div>' +
+         '<h2>试卷题库 · 整题练习</h2>' +
+         '<p>原题 + 自动判分 + 分步解析。图片类题目请对照原卷看题。</p></div></div></div>');
+  var packs = allPacks();
+  if(!packs.length){
+    h.push('<div class="card"><div class="empty-state">题库是空的。到「题库管理」导入题包。</div></div>');
+    return h.join('');
+  }
+  packs.forEach(function(p){
+    var st = packStat(p);
+    var rate = st.graded ? Math.round(st.right / st.graded * 100) : null;
+    h.push('<div class="card"><div class="qhead"><span class="tag">' + esc(p.name) + '</span>' +
+           (p.source ? '<span class="tag-soft">' + esc(p.source) + '</span>' : '') + '</div>');
+    if(p.exam) h.push('<div class="small muted">' + esc(p.exam) + '</div>');
+    if(p.note) h.push('<div class="tiny muted" style="margin-top:4px">' + esc(p.note) + '</div>');
+    h.push('<div class="row small" style="margin-top:10px"><span>共 ' + st.total + ' 题，已做 ' + st.done + ' 题</span>' +
+           (rate === null ? '<span class="muted">还没有判定记录</span>' : '<span>正确率 <b>' + rate + '%</b></span>') + '</div>');
+    h.push('<div class="tools" style="margin-top:10px">' +
+           '<button class="btn btn-primary" data-act="openpack" data-pack="' + esc(p.id) + '">' +
+           (st.done ? '继续练习' : '开始练习') + '</button>' +
+           '<button class="btn" data-act="manage">题库管理</button></div></div>');
+  });
+  return h.join('');
+}
+
+/* ---------- 题目列表 ---------- */
+function viewPack(){
+  var p = findPack(S.packId);
+  if(!p){ S.screen = 'paper'; return viewPaper(); }
+  var st = packStat(p), h = [];
+  h.push('<div class="card"><div class="qhead"><span class="tag">' + esc(p.name) + '</span>' +
+         '<span class="tag-soft">' + st.done + ' / ' + st.total + ' 已做</span></div>');
+  h.push('<div class="packlist">');
+  p.questions.forEach(function(q, i){
+    var rec = st.map[q.id];
+    var mark = rec ? (rec.ok === null ? '◐' : (rec.ok ? '✓' : '✗')) : '·';
+    var cls = rec ? (rec.ok === null ? 'half' : (rec.ok ? 'okrow' : 'norow')) : '';
+    h.push('<button class="prow ' + cls + '" data-act="openq" data-idx="' + i + '">' +
+           '<span class="pno">' + esc(q.no || (i + 1)) + '</span>' +
+           '<span class="pmark">' + mark + '</span>' +
+           '<span class="ptxt">' + esc((q.ask || '').split('\n')[0].slice(0, 42)) + (q.ask && q.ask.length > 42 ? '…' : '') + '</span>' +
+           '<span class="pmeta">' + esc(q.group || '') + ' · ' + focusTag(q.focus) + '</span></button>');
+  });
+  h.push('</div>');
+  h.push('<div class="tools" style="margin-top:12px"><button class="btn" data-act="papers">← 返回试卷列表</button></div></div>');
+  return h.join('');
+}
+
+/* ---------- 单题作答 ---------- */
+function viewPaperQ(){
+  var p = findPack(S.packId), qs = S.pq;
+  if(!p || !qs){ S.screen = 'paper'; return viewPaper(); }
+  var q = p.questions[qs.idx], h = [];
+  var done = qs.phase === 'done';
+  h.push('<div class="rail"><div class="n now"><b>' + (qs.idx + 1) + '</b>第 ' + (qs.idx + 1) + ' / ' + p.questions.length + ' 题</div>' +
+         '<div class="n"><b>' + esc(q.group || '') + '</b>' + (q.group ? ' · ' : '') + focusTag(q.focus) + '</div>' +
+         '<div class="n"><b>★</b>' + stars(q.diff) + '</div></div>');
+  h.push('<div class="card"><div class="qhead"><span class="tag">第 ' + esc(q.no || (qs.idx + 1)) + ' 题</span>' +
+         '<span class="tag-soft">' + esc(p.name) + '</span>' + (q.selfCheck ? '<span class="tag-warn">自评题</span>' : '') + '</div>');
+  h.push('<div class="stem">' + esc(q.ask) + '</div>');
+  if(q.stem) h.push('<div class="stem small muted" style="margin-top:6px">' + esc(q.stem) + '</div>');
+  if(q.plot) h.push('<div class="plotbig" style="margin-top:12px">' + plotSVG(q.plot) + '</div>');
+  if(q.table) h.push(tableHTML(q.table));
+
+  if(q.type === 'choice'){
+    var isImg = q.opts.some(function(o){ return o && typeof o === 'object' && o.plot; });
+    if(isImg){
+      h.push('<div class="plotgrid" style="margin-top:14px">');
+      q.opts.forEach(function(o, i){
+        var cls2 = 'plotcell';
+        if(done && !q.selfCheck){
+          if(i === qs.sel) cls2 += (i === q.ans ? ' ok' : ' no');
+          else if(i === q.ans) cls2 += ' ok';
+        }else if(qs.sel === i) cls2 += ' sel';
+        h.push('<button class="' + cls2 + '" data-popt="' + i + '"><span class="cap">' + 'ABCDEF'[i] + '</span>' + plotSVG(o.plot) + '</button>');
+      });
+      h.push('</div>');
+    }else{
+      h.push('<div class="opts" style="margin-top:14px">');
+      q.opts.forEach(function(o, i){
+        var cls = 'opt';
+        if(done && !q.selfCheck){
+          if(i === qs.sel) cls += (i === q.ans ? ' ok' : ' no');
+          else if(i === q.ans) cls += ' ok';
+        }else if(qs.sel === i) cls += ' sel';
+        h.push('<button class="' + cls + '" data-popt="' + i + '"><span class="k">' + 'ABCDEF'[i] + '</span><span>' + esc(o) + '</span></button>');
+      });
+      h.push('</div>');
+    }
+  }else if(q.fields){
+    h.push('<div style="margin-top:14px">' + fieldsHTML(q.fields, qs.ent, done && !q.selfCheck) + '</div>');
+    if(!done) h.push('<div class="tiny muted" style="margin-top:6px">可以填分数（如 1/2）或小数；先算再填，别边算边改。</div>');
+  }
+
+  if(done){
+    if(!q.selfCheck){
+      h.push('<div class="fb ' + (qs.ok ? 'ok' : 'no') + '"><h4>' + (qs.ok ? '✓ 全对' : '✗ 有 ' + (qs.wrong || 0) + ' 处不对') + '</h4>' +
+             '<div class="small">' + (qs.ok ? '这一题你抓住了关键。再看看解析里有没有更快的写法。' : '红色的地方就是问题所在，回原卷重算一遍，再对照解析。') + '</div></div>');
+    }else{
+      h.push('<div class="fb soft"><h4>自评题：对照答案自己判</h4><div class="small">这道题的图形/答案口径以老师讲的为准，工具不判分。</div></div>');
+    }
+    h.push('<div class="card" style="box-shadow:none;margin-top:12px"><div class="sol"><div style="font-size:15px;font-weight:600;margin-bottom:6px">参考答案</div><ul style="list-style:none;margin:0;padding:0">');
+    if(q.type === 'choice'){
+      var oa = q.opts[q.ans];
+      h.push('<li><b>选项：</b>' + esc('ABCDEF'[q.ans]) + (typeof oa === 'string' ? '　' + esc(oa) : '（见所配图）') + '</li>');
+    }else if(q.fields){
+      q.fields.forEach(function(fd){ h.push('<li><b>' + esc(fd.label) + '</b> ' + esc(answerText(fd)) + '</li>'); });
+    }
+    h.push('</ul><hr class="sep"><div style="font-size:15px;font-weight:600;margin-bottom:6px">解析</div><ol>');
+    (q.solution || []).forEach(function(s){ h.push('<li>' + esc(s) + '</li>'); });
+    h.push('</ol>');
+    if(q.tip) h.push('<div class="key"><b>这一步的关键：</b>' + esc(q.tip) + '</div>');
+    h.push('</div></div>');
+  }
+
+  h.push('<div class="tools">');
+  if(!done){
+    if(q.selfCheck){
+      h.push('<button class="btn btn-primary" data-act="pskip">看答案与解析</button>');
+    }else{
+      h.push('<button class="btn btn-primary" data-act="psubmit">提交答案</button>');
+      h.push('<button class="btn" data-act="pskip">直接看解析</button>');
+    }
+  }else{
+    h.push('<button class="btn btn-primary" data-act="pnext">' + (qs.idx + 1 >= p.questions.length ? '本卷完成' : '下一题') + '</button>');
+  }
+  h.push('<span class="spacer"></span><button class="btn-ghost" data-act="pack">返回题目列表</button></div>');
+  h.push('</div>');
+  return h.join('');
+}
+
+/* ---------- 题库管理 ---------- */
+function viewManage(){
+  var h = [];
+  h.push('<div class="card"><div class="step-hd"><div class="stepbadge">⚙</div><div><h2>题库管理</h2>' +
+         '<p>内置：五步母题 ' + BANK.length + ' 组 · 闪练 ' + DRILLS.length + ' 题 · 试卷 ' + PACKS.length + ' 套（' +
+         PACKS.reduce(function(a, p){ return a + p.questions.length; }, 0) + ' 题）</p></div></div></div>');
+
+  h.push('<div class="card"><div class="qhead"><span class="tag">题包</span></div><div class="packlist">');
+  allPacks().forEach(function(p){
+    var st = packStat(p);
+    var builtin = isBuiltinPack(p.id);
+    h.push('<div class="prow static mng"><span class="pno">' + (builtin ? '内置' : '导入') + '</span>' +
+           '<span class="ptxt"><b>' + esc(p.name) + '</b><span class="tiny muted"><br>' + p.questions.length + ' 题' +
+           (p.source ? '　来源 ' + esc(p.source) : '') + '</span></span>' +
+           '<span class="pmeta">' + st.done + ' / ' + st.total + ' 已做' +
+           (builtin ? '' : '<br><button class="btn-mini" data-act="delpack" data-pack="' + esc(p.id) + '">删除</button>') + '</span></div>');
+  });
+  h.push('</div><div class="tools" style="margin-top:12px"><button class="btn" data-act="exportpacks">导出全部题包（JSON）</button></div></div>');
+
+  h.push('<div class="card"><div class="qhead"><span class="tag">导入新题包</span></div>' +
+         '<p class="small muted" style="margin-top:8px">选一个 <b>.json</b> 文件，或把 JSON 直接粘到下面。格式见《使用说明.md》的「加题规范」。' +
+         '导入前会自动校验，不合格的地方会逐条列出。</p>' +
+         '<div class="tools" style="margin-top:10px"><input type="file" id="packfile" accept=".json,application/json">' +
+         '<button class="btn" data-act="doimport">校验并导入</button></div>' +
+         '<textarea id="packtext" class="ta" placeholder="把题包 JSON 粘在这里（也可以先用上面的按钮选择文件）"></textarea>' +
+         '<div id="importmsg">' + (S.importMsg || '') + '</div></div>');
+
+  h.push('<div class="card"><div class="qhead"><span class="tag">加题规范（速查）</span></div>' +
+         '<div class="small" style="line-height:1.9;margin-top:8px">' +
+         '题包 = <code>{ id, name, source, questions:[...] }</code>；每道题要有 <code>id / no / ask / solution</code>。' +
+         '<br>选择题：<code>type:"choice"</code> + <code>opts:[…]</code> + <code>ans:正确项下标（从 0 起）</code>。' +
+         '<br>填空/解答：<code>type:"fill"</code> + <code>fields:[{type:"num",label,ans} | {type:"coef",label,tpl,ans} | {type:"choice",label,options,ans}]</code>。' +
+         '<br>图：<code>plot:{expr:"2x-3", x0,x1,y0,y1}</code>，折线用 <code>poly:[[x,y],…]</code>。' +
+         '<br>可选：<code>focus</code>（trans/graph/model/plan/check）、<code>tip</code>、<code>diff</code>（1～3）、<code>selfCheck:true</code>（不判分）。' +
+         '</div></div>');
+  return h.join('');
+}
+
+/* ---------- 校验 / 导入 / 导出 ---------- */
+function validatePack(obj){
+  var err = [], warn = [];
+  if(!obj || typeof obj !== 'object' || Array.isArray(obj)) return {errors:['题包必须是一个 JSON 对象'], warns:[]};
+  if(typeof obj.id !== 'string' || !obj.id) err.push('缺少 id（字符串，题包唯一标识）');
+  if(typeof obj.name !== 'string' || !obj.name) err.push('缺少 name（题包名称）');
+  if(!Array.isArray(obj.questions) || !obj.questions.length) err.push('questions 必须是非空数组');
+  var ids = {};
+  allPacks().forEach(function(p){ p.questions.forEach(function(q){ ids[q.id] = p.id; }); });
+  (obj.questions || []).forEach(function(q, k){
+    var tag = '第 ' + (k + 1) + ' 题' + (q && q.id ? '（' + q.id + '）' : '');
+    if(!q || typeof q !== 'object'){ err.push(tag + '：不是对象'); return; }
+    if(!q.id) err.push(tag + '：缺少 id');
+    else {
+      if(ids[q.id] && ids[q.id] !== obj.id) err.push(tag + '：id 与已有题包（' + ids[q.id] + '）重复');
+      ids[q.id] = obj.id;
+    }
+    if(!q.ask) err.push(tag + '：缺少题干 ask');
+    if(!Array.isArray(q.solution) || !q.solution.length) err.push(tag + '：缺少解析 solution');
+    if(q.focus && !DIMNAME[q.focus]) err.push(tag + '：focus 只能是 trans / graph / model / plan / check');
+    if(q.diff && (q.diff < 1 || q.diff > 3)) warn.push(tag + '：diff 建议取 1～3');
+    if(q.type === 'choice'){
+      if(!Array.isArray(q.opts) || q.opts.length < 2) err.push(tag + '：选择题需要 opts 数组（至少 2 项）');
+      else {
+        if(!(q.ans >= 0 && q.ans < q.opts.length)) err.push(tag + '：ans 必须是正确选项的下标（从 0 起）');
+        q.opts.forEach(function(o, j){
+          if(o && typeof o === 'object' && !o.plot) err.push(tag + '：第 ' + (j + 1) + ' 个选项是对象，必须有 plot');
+          if(o && typeof o === 'object' && o.plot && o.plot.expr && !exprFn(o.plot.expr)) err.push(tag + '：第 ' + (j + 1) + ' 个选项的 plot.expr 无法解析');
+        });
+      }
+    }else if(q.type === 'fill' || q.type === 'solve'){
+      if(!Array.isArray(q.fields) || !q.fields.length){
+        if(!q.selfCheck) err.push(tag + '：填空/解答题需要 fields 数组（不判分的题请加 selfCheck:true）');
+      }else q.fields.forEach(function(f, j){
+        var ft = tag + ' 的第 ' + (j + 1) + ' 个字段';
+        if(!f || !f.type) { err.push(ft + '：缺少 type'); return; }
+        if(f.type === 'num' && typeof f.ans !== 'number') err.push(ft + '：num 的 ans 必须是数字');
+        if(f.type === 'coef'){
+          if(typeof f.tpl !== 'string') err.push(ft + '：coef 需要 tpl 模板，如 "y = {0}x + {1}"');
+          else if(!Array.isArray(f.ans)) err.push(ft + '：coef 的 ans 必须是数组，如 [-1, 2]');
+          else {
+            var n = (f.tpl.match(/\{\d+\}/g) || []).length;
+            var m = f.ans.length;
+            if(n !== m) err.push(ft + '：tpl 里占位符有 ' + n + ' 个，ans 有 ' + m + ' 个，数量要一致');
+            if(f.ans.some(function(a){ return typeof a !== 'number'; })) err.push(ft + '：ans 必须是数字数组');
+          }
+        }
+        if(f.type === 'choice'){
+          if(!Array.isArray(f.options) || !f.options.length) err.push(ft + '：choice 需要 options 数组');
+          else if(!(f.ans >= 0 && f.ans < f.options.length)) err.push(ft + '：choice 的 ans 下标越界');
+        }
+        if(f.type !== 'num' && f.type !== 'coef' && f.type !== 'choice') err.push(ft + '：type 只能是 num / coef / choice');
+      });
+    }else err.push(tag + '：type 只能是 choice / fill / solve');
+    if(q.plot){
+      if(typeof q.plot !== 'object') err.push(tag + '：plot 必须是对象');
+      else {
+        if(q.plot.expr && !exprFn(q.plot.expr)) err.push(tag + '：plot.expr 表达式无法解析（只支持 + - * / ^ ( ) x 及 sqrt/abs）');
+        if(q.plot.expr2 && !exprFn(q.plot.expr2)) err.push(tag + '：plot.expr2 表达式无法解析');
+        if(!q.plot.expr && !q.plot.expr2 && !q.plot.poly && !(q.plot.marks && q.plot.marks.length)) warn.push(tag + '：plot 里既没有曲线也没有标点，画出来是空的');
+      }
+    }
+    if(!q.tip) warn.push(tag + '：缺少 tip（做题提示），提示区会是空的');
+  });
+  return {errors:err, warns:warn};
+}
+function importPacksText(raw){
+  var data;
+  try{ data = JSON.parse(raw); }catch(e){ return {ok:false, errors:['JSON 解析失败：' + e.message]}; }
+  var list = Array.isArray(data) ? data : (Array.isArray(data.packs) ? data.packs : [data]);
+  var errs = [], warns = [], oks = 0;
+  list.forEach(function(p, i){
+    var r = validatePack(p);
+    r.errors.forEach(function(e){ errs.push('题包 ' + (i + 1) + '：' + e); });
+    r.warns.forEach(function(w){ warns.push('题包 ' + (i + 1) + '：' + w); });
+    if(!r.errors.length) oks++;
+  });
+  if(errs.length) return {ok:false, errors:errs, warns:warns};
+  var replaced = 0;
+  list.forEach(function(p){
+    var idx = -1;
+    for(var k = 0; k < DB.packs.length; k++) if(DB.packs[k].id === p.id){ idx = k; break; }
+    if(idx >= 0){ DB.packs[idx] = p; replaced++; }
+    else DB.packs.push(p);
+  });
+  saveDB();
+  return {ok:true, count:list.length, replaced:replaced, warns:warns};
+}
+function downloadText(name, text, mime){
+  var blob = new Blob([text], {type:(mime || 'text/plain') + ';charset=utf-8'});
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = name;
+  document.body.appendChild(a); a.click();
+  setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); }, 500);
+}
+function doImport(raw){
+  var r = importPacksText(raw);
+  if(r.ok){
+    S.importMsg = '<div class="fb ok"><h4>✓ 导入成功</h4><div>共 ' + r.count + ' 个题包：新增 ' + (r.count - r.replaced) + '，覆盖 ' + r.replaced + '。</div>' +
+      (r.warns.length ? '<div class="small" style="margin-top:6px">提醒：<br>' + r.warns.map(esc).join('<br>') + '</div>' : '') + '</div>';
+  }else{
+    S.importMsg = '<div class="fb no"><h4>✗ 有 ' + r.errors.length + ' 处不符合规范，没有导入</h4><ul>' +
+      r.errors.slice(0, 20).map(function(e){ return '<li>' + esc(e) + '</li>'; }).join('') + '</ul>' +
+      (r.errors.length > 20 ? '<div class="small">只显示前 20 条。</div>' : '') + '</div>';
+  }
+  render();
+}
+
+/* =========================================================
+   交互
+   ========================================================= */
+function loadQuestion(){
+  var q = curQ();
+  S.qs = {qid:q.id, step:0, phase:'ask', sel:[], order:[], val:'', attempt:0, hint:0,
+          failed:[], fb:null, ent:{}, fAttempt:0, fOk:null, fWrong:0, stuck:null, hints:0};
+  S.screen = 'train';
+  render();
+}
+
+function currentStep(){
+  var q = curQ();
+  return q.steps[S.qs.step];
+}
+
+function logStep(dim, ok){
+  DB.log.push({ts:Date.now(), qid:S.qs.qid, dim:dim, ok:!!ok});
+  saveDB();
+}
+
+function submitStep(){
+  var st = currentStep(), qs = S.qs;
+  if(qs.phase !== 'ask') return;
+  var res = {ok:false, diag:''};
+
+  if(st.type === 'multi'){
+    if(!qs.sel.length){ flash('至少选一条。'); return; }
+    var correct = [], chosen = qs.sel.slice();
+    st.opts.forEach(function(o, i){ if(o.ok) correct.push(i); });
+    var missed = correct.filter(function(i){ return chosen.indexOf(i) < 0; });
+    var extra = chosen.filter(function(i){ return correct.indexOf(i) < 0; });
+    res.ok = missed.length === 0 && extra.length === 0;
+    res.diag = '你选了 ' + chosen.length + ' 条' +
+      (extra.length ? '，其中 ' + extra.length + ' 条不是这道题的可用条件' : '') +
+      (missed.length ? '，还漏了 ' + missed.length + ' 条' : '') + '。再看看题干，“能变成式子”的才算。';
+  }else if(st.type === 'choice' || st.type === 'img'){
+    if(qs.sel.length === 0){ flash('先选一个。'); return; }
+    var i = qs.sel[0];
+    res.ok = !!(st.opts[i] && st.opts[i].ok);
+    res.diag = st.opts[i] ? (st.opts[i].why || '这个选项不对。') : '这个选项不对。';
+  }else if(st.type === 'order'){
+    if(qs.order.length !== st.items.length){ flash('把所有步骤都排进去再提交。'); return; }
+    res.ok = qs.order.every(function(v, k){ return v === k; });
+    var bad = -1;
+    for(var k = 0; k < qs.order.length; k++){ if(qs.order[k] !== k){ bad = k; break; } }
+    res.diag = bad >= 0 ? ('第 ' + (bad + 1) + ' 步放错了：『' + st.items[qs.order[bad]] + '』不该在这儿。想想这一步需要什么前提。') : '';
+  }else if(st.type === 'num'){
+    if(!qs.val){ flash('先填一个数。'); return; }
+    res.ok = numEq(qs.val, st.answer);
+    res.diag = '算出来的数不对。先把式子列出来，再代数字——注意符号和单位。';
+  }
+
+  qs.attempt++;
+  if(qs.attempt === 1) logStep(st.dim, res.ok);
+
+  if(res.ok){
+    qs.fb = {ok:true, reveal:true};
+    qs.phase = 'fb';
+  }else if(qs.attempt === 1){
+    qs.fb = {ok:false, reveal:false, diag:res.diag};
+    qs.phase = 'fb';
+  }else{
+    if(qs.failed.indexOf(st.dim) < 0) qs.failed.push(st.dim);
+    qs.fb = {ok:false, reveal:true, diag:res.diag};
+    qs.phase = 'fb';
+  }
+  render();
+}
+
+function nextStep(){
+  var qs = S.qs, q = curQ();
+  qs.step++;
+  qs.sel = []; qs.order = []; qs.val = ''; qs.attempt = 0; qs.fb = null;
+  qs.phase = qs.step >= q.steps.length ? 'final' : 'ask';
+  render();
+}
+
+function checkField(fd, val){
+  if(!fd) return false;
+  if(fd.type === 'coef'){
+    for(var k = 0; k < fd.ans.length; k++){
+      if(!numEq(val[k], fd.ans[k])) return false;
+    }
+    return true;
+  }
+  if(fd.type === 'num') return numEq(val, fd.ans);
+  if(fd.type === 'choice') return val === fd.ans;
+  return false;
+}
+
+function submitFinal(){
+  var q = curQ(), qs = S.qs, fields = q.final.fields, wrong = 0, fieldsOk = 0;
+  fields.forEach(function(fd, i){
+    var got = {};
+    if(fd.type === 'coef'){
+      fd.ans.forEach(function(a, k){ got[k] = qs.ent[i + '.' + k]; });
+    }else{
+      got = qs.ent[i + '.0'];
+    }
+    if(checkField(fd, got)) fieldsOk++; else wrong++;
+  });
+  qs.fAttempt++;
+  qs.fWrong = wrong;
+  if(wrong === 0){
+    qs.fOk = true;
+    finalize(true);
+    return;
+  }
+  if(qs.fAttempt === 1){
+    qs.fOk = false;
+    render();
+    flash('有 ' + wrong + ' 处还不对。红格子是错的，回纸上重算——先想清楚是哪一步错了。');
+    return;
+  }
+  qs.fOk = false;
+  finalize(false);
+}
+
+function finalize(ok){
+  var qs = S.qs, q = curQ();
+  qs.phase = 'sol';
+  qs.fOk = ok;
+  DB.recs.push({ts:Date.now(), qid:q.id, ok:ok, failed:qs.failed.slice(), hints:qs.hint, stuck:null,
+                tries:qs.fAttempt});
+  saveDB();
+  S.sess.n++;
+  if(ok) S.sess.ok++;
+  (qs.failed || []).forEach(function(d){ S.sess.dims[d] = (S.sess.dims[d] || 0) + 1; });
+  render();
+}
+
+function flash(msg){
+  var el = document.createElement('div');
+  el.className = 'fb soft';
+  el.style.cssText = 'position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:99;max-width:520px;box-shadow:0 8px 30px rgba(0,0,0,.16)';
+  el.textContent = msg;
+  document.body.appendChild(el);
+  setTimeout(function(){ el.remove(); }, 2600);
+}
+
+/* ---------- 事件 ---------- */
+document.addEventListener('click', function(e){
+  var t = e.target;
+  var actEl = t.closest ? t.closest('[data-act]') : null;
+  if(actEl){ handleAct(actEl); return; }
+  var dopt = t.closest ? t.closest('[data-dopt]') : null;
+  if(dopt){ drillPick(+dopt.getAttribute('data-dopt')); return; }
+  var popt = t.closest ? t.closest('[data-popt]') : null;
+  if(popt){ paperPick(+popt.getAttribute('data-popt')); return; }
+  var opt = t.closest ? t.closest('[data-opt]') : null;
+  if(opt){ pickOpt(+opt.getAttribute('data-opt')); return; }
+  var ordAdd = t.closest ? t.closest('[data-ord-add]') : null;
+  if(ordAdd){ orderAdd(+ordAdd.getAttribute('data-ord-add')); return; }
+  var ordRem = t.closest ? t.closest('[data-ord]') : null;
+  if(ordRem){ orderRemove(+ordRem.getAttribute('data-ord')); return; }
+  var ch = t.closest ? t.closest('[data-ch]') : null;
+  if(ch){
+    var key = ch.getAttribute('data-ch');
+    var host = (S.screen === 'paperq' && S.pq) ? S.pq
+             : (S.screen === 'libq' && S.vs) ? S.vs
+             : S.qs;
+    if(host && host.ent) host.ent[key] = +ch.getAttribute('data-ci');
+    render();
+    return;
+  }
+});
+
+document.addEventListener('input', function(e){
+  var el = e.target;
+  if(el.getAttribute && el.getAttribute('data-stepnum')){
+    S.qs.val = el.value;
+    return;
+  }
+  var f = el.getAttribute && el.getAttribute('data-f');
+  if(f){
+    if(S.screen === 'paperq' && S.pq) S.pq.ent[f] = el.value;
+    else if(S.screen === 'libq' && S.vs) S.vs.ent[f] = el.value;
+    else if(S.qs) S.qs.ent[f] = el.value;
+  }
+});
+
+document.addEventListener('change', function(e){
+  var el = e.target;
+  if(el && el.id === 'packfile'){
+    var f = el.files && el.files[0];
+    if(!f) return;
+    var r = new FileReader();
+    r.onload = function(){
+      var ta = document.getElementById('packtext');
+      if(ta) ta.value = String(r.result);
+      flash('文件已读入（' + f.name + '），点「校验并导入」。');
+    };
+    r.readAsText(f, 'utf-8');
+  }
+});
+
+document.addEventListener('keydown', function(e){
+  if(e.key !== 'Enter') return;
+  var el = e.target;
+  if(el && el.id === 'stepnum'){ submitStep(); }
+  else if(el && el.getAttribute && el.getAttribute('data-f')){
+    if(S.screen === 'paperq'){ paperSubmit(); }
+    else if(S.screen === 'libq'){ vsSubmit(); }
+    else if(S.qs && S.qs.phase === 'final') submitFinal();
+  }
+});
+
+function pickOpt(i){
+  var qs = S.qs;
+  if(!qs || qs.phase !== 'ask') return;
+  var st = currentStep();
+  if(st.type === 'multi'){
+    var k = qs.sel.indexOf(i);
+    if(k >= 0) qs.sel.splice(k, 1); else qs.sel.push(i);
+  }else{
+    qs.sel = [i];
+  }
+  render();
+}
+function orderAdd(idx){
+  var qs = S.qs;
+  if(!qs || qs.phase !== 'ask') return;
+  if(qs.order.indexOf(idx) >= 0) return;
+  qs.order.push(idx);
+  render();
+}
+function orderRemove(pos){
+  var qs = S.qs;
+  if(!qs || qs.phase !== 'ask') return;
+  qs.order.splice(pos, 1);
+  render();
+}
+
+function drillPick(i){
+  if(S.dOk !== null) return;
+  var d = DRILLS[S.di];
+  S.dSel = i;
+  var ok = !!(d.opts[i] && d.opts[i].ok);
+  S.dOk = ok;
+  if(ok) S.dRight++;
+  else S.dWrong.push(d.id);
+  DB.log.push({ts:Date.now(), qid:d.id, dim:'repr', ok:ok});
+  saveDB();
+  render();
+}
+
+/* ---------- 试卷练习 ---------- */
+function openPack(id){
+  S.packId = id;
+  S.screen = 'pack';
+  render();
+}
+function openPaperQ(idx){
+  var p = findPack(S.packId);
+  if(!p) return;
+  if(idx >= p.questions.length){ S.screen = 'pack'; render(); return; }
+  S.pq = {idx:idx, ent:{}, sel:null, phase:'ask', ok:null, wrong:0, attempt:0};
+  S.screen = 'paperq';
+  render();
+}
+function paperPick(i){
+  if(!S.pq || S.pq.phase !== 'ask') return;
+  S.pq.sel = i;
+  render();
+}
+function paperSubmit(){
+  var p = findPack(S.packId), qs = S.pq;
+  if(!p || !qs || qs.phase !== 'ask') return;
+  var q = p.questions[qs.idx];
+  qs.attempt++;
+  if(q.selfCheck){ qs.phase = 'done'; qs.ok = null; render(); return; }
+  var ok = false, wrong = 0;
+  if(q.type === 'choice'){
+    if(qs.sel === null){ flash('先选一个选项。'); return; }
+    ok = qs.sel === q.ans;
+    wrong = ok ? 0 : 1;
+  }else{
+    var g = gradeFields(q.fields, qs.ent);
+    ok = g.ok; wrong = g.wrong.length;
+    if(!ok && wrong === q.fields.length && qs.attempt === 1 && !Object.keys(qs.ent).length){
+      flash('还没有填答案。');
+      return;
+    }
+  }
+  qs.phase = 'done';
+  qs.ok = ok;
+  qs.wrong = wrong;
+  DB.paper.push({ts:Date.now(), pack:p.id, qid:q.id, ok:ok});
+  if(q.focus){ DB.log.push({ts:Date.now(), qid:q.id, dim:q.focus, ok:ok}); }
+  saveDB();
+  render();
+}
+function paperSkip(){
+  var p = findPack(S.packId), qs = S.pq;
+  if(!p || !qs) return;
+  var q = p.questions[qs.idx];
+  qs.phase = 'done';
+  qs.ok = null;
+  DB.paper.push({ts:Date.now(), pack:p.id, qid:q.id, ok:null});
+  saveDB();
+  render();
+}
+function paperNext(){
+  var p = findPack(S.packId), qs = S.pq;
+  if(!p || !qs) return;
+  if(qs.idx + 1 >= p.questions.length){ S.screen = 'pack'; render(); return; }
+  openPaperQ(qs.idx + 1);
+}
+
+function handleAct(el){
+  var act = el.getAttribute('data-act');
+  if(act === 'home'){ S.screen = 'home'; render(); return; }
+  if(act === 'library'){ S.screen = 'library'; render(); return; }
+  if(act === 'libnext'){
+    S.libI = (Math.min(Math.max(S.libI || 0, 0), BANK.length - 1) + 1) % BANK.length;
+    S.libOpen = {}; render(); return;
+  }
+  if(act === 'libprev'){
+    var li = Math.min(Math.max(S.libI || 0, 0), BANK.length - 1);
+    S.libI = (li - 1 + BANK.length) % BANK.length;
+    S.libOpen = {}; render(); return;
+  }
+  if(act === 'librev'){
+    var lk = el.getAttribute('data-k');
+    S.libOpen = S.libOpen || {};
+    S.libOpen[lk] = !S.libOpen[lk];
+    render(); return;
+  }
+  if(act === 'libself'){
+    libSetStat(+el.getAttribute('data-q'), +el.getAttribute('data-v'), +el.getAttribute('data-ok'));
+    return;
+  }
+  if(act === 'liblist'){ S.libList = true; S.libOpen = {}; render(); return; }
+  if(act === 'libguide'){ S.libList = false; render(); return; }
+  if(act === 'libpick'){ S.screen = 'libpick'; render(); return; }
+  if(act === 'libpractice'){ startLibQ(+el.getAttribute('data-q'), +el.getAttribute('data-v')); return; }
+  if(act === 'vsback'){ vsBack(); return; }
+  if(act === 'vssubmit'){ vsSubmit(); return; }
+  if(act === 'vsreveal'){ vsReveal(); return; }
+  if(act === 'vsretry'){ vsRetry(); return; }
+  if(act === 'vsnext'){ vsNext(); return; }
+  if(act === 'libclear'){
+    if(confirm('清空变式题库的自评记录（已说清 / 还没底）？')){
+      DB.lib = {}; saveDB(); render();
+    }
+    return;
+  }
+  if(act === 'report'){ S.screen = 'report'; render(); return; }
+  if(act === 'print'){ window.print(); return; }
+  if(act === 'papers'){ S.screen = 'paper'; render(); return; }
+  if(act === 'manage'){ S.screen = 'manage'; render(); return; }
+  if(act === 'openpack'){ openPack(el.getAttribute('data-pack')); return; }
+  if(act === 'pack'){ S.screen = 'pack'; render(); return; }
+  if(act === 'openq'){ openPaperQ(+el.getAttribute('data-idx')); return; }
+  if(act === 'psubmit'){ paperSubmit(); return; }
+  if(act === 'pskip'){ paperSkip(); return; }
+  if(act === 'pnext'){ paperNext(); return; }
+  if(act === 'start'){
+    var m = el.getAttribute('data-mode');
+    S.mode = m;
+    if(m === 'guide'){
+      S.queue = BANK.map(function(q){ return q.id; });
+      S.qi = 0; S.sess = {n:0, ok:0, dims:{}};
+      loadQuestion();
+    }else if(m === 'drill'){
+      S.di = 0; S.dSel = null; S.dOk = null; S.dRight = 0; S.dWrong = [];
+      S.screen = 'drill'; render();
+    }
+    return;
+  }
+  if(act === 'hint'){
+    var st = currentStep();
+    if(S.qs.hint < st.hint.length){ S.qs.hint++; S.qs.hints = Math.max(S.qs.hints, S.qs.hint); }
+    render(); return;
+  }
+  if(act === 'submit'){ submitStep(); return; }
+  if(act === 'retry'){
+    S.qs.phase = 'ask'; S.qs.fb = null; S.qs.sel = []; S.qs.order = [];
+    render(); return;
+  }
+  if(act === 'next'){ nextStep(); return; }
+  if(act === 'fsubmit'){ submitFinal(); return; }
+  if(act === 'freveal'){ S.qs.fAttempt = 2; finalize(false); return; }
+  if(act === 'qnext'){
+    S.qi++;
+    if(S.qi >= S.queue.length){ S.screen = 'done'; render(); }
+    else loadQuestion();
+    return;
+  }
+  if(act === 'skip'){
+    S.qi++;
+    if(S.qi >= S.queue.length){ S.screen = 'done'; render(); }
+    else loadQuestion();
+    return;
+  }
+  if(act === 'stuck'){
+    var dim = el.getAttribute('data-dim');
+    S.qs.stuck = dim;
+    var last = DB.recs[DB.recs.length - 1];
+    if(last && last.qid === S.qs.qid) last.stuck = dim;
+    saveDB(); render(); return;
+  }
+  if(act === 'dnext'){
+    S.di++;
+    S.dSel = null; S.dOk = null;
+    if(S.di >= DRILLS.length){
+      DB.drill.push({ts:Date.now(), right:S.dRight, total:DRILLS.length});
+      saveDB();
+      S.screen = 'drillsum';
+    }
+    render(); return;
+  }
+  if(act === 'dcancel'){ S.screen = 'home'; render(); return; }
+  if(act === 'delpack'){
+    var pid = el.getAttribute('data-pack');
+    if(confirm('确定删除这个导入的题包？内置题包不能删。')){
+      DB.packs = DB.packs.filter(function(p){ return p.id !== pid; });
+      saveDB(); render();
+    }
+    return;
+  }
+  if(act === 'exportpacks'){
+    var data = {version:1, exportedAt:new Date().toISOString(), packs:allPacks()};
+    downloadText('题库-全部题包.json', JSON.stringify(data, null, 2), 'application/json');
+    return;
+  }
+  if(act === 'doimport'){
+    var ta = document.getElementById('packtext');
+    var raw = ta ? ta.value.trim() : '';
+    if(!raw){ flash('先选一个 .json 文件，或把 JSON 粘到下面的框里。'); return; }
+    doImport(raw);
+    return;
+  }
+  if(act === 'reset'){
+    if(confirm('确定清空所有训练记录？这个动作不能撤销。')){
+      DB = {log:[], recs:[], drill:[], paper:[], packs:DB.packs || [], lib:{}, vrec:[]}; saveDB(); render();
+    }
+    return;
+  }
+  if(act === 'export'){
+    var lines = ['函数思维脚手架 · 训练记录', '导出时间：' + new Date().toLocaleString()];
+    lines.push('', '== 各环节一次答对率 ==');
+    var st = stats();
+    DIMS.forEach(function(d){
+      var o = st[d.key];
+      if(o.n) lines.push(d.name + '：' + o.ok + '/' + o.n + '（' + pct(o) + '%）');
+    });
+    if(st.repr.n) lines.push('四种表示转换：' + st.repr.ok + '/' + st.repr.n + '（' + pct(st.repr) + '%）');
+    lines.push('', '== 做过的题 ==');
+    DB.recs.forEach(function(r){
+      var q = BANK.filter(function(x){ return x.id === r.qid; })[0];
+      lines.push(new Date(r.ts).toLocaleString() + '　' + (q ? q.title : r.qid) +
+                 '　落笔' + (r.ok ? '全对' : '有错') +
+                 (r.failed && r.failed.length ? '　卡点：' + r.failed.map(function(k){ return DIMNAME[k]; }).join('、') : ''));
+    });
+    var blob = new Blob([lines.join('\n')], {type:'text/plain;charset=utf-8'});
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = '函数训练记录.txt';
+    document.body.appendChild(a); a.click();
+    setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); }, 500);
+    return;
+  }
+}
+
+/* ---------- 启动 ---------- */
+loadDB();
+render();
+/* 调试/自检钩子（不影响使用） */
+window.__APP__ = {BANK:BANK, DRILLS:DRILLS, PACKS:PACKS, DIMS:DIMS, DIMNAME:DIMNAME, RX:RX,
+                  S:S, DB:DB, stats:stats, plotSVG:plotSVG, render:render, weakestDim:weakestDim,
+                  allPacks:allPacks, findPack:findPack, validatePack:validatePack, exprFn:exprFn,
+                  importPacksText:importPacksText, packStat:packStat};
+</script>
+</body>
+</html>
