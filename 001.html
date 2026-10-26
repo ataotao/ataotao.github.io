@@ -3025,7 +3025,40 @@ function weakestDim(st){
 /* =========================================================
    渲染
    ========================================================= */
+/* 当前滚动位置（兼容各种浏览器） */
+function curScrollY(){
+  return window.scrollY || document.documentElement.scrollTop || document.body.scrollTop || 0;
+}
+/* 只有"换了一屏 / 换了一道题 / 换了一步 / 进入落笔或解析"才滚回顶部；
+   同一屏内的选选项、点提示、提交反馈，保持当前位置不动 */
+function majorPhase(p){
+  return (p === 'fb' || p === 'done') ? 'ask' : (p || '');
+}
+function viewKey(){
+  var k = S.screen || '';
+  if(S.screen === 'train' || S.screen === 'done'){
+    k += '|' + S.qi + '|' + (S.qs ? (S.qs.step + '|' + majorPhase(S.qs.phase)) : '');
+  }else if(S.screen === 'paperq' && S.pq){
+    k += '|' + S.packId + '|' + S.pq.idx + '|' + majorPhase(S.pq.phase);
+  }else if(S.screen === 'libq' && S.vs){
+    k += '|' + S.vs.qi + '|' + S.vs.vi + '|' + majorPhase(S.vs.phase);
+  }else if(S.screen === 'library'){
+    k += '|' + (S.libI || 0) + '|' + (S.libList ? 'list' : 'guide');
+  }else if(S.screen === 'libpick'){
+    k += '|pick';
+  }else if(S.screen === 'drill'){
+    k += '|' + S.di;
+  }else if(S.screen === 'drillsum'){
+    k += '|sum';
+  }else if(S.screen === 'pack'){
+    k += '|' + S.packId;
+  }
+  return k;
+}
 function render(){
+  var prevY = curScrollY();
+  var vk = viewKey();
+  var keepScroll = (S._viewKey === vk);
   var el = $('#screen');
   var chip = $('#modechip');
   var names = {guide:'引导训练', drill:'闪练 · 四种表示', library:'变式题库', report:'训练报告'};
@@ -3064,7 +3097,8 @@ function render(){
   else if(S.screen === 'pack') el.innerHTML = viewPack();
   else if(S.screen === 'paperq') el.innerHTML = viewPaperQ();
   else if(S.screen === 'manage') el.innerHTML = viewManage();
-  window.scrollTo(0, 0);
+  window.scrollTo(0, keepScroll ? prevY : 0);
+  S._viewKey = vk;
 }
 
 /* ---------- 首页 ---------- */
@@ -4343,6 +4377,7 @@ function nextStep(){
   var qs = S.qs, q = curQ();
   qs.step++;
   qs.sel = []; qs.order = []; qs.val = ''; qs.attempt = 0; qs.fb = null;
+  qs.hint = 0;   /* 每一步的提示各自独立：换步必须清零，否则下一步会提前露出提示 */
   qs.phase = qs.step >= q.steps.length ? 'final' : 'ask';
   render();
 }
@@ -4392,7 +4427,7 @@ function finalize(ok){
   var qs = S.qs, q = curQ();
   qs.phase = 'sol';
   qs.fOk = ok;
-  DB.recs.push({ts:Date.now(), qid:q.id, ok:ok, failed:qs.failed.slice(), hints:qs.hint, stuck:null,
+  DB.recs.push({ts:Date.now(), qid:q.id, ok:ok, failed:qs.failed.slice(), hints:qs.hints || 0, stuck:null,
                 tries:qs.fAttempt});
   saveDB();
   S.sess.n++;
@@ -4642,7 +4677,7 @@ function handleAct(el){
   }
   if(act === 'hint'){
     var st = currentStep();
-    if(S.qs.hint < st.hint.length){ S.qs.hint++; S.qs.hints = Math.max(S.qs.hints, S.qs.hint); }
+    if(S.qs.hint < st.hint.length){ S.qs.hint++; S.qs.hints = (S.qs.hints || 0) + 1; }
     render(); return;
   }
   if(act === 'submit'){ submitStep(); return; }
