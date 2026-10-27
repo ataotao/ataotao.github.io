@@ -1,0 +1,508 @@
+{
+  "packId": "pk-w2",
+  "file": "第2周.docx",
+  "title": "第2周",
+  "pages": 5,
+  "meta": {
+    "pageWidth": 595.299987792969,
+    "pageHeight": 841.900024414063,
+    "leftMargin": 56.7000007629395,
+    "rightMargin": 56.7000007629395,
+    "topMargin": 48.2000007629395,
+    "bottomMargin": 48.2000007629395,
+    "headerDistance": 17,
+    "footerDistance": 28.3500003814697,
+    "pages": 5,
+    "paraCount": 120
+  },
+  "anomalies": [
+    "第2题的图在题号上方（图注「第2题」），已把该图并入本题裁图",
+    "第4题的图在题号上方（图注「第4题」），已把该图并入本题裁图",
+    "第6题的图在题号上方（图注「第6题」），已把该图并入本题裁图",
+    "第10题的图在题号上方（图注「第10题」），已把该图并入本题裁图",
+    "第6题跨页（共2页）：已出 q06_1..q06_2.png 并竖向合成 q06.png 单图"
+  ],
+  "questions": [
+    {
+      "no": 1,
+      "group": "选择",
+      "isChoice": true,
+      "guessType": "choice",
+      "askText": "1．不计质量的硬杆处于水平静止状态，[式]，在B点施加竖直向上的拉力F，杆上挂了两个物体M、H，M重为2N，则重4N的H挂在（  ）",
+      "opts": [
+        "A点左侧",
+        "C点右侧",
+        "A与B之间",
+        "B与C之间"
+      ],
+      "answerKey": "D",
+      "answerText": "",
+      "section": "一、单选题",
+      "askImg": [
+        "图片/pk-w2/q01.png"
+      ],
+      "ansImg": [],
+      "range": {
+        "startPage": 1,
+        "startY": 112.05,
+        "endPage": 1,
+        "endY": 267.95,
+        "lastContentPage": 1
+      },
+      "extraRanges": [],
+      "ansRange": null,
+      "hasAnswerBlock": false,
+      "ansInferred": false
+    },
+    {
+      "no": 2,
+      "group": "选择",
+      "isChoice": true,
+      "guessType": "choice",
+      "askText": "2．一根均匀铁丝AB，在中点O用一细绳将它悬挂起来，铁丝保持水平方向平衡。如果将OB这一段弯折一下，使点B和点O重合，如图所示，则此时铁丝将（  ）",
+      "opts": [
+        "左端向下倾斜",
+        "右端向下倾斜",
+        "水平方向保持平衡",
+        "未知铁丝原长，无法判断"
+      ],
+      "answerKey": "A",
+      "answerText": "",
+      "section": "一、单选题",
+      "askImg": [
+        "图片/pk-w2/q02.png"
+      ],
+      "ansImg": [],
+      "range": {
+        "startPage": 1,
+        "startY": 164.65,
+        "endPage": 1,
+        "endY": 329.95,
+        "lastContentPage": 1
+      },
+      "extraRanges": [],
+      "ansRange": null,
+      "hasAnswerBlock": false,
+      "ansInferred": false
+    },
+    {
+      "no": 3,
+      "group": "选择",
+      "isChoice": true,
+      "guessType": "choice",
+      "askText": "3．如图：O为支点，为使杠杆保持水平平衡，OB＜AB，可分别在A点沿不同方向施加作用力F1、F2、F3。这三个力的大小关系应是（  ）",
+      "opts": [
+        "F1＜F2＜F3",
+        "F1=F2＜F3",
+        "F1＞F2＞F3",
+        "F1=F2=F3"
+      ],
+      "answerKey": "A",
+      "answerText": "",
+      "section": "一、单选题",
+      "askImg": [
+        "图片/pk-w2/q03.png"
+      ],
+      "ansImg": [],
+      "range": {
+        "startPage": 1,
+        "startY": 329.95,
+        "endPage": 1,
+        "endY": 486.45,
+        "lastContentPage": 1
+      },
+      "extraRanges": [],
+      "ansRange": null,
+      "hasAnswerBlock": false,
+      "ansInferred": false
+    },
+    {
+      "no": 4,
+      "group": "选择",
+      "isChoice": true,
+      "guessType": "choice",
+      "askText": "4．小明在水平地面上做俯卧撑，当身体与地面平行时，可简化成如图所示的杠杆模型，他的重心在[式]点，地面对脚的力作用在[式]点，对手的力作用在[式]点，且都与身体垂直，小明的重力为[式]，[式]长为[式]，[式]长为[式]。则地面对小明手的作用力为（  ）\n\t\t\tA．1125N\tB．500N\tC．250N\tD．50N",
+      "opts": [],
+      "answerKey": "B",
+      "answerText": "",
+      "section": "一、单选题",
+      "askImg": [
+        "图片/pk-w2/q04.png"
+      ],
+      "ansImg": [],
+      "range": {
+        "startPage": 1,
+        "startY": 380.65,
+        "endPage": 1,
+        "endY": 564.1,
+        "lastContentPage": 1
+      },
+      "extraRanges": [],
+      "ansRange": null,
+      "hasAnswerBlock": false,
+      "ansInferred": false
+    },
+    {
+      "no": 5,
+      "group": "选择",
+      "isChoice": true,
+      "guessType": "choice",
+      "askText": "5．600N的人站在跷跷板某一位置时，跷跷板处于如图所示的平衡状态．忽略跷跷板自重和转动的摩擦，以下说法正确的是（  ）",
+      "opts": [
+        "球的质量约为200N",
+        "球的质量约为120 kg",
+        "使跷跷板平衡的力是球的压力和人的重力",
+        "当人往中点O走时，跷跷板右端下降"
+      ],
+      "answerKey": "D",
+      "answerText": "",
+      "section": "一、单选题",
+      "askImg": [
+        "图片/pk-w2/q05.png"
+      ],
+      "ansImg": [],
+      "range": {
+        "startPage": 1,
+        "startY": 564.1,
+        "endPage": 1,
+        "endY": 751.3,
+        "lastContentPage": 1
+      },
+      "extraRanges": [],
+      "ansRange": null,
+      "hasAnswerBlock": false,
+      "ansInferred": false
+    },
+    {
+      "no": 6,
+      "group": "选择",
+      "isChoice": true,
+      "guessType": "choice",
+      "askText": "6．用不可伸长的轻绳按图甲、乙两种方式将重为10N的物体匀速提升10cm，下列说法正确的是（  ）",
+      "opts": [
+        "F甲一定为10N",
+        "F乙一定小于10N",
+        "甲绳子自由端移动10cm",
+        "甲绳子自由端移动的距离比乙大"
+      ],
+      "answerKey": "C",
+      "answerText": "",
+      "section": "一、单选题",
+      "askImg": [
+        "图片/pk-w2/q06.png"
+      ],
+      "ansImg": [],
+      "range": {
+        "startPage": 1,
+        "startY": 629.2,
+        "endPage": 2,
+        "endY": 65.1,
+        "lastContentPage": 2
+      },
+      "extraRanges": [],
+      "ansRange": null,
+      "hasAnswerBlock": false,
+      "ansInferred": false
+    },
+    {
+      "no": 7,
+      "group": "选择",
+      "isChoice": true,
+      "guessType": "choice",
+      "askText": "7．已知被测物体的重力略超出弹簧测力计的量程，图中的方法中无法完成测量的是",
+      "opts": [
+        "[图]",
+        "[图]",
+        "[图]",
+        "[图]"
+      ],
+      "answerKey": "D",
+      "answerText": "",
+      "section": "一、单选题",
+      "askImg": [
+        "图片/pk-w2/q07.png"
+      ],
+      "ansImg": [],
+      "range": {
+        "startPage": 2,
+        "startY": 65.1,
+        "endPage": 2,
+        "endY": 227.25,
+        "lastContentPage": 2
+      },
+      "extraRanges": [],
+      "ansRange": null,
+      "hasAnswerBlock": false,
+      "ansInferred": false
+    },
+    {
+      "no": 8,
+      "group": "选择",
+      "isChoice": true,
+      "guessType": "choice",
+      "askText": "8．如图1，用甲、乙两个滑轮组分别将物体A、B在相同时间内匀速提升相同高度，拉力分别为[式]、[式]。此过程相关数据如图2所示。下列说法正确的是（     ）\n[图]",
+      "opts": [
+        "[式]的功率等于[式]的功率",
+        "机械效率[式]",
+        "物体质量[式]",
+        "两滑轮组绳子自由端移动的距离相等"
+      ],
+      "answerKey": "C",
+      "answerText": "",
+      "section": "一、单选题",
+      "askImg": [
+        "图片/pk-w2/q08.png"
+      ],
+      "ansImg": [],
+      "range": {
+        "startPage": 2,
+        "startY": 227.25,
+        "endPage": 2,
+        "endY": 500.85,
+        "lastContentPage": 2
+      },
+      "extraRanges": [],
+      "ansRange": null,
+      "hasAnswerBlock": false,
+      "ansInferred": false
+    },
+    {
+      "no": 9,
+      "group": "选择",
+      "isChoice": true,
+      "guessType": "choice",
+      "askText": "9．如图，甲把重为[式]的物体从A点竖直向上匀速拉至B点，此过程绳的拉力为[式]；乙用平行于斜面的力把同一物体沿斜面从C点匀速拉至与B等高的D点，此过程绳的拉力为[式]，则斜面的机械效率为（  ）\n\t\t\tA．100%\tB．[式]\tC．[式]\tD．[式]\n[图]\n\t\t\t第9题\t第10题",
+      "opts": [],
+      "answerKey": "C",
+      "answerText": "",
+      "section": "一、单选题",
+      "askImg": [
+        "图片/pk-w2/q09.png"
+      ],
+      "ansImg": [],
+      "range": {
+        "startPage": 2,
+        "startY": 500.85,
+        "endPage": 2,
+        "endY": 720,
+        "lastContentPage": 2
+      },
+      "extraRanges": [],
+      "ansRange": null,
+      "hasAnswerBlock": false,
+      "ansInferred": false
+    },
+    {
+      "no": 10,
+      "group": "选择",
+      "isChoice": true,
+      "guessType": "choice",
+      "askText": "10．如图1，分别用动滑轮和定滑轮拉动重力均为G的物体M、N，在相同时间内使M、N沿水平面匀速直线移动了相同距离s，两个滑轮做功情况如图2所示，则（  ）",
+      "opts": [
+        "定滑轮做的有用功为Gs",
+        "M、N受到的摩擦力大小相等",
+        "动滑轮的机械效率小于定滑轮",
+        "F动做功的功率大于F定做功的功率"
+      ],
+      "answerKey": "C",
+      "answerText": "",
+      "section": "一、单选题",
+      "askImg": [
+        "图片/pk-w2/q10.png"
+      ],
+      "ansImg": [],
+      "range": {
+        "startPage": 2,
+        "startY": 581.65,
+        "endPage": 3,
+        "endY": 65.1,
+        "lastContentPage": 2
+      },
+      "extraRanges": [],
+      "ansRange": null,
+      "hasAnswerBlock": false,
+      "ansInferred": false
+    },
+    {
+      "no": 11,
+      "group": "选择",
+      "isChoice": false,
+      "guessType": "solve",
+      "askText": "11．如图，甲、乙分别表示A、B两机械某次工作时的有用功[式]和额外功[式]的关系，则A的机械效率为[式]________；A、B的机械效率大小关系为[式]________[式]；总功的大小关系为[式]________[式]（后面两空选填“<”、“>”或“=”）。\n[图]",
+      "opts": [],
+      "answerKey": "",
+      "answerText": "25%     ＜     =",
+      "section": "二、非选择题",
+      "askImg": [
+        "图片/pk-w2/q11.png"
+      ],
+      "ansImg": [
+        "图片/pk-w2/q11-a.png"
+      ],
+      "range": {
+        "startPage": 3,
+        "startY": 87.05,
+        "endPage": 3,
+        "endY": 267.95,
+        "lastContentPage": 3
+      },
+      "extraRanges": [],
+      "ansRange": {
+        "startPage": 5,
+        "startY": 113.3,
+        "endPage": 5,
+        "endY": 128.95,
+        "lastContentPage": 5
+      },
+      "hasAnswerBlock": true,
+      "ansInferred": false
+    },
+    {
+      "no": 12,
+      "group": "选择",
+      "isChoice": false,
+      "guessType": "selfcheck",
+      "askText": "12．2024年6月2日，我国嫦娥六号探测器着陆月球背面，开启了世界首次月球背面“挖宝”之旅。图1是探测车在采集月壤样本时的情景，机械臂可以简化为图2中绕O点转动的杠杆，[式]，不计机械臂自身重，当采集重为0.16N的月壤时：\n[图]\n(1)在A点需要施加的拉力[式]的大小至少为______N。\n(2)请在图2中：①画出B点受到绳子的拉力[式]；②画出拉力[式]的力臂[式]；此时杠杆OAB在[式]的作用下处于静止状态，则杠杆OAB是________________（选填“省力”或“费力”）杠杆，判断依据：\n__________________________________________________________________________________________",
+      "opts": [],
+      "answerKey": "",
+      "answerText": "(1)0.64\n(2)     [图]     费力\n杠杆OAB处于静止状态，F1l1=F2l2，l1<l2，故F1>F2，是费力杠杆。",
+      "section": "二、非选择题",
+      "askImg": [
+        "图片/pk-w2/q12.png"
+      ],
+      "ansImg": [
+        "图片/pk-w2/q12-a.png"
+      ],
+      "range": {
+        "startPage": 3,
+        "startY": 267.95,
+        "endPage": 3,
+        "endY": 531.55,
+        "lastContentPage": 3
+      },
+      "extraRanges": [],
+      "ansRange": {
+        "startPage": 5,
+        "startY": 128.95,
+        "endPage": 5,
+        "endY": 237.9,
+        "lastContentPage": 5
+      },
+      "hasAnswerBlock": true,
+      "ansInferred": false
+    },
+    {
+      "no": 13,
+      "group": "选择",
+      "isChoice": false,
+      "guessType": "selfcheck",
+      "askText": "13．如图所示，在O为支点的轻质杠杆上施加一个竖直向下大小为4N的力[式]，为使杠杆能保持水平静止，杠杆同时受到另一个沿竖直方向的力（图中未画出）。\n[图]\n（1）请在图中画出力[式]的力臂[式]；\n（2）在下表的各个力中，不能使杠杆保持水平静止的有______（填写力的符号）。",
+      "opts": [],
+      "answerKey": "",
+      "answerText": "[图]       F4、F5",
+      "section": "二、非选择题",
+      "askImg": [
+        "图片/pk-w2/q13.png"
+      ],
+      "ansImg": [
+        "图片/pk-w2/q13-a.png"
+      ],
+      "range": {
+        "startPage": 3,
+        "startY": 531.55,
+        "endPage": 4,
+        "endY": 87.05,
+        "lastContentPage": 3
+      },
+      "extraRanges": [],
+      "ansRange": {
+        "startPage": 5,
+        "startY": 237.9,
+        "endPage": 5,
+        "endY": 330.55,
+        "lastContentPage": 5
+      },
+      "hasAnswerBlock": true,
+      "ansInferred": false
+    },
+    {
+      "no": 14,
+      "group": "选择",
+      "isChoice": false,
+      "guessType": "solve",
+      "askText": "14．如图，龙门吊上的起重机通过滑轮组在10 s内，将重为[式]的货物沿竖直方向匀速提升4 m，滑轮组的机械效率为60%。g取10 N/kg。求\n[图](1)货物的质量；\n(2)滑轮组的有用功；\n(3)拉力F的功率；\n(4)拉力F的大小。",
+      "opts": [],
+      "answerKey": "",
+      "answerText": "解:（1）[式]\n（2）[式]\n（3）[式]\n[式]\n（4）[式]\n[式]",
+      "section": "二、非选择题",
+      "askImg": [
+        "图片/pk-w2/q14.png"
+      ],
+      "ansImg": [
+        "图片/pk-w2/q14-a.png"
+      ],
+      "range": {
+        "startPage": 4,
+        "startY": 87.05,
+        "endPage": 5,
+        "endY": 49.45,
+        "lastContentPage": 4
+      },
+      "extraRanges": [],
+      "ansRange": {
+        "startPage": 5,
+        "startY": 330.55,
+        "endPage": null,
+        "endY": null,
+        "lastContentPage": 5
+      },
+      "hasAnswerBlock": true,
+      "ansInferred": false
+    }
+  ],
+  "shapeBoxes": [
+    {
+      "page": 4,
+      "x0": 265.3,
+      "y0": 128,
+      "x1": 544.3,
+      "y1": 268.2,
+      "owner": "q14",
+      "ownerName": "第14题"
+    }
+  ],
+  "answerBlocks": [
+    {
+      "no": 11,
+      "startIdx": 108,
+      "endIdx": 109
+    },
+    {
+      "no": 12,
+      "startIdx": 109,
+      "endIdx": 112
+    },
+    {
+      "no": 13,
+      "startIdx": 112,
+      "endIdx": 114
+    },
+    {
+      "no": 14,
+      "startIdx": 114,
+      "endIdx": 121
+    }
+  ],
+  "answerTable": {
+    "10": "C",
+    "9": "C",
+    "8": "C",
+    "7": "D",
+    "6": "C",
+    "5": "D",
+    "4": "B",
+    "3": "A",
+    "2": "A",
+    "1": "D"
+  }
+}

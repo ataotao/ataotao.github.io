@@ -1,0 +1,59 @@
+{
+ "id": "pk-模板",
+ "name": "题包模板（照这个改）",
+ "source": "题库/xxx.docx",
+ "exam": "副标题，例如 第10周练习",
+ "topics": ["杠杆"],
+ "note": "",
+ "questions": [
+  {
+   "id": "w10q01",
+   "no": "1",
+   "group": "选择",
+   "type": "choice",
+   "askImg": "图片/pk-w10/q01.png",
+   "ansImg": "图片/pk-w10/q01-a.png",
+   "ask": "题干纯文本（公式用 Unicode：F₁l₁=F₂l₂，可省略）",
+   "opts": ["选项一", "选项二", "选项三", "选项四"],
+   "ans": 1,
+   "ansText": "B",
+   "solution": ["第一句：这题的关键是什么", "第二句：怎么判断出答案"],
+   "tip": "一句话关键",
+   "focus": "rule",
+   "tags": ["杠杆平衡条件"],
+   "diff": 2
+  },
+  {
+   "id": "w10q12",
+   "no": "12",
+   "group": "解答",
+   "type": "solve",
+   "askImg": ["图片/pk-w10/q12_1.png", "图片/pk-w10/q12_2.png"],
+   "ansImg": "图片/pk-w10/q12-a.png",
+   "ask": "题干纯文本（可省略）",
+   "fields": [
+    {"type": "num", "label": "拉力 F =", "ans": 30, "unit": "N", "tol": 0.01},
+    {"type": "num", "label": "机械效率 η =", "ans": 80, "unit": "%", "tol": 0.5}
+   ],
+   "solution": ["第一步：算有用功 W有 = Gh", "第二步：算总功 W总 = Fs", "第三步：η = W有/W总"],
+   "tip": "先分清楚哪个是有用功、哪个是总功。",
+   "focus": "calc",
+   "tags": ["机械效率"],
+   "diff": 2
+  },
+  {
+   "id": "w10q15",
+   "no": "15",
+   "group": "实验",
+   "type": "selfcheck",
+   "askImg": "图片/pk-w10/q15.png",
+   "ansImg": "图片/pk-w10/q15-a.png",
+   "ask": "画图/说理类题目（答案不唯一，不自动判分）",
+   "solution": ["评分要点……"],
+   "focus": "check",
+   "tags": ["实验探究"],
+   "diff": 3,
+   "selfCheck": true
+  }
+ ]
+}

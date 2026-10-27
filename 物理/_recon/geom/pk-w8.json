@@ -1,0 +1,718 @@
+{
+  "packId": "pk-w8",
+  "file": "第8周.docx",
+  "title": "第8周",
+  "pages": 5,
+  "meta": {
+    "pageWidth": 595.299987792969,
+    "pageHeight": 841.900024414063,
+    "leftMargin": 56.7000007629395,
+    "rightMargin": 56.7000007629395,
+    "topMargin": 48.2000007629395,
+    "bottomMargin": 48.2000007629395,
+    "headerDistance": 17,
+    "footerDistance": 28.3500003814697,
+    "pages": 5,
+    "paraCount": 159
+  },
+  "anomalies": [
+    "第15题的图在题号上方（图注「第15题」），已把该图并入本题裁图",
+    "第14题裁图含第15题(1)的电路图（原卷两图并排在同一图行，矩形裁切无法只取左半）；g02 五步母题引用该图时注意",
+    "有 2 个浮动图形未能归到某题（未参与边界扩展）"
+  ],
+  "questions": [
+    {
+      "no": 1,
+      "group": "选择",
+      "isChoice": true,
+      "guessType": "choice",
+      "askText": "1．如图所示，在拉力F的作用下，总重40N的物体被匀速提升了20cm。若不计滑轮的重力和摩擦力，则拉力F及其向上移动的距离s分别为（  ）",
+      "opts": [
+        "F=40N，s=0.2m",
+        "F=40N，s=0.4m",
+        "F=20N，s=0.2m",
+        "F=20N，s=0.4m"
+      ],
+      "answerKey": "D",
+      "answerText": "",
+      "section": "一、单选题",
+      "askImg": [
+        "图片/pk-w8/q01.png"
+      ],
+      "ansImg": [],
+      "range": {
+        "startPage": 1,
+        "startY": 121.45,
+        "endPage": 1,
+        "endY": 199.7,
+        "lastContentPage": 1
+      },
+      "extraRanges": [],
+      "ansRange": null,
+      "hasAnswerBlock": false,
+      "ansInferred": false
+    },
+    {
+      "no": 2,
+      "group": "选择",
+      "isChoice": true,
+      "guessType": "choice",
+      "askText": "2．利用如图所示机械（不计机械自重和摩擦）提升同一重物G，所需拉力F最大的是（  ）",
+      "opts": [
+        "[图]",
+        "[图]",
+        "[图]",
+        "[图]"
+      ],
+      "answerKey": "D",
+      "answerText": "",
+      "section": "一、单选题",
+      "askImg": [
+        "图片/pk-w8/q02.png"
+      ],
+      "ansImg": [],
+      "range": {
+        "startPage": 1,
+        "startY": 199.7,
+        "endPage": 1,
+        "endY": 308.65,
+        "lastContentPage": 1
+      },
+      "extraRanges": [],
+      "ansRange": null,
+      "hasAnswerBlock": false,
+      "ansInferred": false
+    },
+    {
+      "no": 3,
+      "group": "选择",
+      "isChoice": true,
+      "guessType": "choice",
+      "askText": "3．A、B是两个轻质泡沫小球，C是用毛皮摩擦过的橡胶棒，A、B、C三者之间相互作用时的场景如图所示。由此可以判断（     ）",
+      "opts": [
+        "小球A一定带正电",
+        "小球A可能不带电",
+        "小球B可能不带电",
+        "小球B可能带负电"
+      ],
+      "answerKey": "B",
+      "answerText": "",
+      "section": "一、单选题",
+      "askImg": [
+        "图片/pk-w8/q03.png"
+      ],
+      "ansImg": [],
+      "range": {
+        "startPage": 1,
+        "startY": 308.65,
+        "endPage": 1,
+        "endY": 465.2,
+        "lastContentPage": 1
+      },
+      "extraRanges": [],
+      "ansRange": null,
+      "hasAnswerBlock": false,
+      "ansInferred": false
+    },
+    {
+      "no": 4,
+      "group": "选择",
+      "isChoice": true,
+      "guessType": "choice",
+      "askText": "4．在燃气灶上用水壶烧水，水沸腾时如图所示。下列说法正确的是（  ）",
+      "opts": [
+        "燃气燃烧时将内能转化为化学能",
+        "燃气的热值始终不变",
+        "壶嘴附近出现的“白气”是水蒸气",
+        "壶内的水分子无规则运动越来越剧烈"
+      ],
+      "answerKey": "B",
+      "answerText": "",
+      "section": "一、单选题",
+      "askImg": [
+        "图片/pk-w8/q04.png"
+      ],
+      "ansImg": [],
+      "range": {
+        "startPage": 1,
+        "startY": 465.2,
+        "endPage": 1,
+        "endY": 527.15,
+        "lastContentPage": 1
+      },
+      "extraRanges": [],
+      "ansRange": null,
+      "hasAnswerBlock": false,
+      "ansInferred": false
+    },
+    {
+      "no": 5,
+      "group": "选择",
+      "isChoice": true,
+      "guessType": "choice",
+      "askText": "5．如图所示是由微颗粒（直径为1~50nm）制备得到的新型防菌“纳米纸”。在“纳米纸”的表面，细菌无法停留且“油水不沾”，下列说法正确的是（    ）\nA．水分子和“纳米纸”分子之间只有斥力\nB．细菌的无规则运动是分子的热运动\nC．组成“纳米纸”的分子之间没有间隙，所以水不能沾湿“纳米纸”\nD．组成“纳米纸”的分子和水分子都在不停地做无规则运动",
+      "opts": [],
+      "answerKey": "D",
+      "answerText": "",
+      "section": "一、单选题",
+      "askImg": [
+        "图片/pk-w8/q05.png"
+      ],
+      "ansImg": [],
+      "range": {
+        "startPage": 1,
+        "startY": 527.15,
+        "endPage": 1,
+        "endY": 636.75,
+        "lastContentPage": 1
+      },
+      "extraRanges": [],
+      "ansRange": null,
+      "hasAnswerBlock": false,
+      "ansInferred": false
+    },
+    {
+      "no": 6,
+      "group": "选择",
+      "isChoice": true,
+      "guessType": "choice",
+      "askText": "[图]6．如图，甲、乙注射器里分别封有相同体积的水和空气。用手推动活塞可以压缩空气，但很难压缩水。下列说法正确的是（   ）\nA．水很难被压缩是因为水分子间没有间隙\nB．水很难被压缩是因为水分子间只有斥力\nC．推动活塞前注射器筒内气体分子静止不动\nD．推动活塞时注射器筒内气体分子运动加剧\n如图1，一杯水在放热变成冰的过程中，其温度随时间的变化如图2（忽略其质量变化）。图3为氢原子和氧原子结构图。根据以上信息，完成下面第7、8小题。\n[图]",
+      "opts": [],
+      "answerKey": "D",
+      "answerText": "",
+      "section": "一、单选题",
+      "askImg": [
+        "图片/pk-w8/q06.png"
+      ],
+      "ansImg": [],
+      "range": {
+        "startPage": 1,
+        "startY": 636.75,
+        "endPage": 2,
+        "endY": 158.4,
+        "lastContentPage": 1
+      },
+      "extraRanges": [],
+      "ansRange": null,
+      "hasAnswerBlock": false,
+      "ansInferred": false
+    },
+    {
+      "no": 7,
+      "group": "选择",
+      "isChoice": true,
+      "guessType": "choice",
+      "askText": "7．这杯水在（  ）\n\tA．0℃时，水分子处于静止状态\tB．t1时的比热容等于t4时\n\tC．t3时的内能等于t2时的内能\tD．t1时的水分子比t2时运动更剧烈",
+      "opts": [],
+      "answerKey": "D",
+      "answerText": "",
+      "section": "一、单选题",
+      "askImg": [
+        "图片/pk-w8/q07.png"
+      ],
+      "ansImg": [],
+      "range": {
+        "startPage": 2,
+        "startY": 158.4,
+        "endPage": 2,
+        "endY": 221,
+        "lastContentPage": 2
+      },
+      "extraRanges": [],
+      "ansRange": null,
+      "hasAnswerBlock": false,
+      "ansInferred": false
+    },
+    {
+      "no": 8,
+      "group": "选择",
+      "isChoice": true,
+      "guessType": "choice",
+      "askText": "8．已知每个水分子由1个氧原子和2个氢原子构成，当水分子不显电性时下列说法正确的是（  ）",
+      "opts": [
+        "水分子内没有质子",
+        "水分子内没有正电荷",
+        "水分子内没有负电荷",
+        "一个水分子含有3个原子核"
+      ],
+      "answerKey": "D",
+      "answerText": "",
+      "section": "一、单选题",
+      "askImg": [
+        "图片/pk-w8/q08.png"
+      ],
+      "ansImg": [],
+      "range": {
+        "startPage": 2,
+        "startY": 221,
+        "endPage": 2,
+        "endY": 283.6,
+        "lastContentPage": 2
+      },
+      "extraRanges": [],
+      "ansRange": null,
+      "hasAnswerBlock": false,
+      "ansInferred": false
+    },
+    {
+      "no": 9,
+      "group": "选择",
+      "isChoice": true,
+      "guessType": "choice",
+      "askText": "9．有甲、乙两台汽油机，通过查阅资料了解到这甲、乙两台汽油机的机械参数如图所示，从图中可知（   ）",
+      "opts": [
+        "甲机械和乙机械的有用功相同",
+        "甲机械总功大",
+        "乙机械额外功小",
+        "乙机械的机械效率较高"
+      ],
+      "answerKey": "A",
+      "answerText": "",
+      "section": "一、单选题",
+      "askImg": [
+        "图片/pk-w8/q09.png"
+      ],
+      "ansImg": [],
+      "range": {
+        "startPage": 2,
+        "startY": 283.6,
+        "endPage": 2,
+        "endY": 360.65,
+        "lastContentPage": 2
+      },
+      "extraRanges": [],
+      "ansRange": null,
+      "hasAnswerBlock": false,
+      "ansInferred": false
+    },
+    {
+      "no": 10,
+      "group": "选择",
+      "isChoice": true,
+      "guessType": "choice",
+      "askText": "10．下列图中汽油机的四个冲程中存在着化学能转化为内能的冲程是（        ）",
+      "opts": [
+        "[图]",
+        "[图]",
+        "[图]",
+        "[图]"
+      ],
+      "answerKey": "C",
+      "answerText": "",
+      "section": "一、单选题",
+      "askImg": [
+        "图片/pk-w8/q10.png"
+      ],
+      "ansImg": [],
+      "range": {
+        "startPage": 2,
+        "startY": 360.65,
+        "endPage": 2,
+        "endY": 517.15,
+        "lastContentPage": 2
+      },
+      "extraRanges": [],
+      "ansRange": null,
+      "hasAnswerBlock": false,
+      "ansInferred": false
+    },
+    {
+      "no": 11,
+      "group": "选择",
+      "isChoice": true,
+      "guessType": "choice",
+      "askText": "11．如图所示，分别使用甲、乙、丙三种方式在相同时间内把同一物体M匀速提升1m（绳长不变），测得各拉力大小如图所示，则（  ）\n\tA．利用机械丙提升M时最省力\n\tB．丙的机械效率小于乙的机械效率\n\tC．[式]和[式]两个力所做的功相同\n\tD．[式]做功的功率一定大于[式]做功的功率\n[图]",
+      "opts": [],
+      "answerKey": "B",
+      "answerText": "",
+      "section": "一、单选题",
+      "askImg": [
+        "图片/pk-w8/q11.png"
+      ],
+      "ansImg": [],
+      "range": {
+        "startPage": 2,
+        "startY": 517.15,
+        "endPage": 2,
+        "endY": 673.65,
+        "lastContentPage": 2
+      },
+      "extraRanges": [],
+      "ansRange": null,
+      "hasAnswerBlock": false,
+      "ansInferred": false
+    },
+    {
+      "no": 12,
+      "group": "选择",
+      "isChoice": false,
+      "guessType": "fill",
+      "askText": "12．取两个相同的验电器A和B，使A带正电，B不带电，可以看到A的金属箔张开，B的金属箔完全闭合。用带有绝缘柄的金属棒把A和B连接起来，如图，用金属棒连接后，B的金属箔会张开，A的金属箔张开角度会__________（选填“变大”“变小”或“不变”）闭合，金属棒里电子的移动方向是从__________（选填“[式]到[式]”或“[式]到[式]”）。",
+      "opts": [],
+      "answerKey": "",
+      "answerText": "变小     N到M",
+      "section": "二、非选择题",
+      "askImg": [
+        "图片/pk-w8/q12.png"
+      ],
+      "ansImg": [
+        "图片/pk-w8/q12-a.png"
+      ],
+      "range": {
+        "startPage": 2,
+        "startY": 689.3,
+        "endPage": 3,
+        "endY": 55.7,
+        "lastContentPage": 2
+      },
+      "extraRanges": [],
+      "ansRange": {
+        "startPage": 5,
+        "startY": 165.3,
+        "endPage": 5,
+        "endY": 180.95,
+        "lastContentPage": 5
+      },
+      "hasAnswerBlock": true,
+      "ansInferred": false
+    },
+    {
+      "no": 13,
+      "group": "选择",
+      "isChoice": false,
+      "guessType": "fill",
+      "askText": "[图]13．甲、乙两铁块如图所示，[式]。它们互相接触时，甲向乙传递热量。则：\n(1)接触前，甲、乙两铁块的温度哪个高？答：_____.（选填“甲”或“乙”）\n(2)接触前（       ）",
+      "opts": [
+        "甲的内能较大",
+        "乙的内能较大",
+        "两铁块的内能同样大",
+        "两铁块的内能大小无法比较"
+      ],
+      "answerKey": "",
+      "answerText": "(1)甲   (2)D    (3)小于",
+      "section": "二、非选择题",
+      "askImg": [
+        "图片/pk-w8/q13.png"
+      ],
+      "ansImg": [
+        "图片/pk-w8/q13-a.png"
+      ],
+      "range": {
+        "startPage": 3,
+        "startY": 55.7,
+        "endPage": 3,
+        "endY": 174.05,
+        "lastContentPage": 3
+      },
+      "extraRanges": [],
+      "ansRange": {
+        "startPage": 5,
+        "startY": 180.95,
+        "endPage": 5,
+        "endY": 201.6,
+        "lastContentPage": 5
+      },
+      "hasAnswerBlock": true,
+      "ansInferred": false
+    },
+    {
+      "no": 14,
+      "group": "选择",
+      "isChoice": false,
+      "guessType": "selfcheck",
+      "askText": "14．如图所示，轻质杠杆AB长为1.2m，其中AO长为0.2m，物体G的重力为10N，为使杠杆水平平衡，在B点应至少施加一个_____ N的力F，该力的方向_________ ，请画出施加在B点的最小动力F的示意图，并标出其力臂l1。\n[图]\n       第14题                                    第15题（1）",
+      "opts": [],
+      "answerKey": "",
+      "answerText": "2     竖直向下     [图]",
+      "section": "二、非选择题",
+      "askImg": [
+        "图片/pk-w8/q14.png"
+      ],
+      "ansImg": [
+        "图片/pk-w8/q14-a.png"
+      ],
+      "range": {
+        "startPage": 3,
+        "startY": 174.05,
+        "endPage": 3,
+        "endY": 361.25,
+        "lastContentPage": 3
+      },
+      "extraRanges": [],
+      "ansRange": {
+        "startPage": 5,
+        "startY": 201.6,
+        "endPage": 5,
+        "endY": 279.25,
+        "lastContentPage": 5
+      },
+      "hasAnswerBlock": true,
+      "ansInferred": false
+    },
+    {
+      "no": 15,
+      "group": "选择",
+      "isChoice": false,
+      "guessType": "selfcheck",
+      "askText": "15．(1)根据电路图，用笔画线代替导线将实物图补充完整（导线不允许交叉）。\n(2)请在图中画出人提起重物时，所用拉力最小的绳子绕线方式。\n(3)请根据如图所示实物图，在虚线框内画出对应的电路图。\n[图]\n\t           第15题（2）\t第15题（3）",
+      "opts": [],
+      "answerKey": "",
+      "answerText": "(1)[图]  (2)[图]     (3)[图]",
+      "section": "二、非选择题",
+      "askImg": [
+        "图片/pk-w8/q15.png"
+      ],
+      "ansImg": [
+        "图片/pk-w8/q15-a.png"
+      ],
+      "range": {
+        "startPage": 3,
+        "startY": 330.55,
+        "endPage": 3,
+        "endY": 548.45,
+        "lastContentPage": 3
+      },
+      "extraRanges": [],
+      "ansRange": {
+        "startPage": 5,
+        "startY": 279.25,
+        "endPage": 5,
+        "endY": 399.45,
+        "lastContentPage": 5
+      },
+      "hasAnswerBlock": true,
+      "ansInferred": false
+    },
+    {
+      "no": 16,
+      "group": "选择",
+      "isChoice": false,
+      "guessType": "solve",
+      "askText": "16．娟准备测量家中燃气灶正常工作时的效率，于是关闭了其它燃气设备。在标准大气压下，将质量是2 kg，初温是50 ℃的水加热到沸腾，她观察到燃气表的读数，使用前是210.65[式]，使用后是210.75 [式]。[水的比热容4.2×103 J/(kg·℃)，天然气的热值为[式]]。求：\n(1)水吸收的热量；\n(2)燃气灶正常工作时的效率。",
+      "opts": [],
+      "answerKey": "",
+      "answerText": "解:（1）[式]\n[式]\n（2）[式]\n[式]\n[式]",
+      "section": "二、非选择题",
+      "askImg": [
+        "图片/pk-w8/q16.png"
+      ],
+      "ansImg": [
+        "图片/pk-w8/q16-a.png"
+      ],
+      "range": {
+        "startPage": 3,
+        "startY": 548.45,
+        "endPage": 4,
+        "endY": 49.45,
+        "lastContentPage": 3
+      },
+      "extraRanges": [],
+      "ansRange": {
+        "startPage": 5,
+        "startY": 399.45,
+        "endPage": 5,
+        "endY": 545.3,
+        "lastContentPage": 5
+      },
+      "hasAnswerBlock": true,
+      "ansInferred": false
+    },
+    {
+      "no": 17,
+      "group": "选择",
+      "isChoice": false,
+      "guessType": "solve",
+      "askText": "[图]17．如图所示，工人用滑轮组将重物G匀速提升5m，已知重物重力[式]，拉力为[式]，若绳重和摩擦不计，求：\n(1)工人所做的有用功[式]；\n(2)滑轮组的机械效率[式]；\n(3)动滑轮的重[式]。",
+      "opts": [],
+      "answerKey": "",
+      "answerText": "解:（1）[式]\n（2）[式]，[式]\n[式]\n[式]\n（3） [式]",
+      "section": "二、非选择题",
+      "askImg": [
+        "图片/pk-w8/q17.png"
+      ],
+      "ansImg": [
+        "图片/pk-w8/q17-a.png"
+      ],
+      "range": {
+        "startPage": 4,
+        "startY": 49.45,
+        "endPage": 4,
+        "endY": 486.45,
+        "lastContentPage": 4
+      },
+      "extraRanges": [],
+      "ansRange": {
+        "startPage": 5,
+        "startY": 545.3,
+        "endPage": 5,
+        "endY": 694.95,
+        "lastContentPage": 5
+      },
+      "hasAnswerBlock": true,
+      "ansInferred": false
+    },
+    {
+      "no": 18,
+      "group": "选择",
+      "isChoice": false,
+      "guessType": "solve",
+      "askText": "18．我国自行设计研制的AG600“鲲龙”水陆两栖飞机，配备四台相同的WJ-6涡轮螺旋桨发动机。已知每台发动机的输出功率为3000kW，效率为60%，燃油的热值为[式]。\n[图]\n(1)飞机飞行1h，每台发动机的输出功为______[式]，四台发动机总共消耗的燃油质量为______[式]（结果保留整数）；若发动机中燃料未充分燃烧，其热值______（选填“大于”“小于”或“等于”）[式]。\n(2)发动机属于热机，其工作时主要将燃料燃烧产生的______能转化为______能。图乙中，与发动机上述能量转化相同的是______（选填字母：",
+      "opts": [
+        "活塞向下压缩空气；",
+        "试管水蒸气冲开木塞；",
+        "热机做功冲程；",
+        "热机压缩冲程；E.蜡烛加热空气推动扇叶）。"
+      ],
+      "answerKey": "",
+      "answerText": "(1)     [式]     1674     等于\n(2)     内     机械     BCE",
+      "section": "二、非选择题",
+      "askImg": [
+        "图片/pk-w8/q18.png"
+      ],
+      "ansImg": [
+        "图片/pk-w8/q18-a.png"
+      ],
+      "range": {
+        "startPage": 4,
+        "startY": 486.45,
+        "endPage": 5,
+        "endY": 49.45,
+        "lastContentPage": 4
+      },
+      "extraRanges": [],
+      "ansRange": {
+        "startPage": 5,
+        "startY": 694.95,
+        "endPage": null,
+        "endY": null,
+        "lastContentPage": 5
+      },
+      "hasAnswerBlock": true,
+      "ansInferred": false
+    }
+  ],
+  "shapeBoxes": [
+    {
+      "page": 5,
+      "x0": -999939.3,
+      "y0": 51.4,
+      "x1": -999857.2,
+      "y1": 116.7,
+      "owner": "",
+      "ownerName": ""
+    },
+    {
+      "page": 1,
+      "x0": 458.1,
+      "y0": 44.5,
+      "x1": 540.2,
+      "y1": 109.8,
+      "owner": "",
+      "ownerName": ""
+    },
+    {
+      "page": 1,
+      "x0": 494.8,
+      "y0": 120.9,
+      "x1": 553.3,
+      "y1": 213.1,
+      "owner": "q1",
+      "ownerName": "第1题"
+    },
+    {
+      "page": 1,
+      "x0": 351.7,
+      "y0": 660.3,
+      "x1": 533.2,
+      "y1": 717.3,
+      "owner": "q6",
+      "ownerName": "第6题"
+    },
+    {
+      "page": 2,
+      "x0": 356.7,
+      "y0": 259.6,
+      "x1": 555,
+      "y1": 357.8,
+      "owner": "q9",
+      "ownerName": "第9题"
+    },
+    {
+      "page": 2,
+      "x0": 338.5,
+      "y0": 505.7,
+      "x1": 535.7,
+      "y1": 615.9,
+      "owner": "q11",
+      "ownerName": "第11题"
+    },
+    {
+      "page": 2,
+      "x0": 422.4,
+      "y0": 664.2,
+      "x1": 550.7,
+      "y1": 770.8,
+      "owner": "q12",
+      "ownerName": "第12题"
+    },
+    {
+      "page": 3,
+      "x0": 433.8,
+      "y0": 57.1,
+      "x1": 556.1,
+      "y1": 114.1,
+      "owner": "q13",
+      "ownerName": "第13题"
+    }
+  ],
+  "answerBlocks": [
+    {
+      "no": 12,
+      "startIdx": 144,
+      "endIdx": 145
+    },
+    {
+      "no": 13,
+      "startIdx": 145,
+      "endIdx": 146
+    },
+    {
+      "no": 14,
+      "startIdx": 146,
+      "endIdx": 147
+    },
+    {
+      "no": 15,
+      "startIdx": 147,
+      "endIdx": 148
+    },
+    {
+      "no": 16,
+      "startIdx": 148,
+      "endIdx": 153
+    },
+    {
+      "no": 17,
+      "startIdx": 153,
+      "endIdx": 158
+    },
+    {
+      "no": 18,
+      "startIdx": 158,
+      "endIdx": 160
+    }
+  ],
+  "answerTable": {
+    "11": "B",
+    "10": "C",
+    "9": "A",
+    "8": "D",
+    "7": "D",
+    "6": "D",
+    "5": "D",
+    "4": "B",
+    "3": "B",
+    "2": "D",
+    "1": "D"
+  }
+}
