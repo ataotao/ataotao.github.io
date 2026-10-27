@@ -1,0 +1,290 @@
+{
+  "generated": "2026-10-27T12:25:58",
+  "totals": {
+    "packs": 9,
+    "questions": 132,
+    "images": 176
+  },
+  "packs": [
+    {
+      "packId": "pk-w1",
+      "title": "第1周",
+      "file": "第1周.docx",
+      "pages": 5,
+      "questions": 16,
+      "choiceCount": 10,
+      "nonChoiceCount": 6,
+      "questionNos": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16
+      ],
+      "imageCount": 22,
+      "anomalies": [
+        "第16题的图在题号上方（图注「第16题」），已把该图并入本题裁图",
+        "第14题答案段没有题号，已按行从第13题答案段切开（请人工核对）",
+        "第16题答案跨页（共2页）：已出 q16-a_1..q16-a_2.png 并竖向合成 q16-a.png"
+      ]
+    },
+    {
+      "packId": "pk-w2",
+      "title": "第2周",
+      "file": "第2周.docx",
+      "pages": 5,
+      "questions": 14,
+      "choiceCount": 10,
+      "nonChoiceCount": 4,
+      "questionNos": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14
+      ],
+      "imageCount": 18,
+      "anomalies": [
+        "第2题的图在题号上方（图注「第2题」），已把该图并入本题裁图",
+        "第4题的图在题号上方（图注「第4题」），已把该图并入本题裁图",
+        "第6题的图在题号上方（图注「第6题」），已把该图并入本题裁图",
+        "第10题的图在题号上方（图注「第10题」），已把该图并入本题裁图",
+        "第6题跨页（共2页）：已出 q06_1..q06_2.png 并竖向合成 q06.png 单图"
+      ]
+    },
+    {
+      "packId": "pk-w4",
+      "title": "第4周（中秋）",
+      "file": "第4周.docx",
+      "pages": 4,
+      "questions": 14,
+      "choiceCount": 10,
+      "nonChoiceCount": 4,
+      "questionNos": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14
+      ],
+      "imageCount": 18,
+      "anomalies": []
+    },
+    {
+      "packId": "pk-w5a",
+      "title": "第5周（国庆2）",
+      "file": "第5周_1.docx",
+      "pages": 5,
+      "questions": 15,
+      "choiceCount": 10,
+      "nonChoiceCount": 5,
+      "questionNos": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15
+      ],
+      "imageCount": 20,
+      "anomalies": [
+        "第3题的图在题号上方（图注「第3题」），已把该图并入本题裁图",
+        "第4题的图在题号上方（图注「第4题」），已把该图并入本题裁图",
+        "第9题的图在题号上方（图注「第9题」），已把该图并入本题裁图",
+        "有 1 个浮动图形未能归到某题（未参与边界扩展）"
+      ]
+    },
+    {
+      "packId": "pk-w5b",
+      "title": "第五周（国庆1）",
+      "file": "第5周_2.docx",
+      "pages": 5,
+      "questions": 15,
+      "choiceCount": 9,
+      "nonChoiceCount": 6,
+      "questionNos": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15
+      ],
+      "imageCount": 21,
+      "anomalies": [
+        "第6题的图在题号上方（图注「第6题」），已把该图并入本题裁图",
+        "有 1 个浮动图形未能归到某题（未参与边界扩展）",
+        "第7题跨页（共2页）：已出 q07_1..q07_2.png 并竖向合成 q07.png 单图"
+      ]
+    },
+    {
+      "packId": "pk-w6",
+      "title": "第6周",
+      "file": "第6周.docx",
+      "pages": 4,
+      "questions": 12,
+      "choiceCount": 8,
+      "nonChoiceCount": 4,
+      "questionNos": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "imageCount": 16,
+      "anomalies": [
+        "第2题的图在题号上方（图注「第2题」），已把该图并入本题裁图",
+        "有 1 个浮动图形未能归到某题（未参与边界扩展）"
+      ]
+    },
+    {
+      "packId": "pk-w8",
+      "title": "第8周",
+      "file": "第8周.docx",
+      "pages": 5,
+      "questions": 18,
+      "choiceCount": 11,
+      "nonChoiceCount": 7,
+      "questionNos": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18
+      ],
+      "imageCount": 25,
+      "anomalies": [
+        "第15题的图在题号上方（图注「第15题」），已把该图并入本题裁图",
+        "第14题裁图含第15题(1)的电路图（原卷两图并排在同一图行，矩形裁切无法只取左半）；g02 五步母题引用该图时注意",
+        "有 2 个浮动图形未能归到某题（未参与边界扩展）"
+      ]
+    },
+    {
+      "packId": "pk-w9",
+      "title": "第9周",
+      "file": "第9周.docx",
+      "pages": 5,
+      "questions": 14,
+      "choiceCount": 10,
+      "nonChoiceCount": 4,
+      "questionNos": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14
+      ],
+      "imageCount": 18,
+      "anomalies": [
+        "第9题跨页（共2页）：已出 q09_1..q09_2.png 并竖向合成 q09.png 单图"
+      ]
+    },
+    {
+      "packId": "pk-wt",
+      "title": "第4周（中秋）",
+      "file": "第10周.docx",
+      "pages": 4,
+      "questions": 14,
+      "choiceCount": 10,
+      "nonChoiceCount": 4,
+      "questionNos": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14
+      ],
+      "imageCount": 18,
+      "anomalies": [
+        "第2题的图在题号上方（图注「第2题」），已把该图并入本题裁图",
+        "第3题的图在题号上方（图注「第3题」），已把该图并入本题裁图"
+      ]
+    }
+  ]
+}

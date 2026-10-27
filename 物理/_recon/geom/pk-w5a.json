@@ -1,0 +1,599 @@
+{
+  "packId": "pk-w5a",
+  "file": "第5周_1.docx",
+  "title": "第5周（国庆2）",
+  "pages": 5,
+  "meta": {
+    "pageWidth": 595.299987792969,
+    "pageHeight": 841.900024414063,
+    "leftMargin": 56.7000007629395,
+    "rightMargin": 56.7000007629395,
+    "topMargin": 48.2000007629395,
+    "bottomMargin": 48.2000007629395,
+    "headerDistance": 17,
+    "footerDistance": 28.3500003814697,
+    "pages": 5,
+    "paraCount": 232
+  },
+  "anomalies": [
+    "第3题的图在题号上方（图注「第3题」），已把该图并入本题裁图",
+    "第4题的图在题号上方（图注「第4题」），已把该图并入本题裁图",
+    "第9题的图在题号上方（图注「第9题」），已把该图并入本题裁图",
+    "有 1 个浮动图形未能归到某题（未参与边界扩展）"
+  ],
+  "questions": [
+    {
+      "no": 1,
+      "group": "选择",
+      "isChoice": true,
+      "guessType": "choice",
+      "askText": "1．2024年10月30日，搭载神舟十九号载人飞船的长征二号F遥十九运载火箭在酒泉卫星发射中心点火发射。火箭燃料采用液氢主要是因为液氢具有较大的（     ）",
+      "opts": [
+        "内能",
+        "热量",
+        "热值",
+        "比热容"
+      ],
+      "answerKey": "C",
+      "answerText": "",
+      "section": "一、单选题",
+      "askImg": [
+        "图片/pk-w5a/q01.png"
+      ],
+      "ansImg": [],
+      "range": {
+        "startPage": 1,
+        "startY": 112.05,
+        "endPage": 1,
+        "endY": 174.05,
+        "lastContentPage": 1
+      },
+      "extraRanges": [],
+      "ansRange": null,
+      "hasAnswerBlock": false,
+      "ansInferred": false
+    },
+    {
+      "no": 2,
+      "group": "选择",
+      "isChoice": true,
+      "guessType": "choice",
+      "askText": "2．如图，注射器中的液体很难被压缩，这个现象说明了（  ）",
+      "opts": [
+        "分子之间存在引力",
+        "分子之间存在斥力",
+        "分子在不停地做无规则运动",
+        "分子之间存在间隙"
+      ],
+      "answerKey": "B",
+      "answerText": "",
+      "section": "一、单选题",
+      "askImg": [
+        "图片/pk-w5a/q02.png"
+      ],
+      "ansImg": [],
+      "range": {
+        "startPage": 1,
+        "startY": 174.05,
+        "endPage": 1,
+        "endY": 345.6,
+        "lastContentPage": 1
+      },
+      "extraRanges": [],
+      "ansRange": null,
+      "hasAnswerBlock": false,
+      "ansInferred": false
+    },
+    {
+      "no": 3,
+      "group": "选择",
+      "isChoice": true,
+      "guessType": "choice",
+      "askText": "3．如图反映了一台机器正常工作时能量流向情况，下列说法错误的是（  ）",
+      "opts": [
+        "该图说明了能量可以发生转化",
+        "该图说明了能量可以发生转移",
+        "该机器遵循能量守恒定律",
+        "该机器的效率为75%"
+      ],
+      "answerKey": "D",
+      "answerText": "",
+      "section": "一、单选题",
+      "askImg": [
+        "图片/pk-w5a/q03.png"
+      ],
+      "ansImg": [],
+      "range": {
+        "startPage": 1,
+        "startY": 224.75,
+        "endPage": 1,
+        "endY": 408.2,
+        "lastContentPage": 1
+      },
+      "extraRanges": [],
+      "ansRange": null,
+      "hasAnswerBlock": false,
+      "ansInferred": false
+    },
+    {
+      "no": 4,
+      "group": "选择",
+      "isChoice": true,
+      "guessType": "choice",
+      "askText": "4．市场上有一种“磁悬浮电灯”，如图所示，该电灯内部没有电池，电灯本身没有导线与家庭电路接通，但能够发光。关于这个“磁悬浮电灯”的说法中，正确的是（  ）\nA．“磁悬浮电灯”发光，不需要消耗能量\nB．“磁悬浮电灯”不掉下来，是它受到的浮力等于重力\nC．“磁悬浮电灯”受到竖直向上的磁场力大于它受到的重力\nD．“磁悬浮电灯”发光所需要的能量一定需要通过某种方式获取",
+      "opts": [],
+      "answerKey": "D",
+      "answerText": "",
+      "section": "一、单选题",
+      "askImg": [
+        "图片/pk-w5a/q04.png"
+      ],
+      "ansImg": [],
+      "range": {
+        "startPage": 1,
+        "startY": 224.75,
+        "endPage": 1,
+        "endY": 516.5,
+        "lastContentPage": 1
+      },
+      "extraRanges": [],
+      "ansRange": null,
+      "hasAnswerBlock": false,
+      "ansInferred": false
+    },
+    {
+      "no": 5,
+      "group": "选择",
+      "isChoice": true,
+      "guessType": "choice",
+      "askText": "5．一个滑轮组改进后提高了机械效率，用它把同一物体匀速提升同样的高度，改进后比改进前相比（     ）",
+      "opts": [
+        "有用功减少，总功减少",
+        "有用功增加，总功增加",
+        "有用功不变，总功减少",
+        "机械效率提高了，功率也变大了"
+      ],
+      "answerKey": "C",
+      "answerText": "",
+      "section": "一、单选题",
+      "askImg": [
+        "图片/pk-w5a/q05.png"
+      ],
+      "ansImg": [],
+      "range": {
+        "startPage": 1,
+        "startY": 516.5,
+        "endPage": 1,
+        "endY": 579.75,
+        "lastContentPage": 1
+      },
+      "extraRanges": [],
+      "ansRange": null,
+      "hasAnswerBlock": false,
+      "ansInferred": false
+    },
+    {
+      "no": 6,
+      "group": "选择",
+      "isChoice": true,
+      "guessType": "choice",
+      "askText": "6．将40℃的一杯水变为80℃，质量不变，则（  ）\n\tA．水40℃时，水分子动能较小\tB．40℃时，水分子运动更剧烈\n\tC．水40℃时比80℃时内能大\tD．40℃的水只能通过吸热变为80℃",
+      "opts": [],
+      "answerKey": "A",
+      "answerText": "",
+      "section": "一、单选题",
+      "askImg": [
+        "图片/pk-w5a/q06.png"
+      ],
+      "ansImg": [],
+      "range": {
+        "startPage": 1,
+        "startY": 579.75,
+        "endPage": 1,
+        "endY": 642.35,
+        "lastContentPage": 1
+      },
+      "extraRanges": [],
+      "ansRange": null,
+      "hasAnswerBlock": false,
+      "ansInferred": false
+    },
+    {
+      "no": 7,
+      "group": "选择",
+      "isChoice": true,
+      "guessType": "choice",
+      "askText": "7．某起重机提升重为3000 N的物体，图为起重机做功的能量分配图。下列说法正确的是（   ）\n[图]A．物体被提升了[式]\nB．起重机的机械效率为30%\nC．起重机做的有用功为[式]\nD．按照技术规程保养起重机，机械效率不变",
+      "opts": [],
+      "answerKey": "C",
+      "answerText": "",
+      "section": "一、单选题",
+      "askImg": [
+        "图片/pk-w5a/q07.png"
+      ],
+      "ansImg": [],
+      "range": {
+        "startPage": 1,
+        "startY": 642.35,
+        "endPage": 2,
+        "endY": 49.45,
+        "lastContentPage": 1
+      },
+      "extraRanges": [],
+      "ansRange": null,
+      "hasAnswerBlock": false,
+      "ansInferred": false
+    },
+    {
+      "no": 8,
+      "group": "选择",
+      "isChoice": true,
+      "guessType": "choice",
+      "askText": "8．如图所示为注射器，小明缓慢推动活塞，数显温度计显示注射器内密封的气体温度不变，此过程密封气体的分子势能变化忽略不计，下列关于密封气体说法正确的是（  ）",
+      "opts": [
+        "内能减少",
+        "分子动能一定增加",
+        "内能不变",
+        "只有做功的方式改变了内能"
+      ],
+      "answerKey": "C",
+      "answerText": "",
+      "section": "一、单选题",
+      "askImg": [
+        "图片/pk-w5a/q08.png"
+      ],
+      "ansImg": [],
+      "range": {
+        "startPage": 2,
+        "startY": 49.45,
+        "endPage": 2,
+        "endY": 252.3,
+        "lastContentPage": 2
+      },
+      "extraRanges": [],
+      "ansRange": null,
+      "hasAnswerBlock": false,
+      "ansInferred": false
+    },
+    {
+      "no": 9,
+      "group": "选择",
+      "isChoice": true,
+      "guessType": "choice",
+      "askText": "9．如图甲所示，在绝热容器（容器与外界无热交换）中装有温度为[式]的未知液体A，质量为mA；将一瓶温度为[式]、质量为mB的水B放入容器中，忽略瓶子吸收（或放出）热量，忽略液体蒸发等因素的影响，两种液体的温度随时间变化的图像如图乙所示。已知mA>mB，在0至7.8min内，下列说法正确的是（     ）\nA．液体A与水B之间发生热传递，传递的是温度\n[图]B．0至7.8min内，液体A的内能一直在减小\nC．液体A的比热容小于水B的比热容\nD．水B从[式]降到[式]放出的热量，小于其从[式]降到[式]放出的热量",
+      "opts": [],
+      "answerKey": "C",
+      "answerText": "",
+      "section": "一、单选题",
+      "askImg": [
+        "图片/pk-w5a/q09.png"
+      ],
+      "ansImg": [],
+      "range": {
+        "startPage": 2,
+        "startY": 113.3,
+        "endPage": 2,
+        "endY": 392.55,
+        "lastContentPage": 2
+      },
+      "extraRanges": [],
+      "ansRange": null,
+      "hasAnswerBlock": false,
+      "ansInferred": false
+    },
+    {
+      "no": 10,
+      "group": "选择",
+      "isChoice": true,
+      "guessType": "choice",
+      "askText": "10．如图所示，甲、乙两人选用不同的装置，在相同时间内把质量相等的货物匀速提升到同一平台，不计绳重和摩擦。下列说法正确的是（      ）",
+      "opts": [
+        "乙做的有用功多",
+        "乙做的总功多",
+        "甲做总功的功率大",
+        "甲所用装置的机械效率大"
+      ],
+      "answerKey": "C",
+      "answerText": "",
+      "section": "一、单选题",
+      "askImg": [
+        "图片/pk-w5a/q10.png"
+      ],
+      "ansImg": [],
+      "range": {
+        "startPage": 2,
+        "startY": 392.55,
+        "endPage": 2,
+        "endY": 470.8,
+        "lastContentPage": 2
+      },
+      "extraRanges": [],
+      "ansRange": null,
+      "hasAnswerBlock": false,
+      "ansInferred": false
+    },
+    {
+      "no": 11,
+      "group": "非选择",
+      "isChoice": false,
+      "guessType": "solve",
+      "askText": "11．学习“内能”后，某同学做了如下实验研究。\n(1)如图a，在一个配有活塞的厚玻璃筒里放一小团脱脂棉，把活塞迅速压下去，脱脂棉燃烧起来，是因为活塞压缩气体做功，使筒内气体的内能____________（选填“增加”“减少”），温度____________（选填“升高”“降低”）。\n(2)下压活塞过程中，越往下压越费力。该同学猜想手对活塞的压力越大，筒内气体的压强越大，设计以下实验进行验证。\n①如图b，用弹簧测力计测出活塞的重力[式]为____________N；\n②把涂有润滑油的活塞安装于玻璃筒内，用推力计竖直向下压活塞，活塞下移；\n③当推力计的示数[式]为[式]时，活塞静止如图c所示，已知[式]，此时电子气压计测得筒内气体压强为____________Pa；\n④增大推力，观察气压计示数的变化，得出结论；\n⑤实验评估：该同学对图b和图c中的数据进行分析。活塞受到的压力[式]和重力[式]的合力[式]为____________N；已知活塞的横截面积为[式]，结合气压计的示数，计算筒内气体对活塞向上的压力[式]为____________N．活塞静止，[式]和[式]不相等的原因可能是受摩擦力和____________的影响。",
+      "opts": [],
+      "answerKey": "",
+      "answerText": "(1)     增加     升高\n(2)     0.5     [式]     5     10.15     外界大气压力",
+      "section": "二、实验题",
+      "askImg": [
+        "图片/pk-w5a/q11.png"
+      ],
+      "ansImg": [
+        "图片/pk-w5a/q11-a.png"
+      ],
+      "range": {
+        "startPage": 2,
+        "startY": 486.45,
+        "endPage": 3,
+        "endY": 49.45,
+        "lastContentPage": 2
+      },
+      "extraRanges": [],
+      "ansRange": {
+        "startPage": 5,
+        "startY": 165.3,
+        "endPage": 5,
+        "endY": 196.6,
+        "lastContentPage": 5
+      },
+      "hasAnswerBlock": true,
+      "ansInferred": false
+    },
+    {
+      "no": 12,
+      "group": "非选择",
+      "isChoice": false,
+      "guessType": "fill",
+      "askText": "12．小红对100g的某固体物质进行加热，用数字温度计测量物质的温度并记录在下表中，温度-时间图像如 下图所示。除此以外，小红还记录了物质的状态：从第8秒开始容器内出现液态的物质，直到第44秒，容 器内尚有少量固态物质，第46秒后，容器内的物质就全都是液态的了。（可以认为所用的加热设备能使该物质每秒吸收热量200J）\n[图]（小红的实验操作及数据记录均无误，以下讨论中均不考虑物质蒸发、升华及对外散热的情况）\n(1)第28秒与第26秒相比，物质的温度不变，内能___________（选填“增大”、“减小”或“不变”）。\n(2)该物质为液态时的比热容___________固态时的比热容（选填“大于”、“小于”或“等于”），判断的依据是 _______________________________\n____________________________________________________________\n(3)液态时该物质的比热容大小是___________[式]。",
+      "opts": [],
+      "answerKey": "",
+      "answerText": "(1)增大\n(2)     大于     吸收相同的热量，液态的该物质上升的温度比固态的该物质上升的温度小\n(3)[式]",
+      "section": "二、实验题",
+      "askImg": [
+        "图片/pk-w5a/q12.png"
+      ],
+      "ansImg": [
+        "图片/pk-w5a/q12-a.png"
+      ],
+      "range": {
+        "startPage": 3,
+        "startY": 49.45,
+        "endPage": 3,
+        "endY": 379.4,
+        "lastContentPage": 3
+      },
+      "extraRanges": [],
+      "ansRange": {
+        "startPage": 5,
+        "startY": 196.6,
+        "endPage": 5,
+        "endY": 243.55,
+        "lastContentPage": 5
+      },
+      "hasAnswerBlock": true,
+      "ansInferred": false
+    },
+    {
+      "no": 13,
+      "group": "非选择",
+      "isChoice": false,
+      "guessType": "fill",
+      "askText": "13．小明和小红一起做探究杠杆平衡条件的实验（杠杆刻度均匀）。\n[图]\n(1)实验前，杠杆置于支架上静止，如图甲所示，此时杠杆______（选填“是”或“不是”）平衡状态，为使杠杆在水平位置平衡，应该将平衡螺母向______（选填“左”或“右”）调。\n(2)杠杆水平平衡后，如图乙所示，A位置挂3个相同的钩码，为使杠杆再次水平平衡，应该在B位置挂上______个同样的钩码。\n(3)如图丙所示，为改变力的方向，小红在杠杆右侧用弹簧测力计向下拉，当测力计由竖直方向逐渐向左偏转，杠杆始终保持水平平衡，测力计的示数将______（选填“变大”“变小”或“不变”）。\n(4)小明和小红交流：\n①如图丁，用木棒作为秤杆，用细线系一个[式]的钩码作为秤砣，把空小盆挂在A点作为秤盘，在B点挂粗绳作为提纽，B点相当于支点；移动细线的位置，直到杆秤水平平衡，标记此时细线的位置，则该位置对应刻度值为______g。\n②在秤盘中逐一添加[式]的砝码，移动细线的位置，当杆秤水平平衡时，标记细线的位置，记录相应的质量，再测出细线距离B点的长度（如表），根据表中数据，应将[式]的刻度值标记在距离B点______[式]处。\n③小组用电子天平检验自制杆秤（以B为支点），发现称量同一物体时，杆秤读数总比电子天平示数略大，请你分析可能造成这种系统误差的原因：_______________________________________________________\n________________________________________________________________（不考虑摩擦因素，合理即可）。",
+      "opts": [],
+      "answerKey": "",
+      "answerText": "(1)     是     左\n(2)6\n(3)变大\n(4)     0     26     秤砣的实际质量小于[式]",
+      "section": "二、实验题",
+      "askImg": [
+        "图片/pk-w5a/q13.png"
+      ],
+      "ansImg": [
+        "图片/pk-w5a/q13-a.png"
+      ],
+      "range": {
+        "startPage": 3,
+        "startY": 379.4,
+        "endPage": 4,
+        "endY": 55.7,
+        "lastContentPage": 3
+      },
+      "extraRanges": [],
+      "ansRange": {
+        "startPage": 5,
+        "startY": 243.55,
+        "endPage": 5,
+        "endY": 305.55,
+        "lastContentPage": 5
+      },
+      "hasAnswerBlock": true,
+      "ansInferred": false
+    },
+    {
+      "no": 14,
+      "group": "非选择",
+      "isChoice": false,
+      "guessType": "solve",
+      "askText": "[图]14．小明用图中的实验装置加热水，他查出酒精的热值是[式]，水的比热容为[式]=4.2×103J/（kg•℃），实验步骤如下：\n①用温度计测量出此时水的温度为[式]=20℃；\n②用电子秤测出烧杯中的水的质量为[式]=0.2kg，及酒精灯中酒精的质量为[式]=120g，\n③用酒精灯加热水一定时间后，水仍未沸腾；\n④用温度计测出此时水的温度为[式]=30℃；\n⑤用电子秤测出酒精灯中剩余酒精的质量[式]=118.6g。\n假如水的质量变化忽略不计，求\n（1）此过程中水升温吸收的热量Q吸；\n（2）此装置加热水的效率η。",
+      "opts": [],
+      "answerKey": "",
+      "answerText": "（1）8.4×103J ；（2）20%",
+      "section": "二、实验题",
+      "askImg": [
+        "图片/pk-w5a/q14.png"
+      ],
+      "ansImg": [
+        "图片/pk-w5a/q14-a.png"
+      ],
+      "range": {
+        "startPage": 4,
+        "startY": 55.7,
+        "endPage": 4,
+        "endY": 486.45,
+        "lastContentPage": 4
+      },
+      "extraRanges": [],
+      "ansRange": {
+        "startPage": 5,
+        "startY": 305.55,
+        "endPage": 5,
+        "endY": 320.55,
+        "lastContentPage": 5
+      },
+      "hasAnswerBlock": true,
+      "ansInferred": false
+    },
+    {
+      "no": 15,
+      "group": "非选择",
+      "isChoice": false,
+      "guessType": "selfcheck",
+      "askText": "[图]15．小明家建新房装修时，在楼顶安装了一个滑轮组用来运送材料。某次运送材料时，卷扬机在绳端用500 N的力将120 kg的材料匀速运送到5 m高处，用时10 s，绳端移动的距离为15 m。绳重和摩擦忽略不计，g取10 N/kg。求：\n(1)请你画出该滑轮组的绕线方式。\n(2)请计算该过程中卷扬机拉力做功的功率是多少？\n(3)若卷扬机施加在绳端的最大拉力为1000 N，求该滑轮组的最大机械效率是多少？",
+      "opts": [],
+      "answerKey": "",
+      "answerText": "(1)[图]\n(2)750W\n(3)90%",
+      "section": "二、实验题",
+      "askImg": [
+        "图片/pk-w5a/q15.png"
+      ],
+      "ansImg": [
+        "图片/pk-w5a/q15-a.png"
+      ],
+      "range": {
+        "startPage": 4,
+        "startY": 486.45,
+        "endPage": 5,
+        "endY": 49.45,
+        "lastContentPage": 4
+      },
+      "extraRanges": [],
+      "ansRange": {
+        "startPage": 5,
+        "startY": 320.55,
+        "endPage": null,
+        "endY": null,
+        "lastContentPage": 5
+      },
+      "hasAnswerBlock": true,
+      "ansInferred": false
+    }
+  ],
+  "shapeBoxes": [
+    {
+      "page": 5,
+      "x0": -999939.3,
+      "y0": 51.4,
+      "x1": -999857.2,
+      "y1": 116.7,
+      "owner": "",
+      "ownerName": ""
+    },
+    {
+      "page": 1,
+      "x0": 382.8,
+      "y0": 665.8,
+      "x1": 514.8,
+      "y1": 789.6,
+      "owner": "q7",
+      "ownerName": "第7题"
+    },
+    {
+      "page": 2,
+      "x0": 446.2,
+      "y0": 342.1,
+      "x1": 547.4,
+      "y1": 458.3,
+      "owner": "q10",
+      "ownerName": "第10题"
+    },
+    {
+      "page": 2,
+      "x0": 276.5,
+      "y0": 480,
+      "x1": 548.8,
+      "y1": 622.9,
+      "owner": "q11",
+      "ownerName": "第11题"
+    },
+    {
+      "page": 3,
+      "x0": 392.9,
+      "y0": 224.1,
+      "x1": 563.7,
+      "y1": 319.6,
+      "owner": "q12",
+      "ownerName": "第12题"
+    },
+    {
+      "page": 4,
+      "x0": 455.7,
+      "y0": 87.3,
+      "x1": 541.2,
+      "y1": 218.6,
+      "owner": "q14",
+      "ownerName": "第14题"
+    },
+    {
+      "page": 4,
+      "x0": 450.9,
+      "y0": 529,
+      "x1": 534.2,
+      "y1": 670,
+      "owner": "q15",
+      "ownerName": "第15题"
+    },
+    {
+      "page": 1,
+      "x0": 460.4,
+      "y0": 60.3,
+      "x1": 542.5,
+      "y1": 125.5,
+      "owner": "q1",
+      "ownerName": "第1题"
+    }
+  ],
+  "answerBlocks": [
+    {
+      "no": 11,
+      "startIdx": 220,
+      "endIdx": 222
+    },
+    {
+      "no": 12,
+      "startIdx": 222,
+      "endIdx": 225
+    },
+    {
+      "no": 13,
+      "startIdx": 225,
+      "endIdx": 229
+    },
+    {
+      "no": 14,
+      "startIdx": 229,
+      "endIdx": 230
+    },
+    {
+      "no": 15,
+      "startIdx": 230,
+      "endIdx": 233
+    }
+  ],
+  "answerTable": {
+    "10": "C",
+    "9": "C",
+    "8": "C",
+    "7": "C",
+    "6": "A",
+    "5": "C",
+    "4": "D",
+    "3": "D",
+    "2": "B",
+    "1": "C"
+  }
+}
