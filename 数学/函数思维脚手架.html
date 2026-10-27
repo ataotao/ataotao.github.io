@@ -207,6 +207,19 @@ details.var .body{margin-top:10px;font-size:13.8px;line-height:1.8}
 details.var .vs{margin:8px 0;padding:9px 12px;background:#fff;border:1px dashed var(--line);border-radius:9px;font-size:13px}
 details.var .vs b{color:var(--brand-d)}
 
+/* 变式题库 · 引导模式 */
+.libq{border:1px solid var(--line);border-radius:12px;padding:14px 16px;background:#fff;margin-top:10px}
+.libq h3{font-size:15px;margin:0 0 7px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.libstem{font-size:14px;line-height:1.85;white-space:pre-wrap;color:var(--ink)}
+.libbox{margin-top:10px;padding:10px 13px;border-radius:10px;background:#fdfcf9;border:1px dashed var(--line);font-size:13.2px;line-height:1.8}
+.libbox b{color:var(--brand-d)}
+.libhint{margin-top:10px;padding:9px 12px;border-left:3px solid var(--warn);background:var(--warn-bg);border-radius:0 10px 10px 0;font-size:13px;line-height:1.7}
+.libguide3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
+.libguide3 div{background:#f7fbf9;border:1px solid var(--line);border-radius:10px;padding:9px 11px;font-size:12.8px;line-height:1.65}
+.libguide3 b{display:block;color:var(--brand-d);margin-bottom:3px}
+.libstat{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:12px}
+@media(max-width:700px){.libguide3{grid-template-columns:1fr}}
+
 /* ---------- 报告 ---------- */
 .tbl{border-collapse:collapse;margin:12px 0;font-size:14px;min-width:240px}
 .tbl th,.tbl td{border:1px solid var(--line);padding:6px 14px;text-align:center;font-variant-numeric:tabular-nums}
@@ -1160,6 +1173,39 @@ var BANK = [
   ]
 }
 ];
+
+/* =========================================================
+   变式练习 · 每个变式的结构化答案
+   键：`<母题 id>-<变式下标>`（如 q3-0 = 第 3 组第 1 个变式）
+   ========================================================= */
+var VARIANT_FIELDS = {
+  'q1-0': [{type:'coef', label:'解析式', tpl:'y = {0}x + {1}', ans:[-1, 2]}],
+  'q1-1': [{type:'num', label:'t =', ans:-2}],
+  'q2-0': [{type:'coef', label:'新直线的解析式', tpl:'y = {0}x + {1}', ans:[2, -6]}],
+  'q2-1': [{type:'num', label:'n =', ans:-1}],
+  'q3-0': [{type:'num', label:'k =', ans:-3}],
+  'q3-1': [{type:'num', label:'k =', ans:12}],
+  'q4-0': [{type:'choice', label:'不等式的解集',
+            options:['0 < x < 2 或 x > 3', 'x < 0 或 2 < x < 3', '2 < x < 3', 'x < 0 或 x > 3'], ans:0}],
+  'q4-1': [{type:'choice', label:'线段 AB 的长', options:['√2', '2', '√5', '2√2'], ans:0}],
+  'q5-0': [{type:'num', label:'最大利润（元）=', ans:225}],
+  'q5-1': [{type:'num', label:'最大利润（元）=', ans:50}],
+  'q6-0': [{type:'choice', label:'a、b、c 的符号',
+            options:['a > 0，b < 0，c < 0', 'a > 0，b > 0，c < 0', 'a > 0，b < 0，c > 0', 'a < 0，b < 0，c < 0'], ans:0}],
+  'q6-1': [{type:'choice', label:'4a − 2b + c', options:['小于 0', '大于 0', '等于 0'], ans:0}],
+  'q7-0': [{type:'num', label:'m =', ans:3}],
+  'q7-1': [{type:'num', label:'两交点间的距离 =', ans:2}],
+  'q8-0': [{type:'num', label:'到达图书馆的时刻（分钟）=', ans:25},
+           {type:'num', label:'全程平均速度（米/分钟）=', ans:120}],
+  'q8-1': [{type:'choice', label:'速度为 0 的时间段',
+            options:['10 ≤ t ≤ 15', '5 ≤ t ≤ 10', '15 ≤ t ≤ 20', '0 ≤ t ≤ 10'], ans:0}]
+};
+BANK.forEach(function(q, qi){
+  q.variants.forEach(function(v, vi){
+    var f = VARIANT_FIELDS[q.id + '-' + vi];
+    if(f) v.fields = f;
+  });
+});
 
 /* =========================================================
    试卷题库（整题练习）· 内置包
@@ -2902,7 +2948,7 @@ function $(sel){ return document.querySelector(sel); }
 
 /* ---------- 存储 ---------- */
 var DBKEY = 'fn_scaffold_v1';
-var DB = {log:[], recs:[], drill:[], paper:[], packs:[]};
+var DB = {log:[], recs:[], drill:[], paper:[], packs:[], lib:{}, vrec:[]};
 function loadDB(){
   try{
     var raw = localStorage.getItem(DBKEY);
@@ -2910,7 +2956,8 @@ function loadDB(){
       var o = JSON.parse(raw);
       if(o && typeof o === 'object'){
         DB.log = o.log || []; DB.recs = o.recs || []; DB.drill = o.drill || [];
-        DB.paper = o.paper || []; DB.packs = o.packs || [];
+        DB.paper = o.paper || []; DB.packs = o.packs || []; DB.lib = o.lib || {};
+        DB.vrec = o.vrec || [];
       }
     }
   }catch(e){ /* file:// 下可能不可用，忽略即可 */ }
@@ -2924,6 +2971,7 @@ var S = {
   screen:'home', mode:'', queue:[], qi:0, qs:null,
   di:0, dSel:null, dOk:null, dRight:0, dWrong:[],
   packId:null, pq:null, importMsg:'',
+  libI:0, libOpen:{}, libList:false, vs:null,
   sess:{n:0, ok:0, dims:{}}
 };
 function curQ(){ return BANK.filter(function(q){ return q.id === S.queue[S.qi]; })[0]; }
@@ -2977,7 +3025,40 @@ function weakestDim(st){
 /* =========================================================
    渲染
    ========================================================= */
+/* 当前滚动位置（兼容各种浏览器） */
+function curScrollY(){
+  return window.scrollY || document.documentElement.scrollTop || document.body.scrollTop || 0;
+}
+/* 只有"换了一屏 / 换了一道题 / 换了一步 / 进入落笔或解析"才滚回顶部；
+   同一屏内的选选项、点提示、提交反馈，保持当前位置不动 */
+function majorPhase(p){
+  return (p === 'fb' || p === 'done') ? 'ask' : (p || '');
+}
+function viewKey(){
+  var k = S.screen || '';
+  if(S.screen === 'train' || S.screen === 'done'){
+    k += '|' + S.qi + '|' + (S.qs ? (S.qs.step + '|' + majorPhase(S.qs.phase)) : '');
+  }else if(S.screen === 'paperq' && S.pq){
+    k += '|' + S.packId + '|' + S.pq.idx + '|' + majorPhase(S.pq.phase);
+  }else if(S.screen === 'libq' && S.vs){
+    k += '|' + S.vs.qi + '|' + S.vs.vi + '|' + majorPhase(S.vs.phase);
+  }else if(S.screen === 'library'){
+    k += '|' + (S.libI || 0) + '|' + (S.libList ? 'list' : 'guide');
+  }else if(S.screen === 'libpick'){
+    k += '|pick';
+  }else if(S.screen === 'drill'){
+    k += '|' + S.di;
+  }else if(S.screen === 'drillsum'){
+    k += '|sum';
+  }else if(S.screen === 'pack'){
+    k += '|' + S.packId;
+  }
+  return k;
+}
 function render(){
+  var prevY = curScrollY();
+  var vk = viewKey();
+  var keepScroll = (S._viewKey === vk);
   var el = $('#screen');
   var chip = $('#modechip');
   var names = {guide:'引导训练', drill:'闪练 · 四种表示', library:'变式题库', report:'训练报告'};
@@ -2992,6 +3073,14 @@ function render(){
   } else if(S.screen === 'manage'){
     chip.hidden = false;
     chip.textContent = '题库管理';
+  } else if(S.screen === 'library' || S.screen === 'libpick' || S.screen === 'libq'){
+    chip.hidden = false;
+    if(S.screen === 'libq' && S.vs && BANK[S.vs.qi]){
+      chip.textContent = '变式练习 · 第 ' + (S.vs.qi + 1) + '/' + BANK.length + ' 组 · ' +
+                         BANK[S.vs.qi].variants[S.vs.vi].label;
+    }else{
+      chip.textContent = S.screen === 'libpick' ? '变式题库 · 选择变式' : '变式题库';
+    }
   } else {
     chip.hidden = true;
   }
@@ -2999,6 +3088,8 @@ function render(){
   else if(S.screen === 'train') el.innerHTML = viewTrain();
   else if(S.screen === 'done') el.innerHTML = viewDone();
   else if(S.screen === 'library') el.innerHTML = viewLibrary();
+  else if(S.screen === 'libpick') el.innerHTML = viewLibPick();
+  else if(S.screen === 'libq') el.innerHTML = viewLibQ();
   else if(S.screen === 'report') el.innerHTML = viewReport();
   else if(S.screen === 'drill') el.innerHTML = viewDrill();
   else if(S.screen === 'drillsum') el.innerHTML = viewDrillSum();
@@ -3006,7 +3097,8 @@ function render(){
   else if(S.screen === 'pack') el.innerHTML = viewPack();
   else if(S.screen === 'paperq') el.innerHTML = viewPaperQ();
   else if(S.screen === 'manage') el.innerHTML = viewManage();
-  window.scrollTo(0, 0);
+  window.scrollTo(0, keepScroll ? prevY : 0);
+  S._viewKey = vk;
 }
 
 /* ---------- 首页 ---------- */
@@ -3030,14 +3122,15 @@ function viewHome(){
          '<p>8 组母题（一次函数 / 反比例 / 二次函数 / 分段图象），每题五问。走完五步才允许落笔，答错会说清错在哪一步。</p>' +
          '<span class="go">开始 →</span></button>');
   h.push('<button class="mode" data-act="papers"><h3>试卷练习 <span class="tag-soft">新</span></h3>' +
-         '<p>两份卷子（反比例单元测 + 10 月 14 日练习）共 38 题：原题重现、自动判分、分步解析。做完学校的卷子来这里对答案、看思路。</p>' +
+         '<p>两份卷子（反比例单元测 + 10 月 14 日练习）共 39 题：原题重现、自动判分、分步解析。做完学校的卷子来这里对答案、看思路。</p>' +
          '<span class="go">进入 →</span></button>');
   h.push('<button class="mode" data-act="start" data-mode="drill"><h3>闪练 · 四种表示</h3>' +
          '<p>12 道快题，练“式子 ↔ 图象 ↔ 表格”的来回转换。一轮约 5 分钟，专治“会算但看不懂图”。</p>' +
          '<span class="go">开始 →</span></button>');
-  h.push('<button class="mode" data-act="library"><h3>变式题库</h3>' +
-         '<p>8 组母题 + 16 个变式。每题都标出“变了什么、没变什么”，这是从“会一道”到“会一类”的桥。</p>' +
-         '<span class="go">查看 →</span></button>');
+  h.push('<button class="mode" data-act="library"><h3>变式题库 <span class="tag-soft">选变式 · 自动判分</span></h3>' +
+         '<p>8 组母题 × 2 个变式。选一个变式直接开练：先自己做、提交判分，再对照“变了什么、没变什么”；' +
+         '做错的单独重做——这是从“会一道”到“会一类”的桥。</p>' +
+         '<span class="go">开始 →</span></button>');
   h.push('<button class="mode" data-act="report"><h3>训练报告</h3>' +
          '<p>五个环节各自的命中率，指出你最容易断在哪一步，并给出对应的三条训练动作。</p>' +
          '<span class="go">查看 →</span></button>');
@@ -3349,12 +3442,121 @@ function viewDone(){
 }
 
 /* ---------- 变式题库 ---------- */
+function libStat(qi, vi){ return (DB.lib || {})['q' + qi + 'v' + vi] || 0; }
+function libSetStat(qi, vi, v){
+  DB.lib = DB.lib || {};
+  var k = 'q' + qi + 'v' + vi;
+  if(DB.lib[k] === v) delete DB.lib[k]; else DB.lib[k] = v;
+  saveDB(); render();
+}
+function libCounts(){
+  var clear = 0, unsure = 0, total = 0;
+  BANK.forEach(function(q, i){
+    q.variants.forEach(function(v, j){
+      total++;
+      var st = libStat(i, j);
+      if(st === 1) clear++; else if(st === 2) unsure++;
+    });
+  });
+  return {clear:clear, unsure:unsure, total:total};
+}
+function libTag(qi, vi){
+  var st = libStat(qi, vi);
+  if(st === 1) return '<span class="tag">已说清</span>';
+  if(st === 2) return '<span class="tag-soft">还没底</span>';
+  return '<span class="tiny muted">未练</span>';
+}
 function viewLibrary(){
+  return S.libList ? viewLibraryList() : viewLibraryGuide();
+}
+
+function viewLibraryGuide(){
+  var n = BANK.length;
+  var qi = Math.min(Math.max(S.libI || 0, 0), n - 1);
+  var q = BANK[qi], c = libCounts(), open = S.libOpen || {};
+  var pctClear = Math.round(c.clear / c.total * 100);
   var h = [];
-  h.push('<div class="card"><div class="step-hd"><div class="stepbadge">◈</div><div><h2>变式题库</h2>' +
-         '<p>8 组母题，每组带 2 个变式；每一组都标了“变了什么、没变什么”</p></div></div>' +
-         '<p class="small muted" style="margin-top:10px">用法：先遮住答案，自己想“这题和母题差在哪”，' +
-         '再看变式说明。能把“变”和“不变”说清楚，才叫举一反三。</p></div>');
+  h.push('<div class="card"><div class="step-hd"><div class="stepbadge">◈</div><div>' +
+         '<h2>变式题库 · 一组一组闯</h2>' +
+         '<p>不用从头看到尾。每次只做一组：先读母题，再把两个变式“变了什么、没变什么”各说一句，最后对照。</p>' +
+         '</div></div>');
+  h.push('<div class="libguide3">' +
+         '<div><b>① 先看母题</b>遮住答案，自己说：这题在求什么？走哪五步？（约 30 秒）</div>' +
+         '<div><b>② 再看变式</b>先别展开，只说一句“条件/问法变了什么”（约 30 秒）</div>' +
+         '<div><b>③ 对照自评</b>展开对照；说清了点「已说清 ✓」，没底点「还没底 ?」，下次只做没底的</div>' +
+         '</div>');
+  h.push('<div class="libstat"><div class="bar" style="flex:1;min-width:150px"><i style="width:' + pctClear + '%"></i></div>' +
+         '<span class="small muted">已练 <b>' + libPracticed() + '</b>/' + c.total +
+         ' · 已说清 <b>' + c.clear + '</b>/' + c.total +
+         (c.unsure ? ' · 还没底 ' + c.unsure + ' 个' : '') + '</span></div>');
+  h.push('<div class="tools" style="margin-top:10px">' +
+         '<button class="btn btn-primary" data-act="libpick">选一个变式，直接练 →</button>' +
+         '<button class="btn-mini" data-act="liblist">浏览全部（列表速查）</button>' +
+         ((c.clear + c.unsure) ? '<button class="btn-mini" data-act="libclear">清空本模块记录</button>' : '') +
+         '</div></div>');
+
+  /* 母题 */
+  h.push('<div class="libq"><h3><span class="tag">母题 ' + (qi + 1) + '</span>' + esc(q.topic) + ' ｜ ' + esc(q.title) +
+         ' <span class="tiny muted">' + esc(q.method) + '</span></h3>');
+  h.push('<div class="libstem">' + esc(q.stem) + '</div>');
+  if(q.graph && q.graph.rev !== 99){
+    h.push('<div class="plotbig" style="margin-top:8px">' + plotSVG(q.graph) + '</div>');
+  }
+  h.push('<div class="tools"><button class="btn-mini" data-act="librev" data-k="steps">' +
+         (open.steps ? '收起五步要点' : '看五步要点（我卡在哪一步）') + '</button>' +
+         '<button class="btn-mini" data-act="librev" data-k="ans">' +
+         (open.ans ? '收起母题答案' : '看母题答案') + '</button></div>');
+  if(open.steps){
+    h.push('<div class="libbox">' + q.steps.map(function(s){
+      return '<b>' + DIMNAME[s.dim] + '</b>：' + esc(s.explain);
+    }).join('<br>') + '</div>');
+  }
+  if(open.ans) h.push('<div class="libbox"><b>答案</b><br>' + esc(q.final.key) + '</div>');
+  h.push('</div>');
+
+  /* 变式 */
+  q.variants.forEach(function(v, vi){
+    var key = 'v' + vi, rev = !!open[key], st = libStat(qi, vi);
+    h.push('<div class="libq"><h3><span class="tag-soft">' + esc(v.label) + '</span>' + libTag(qi, vi) + '</h3>');
+    h.push('<div class="libstem">' + esc(v.stem) + '</div>');
+    if(!rev){
+      h.push('<div class="libhint">先别展开：和母题比，<b>哪里变了？哪里没变？</b>各说一句话；也可以直接点「练这个变式」自己做一遍。</div>');
+      h.push('<div class="tools">' +
+             '<button class="btn btn-primary" data-act="libpractice" data-q="' + qi + '" data-v="' + vi + '">练这个变式 →</button>' +
+             '<button class="btn" data-act="librev" data-k="' + key + '">对照：变了什么 / 答案</button></div>');
+    }else{
+      h.push('<div class="libbox"><b>变了：</b>' + esc(v.change) + '<br><b>没变：</b>' + esc(v.same) +
+             '<br><b>答案：</b>' + esc(v.answer) + (v.note ? '<br><b>一句话：</b>' + esc(v.note) : '') + '</div>');
+      h.push('<div class="tools">' +
+             '<button class="btn btn-primary" data-act="libpractice" data-q="' + qi + '" data-v="' + vi + '">练这个变式 →</button>' +
+             '<button class="btn-mini' + (st === 1 ? ' sel' : '') + '" data-act="libself" data-q="' + qi +
+             '" data-v="' + vi + '" data-ok="1">已说清 ✓</button>' +
+             '<button class="btn-mini' + (st === 2 ? ' sel' : '') + '" data-act="libself" data-q="' + qi +
+             '" data-v="' + vi + '" data-ok="2">还没底 ?</button></div>');
+    }
+    h.push('</div>');
+  });
+
+  h.push('<div class="tools" style="margin-top:14px">' +
+         '<button class="btn" data-act="libprev">← 上一组</button>' +
+         '<span class="small muted">第 ' + (qi + 1) + ' / ' + n + ' 组</span>' +
+         '<button class="btn btn-primary" data-act="libnext">' + (qi + 1 >= n ? '回到第 1 组' : '下一组 →') +
+         '</button><span class="spacer"></span><button class="btn-ghost" data-act="home">回首页</button></div>');
+  if(c.clear + c.unsure >= c.total){
+    h.push('<div class="fb ok" style="margin-top:12px"><h4>✓ 16 个变式都过了一遍</h4><div>下一步：去「试卷练习」限时做整题；' +
+           '做错的题回来找对应母题，只看没人底的那几个变式。</div><div class="cont">' +
+           '<button class="btn-mini" data-act="papers">去试卷练习</button>' +
+           '<button class="btn-mini" data-act="start" data-mode="guide">再走一轮引导</button></div></div>');
+  }
+  return h.join('');
+}
+
+function viewLibraryList(){
+  var h = [];
+  h.push('<div class="card"><div class="step-hd"><div class="stepbadge">◈</div><div><h2>变式题库 · 全部列表</h2>' +
+         '<p>这是速查模式：把 8 组母题和 16 个变式的“变了 / 没变 / 答案”摊开对照，适合复习和讲给别人听。</p></div></div>' +
+         '<p class="small muted" style="margin-top:10px">想真正练“举一反三”，请回到「一组一组闯」：先自己说，再展开。</p>' +
+         '<div class="tools"><button class="btn-mini" data-act="libguide">← 回到一组一组闯</button></div></div>');
   BANK.forEach(function(q, i){
     h.push('<div class="card"><details class="var"><summary>' + esc(q.topic) + ' ｜ ' + esc(q.title) + '（' + esc(q.method) + '）</summary>');
     h.push('<div class="body"><div style="white-space:pre-wrap"><b>题目：</b>' + esc(q.stem) + '</div>');
@@ -3365,12 +3567,168 @@ function viewLibrary(){
       return '· ' + DIMNAME[s.dim] + '：' + esc(s.explain);
     }).join('<br>') + '</div>');
     h.push('<div><b>答案：</b>' + esc(q.final.key) + '</div>');
-    q.variants.forEach(function(v){
+    q.variants.forEach(function(v, vi){
       h.push('<div class="vs"><b>' + esc(v.label) + '｜变了：</b>' + esc(v.change) + '<br><b>题目：</b>' + esc(v.stem) +
              '<br><b>答案：</b>' + esc(v.answer) + '<br><b>没变：</b>' + esc(v.same) + '</div>');
+      h.push('<div class="tools" style="margin:-2px 0 10px"><button class="btn-mini" data-act="libpractice" ' +
+             'data-q="' + i + '" data-v="' + vi + '">练这个变式 →</button></div>');
     });
     h.push('</div></details></div>');
   });
+  return h.join('');
+}
+
+/* ---------- 变式练习：选一个变式，直接开练 ---------- */
+function libPracticed(){
+  var seen = {};
+  (DB.vrec || []).forEach(function(r){ seen['q' + r.qi + 'v' + r.vi] = 1; });
+  return Object.keys(seen).length;
+}
+function curVariant(){
+  var vs = S.vs;
+  if(!vs || !BANK[vs.qi] || !BANK[vs.qi].variants[vs.vi]) return null;
+  return {q: BANK[vs.qi], v: BANK[vs.qi].variants[vs.vi]};
+}
+function startLibQ(qi, vi){
+  S.vs = {qi: qi, vi: vi, ent: {}, phase: 'ask', ok: null};
+  S.screen = 'libq';
+  render();
+}
+function variantAnswerText(v){
+  var f = v.fields || [];
+  if(!f.length) return v.answer || '';
+  return f.map(function(fd){ return (fd.label ? fd.label + ' ' : '') + answerText(fd); }).join('；');
+}
+function vsSubmit(){
+  var cur = curVariant(), vs = S.vs;
+  if(!cur || !vs || vs.phase !== 'ask') return;
+  var fields = cur.v.fields || [];
+  if(!fields.length){ vsReveal(); return; }
+  if(!Object.keys(vs.ent || {}).length){ flash('先把答案填上（可以填分数，如 1/2）。'); return; }
+  var g = gradeFields(fields, vs.ent);
+  vs.phase = 'done';
+  vs.ok = g.ok;
+  vs.wrong = g.wrong.length;
+  DB.vrec = DB.vrec || [];
+  DB.vrec.push({ts: Date.now(), qi: vs.qi, vi: vs.vi, ok: g.ok});
+  DB.lib = DB.lib || {};
+  DB.lib['q' + vs.qi + 'v' + vs.vi] = g.ok ? 1 : 2;
+  saveDB();
+  render();
+}
+function vsReveal(){
+  var vs = S.vs;
+  if(!vs) return;
+  vs.phase = 'done';
+  vs.ok = null;
+  render();
+}
+function vsRetry(){
+  var vs = S.vs;
+  if(!vs) return;
+  vs.ent = {};
+  vs.phase = 'ask';
+  vs.ok = null;
+  render();
+}
+function vsNext(){
+  var vs = S.vs;
+  if(!vs) return;
+  var qi = vs.qi, vi = vs.vi + 1;
+  if(vi >= BANK[qi].variants.length){
+    qi = (qi + 1) % BANK.length;
+    vi = 0;
+  }
+  startLibQ(qi, vi);
+}
+function vsBack(){
+  S.screen = 'library';
+  render();
+}
+
+function viewLibPick(){
+  var practiced = libPracticed(), c = libCounts();
+  var h = [];
+  h.push('<div class="card"><div class="step-hd"><div class="stepbadge">◈</div><div>' +
+         '<h2>选一个变式，直接开练</h2>' +
+         '<p>点任意一个变式就进入练习：先自己做，提交后自动判分；做错立刻能看“变了什么、没变什么”。</p></div></div>');
+  h.push('<div class="libstat"><div class="bar" style="flex:1;min-width:150px"><i style="width:' +
+         Math.round(c.clear / c.total * 100) + '%"></i></div>' +
+         '<span class="small muted">已练 <b>' + practiced + '</b>/' + c.total +
+         ' · 已说清 <b>' + c.clear + '</b>/' + c.total + '</span></div>');
+  h.push('<div class="tools" style="margin-top:10px">' +
+         '<button class="btn-mini" data-act="libguide">← 回到一组一组闯</button>' +
+         '<button class="btn-mini" data-act="liblist">浏览全部（列表速查）</button></div></div>');
+  BANK.forEach(function(q, qi){
+    h.push('<div class="card"><div class="qhead"><span class="tag">第 ' + (qi + 1) + ' 组</span>' +
+           '<span class="tag-soft">' + esc(q.topic) + ' · ' + esc(q.title) + '</span></div>');
+    h.push('<div class="packlist">');
+    q.variants.forEach(function(v, vi){
+      var st = libStat(qi, vi);
+      var mark = st === 1 ? '✓' : (st === 2 ? '✗' : '·');
+      var cls = st === 1 ? 'okrow' : (st === 2 ? 'norow' : '');
+      h.push('<button class="prow ' + cls + '" data-act="libpractice" data-q="' + qi + '" data-v="' + vi + '">' +
+             '<span class="pno">' + esc(v.label.replace(/\D/g, '') || (vi + 1)) + '</span>' +
+             '<span class="pmark">' + mark + '</span>' +
+             '<span class="ptxt">' + esc(v.stem.slice(0, 40)) + (v.stem.length > 40 ? '…' : '') + '</span>' +
+             '<span class="pmeta">' + (v.fields ? '可判分' : '看答案') + '</span></button>');
+    });
+    h.push('</div></div>');
+  });
+  return h.join('');
+}
+
+function viewLibQ(){
+  var cur = curVariant();
+  if(!cur){ S.screen = 'library'; return viewLibrary(); }
+  var q = cur.q, v = cur.v, vs = S.vs;
+  var fields = v.fields || [];
+  var done = vs.phase === 'done';
+  var h = [];
+  h.push('<div class="rail">' +
+         '<div class="n now"><b>' + (vs.qi + 1) + '</b>第 ' + (vs.qi + 1) + ' / ' + BANK.length + ' 组</div>' +
+         '<div class="n"><b>' + esc(v.label) + '</b>' + esc(q.topic) + ' · ' + esc(q.method) + '</div>' +
+         '<div class="n"><b>已练</b>' + libPracticed() + ' / ' + libCounts().total + '</div></div>');
+  h.push('<div class="card"><div class="qhead"><span class="tag">变式练习</span>' +
+         '<span class="tag-soft">' + esc(q.topic) + ' · ' + esc(v.label) + '</span>' +
+         '<span class="spacer"></span><button class="btn-mini" data-act="vsback">← 回变式题库</button></div>');
+  h.push('<div class="small muted" style="margin-bottom:8px">母题 Q' + (vs.qi + 1) + '：' + esc(q.title) +
+         '（' + esc(q.method) + '）。先自己做，再对照“变了什么”。</div>');
+  h.push('<div class="stem">' + esc(v.stem) + '</div>');
+  if(fields.length){
+    h.push('<div style="margin-top:14px">' + fieldsHTML(fields, vs.ent || {}, done && vs.ok === false) + '</div>');
+    if(!done && fields.some(function(fd){ return fd.type === 'num' || fd.type === 'coef'; })){
+      h.push('<div class="tiny muted" style="margin-top:6px">可以填分数（如 1/2）或小数；先算再填，别边算边改。</div>');
+    }
+  }else{
+    h.push('<div class="fb soft" style="margin-top:14px"><h4>这道变式暂无自动判分</h4>' +
+           '<div class="small">先在纸上做，再点「直接看答案」对照。</div></div>');
+  }
+
+  if(done){
+    if(vs.ok === true){
+      h.push('<div class="fb ok"><h4>✓ 答对了</h4><div class="small">说明这个变式“改了什么”你抓住了。把下面的“变了 / 没变”说给家长听一遍，就算过。</div></div>');
+    }else if(vs.ok === false){
+      h.push('<div class="fb no"><h4>✗ 还差一点</h4><div class="small">正确答案：<b>' + esc(variantAnswerText(v)) +
+             '</b><br>红格子是错的地方，回纸上重算这一步，再对照下面的“变了 / 没变”。</div></div>');
+    }else{
+      h.push('<div class="fb soft"><h4>已展开答案</h4><div class="small">先自己算过一遍，再看答案，对照才有用。</div></div>');
+    }
+    h.push('<div class="libbox"><b>变了：</b>' + esc(v.change) +
+           '<br><b>没变：</b>' + esc(v.same) +
+           '<br><b>答案：</b>' + esc(v.answer) +
+           (v.note ? '<br><b>一句话：</b>' + esc(v.note) : '') + '</div>');
+    h.push('<div class="tools">' +
+           '<button class="btn btn-primary" data-act="vsnext">练下一个变式 →</button>' +
+           '<button class="btn" data-act="vsretry">重做这个变式</button>' +
+           '<span class="spacer"></span><button class="btn-ghost" data-act="vsback">回这一组</button></div>');
+  }else{
+    h.push('<div class="tools">' +
+           '<button class="btn btn-primary" data-act="vssubmit">提交答案</button>' +
+           '<button class="btn" data-act="vsreveal">直接看答案</button>' +
+           '<span class="spacer"></span><button class="btn-ghost" data-act="vsback">返回</button></div>');
+  }
+  h.push('</div>');
   return h.join('');
 }
 
@@ -4019,6 +4377,7 @@ function nextStep(){
   var qs = S.qs, q = curQ();
   qs.step++;
   qs.sel = []; qs.order = []; qs.val = ''; qs.attempt = 0; qs.fb = null;
+  qs.hint = 0;   /* 每一步的提示各自独立：换步必须清零，否则下一步会提前露出提示 */
   qs.phase = qs.step >= q.steps.length ? 'final' : 'ask';
   render();
 }
@@ -4068,7 +4427,7 @@ function finalize(ok){
   var qs = S.qs, q = curQ();
   qs.phase = 'sol';
   qs.fOk = ok;
-  DB.recs.push({ts:Date.now(), qid:q.id, ok:ok, failed:qs.failed.slice(), hints:qs.hint, stuck:null,
+  DB.recs.push({ts:Date.now(), qid:q.id, ok:ok, failed:qs.failed.slice(), hints:qs.hints || 0, stuck:null,
                 tries:qs.fAttempt});
   saveDB();
   S.sess.n++;
@@ -4104,7 +4463,9 @@ document.addEventListener('click', function(e){
   var ch = t.closest ? t.closest('[data-ch]') : null;
   if(ch){
     var key = ch.getAttribute('data-ch');
-    var host = (S.screen === 'paperq' && S.pq) ? S.pq : S.qs;
+    var host = (S.screen === 'paperq' && S.pq) ? S.pq
+             : (S.screen === 'libq' && S.vs) ? S.vs
+             : S.qs;
     if(host && host.ent) host.ent[key] = +ch.getAttribute('data-ci');
     render();
     return;
@@ -4120,6 +4481,7 @@ document.addEventListener('input', function(e){
   var f = el.getAttribute && el.getAttribute('data-f');
   if(f){
     if(S.screen === 'paperq' && S.pq) S.pq.ent[f] = el.value;
+    else if(S.screen === 'libq' && S.vs) S.vs.ent[f] = el.value;
     else if(S.qs) S.qs.ent[f] = el.value;
   }
 });
@@ -4145,6 +4507,7 @@ document.addEventListener('keydown', function(e){
   if(el && el.id === 'stepnum'){ submitStep(); }
   else if(el && el.getAttribute && el.getAttribute('data-f')){
     if(S.screen === 'paperq'){ paperSubmit(); }
+    else if(S.screen === 'libq'){ vsSubmit(); }
     else if(S.qs && S.qs.phase === 'final') submitFinal();
   }
 });
@@ -4255,6 +4618,40 @@ function handleAct(el){
   var act = el.getAttribute('data-act');
   if(act === 'home'){ S.screen = 'home'; render(); return; }
   if(act === 'library'){ S.screen = 'library'; render(); return; }
+  if(act === 'libnext'){
+    S.libI = (Math.min(Math.max(S.libI || 0, 0), BANK.length - 1) + 1) % BANK.length;
+    S.libOpen = {}; render(); return;
+  }
+  if(act === 'libprev'){
+    var li = Math.min(Math.max(S.libI || 0, 0), BANK.length - 1);
+    S.libI = (li - 1 + BANK.length) % BANK.length;
+    S.libOpen = {}; render(); return;
+  }
+  if(act === 'librev'){
+    var lk = el.getAttribute('data-k');
+    S.libOpen = S.libOpen || {};
+    S.libOpen[lk] = !S.libOpen[lk];
+    render(); return;
+  }
+  if(act === 'libself'){
+    libSetStat(+el.getAttribute('data-q'), +el.getAttribute('data-v'), +el.getAttribute('data-ok'));
+    return;
+  }
+  if(act === 'liblist'){ S.libList = true; S.libOpen = {}; render(); return; }
+  if(act === 'libguide'){ S.libList = false; render(); return; }
+  if(act === 'libpick'){ S.screen = 'libpick'; render(); return; }
+  if(act === 'libpractice'){ startLibQ(+el.getAttribute('data-q'), +el.getAttribute('data-v')); return; }
+  if(act === 'vsback'){ vsBack(); return; }
+  if(act === 'vssubmit'){ vsSubmit(); return; }
+  if(act === 'vsreveal'){ vsReveal(); return; }
+  if(act === 'vsretry'){ vsRetry(); return; }
+  if(act === 'vsnext'){ vsNext(); return; }
+  if(act === 'libclear'){
+    if(confirm('清空变式题库的自评记录（已说清 / 还没底）？')){
+      DB.lib = {}; saveDB(); render();
+    }
+    return;
+  }
   if(act === 'report'){ S.screen = 'report'; render(); return; }
   if(act === 'print'){ window.print(); return; }
   if(act === 'papers'){ S.screen = 'paper'; render(); return; }
@@ -4280,7 +4677,7 @@ function handleAct(el){
   }
   if(act === 'hint'){
     var st = currentStep();
-    if(S.qs.hint < st.hint.length){ S.qs.hint++; S.qs.hints = Math.max(S.qs.hints, S.qs.hint); }
+    if(S.qs.hint < st.hint.length){ S.qs.hint++; S.qs.hints = (S.qs.hints || 0) + 1; }
     render(); return;
   }
   if(act === 'submit'){ submitStep(); return; }
@@ -4343,7 +4740,7 @@ function handleAct(el){
   }
   if(act === 'reset'){
     if(confirm('确定清空所有训练记录？这个动作不能撤销。')){
-      DB = {log:[], recs:[], drill:[]}; saveDB(); render();
+      DB = {log:[], recs:[], drill:[], paper:[], packs:DB.packs || [], lib:{}, vrec:[]}; saveDB(); render();
     }
     return;
   }
