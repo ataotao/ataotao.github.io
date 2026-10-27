@@ -251,7 +251,10 @@
       var gap = o.ok ? (rec.streak >= 3 ? 15 : rec.streak === 2 ? 7 : 3) : 1;
       rec.due = new Date(Date.now() + gap * 86400000).toISOString().slice(0, 10);
       bump(U.today(), 'concept');
-      if (o.ok) delWrong('c:' + o.cid); else addWrong('c:' + o.cid, { kind: 'concept', cid: o.cid });
+      /* 概念错卡不做自动清除：答错过就留在错题本，由本人在「错题回炉」
+         勾「我会了」手动清掉 —— 避免"同轮末尾重答一次对了"就把真正的模糊点抹掉。
+         再答错会刷新这条记录的时间，排到列表最前面。 */
+      if (!o.ok) addWrong('c:' + o.cid, { kind: 'concept', cid: o.cid });
       persist();
     },
     markWrong: addWrong,
@@ -263,12 +266,15 @@
       });
       return out.sort(function (a, b) { return (b.at || '').localeCompare(a.at || ''); });
     },
-    /** 概念掌握度：0 未练 1 生疏 2 熟悉 3 掌握 */
+    /** 概念掌握度：0 未练 1 生疏 2 熟悉 3 掌握
+     *  掌握：最近一次答对（streak ≥1）且总正确率 ≥80%
+     *  —— 一张卡答对一次即可算掌握，不必等第二轮复习；
+     *     「复习到期日」仍按连对次数拉长（见 conceptAnswer），保证还会回来再见一次。 */
     conceptLevel: function (cid) {
       var r = state.concept[cid];
       if (!r || !r.n) return 0;
       var rate = r.ok / r.n;
-      if (r.streak >= 2 && rate >= 0.8) return 3;
+      if (r.streak >= 1 && rate >= 0.8) return 3;
       if (rate >= 0.6) return 2;
       return 1;
     },
