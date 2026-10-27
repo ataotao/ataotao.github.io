@@ -348,7 +348,15 @@
           fbbox.innerHTML = '';
           if (ctrl.kind === 'fields') ctrl.fs.reset();
           submitBtn.disabled = false;
-          if (ctrl.kind === 'opts') Array.prototype.forEach.call(ctrl.box.children, function (c) { c.classList.remove('ok', 'no', 'dim'); });
+          if (ctrl.kind === 'opts') {
+            /* 彻底清空重选：内部 sel 与界面样式必须同时清。
+               之前只清 ok/no/dim、不清内部 sel，多选时看起来全空、
+               内部还留着旧选择，再点选项就变成"取消"，越点越乱。 */
+            if (multi) sel.length = 0; else sel = null;
+            Array.prototype.forEach.call(ctrl.box.children, function (c) {
+              c.classList.remove('ok', 'no', 'dim', 'sel');
+            });
+          }
         });
         fbbox.appendChild(again);
       }

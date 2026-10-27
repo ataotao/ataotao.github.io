@@ -838,17 +838,21 @@
     concepts().forEach(function (x) { if (!c && x.id === w.cid) c = x; });
     var note = [];
     if (c && c.tags) note.push(c.tags.join(' / '));
-    note.push('到「概念闪练」找这张卡重做');
+    /* 概念错卡不会自动清（答错过就留着），这里提示最近一次是否已经答对，方便判断能不能勾掉 */
+    var r = PHYS.store.get('concept.' + w.cid, null);
+    if (r && r.streak > 0) note.push('最近一次已经答对：确认真会了就勾掉');
+    else note.push('到「概念闪练」找这张卡重做');
+    var extra = (r && r.n) ? '（练过 ' + r.n + ' 次，对 ' + r.ok + ' 次）' : '';
     return {
       label: c ? c.q : '概念卡 ' + w.cid,
-      href: '#/concept', tagText: '概念闪练', tagCls: 'tag-soft', note: note.join(' · ')
+      href: '#/concept', tagText: '概念闪练', tagCls: 'tag-soft', note: note.join(' · ') + extra
     };
   }
 
   var KIND_META = {
     guided: { name: '五步断点', info: guidedInfo, hint: '五步引导没走通的地方' },
     exam: { name: '试卷错题', info: examInfo, hint: '试卷练习里做错的题' },
-    concept: { name: '概念错卡', info: conceptInfo, hint: '概念闪练里答错的卡' }
+    concept: { name: '概念错卡', info: conceptInfo, hint: '概念闪练里答错的卡（答错过就留着，手动勾「我会了」才清）' }
   };
 
   function renderWrong(root, kind) {

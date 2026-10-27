@@ -91,8 +91,10 @@
 .cd-tagbtn:hover{border-color:var(--brand);background:#fbfdff}
 .cd-tagbtn b{display:block;font-size:13.5px;line-height:1.45}
 .cd-tagbtn span{display:block;font-size:11.5px;color:var(--muted);margin-top:1px}
-.cd-mini{height:5px;border-radius:99px;background:#eeeae2;overflow:hidden;margin-top:7px}
-.cd-mini>i{display:block;height:100%;background:var(--ok);border-radius:99px}
+.cd-mini{height:5px;border-radius:99px;background:#eeeae2;overflow:hidden;margin-top:7px;position:relative}
+.cd-mini>i{display:block;height:100%;border-radius:99px;position:absolute;left:0;top:0}
+.cd-mini>i.p{background:#ccd6dd}
+.cd-mini>i.g{background:var(--ok)}
 .cd-listcard{padding:16px 18px}
 .cd-listhdrow{display:flex;align-items:center;gap:10px;justify-content:space-between;margin:10px 0 2px}
 .cd-listhd{font-size:14px;color:var(--brand-d);margin-bottom:4px}
@@ -425,7 +427,7 @@
     lvCard.appendChild(levels);
     lvCard.appendChild(UI.el('p', {
       class: 'tiny muted', style: 'margin-top:8px',
-      text: '规则：连对 2 次且正确率 ≥80% 记为「掌握」，正确率 ≥60% 记为「熟悉」，其余练过的记为「生疏」。'
+      text: '规则：最近一次答对且正确率 ≥80% 记为「掌握」，正确率 ≥60% 记为「熟悉」，其余练过的记为「生疏」。'
     }));
     var lrow = UI.el('div', { class: 'row', style: 'margin-top:10px' });
     var lb = UI.el('button', { class: 'btn-mini', type: 'button', text: '看全部 ' + cards.length + ' 张卡片 →' });
@@ -440,17 +442,19 @@
   function renderTags() {
     var root = S.root;
     root.innerHTML = '';
-    root.appendChild(pageHead('按考点练', '点一个考点，只练这一类。数字是「已掌握 / 总张数」。', {}));
+    root.appendChild(pageHead('按考点练', '点一个考点，只练这一类。「掌握 / 总张数」后面是已练张数；进度条浅色 = 已练，绿色 = 已掌握。', {}));
     var grid = UI.el('div', { class: 'cd-taggrid' });
     TAGS.forEach(function (tag) {
       var cs = allCards().filter(function (c) { return c.tags && c.tags.indexOf(tag) >= 0; });
       if (!cs.length) return;
-      var m = 0;
-      cs.forEach(function (c) { if (lvOf(c.id) === 3) m++; });
+      var m = 0, pr = 0;
+      cs.forEach(function (c) { var l = lvOf(c.id); if (l === 3) m++; if (l > 0) pr++; });
       var b = UI.el('button', { class: 'cd-tagbtn', type: 'button' });
       b.innerHTML = '<b>' + UI.escape(tag) + '</b>' +
-        '<span>' + m + ' / ' + cs.length + ' 张已掌握</span>' +
-        '<div class="cd-mini"><i style="width:' + Math.round(m / cs.length * 100) + '%"></i></div>';
+        '<span>' + m + ' / ' + cs.length + ' 张已掌握' +
+          (pr > m ? '　·　已练 ' + pr : (pr ? '　·　全练过' : '')) + '</span>' +
+        '<div class="cd-mini"><i class="p" style="width:' + Math.round(pr / cs.length * 100) + '%"></i>' +
+        '<i class="g" style="width:' + Math.round(m / cs.length * 100) + '%"></i></div>';
       b.addEventListener('click', function () { nav({ tag: tag }); });
       grid.appendChild(b);
     });
