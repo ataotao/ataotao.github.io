@@ -20,8 +20,9 @@ def answer_tables(docx_path):
     try:
         from docx import Document
     except ImportError:
-        print('需要 python-docx')
-        return {}
+        print('✗ 缺少 python-docx 依赖：请运行  python -m pip install python-docx')
+        sys.exit(2)
+
     doc = Document(docx_path)
     best = {}
     for t in doc.tables:
@@ -44,7 +45,7 @@ def answer_tables(docx_path):
     return best
 
 
-rows, total_bad = [], 0
+rows, total_bad, no_key = [], 0, 0
 for fn in sorted(os.listdir(QDIR)):
     if not fn.startswith('pack-w') or not fn.endswith('.json'):
         continue
@@ -67,6 +68,7 @@ for fn in sorted(os.listdir(QDIR)):
         checked += 1
         want = keys.get(str(q['no']))
         if not want:
+            no_key += 1
             rows.append((pid, q['no'], 'NO_KEY', '', ''))
             continue
         want_idx = sorted('ABCD'.index(ch) for ch in want if ch in 'ABCD')
@@ -79,4 +81,10 @@ for fn in sorted(os.listdir(QDIR)):
 
 for r in rows:
     print('%-8s q%-3s %-24s want=%-4s got=%s' % r)
-print('\n结论：%s' % ('全部一致 ✓' if total_bad == 0 else '有 %d 题不一致 ✗' % total_bad))
+print('')
+if no_key:
+    print('⚠ 有 %d 题在答案表里找不到对应题号（答案表解析可能失败，或题号对不上）' % no_key)
+ok = (total_bad == 0 and no_key == 0)
+print('结论：%s' % ('全部一致 ✓' if ok else '有 %d 题不一致 ✗，%d 题缺答案键' % (total_bad, no_key)))
+if not ok:
+    sys.exit(1)

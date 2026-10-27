@@ -1,4 +1,4 @@
-<#
+﻿<#
   每周加一卷：一条命令把新 docx 变成「当周就能做」的题包。
   用法（在仓库根目录运行，pwsh 7）：
     pwsh -File 物理\工具\weekly.ps1 -Docx "C:\path\第10周.docx"
@@ -21,9 +21,26 @@ $ROOT = Split-Path -Parent (Split-Path -Parent $MyInvocation.MyCommand.Path)   #
 $REPO = Split-Path -Parent $ROOT
 $TOOLS = Join-Path $ROOT '工具'
 $QDIR = Join-Path $ROOT '题库'
-$NODE = 'C:\Users\Tao\.local\nodejs2\node.exe'
-if (-not (Test-Path $NODE)) { $NODE = (Get-Command node -ErrorAction SilentlyContinue).Source }
-if (-not $NODE) { throw '找不到 node（请改脚本里的 $NODE）' }
+# 工具探测：不写死任何机器路径（换电脑 / 多人协作用）
+function Find-Exe([string]$Name, [string[]]$Candidates) {
+  $envVal = [Environment]::GetEnvironmentVariable($Name.ToUpper())
+  if ($envVal -and (Test-Path $envVal)) { return $envVal }
+  $cmd = Get-Command $Name -ErrorAction SilentlyContinue
+  if ($cmd) { return $cmd.Source }
+  foreach ($c in $Candidates) { if ($c -and (Test-Path $c)) { return $c } }
+  return $null
+}
+$NODE = Find-Exe 'node' @(
+  "$env:ProgramFiles\nodejs\node.exe",
+  "$env:LOCALAPPDATA\Programs\nodejs\node.exe",
+  "$env:USERPROFILE\.local\nodejs2\node.exe"
+)
+if (-not $NODE) { throw '找不到 node。请安装 Node.js（https://nodejs.org）或把 node 加进 PATH，然后用 -NodeExe 指定路径。' }
+$PYTHON = Find-Exe 'python' @(
+  "$env:USERPROFILE\AppData\Local\Programs\Python\Python313\python.exe",
+  "$env:LOCALAPPDATA\Programs\Python\Python313\python.exe",
+  "$env:USERPROFILE\.dsh\dsh-runtimes\dsh-primary-runtime\dependencies\python\python.exe"
+)
 
 # ---------- 1. 定 packId ----------
 if (-not (Test-Path $Docx)) { throw "docx 不存在：$Docx" }
@@ -85,5 +102,5 @@ Write-Host ""
 Write-Host "想升级成精修版（解答题可判分 + 解析）："
 Write-Host "  1) 打开 题库/pack-$short.json，给 selfcheck 题加 fields（见 源/内容作者必读.md 第 3 节）并补 solution"
 Write-Host "  2) 删掉题包和题目上的 draft 字段"
-Write-Host "  3) & '$NODE' 物理\工具\build.mjs"
-Write-Host "  4) & 'C:\Users\Tao\.dsh\dsh-runtimes\dsh-primary-runtime\dependencies\python\python.exe' 物理\工具\check_answers.py   # 选择题答案体检"
+Write-Host "  3) node 物理/工具/build.mjs"
+Write-Host "  4) 一键闸门：pwsh -File 物理/工具/check.ps1   （自动找 node/python，跑 build+答案体检+完整性+核验清单）"

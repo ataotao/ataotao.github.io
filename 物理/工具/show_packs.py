@@ -1,6 +1,9 @@
 import json, sys, os
 sys.stdout.reconfigure(encoding='utf-8')
-QDIR = r'C:\work\my-work\learning-training\物理\题库'
+
+# 路径从脚本位置推导：换电脑 / 换目录不用改
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))   # 物理/
+QDIR = os.path.join(ROOT, '题库')
 for fn in sorted(os.listdir(QDIR)):
     if not (fn.startswith('pack-') and fn.endswith('.json')) or '模板' in fn or '全部' in fn:
         continue
