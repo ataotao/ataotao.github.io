@@ -1,14 +1,19 @@
-param(
-  [string]$Dir = "C:\work\my-work\learning-training\物理\图片",
+﻿param(
+  [string]$Dir = "",
   [int]$Threshold = 246,
   [int]$Pad = 10,
   [switch]$DryRun
 )
 # 裁图后处理：去掉四周多余的白边（上/下空白特别多时最有用）。
 # 只裁"整行/整列都是接近纯白"的部分，不会切到内容；裁完仍保留 Pad 像素白边。
-# 用法：powershell.exe -NoProfile -STA -File 物理\工具\trim.ps1 [-DryRun]
+# 用法：pwsh -File 物理/工具/trim.ps1 [-DryRun] [-Dir <图片目录>]
 $ErrorActionPreference = 'Stop'
 Add-Type -AssemblyName System.Drawing
+if (-not $Dir) {
+  # 默认 <仓库>/物理/图片，从脚本位置推导，换电脑不用改
+  $Dir = Join-Path (Split-Path -Parent $PSScriptRoot) '图片'
+}
+if (-not (Test-Path $Dir)) { Write-Host "图片目录不存在：$Dir"; exit 1 }
 
 function Get-ContentBox($bmp, $thr) {
   $w = $bmp.Width; $h = $bmp.Height

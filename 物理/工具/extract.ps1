@@ -36,10 +36,13 @@ $ErrorActionPreference = "Stop"
 
 # ---------------------------------------------------------------- paths
 if (-not $Root) {
+    # 从脚本位置推导：<仓库>/物理/工具/extract.ps1 → <仓库>/物理（换电脑/换目录不用改）
     $cand = Split-Path -Parent $PSScriptRoot
     if (Test-Path (Join-Path $cand "题库")) { $Root = $cand }
     else { $Root = Split-Path -Parent $cand }
-    if (-not (Test-Path (Join-Path $Root "题库"))) { $Root = "C:\work\my-work\learning-training\物理" }
+    if (-not (Test-Path (Join-Path $Root "题库"))) {
+        throw "找不到 题库/ 目录（推导结果：$Root）。请用 -Root 指定 物理 目录。"
+    }
 }
 $SrcDir = Join-Path $Root "题库"
 $ImgRoot = Join-Path $Root "图片"
