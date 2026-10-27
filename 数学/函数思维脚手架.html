@@ -138,8 +138,57 @@ hr.sep{border:0;border-top:1px dashed var(--line);margin:16px 0}
   border-radius:9px;padding:8px 11px;font-size:14px;line-height:1.6}
 .seq .s .no{font-weight:700;color:var(--brand);font-size:12.5px;flex:0 0 auto;margin-top:2px}
 .seq .empty{font-size:13px;color:var(--muted);padding:4px}
+.seq .s .sw{margin-left:auto;flex:0 0 auto;font-size:11px;line-height:1.6;color:var(--accent);
+  border:1px solid #c9d9e8;background:#f4f8fb;border-radius:5px;padding:0 5px;margin-top:1px}
 .seq.ok{border-color:#9dd3b4;background:var(--ok-bg)}
 .seq.no{border-color:#e5b3af;background:var(--bad-bg)}
+.seqnote{margin:-2px 0 10px;padding:8px 12px;border-radius:9px;background:#f4f8fb;border:1px dashed #c9d9e8;
+  font-size:12.8px;line-height:1.7;color:#3f5568}
+.seqnote b{color:var(--accent)}
+
+/* 看思路 */
+.ideacard{border-color:#cfe0d8;background:#fcfdfc}
+.ideacard .qhead{margin-bottom:8px}
+.idea-in{padding:10px 13px;border-radius:10px;background:#f4f8fb;border:1px dashed #c9d9e8;font-size:14px;line-height:1.8}
+.idea-in .lab{display:block;font-weight:700;color:var(--accent);font-size:12.5px;margin-bottom:3px}
+.ideasteps{list-style:none;margin:12px 0 0;padding:0;display:flex;flex-direction:column;gap:8px}
+.ideasteps li{padding:9px 13px;border-radius:10px;border:1px solid var(--line);background:#fff;font-size:13.8px;line-height:1.75}
+.ideasteps li>b{display:block;color:var(--brand-d);font-size:13px;margin-bottom:3px}
+.ideasteps .ord{display:inline}
+.ideasteps .ord b{color:var(--brand);font-size:12.5px}
+.ideasteps .k{display:block;margin-top:5px;padding-top:5px;border-top:1px dashed var(--line);color:var(--muted);font-size:12.8px}
+.ideakey{margin-top:12px;background:#f7f5f0;border-left:3px solid var(--brand);border-radius:0 9px 9px 0;padding:10px 13px;font-size:13.4px;line-height:1.8}
+.ideacard .btnrow{margin-top:12px;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.qtools{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+
+/* 快速换题 */
+.qbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:12px;padding:8px 11px;
+  border-radius:11px;background:#fff;border:1px solid var(--line)}
+.qbar .qlab{font-size:12px;color:var(--muted)}
+.qbar .btn-mini:disabled{opacity:.4;cursor:not-allowed}
+.qchips{display:flex;gap:5px;flex-wrap:wrap}
+.qchip{width:27px;height:27px;border-radius:8px;border:1px solid var(--line);background:#fff;
+  font-size:12.5px;font-weight:700;color:var(--muted);font-variant-numeric:tabular-nums}
+.qchip:hover{border-color:var(--brand);color:var(--brand-d)}
+.qchip.good{border-color:#9dd3b4;color:var(--ok);background:var(--ok-bg)}
+.qchip.bad{border-color:#e5b3af;color:var(--bad);background:var(--bad-bg)}
+.qchip.cur{border-color:var(--brand);background:var(--brand);color:#fff}
+.qlist{display:flex;flex-direction:column;gap:6px;margin:-4px 0 12px}
+.qitem{display:flex;gap:10px;align-items:center;text-align:left;padding:8px 12px;border-radius:10px;
+  border:1px solid var(--line);background:#fff;font-size:13.5px;line-height:1.5}
+.qitem:hover{border-color:#bfd6cd;background:#fcfdfc}
+.qitem.cur{background:var(--brand-l);border-color:var(--brand)}
+.qitem .no{flex:0 0 18px;font-weight:700;color:var(--brand);font-size:12.5px;text-align:center}
+.qitem .tt{flex:1;min-width:0;color:var(--muted)}
+.qitem .tt b{display:block;color:var(--ink);font-weight:600}
+@media(max-width:560px){
+  .qbar{gap:6px;padding:7px 9px}
+  .qbar .qlab{display:none}
+  .qchips{gap:4px}
+  .qchip{width:24px;height:24px;font-size:12px;border-radius:7px}
+  .qbar .btn-mini{padding:4px 9px;font-size:12px}
+  .qbar .btn-ghost{padding:4px 8px;font-size:12.5px}
+}
 
 /* 试卷 / 题库管理 */
 .packlist{display:flex;flex-direction:column;gap:6px;margin-top:8px}
@@ -405,11 +454,14 @@ var BANK = [
             '解方程组，得 k = -1、b = 2',
             '写出解析式 y = -x + 2'],
      disp:[3,0,4,1,2],
+     /* 每一步的“前提”：只要求前提排在自己前面，同一层的几步可以互换 */
+     deps:[[], [0], [0], [1,2], [3]],
+     swap:'第 2、3 步可以互换：A、B 两个点谁先代入都行，只要都在「设式子」之后、「解方程组」之前。',
      ask:'把解题步骤排成正确顺序（点一下加进来，再点一下去掉）',
      hint:['先看看：哪一步必须先有未知数，才能“代入”？',
            '两个点要各代一次，才能得到两个方程；两个方程才解得出一对数。',
-           '顺序：设式子 → A 代入 → B 代入 → 解方程组 → 写答案。'],
-     explain:'流程题不是背答案，是背顺序。顺序错了，后面全乱。'},
+           '顺序：设式子 → A、B 两点代入（这两个先后随意）→ 解方程组 → 写答案。'],
+     explain:'流程题不是背答案，是背顺序。顺序看的是“谁必须在谁之前”：代入必须在设式子之后、解方程组之前，但两点谁先代无所谓。'},
     {dim:'check', type:'choice',
      ask:'算出 y = -x + 2 之后，怎么用最少的力气确认它没错？',
      opts:[
@@ -502,6 +554,8 @@ var BANK = [
             '把 y = 5 代入得 2m - 3 = 5，解得 m = 4',
             '平移：向上 4 个单位，b 由 -3 变 1，得 y = 2x + 1'],
      disp:[1,0,4,2,3],
+     deps:[[], [0], [1], [0], [0]],
+     swap:'读式子之后的几小问（判象限、代点求 m、平移）互不依赖，先后顺序可以不同，但都要在“读懂式子、画草图”之后。',
      ask:'把解题步骤排成正确顺序（点一下加进来，再点一下去掉）',
      hint:['三个小问，先用哪一条信息把它们串起来？',
            '先读懂式子里的 k、b，再画草图，图一出来象限就定了。',
@@ -607,6 +661,7 @@ var BANK = [
             '得到 |k| = 6',
             '由 k > 0 得 k = 6'],
      disp:[1,0,3,2,4],
+     deps:[[], [0], [1], [2], [3]],
      ask:'把推理步骤排成正确顺序（点一下加进来，再点一下去掉）',
      hint:['几何量 → 坐标 → 解析式，这条链子的顺序不能乱。',
            '先把矩形的边用坐标表示，才能写出面积。',
@@ -710,6 +765,8 @@ var BANK = [
             'x < 0 时：直线为正、双曲线为负，直线在上方，得 x < 0',
             '合并写解集：x < 0 或 2 < x < 3'],
      disp:[1,3,0,4,2],
+     deps:[[], [0], [1], [1], [2,3]],
+     swap:'x > 0 和 x < 0 两支先讨论哪一支都行，但都要在“求交点、画图”之后。',
      ask:'把解题步骤排成正确顺序（点一下加进来，再点一下去掉）',
      hint:['先有图还是先有交点？想想哪个更能帮你判断高低。',
            '交点是分界，没有交点就不知道从哪儿开始分。',
@@ -817,6 +874,7 @@ var BANK = [
             '顶点 (50, 100)，且 50 在 40 ≤ x ≤ 60 内',
             '答：售价 50 元时利润最大，最大利润 100 元'],
      disp:[2,0,4,3,1],
+     deps:[[], [0], [1], [2], [3]],
      ask:'把解题步骤排成正确顺序（点一下加进来，再点一下去掉）',
      hint:['应用题的骨架是“设—列—化—判—答”。',
            '先设未知数，才能列式子；式子列出来才能化简。',
@@ -916,6 +974,8 @@ var BANK = [
             '把 a - b + c 看成 x = -1 时的函数值 → 图上为 0',
             '把 4a + 2b + c 看成 x = 2 时的函数值 → x = 2 的点在 x 轴上方，为正'],
      disp:[3,1,0,4,2],
+     deps:[[], [], [0], [0,1,2], [0,1,2]],
+     swap:'读 a（开口）和读 c（y 轴交点）这两步先后随意；最后两个“代值”小问也可以换。',
      ask:'把判断顺序排好（点一下加进来，再点一下去掉）',
      hint:['a、b、c 三个字母，各有一处“专属位置”，先找最容易的。',
            '开口定 a，y 轴交点定 c，对称轴定 b——按这个顺序最省力。',
@@ -1021,6 +1081,7 @@ var BANK = [
             '令 2√(m² - 3m) = 4，得 m² - 3m = 4',
             '解得 m = 4 或 m = -1，再检验是否满足 m < 0 或 m > 3'],
      disp:[2,0,4,1,3],
+     deps:[[], [0], [1], [2], [3]],
      ask:'把解题步骤排成正确顺序（点一下加进来，再点一下去掉）',
      hint:['第一问的范围，第二问要不要用？',
            '第二问求出的 m 必须让“有两个交点”成立，否则要舍去。',
@@ -1126,6 +1187,8 @@ var BANK = [
             '全程平均速度 = 3000 ÷ 20 = 150（米/分钟）',
             '0 ≤ t ≤ 10 这一段的图象过原点且是直线，所以 s 与 t 成正比例'],
      disp:[3,0,4,2,1],
+     deps:[[], [0], [1], [0], [0]],
+     swap:'算“某一段速度”、算“全程平均速度”、判断“哪一段是正比例”这三小问互不依赖，先后可以换。',
      ask:'把解题步骤排成正确顺序（点一下加进来，再点一下去掉）',
      hint:['先做哪一步，后面三个小问才都能用上？',
            '把关键点标出来，三个问题都能从图上直接回答。',
@@ -2968,7 +3031,7 @@ function saveDB(){
 
 /* ---------- 状态 ---------- */
 var S = {
-  screen:'home', mode:'', queue:[], qi:0, qs:null,
+  screen:'home', mode:'', queue:[], qi:0, qs:null, qSwitch:false,
   di:0, dSel:null, dOk:null, dRight:0, dWrong:[],
   packId:null, pq:null, importMsg:'',
   libI:0, libOpen:{}, libList:false, vs:null,
@@ -3119,7 +3182,7 @@ function viewHome(){
 
   h.push('<div class="modes">');
   h.push('<button class="mode rec" data-act="start" data-mode="guide"><h3>引导训练 <span class="tag">推荐</span></h3>' +
-         '<p>8 组母题（一次函数 / 反比例 / 二次函数 / 分段图象），每题五问。走完五步才允许落笔，答错会说清错在哪一步。</p>' +
+         '<p>8 组母题（一次函数 / 反比例 / 二次函数 / 分段图象），每题五问。走完五步才允许落笔，答错会说清错在哪一步；卡住了点「看思路」，五步要点一次看全。</p>' +
          '<span class="go">开始 →</span></button>');
   h.push('<button class="mode" data-act="papers"><h3>试卷练习 <span class="tag-soft">新</span></h3>' +
          '<p>两份卷子（反比例单元测 + 10 月 14 日练习）共 39 题：原题重现、自动判分、分步解析。做完学校的卷子来这里对答案、看思路。</p>' +
@@ -3216,11 +3279,14 @@ function orderHTML(st, qs, fb){
   }
   h.push('</div>');
   if(fb && qs.fb.reveal){
+    var flex = orderFlex(st);
     h.push('<div class="seq ok" style="margin-top:8px">');
     for(i = 0; i < st.items.length; i++){
-      h.push('<div class="s"><span class="no">' + (i + 1) + '.</span><span>' + esc(st.items[i]) + '</span></div>');
+      h.push('<div class="s"><span class="no">' + (i + 1) + '.</span><span>' + esc(st.items[i]) + '</span>' +
+             (flex[i] ? '<span class="sw" title="这一步和别的步骤互不为前提，换个位置也算对">⇄ 可换</span>' : '') + '</div>');
     }
     h.push('</div>');
+    h.push(orderNoteHTML(st));
     return h.join('');
   }
   h.push('<div class="pool">');
@@ -3237,6 +3303,110 @@ function numInputHTML(st, qs){
          'value="' + esc(qs.val || '') + '" placeholder="填数或分数" data-stepnum="1"></div>';
 }
 
+/* ---------- 看思路（每题一个入口：直接把解题思路摆出来） ---------- */
+/* 每一步“该怎么做”：抽标准答案里的动作，但只给要点，不给完整过程 */
+function ideaStepHTML(st, skip){
+  if(skip) return '';                 /* 已经写在「入口」里的那一步不再重复 */
+  var lines = [], i;
+  if(st.type === 'multi'){
+    st.opts.forEach(function(o){ if(o.ok) lines.push('✓ ' + esc(o.t)); });
+  }else if(st.type === 'choice'){
+    var okc = st.opts.filter(function(o){ return o.ok; })[0];
+    if(okc) lines.push('✓ ' + esc(okc.t));
+  }else if(st.type === 'img'){
+    var oki = st.opts.map(function(o, n){ return o.ok ? n : -1; }).filter(function(n){ return n >= 0; })[0];
+    if(oki !== undefined && oki !== null) lines.push('✓ 选 ' + 'ABCD'[oki] + '：' + esc(st.opts[oki].why || ''));
+  }else if(st.type === 'order'){
+    st.items.forEach(function(t, n){ lines.push('<span class="ord"><b>' + (n + 1) + '.</b>' + esc(t) + '</span>'); });
+  }else if(st.type === 'num'){
+    lines.push('答案：' + esc(st.answer));
+  }
+  return lines.length ? '<div>' + lines.join('<br>') + '</div>' : '';
+}
+function ideaHTML(q){
+  var h = [], model = null, mIdx = -1;
+  q.steps.forEach(function(s, k){ if(s.dim === 'model' && !model){ model = s; mIdx = k; } });
+  var entry = '';
+  if(model){
+    var okm = (model.opts || []).filter(function(o){ return o.ok; })[0];
+    entry = okm ? (okm.t + (okm.why ? '——' + okm.why : '')) : model.explain;
+  }
+  h.push('<div class="card ideacard">');
+  h.push('<div class="qhead"><span class="tag">这题的思路</span>' +
+         '<span class="tag-soft">先自己走一步再看，比照抄有用</span></div>');
+  if(entry) h.push('<div class="idea-in"><span class="lab">入口：这题在考什么、用哪个模型</span>' + esc(entry) + '</div>');
+  h.push('<ol class="ideasteps">');
+  q.steps.forEach(function(st, k){
+    h.push('<li><b>第 ' + (k + 1) + ' 步 · ' + DIMNAME[st.dim] + '</b>' + ideaStepHTML(st, k === mIdx) +
+           (st.explain ? '<span class="k">关键：' + esc(st.explain) + '</span>' : '') + '</li>');
+  });
+  h.push('</ol>');
+  h.push('<details class="var" style="margin-top:12px"><summary>参考答案与分步解析（先别急着展开）</summary>' +
+         '<div class="body"><ul style="list-style:none;margin:0;padding:0">' + finalAnswersHTML(q.final) + '</ul>' +
+         '<hr class="sep" style="margin:10px 0"><ol style="margin:0 0 0 18px;padding:0">' +
+         q.final.solution.map(function(s){ return '<li>' + esc(s) + '</li>'; }).join('') + '</ol></div></details>');
+  h.push('<div class="ideakey"><b>本题关键：</b>' + esc(q.final.key) + '</div>');
+  h.push('<div class="btnrow"><button class="btn-mini" data-act="idea">收起思路 ▲</button>' +
+         '<span class="tiny muted">看过思路的题，报告里会标「看过思路」——先想再看，才长本事。</span></div>');
+  h.push('</div>');
+  return h.join('');
+}
+
+/* ---------- 快速换题（引导训练：不必按顺序做） ---------- */
+function qDoneMap(){
+  var m = {};
+  (DB.recs || []).forEach(function(r){ if(r.qid) m[r.qid] = !!r.ok; });
+  return m;
+}
+function qbarHTML(){
+  var done = qDoneMap(), h = [];
+  h.push('<div class="qbar">');
+  h.push('<button class="btn-mini" data-act="qprev"' + (S.qi <= 0 ? ' disabled' : '') + '>← 上一题</button>');
+  h.push('<span class="qlab">换题</span><div class="qchips">');
+  BANK.forEach(function(q, i){
+    var cls = 'qchip';
+    if(i === S.qi) cls += ' cur';
+    else if(done[q.id] === true) cls += ' good';
+    else if(done[q.id] === false) cls += ' bad';
+    h.push('<button class="' + cls + '" data-act="qjump" data-qi="' + i + '" title="第 ' + (i + 1) + ' 题 · ' +
+           esc(q.topic + '｜' + q.method + '｜' + q.title) + '">' + (i + 1) + '</button>');
+  });
+  h.push('</div>');
+  h.push('<button class="btn-mini" data-act="qnext2"' + (S.qi >= BANK.length - 1 ? ' disabled' : '') + '>下一题 →</button>');
+  h.push('<span class="spacer"></span>');
+  h.push('<button class="btn-ghost" data-act="qlist">' + (S.qSwitch ? '收起清单 ▲' : '题目清单 ▾') + '</button>');
+  h.push('</div>');
+  if(S.qSwitch){
+    h.push('<div class="qlist">');
+    BANK.forEach(function(q, i){
+      var st = done[q.id], mark;
+      if(i === S.qi) mark = '<span class="tag">当前</span>';
+      else if(st === true) mark = '<span class="tag">✓ 全对</span>';
+      else if(st === false) mark = '<span class="tag tag-bad">✗ 有错</span>';
+      else mark = '<span class="tiny muted">未做</span>';
+      h.push('<button class="qitem' + (i === S.qi ? ' cur' : '') + '" data-act="qjump" data-qi="' + i + '">' +
+             '<span class="no">' + (i + 1) + '</span>' +
+             '<span class="tt">' + esc(q.topic + '｜' + q.method) + '<b>' + esc(q.title) + '</b></span>' +
+             mark + '</button>');
+    });
+    h.push('</div>');
+  }
+  return h.join('');
+}
+function guideJump(i){
+  if(!S.queue || !S.queue.length) return;
+  i = Math.max(0, Math.min(i, S.queue.length - 1));
+  if(i === S.qi) return;
+  var qs = S.qs;
+  var touched = qs && qs.phase !== 'sol' &&
+                (qs.step > 0 || qs.attempt > 0 || (qs.ent && Object.keys(qs.ent).length > 0));
+  if(touched && !confirm('这一题还没走完（现在在第 ' + (qs.step + 1) + ' 步）。换题会丢掉这题的当前进度，' +
+                         '已经记录过的作答不受影响。确定换？')) return;
+  S.qi = i;
+  S.qSwitch = false;                 /* 选完就收起清单，别把题目挤到屏幕外 */
+  loadQuestion();
+}
+
 /* ---------- 题目视图 ---------- */
 function viewTrain(){
   var q = curQ(), qs = S.qs;
@@ -3244,14 +3414,18 @@ function viewTrain(){
   var fb = qs.phase === 'fb';
   var h = [];
   h.push(railHTML(qs.phase === 'final' || qs.phase === 'sol' ? 5 : qs.step));
+  h.push(qbarHTML());
   h.push('<div class="card"><div class="qhead"><span class="tag">第 ' + (S.qi + 1) + ' / ' + S.queue.length + ' 题</span>' +
-         '<span class="tag-soft">' + esc(q.topic) + ' · ' + esc(q.method) + '</span></div>' +
+         '<span class="tag-soft">' + esc(q.topic) + ' · ' + esc(q.method) + '</span>' +
+         (qs.phase === 'sol' ? '' : '<span class="spacer"></span>' +
+            '<button class="btn-mini" data-act="idea">' + (qs.idea ? '收起思路 ▲' : '看思路') + '</button>') + '</div>' +
          '<div class="stem">' + esc(q.stem) + '</div>');
   if(q.graph && (q.graph.rev === undefined || qs.step >= q.graph.rev || qs.phase === 'sol')){
     h.push('<div class="plotbig" style="margin-top:12px">' + plotSVG(q.graph) + '</div>');
   }
   h.push('</div>');
 
+  if(qs.idea && qs.phase !== 'sol') h.push(ideaHTML(q));
   if(qs.phase === 'final') return h.join('') + viewFinalCard(q, qs);
   if(qs.phase === 'sol') return h.join('') + viewSolutionCard(q, qs);
 
@@ -3320,6 +3494,23 @@ function fbHTML(st, qs){
 }
 
 /* ---------- 落笔 ---------- */
+/* 参考答案（解析页与「看思路」共用一份渲染，避免两处口径不一致） */
+function finalAnswersHTML(f){
+  var h = [];
+  f.fields.forEach(function(fd){
+    var t = fd.tpl ? fd.tpl : '';
+    if(fd.type === 'coef'){
+      fd.ans.forEach(function(a, k){ t = t.replace('{' + k + '}', a); });
+      t = t.replace(/\+\s*-/g, '− ').replace(/(^|[^0-9.])1x/g, '$1x');
+      h.push('<li><b>' + esc(fd.label) + '：</b>' + esc(t) + '</li>');
+    }else if(fd.type === 'num'){
+      h.push('<li><b>' + esc(fd.label) + '</b> ' + esc(fd.ans) + '</li>');
+    }else{
+      h.push('<li><b>' + esc(fd.label) + '：</b>' + esc(fd.options[fd.ans]) + '</li>');
+    }
+  });
+  return h.join('');
+}
 function viewFinalCard(q, qs){
   var f = q.final, h = [];
   h.push('<div class="card">');
@@ -3379,20 +3570,7 @@ function viewSolutionCard(q, qs){
   h.push('<div class="qhead"><span class="tag ' + (allOk ? '' : 'tag-bad') + '">' + (allOk ? '✓ 落笔全对' : '✗ 落笔有错') + '</span>' +
          '<span class="tag-soft">' + esc(q.title) + '</span></div>');
   h.push('<div class="sol"><div style="font-size:15px;font-weight:600;margin-bottom:6px">参考答案</div>');
-  h.push('<ul style="list-style:none;margin:0;padding:0">');
-  f.fields.forEach(function(fd){
-    var t = fd.tpl ? fd.tpl : '';
-    if(fd.type === 'coef'){
-      fd.ans.forEach(function(a, k){ t = t.replace('{' + k + '}', a); });
-      t = t.replace(/\+\s*-/g, '− ').replace(/(^|[^0-9.])1x/g, '$1x');
-      h.push('<li><b>' + esc(fd.label) + '：</b>' + esc(t) + '</li>');
-    }else if(fd.type === 'num'){
-      h.push('<li><b>' + esc(fd.label) + '</b> ' + esc(fd.ans) + '</li>');
-    }else{
-      h.push('<li><b>' + esc(fd.label) + '：</b>' + esc(fd.options[fd.ans]) + '</li>');
-    }
-  });
-  h.push('</ul>');
+  h.push('<ul style="list-style:none;margin:0;padding:0">' + finalAnswersHTML(f) + '</ul>');
   h.push('<hr class="sep"><div style="font-size:15px;font-weight:600;margin-bottom:6px">分步解析</div><ol>');
   f.solution.forEach(function(s){ h.push('<li>' + esc(s) + '</li>'); });
   h.push('</ol><div class="key"><b>本题关键：</b>' + esc(f.key) + '</div></div>');
@@ -3895,7 +4073,8 @@ function viewReport(){
       if(!q) return;
       h.push('<div class="wrongitem"><div class="row"><b>' + esc(q.title) + '</b>' +
              '<span class="tag-soft">' + esc(q.topic) + '</span>' +
-             (r.ok ? '<span class="tag">落笔全对</span>' : '<span class="tag tag-bad">落笔有错</span>') + '</div>');
+             (r.ok ? '<span class="tag">落笔全对</span>' : '<span class="tag tag-bad">落笔有错</span>') +
+             (r.idea ? '<span class="tag-soft">看过思路</span>' : '') + '</div>');
       if(r.failed && r.failed.length){
         h.push('<div class="tiny muted" style="margin-top:4px">卡在：' + r.failed.map(function(k){ return DIMNAME[k]; }).join('、') + '</div>');
       }
@@ -4309,7 +4488,8 @@ function doImport(raw){
 function loadQuestion(){
   var q = curQ();
   S.qs = {qid:q.id, step:0, phase:'ask', sel:[], order:[], val:'', attempt:0, hint:0,
-          failed:[], fb:null, ent:{}, fAttempt:0, fOk:null, fWrong:0, stuck:null, hints:0};
+          failed:[], fb:null, ent:{}, fAttempt:0, fOk:null, fWrong:0, stuck:null, hints:0,
+          idea:false, usedIdea:false};
   S.screen = 'train';
   render();
 }
@@ -4322,6 +4502,58 @@ function currentStep(){
 function logStep(dim, ok){
   DB.log.push({ts:Date.now(), qid:S.qs.qid, dim:dim, ok:!!ok});
   saveDB();
+}
+
+/* ---------- 排序题：判“前提”，不判死顺序 ----------
+   deps[i] 列出第 i 步必须排在它前面的步骤下标。
+   只要每条前提都在自己前面就算对，所以互相没有依赖的几步（比如 A、B 两点谁先代入）
+   可以互换——这正是题目本来允许的两种顺序。
+   没有写 deps 的旧题，退化成严格顺序（第 i 步必须在第 i-1 步之后）。 */
+function orderDeps(st){
+  if(st.deps) return st.deps;
+  return st.items.map(function(_, i){ return i ? [i - 1] : []; });
+}
+function orderCheck(st, order){
+  var deps = orderDeps(st), pos = {}, i;
+  for(i = 0; i < order.length; i++) pos[order[i]] = i;
+  for(i = 0; i < order.length; i++){
+    var it = order[i], miss = [];
+    (deps[it] || []).forEach(function(d){ if(pos[d] > i) miss.push(d); });
+    if(miss.length){
+      /* 取离它最近的那条前提，最像“你跳过的那一步” */
+      miss.sort(function(a, b){ return pos[b] - pos[a]; });
+      var need = miss[0];
+      return {ok:false, bad:{pos:i, item:it, need:need, needPos:pos[need]},
+        diag:'第 ' + (i + 1) + ' 步放错了：『' + st.items[it] + '』不该在这儿。它得排在『' +
+             st.items[need] + '』（你现在放在第 ' + (pos[need] + 1) + ' 步）后面——想想这一步需要什么前提。'};
+    }
+  }
+  return {ok:true, bad:null, diag:''};
+}
+/* 哪几步和别的步骤“可以互换”（互不为前提），用来在解析里标 ⇄ */
+function orderFlex(st){
+  var deps = orderDeps(st), n = st.items.length, reach = [], i, j, k;
+  for(i = 0; i < n; i++) reach[i] = [];
+  for(i = 0; i < n; i++){
+    (deps[i] || []).forEach(function(d){ if(reach[d]) reach[d][i] = 1; });
+  }
+  for(k = 0; k < n; k++)
+    for(i = 0; i < n; i++)
+      if(reach[i][k])
+        for(j = 0; j < n; j++)
+          if(reach[k][j]) reach[i][j] = 1;
+  var flex = [];
+  for(i = 0; i < n; i++){
+    flex[i] = false;
+    for(j = 0; j < n; j++){
+      if(i !== j && !reach[i][j] && !reach[j][i]) flex[i] = true;
+    }
+  }
+  return flex;
+}
+function orderNoteHTML(st){
+  if(!st || st.type !== 'order' || !st.swap) return '';
+  return '<div class="seqnote"><b>顺序说明：</b>' + esc(st.swap) + '</div>';
 }
 
 function submitStep(){
@@ -4346,10 +4578,9 @@ function submitStep(){
     res.diag = st.opts[i] ? (st.opts[i].why || '这个选项不对。') : '这个选项不对。';
   }else if(st.type === 'order'){
     if(qs.order.length !== st.items.length){ flash('把所有步骤都排进去再提交。'); return; }
-    res.ok = qs.order.every(function(v, k){ return v === k; });
-    var bad = -1;
-    for(var k = 0; k < qs.order.length; k++){ if(qs.order[k] !== k){ bad = k; break; } }
-    res.diag = bad >= 0 ? ('第 ' + (bad + 1) + ' 步放错了：『' + st.items[qs.order[bad]] + '』不该在这儿。想想这一步需要什么前提。') : '';
+    var chk = orderCheck(st, qs.order);
+    res.ok = chk.ok;
+    res.diag = chk.diag;
   }else if(st.type === 'num'){
     if(!qs.val){ flash('先填一个数。'); return; }
     res.ok = numEq(qs.val, st.answer);
@@ -4428,7 +4659,7 @@ function finalize(ok){
   qs.phase = 'sol';
   qs.fOk = ok;
   DB.recs.push({ts:Date.now(), qid:q.id, ok:ok, failed:qs.failed.slice(), hints:qs.hints || 0, stuck:null,
-                tries:qs.fAttempt});
+                tries:qs.fAttempt, idea:qs.usedIdea ? 1 : 0});
   saveDB();
   S.sess.n++;
   if(ok) S.sess.ok++;
@@ -4667,7 +4898,7 @@ function handleAct(el){
     S.mode = m;
     if(m === 'guide'){
       S.queue = BANK.map(function(q){ return q.id; });
-      S.qi = 0; S.sess = {n:0, ok:0, dims:{}};
+      S.qi = 0; S.sess = {n:0, ok:0, dims:{}}; S.qSwitch = false;
       loadQuestion();
     }else if(m === 'drill'){
       S.di = 0; S.dSel = null; S.dOk = null; S.dRight = 0; S.dWrong = [];
@@ -4699,6 +4930,16 @@ function handleAct(el){
     if(S.qi >= S.queue.length){ S.screen = 'done'; render(); }
     else loadQuestion();
     return;
+  }
+  if(act === 'qjump'){ guideJump(+el.getAttribute('data-qi')); return; }
+  if(act === 'qprev'){ guideJump(S.qi - 1); return; }
+  if(act === 'qnext2'){ guideJump(S.qi + 1); return; }
+  if(act === 'qlist'){ S.qSwitch = !S.qSwitch; render(); return; }
+  if(act === 'idea'){
+    if(!S.qs) return;
+    S.qs.idea = !S.qs.idea;
+    if(S.qs.idea) S.qs.usedIdea = true;     /* 报告里标一下：这题看过思路 */
+    render(); return;
   }
   if(act === 'stuck'){
     var dim = el.getAttribute('data-dim');
@@ -4758,6 +4999,7 @@ function handleAct(el){
       var q = BANK.filter(function(x){ return x.id === r.qid; })[0];
       lines.push(new Date(r.ts).toLocaleString() + '　' + (q ? q.title : r.qid) +
                  '　落笔' + (r.ok ? '全对' : '有错') +
+                 (r.idea ? '　看过思路' : '') +
                  (r.failed && r.failed.length ? '　卡点：' + r.failed.map(function(k){ return DIMNAME[k]; }).join('、') : ''));
     });
     var blob = new Blob([lines.join('\n')], {type:'text/plain;charset=utf-8'});
@@ -4777,7 +5019,10 @@ render();
 window.__APP__ = {BANK:BANK, DRILLS:DRILLS, PACKS:PACKS, DIMS:DIMS, DIMNAME:DIMNAME, RX:RX,
                   S:S, DB:DB, stats:stats, plotSVG:plotSVG, render:render, weakestDim:weakestDim,
                   allPacks:allPacks, findPack:findPack, validatePack:validatePack, exprFn:exprFn,
-                  importPacksText:importPacksText, packStat:packStat};
+                  importPacksText:importPacksText, packStat:packStat,
+                  orderCheck:orderCheck, orderFlex:orderFlex, guideJump:guideJump, viewTrain:viewTrain,
+                  handleAct:handleAct, submitStep:submitStep, loadQuestion:loadQuestion,
+                  ideaHTML:ideaHTML, finalize:finalize, viewReport:viewReport};
 </script>
 </body>
 </html>
