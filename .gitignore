@@ -19,3 +19,7 @@ bun.lock
 Thumbs.db
 desktop.ini
 *.bak-*
+
+# 背记训练器：开发自检产物（可重建，不进版本库）
+_verify/
+.verify-tmp2/
