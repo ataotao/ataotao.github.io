@@ -309,8 +309,8 @@ function warnHTML(c){
 }
 function pageLink(c){
   if(!c.page)return '';
-  const base=(DATA.imgBase||'images/'),pre=DATA.imgPrefix||'';
-  return ` <a href="${esc(base+pre+c.page+'.jpg')}" target="_blank" rel="noopener">对照原页 p${c.page}</a>`;
+  const base=(DATA.imgBase||'images/'),pre=DATA.imgPrefix||'',ext=DATA.imgExt||'jpg';
+  return ` <a href="${esc(base+pre+c.page+'.'+ext)}" target="_blank" rel="noopener">对照原页 p${c.page}</a>`;
 }
 function metaHTML(c){
   const bits=[];

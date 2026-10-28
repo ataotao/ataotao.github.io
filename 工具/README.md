@@ -7,17 +7,23 @@
   core-template.html      引擎（单文件网页模板，数据用 /*DATA*/null 占位）
   build.mjs               考点数据.json + 模板 → <科目>/核心考点训练.html
   merge.mjs               _transcribe/*.json（逐页转录）→ <科目>/考点数据.json
-  test.mjs                自检：用 jsdom 跑五个模式，断言 UI 与记录逻辑
+  compress-pages.js       <科目>/images/*.jpg → 1600px 宽 WebP（摆正 EXIF 方向、删原图）
+  test.mjs                自检：静态检查 + 用 jsdom 跑五个模式
   shots.mjs               生成 <科目>/预览截图/*.png
   _transcribe/            逐页转录的原始 JSON（每 3–4 页一个文件）
 ```
 
+> `compress-pages.js` 和 `shots.mjs` 要 `bun` + `sharp`；`merge` / `build` / `test` 用 `node`。
+
 ## 加页子 / 改内容
 
-1. 新页子放进 `<科目>/images/`，接着编号命名（如 `政治_11.jpg`）。
+1. 新页子放进 `<科目>/images/`，接着编号命名（如 `政治_11.jpg`），然后 `bun 工具/compress-pages.js 道德与法治` 压成 WebP。
+   手机拍的照片 EXIF 里带方向标记，脚本会 `rotate()` 把方向烤进像素——**不这么做，去掉 EXIF 的 WebP 在浏览器里会横过来**。
 2. 按 `_transcribe/` 里现有文件的格式，把新页转成考点卡 JSON（规范见下）。
 3. `node 工具/merge.mjs` —— 合并、清洗、按页码排序，产出 `<科目>/考点数据.json`。
 4. `node 工具/build.mjs` —— 生成网页（会顺带校验 id 唯一、`【】` 成对、表格列数）。
+
+图片压缩参考值：原页 4096×3072、2–3MB → 1600×2133、100–600KB（省 84%）。正文卡片已经把文字都提出来了，「对照原页」只是核对用，1600 宽足够看清印刷体和手写批注。
 
 只改文字（不改 id）时，练习记录不会丢：记录是按考点 id 存的。
 

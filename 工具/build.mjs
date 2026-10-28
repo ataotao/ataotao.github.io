@@ -42,6 +42,7 @@ for (const j of jobs) {
     title: data.title,
     imgBase: data.imgBase ?? 'images/',
     imgPrefix: data.imgPrefix ?? '',
+    imgExt: data.imgExt ?? 'jpg',
     cards,
   });
   if (!tpl.includes(MARK)) { console.error('模板缺少 DATA 标记'); process.exitCode = 1; break; }
