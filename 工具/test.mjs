@@ -1,6 +1,6 @@
 // 训练器自检：用 jsdom 在 Node 里跑五个模式，断言 UI 与记录逻辑
 // 用法：node 工具/test.mjs <科目目录>   例：node 工具/test.mjs 道德与法治
-import { readFileSync } from 'node:fs';
+import { readFileSync, existsSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createRequire } from 'node:module';
@@ -12,6 +12,37 @@ const { JSDOM, VirtualConsole } = require2('jsdom');
 const target = process.argv[2] || '道德与法治';
 const html = readFileSync(join(root, target, '核心考点训练.html'), 'utf8');
 
+/* ---------- 静态检查：只看文件，不开浏览器 ---------- */
+{
+  const res = [];
+  const ok = (n, c, extra = '') => res.push({ n, pass: !!c, extra });
+  const m = html.match(/const DATA = (\{[\s\S]*?\});\s*\n/);
+  ok('数据块能解析', !!m);
+  if (m) {
+    const D = JSON.parse(m[1]);
+    ok('考点数 > 0', D.cards.length > 0, D.cards.length + ' 张');
+    const ids = new Set(D.cards.map(c => c.id));
+    ok('考点 id 不重复', ids.size === D.cards.length, `${ids.size}/${D.cards.length}`);
+    ok('图片用 WebP', D.imgExt === 'webp', String(D.imgExt));
+    const pages = [...new Set(D.cards.map(c => c.page))].sort((a, b) => a - b);
+    const missing = pages.filter(p => !existsSync(join(root, target, D.imgBase, D.imgPrefix + p + '.' + D.imgExt)));
+    ok('每页都能找到原页图', missing.length === 0, missing.length ? '缺 p' + missing.join(',p') : `p${pages[0]}–p${pages[pages.length - 1]} 齐`);
+    const badBlank = D.cards.filter(c => {
+      const all = (c.a || []).concat(c.table ? c.table.rows.flat() : []).join('');
+      return (all.match(/【/g) || []).length !== (all.match(/】/g) || []).length;
+    });
+    ok('挖空标记【】成对', badBlank.length === 0, badBlank.map(c => c.id).join(',') || '全部成对');
+    const stray = D.cards.filter(c => /【\s*易错|【\s*必背|【\s*注意/.test(JSON.stringify(c)));
+    ok('批注没混成挖空', stray.length === 0, stray.map(c => c.id).join(',') || '无');
+    const tbl = D.cards.filter(c => c.table && c.table.rows.some(r => r.length !== c.table.head.length));
+    ok('表格列数一致', tbl.length === 0, tbl.map(c => c.id).join(',') || '无');
+  }
+  const bad = res.filter(x => !x.pass);
+  console.log(`${bad.length ? '❌' : '✅'} static  ${res.length - bad.length}/${res.length}`);
+  bad.forEach(x => console.log(`     ✗ ${x.n}${x.extra ? '  → ' + x.extra : ''}`));
+  if (bad.length) { console.log('\n静态检查未通过，后面的浏览器测试跳过。'); process.exit(1); }
+}
+
 const CASES = {
   recite: `
     ok('考点数 > 0', DATA.cards.length>0, DATA.cards.length+' 张');
@@ -19,6 +50,8 @@ const CASES = {
     const q0=document.querySelector('.q').textContent.trim();
     ok('题目文字非空', q0.length>2, q0.slice(0,20));
     ok('未揭晓时没有答案', document.querySelectorAll('.kw').length===0);
+    const link=document.querySelector('.meta a');
+    ok('「对照原页」指向 webp', link && /\.webp$/.test(link.getAttribute('href')), link && link.getAttribute('href'));
     document.querySelector('#show').click();
     const kws=document.querySelectorAll('.kw').length;
     ok('揭晓后有关键词高亮', kws>0, kws+' 处');

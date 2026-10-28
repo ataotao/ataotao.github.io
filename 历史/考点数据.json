@@ -3,6 +3,7 @@
   "title": "九年级上册历史核心考点",
   "imgBase": "images/",
   "imgPrefix": "历史_",
+  "imgExt": "webp",
   "cards": [
     {
       "id": "ls-p1-01",

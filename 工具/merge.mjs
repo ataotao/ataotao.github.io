@@ -110,6 +110,7 @@ for (const sub of SUBJECTS) {
     title: sub.title,
     imgBase: 'images/',
     imgPrefix: sub.imgPrefix,
+    imgExt: 'webp',
     cards: sorted,
   };
   writeFileSync(join(root, sub.dir, '考点数据.json'), JSON.stringify(out, null, 2), 'utf8');
