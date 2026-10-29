@@ -315,6 +315,41 @@ details.var .vs b{color:var(--brand-d)}
   .printcard td{border:1px solid #999;padding:2.4mm 3mm;vertical-align:top;font-size:11pt;line-height:1.5}
   .printcard td:first-child{width:26mm;font-weight:700;background:#f2f2f2;text-align:center}
 }
+/* ---------- v2：分值 / 得分 / 任务卡 ---------- */
+.ptbadge{display:inline-block;margin-left:8px;padding:1px 7px;border-radius:20px;background:var(--brand-l);
+  color:var(--brand-d);font-size:11.5px;font-weight:700;vertical-align:1px}
+.steprow{display:flex;align-items:center;gap:8px;padding:4px 0;font-size:13px;border-bottom:1px dashed var(--line)}
+.steprow:last-child{border-bottom:0}
+.okmark{color:var(--ok);font-weight:800}
+.nomark{color:var(--bad);font-weight:800}
+.steplab{flex:1;color:#3d3a35}
+.steppt{font-variant-numeric:tabular-nums;color:var(--muted);font-size:12.5px}
+.errpick{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:10px}
+.btn-mini.on{background:var(--brand);color:#fff;border-color:var(--brand)}
+.tasklist{margin-top:10px}
+.task{display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:12px;border:1px solid var(--line);
+  border-radius:12px;background:#fff;margin-bottom:8px;cursor:pointer;font-family:inherit}
+.task:hover{border-color:var(--brand);background:var(--brand-l)}
+.task .tn{width:22px;height:22px;border-radius:50%;background:var(--brand);color:#fff;font-size:12px;font-weight:700;
+  display:flex;align-items:center;justify-content:center;flex:0 0 22px}
+.task .tb{flex:1;min-width:0}
+.task .tb b{display:block;font-size:14px;margin-bottom:2px;color:var(--ink)}
+.task .tb i{font-style:normal;font-size:12.5px;color:var(--muted)}
+.task .go{color:var(--brand);font-weight:700;font-size:12.5px;flex:0 0 auto}
+.chipline{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.scorebar{display:grid;grid-template-columns:118px 1fr 88px;gap:10px;align-items:center;padding:6px 0}
+.scorebar .nm{font-size:13px;color:#3d3a35;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.scorebar .bar{height:9px;border-radius:6px;background:#eee9df;overflow:hidden}
+.scorebar .bar i{display:block;height:100%;background:var(--ok);border-radius:6px}
+.scorebar .bar i.mid{background:var(--warn)}
+.scorebar .bar i.low{background:var(--bad)}
+.scorebar .pc{text-align:right;font-size:12.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+.srow{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px dashed var(--line);font-size:13px}
+.srow:last-child{border-bottom:0}
+.srow .ptxt{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.srow .scmax{color:var(--muted);font-size:12.5px;flex:0 0 auto}
+.scin{width:60px;padding:5px 7px;border-radius:8px;border:1.5px solid var(--line);text-align:center;
+  font-size:14px;font-family:inherit;background:#fff}
 </style>
 </head>
 <body>
@@ -2113,7 +2148,7 @@ var PACKS = [
     "id": "pk-hanshu-1014",
     "name": "数学练习卷（10 月 14 日）",
     "source": "题库/数学函数练习卷【问卷】.pdf",
-    "exam": "10 月 14 日 数学练习（选择 8 + 填空 4 + 解答 4）",
+    "exam": "10 月 14 日 数学练习（选择 8×4 + 填空 4×4 + 解答 4×13，共 100 分）",
     "note": "第 8 题的四个选项图请对照原卷看；本工具用文字描述各选项。已按老师答卷核对校正（8=D、11 题边长 2、13(4) 求 m=7、16(3) 两个点）。",
     "questions": [
       {
@@ -2121,6 +2156,7 @@ var PACKS = [
         "no": "1",
         "group": "选择",
         "type": "choice",
+        "score": 4,
         "diff": 1,
         "focus": "trans",
         "ask": "下列函数是 y 关于 x 的反比例函数的是（　）",
@@ -2142,6 +2178,7 @@ var PACKS = [
         "no": "2",
         "group": "选择",
         "type": "choice",
+        "score": 4,
         "diff": 1,
         "focus": "model",
         "ask": "将抛物线 y = x² + 1 向左平移 2 个单位，再向下平移 3 个单位，所得抛物线是（　）",
@@ -2164,6 +2201,7 @@ var PACKS = [
         "no": "3",
         "group": "选择",
         "type": "choice",
+        "score": 4,
         "diff": 2,
         "focus": "graph",
         "ask": "根据表格数据，方程 x² + 3x - 5 = 0 的一个解 x 的取值范围为（　）",
@@ -2204,6 +2242,7 @@ var PACKS = [
         "no": "4",
         "group": "选择",
         "type": "choice",
+        "score": 4,
         "diff": 2,
         "focus": "graph",
         "ask": "汽车紧急刹车后前行的距离 s（米）与行驶时间 t（秒）的关系是 s = 30t - 5t²，则该车从开始刹车到停下来一共用时（　）",
@@ -2226,6 +2265,7 @@ var PACKS = [
         "no": "5",
         "group": "选择",
         "type": "choice",
+        "score": 4,
         "diff": 3,
         "focus": "plan",
         "ask": "如图，一抛物线型拱桥，当拱顶到水面的距离为 2m 时，水面宽度为 4m，那么水位上涨 1m 时，水面的宽度为（　）m",
@@ -2272,6 +2312,7 @@ var PACKS = [
         "no": "6",
         "group": "选择",
         "type": "choice",
+        "score": 4,
         "diff": 3,
         "focus": "graph",
         "ask": "如图是二次函数 y = ax² + bx + c 的图象，对称轴是直线 x = -1，下列结论正确的是（　）",
@@ -2306,6 +2347,7 @@ var PACKS = [
         "no": "7",
         "group": "选择",
         "type": "choice",
+        "score": 4,
         "diff": 3,
         "focus": "trans",
         "ask": "某农场建长方形养鸡场，一边靠墙（墙长 18m），墙对面有一个 2m 宽的门，另外三边用木栏围成，木栏长 30m。若鸡场的宽为 x m，面积为 S m²，则 S 与 x 的关系式为（　）",
@@ -2329,6 +2371,7 @@ var PACKS = [
         "no": "8",
         "group": "选择",
         "type": "choice",
+        "score": 4,
         "diff": 3,
         "focus": "plan",
         "ask": "如图，Rt△ABC 中 ∠C = 90°，AC = 8，BC = 6，动点 P 从 B 沿 BA 向 A 匀速运动，同时动点 Q 从 A 出发沿 AC → CB 向 B 匀速运动，速度相同，到各自终点停止。点 Q 运动的路程为 x，△BPQ 的面积为 y，则能反映 y 与 x 关系的图象是（　）",
@@ -2353,6 +2396,7 @@ var PACKS = [
         "no": "9",
         "group": "填空",
         "type": "fill",
+        "score": 4,
         "diff": 1,
         "focus": "model",
         "ask": "若点 P(3, 2) 在反比例函数 y = (k+1)/x 的图象上，则 k = ______。",
@@ -2373,6 +2417,7 @@ var PACKS = [
         "no": "10",
         "group": "填空",
         "type": "fill",
+        "score": 4,
         "diff": 3,
         "focus": "trans",
         "ask": "若两条抛物线开口方向相同、与 x 轴有相同交点，则它们所围成的封闭曲线称为\"月牙线\"。如图是由抛物线 y₁ = -(1/4)x² + 1 和抛物线 y₂ = -(1/2)x² + k 组成的\"月牙线\"，则 k 的值为 ______。",
@@ -2395,6 +2440,7 @@ var PACKS = [
         "no": "11",
         "group": "填空",
         "type": "fill",
+        "score": 4,
         "diff": 3,
         "focus": "plan",
         "ask": "如图，正方形 ABCD 的边长是 2，正方形 EFGH 的顶点分别在 AB、BC、CD、AD 上。设正方形 EFGH 的面积是 S，AE 的长是 x（x > 0），则当 x = ______ 时，S 取得最小值 ______。",
@@ -2423,6 +2469,7 @@ var PACKS = [
         "no": "12",
         "group": "填空",
         "type": "fill",
+        "score": 4,
         "diff": 3,
         "focus": "check",
         "selfCheck": true,
@@ -2444,6 +2491,7 @@ var PACKS = [
         "no": "13",
         "group": "解答",
         "type": "solve",
+        "score": 13,
         "diff": 2,
         "focus": "graph",
         "ask": "如图，是反比例函数 y = (m-3)/x 的图象的一支（在第一象限），根据图象回答问题：\n(1) 常数 m 的取值范围是 ______；图象的另一支在第 ______ 象限；\n(2) 在每个象限内 y 随 x 的增大而 ______；\n(3) 在该函数图象上取点 A(x₁,y₁)、B(x₂,y₂)、C(x₃,y₃)，如果 x₁ < 0 < x₂ < x₃，比较 y₁、y₂、y₃ 的大小；\n(4) 若点 C(-1,-4) 在该反比例函数的图象上，求 m 的值。",
@@ -2500,6 +2548,7 @@ var PACKS = [
         "no": "14",
         "group": "解答",
         "type": "solve",
+        "score": 13,
         "diff": 3,
         "focus": "plan",
         "ask": "如图，要建一个矩形场地，一面靠墙（墙长 8m），另三边用篱笆围成，篱笆总长 20m。设垂直于墙的一边 AD 为 x m，矩形场地的面积为 S m²。\n(1) S 与 x 的函数关系式：S = ______，x 的取值范围是 ______；\n(2) 若矩形场地的面积为 42 m²，求矩形的长与宽；\n(3) 求矩形场地面积的最大值，并写出此时的长与宽。",
@@ -2553,6 +2602,7 @@ var PACKS = [
         "no": "15",
         "group": "解答",
         "type": "solve",
+        "score": 13,
         "diff": 3,
         "focus": "model",
         "ask": "某商品进价每件 40 元，售价每件 50 元时每月可卖 210 件；售价每上涨 1 元，每月少卖 10 件，且每件售价不能超过 60 元。设每件售价上涨 x 元（x 为正整数），每月销售利润为 w 元。\n(1) 求 w 与 x 的函数关系式，并写出 x 的取值范围；\n(2) 售价定为多少元时月利润最大？最大月利润是多少？\n(3) 售价定为多少元时月利润恰为 2280 元？并直接写出售价 m 在什么范围时月利润不低于 2280 元。",
@@ -2621,6 +2671,7 @@ var PACKS = [
         "no": "16",
         "group": "解答",
         "type": "solve",
+        "score": 13,
         "diff": 3,
         "focus": "plan",
         "ask": "如图，抛物线 y = ax² + bx + 3 与 x 轴交于 A(-1, 0)、B(3, 0)，与 y 轴交于点 C。点 P 为抛物线上一动点。\n(1) 求抛物线的解析式；\n(2) 若 △BCP 的面积为 3，且点 P 在第一象限，求点 P 的坐标；\n(3) 当 ∠ACP 与 Rt△ACO 的一个内角相等时，求点 P 的坐标。",
@@ -2677,14 +2728,19 @@ var PACKS = [
     "id": "pk-qimo-mn-1028",
     "name": "九上数学期中模拟练习（2026.10.28）",
     "source": "题库/九上数学期中模拟练习【问卷】.pdf",
-    "exam": "九上数学 期中模拟练习（选择 10×4 分 + 填空 6×4 分 + 解答 56 分，共 120 分）",
-    "note": "已按《九上数学期中模拟练习【答案】.pdf》逐题核对答案。第 1 题的四个图形选项用文字描述、第 4/10/13/18/20/25 题的图形无法自动绘制，均请对照原卷；第 8/15/16/21/22/23/24 题配的是示意图象。第 18 题为作图题，按「自评题」处理（不判分，只给解析）。",
+    "exam": "九上数学 期中模拟练习（选择 10×4 分 + 填空 6×4 分 + 解答 86 分，共 150 分）",
+    "note": "已按《九上数学期中模拟练习【答案】.pdf》逐题核对答案。每题已标分值（按卷面 150 分）与知识点；分值在多个填空之间按「整数均分」分配（可在 steps 里逐项改 pt）。第 1 题的四个图形选项用文字描述、第 4/10/13/18/20/25 题的图形无法自动绘制，均请对照原卷；第 8/15/16/21/22/23/24 题配的是示意图象。第 18 题为作图题，按「自评题」处理（不判分，只给解析）。",
     "questions": [
       {
         "id": "m1",
         "no": "1",
         "group": "选择",
         "type": "choice",
+        "score": 4,
+        "kp": [
+          "图形的变换",
+          "轴对称与中心对称"
+        ],
         "diff": 1,
         "focus": "trans",
         "ask": "下列图形中，既是轴对称图形，又是中心对称图形的是（　）",
@@ -2710,6 +2766,11 @@ var PACKS = [
         "no": "2",
         "group": "选择",
         "type": "choice",
+        "score": 4,
+        "kp": [
+          "方程与应用",
+          "一元二次方程"
+        ],
         "diff": 1,
         "focus": "model",
         "ask": "若一元二次方程 x² − 5x + b = 0 的一个根是 x = 3，则另一个根是（　）",
@@ -2733,6 +2794,11 @@ var PACKS = [
         "no": "3",
         "group": "选择",
         "type": "choice",
+        "score": 4,
+        "kp": [
+          "函数与图象",
+          "反比例函数"
+        ],
         "diff": 2,
         "focus": "graph",
         "ask": "若点 (−5, a)、(−3, b)、(1, c) 都在反比例函数 y = 2/x 的图象上，则（　）",
@@ -2757,6 +2823,11 @@ var PACKS = [
         "no": "4",
         "group": "选择",
         "type": "choice",
+        "score": 4,
+        "kp": [
+          "图形的变换",
+          "旋转"
+        ],
         "diff": 2,
         "focus": "trans",
         "ask": "如图，△ABC 中，∠ACB = 90°，∠ABC = 40°。将 △ABC 绕点 B 逆时针旋转得到 △A′BC′，使点 C 的对应点 C′ 恰好落在边 AB 上，则 ∠CAA′ 的度数是（　）",
@@ -2782,6 +2853,11 @@ var PACKS = [
         "no": "5",
         "group": "选择",
         "type": "choice",
+        "score": 4,
+        "kp": [
+          "方程与应用",
+          "一元二次方程"
+        ],
         "diff": 2,
         "focus": "model",
         "ask": "要组织一次排球邀请赛，赛制为单循环形式（每两支球队之间比赛 1 场），根据场地和时间等条件，计划安排 36 场比赛，设比赛组织者邀请 x 支球队参赛，则 x 满足的关系式为（　）",
@@ -2804,6 +2880,11 @@ var PACKS = [
         "no": "6",
         "group": "选择",
         "type": "choice",
+        "score": 4,
+        "kp": [
+          "函数与图象",
+          "二次函数"
+        ],
         "diff": 2,
         "focus": "graph",
         "ask": "二次函数 y = x² 与反比例函数 y = k/x（k > 0）的图象的公共点个数为（　）",
@@ -2840,6 +2921,11 @@ var PACKS = [
         "no": "7",
         "group": "选择",
         "type": "choice",
+        "score": 4,
+        "kp": [
+          "函数与图象",
+          "二次函数"
+        ],
         "diff": 3,
         "focus": "plan",
         "ask": "二次函数 y = −x² − 2x + c² − 2c 在 −3 ≤ x ≤ 2 的范围内有最小值为 −5，则 c 的值为（　）",
@@ -2863,6 +2949,11 @@ var PACKS = [
         "no": "8",
         "group": "选择",
         "type": "choice",
+        "score": 4,
+        "kp": [
+          "函数与图象",
+          "二次函数"
+        ],
         "diff": 3,
         "focus": "graph",
         "ask": "已知二次函数 y = ax² + bx + c 的图象如图所示，下列结论：\n①a > 0；②b² − 4ac > 0；③4a + b = 0；④不等式 ax² + (b − 1)x + c < 0 的解集为 1 < x < 3。\n正确的结论个数是（　）",
@@ -2912,6 +3003,11 @@ var PACKS = [
         "no": "9",
         "group": "选择",
         "type": "choice",
+        "score": 4,
+        "kp": [
+          "函数与图象",
+          "二次函数"
+        ],
         "diff": 3,
         "focus": "model",
         "ask": "抛物线 y = ax² + bx + c 的图象经过 A(0, −1)，B(−1, 0)，C(3, 0) 三点，下面结论中正确的是（　）",
@@ -2937,6 +3033,11 @@ var PACKS = [
         "no": "10",
         "group": "选择",
         "type": "choice",
+        "score": 4,
+        "kp": [
+          "图形的变换",
+          "旋转"
+        ],
         "diff": 3,
         "focus": "plan",
         "ask": "如图，O 是等边 △ABC 内一点，OA = 3，OB = 4，OC = 5，将线段 BO 绕点 B 逆时针旋转 60° 得到线段 BO′，则 S△AOC + S△AOB 的值为（　）",
@@ -2962,6 +3063,11 @@ var PACKS = [
         "no": "11",
         "group": "填空",
         "type": "fill",
+        "score": 4,
+        "kp": [
+          "图形的变换",
+          "坐标与对称"
+        ],
         "diff": 1,
         "focus": "trans",
         "ask": "点 P(2, 3) 关于原点对称点 P′ 的坐标是 ______。",
@@ -2988,6 +3094,11 @@ var PACKS = [
         "no": "12",
         "group": "填空",
         "type": "fill",
+        "score": 4,
+        "kp": [
+          "函数与图象",
+          "二次函数"
+        ],
         "diff": 1,
         "focus": "trans",
         "ask": "将抛物线 y = 2(x − 1)² + 3 向右移 1 个单位，上移 2 个单位所得到的新抛物线解析式为 ______。",
@@ -3016,6 +3127,11 @@ var PACKS = [
         "no": "13",
         "group": "填空",
         "type": "fill",
+        "score": 4,
+        "kp": [
+          "图形的变换",
+          "旋转"
+        ],
         "diff": 2,
         "focus": "trans",
         "ask": "如图，在方格纸中，线段 AB 绕某个点旋转一定角度得到线段 CD，其中点 A 的对应点是点 C，则旋转中心是点 ______。",
@@ -3046,6 +3162,12 @@ var PACKS = [
         "no": "14",
         "group": "填空",
         "type": "fill",
+        "score": 4,
+        "kp": [
+          "函数与图象",
+          "二次函数",
+          "综合与实践"
+        ],
         "diff": 2,
         "focus": "model",
         "ask": "若飞机着陆后滑行的距离 y（单位：m）关于滑行时间 t（单位：s）的函数解析式是 y = 60t − 1.5t²。飞机着陆后，滑行 ______ 秒才能停下来，最后 4s 滑行了 ______ 米。",
@@ -3074,6 +3196,11 @@ var PACKS = [
         "no": "15",
         "group": "填空",
         "type": "fill",
+        "score": 4,
+        "kp": [
+          "几何综合",
+          "函数图象"
+        ],
         "diff": 3,
         "focus": "graph",
         "ask": "如图 1，在 △ABC 中，AB > AC，D 是边 BC 上的动点。设 B，D 两点之间的距离为 x，A，D 两点之间的距离为 y，表示 y 与 x 的函数关系的图象如图 2 所示，线段 AB 的长为 ______。",
@@ -3134,6 +3261,11 @@ var PACKS = [
         "no": "16",
         "group": "填空",
         "type": "fill",
+        "score": 4,
+        "kp": [
+          "函数与图象",
+          "二次函数"
+        ],
         "diff": 3,
         "focus": "graph",
         "ask": "如图，抛物线与 x 轴交于 A，B 两点，顶点 C(0, −4) 在 y 轴上，则下列结论：\n①抛物线解析式是 y = x² − 4；\n②若函数值 y > 0，则 x 的取值范围是 x < −2 或 x > 2；\n③若点 P 为抛物线上的一点，且 S△PAB = 4，则点 P 的坐标为 (√6, 2) 或 (−√6, 2)；\n④连接 BC，D 为线段 BC 上一点，过点 D 作 y 轴的平行线交抛物线于点 P，则 DP 有最大值为 1。\n其中正确的结论有 ______。",
@@ -3196,6 +3328,11 @@ var PACKS = [
         "no": "17",
         "group": "解答",
         "type": "solve",
+        "score": 6,
+        "kp": [
+          "方程与应用",
+          "一元二次方程"
+        ],
         "diff": 2,
         "focus": "model",
         "ask": "解下列方程：\n（1）x² − 3x − 1 = 0；\n（2）x(x + 4) = 2x + 8。",
@@ -3237,6 +3374,11 @@ var PACKS = [
         "no": "18",
         "group": "解答",
         "type": "solve",
+        "score": 6,
+        "kp": [
+          "图形的变换",
+          "旋转与作图"
+        ],
         "diff": 3,
         "focus": "trans",
         "selfCheck": true,
@@ -3257,6 +3399,11 @@ var PACKS = [
         "no": "19",
         "group": "解答",
         "type": "solve",
+        "score": 8,
+        "kp": [
+          "方程与应用",
+          "判别式与韦达"
+        ],
         "diff": 2,
         "focus": "model",
         "ask": "已知关于 x 的一元二次方程 x² − (2k − 1)x + k² = 0 有两个不相等的实数根。\n（1）求 k 的取值范围；\n（2）若此方程的两实数根 x₁，x₂ 满足 (x₁ − 1)(x₂ − 1) = 5，求 k 的值。",
@@ -3294,6 +3441,12 @@ var PACKS = [
         "no": "20",
         "group": "解答",
         "type": "solve",
+        "score": 8,
+        "kp": [
+          "方程与应用",
+          "一元二次方程",
+          "综合与实践"
+        ],
         "diff": 3,
         "focus": "plan",
         "ask": "在美化校园的活动中，某兴趣小组想借助如图所示的直角墙角（两边足够长），用 28 m 长的篱笆围成一个矩形花园 ABCD（篱笆只围 AB，BC 两边），设 AB = x m。\n（1）若花园的面积为 192 m²，求 x 的值；\n（2）若在 P 处有一棵树与墙 CD，AD 的距离分别是 15 m 和 6 m，要将这棵树围在花园内（含边界，不考虑树的粗细），求花园面积 S 的最大值。",
@@ -3334,6 +3487,12 @@ var PACKS = [
         "no": "21",
         "group": "解答",
         "type": "solve",
+        "score": 8,
+        "kp": [
+          "函数与图象",
+          "二次函数",
+          "综合与实践"
+        ],
         "diff": 3,
         "focus": "model",
         "ask": "一个横截面为抛物线形的隧道，其底部的宽 AB 为 10 m，拱高为 5 m，该隧道为双向车道，且两车道之间有 0.4 m 的隔离带，一辆宽为 3 m 的货车要安全通过这条隧道，需保持其顶部与隧道间有不少于 0.5 m 的空隙，按如图建立直角坐标系。\n（1）求抛物线的解析式；\n（2）若该辆货车高 2.5 m，请问它能否安全通过此隧道？并说明理由。",
@@ -3401,6 +3560,12 @@ var PACKS = [
         "no": "22",
         "group": "解答",
         "type": "solve",
+        "score": 10,
+        "kp": [
+          "函数与图象",
+          "反比例函数",
+          "综合与实践"
+        ],
         "diff": 3,
         "focus": "graph",
         "ask": "如图是某型号冷柜循环制冷过程中温度变化的部分示意图。该冷柜的工作过程是：当冷柜温度达到 −4℃ 时制冷开始，温度开始逐渐下降，当温度下降到 −20℃ 时制冷停止，温度开始逐渐上升，当温度上升到 −4℃ 时，制冷再次开始，…，按照以上方式循环工作。通过分析发现，当 0 ≤ x < 4 时，温度 y 是时间 x 的一次函数；当 4 ≤ x < t 时，温度 y 是时间 x 的反比例函数。\n（1）当 0 ≤ x < 4 时，求 y 关于 x 的一次函数解析式；\n（2）求 t 的值；\n（3）若规定温度低于 −10℃ 的时间为有效制冷时间，那么在一次循环过程中有多长时间属于有效制冷时间？",
@@ -3488,6 +3653,11 @@ var PACKS = [
         "no": "23",
         "group": "解答",
         "type": "solve",
+        "score": 12,
+        "kp": [
+          "函数与图象",
+          "反比例函数"
+        ],
         "diff": 3,
         "focus": "graph",
         "ask": "如图，直线 AB 与 x 轴交于点 A(1, 0)，与 y 轴交于点 B(0, 2)，将线段 AB 绕点 A 顺时针旋转 90° 得到线段 AC，反比例函数 y = k/x（k ≠ 0，x > 0）的图象经过点 C。\n（1）求直线 AB 的解析式；\n（2）求反比例函数 y = k/x（k ≠ 0，x > 0）；\n（3）已知点 P 是反比例函数 y = k/x 图象上的一个动点，求点 P 到直线 AB 距离最短时的坐标。",
@@ -3567,6 +3737,11 @@ var PACKS = [
         "no": "24",
         "group": "解答",
         "type": "solve",
+        "score": 14,
+        "kp": [
+          "函数与图象",
+          "二次函数"
+        ],
         "diff": 3,
         "focus": "plan",
         "ask": "如图①，已知抛物线 y = ax² + bx + 3（a ≠ 0）与 x 轴交于 A(−1, 0)，B(3, 0) 两点，与 y 轴交于点 C。\n（1）求该抛物线的表达式；\n（2）若点 D 是抛物线上第一象限内的一个动点，连接 CD，BD，BC，AC。当 △BCD 的面积等于 △AOC 面积的 2 倍时，求点 D 的坐标；\n（3）抛物线上是否存在点 P，使 ∠CBP + ∠ACO = ∠ABC？若存在，请求出点 P 坐标；若不存在请说明理由。",
@@ -3654,6 +3829,11 @@ var PACKS = [
         "no": "25",
         "group": "解答",
         "type": "solve",
+        "score": 14,
+        "kp": [
+          "几何综合",
+          "新定义"
+        ],
         "diff": 3,
         "focus": "check",
         "ask": "给出如下定义：若一个四边形中存在相邻两边的平方和等于一条对角线的平方，则称该四边形为勾股四边形。\n（1）以下四边形中，是勾股四边形的为 ______（填序号即可）；\n①平行四边形；②矩形；③有一个角为直角的任意凸四边形；④有一个角为 60° 的菱形。\n（2）如图 1，将 △ABC 绕顶点 C 按顺时针方向旋转 n° 得到 △EDC。\n①连接 AD，当 n = 60，∠BAD = 30° 时，求证：四边形 ABCD 是勾股四边形。\n②如图 2，将 DE 绕点 E 顺时针方向旋转得到 EF，连接 BF，BF 与 AE 交于点 P，连接 CP，若 ∠DEF = (180 − n)°，CP = 2，AE = 8，求 AC 的长度。",
@@ -4160,11 +4340,12 @@ function render(){
   if(S.screen === 'train' || S.screen === 'done' || S.screen === 'drill' || S.screen === 'drillsum'){
     chip.hidden = false;
     chip.textContent = (names[S.mode] || '训练') + (S.screen === 'train' ? ' · 第 ' + (S.qi + 1) + '/' + S.queue.length + ' 题' : '');
-  } else if(S.screen === 'paper' || S.screen === 'pack' || S.screen === 'paperq'){
+  } else if(S.screen === 'paper' || S.screen === 'pack' || S.screen === 'paperq' || S.screen === 'score'){
     var pk = S.packId ? findPack(S.packId) : null;
     chip.hidden = false;
     chip.textContent = (S.screen === 'paperq' && S.pq) ? ('试卷练习 · 第 ' + (S.pq.idx + 1) + '/' + pk.questions.length + ' 题')
-                     : (S.screen === 'pack' ? '试卷练习 · 题目列表' : '试卷练习');
+                     : (S.screen === 'pack' ? '试卷练习 · 题目列表'
+                     : (S.screen === 'score' ? '试卷练习 · 录得分' : '试卷练习'));
   } else if(S.screen === 'manage'){
     chip.hidden = false;
     chip.textContent = '题库管理';
@@ -4191,12 +4372,126 @@ function render(){
   else if(S.screen === 'paper') el.innerHTML = viewPaper();
   else if(S.screen === 'pack') el.innerHTML = viewPack();
   else if(S.screen === 'paperq') el.innerHTML = viewPaperQ();
+  else if(S.screen === 'score') el.innerHTML = viewScoreEntry();
   else if(S.screen === 'manage') el.innerHTML = viewManage();
   window.scrollTo(0, keepScroll ? prevY : 0);
   S._viewKey = vk;
 }
 
 /* ---------- 首页 ---------- */
+/* 今日任务卡的数据：错题数 / 得分率 / 已练题数 */
+function daySeed(){
+  var d = new Date();
+  return d.getFullYear() * 10000 + (d.getMonth() + 1) * 100 + d.getDate();
+}
+function dayRng(seed){
+  var s = seed % 2147483647;
+  if(s <= 0) s += 2147483646;
+  return function(){ s = (s * 16807) % 2147483647; return (s - 1) / 2147483646; };
+}
+/* 闪练顺序：上次做错的优先 → 没做过的 → 做过的；同档内按日期洗牌（当天固定，隔天变化） */
+function drillOrder(){
+  var last = {}, lastOk = {};
+  (DB.log || []).forEach(function(l){
+    if(!l || l.dim !== 'repr' || !l.qid) return;
+    if(!last[l.qid] || last[l.qid] < l.ts){ last[l.qid] = l.ts; lastOk[l.qid] = l.ok; }
+  });
+  var r = dayRng(daySeed());
+  var arr = DRILLS.map(function(d, i){
+    var p;
+    if(last[d.id] == null) p = 1;
+    else p = lastOk[d.id] ? 2 : 0;
+    return {i:i, p:p, k:r()};
+  });
+  arr.sort(function(a, b){ return a.p - b.p || a.k - b.k; });
+  return arr.map(function(o){ return o.i; });
+}
+function curDrill(){
+  var i = (S.dOrder && S.dOrder.length) ? S.dOrder[S.di] : S.di;
+  return DRILLS[i];
+}
+/* 引导训练：挑最久没做、错得最多的那一组 */
+function guidePickIndex(){
+  var last = {}, fails = {};
+  (DB.recs || []).forEach(function(r){
+    if(!last[r.qid] || last[r.qid] < r.ts) last[r.qid] = r.ts;
+    if(r.ok === false) fails[r.qid] = (fails[r.qid] || 0) + 1;
+  });
+  var best = 0, bestScore = -1;
+  BANK.forEach(function(q, i){
+    var t = last[q.id] || 0;
+    var stale = t ? (Date.now() - t) / 86400000 : 999;
+    var score = stale + (fails[q.id] || 0) * 3;
+    if(score > bestScore){ bestScore = score; best = i; }
+  });
+  return best;
+}
+/* 错题回炉：按 1/3/7/14 天间隔，找出今天到期的错题 */
+var REVIEW_GAPS = [1, 3, 7, 14];
+function dueList(limit){
+  var groups = {};
+  (DB.paper || []).forEach(function(r){
+    if(r.score == null) return;
+    var k = r.pack + '|' + r.qid;
+    (groups[k] = groups[k] || []).push(r);
+  });
+  var out = [];
+  Object.keys(groups).forEach(function(k){
+    var list = groups[k].sort(function(a, b){ return a.ts - b.ts; });
+    var last = list[list.length - 1];
+    var bad = (last.ok === false) || (last.got != null && last.got < last.score);
+    if(!bad) return;
+    var n = Math.min(list.length - 1, REVIEW_GAPS.length - 1);
+    var due = last.ts + REVIEW_GAPS[n] * 86400000;
+    if(due > Date.now()) return;
+    var p = findPack(last.pack), q = findQ(last.pack, last.qid);
+    if(!q) return;
+    var idx = p ? p.questions.indexOf(q) : -1;
+    out.push({due: due, rec: last, pack: last.pack, qid: last.qid, q: q, idx: idx});
+  });
+  out.sort(function(a, b){ return a.due - b.due; });
+  return out.slice(0, limit || 3);
+}
+function taskInfo(){
+  var got = 0, max = 0, errN = 0, partialN = 0;
+  var latest = {};
+  (DB.paper || []).forEach(function(r){
+    var key = r.pack + '|' + r.qid;
+    if(!latest[key] || (latest[key].ts || 0) < (r.ts || 0)) latest[key] = r;
+  });
+  Object.keys(latest).forEach(function(k){
+    var r = latest[k];
+    if(r.score == null) return;
+    got += (r.got == null ? (r.ok ? r.score : 0) : r.got);
+    max += r.score;
+    if(r.ok === false) errN++;
+    else if(r.got != null && r.got > 0 && r.got < r.score) partialN++;
+  });
+  var due = dueList(3);
+  var out = {errN: errN, partialN: partialN, got: got, max: max, due: due};
+  if(due.length){
+    out.dueTxt = '今天到期 ' + due.length + ' 题：' + due.slice(0, 2).map(function(d){
+      return '第 ' + (d.q.no || '?') + ' 题（' + (d.rec.got || 0) + '/' + d.rec.score + '）';
+    }).join('、') + (due.length > 2 ? '…' : '');
+    out.dueBtn = '第 ' + (due[0].q.no || '?') + ' 题';
+  }else if(errN || partialN){
+    out.dueTxt = (errN ? errN + ' 道做错' : '') + (errN && partialN ? ' + ' : '') +
+                 (partialN ? partialN + ' 道没拿满' : '') + '：明天开始按 1/3/7 天回炉';
+    out.dueBtn = '去看错题';
+  }else{
+    out.dueTxt = '还没有错题记录；先去变式题库练一组';
+    out.dueBtn = '去练';
+  }
+  if(max){
+    var p = Math.round(got / max * 100);
+    out.scoreTxt = '已录入的试卷得分率 <b>' + p + '%</b>（' + got + ' / ' + max + ' 分）' +
+                   (p < 60 ? ' · 目标先到 60%（及格线）' : ' · 下一步攻中档题的分步得分');
+  }
+  var nGuide = (DB.recs || []).length;
+  if(nGuide) out.guide = '已走过 ' + nGuide + ' 题，今天自动挑最久没练的一组';
+  return out;
+}
+
 function viewHome(){
   var st = stats(), total = 0, ok = 0;
   Object.keys(st).forEach(function(k){ total += st[k].n; ok += st[k].ok; });
@@ -4212,23 +4507,29 @@ function viewHome(){
   });
   h.push('</div></section>');
 
-  h.push('<div class="modes">');
-  h.push('<button class="mode rec" data-act="start" data-mode="guide"><h3>引导训练 <span class="tag">推荐</span></h3>' +
-         '<p>8 组母题（一次函数 / 反比例 / 二次函数 / 分段图象），每题五问。走完五步才允许落笔，答错会说清错在哪一步；卡住了点「看思路」，五步要点一次看全。</p>' +
+  /* 今日任务卡：把 5 个入口收成 3 件事，按顺序做 */
+  var tinfo = taskInfo();
+  h.push('<div class="card"><div class="qhead"><span class="tag">今日任务 · 约 25 分钟</span>' +
+         '<span class="tiny muted">按顺序做，不用挑</span></div><div class="tasklist">');
+  h.push('<button class="task" data-act="start" data-mode="drill"><span class="tn">1</span>' +
+         '<span class="tb"><b>基础快练 · 10 分钟</b><i>闪练 12 题：先补上次错的，其余每天换顺序</i></span>' +
          '<span class="go">开始 →</span></button>');
-  h.push('<button class="mode" data-act="papers"><h3>试卷练习 <span class="tag-soft">新</span></h3>' +
-         '<p>两份卷子（反比例单元测 + 10 月 14 日练习）共 39 题：原题重现、自动判分、分步解析。做完学校的卷子来这里对答案、看思路。</p>' +
-         '<span class="go">进入 →</span></button>');
-  h.push('<button class="mode" data-act="start" data-mode="drill"><h3>闪练 · 四种表示</h3>' +
-         '<p>12 道快题，练“式子 ↔ 图象 ↔ 表格”的来回转换。一轮约 5 分钟，专治“会算但看不懂图”。</p>' +
+  h.push('<button class="task" data-act="start" data-mode="guide"><span class="tn">2</span>' +
+         '<span class="tb"><b>一题深练 · 8 分钟</b><i>' + esc(tinfo.guide || '五步母题：卡住了点提示，先自己想 20 秒') + '</i></span>' +
          '<span class="go">开始 →</span></button>');
-  h.push('<button class="mode" data-act="library"><h3>变式题库 <span class="tag-soft">选变式 · 自动判分</span></h3>' +
-         '<p>8 组母题 × 2 个变式。选一个变式直接开练：先自己做、提交判分，再对照“变了什么、没变什么”；' +
-         '做错的单独重做——这是从“会一道”到“会一类”的桥。</p>' +
-         '<span class="go">开始 →</span></button>');
-  h.push('<button class="mode" data-act="report"><h3>训练报告</h3>' +
-         '<p>五个环节各自的命中率，指出你最容易断在哪一步，并给出对应的三条训练动作。</p>' +
-         '<span class="go">查看 →</span></button>');
+  var due = (tinfo.due && tinfo.due[0]) || null;
+  var dueAct = due ? 'dueopen' : (tinfo.errN ? 'papers' : 'library');
+  var dueAttrs = due ? ' data-pack="' + esc(due.pack) + '" data-idx="' + due.idx + '"' : '';
+  h.push('<button class="task" data-act="' + dueAct + '"' + dueAttrs + '><span class="tn">3</span>' +
+         '<span class="tb"><b>错题回炉 · 7 分钟</b><i>' + esc(tinfo.dueTxt) + '</i></span>' +
+         '<span class="go">' + esc(tinfo.dueBtn || '去练') + ' →</span></button>');
+  h.push('</div>');
+  if(tinfo.scoreTxt) h.push('<div class="small muted" style="margin-top:6px">' + tinfo.scoreTxt + '</div>');
+  h.push('<div class="chipline">' +
+         '<button class="btn-mini" data-act="papers">试卷练习</button>' +
+         '<button class="btn-mini" data-act="library">变式题库</button>' +
+         '<button class="btn-mini" data-act="report">训练报告</button>' +
+         '<button class="btn-mini" data-act="manage">题库管理</button></div>');
   h.push('</div>');
 
   h.push('<div class="rec-box">');
@@ -4248,8 +4549,9 @@ function viewHome(){
            '<button class="btn-mini" data-act="reset">清空记录</button></div>');
   }
   h.push('</div>');
-  h.push('<p class="tiny muted" style="margin-top:18px;line-height:1.9">用法建议：每天 1 题引导训练 + 1 轮闪练（约 20 分钟），连续 5 天。' +
-         '做题时把纸放在旁边，工具只负责“问”，落笔和计算必须在纸上完成；学校发了卷子，就整张做完再录进「试卷练习」对答案。</p>');
+  h.push('<p class="tiny muted" style="margin-top:18px;line-height:1.9">用法建议：每天按任务卡走完 25 分钟（基础快练 → 一题深练 → 错题回炉）。' +
+         '做题时把纸放在旁边，工具只负责“问”和判分，落笔和计算必须在纸上完成；学校发了卷子，就整张做完再录进「试卷练习」，' +
+         '每题得分填准——得分率比题数正确率更能说明问题。</p>');
   return h.join('');
 }
 
@@ -4944,7 +5246,7 @@ function viewLibQ(){
 
 /* ---------- 闪练 ---------- */
 function viewDrill(){
-  var d = DRILLS[S.di], answered = S.dOk !== null;
+  var d = curDrill(), answered = S.dOk !== null;
   var h = [];
   h.push('<div class="rail"><div class="n now"><b>' + (S.di + 1) + '</b>第 ' + (S.di + 1) + ' / ' + DRILLS.length + ' 题</div>' +
          '<div class="n done"><b>✓</b>已对 ' + S.dRight + '</div></div>');
@@ -5022,15 +5324,100 @@ function viewDrillSum(){
 }
 
 /* ---------- 报告 ---------- */
+/* ---------- 得分档案（按分值，而不是题数） ---------- */
+function scoreReportHTML(){
+  var latest = {}, keys = [];
+  (DB.paper || []).forEach(function(r){
+    var key = r.pack + '|' + r.qid;
+    if(!latest[key]) keys.push(key);
+    if(!latest[key] || (latest[key].ts || 0) < (r.ts || 0)) latest[key] = r;
+  });
+  if(!keys.length) return '';
+  var byPack = {}, byKp = {}, partial = [], errs = {},
+      nScored = 0, got = 0, max = 0, noKp = {n:0, max:0, got:0};
+  keys.forEach(function(k){
+    var r = latest[k], q = findQ(r.pack, r.qid);
+    if(!q) return;
+    var score = qScore(q) || r.score || 0;
+    if(!score) return;
+    var g = (r.got == null ? (r.ok ? score : 0) : r.got);
+    nScored++; got += g; max += score;
+    if(r.err) errs[r.err] = (errs[r.err] || 0) + 1;
+    var pk = findPack(r.pack), pid = r.pack;
+    if(!byPack[pid]) byPack[pid] = {name: pk ? pk.name : pid, got:0, max:0, n:0};
+    byPack[pid].got += g; byPack[pid].max += score; byPack[pid].n++;
+    var kp = kpOf(q);
+    if(kp){
+      if(!byKp[kp]) byKp[kp] = {got:0, max:0, n:0};
+      byKp[kp].got += g; byKp[kp].max += score; byKp[kp].n++;
+    }else{
+      noKp.n++; noKp.got += g; noKp.max += score;
+    }
+    if(g > 0 && g < score) partial.push({q:q, got:g, score:score, pack:pk});
+  });
+  if(!nScored) return '';
+  var h = [];
+  h.push('<div class="card"><div class="qhead"><span class="tag">得分档案</span>' +
+         '<span class="tiny muted">按分值算，不按题数</span></div>');
+  h.push('<div class="row small" style="margin-top:4px"><span>已录 <b>' + nScored + '</b> 题，合计 <b>' + got + '</b> / ' + max +
+         ' 分（<b>' + Math.round(got / max * 100) + '%</b>）' +
+         (max >= 100 ? '　目标线：60%（' + Math.round(max * 0.6) + ' 分）' : '') + '</span></div>');
+  var kps = Object.keys(byKp);
+  if(kps.length){
+    h.push('<div style="margin-top:12px">');
+    kps.sort(function(a, b){ return byKp[b].max - byKp[a].max; }).forEach(function(k){
+      var o = byKp[k], p = Math.round(o.got / o.max * 100);
+      var cls = p < 40 ? 'low' : (p < 70 ? 'mid' : '');
+      h.push('<div class="scorebar"><div class="nm">' + esc(k) + '</div>' +
+             '<div class="bar"><i class="' + cls + '" style="width:' + p + '%"></i></div>' +
+             '<div class="pc">' + o.got + ' / ' + o.max + '（' + p + '%）</div></div>');
+    });
+    h.push('</div>');
+  }
+  if(noKp.n){
+    h.push('<div class="tiny muted" style="margin-top:4px">另有 ' + noKp.n + ' 题（' + noKp.max + ' 分）未标知识点，未计入板块。</div>');
+  }
+  var packIds = Object.keys(byPack);
+  if(packIds.length > 1){
+    h.push('<div class="small muted" style="margin-top:10px">分卷：' + packIds.map(function(id){
+      var o = byPack[id];
+      return esc(o.name) + ' ' + o.got + ' / ' + o.max;
+    }).join('　·　') + '</div>');
+  }
+  if(partial.length){
+    h.push('<div class="qhead" style="margin-top:14px"><span class="tag tag-warn">会但没拿满</span>' +
+           '<span class="tiny muted">最该讲的就是这几道</span></div>');
+    partial.sort(function(a, b){ return (b.got / b.score) - (a.got / a.score); }).slice(0, 6).forEach(function(it){
+      h.push('<div class="wrongitem"><div class="row"><b>第 ' + esc(it.q.no || '') + ' 题</b>' +
+             '<span class="tag-soft">' + it.got + ' / ' + it.score + ' 分</span>' +
+             (kpOf(it.q) ? '<span class="tag-soft">' + esc(kpOf(it.q)) + '</span>' : '') + '</div>' +
+             '<div class="tiny muted" style="margin-top:3px">' + esc(it.q.tip || '') + '</div></div>');
+    });
+  }
+  var errKeys = Object.keys(errs);
+  if(errKeys.length){
+    h.push('<div class="small muted" style="margin-top:12px">错因：' + errKeys.map(function(k){
+      return esc(k) + ' ' + errs[k] + ' 题';
+    }).join('　·　') + '</div>');
+    if(errs['入口不会']){
+      h.push('<div class="tiny muted">「入口不会」多 → 先练“只写得分点”，不是多刷题；「算错」多 → 每天 10 分钟计算。</div>');
+    }
+  }
+  h.push('</div>');
+  return h.join('');
+}
+
 function viewReport(){
   var st = stats(), total = 0, ok = 0;
   Object.keys(st).forEach(function(k){ total += st[k].n; ok += st[k].ok; });
+  var hasPaper = (DB.paper || []).length > 0;
   var h = [];
-  if(total === 0){
-    h.push('<div class="card"><div class="empty-state">还没有数据。<br>先做 1～2 题引导训练，报告才有东西可看。</div>' +
+  if(total === 0 && !hasPaper){
+    h.push('<div class="card"><div class="empty-state">还没有数据。<br>先做 1～2 题引导训练，或到「试卷练习」录一次得分，报告才有东西可看。</div>' +
            '<div class="row" style="justify-content:center"><button class="btn btn-primary" data-act="start" data-mode="guide">去引导训练</button></div></div>');
     return h.join('');
   }
+  if(total > 0){
   h.push('<div class="card"><div class="qhead"><span class="tag">训练报告</span><span class="tag-soft">累计 ' + total + ' 个判断</span></div>');
   h.push('<div class="small muted">每个环节只看“第一次就答对”的比例——提示之后答对不算会。</div>');
   h.push('<div style="margin-top:14px">');
@@ -5058,6 +5445,9 @@ function viewReport(){
            ' 题，正确率 <b>' + (prG.length ? Math.round(prR / prG.length * 100) : 0) + '%</b></div>');
   }
   h.push('</div>');
+  }
+
+  h.push(scoreReportHTML());
 
   var weak = weakestDim(st);
   if(weak && pct(st[weak]) < 80){
@@ -5148,22 +5538,127 @@ function findPack(id){
 }
 function packStat(p){
   var recs = (DB.paper || []).filter(function(r){ return r.pack === p.id; });
-  var map = {}, right = 0, graded = 0, done = 0;
+  var map = {}, done = 0;
   recs.forEach(function(r){
-    if(!map[r.qid]) done++;
+    var prev = map[r.qid];
+    if(prev && prev.ts && r.ts && prev.ts > r.ts) return;   /* 只留每题最后一次 */
+    if(!prev) done++;
     map[r.qid] = r;
-    if(r.ok !== null){ graded++; if(r.ok) right++; }
   });
-  return {total:p.questions.length, done:Math.min(done, p.questions.length), right:right, graded:graded, map:map};
+  var right = 0, graded = 0, got = 0, max = 0, scored = false;
+  Object.keys(map).forEach(function(k){
+    var r = map[k];
+    if(r.ok !== null){ graded++; if(r.ok) right++; }
+    if(r.score != null){
+      scored = true; max += r.score;
+      got += (r.got == null ? (r.ok ? r.score : 0) : r.got);
+    }
+  });
+  return {total:p.questions.length, done:Math.min(done, p.questions.length), right:right, graded:graded,
+          map:map, got:got, max:max, scored:scored};
 }
 function focusTag(k){ return DIMNAME[k] || '综合'; }
 function stars(n){ n = n || 2; return '★★★'.slice(0, n) + '☆☆☆'.slice(0, 3 - n); }
 
+/* ---------- 分值 / 知识点 / 分步判分 ---------- */
+function qScore(q){
+  if(q && typeof q.score === 'number' && isFinite(q.score) && q.score > 0) return q.score;
+  return null;
+}
+function kpOf(q){ return (q && q.kp && q.kp.length) ? String(q.kp[0]) : ''; }
+function splitPts(total, n){
+  if(!total || !n) return [];
+  var base = Math.floor(total / n), rest = total - base * n, out = [];
+  for(var i = 0; i < n; i++) out.push(base + (i < rest ? 1 : 0));
+  return out;
+}
+/* 题目 → 判分步骤 [{pt, fd}]：优先 steps，其次 fields 整数均分，选择题一步 */
+function stepsOf(q){
+  if(!q) return [];
+  if(q.steps && q.steps.length){
+    return q.steps.map(function(s){
+      var fd = {};
+      Object.keys(s).forEach(function(k){ if(k !== 'pt') fd[k] = s[k]; });
+      return {pt: (typeof s.pt === 'number' ? s.pt : 0), fd: fd};
+    });
+  }
+  if(q.type === 'choice'){
+    return [{pt: qScore(q) || 0, fd: {type:'choice', label:'选项', options:q.opts || [], ans:q.ans}}];
+  }
+  if(q.fields && q.fields.length){
+    var pts = splitPts(qScore(q) || 0, q.fields.length);
+    return q.fields.map(function(fd, i){ return {pt: pts[i] || 0, fd: fd}; });
+  }
+  return [];
+}
+function stepValue(fd, ent, i){
+  if(fd.type === 'coef') return (fd.ans || []).map(function(a, k){ return ent[i + '.' + k]; });
+  return ent[i + '.0'];
+}
+function gradeSteps(q, qs){
+  var steps = stepsOf(q), got = 0, detail = [], okAll = true;
+  steps.forEach(function(st, i){
+    var ok;
+    if(q.type === 'choice') ok = (qs.sel === q.ans);
+    else ok = checkField(st.fd, stepValue(st.fd, qs.ent || {}, i));
+    if(!ok) okAll = false;
+    if(ok) got += st.pt;
+    detail.push({pt: st.pt, ok: ok, label: st.fd.label || ('第 ' + (i + 1) + ' 空')});
+  });
+  return {ok: okAll, got: got, score: qScore(q), detail: detail,
+          wrong: detail.filter(function(d){ return !d.ok; }).length};
+}
+function packMax(p){
+  var t = 0, has = false;
+  ((p && p.questions) || []).forEach(function(q){ var s = qScore(q); if(s){ t += s; has = true; } });
+  return has ? t : null;
+}
+function findQ(packId, qid){
+  var p = findPack(packId);
+  if(!p) return null;
+  return p.questions.filter(function(x){ return x.id === qid; })[0] || null;
+}
+function builtinPack(id){ return PACKS.filter(function(p){ return p.id === id; })[0] || null; }
+function localPack(id){ return (DB.packs || []).filter(function(p){ return p.id === id; })[0] || null; }
+function scoredCount(p){
+  var n = 0;
+  ((p && p.questions) || []).forEach(function(q){ if(qScore(q)) n++; });
+  return n;
+}
+/* 本地导入版比内置版少了分值/知识点时，返回差距（否则 null） */
+function packMetaGap(id){
+  var b = builtinPack(id), l = localPack(id);
+  if(!b || !l) return null;
+  var bn = scoredCount(b), ln = scoredCount(l);
+  if(bn <= ln) return null;
+  return {builtin:b, local:l, builtinScored:bn, localScored:ln};
+}
+/* 启动时把内置版的分值/知识点补进同 id 的本地导入包（保留本地答案改动） */
+function mergePackMeta(){
+  var changed = 0;
+  (DB.packs || []).forEach(function(lp){
+    var bp = builtinPack(lp.id);
+    if(!bp) return;
+    var byId = {};
+    (bp.questions || []).forEach(function(q){ byId[q.id] = q; });
+    (lp.questions || []).forEach(function(q){
+      var b = byId[q.id];
+      if(!b) return;
+      if(q.score == null && b.score != null){ q.score = b.score; changed++; }
+      if(!q.kp && b.kp){ q.kp = b.kp.slice(); changed++; }
+      if(!q.steps && b.steps){ q.steps = b.steps; }
+    });
+  });
+  if(changed) saveDB();
+  return changed;
+}
+
 /* ---------- 通用字段渲染（落笔 / 试卷题共用） ---------- */
-function fieldsHTML(fields, ent, showWrong){
+function fieldsHTML(fields, ent, showWrong, pts){
   var h = ['<div class="fields">'];
   fields.forEach(function(fd, i){
-    h.push('<div class="field"><div class="lab">' + esc(fd.label) + '</div>');
+    h.push('<div class="field"><div class="lab">' + esc(fd.label) +
+           (pts && pts[i] != null ? '<span class="ptbadge">' + pts[i] + ' 分</span>' : '') + '</div>');
     if(fd.type === 'coef'){
       var parts = fd.tpl.split(/(\{\d+\})/);
       h.push('<div class="blank" style="font-size:16px">');
@@ -5251,8 +5746,17 @@ function viewPaper(){
            (p.source ? '<span class="tag-soft">' + esc(p.source) + '</span>' : '') + '</div>');
     if(p.exam) h.push('<div class="small muted">' + esc(p.exam) + '</div>');
     if(p.note) h.push('<div class="tiny muted" style="margin-top:4px">' + esc(p.note) + '</div>');
-    h.push('<div class="row small" style="margin-top:10px"><span>共 ' + st.total + ' 题，已做 ' + st.done + ' 题</span>' +
-           (rate === null ? '<span class="muted">还没有判定记录</span>' : '<span>正确率 <b>' + rate + '%</b></span>') + '</div>');
+    var gap = packMetaGap(p.id);
+    if(gap){
+      h.push('<div class="small" style="margin-top:6px;color:var(--warn)">本地导入的是旧版（' + gap.localScored + ' 题有分值），' +
+             '内置版有 ' + gap.builtinScored + ' 题：' +
+             '<button class="btn-mini" data-act="usebuiltin" data-pack="' + esc(p.id) + '">用内置版本覆盖</button></div>');
+    }
+    var pm = packMax(p);
+    h.push('<div class="row small" style="margin-top:10px"><span>共 ' + st.total + ' 题' +
+           (pm ? '，满分 ' + pm + ' 分' : '，分值未录') + '，已做 ' + st.done + ' 题</span>' +
+           (rate === null ? '<span class="muted">还没有判定记录</span>' : '<span>正确率 <b>' + rate + '%</b></span>') +
+           (st.scored && st.max ? '<span>得分 <b>' + st.got + '</b> / ' + st.max + '</span>' : '') + '</div>');
     h.push('<div class="tools" style="margin-top:10px">' +
            '<button class="btn btn-primary" data-act="openpack" data-pack="' + esc(p.id) + '">' +
            (st.done ? '继续练习' : '开始练习') + '</button>' +
@@ -5267,7 +5771,9 @@ function viewPack(){
   if(!p){ S.screen = 'paper'; return viewPaper(); }
   var st = packStat(p), h = [];
   h.push('<div class="card"><div class="qhead"><span class="tag">' + esc(p.name) + '</span>' +
-         '<span class="tag-soft">' + st.done + ' / ' + st.total + ' 已做</span></div>');
+         '<span class="tag-soft">' + st.done + ' / ' + st.total + ' 已做' +
+         (st.scored && st.max ? '　得分 ' + st.got + ' / ' + st.max
+                              : (packMax(p) ? '' : '　分值未录')) + '</span></div>');
   h.push('<div class="packlist">');
   p.questions.forEach(function(q, i){
     var rec = st.map[q.id];
@@ -5277,22 +5783,102 @@ function viewPack(){
            '<span class="pno">' + esc(q.no || (i + 1)) + '</span>' +
            '<span class="pmark">' + mark + '</span>' +
            '<span class="ptxt">' + esc((q.ask || '').split('\n')[0].slice(0, 42)) + (q.ask && q.ask.length > 42 ? '…' : '') + '</span>' +
-           '<span class="pmeta">' + esc(q.group || '') + ' · ' + focusTag(q.focus) + '</span></button>');
+           '<span class="pmeta">' + (qScore(q) ? qScore(q) + ' 分 · ' : '') + esc(q.group || '') + ' · ' + focusTag(q.focus) +
+           (rec && rec.got != null && rec.score != null ? '<br>得 ' + rec.got + ' / ' + rec.score : '') + '</span></button>');
   });
   h.push('</div>');
-  h.push('<div class="tools" style="margin-top:12px"><button class="btn" data-act="papers">← 返回试卷列表</button></div></div>');
+  var pm = packMax(p), gap = packMetaGap(p.id);
+  if(gap){
+    h.push('<div class="small" style="margin-top:8px;color:var(--warn)">本地导入的是旧版（' + gap.localScored + ' 题有分值），' +
+           '内置版有 ' + gap.builtinScored + ' 题：' +
+           '<button class="btn-mini" data-act="usebuiltin" data-pack="' + esc(p.id) + '">用内置版本覆盖</button></div>');
+  }
+  h.push('<div class="tools" style="margin-top:12px"><button class="btn" data-act="papers">← 返回试卷列表</button>' +
+         (pm ? '<button class="btn btn-primary" data-act="scoreentry">录得分（按卷面）</button>'
+             : '<span class="tiny muted">这套卷还没录分值，暂时不能录得分</span>') + '</div></div>');
   return h.join('');
 }
 
 /* ---------- 单题作答 ---------- */
+/* ---------- 按卷面录得分（不用重做，直接填分） ---------- */
+function viewScoreEntry(){
+  var p = findPack(S.packId);
+  if(!p){ S.screen = 'paper'; return viewPaper(); }
+  var st = packStat(p), h = [];
+  var scored = scoredCount(p);
+  if(!scored){
+    var gap = packMetaGap(p.id);
+    h.push('<div class="card"><div class="qhead"><span class="tag">录得分</span><span class="tag-soft">' + esc(p.name) + '</span></div>');
+    h.push('<div class="empty-state">这套卷还没有分值，所以没有可填的框。</div>');
+    if(gap){
+      h.push('<div class="small muted" style="margin-top:8px">你本地导入的是旧版题包（只有 ' + gap.localScored + ' 题带分值），' +
+             '内置版已经有 ' + gap.builtinScored + ' 题分值。点下面按钮改用内置版（答案不变，只补分值）。</div>');
+      h.push('<div class="tools" style="margin-top:10px">' +
+             '<button class="btn btn-primary" data-act="usebuiltin" data-pack="' + esc(p.id) + '">用内置版本覆盖</button>' +
+             '<button class="btn" data-act="pack">返回题目列表</button></div>');
+    }else{
+      h.push('<div class="small muted" style="margin-top:8px">这套卷还没录分值。到「题库管理」给每道题补 <code>score</code>，' +
+             '或先用已经有分值的卷子：九上期中模拟练习（150 分）、10 月 14 日练习（100 分）。</div>');
+      h.push('<div class="tools" style="margin-top:10px">' +
+             '<button class="btn" data-act="papers">看看其它卷子</button>' +
+             '<button class="btn" data-act="pack">返回题目列表</button></div>');
+    }
+    h.push('</div>');
+    return h.join('');
+  }
+  h.push('<div class="card"><div class="qhead"><span class="tag">录得分</span><span class="tag-soft">' + esc(p.name) + '</span></div>');
+  h.push('<div class="small muted" style="margin-top:4px">本卷 ' + scored + ' / ' + p.questions.length + ' 题有分值，共 ' + packMax(p) + ' 分。</div>');
+  h.push('<div class="small muted" style="margin-top:6px">按卷面把每题得分填进来（0 到该题分值），保存后进入「得分档案」。' +
+         '没做的题留空；填完会自动算板块得分率和「会但没拿满」。</div>');
+  h.push('<div class="packlist" style="margin-top:10px">');
+  p.questions.forEach(function(q, i){
+    var sc = qScore(q), rec = st.map[q.id];
+    var cur = (S.scoreEnt && S.scoreEnt[q.id] != null) ? S.scoreEnt[q.id]
+            : (rec && rec.got != null ? rec.got : '');
+    h.push('<div class="srow"><span class="pno">' + esc(q.no || (i + 1)) + '</span>' +
+           '<span class="ptxt">' + esc((q.ask || '').split('\n')[0].slice(0, 28)) + '</span>' +
+           (sc ? '<input class="scin" inputmode="decimal" data-sq="' + esc(q.id) + '" value="' + esc(String(cur)) + '">' +
+                 '<span class="scmax">/ ' + sc + '</span>'
+               : '<span class="tiny muted">无分值</span>') + '</div>');
+  });
+  h.push('</div>');
+  h.push('<div class="tools" style="margin-top:12px"><button class="btn btn-primary" data-act="scoresave">保存得分</button>' +
+         '<button class="btn" data-act="pack">返回题目列表</button></div></div>');
+  return h.join('');
+}
+function saveScores(){
+  var p = findPack(S.packId);
+  if(!p) return;
+  var n = 0, ts0 = Date.now();
+  p.questions.forEach(function(q, i){
+    var raw = S.scoreEnt ? S.scoreEnt[q.id] : null;
+    if(raw == null || raw === '') return;
+    var sc = qScore(q);
+    if(!sc) return;
+    var v = parseNum(raw);
+    if(isNaN(v)) return;
+    if(v < 0) v = 0;
+    if(v > sc) v = sc;
+    DB.paper.push({ts: ts0 + i, pack: p.id, qid: q.id, ok: (Math.abs(v - sc) < 1e-9),
+                   score: sc, got: v, sec: null, err: null, src: 'score'});
+    n++;
+  });
+  saveDB();
+  S.scoreEnt = {};
+  S.screen = 'pack';
+  render();
+  flash('已保存 ' + n + ' 题的得分。');
+}
+
 function viewPaperQ(){
   var p = findPack(S.packId), qs = S.pq;
   if(!p || !qs){ S.screen = 'paper'; return viewPaper(); }
   var q = p.questions[qs.idx], h = [];
   var done = qs.phase === 'done';
+  var qsc = qScore(q), qkp = kpOf(q);
   h.push('<div class="rail"><div class="n now"><b>' + (qs.idx + 1) + '</b>第 ' + (qs.idx + 1) + ' / ' + p.questions.length + ' 题</div>' +
          '<div class="n"><b>' + esc(q.group || '') + '</b>' + (q.group ? ' · ' : '') + focusTag(q.focus) + '</div>' +
-         '<div class="n"><b>★</b>' + stars(q.diff) + '</div></div>');
+         '<div class="n"><b>' + (qsc ? qsc + '分' : '★') + '</b>' + (qkp ? esc(qkp) : stars(q.diff)) + '</div></div>');
   h.push('<div class="card"><div class="qhead"><span class="tag">第 ' + esc(q.no || (qs.idx + 1)) + ' 题</span>' +
          '<span class="tag-soft">' + esc(p.name) + '</span>' + (q.selfCheck ? '<span class="tag-warn">自评题</span>' : '') + '</div>');
   h.push('<div class="stem">' + esc(q.ask) + '</div>');
@@ -5325,15 +5911,35 @@ function viewPaperQ(){
       });
       h.push('</div>');
     }
-  }else if(q.fields){
-    h.push('<div style="margin-top:14px">' + fieldsHTML(q.fields, qs.ent, done && !q.selfCheck) + '</div>');
-    if(!done) h.push('<div class="tiny muted" style="margin-top:6px">可以填分数（如 1/2）或小数；先算再填，别边算边改。</div>');
+  }else if(q.fields || q.steps){
+    var stps = stepsOf(q);
+    h.push('<div style="margin-top:14px">' + fieldsHTML(stps.map(function(s){ return s.fd; }), qs.ent,
+           done && !q.selfCheck, stps.map(function(s){ return s.pt; })) + '</div>');
+    if(!done) h.push('<div class="tiny muted" style="margin-top:6px">每个空的分值写在标题旁；可以填分数（如 1/2）或小数，先算再填。</div>');
   }
 
   if(done){
     if(!q.selfCheck){
-      h.push('<div class="fb ' + (qs.ok ? 'ok' : 'no') + '"><h4>' + (qs.ok ? '✓ 全对' : '✗ 有 ' + (qs.wrong || 0) + ' 处不对') + '</h4>' +
-             '<div class="small">' + (qs.ok ? '这一题你抓住了关键。再看看解析里有没有更快的写法。' : '红色的地方就是问题所在，回原卷重算一遍，再对照解析。') + '</div></div>');
+      var scoreTxt = (qs.score != null)
+        ? ('得分 <b>' + (qs.got || 0) + '</b> / ' + qs.score)
+        : (qs.ok ? '全对' : '有 ' + (qs.wrong || 0) + ' 处不对');
+      h.push('<div class="fb ' + (qs.ok ? 'ok' : 'no') + '"><h4>' + (qs.ok ? '✓ ' : '✗ ') + scoreTxt + '</h4>');
+      if(qs.detail && qs.detail.length && qs.score != null){
+        h.push('<div style="margin-top:8px">');
+        qs.detail.forEach(function(d){
+          h.push('<div class="steprow"><span class="' + (d.ok ? 'okmark' : 'nomark') + '">' + (d.ok ? '✓' : '✗') + '</span>' +
+                 '<span class="steplab">' + esc(d.label) + '</span>' +
+                 '<span class="steppt">' + (d.ok ? '+' + d.pt : '0') + ' / ' + d.pt + '</span></div>');
+        });
+        h.push('</div>');
+      }
+      h.push('<div class="small" style="margin-top:8px">' +
+             (qs.ok ? '这一题你抓住了关键。再看看解析里有没有更快的写法。' : '红色格子是错的那一步；先回原卷重算这一步，再看解析。') + '</div></div>');
+      h.push('<div class="errpick"><span class="tiny muted">这道题卡在哪：</span>' +
+             ['入口不会', '算错', '看错'].map(function(k){
+               var sel = (qs.rec && qs.rec.err === k);
+               return '<button class="btn-mini' + (sel ? ' on' : '') + '" data-act="perr" data-err="' + k + '">' + k + '</button>';
+             }).join('') + '</div>');
     }else{
       h.push('<div class="fb soft"><h4>自评题：对照答案自己判</h4><div class="small">这道题的图形/答案口径以老师讲的为准，工具不判分。</div></div>');
     }
@@ -5341,8 +5947,8 @@ function viewPaperQ(){
     if(q.type === 'choice'){
       var oa = q.opts[q.ans];
       h.push('<li><b>选项：</b>' + esc('ABCDEF'[q.ans]) + (typeof oa === 'string' ? '　' + esc(oa) : '（见所配图）') + '</li>');
-    }else if(q.fields){
-      q.fields.forEach(function(fd){ h.push('<li><b>' + esc(fd.label) + '</b> ' + esc(answerText(fd)) + '</li>'); });
+    }else if(q.fields || q.steps){
+      stepsOf(q).forEach(function(s){ h.push('<li><b>' + esc(s.fd.label) + '</b> ' + esc(answerText(s.fd)) + '　<span class="tiny muted">' + s.pt + ' 分</span></li>'); });
     }
     h.push('</ul><hr class="sep"><div style="font-size:15px;font-weight:600;margin-bottom:6px">解析</div><ol>');
     (q.solution || []).forEach(function(s){ h.push('<li>' + esc(s) + '</li>'); });
@@ -5401,6 +6007,8 @@ function viewManage(){
          '<br>填空/解答：<code>type:"fill"</code> + <code>fields:[{type:"num",label,ans} | {type:"coef",label,tpl,ans} | {type:"choice",label,options,ans}]</code>。' +
          '<br>图：<code>plot:{expr:"2x-3", x0,x1,y0,y1}</code>，折线用 <code>poly:[[x,y],…]</code>。' +
          '<br>可选：<code>focus</code>（trans/graph/model/plan/check）、<code>tip</code>、<code>diff</code>（1～3）、<code>selfCheck:true</code>（不判分）。' +
+         '<br><b>分值</b>：<code>score:8</code>；<b>知识点</b>：<code>kp:["函数与图象","二次函数"]</code>（第一个决定报告里的板块）。' +
+         '<br><b>分步给分</b>：把 <code>fields</code> 换成 <code>steps:[{pt:2,label,type:"num",ans:…}, …]</code>，<code>pt</code> 之和应等于 <code>score</code>。' +
          '</div></div>');
   return h.join('');
 }
@@ -5426,6 +6034,13 @@ function validatePack(obj){
     if(!Array.isArray(q.solution) || !q.solution.length) err.push(tag + '：缺少解析 solution');
     if(q.focus && !DIMNAME[q.focus]) err.push(tag + '：focus 只能是 trans / graph / model / plan / check');
     if(q.diff && (q.diff < 1 || q.diff > 3)) warn.push(tag + '：diff 建议取 1～3');
+    if(q.score != null && !(typeof q.score === 'number' && isFinite(q.score) && q.score > 0))
+      err.push(tag + '：score 必须是正数（本题分值）');
+    if(q.kp != null){
+      if(!Array.isArray(q.kp) || !q.kp.length || q.kp.some(function(x){ return typeof x !== 'string' || !x; }))
+        err.push(tag + '：kp 必须是非空字符串数组，如 ["函数与图象","二次函数"]');
+      else if(q.kp.length > 3) warn.push(tag + '：kp 建议不超过 3 个（第一个决定报告板块）');
+    }
     if(q.type === 'choice'){
       if(!Array.isArray(q.opts) || q.opts.length < 2) err.push(tag + '：选择题需要 opts 数组（至少 2 项）');
       else {
@@ -5436,8 +6051,32 @@ function validatePack(obj){
         });
       }
     }else if(q.type === 'fill' || q.type === 'solve'){
-      if(!Array.isArray(q.fields) || !q.fields.length){
-        if(!q.selfCheck) err.push(tag + '：填空/解答题需要 fields 数组（不判分的题请加 selfCheck:true）');
+      if(Array.isArray(q.steps) && q.steps.length){
+        var sumPt = 0;
+        q.steps.forEach(function(s, j){
+          var sj = tag + ' 的第 ' + (j + 1) + ' 步';
+          if(!s || typeof s !== 'object'){ err.push(sj + '：不是对象'); return; }
+          if(typeof s.pt !== 'number' || s.pt < 0) err.push(sj + '：pt 必须是数字（这一步的分值）');
+          else sumPt += s.pt;
+          if(!s.label) warn.push(sj + '：建议写 label（这一步做什么）');
+          if(s.type === 'num' && typeof s.ans !== 'number') err.push(sj + '：num 的 ans 必须是数字');
+          if(s.type === 'coef'){
+            if(typeof s.tpl !== 'string') err.push(sj + '：coef 需要 tpl 模板');
+            else if(!Array.isArray(s.ans)) err.push(sj + '：coef 的 ans 必须是数组');
+            else if((s.tpl.match(/\{\d+\}/g) || []).length !== s.ans.length)
+              err.push(sj + '：tpl 占位符与 ans 数量要一致');
+          }
+          if(s.type === 'choice'){
+            if(!Array.isArray(s.options) || !s.options.length) err.push(sj + '：choice 需要 options 数组');
+            else if(!(s.ans >= 0 && s.ans < s.options.length)) err.push(sj + '：choice 的 ans 下标越界');
+          }
+          if(s.type !== 'num' && s.type !== 'coef' && s.type !== 'choice')
+            err.push(sj + '：type 只能是 num / coef / choice');
+        });
+        if(q.score != null && Math.abs(sumPt - q.score) > 1e-6)
+          warn.push(tag + '：steps 的 pt 合计 ' + sumPt + ' 与 score ' + q.score + ' 不一致');
+      }else if(!Array.isArray(q.fields) || !q.fields.length){
+        if(!q.selfCheck) err.push(tag + '：填空/解答题需要 fields 或 steps 数组（不判分的题请加 selfCheck:true）');
       }else q.fields.forEach(function(f, j){
         var ft = tag + ' 的第 ' + (j + 1) + ' 个字段';
         if(!f || !f.type) { err.push(ft + '：缺少 type'); return; }
@@ -5741,9 +6380,14 @@ document.addEventListener('input', function(e){
     S.qs.val = el.value;
     return;
   }
+  var sq = el.getAttribute && el.getAttribute('data-sq');
+  if(sq){
+    S.scoreEnt = S.scoreEnt || {};
+    S.scoreEnt[sq] = el.value;
+    return;
+  }
   var f = el.getAttribute && el.getAttribute('data-f');
-  if(f){
-    if(S.screen === 'paperq' && S.pq) S.pq.ent[f] = el.value;
+  if(f){    if(S.screen === 'paperq' && S.pq) S.pq.ent[f] = el.value;
     else if(S.screen === 'libq' && S.vs) S.vs.ent[f] = el.value;
     else if(S.qs) S.qs.ent[f] = el.value;
   }
@@ -5803,7 +6447,7 @@ function orderRemove(pos){
 
 function drillPick(i){
   if(S.dOk !== null) return;
-  var d = DRILLS[S.di];
+  var d = curDrill();
   S.dSel = i;
   var ok = !!(d.opts[i] && d.opts[i].ok);
   S.dOk = ok;
@@ -5824,7 +6468,7 @@ function openPaperQ(idx){
   var p = findPack(S.packId);
   if(!p) return;
   if(idx >= p.questions.length){ S.screen = 'pack'; render(); return; }
-  S.pq = {idx:idx, ent:{}, sel:null, phase:'ask', ok:null, wrong:0, attempt:0};
+  S.pq = {idx:idx, ent:{}, sel:null, phase:'ask', ok:null, wrong:0, attempt:0, t0:Date.now(), rec:null};
   S.screen = 'paperq';
   render();
 }
@@ -5839,24 +6483,21 @@ function paperSubmit(){
   var q = p.questions[qs.idx];
   qs.attempt++;
   if(q.selfCheck){ qs.phase = 'done'; qs.ok = null; render(); return; }
-  var ok = false, wrong = 0;
-  if(q.type === 'choice'){
-    if(qs.sel === null){ flash('先选一个选项。'); return; }
-    ok = qs.sel === q.ans;
-    wrong = ok ? 0 : 1;
-  }else{
-    var g = gradeFields(q.fields, qs.ent);
-    ok = g.ok; wrong = g.wrong.length;
-    if(!ok && wrong === q.fields.length && qs.attempt === 1 && !Object.keys(qs.ent).length){
-      flash('还没有填答案。');
-      return;
-    }
+  if(q.type === 'choice' && qs.sel === null){ flash('先选一个选项。'); return; }
+  var steps = stepsOf(q);
+  if(q.type !== 'choice' && !Object.keys(qs.ent || {}).length && qs.attempt === 1 && steps.length){
+    flash('还没有填答案。');
+    return;
   }
+  var g = gradeSteps(q, qs);
+  var sec = qs.t0 ? Math.max(1, Math.round((Date.now() - qs.t0) / 1000)) : null;
   qs.phase = 'done';
-  qs.ok = ok;
-  qs.wrong = wrong;
-  DB.paper.push({ts:Date.now(), pack:p.id, qid:q.id, ok:ok});
-  if(q.focus){ DB.log.push({ts:Date.now(), qid:q.id, dim:q.focus, ok:ok}); }
+  qs.ok = g.ok; qs.got = g.got; qs.score = g.score; qs.detail = g.detail; qs.wrong = g.wrong;
+  var rec = {ts:Date.now(), pack:p.id, qid:q.id, ok:g.ok,
+             score:g.score, got:(g.score == null ? null : g.got), sec:sec, err:null};
+  qs.rec = rec;
+  DB.paper.push(rec);
+  if(q.focus){ DB.log.push({ts:Date.now(), qid:q.id, dim:q.focus, ok:g.ok}); }
   saveDB();
   render();
 }
@@ -5866,7 +6507,8 @@ function paperSkip(){
   var q = p.questions[qs.idx];
   qs.phase = 'done';
   qs.ok = null;
-  DB.paper.push({ts:Date.now(), pack:p.id, qid:q.id, ok:null});
+  DB.paper.push({ts:Date.now(), pack:p.id, qid:q.id, ok:null, score:qScore(q), got:null,
+                 sec:(qs.t0 ? Math.max(1, Math.round((Date.now() - qs.t0) / 1000)) : null), err:null});
   saveDB();
   render();
 }
@@ -5923,6 +6565,29 @@ function handleAct(el){
   if(act === 'pack'){ S.screen = 'pack'; render(); return; }
   if(act === 'openq'){ openPaperQ(+el.getAttribute('data-idx')); return; }
   if(act === 'psubmit'){ paperSubmit(); return; }
+  if(act === 'dueopen'){
+    var dpid = el.getAttribute('data-pack'), didx = +el.getAttribute('data-idx');
+    if(dpid && didx >= 0){ S.packId = dpid; openPaperQ(didx); }
+    return;
+  }
+  if(act === 'scoreentry'){ S.scoreEnt = {}; S.screen = 'score'; render(); return; }
+  if(act === 'scoresave'){ saveScores(); return; }
+  if(act === 'usebuiltin'){
+    var bid = el.getAttribute('data-pack');
+    DB.packs = (DB.packs || []).filter(function(x){ return x.id !== bid; });
+    saveDB();
+    flash('已改用内置版本（含分值），答案不变。');
+    render();
+    return;
+  }
+  if(act === 'perr'){
+    var errv = el.getAttribute('data-err');
+    if(S.pq && S.pq.rec){
+      S.pq.rec.err = (S.pq.rec.err === errv ? null : errv);
+      saveDB(); render();
+    }
+    return;
+  }
   if(act === 'pskip'){ paperSkip(); return; }
   if(act === 'pnext'){ paperNext(); return; }
   if(act === 'start'){
@@ -5930,9 +6595,10 @@ function handleAct(el){
     S.mode = m;
     if(m === 'guide'){
       S.queue = BANK.map(function(q){ return q.id; });
-      S.qi = 0; S.sess = {n:0, ok:0, dims:{}}; S.qSwitch = false;
+      S.qi = guidePickIndex(); S.sess = {n:0, ok:0, dims:{}}; S.qSwitch = false;
       loadQuestion();
     }else if(m === 'drill'){
+      S.dOrder = drillOrder();
       S.di = 0; S.dSel = null; S.dOk = null; S.dRight = 0; S.dWrong = [];
       S.screen = 'drill'; render();
     }
@@ -6046,6 +6712,7 @@ function handleAct(el){
 
 /* ---------- 启动 ---------- */
 loadDB();
+mergePackMeta();
 render();
 /* 调试/自检钩子（不影响使用） */
 window.__APP__ = {BANK:BANK, DRILLS:DRILLS, PACKS:PACKS, DIMS:DIMS, DIMNAME:DIMNAME, RX:RX,

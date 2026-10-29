@@ -74,10 +74,28 @@ python 题库工具\qb.py verify
 | 命令 | 作用 |
 |---|---|
 | `qb.py build` | 合并 `题库/pack-*.json` → `pack-全部.json` + 注入 HTML（自动备份） |
-| `qb.py verify` | 校验：每个 JSON 可解析、题包 id 不重复、`全部.json` 与单卷一致、HTML 内嵌脚本 `node --check` |
+| `qb.py verify` | 校验：每个 JSON 可解析、题包 id 不重复、`全部.json` 与单卷一致、**分值/知识点/分步字段形状**、HTML 内嵌脚本 `node --check` |
 | `qb.py checkall` | 批量核对：自动找 `answers/` 里对应的答案文件，汇总每套卷的一致/不一致数 |
 | `qb.py apply --dry-run` | 只看会改哪些答案，不落盘 |
 | `qb.py check --report r.json` | 差异表另存 JSON，便于批量统计 |
+
+## v2 新增字段（分值 / 知识点 / 分步）
+
+题包里每题可以带三个新字段，`template` 会把分值打在题号后面：
+
+```json
+{ "id": "m21", "no": "21", "type": "solve", "score": 8,
+  "kp": ["函数与图象", "二次函数"],
+  "steps": [ {"pt": 4, "type": "choice", "label": "(1) 解析式", "options": [...], "ans": 1},
+             {"pt": 4, "type": "choice", "label": "(2) 能否通过", "options": [...], "ans": 0} ] }
+```
+
+- `score`：本题分值（数字，正数）。
+- `kp`：知识点数组，第一个决定报告里的板块。
+- `steps`：分步给分，`pt` 之和应等于 `score`；不给 `steps` 时按 `fields` 整数均分。
+- `qb.py verify` 会检查：`score` 为正数、`kp` 是非空字符串数组、`steps` 的 `pt` 合计与 `score` 一致。
+- `check` / `apply` / `template` 已兼容 `steps`（把每步当成一个 field，忽略 `pt`）。
+
 
 ## 速查（复制即用）
 
