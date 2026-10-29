@@ -20,9 +20,11 @@
   21 8 40 13
 """
 import argparse
+import ast
 import datetime
 import glob
 import json
+import math
 import os
 import re
 import shutil
@@ -35,6 +37,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 BASE = os.path.dirname(HERE)                       # learning-training
 TDIR = os.path.join(BASE, '题库')
 ALL_JSON = os.path.join(TDIR, 'pack-全部.json')
+DRILLS_JSON = os.path.join(TDIR, 'drills.json')
 HTML = os.path.join(BASE, '函数思维脚手架.html')
 SKIP = {'pack-全部.json', 'pack-模板.json'}
 LETTERS = 'ABCD'
@@ -486,17 +489,34 @@ def cmd_build(args, override=None):
     if not os.path.exists(HTML):
         die('找不到 %s' % HTML)
     html = open(HTML, 'rb').read().decode('utf-8')
+
+    # 1) 闪练题库
+    if not os.path.exists(DRILLS_JSON):
+        die('找不到 %s' % DRILLS_JSON)
+    dj = read_json(DRILLS_JSON)
+    drills = dj.get('drills') if isinstance(dj, dict) else dj
+    if not drills:
+        die('drills.json 里没有 drills')
+    bmark, emark = '/* DRILLS:BEGIN */', '/* DRILLS:END */'
+    if html.count(bmark) != 1 or html.count(emark) != 1:
+        die('HTML 里 DRILLS:BEGIN/END 标记数量异常，拒绝改写')
+    bs = html.index(bmark) + len(bmark)
+    be = html.index(emark)
+    dblock = '\r\nvar DRILLS = ' + json.dumps(drills, ensure_ascii=False, indent=2).replace('\n', '\r\n') + ';\r\n'
+    html = html[:bs] + dblock + html[be:]
+
+    # 2) 试卷题包（替换到 DRILLS:BEGIN 之前，避免吃掉标记）
     if html.count('var PACKS = [') != 1 or html.count('var DRILLS = [') != 1:
         die('HTML 里 PACKS/DRILLS 标记数量异常，拒绝改写')
     s = html.index('var PACKS = [')
-    e = html.index('var DRILLS = [', s)
+    e = html.index(bmark, s)
     block = 'var PACKS = ' + json.dumps(packs, ensure_ascii=False, indent=2).replace('\n', '\r\n') + ';\r\n'
     html = html[:s] + block + html[e:]
     backup(HTML)
     write_text(HTML, html)
     qn = sum(len(p['questions']) for p in packs)
     if not getattr(args, 'quiet', False):
-        print('✓ build 完成：%d 套卷 / %d 题 -> pack-全部.json + HTML' % (len(packs), qn))
+        print('✓ build 完成：%d 套卷 / %d 题 ＋ 闪练 %d 题 -> pack-全部.json + HTML' % (len(packs), qn, len(drills)))
         print('  ' + ', '.join('%s(%d题)' % (p['id'], len(p['questions'])) for p in packs))
 
 
@@ -544,6 +564,129 @@ def cmd_checkall(args):
         return 1
     print('全部一致 ✓')
     return 0
+
+
+# ---------- 闪练题库校验 ----------
+_ALLOWED_FUNCS = {'sqrt': math.sqrt, 'abs': abs}
+
+
+def _norm_expr(s):
+    """把应用里的写法转成 Python 表达式：2x / x^2 / 0.5x^2 / sqrt()。"""
+    s = str(s).replace('²', '^2').replace('×', '*').replace('÷', '/')
+    s = s.replace('^', '**')
+    s = re.sub(r'(?<=[0-9x)])\s*(?=[x(])', '*', s)
+    return s
+
+
+def _eval_ast(node, x):
+    if isinstance(node, ast.Expression):
+        return _eval_ast(node.body, x)
+    if isinstance(node, ast.Constant):
+        return float(node.value)
+    if isinstance(node, ast.Name):
+        if node.id == 'x':
+            return x
+        raise ValueError('未知变量 %s' % node.id)
+    if isinstance(node, ast.UnaryOp) and isinstance(node.op, (ast.USub, ast.UAdd)):
+        v = _eval_ast(node.operand, x)
+        return -v if isinstance(node.op, ast.USub) else v
+    if isinstance(node, ast.BinOp):
+        a, b = _eval_ast(node.left, x), _eval_ast(node.right, x)
+        for cls, fn in ((ast.Add, lambda p, q: p + q), (ast.Sub, lambda p, q: p - q),
+                        (ast.Mult, lambda p, q: p * q), (ast.Div, lambda p, q: p / q),
+                        (ast.Pow, lambda p, q: p ** q)):
+            if isinstance(node.op, cls):
+                return fn(a, b)
+        raise ValueError('不支持的运算')
+    if isinstance(node, ast.Call):
+        f = node.func
+        if not isinstance(f, ast.Name) or f.id not in _ALLOWED_FUNCS:
+            raise ValueError('不支持的函数')
+        return _ALLOWED_FUNCS[f.id](*[_eval_ast(a, x) for a in node.args])
+    raise ValueError('不支持的语法')
+
+
+def expr_value(expr, x):
+    return _eval_ast(ast.parse(_norm_expr(expr), mode='eval'), x)
+
+
+def check_drills(path):
+    errs, warns = [], []
+    data = read_json(path)
+    drills = data.get('drills') if isinstance(data, dict) else data
+    pools = [p.get('id') for p in (data.get('pools') or [])] if isinstance(data, dict) else []
+    ids = set()
+    for i, d in enumerate(drills):
+        tag = '第 %d 题(%s)' % (i + 1, d.get('id', '?'))
+        if not d.get('id'):
+            errs.append(tag + ' 缺 id')
+        elif d['id'] in ids:
+            errs.append(tag + ' id 重复')
+        ids.add(d.get('id'))
+        if not d.get('ask'):
+            errs.append(tag + ' 缺 ask')
+        if not d.get('why'):
+            errs.append(tag + ' 缺 why')
+        if pools and d.get('pool') not in pools:
+            errs.append(tag + ' pool 不在 pools 里')
+        if not d.get('skill'):
+            errs.append(tag + ' 缺 skill')
+        opts = d.get('opts') or []
+        ans = d.get('ans')
+        if len(opts) < 2:
+            errs.append(tag + ' 选项少于 2 个')
+        if not isinstance(ans, int) or not (0 <= ans < len(opts)):
+            errs.append(tag + ' ans 越界')
+        texts, curves = [], []
+        for j, o in enumerate(opts):
+            if not o.get('why') and j != ans:
+                warns.append(tag + ' 第 %d 项没有 why' % (j + 1))
+            if 't' in o:
+                if o['t'] in texts:
+                    errs.append(tag + ' 文本选项重复')
+                texts.append(o['t'])
+            elif (o.get('plot') or {}).get('expr'):
+                try:
+                    vals = [expr_value(o['plot']['expr'], x) for x in (-3, -2, -1, 0.5, 1, 2, 3)]
+                except Exception as ex:
+                    errs.append(tag + ' 第 %d 项表达式无法解析：%s（%s）'
+                                % (j + 1, o['plot']['expr'], ex))
+                    continue
+                curves.append((j, vals))
+            else:
+                errs.append(tag + ' 第 %d 项既没有 t 也没有 plot.expr' % (j + 1))
+        if isinstance(ans, int):
+            correct = dict(curves).get(ans)
+            if correct:
+                for j, vals in curves:
+                    if j == ans:
+                        continue
+                    diff = sum(1 for a, b in zip(vals, correct) if abs(a - b) > 1e-6)
+                    if diff < 2:
+                        errs.append(tag + ' 第 %d 项与正确项几乎重合（%d 个采样点不同）' % (j + 1, diff))
+        sp = (d.get('stemPlot') or {}).get('expr')
+        if sp:
+            try:
+                expr_value(sp, 1)
+            except Exception as ex:
+                errs.append(tag + ' stemPlot 无法解析：%s' % ex)
+    counts = {}
+    skills = {}
+    for d in drills:
+        counts[d.get('pool')] = counts.get(d.get('pool'), 0) + 1
+        skills[d.get('skill')] = skills.get(d.get('skill'), 0) + 1
+    rnd = (data.get('round') if isinstance(data, dict) else None) or 12
+    per = max(1, round(rnd / max(1, len(counts))))
+    for p, n in counts.items():
+        if n < per:
+            errs.append('池 %s 只有 %d 题，少于每轮要抽的 %d 题' % (p, n, per))
+    for s, n in skills.items():
+        if n < 3:
+            errs.append('易错点 %s 只有 %d 题（目标 ≥3）' % (s, n))
+    summary = ['闪练 %d 题，每轮 %d 题，分池 %s' % (len(drills), rnd,
+                                                ', '.join('%s:%d' % (k, v) for k, v in sorted(counts.items()))),
+               '易错点 %d 个：%s' % (len(skills), ', '.join('%s=%d' % (k, v) for k, v in sorted(skills.items())))]
+    return errs, warns, summary
 
 
 def cmd_verify(args):
@@ -605,6 +748,23 @@ def cmd_verify(args):
             print('  %-20s 分值 %2d/%2d 题（合计 %s）　知识点 %2d 题'
                   % (p.get('id'), n_score, len(p['questions']),
                      fmt_num(total) if n_score else '—', n_kp))
+    # 闪练题库
+    if os.path.exists(DRILLS_JSON):
+        try:
+            derrs, dwarns, dsum = check_drills(DRILLS_JSON)
+        except Exception as ex:
+            derrs, dwarns, dsum = ['drills.json 读取失败：%s' % ex], [], []
+        for m in dsum:
+            print('  ' + m)
+        for w in dwarns:
+            print('· ' + w)
+        for e in derrs:
+            ok = False
+            print('✗ ' + e)
+        if not derrs:
+            print('✓ drills.json 结构 / 表达式 / 选项区分度检查通过')
+    else:
+        print('· 没有 drills.json，跳过闪练检查')
     # 全部.json 与单卷一致性
     try:
         allp = {p['id']: p for p in read_json(ALL_JSON)['packs']}

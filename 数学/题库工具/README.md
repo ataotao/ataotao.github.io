@@ -96,6 +96,23 @@ python 题库工具\qb.py verify
 - `qb.py verify` 会检查：`score` 为正数、`kp` 是非空字符串数组、`steps` 的 `pt` 合计与 `score` 一致。
 - `check` / `apply` / `template` 已兼容 `steps`（把每步当成一个 field，忽略 `pt`）。
 
+## 闪练题库（`题库/drills.json`）
+
+闪练题也走 build 注入（HTML 里 `/* DRILLS:BEGIN */ … /* DRILLS:END */` 之间）：
+
+```json
+{ "id": "dr-105", "pool": "P1", "kp": "函数与图象", "skill": "k-sign",
+  "ask": "y = 3x - 2 的图象是哪一个？",
+  "opts": [ {"plot": {"expr": "3x-2"}},
+            {"plot": {"expr": "-3x-2"}, "why": "k 的符号反了"} ],
+  "ans": 0,
+  "why": "k > 0 上升，b = -2 交 y 轴负半轴。" }
+```
+
+- `pool` 决定每轮从哪一池抽题（P1 一次 / P2 反比例 / P3 二次 / P4 方程 / P5 变换）；`skill` 是易错点标签，判错时显示、结算页按它归组。
+- `verify` 会检查闪练题：`ans` 越界 / 选项重复 / `expr` 解析失败 / **两个图选项采样后几乎重合** / **某池题数少于每轮要抽的 3 题** / **某易错点少于 3 题**。
+- 改完 `drills.json` 一样要 `build` 才会进 HTML。
+
 
 ## 速查（复制即用）
 
