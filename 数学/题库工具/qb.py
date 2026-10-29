@@ -218,10 +218,12 @@ def check_field(field, tok):
 
 
 def question_fields(q):
-    """把题目统一成 field 列表（选择题本身就是一种 field）。"""
+    """把题目统一成 field 列表（选择题本身就是一种 field；steps 去掉 pt）。"""
     if q.get('type') == 'choice':
         return [{'type': 'choice', 'options': q.get('opts') or [], 'ans': q.get('ans'),
                  '_single': True}]
+    if q.get('steps'):
+        return [{k: v for k, v in s.items() if k != 'pt'} for s in q['steps']]
     return list(q.get('fields') or [])
 
 
@@ -327,13 +329,15 @@ def cmd_template(args):
     print('# 格式：题号 答案...（选择题填 A/B/C/D；数值直接写，可写分数；多空按顺序空格分隔）')
     for q in pack['questions']:
         fields = question_fields(q)
+        score = q.get('score')
+        head = '%-4s %s' % (q.get('no'), ('[%s 分]' % fmt_num(score)) if score else '[分值未录]')
         if q.get('type') == 'choice':
-            print('%-4s [choice]   # %s' % (q.get('no'), ' '.join('%s.%s' % (LETTERS[i], o)
+            print('%s  [choice]   # %s' % (head, ' '.join('%s.%s' % (LETTERS[i], o)
                   for i, o in enumerate(q.get('opts') or []) if isinstance(o, str))))
         elif not fields:
-            print('%-4s # 自评题（无判分字段）' % q.get('no'))
+            print('%s  # 自评题（无判分字段）' % head)
         else:
-            print('%-4s %s' % (q.get('no'), ' '.join(
+            print('%s  %s' % (head, ' '.join(
                 '[%s%s]' % (f.get('type'), ('×%d' % need_tokens(f)) if need_tokens(f) > 1 else '')
                 for f in fields)))
 
@@ -568,6 +572,39 @@ def cmd_verify(args):
             ids[p.get('id')] = f
         print('✓ %-18s %2d 套 / %3d 题' % (os.path.basename(f), len(ps),
                                            sum(len(p['questions']) for p in ps)))
+    # 分值 / 知识点 / 分步 的形状检查
+    for f in files:
+        d = read_json(f)
+        ps = d['packs'] if isinstance(d, dict) and 'packs' in d else d
+        for p in ps:
+            n_score, n_kp, total = 0, 0, 0
+            for q in p['questions']:
+                no = q.get('no', '?')
+                s = q.get('score')
+                if s is not None:
+                    if not (isinstance(s, (int, float)) and s > 0):
+                        ok = False
+                        print('✗ %s 第 %s 题：score 必须是正数' % (p.get('id'), no))
+                    else:
+                        n_score += 1
+                        total += s
+                kp = q.get('kp')
+                if kp is not None:
+                    if not (isinstance(kp, list) and kp and all(isinstance(x, str) and x for x in kp)):
+                        ok = False
+                        print('✗ %s 第 %s 题：kp 必须是非空字符串数组' % (p.get('id'), no))
+                    else:
+                        n_kp += 1
+                st = q.get('steps')
+                if st and s is not None:
+                    pts = sum((x.get('pt') or 0) for x in st)
+                    if abs(pts - s) > 1e-6:
+                        ok = False
+                        print('✗ %s 第 %s 题：steps 的 pt 合计 %s ≠ score %s'
+                              % (p.get('id'), no, pts, s))
+            print('  %-20s 分值 %2d/%2d 题（合计 %s）　知识点 %2d 题'
+                  % (p.get('id'), n_score, len(p['questions']),
+                     fmt_num(total) if n_score else '—', n_kp))
     # 全部.json 与单卷一致性
     try:
         allp = {p['id']: p for p in read_json(ALL_JSON)['packs']}
