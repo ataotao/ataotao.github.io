@@ -114,6 +114,19 @@ A(todayCards().length===8,'兜底按钮应标上 8 条★★核心');
 /* 复原成老师那 13 条，供后面的搜索测试 */
 P.today.ids=DATA.cards.filter(function(c){return c.today;}).map(function(c){return c.id;});
 saveProg();S.mode='list';render();
+
+/* ---------- 遮住公式 ---------- */
+var d0=document.querySelector('details.k');d0.open=true;
+var cb=document.querySelector('#mask');cb.checked=true;cb.dispatchEvent(new Event('change'));
+A(document.querySelectorAll('details.k[open]').length===1,'勾「遮住公式」把展开的条目折掉了');
+A(!!document.querySelector('.bd.maskcur'),'勾了「遮住公式」但公式没被遮');
+A(!!document.querySelector('#todaybox li.maskcur'),'今日必背清单没跟着遮');
+A(!!document.querySelector('.maskhint'),'没有提示怎么揭开');
+var bd=document.querySelector('.bd.maskcur');
+bd.click();
+A(!bd.classList.contains('maskcur'),'点一下没能揭开');
+cb=document.querySelector('#mask');cb.checked=false;cb.dispatchEvent(new Event('change'));
+A(!document.querySelector('.bd.maskcur'),'取消勾选后公式还糊着');
 document.querySelector('#sq').value='韦达';
 document.querySelector('#sq').dispatchEvent(new Event('input'));
 A(document.querySelectorAll('details.k').length===4,'公式表：搜「韦达」应剩 4 条（含 qe-01 易错里提到的），实际 '+document.querySelectorAll('details.k').length);
