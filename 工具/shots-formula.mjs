@@ -32,6 +32,10 @@ const SHOTS = [
       var d=document.querySelectorAll('details.k');
       for(var i=0;i<2&&i<d.length;i++)d[i].open=true;
     },0);`, 900, 1300],
+  ['10-公式表-遮住公式', `S.mode='list';S.qi=0;render();
+    var d=document.querySelectorAll('details.k'); if(d[1])d[1].open=true;
+    var cb=document.querySelector('#mask'); cb.checked=true; cb.dispatchEvent(new Event('change'));
+    var tb=document.querySelector('#todaybox'); if(tb)tb.style.display='none';`, 900, 1200],
   ['8-手机-背公式', only('qe-13', 'recite') + 'S.revealed=true;render();', 500, 980],
 ];
 

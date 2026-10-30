@@ -182,9 +182,10 @@ details.k .bd{padding:0 14px 14px}
 .ubar .pc{flex:0 0 44px;text-align:right;font-variant-numeric:tabular-nums}
 .hint{font-size:12.5px;color:var(--sub);margin-top:8px;line-height:1.7}
 .hidef .fx .tx,.hidef .fx i.v,.hidef .fx .fr{transition:.15s}
-.maskcurl{cursor:pointer}
-.maskcur .fx{filter:blur(6px);cursor:pointer;user-select:none}
-.maskcur .fx:hover{filter:none}
+/* 遮住公式：整块糊住，点一下这张卡才揭开（不做 hover——鼠标一过就露等于没遮） */
+.maskcur .fx{filter:blur(10px);cursor:pointer;user-select:none;transition:filter .12s}
+.maskcur .tipbox,.maskcur .trapbox{filter:blur(7px);cursor:pointer;user-select:none;transition:filter .12s}
+.maskhint{background:#fff8e8;border:1px dashed #e6cf9d;border-radius:9px;padding:8px 12px;font-size:13px;color:#8a5a10;line-height:1.7;margin:10px 0 0}
 
 @media (max-width:520px){
   .q{font-size:17.5px}
@@ -210,6 +211,9 @@ details.k .bd{padding:0 14px 14px}
   body.print-today .todaybox{border:0;box-shadow:none;background:#fff;padding:0}
   body.print-today .todaybox h3{font-size:17px;color:#000}
   body.print-today .tl>li{break-inside:avoid;page-break-inside:avoid}
+  /* 打印时不要糊的 */
+  .maskcur .fx,.maskcur .tipbox,.maskcur .trapbox{filter:none!important}
+  .maskhint{display:none!important}
 }
 </style>
 </head>
@@ -784,7 +788,7 @@ function todayBoxHTML(){
       :`<button id="tall">把 ★★核心 的标上来</button>`}</div></div>`;
   const body=arr.length?`<ol class="tl">${arr.map((c,i)=>{
     const lv=level(c.id),f=fullTex(c);
-    return `<li>
+    return `<li class="${MASKCUR?'maskcur':''}">
       <div class="tlh"><span class="no">${i+1}</span><span class="nm">${esc(c.name)}</span>
         <span class="lv lv${lv}">${lv===4?'待强化':LVTXT[lv]}</span>
         <button class="x" data-un="${c.id}" title="从今日必背里去掉">取消</button></div>
@@ -832,8 +836,9 @@ function renderList(st,keepOpen){
   st.innerHTML=`<input class="searchbox" id="sq" placeholder="搜公式名或关键词，比如「判别式」「顶点」「韦达」…" value="${esc(LISTQ)}">
     <div class="bar" style="margin:10px 0 0"><div class="row">
       <label style="display:flex;gap:6px;align-items:center;cursor:pointer">
-      <input type="checkbox" id="mask"${MASKCUR?' checked':''}> 遮住公式（自测：点一下公式揭开）</label>
+      <input type="checkbox" id="mask"${MASKCUR?' checked':''}> 遮住公式（自测用）</label>
       <span class="sp"></span><button class="linkbtn" id="prt">打印公式表</button></div></div>
+    ${MASKCUR?`<div class="maskhint">公式已糊住（口诀、易错也一起遮）。展开任意一条，点一下那张卡就揭开；想重新遮住，把这个勾取消再勾上。</div>`:''}
     ${q?'':todayBoxHTML()}
     ${ubars&&!q?`<div class="report"><h3>各章节熟练度（连续写对 3 次才算熟练）</h3><div class="ubars">${ubars}</div></div>`:''}
     ${weakHTML}
@@ -856,8 +861,19 @@ function renderList(st,keepOpen){
         }).join('')}
       </div>`).join(''):'<div class="card empty"><span class="big">🔍</span>没搜到。换个词试试。</div>'}`;
 
-  $('#sq',st).oninput=e=>{LISTQ=e.target.value;const pos=e.target.selectionStart;renderList(st);const n=$('#sq',st);n.focus();n.setSelectionRange(pos,pos);};
-  $('#mask',st).onchange=e=>{MASKCUR=e.target.checked;renderList(st);};
+  const openIdsNow=()=>$$('details.k[open]',st).map(d=>d.dataset.id);
+  $('#sq',st).oninput=e=>{
+    LISTQ=e.target.value;const pos=e.target.selectionStart;
+    renderList(st,openIdsNow());
+    const n=$('#sq',st);n.focus();n.setSelectionRange(pos,pos);
+  };
+  // 勾/取消「遮住公式」：保留已展开的条目，否则一勾全折叠，看着像没生效
+  $('#mask',st).onchange=e=>{
+    MASKCUR=e.target.checked;
+    const open=openIdsNow();
+    if(MASKCUR&&!open.length){const f=$('details.k',st);if(f)open.push(f.dataset.id);}
+    renderList(st,open);
+  };
   $('#prt',st).onclick=()=>window.print();
   // 今日必背那块的操作
   const tt=$('#ttrain',st);
@@ -879,9 +895,19 @@ function renderList(st,keepOpen){
     toggleToday(b.dataset.un);
     refreshAfterToday($$('details.k[open]',st).map(d=>d.dataset.id));
   });
-  // 遮住时点公式揭开
-  $$('.maskcur .fx',st).forEach(x=>x.onclick=ev=>{ev.preventDefault();ev.stopPropagation();
-    x.style.filter='none';x.style.userSelect='auto';});
+  // 遮住公式：点这张卡里的任意位置（按钮除外）就把整张卡的公式/口诀/易错一起揭开
+  $$('.bd.maskcur',st).forEach(bd=>{
+    bd.addEventListener('click',ev=>{
+      if(ev.target.closest('button'))return;
+      bd.classList.remove('maskcur');
+    });
+  });
+  $$('.tl>li.maskcur',st).forEach(li=>{
+    li.addEventListener('click',ev=>{
+      if(ev.target.closest('button'))return;
+      li.classList.remove('maskcur');
+    });
+  });
   $$('[data-solo]',st).forEach(b=>b.onclick=()=>{
     S.queue=[b.dataset.solo];S.qi=0;S.mode='recite';resetCardState();S.revealed=true;render();
   });
