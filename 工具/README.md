@@ -1,21 +1,34 @@
 # 背记训练器 · 工具链
 
-给 `道德与法治/` 和 `历史/` 两个文件夹生成训练器用。**平时不用管这个文件夹**，只有要加页子或改样式时才用。
+给 `道德与法治/`、`历史/`（文字考点）、`公式记背/`（数学公式）三个文件夹生成训练器用。**平时不用管这个文件夹**，只有要加页子或改样式时才用。
 
 ```
 工具/
-  core-template.html      引擎（单文件网页模板，数据用 /*DATA*/null 占位）
-  build.mjs               考点数据.json + 模板 → <科目>/核心考点训练.html
+  core-template.html      文字版引擎（单文件网页模板，数据用 /*DATA*/null 占位）
+  formula-template.html   公式版引擎（自带迷你公式排版，不联网也不依赖 KaTeX）
+  build.mjs               数据 + 模板 → <科目>/核心考点训练.html | 公式记背/公式记背.html
   merge.mjs               _transcribe/*.json（逐页转录）→ <科目>/考点数据.json
   compress-pages.js       <科目>/images/*.jpg → 1600px 宽 WebP（摆正 EXIF 方向、删原图）
-  test.mjs                自检：静态检查 + 用 jsdom 跑五个模式
+  test.mjs                文字版自检：静态检查 + 用 jsdom 跑五个模式
+  test-formula.mjs        公式版自检：抠出排版器渲染全部公式（993 项断言）
+  test-ui-formula.mjs     公式版界面自检：用本机 Chrome 真点五个模式（31 项断言）
   shots.mjs               生成 <科目>/预览截图/*.png
+  shots-formula.mjs       生成 公式记背/预览截图/*.png
   _transcribe/            逐页转录的原始 JSON（每 3–4 页一个文件）
 ```
 
-> `compress-pages.js` 和 `shots.mjs` 要 `bun` + `sharp`；`merge` / `build` / `test` 用 `node`。
+> `compress-pages.js` 和两个 `shots*.mjs` 要 `bun` + `sharp`（截图脚本用本机 Chrome 无头模式）；`merge` / `build` / `test*` 用 `node`。
+>
+> `build.mjs` 不带参数会重新生成全部三个；只生成某一科：`node 工具/build.mjs 公式记背`。
 
-## 加页子 / 改内容
+## 公式版（公式记背）跟文字版有什么不同
+
+- **公式要排版**：数据里写简化 LaTeX（`\frac` `\sqrt` `^` `_` `\text`），模板里有个约 120 行的迷你渲染器，画成 HTML 的分数/根号，所以单文件、离线也能看。
+- **挖空用「块级选择」而不是打字**：数学公式靠键盘敲 `√(b²-4ac)/2a` 既慢又没法判分，所以改成每个空从 4 个候选块里点选，3 个干扰项**故意写成常见错法**（漏负号、根号里加号、分母少个 2）。这才是数学记背真正要练的地方。
+- **多一个「认一认」**：给公式认名字，专治「两根之和 / 两根之积 / 顶点纵坐标 / 对称轴」互相记串。
+- 字段说明见 `公式记背/使用说明.md` 第八节。
+
+## 加页子 / 改内容（文字版）
 
 1. 新页子放进 `<科目>/images/`，接着编号命名（如 `政治_11.jpg`），然后 `bun 工具/compress-pages.js 道德与法治` 压成 WebP。
    手机拍的照片 EXIF 里带方向标记，脚本会 `rotate()` 把方向烤进像素——**不这么做，去掉 EXIF 的 WebP 在浏览器里会横过来**。
