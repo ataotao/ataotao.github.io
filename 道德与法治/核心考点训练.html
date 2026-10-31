@@ -150,15 +150,52 @@ details.k .bd{padding:0 14px 14px}
 .ubar .pc{flex:0 0 44px;text-align:right;font-variant-numeric:tabular-nums}
 .hint{font-size:12px;color:var(--sub);margin-top:10px;line-height:1.7}
 
+/* ---------- 套卷（⑥） ---------- */
+.pstem{font-size:17px;line-height:1.8;font-weight:600;margin:0 0 10px}
+.pstem p{margin:0 0 8px}
+.pstem p:last-child{margin-bottom:0}
+.figs{display:flex;flex-wrap:wrap;gap:10px;margin:4px 0 12px}
+.figs figure{margin:0;flex:1 1 200px;min-width:120px;max-width:100%}
+.figs img{width:100%;height:auto;border:1px solid var(--line);border-radius:9px;background:#fff;display:block}
+.ptbl{width:100%;border-collapse:collapse;margin:4px 0 12px;font-size:14px;table-layout:auto}
+.ptbl td{border:1px solid var(--line);padding:7px 10px;vertical-align:top;line-height:1.75}
+.ptbl td.cap{background:var(--acc-soft);color:var(--acc);font-weight:600;border-color:var(--acc-soft)}
+.ptbl td img{max-width:100%;height:auto;border-radius:7px;display:block;margin:0 0 6px}
+.ptbl .tx{white-space:pre-line;display:block}
+.whybox{margin-top:12px;border-top:1px dashed var(--line);padding-top:11px}
+.whybox .lead{color:var(--sub);font-size:12px;margin:0 0 8px}
+.whyrow{display:flex;gap:9px;font-size:14.5px;line-height:1.85;margin:0 0 8px;color:var(--sub)}
+.whyrow .k{flex:0 0 auto;width:21px;height:21px;line-height:21px;text-align:center;border-radius:6px;background:var(--bg);border:1px solid var(--line);font-size:12px;color:var(--sub);margin-top:3px}
+.whyrow.right{color:var(--ink)}
+.whyrow.right .k{background:var(--ok);border-color:var(--ok);color:#fff;font-weight:700}
+.whyrow.right .tx{font-weight:600}
+.whysol{font-size:14.5px;line-height:1.9;white-space:pre-line}
+.pno{font-variant-numeric:tabular-nums}
+.jump{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0 0}
+.jump button{border:1px solid var(--line);background:#fff;border-radius:8px;padding:4px 10px;font-size:13px;cursor:pointer;color:var(--bad)}
+.jump button:hover{border-color:var(--acc);color:var(--acc)}
+.optrow{display:flex;gap:9px;align-items:flex-start;border:1px solid var(--line);border-radius:10px;padding:9px 13px;font-size:15.5px;line-height:1.65;margin:0 0 8px;background:#fff}
+.optrow .kk{flex:0 0 auto;width:20px;height:20px;line-height:20px;text-align:center;border-radius:5px;background:var(--bg);font-size:12px;color:var(--sub);margin-top:2px}
+.optrow.c{border-color:var(--ok);background:var(--ok-soft);color:var(--ok);font-weight:700}
+.optrow.c .kk{background:var(--ok);color:#fff}
+.scoreline{font-size:15px;line-height:2}
+.scoreline b{font-size:22px;color:var(--acc);margin:0 3px}
+
 @media (max-width:520px){
   .q{font-size:17.5px}
   .card{padding:15px 13px 13px}
   .brand b{font-size:15px}
   .pill{padding:2px 9px}
   .ubar .nm{flex-basis:150px}
+  /* 六个标签尽量一屏放下，手机上不用横向滚才发现 ⑥ */
+  .tabs button{padding:6px 9px;font-size:13px}
+  .tabs{gap:5px}
+  .pstem{font-size:16px}
+  .ptbl{font-size:13px}
+  .ptbl td{padding:6px 8px}
 }
 @media print{
-  header,.tabs,.bar,.acts,.nav,.searchbox{display:none!important}
+  header,.tabs,.bar,.acts,.nav,.searchbox,.no-print{display:none!important}
   body{background:#fff}
   .card,details.k,.unitbox{box-shadow:none;break-inside:avoid}
   details.k .bd{display:block!important}
@@ -175,6 +212,7 @@ details.k .bd{padding:0 14px 14px}
       <button data-mode="choice">③ 四选一</button>
       <button data-mode="wrong">④ 错题强化</button>
       <button data-mode="list">⑤ 清单</button>
+      <button data-mode="paper" id="tabPaper" hidden>⑥ 套卷</button>
     </div>
   </div>
 </header>
@@ -217,9 +255,10 @@ const loose=s=>norm(s).replace(/[的地得了着和与及其之]/g,'');
 const SK='kss_v1_'+(DATA&&DATA.subject||'x');
 let P=loadProg();
 function loadProg(){
-  let d={cards:{},days:{}};
+  let d={cards:{},days:{},paper:{}};
   try{const raw=localStorage.getItem(SK);if(raw){const o=JSON.parse(raw);if(o&&o.cards)d=o;}}catch(e){}
   if(!d.days)d.days={};
+  if(!d.paper)d.paper={};
   return d;
 }
 function saveProg(){ try{localStorage.setItem(SK,JSON.stringify(P));}catch(e){console.warn('保存失败',e);} }
@@ -327,7 +366,8 @@ function metaHTML(c){
    全局状态
    ================================================================ */
 const UNITS=[...new Set((DATA?DATA.cards:[]).map(c=>c.unit||'未分单元'))];
-const S={mode:'recite',unit:'全部',scope:'all',queue:[],qi:0,revealed:false,scored:false,cur:null,curPlan:null,choice:null,optDone:false};
+const S={mode:'recite',unit:'全部',scope:'all',queue:[],qi:0,revealed:false,scored:false,cur:null,curPlan:null,choice:null,optDone:false,
+  paper:{unit:'全部',range:'seq',queue:[],qi:0,log:{},pick:null}};
 const hasBlanks=c=>PLAN[c.id].count>0;
 const CARD_BY=id=>DATA.cards.find(c=>c.id===id);
 
@@ -335,6 +375,7 @@ const CARD_BY=id=>DATA.cards.find(c=>c.id===id);
    统计条
    ================================================================ */
 function renderBar(){
+  if(S.mode==='paper'&&PAPER){paperBar();return;}
   const cards=DATA.cards;
   const n=cards.length;
   let ok=0,weak=0,done=0;
@@ -348,12 +389,12 @@ function renderBar(){
     `<span class="pill bad">待强化 <b>${weak}</b></span>`+
     `<span class="pill">今天 <b>${d.n}</b> 题 · <b>${rate}%</b></span></div>`+
     `<div class="row">`+
-    `<select id="fu" title="按单元练">${['全部',...UNITS].map(u=>`<option${u===S.unit?' selected':''}>${esc(u)}</option>`).join('')}</select>`+
-    `<select id="fs" title="练习范围">
+    `<select id="fu" title="按单元（做题和 ⑤ 清单 都按它筛）">${['全部',...UNITS].map(u=>`<option${u===S.unit?' selected':''}>${esc(u)}</option>`).join('')}</select>`+
+    `<select id="fs" title="${S.mode==='list'?'筛选范围（清单里只显示符合条件的卡）':'练习范围（做题和 ⑤ 清单 都按它筛）'}">
       <option value="all"${S.scope==='all'?' selected':''}>全部范围</option>
-      <option value="star"${S.scope==='star'?' selected':''}>只练★必背</option>
-      <option value="weak"${S.scope==='weak'?' selected':''}>只练未熟练</option>
-      <option value="unseen"${S.scope==='unseen'?' selected':''}>只练没练过</option>
+      <option value="star"${S.scope==='star'?' selected':''}>${S.mode==='list'?'只看★必背':'只练★必背'}</option>
+      <option value="weak"${S.scope==='weak'?' selected':''}>${S.mode==='list'?'只看待强化':'只练未熟练'}</option>
+      <option value="unseen"${S.scope==='unseen'?' selected':''}>${S.mode==='list'?'只看没练过':'只练没练过'}</option>
     </select>`+
     `<span class="sp"></span>`+
     `<button class="linkbtn" id="exp" title="把练习记录导出成文件（备份/换设备）">导出记录</button>`+
@@ -365,7 +406,9 @@ function renderBar(){
   $('#imp').onclick=importProg;
   $('#rst').onclick=()=>{
     if(!confirm('清空全部练习记录？（不可恢复，建议先「导出记录」）'))return;
-    P={cards:{},days:{}};saveProg();S.qi=0;buildQueue();render();
+    P={cards:{},days:{},paper:{}};saveProg();
+    if(S.mode==='paper')buildPaper();
+    S.qi=0;buildQueue();render();
   };
 }
 function exportProg(){
@@ -386,7 +429,9 @@ function importProg(){
         const d=o.data&&o.data.cards?o.data:o;
         if(!d.cards)throw new Error('文件里没有 cards');
         if(!confirm(`导入后会用文件里的记录覆盖本机记录（文件里 ${Object.keys(d.cards).length} 张卡的记录）。继续？`))return;
-        P={cards:d.cards||{},days:d.days||{}};saveProg();S.qi=0;buildQueue();render();
+        P={cards:d.cards||{},days:d.days||{},paper:d.paper||{}};saveProg();
+        if(S.mode==='paper')buildPaper();
+        S.qi=0;buildQueue();render();
       }catch(e){alert('导入失败：'+e.message);}
     };
     r.readAsText(f);
@@ -417,6 +462,12 @@ function buildQueue(){
 }
 function setProg(){
   const el=$('#prog');
+  if(S.mode==='paper'){
+    if(!S.paper.queue.length){el.hidden=true;return;}
+    el.hidden=false;
+    $('i',el).style.width=Math.round((S.paper.qi+1)/S.paper.queue.length*100)+'%';
+    return;
+  }
   if(!['recite','cloze','choice','wrong'].includes(S.mode)||!S.queue.length){el.hidden=true;return;}
   el.hidden=false;
   $('i',el).style.width=Math.round((S.qi+1)/S.queue.length*100)+'%';
@@ -430,6 +481,7 @@ function render(){
   renderBar();setProg();
   const st=$('#stage');
   if(S.mode==='list'){renderList(st);return;}
+  if(S.mode==='paper'){renderPaper(st);return;}
   if(!S.queue.length){st.innerHTML=emptyHTML();renderNav(st);return;}
   const c=CARD_BY(S.queue[S.qi]);
   if(!c){st.innerHTML=emptyHTML();return;}
@@ -439,6 +491,17 @@ function render(){
   renderNav(st);
 }
 function emptyHTML(){
+  if(S.mode==='paper'){
+    const tips={
+      weak:'做错的题会自动进来；在「只做错题」里连续答对 2 次才出库。',
+      unseen:'这个范围里的题都做过了，换成「整卷顺序」或「只做错题」。',
+      seq:'换一个单元，或把范围改成「整卷顺序」。',
+      round:'这一份卷子没有匹配的题。'
+    };
+    return `<div class="card empty"><span class="big">${S.paper.range==='weak'?'🎉':'🗂'}</span>${
+      S.paper.range==='weak'?'当前范围没有待强化的错题。':'当前范围没有可做的题。'}
+      <div class="hint">${tips[S.paper.range]||''}</div></div>`;
+  }
   const tips={
     recite:'把「练习范围」改成"全部范围"，或点上面的单元重新选。',
     cloze:'这一类里没有可挖空的考点，换「翻卡背」练。',
@@ -452,6 +515,17 @@ function emptyHTML(){
 function renderNav(st){
   const nav=document.createElement('div');
   nav.className='nav';
+  if(S.mode==='paper'){
+    if(!S.paper.queue.length)return;
+    nav.innerHTML=`<button class="btn sm" id="pv"${S.paper.qi===0?' disabled':''}>← 上一题</button>
+       <span>${S.paper.qi+1} / ${S.paper.queue.length}</span>
+       <button class="btn sm" id="nx">下一题 →</button>`;
+    st.appendChild(nav);
+    const pv=$('#pv',nav),nx=$('#nx',nav);
+    if(pv&&!pv.disabled)pv.onclick=()=>{S.paper.qi--;render();scrollTop();};
+    if(nx)nx.onclick=()=>paperNext();
+    return;
+  }
   const inSess=['recite','cloze','choice','wrong'].includes(S.mode);
   nav.innerHTML=inSess&&S.queue.length
     ? `<button class="btn sm" id="pv"${S.qi===0?' disabled':''}>← 上一题</button>
@@ -662,38 +736,59 @@ function PICK_TOKENS(p,k){
 
 /* ---------------- ⑤ 清单 ---------------- */
 let LISTQ='',LISTHIDE=false;
+const SCOPE_TXT={all:'全部范围',star:'只看★必背',weak:'只看待强化',unseen:'只看没练过'};
 function renderList(st){
   const q=LISTQ.trim();
-  const cards=DATA.cards.filter(c=>{
+  /* 顶部「按单元 / 练习范围」两个下拉框在清单里同样生效，而不是只影响做题队列 */
+  const base=pool();
+  const hit=c=>{
     if(!q)return true;
-    const hay=(c.q+' '+(c.a||[]).join(' ')+' '+(c.warn||'')+' '+(c.lesson||'')).toLowerCase();
+    const hay=(c.q+' '+(c.a||[]).join(' ')+' '+(c.warn||'')+' '+(c.lesson||'')+' '+(c.unit||'')+' '+(c.node||'')).toLowerCase();
     return hay.includes(q.toLowerCase());
-  });
+  };
+  const cards=base.filter(hit);
+  const filtering=S.unit!=='全部'||S.scope!=='all';
   const byUnit=new Map();
   cards.forEach(c=>{
     const u=c.unit||'未分单元';
     if(!byUnit.has(u))byUnit.set(u,[]);
     byUnit.get(u).push(c);
   });
-  // 单元进度
-  const ubars=[...byUnit.entries()].map(([u,arr])=>{
+  // 单元进度（按筛选后的范围算，不受搜索词影响）
+  const baseByUnit=new Map();
+  base.forEach(c=>{
+    const u=c.unit||'未分单元';
+    if(!baseByUnit.has(u))baseByUnit.set(u,[]);
+    baseByUnit.get(u).push(c);
+  });
+  const ubars=[...baseByUnit.entries()].map(([u,arr])=>{
     const doneN=arr.filter(c=>level(c.id)===3).length;
     const pc=Math.round(doneN/arr.length*100);
     return `<div class="ubar"><span class="nm" title="${esc(u)}">${esc(u)}</span><span class="tr"><i style="width:${pc}%"></i></span><span class="pc">${pc}%</span></div>`;
   }).join('');
-  // 最该补的 10 张
-  const weak=DATA.cards.map(c=>({c,lv:level(c.id),p:getP(c.id)}))
+  // 最该补的 10 张（同样只看当前筛选范围）
+  const weak=base.map(c=>({c,lv:level(c.id),p:getP(c.id)}))
     .filter(x=>x.p&&x.p.wrong>0&&x.lv!==3)
     .sort((a,b)=>b.p.wrong-a.p.wrong||a.lv-b.lv).slice(0,10);
   const weakHTML=weak.length?`<div class="report"><h3>最该补的 ${weak.length} 张（错得最多 / 还没拿稳）</h3><ul>${
     weak.map(({c,p})=>`<li>${esc(c.q)} <b>错 ${p.wrong} 次</b> <span class="hint">· ${esc(c.lesson||c.unit||'')}</span></li>`).join('')
   }</ul><div class="hint">这些卡会优先出现在 ④ 错题强化 里。</div></div>`:'';
+  const chips=filtering?`<div class="row" style="font-size:13px">
+      <span class="pill">筛选结果 <b>${cards.length}</b> 张</span>
+      <span class="pill">${esc(S.unit==='全部'?'全部单元':S.unit)} · ${esc(SCOPE_TXT[S.scope]||'')}</span>
+      <button class="linkbtn" id="lclr">清除筛选（显示全部 ${DATA.cards.length} 张）</button></div>`:'';
+  const empty=filtering||q
+    ? `<div class="card empty"><span class="big">🔍</span>${q?`没搜到「${esc(LISTQ)}」。`:'这个筛选下没有考点。'}
+        <div class="hint">${filtering?'把顶部两个下拉框改回「全部范围 / 全部」，或点下面的按钮。':'换个词试试。'}</div>
+        ${filtering?'<div class="acts" style="justify-content:center"><button class="btn sm" id="lclr2">清除筛选</button></div>':''}</div>`
+    : '<div class="card empty"><span class="big">🗂</span>没有考点数据。</div>';
 
   st.innerHTML=`<input class="searchbox" id="sq" placeholder="搜索考点关键词，比如「民主」「瓦特」「条约」…" value="${esc(LISTQ)}">
     <div class="bar" style="margin-top:10px"><div class="row">
       <label style="display:flex;gap:6px;align-items:center;cursor:pointer">
       <input type="checkbox" id="hide"${LISTHIDE?' checked':''}> 遮住红字（自测用，点一下灰块能揭开）</label>
-      <span class="sp"></span><button class="linkbtn" id="prt">打印这份清单</button></div></div>
+      <span class="sp"></span><button class="linkbtn" id="prt">打印这份清单</button></div>
+      ${chips}</div>
     ${ubars?`<div class="report"><h3>各单元熟练度（连续答对 3 次才算熟练）</h3><div class="ubars">${ubars}</div></div>`:''}
     ${weakHTML}
     ${cards.length?[...byUnit.entries()].map(([u,arr])=>`
@@ -712,14 +807,224 @@ function renderList(st){
             </div>
           </details>`;
         }).join('')}
-      </div>`).join(''):'<div class="card empty"><span class="big">🔍</span>没搜到。换个词试试。</div>'}`;
+      </div>`).join(''):empty}`;
 
   $('#sq',st).oninput=e=>{LISTQ=e.target.value;const pos=e.target.selectionStart;renderList(st);const n=$('#sq',st);n.focus();n.setSelectionRange(pos,pos);};
   $('#hide',st).onchange=e=>{LISTHIDE=e.target.checked;renderList(st);};
   $('#prt',st).onclick=()=>window.print();
+  const clear=()=>{S.unit='全部';S.scope='all';S.qi=0;buildQueue();render();};
+  const c1=$('#lclr',st);if(c1)c1.onclick=clear;
+  const c2=$('#lclr2',st);if(c2)c2.onclick=clear;
   $$('[data-solo]',st).forEach(b=>b.onclick=()=>{
     S.queue=[b.dataset.solo];S.qi=0;S.mode='recite';S.revealed=true;S.scored=false;render();
   });
+}
+
+/* ================================================================
+   ⑥ 套卷（可选的 DATA.paper：一整份带解析的选择题卷）
+   ================================================================ */
+const PAPER=DATA&&DATA.paper?DATA.paper:null;
+const PQ=PAPER?(PAPER.questions||[]):[];
+const PQ_BY=id=>PQ.find(q=>q.id===id);
+const PUNITS=[...new Set(PQ.map(q=>q.unit||'未分单元'))];
+const PPLAN={};PQ.forEach((q,i)=>{PPLAN[q.id]=i;});
+function pState(id){return (P.paper||{})[id]||null;}
+function pTally(){
+  let seen=0,att=0,right=0,weak=0;
+  PQ.forEach(q=>{const p=pState(q.id);if(!p||!p.seen)return;
+    seen++;att+=p.seen;right+=p.ok;if(p.wrong>0&&p.streak<2)weak++;});
+  return {n:PQ.length,seen,att,right,weak,rate:att?Math.round(right/att*100):0};
+}
+function recPaper(q,ok,pick){
+  if(!P.paper)P.paper={};
+  const p=P.paper[q.id]||(P.paper[q.id]={seen:0,ok:0,wrong:0,streak:0,last:0,pick:-1});
+  p.seen++;p.last=Date.now();p.pick=pick;
+  if(ok){p.ok++;p.streak=Math.min(9,p.streak+1);}else{p.wrong++;p.streak=0;}
+  const d=todayKey(),t=P.days[d]||(P.days[d]={n:0,ok:0});
+  t.n++;if(ok)t.ok++;
+  saveProg();
+}
+/* 队列：整套顺序 / 随机 20 题 / 只做错题 / 只做没做过，可按单元筛 */
+function buildPaper(){
+  const st=S.paper;
+  let a=PQ.slice();
+  if(st.unit!=='全部')a=a.filter(q=>(q.unit||'未分单元')===st.unit);
+  if(st.range==='weak')a=a.filter(q=>{const p=pState(q.id);return p&&p.wrong>0&&p.streak<2;});
+  if(st.range==='unseen')a=a.filter(q=>!pState(q.id)||!pState(q.id).seen);
+  if(st.range==='weak')a.sort((x,y)=>pState(y.id).wrong-pState(x.id).wrong);
+  else if(st.range!=='seq')a=shuffle(a.slice());
+  if(st.range==='round')a=a.slice(0,20);
+  if(st.range==='seq')a.sort((x,y)=>x.no-y.no);
+  st.queue=a.map(q=>q.id);
+  st.qi=0;st.log={};st.pick=null;
+}
+function paperBar(){
+  const t=pTally();
+  $('#bar').innerHTML=
+    `<div class="row"><span class="pill">套卷 <b>${t.n}</b> 题</span>`+
+    `<span class="pill">已做 <b>${t.seen}</b>/${t.n}</span>`+
+    `<span class="pill ok">正确率 <b>${t.rate}%</b></span>`+
+    `<span class="pill bad">待强化 <b>${t.weak}</b></span>`+
+    `<span class="pill">今天 <b>${(P.days[todayKey()]||{n:0}).n}</b> 题</span></div>`+
+    `<div class="row">`+
+    `<select id="pu" title="按单元做">${['全部',...PUNITS].map(u=>`<option${u===S.paper.unit?' selected':''}>${esc(u)}</option>`).join('')}</select>`+
+    `<select id="pr" title="做题范围">
+      <option value="seq"${S.paper.range==='seq'?' selected':''}>整卷顺序</option>
+      <option value="round"${S.paper.range==='round'?' selected':''}>随机 20 题</option>
+      <option value="weak"${S.paper.range==='weak'?' selected':''}>只做错题</option>
+      <option value="unseen"${S.paper.range==='unseen'?' selected':''}>只做没做过</option>
+    </select>`+
+    `<span class="sp"></span>`+
+    `<button class="linkbtn" id="exp" title="把练习记录导出成文件（备份/换设备）">导出记录</button>`+
+    `<button class="linkbtn" id="imp" title="从文件导入练习记录">导入记录</button>`+
+    `<button class="linkbtn" id="prt2" title="打印整份试卷（题干+答案+解析）">打印整卷</button></div>`;
+  $('#pu').onchange=e=>{S.paper.unit=e.target.value;buildPaper();render();};
+  $('#pr').onchange=e=>{S.paper.range=e.target.value;buildPaper();render();};
+  $('#exp').onclick=exportProg;
+  $('#imp').onclick=importProg;
+  $('#prt2').onclick=()=>paperPrint();
+}
+/* 整卷打印视图：题干 + 选项（正确项标绿）+ 解析，一份可打印的解析版 */
+function paperPrint(){
+  const st=$('#stage');
+  st.innerHTML=`<div class="card no-print"><div class="acts" style="margin:0">
+      <button class="btn" id="pback">← 返回做题</button>
+      <button class="btn p" id="pprt">打印 / 存成 PDF</button>
+    </div><div class="hint" style="margin-top:8px">整份 ${PQ.length} 题，含答案与逐项解析。打印时会自动去掉顶栏和按钮。</div></div>`+
+    PQ.map(q=>`<div class="card">
+      <div class="meta"><span class="mt"><b>第 ${q.no} 题</b> ／ ${esc(q.unit||'')}</span><span class="mr">答案 ${'ABCD'[q.ans]}</span></div>
+      <div class="pstem">${paperBody(q)}</div>
+      ${q.opts.map((o,i)=>`<div class="optrow${i===q.ans?' c':''}"><span class="kk">${'ABCD'[i]}</span><span>${esc(o)}</span></div>`).join('')}
+      ${whyHTML(q)}
+    </div>`).join('');
+  $('#pback').onclick=()=>render();
+  $('#pprt').onclick=()=>window.print();
+  scrollTop();
+}
+const pImg=s=>`<a href="${esc(s)}" target="_blank" rel="noopener"><img src="${esc(s)}" alt="题目配图" loading="lazy"></a>`;
+function paperTable(b){
+  const rows0=b.rows||[];
+  const cols=Math.max(1,...rows0.filter(r=>r.length>1).map(r=>r.length));
+  const rows=rows0.map(r=>{
+    if(r.length===1){
+      const c=r[0];
+      return `<tr><td class="cap" colspan="${cols}">${esc(c.t)}${(c.imgs||[]).map(pImg).join('')}</td></tr>`;
+    }
+    return '<tr>'+r.map(c=>`<td>${(c.imgs||[]).map(pImg).join('')}<span class="tx">${esc(c.t)}</span></td>`).join('')+'</tr>';
+  }).join('');
+  return `<table class="ptbl">${rows}</table>`;
+}
+function paperBody(q){
+  let out='',figs=[];
+  const flush=()=>{if(figs.length){out+=`<div class="figs">${figs.join('')}</div>`;figs=[];}};
+  (q.blocks||[]).forEach(b=>{
+    if(b.t==='p'){flush();out+=`<p>${esc(b.v)}</p>`;}
+    else if(b.t==='img'){figs.push(`<figure>${pImg(b.src)}</figure>`);}
+    else if(b.t==='tbl'){flush();out+=paperTable(b);}
+  });
+  flush();
+  return out;
+}
+function whyHTML(q){
+  const L=['A','B','C','D'];
+  if(q.why&&Object.keys(q.why).length){
+    return `<div class="whybox"><div class="lead">逐项解析（绿的是正确项）</div>`+
+      L.map((k,i)=>{
+        const t=q.why[k];if(!t)return '';
+        return `<div class="whyrow${i===q.ans?' right':''}"><span class="k">${k}</span><span class="tx">${esc(t)}</span></div>`;
+      }).join('')+`</div>`;
+  }
+  return `<div class="whybox"><div class="lead">解析</div><div class="whysol">${esc(q.sol||'')}</div></div>`;
+}
+function renderPaper(st){
+  const id=S.paper.queue[S.paper.qi];
+  if(!id){st.innerHTML=emptyHTML();return;}
+  const q=PQ_BY(id),t=pTally();
+  const logged=S.paper.log[id];
+  const done=logged!==undefined;
+  const pick=done?logged:null;
+  st.innerHTML=`<div class="card">
+    <div class="meta"><span class="mt"><b>第 ${q.no} 题</b> ／ 共 ${t.n} 题 ／ ${esc(q.unit||'未分单元')}</span>
+      <span class="mr"><span class="pno">${S.paper.qi+1} / ${S.paper.queue.length}</span></span></div>
+    <div class="pstem">${paperBody(q)}</div>
+    <div class="opts" id="opts">${q.opts.map((o,i)=>
+      `<button data-i="${i}"${done?' disabled':''} class="${done?(i===q.ans?'c':(i===pick?'w':'')):''}"><span class="kk">${'ABCD'[i]}</span>${esc(o)}</button>`).join('')}</div>
+    <div id="fb">${done?paperVerdict(q,pick):''}</div>
+    ${done?whyHTML(q):''}
+    <div class="acts" id="acts">${done?paperActs(q,pick):`<span class="hint">点选项或按 1–4；答完立刻给解析，错题自动进「只做错题」。</span>`}</div>
+  </div>`;
+  const btns=$$('#opts button',st);
+  if(!done)btns.forEach(b=>b.onclick=()=>answerPaper(+b.dataset.i));
+  else bindPaperActs(st,q);
+  renderNav(st);
+}
+function paperVerdict(q,pick){
+  const L='ABCD';
+  if(pick===q.ans)return `<div class="verdict ok"><b>答对了 ✓</b> 正确答案 ${L[q.ans]}。</div>`;
+  return `<div class="verdict bad"><b>答错了</b> 你选的是 ${L[pick]}，正确答案是 <b>${L[q.ans]}</b>。看完下面的解析再往下走。</div>`;
+}
+function paperActs(q,pick){
+  const more=S.paper.qi<S.paper.queue.length-1;
+  return `<button class="btn p" id="pnx">${more?'下一题（回车）':'本轮完成（回车）'}</button>`+
+    (pick===q.ans?'':`<button class="btn sm" id="pgo" title="去⑤清单看这一单元的考点卡">看本单元考点</button>`)+
+    `<span class="hint">${S.paper.qi+1} / ${S.paper.queue.length}</span>`;
+}
+function bindPaperActs(st,q){
+  const nx=$('#pnx',st);
+  if(nx)nx.onclick=()=>paperNext();
+  const go=$('#pgo',st);
+  if(go)go.onclick=()=>{S.mode='list';LISTQ=q.unit||'';buildQueue();render();scrollTop();};
+}
+function answerPaper(i){
+  const id=S.paper.queue[S.paper.qi];
+  if(S.paper.log[id]!==undefined)return;
+  const q=PQ_BY(id);
+  S.paper.log[id]=i;
+  recPaper(q,i===q.ans,i);
+  render();
+}
+function paperNext(){
+  const st=$('#stage');
+  if(S.paper.qi<S.paper.queue.length-1){
+    S.paper.qi++;render();scrollTop();return;
+  }
+  st.innerHTML=paperSummary();
+  $$('[data-jump]',st).forEach(b=>b.onclick=()=>{
+    const id=b.dataset.jump;
+    S.paper.qi=S.paper.queue.indexOf(id);
+    render();scrollTop();
+  });
+  const again=$('#pagain',st);
+  if(again)again.onclick=()=>{S.paper.log={};S.paper.qi=0;render();scrollTop();};
+  const next=$('#pnext',st);
+  if(next)next.onclick=()=>{S.paper.range='round';buildPaper();render();scrollTop();};
+  const weak=$('#pweak',st);
+  if(weak&&!weak.disabled)weak.onclick=()=>{S.paper.range='weak';buildPaper();render();scrollTop();};
+  scrollTop();
+}
+function paperSummary(){
+  const ids=S.paper.queue;
+  let right=0;const wrong=[];
+  ids.forEach(id=>{const p=pickOf(id);if(p===undefined)return;
+    const q=PQ_BY(id);if(p===q.ans)right++;else wrong.push(q);});
+  const tot=ids.length,rate=tot?Math.round(right/tot*100):0;
+  const t=pTally();
+  return `<div class="card">
+    <div class="meta"><span class="mt">本轮走完了</span><span class="mr">${tot} 题</span></div>
+    <div class="scoreline">对 <b>${right}</b> 题 · 错 <b>${wrong.length}</b> 题 · 正确率 <b>${rate}%</b></div>
+    ${wrong.length?`<div class="hint" style="margin-top:6px">做错的题（点题号回到那一题看解析）：</div>
+      <div class="jump">${wrong.map(q=>`<button data-jump="${esc(q.id)}">第 ${q.no} 题</button>`).join('')}</div>`
+      :'<div class="verdict ok" style="margin-top:10px"><b>全对 ✓</b> 这一轮没有错题。</div>'}    <div class="acts">
+      <button class="btn p" id="pagain">重做这一轮</button>
+      <button class="btn" id="pnext">换一批（随机 20 题）</button>
+      <button class="btn" id="pweak"${t.weak?'':' disabled'}>只做错题（${t.weak}）</button>
+    </div>
+    <div class="hint">全卷进度：已做 ${t.seen}/${t.n} 题，累计正确率 ${t.rate}%。错题在「只做错题」里连对 2 次才算过关。</div>
+  </div>`;
+}
+function pickOf(id){
+  const l=S.paper.log;
+  return l[id];
 }
 
 /* ================================================================
@@ -733,15 +1038,31 @@ function boot(){
   document.documentElement.dataset.subj=DATA.subject||'';
   document.title=DATA.title||'核心考点训练';
   $('#ttl').textContent=DATA.title||'核心考点训练';
-  $('#sb').textContent=`共 ${DATA.cards.length} 个考点 · 记录存在本机浏览器`;
+  $('#sb').textContent=PAPER
+    ? `共 ${DATA.cards.length} 个考点 · 套卷 ${PQ.length} 题 · 记录存在本机浏览器`
+    : `共 ${DATA.cards.length} 个考点 · 记录存在本机浏览器`;
+  if(PAPER&&PQ.length){
+    const tp=$('#tabPaper');
+    if(tp){tp.hidden=false;tp.textContent='⑥ 套卷';}
+  }
   $$('#tabs button').forEach(b=>b.onclick=()=>{
     if(b.dataset.mode===S.mode)return;
     S.mode=b.dataset.mode;S.qi=0;S.revealed=false;S.scored=false;S.cur=null;S.choice=null;
+    if(S.mode==='paper')buildPaper();
     buildQueue();render();scrollTop();
   });
   buildQueue();render();
   document.addEventListener('keydown',e=>{
     if(e.target.matches('input,select,textarea'))return;
+    if(S.mode==='paper'){
+      const id=S.paper.queue[S.paper.qi];
+      if(!id)return;
+      const answered=S.paper.log.hasOwnProperty(id);
+      if(!answered&&'1234'.includes(e.key)){e.preventDefault();answerPaper(+e.key-1);}
+      else if(answered&&(e.key==='Enter'||e.key===' ')){e.preventDefault();paperNext();}
+      else if(e.key==='ArrowLeft'&&S.paper.qi>0){e.preventDefault();S.paper.qi--;render();scrollTop();}
+      return;
+    }
     if(S.mode==='recite'){
       if(!S.revealed&&(e.key===' '||e.code==='Space')){e.preventDefault();S.revealed=true;render();}
       else if(S.revealed){
