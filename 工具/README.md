@@ -8,16 +8,17 @@
   formula-template.html   公式版引擎（自带迷你公式排版，不联网也不依赖 KaTeX）
   build.mjs               数据 + 模板 → <科目>/核心考点训练.html | 公式记背/公式记背.html
   merge.mjs               _transcribe/*.json（逐页转录）→ <科目>/考点数据.json
+  parse-paper.py          <科目>/images/xxx.docx（带答案的试卷）→ <科目>/试卷数据.json（⑥ 套卷）
   compress-pages.js       <科目>/images/*.jpg → 1600px 宽 WebP（摆正 EXIF 方向、删原图）
-  test.mjs                文字版自检：静态检查 + 用 jsdom 跑五个模式
+  test.mjs                文字版自检：静态检查 + 用 jsdom 跑六个模式
   test-formula.mjs        公式版自检：抠出排版器渲染全部公式（993 项断言）
   test-ui-formula.mjs     公式版界面自检：用本机 Chrome 真点五个模式（31 项断言）
-  shots.mjs               生成 <科目>/预览截图/*.png
+  shots.mjs               生成 <科目>/预览截图/*.png（有套卷的多截 3–5 张）
   shots-formula.mjs       生成 公式记背/预览截图/*.png
   _transcribe/            逐页转录的原始 JSON（每 3–4 页一个文件）
 ```
 
-> `compress-pages.js` 和两个 `shots*.mjs` 要 `bun` + `sharp`（截图脚本用本机 Chrome 无头模式）；`merge` / `build` / `test*` 用 `node`。
+> `compress-pages.js` 和两个 `shots*.mjs` 要 `bun` + `sharp`（截图脚本用本机 Chrome 无头模式）；`merge` / `build` / `test*` 用 `node`；`parse-paper.py` 用 `python` + `python-docx` + `Pillow`。
 >
 > `build.mjs` 不带参数会重新生成全部三个；只生成某一科：`node 工具/build.mjs 公式记背`。
 
@@ -29,6 +30,8 @@
 - 字段说明见 `公式记背/使用说明.md` 第八节。
 
 ## 加页子 / 改内容（文字版）
+
+> ⚠️ 现在先别跑不带参数的 `node 工具/build.mjs`：`公式记背/公式记背.html` 里的例题分步渲染（`stepsHTML`、分组编号、打印分页）比 `公式数据.json` + `formula-template.html` 新，重建会把这部分退回去。只重建某一科：`node 工具/build.mjs 历史`。
 
 1. 新页子放进 `<科目>/images/`，接着编号命名（如 `政治_11.jpg`），然后 `bun 工具/compress-pages.js 道德与法治` 压成 WebP。
    手机拍的照片 EXIF 里带方向标记，脚本会 `rotate()` 把方向烤进像素——**不这么做，去掉 EXIF 的 WebP 在浏览器里会横过来**。
@@ -73,8 +76,55 @@
 
 ```powershell
 npm i jsdom --prefix _verify        # 首次
-node 工具/test.mjs 历史              # 43 条断言：五个模式 + 长答案容错 + 边界保护
+node 工具/test.mjs 历史              # 76 条断言：六个模式 + 长答案容错 + 套卷/结算/打印
+node 工具/test.mjs 道德与法治         # 45 条断言（没有套卷，⑥ 那组自动跳过）
 node 工具/shots.mjs 历史             # 重新生成预览截图
 ```
 
-自检会真的操作页面：揭晓答案、填对、填错、看错题本有没有捞回来、搜索能不能过滤、连点下一题会不会崩。
+自检会真的操作页面：揭晓答案、填对、填错、看错题本有没有捞回来、搜索能不能过滤、连点下一题会不会崩、套卷答错有没有标红和给解析、结算页能不能跳回错题。
+
+## 套卷（⑥）——一份带答案的选择题卷
+
+科目目录下放一个 **`试卷数据.json`**，`build.mjs` 就会把它注入 HTML，顶部多出「⑥ 套卷」标签；没有这个文件就完全不出现（道法、公式记背现在都没有）。
+
+数据由 **`工具/parse-paper.py`** 从解析版 docx 生成：
+
+```powershell
+python 工具/parse-paper.py "历史\images\专练01.docx" "历史\试卷数据.json" `
+  --id ls-paper01 --name "九上历史·选择题100题冲刺专练" `
+  --imgdir "历史\images\试卷" --imgbase "images/试卷/" `
+  --override "历史\试卷单元.json" --dump _paper_dump.txt
+node 工具/build.mjs 历史
+```
+
+写出来的格式：
+
+```json
+{
+  "id": "ls-paper01",
+  "name": "九上历史·选择题100题冲刺专练",
+  "source": "专练01…….docx",
+  "questions": [
+    {
+      "id": "ls-paper01-q005",
+      "no": 5,
+      "unit": "第一单元 文明的产生与古代亚非文明",
+      "blocks": [                                  // 题干按试卷上的顺序排
+        {"t": "p", "v": "下列两幅图片共同反映了（ ）"},
+        {"t": "img", "src": "images/试卷/q005_1.webp"},
+        {"t": "tbl", "rows": [[{"t": "时间", "imgs": []}, {"t": "工场经营情况", "imgs": []}]]}
+      ],
+      "opts": ["内容广泛", "思想落后", "传播广泛", "影响深远"],
+      "ans": 0,                                    // 0=A 1=B 2=C 3=D
+      "why": {"A": "……正确。", "B": "……错误。"},     // 逐项解析；整段解析放 sol
+      "sol": ""
+    }
+  ]
+}
+```
+
+解析器自带校验，任何一条不过就以非 0 退出、不写文件：题号连续、每题 4 个选项且字母是 A–D、`ans` 在范围内、**逐项解析里"正确"那一项必须和【答案】一致**（否定题干"不可能/不正确…"则反过来）、整段解析必须写「故选X」且与答案一致。
+
+单元标签先按 `DEFAULT_UNITS` 里的关键词打分（题干权重 3、选项 1、解析 1，第一名要领先第二名 1.6 倍，否则算「综合」）；判错的写进 `--override` 的 JSON（`{"题号": "单元名"}`）人工覆盖。
+
+页面行为：一次一题、点选项或按 1–4 判分、答完展开解析（正确项标绿）、回车下一题、可回看已答的题；顶部可按单元和范围（整卷顺序 / 随机 20 题 / 只做错题 / 只做没做过）筛；一轮结束出结算页，错题号可点回原题；「打印整卷」输出题干+答案+解析的可打印版本。套卷记录存在 `P.paper`（按题 id），跟考点卡的记录分开算，导出/导入记录时一起带走。

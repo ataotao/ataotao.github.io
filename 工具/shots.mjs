@@ -33,9 +33,40 @@ const SHOTS = [
     setTimeout(function(){var d=document.querySelectorAll('details.k');for(var i=0;i<2&&i<d.length;i++)d[i].open=true;},0);`, 900, 1500],
 ];
 
+/* 有套卷的科目（历史）多截三张 ⑥ 套卷 */
+if (html.indexOf('"paper"') > 0 && html.indexOf('const DATA') > 0 && /"paper":\{"id"/.test(html)) {  SHOTS.push(
+    ['7-套卷', `document.querySelector('[data-mode="paper"]').click();`, 900, 780],
+    ['8-套卷-答错看解析', `document.querySelector('[data-mode="paper"]').click();
+      var q=PQ_BY(S.paper.queue[3]);
+      document.querySelectorAll('#opts button')[(q.ans+1)%4].click();`, 900, 1200],
+    ['9-套卷-配图题', `document.querySelector('[data-mode="paper"]').click();
+      var q=PQ.filter(function(x){return x.blocks.some(function(b){return b.t==='img'})})[0];
+      S.paper.queue=[q.id];S.paper.qi=0;S.paper.log={};render();`, 900, 1100],
+    ['10-套卷-题表', `document.querySelector('[data-mode="paper"]').click();
+      var q=PQ.filter(function(x){return x.no===24})[0];
+      S.paper.queue=[q.id];S.paper.qi=0;S.paper.log={};render();`, 900, 820],
+    ['11-套卷-结算页', `document.querySelector('[data-mode="paper"]').click();
+      var qs=PQ.slice(0,4);
+      S.paper.queue=qs.map(function(q){return q.id});S.paper.qi=0;S.paper.log={};render();
+      for(var i=0;i<qs.length;i++){
+        var b=document.querySelectorAll('#opts button');
+        b[i===1?(qs[i].ans+1)%4:qs[i].ans].click();
+        document.querySelector('#pnx').click();
+      }`, 900, 700],
+  );
+}
+
+/* 清单里按单元筛选（两个下拉框在清单里也生效） */
+SHOTS.push(['12-清单-按单元筛选', `document.querySelector('[data-mode="list"]').click();
+  var us=[...new Set(DATA.cards.map(function(c){return c.unit}))];
+  var fu=document.querySelector('#fu'); fu.value=us[1]||'全部';
+  fu.dispatchEvent(new Event('change'));
+  var fs=document.querySelector('#fs'); fs.value='star'; fs.dispatchEvent(new Event('change'));`, 900, 900]);
+
 let n = 0;
 for (const [name, code, w, h] of SHOTS) {
-  const src = join(tmp, `s-${target}-${name}.html`);
+  // 临时页面放在科目目录里，相对路径（images/…）才找得到图
+  const src = join(root, target, `_shot-tmp-${n}.html`);
   writeFileSync(src, html.replace('</body>', wrap(code) + '</body>'), 'utf8');
   const out = join(outDir, name + '.png');
   if (existsSync(out)) rmSync(out);
@@ -44,5 +75,6 @@ for (const [name, code, w, h] of SHOTS) {
     pathToFileURL(src).href], { stdio: 'ignore' });
   let wait = 0;
   while (!existsSync(out) && wait++ < 150) spawnSync(process.execPath, ['-e', 'setTimeout(()=>{},100)']);
+  rmSync(src, { force: true });
   console.log(`${existsSync(out) ? '✅' : '❌'} ${target}/预览截图/${name}.png`);
 }

@@ -36,6 +36,19 @@ const html = readFileSync(join(root, target, '核心考点训练.html'), 'utf8')
     ok('批注没混成挖空', stray.length === 0, stray.map(c => c.id).join(',') || '无');
     const tbl = D.cards.filter(c => c.table && c.table.rows.some(r => r.length !== c.table.head.length));
     ok('表格列数一致', tbl.length === 0, tbl.map(c => c.id).join(',') || '无');
+    if (D.paper) {
+      const Q = D.paper.questions;
+      ok('套卷题数 > 0', Q.length > 0, Q.length + ' 题');
+      ok('套卷题 id 不重复', new Set(Q.map(q => q.id)).size === Q.length);
+      ok('套卷每题 4 个选项', Q.every(q => Array.isArray(q.opts) && q.opts.length === 4));
+      ok('套卷答案都在 0–3', Q.every(q => q.ans >= 0 && q.ans <= 3));
+      ok('套卷每题有解析', Q.every(q => (q.why && Object.keys(q.why).length) || q.sol));
+      ok('套卷每题有单元', Q.every(q => typeof q.unit === 'string' && q.unit.length > 1));
+      const imgs = Q.flatMap(q => (q.blocks || []).flatMap(b =>
+        b.t === 'img' ? [b.src] : b.t === 'tbl' ? b.rows.flatMap(r => r.flatMap(c => c.imgs || [])) : []));
+      const miss = imgs.filter(s => !existsSync(join(root, target, s)));
+      ok('套卷配图都在', imgs.length > 0 && miss.length === 0, `${imgs.length} 张${miss.length ? ' 缺 ' + miss.slice(0, 3).join(',') : ''}`);
+    }
   }
   const bad = res.filter(x => !x.pass);
   console.log(`${bad.length ? '❌' : '✅'} static  ${res.length - bad.length}/${res.length}`);
@@ -119,6 +132,25 @@ const CASES = {
     ok('搜索能过滤', n>0 && n<=DATA.cards.length, n+' 张命中「'+kw+'」');
     ok('有单元进度条', $$('.ubar').length>0);
     ok('有打印按钮', !!document.querySelector('#prt'));
+    // 顶部「按单元 / 练习范围」下拉框在清单里也要生效
+    s.value=''; s.dispatchEvent(new Event('input'));
+    const u=[...new Set(DATA.cards.map(c=>c.unit))][1] || [...new Set(DATA.cards.map(c=>c.unit))][0];
+    const fu=document.querySelector('#fu'); fu.value=u; fu.dispatchEvent(new Event('change'));
+    const inU=DATA.cards.filter(c=>(c.unit||'未分单元')===u).length;
+    ok('按单元筛选在清单里生效', $$('details.k').length===inU, $$('details.k').length+'/'+inU);
+    ok('单元分组只剩一个', $$('.unitbox').length===1, $$('.unitbox').length+'');
+    ok('显示筛选提示', !!document.querySelector('#lclr'), (document.querySelector('#lclr')||{}).textContent);
+    // 叠加「只练★必背」
+    const fs=document.querySelector('#fs'); fs.value='star'; fs.dispatchEvent(new Event('change'));
+    const starN=DATA.cards.filter(c=>(c.unit||'未分单元')===u && (c.star||1)>=2).length;
+    ok('范围筛选在清单里也生效', $$('details.k').length===starN, $$('details.k').length+'/'+starN);
+    ok('清单里的卡都符合范围', [...document.querySelectorAll('details.k')].every(d=>{
+      const c=DATA.cards.find(x=>x.id===d.dataset.id);return c && (c.unit||'未分单元')===u && (c.star||1)>=2;
+    }));
+    // 清除筛选
+    document.querySelector('#lclr').click();
+    ok('清除筛选恢复全部', $$('details.k').length===DATA.cards.length, $$('details.k').length+'/'+DATA.cards.length);
+    ok('清除后下拉框复位', document.querySelector('#fu').value==='全部' && document.querySelector('#fs').value==='all');
   `,
   judge: `
     ok('norm 去标点空白', norm(' 根本政治前提、和制度基础。 ')===norm('根本政治前提和制度基础'));
@@ -134,8 +166,89 @@ const CASES = {
     document.querySelector('#sub').click();
     ok('长答案少一个虚词仍判全对', !!document.querySelector('.verdict.ok'), (document.querySelector('.verdict')||{}).textContent);
   `,
-  misc: `    ok('页面标题用数据里的', document.title===DATA.title, document.title);
-    ok('单元筛选项齐全', $$('#fu option').length>=2, $$('#fu option').length+' 项');
+  paper: `
+    if(!DATA.paper){ ok('这份数据没有套卷（跳过）', true); }
+    else{
+      const tab=document.querySelector('#tabPaper');
+      ok('⑥ 套卷标签显示出来', tab && !tab.hidden);
+      tab.click();
+      ok('切到套卷模式', S.mode==='paper');
+      ok('整卷队列 100 题', S.paper.queue.length===100, S.paper.queue.length+' 题');
+      ok('进度条可见', document.querySelector('#prog') && !document.querySelector('#prog').hidden);
+      ok('统计条显示正确率', document.querySelector('#bar').textContent.includes('正确率'));
+      const q0=PQ_BY(S.paper.queue[0]);
+      ok('题干渲染出来', document.querySelector('.pstem').textContent.length>10, document.querySelector('.pstem').textContent.slice(0,20));
+      const ob=$$('#opts button');
+      ok('四个选项按钮', ob.length===4, ob.length+'');
+      // 故意答错：要标红、标出正确项、给出逐项解析、进错题
+      ob[(q0.ans+1)%4].click();
+      ok('答错时标红', !!document.querySelector('#opts button.w'));
+      ok('正确项标绿', !!document.querySelector('#opts button.c'));
+      ok('逐项解析 4 条', $$('.whyrow').length===4, $$('.whyrow').length+'');
+      ok('解析里正确项高亮', $$('.whyrow.right').length===1);
+      ok('判错记录进 P.paper', P.paper[q0.id] && P.paper[q0.id].wrong===1, JSON.stringify(P.paper[q0.id]));
+      ok('答错后选项禁用', $$('#opts button').every(b=>b.disabled));
+      // 下一题 → 再上一题，已答状态要保留
+      document.querySelector('#pnx').click();
+      ok('下一题换到第 2 题', S.paper.qi===1, 'qi='+S.paper.qi);
+      document.querySelector('#pv').click();
+      ok('回到上一题仍显示解析', $$('.whyrow').length===4);
+      ok('回到上一题仍标记答案', !!document.querySelector('#opts button.c'));
+      // 答对
+      document.querySelector('#pnx').click();
+      const q1=PQ_BY(S.paper.queue[1]);
+      $$('#opts button')[q1.ans].click();
+      ok('答对显示绿色判定', !!document.querySelector('.verdict.ok'));
+      ok('答对计入 ok', P.paper[q1.id].ok===1, JSON.stringify(P.paper[q1.id]));
+      // 配图题：图片要有真实 src
+      const imgQ=PQ.filter(q=>q.blocks.some(b=>b.t==='img'))[0];
+      ok('套卷里有配图题', !!imgQ, imgQ&&imgQ.id);
+      if(imgQ){ S.paper.queue=[imgQ.id];S.paper.qi=0;S.paper.log={};render();
+        const im=document.querySelector('.figs img');
+        ok('配图渲染成 img', im && /\\.webp$/.test(im.getAttribute('src')), im&&im.getAttribute('src'));
+      }
+      // 表格题：题表要渲染
+      const tblQ=PQ.filter(q=>q.blocks.some(b=>b.t==='tbl'))[0];
+      ok('套卷里有题表题', !!tblQ, tblQ&&tblQ.id);
+      if(tblQ){ S.paper.queue=[tblQ.id];S.paper.qi=0;S.paper.log={};render();
+        ok('题表渲染成表格', $$('.ptbl td').length>0, $$('.ptbl td').length+' 个单元格');
+      }
+      // 范围筛选
+      const sel=document.querySelector('#pr');
+      sel.value='round'; sel.dispatchEvent(new Event('change'));
+      ok('随机 20 题', S.paper.queue.length===20, S.paper.queue.length+'');
+      sel.value='weak'; sel.dispatchEvent(new Event('change'));
+      ok('只做错题能捞回答错的题', S.paper.queue.includes(q0.id), S.paper.queue.length+' 题');
+      sel.value='seq'; sel.dispatchEvent(new Event('change'));
+      // 单元筛选
+      const u=PQ[0].unit;
+      const pu=document.querySelector('#pu'); pu.value=u; pu.dispatchEvent(new Event('change'));
+      ok('按单元筛选生效', S.paper.queue.length>0 && S.paper.queue.every(id=>PQ_BY(id).unit===u), u+' → '+S.paper.queue.length+' 题');
+      pu.value='全部'; pu.dispatchEvent(new Event('change'));
+      // 本轮结算
+      const a=PQ[0].id,b=PQ[1].id;
+      S.paper.queue=[a,b];S.paper.qi=0;S.paper.log={};render();
+      $$('#opts button')[PQ[0].ans].click();
+      document.querySelector('#pnx').click();
+      $$('#opts button')[(PQ[1].ans+2)%4].click();
+      document.querySelector('#pnx').click();
+      ok('答完一轮出结算页', !!document.querySelector('.scoreline'), (document.querySelector('.scoreline')||{}).textContent);
+      ok('结算页有错题跳转', $$('[data-jump]').length===1, $$('[data-jump]').length+'');
+      $$('[data-jump]')[0].click();
+      ok('点题号能回到那题', S.paper.qi===1, 'qi='+S.paper.qi);
+      // 整卷打印视图
+      document.querySelector('[data-mode="paper"]').click();
+      paperPrint();
+      ok('打印视图列出全部题', $$('.optrow.c').length===PQ.length, $$('.optrow.c').length+'/'+PQ.length);
+      ok('打印视图有解析', $$('.whybox').length===PQ.length);
+      document.querySelector('#pback').click();
+      ok('返回做题视图', !!document.querySelector('.pstem') && !document.querySelector('.scoreline'));
+      // 记录导出/导入不丢套卷记录
+      const blob=JSON.stringify({data:P});
+      ok('导出记录里带套卷记录', JSON.parse(blob).data.paper && Object.keys(JSON.parse(blob).data.paper).length>0);
+    }
+  `,
+  misc: `    ok('页面标题用数据里的', document.title===DATA.title, document.title);    ok('单元筛选项齐全', $$('#fu option').length>=2, $$('#fu option').length+' 项');
     ok('范围筛选项齐全', $$('#fs option').length===4);
     // 切换单元后队列只含该单元
     const u=[...new Set(DATA.cards.map(c=>c.unit))][0];
@@ -148,6 +261,17 @@ const CASES = {
     // 越界保护：连点下一题
     for(let i=0;i<30;i++){const n=document.querySelector('#nx');if(n)n.click();}
     ok('连点下一题不崩', !!document.querySelector('#stage').innerHTML.length);
+    // 清空记录后切到套卷不能崩（P.paper 必须一起重置）
+    const oc=window.confirm; window.confirm=()=>true;
+    $$('#tabs button').find(b=>b.dataset.mode==='recite').click();
+    document.querySelector('#rst').click();
+    window.confirm=oc;
+    ok('清空后 P.paper 还在', P.paper && typeof P.paper==='object', JSON.stringify(P.paper));
+    if(DATA.paper){
+      $$('#tabs button').find(b=>b.dataset.mode==='paper').click();
+      ok('清空后切套卷不崩', !!document.querySelector('.pstem'));
+      ok('清空后套卷统计归零', P.paper && Object.keys(P.paper).length===0);
+    }
   `,
 };
 
