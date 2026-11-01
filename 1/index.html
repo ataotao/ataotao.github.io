@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>做题思维训练 · 索引</title>
+<link rel="icon" href="../favicon.png" />
+<style>
+  :root{
+    --bg:#f6f7f9;
+    --card:#ffffff;
+    --text:#1a1d21;
+    --muted:#6b7280;
+    --line:#e6e8ec;
+    --shadow:0 1px 2px rgba(16,24,40,.04), 0 8px 24px -12px rgba(16,24,40,.14);
+    --shadow-h:0 2px 6px rgba(16,24,40,.06), 0 18px 40px -16px rgba(16,24,40,.22);
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#0f1115;
+      --card:#181b21;
+      --text:#e8eaed;
+      --muted:#9aa1ab;
+      --line:#272b33;
+      --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -12px rgba(0,0,0,.6);
+      --shadow-h:0 2px 8px rgba(0,0,0,.5), 0 20px 44px -18px rgba(0,0,0,.8);
+    }
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei","Source Han Sans SC",sans-serif;
+    -webkit-font-smoothing:antialiased;
+    line-height:1.6;
+    padding:clamp(20px,4vw,56px) clamp(16px,4vw,32px) 64px;
+  }
+  .wrap{max-width:980px;margin:0 auto}
+
+  header{margin-bottom:clamp(24px,4vw,40px)}
+  h1{
+    font-size:clamp(24px,4.2vw,34px);
+    line-height:1.25;
+    letter-spacing:-.01em;
+    margin:0 0 10px;
+    font-weight:700;
+  }
+  .sub{color:var(--muted);font-size:15px;margin:0;max-width:60ch}
+
+  .grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
+    gap:14px;
+  }
+
+  a.card{
+    --accent:#3b82f6;
+    position:relative;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    padding:18px 18px 16px;
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:16px;
+    text-decoration:none;
+    color:inherit;
+    box-shadow:var(--shadow);
+    transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+    overflow:hidden;
+  }
+  a.card::before{
+    content:"";
+    position:absolute;
+    inset:0 auto 0 0;
+    width:4px;
+    background:var(--accent);
+    opacity:.9;
+  }
+  a.card:hover{
+    transform:translateY(-3px);
+    box-shadow:var(--shadow-h);
+    border-color:color-mix(in srgb, var(--accent) 45%, var(--line));
+  }
+  a.card:focus-visible{
+    outline:2px solid var(--accent);
+    outline-offset:3px;
+  }
+
+  .top{display:flex;align-items:center;gap:10px}
+  .ico{
+    flex:0 0 auto;
+    width:38px;height:38px;
+    display:grid;place-items:center;
+    font-size:19px;
+    border-radius:11px;
+    background:color-mix(in srgb, var(--accent) 14%, transparent);
+    color:var(--accent);
+  }
+  .name{font-size:16.5px;font-weight:650;letter-spacing:.01em}
+  .file{
+    font-size:11.5px;
+    color:var(--muted);
+    font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+    margin-top:1px;
+    word-break:break-all;
+  }
+
+  .desc{margin:0;color:var(--muted);font-size:13.5px;line-height:1.55;min-height:2.9em}
+
+  .tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:auto;padding-top:4px}
+  .tag{
+    font-size:11.5px;
+    padding:3px 8px;
+    border-radius:999px;
+    background:color-mix(in srgb, var(--accent) 10%, transparent);
+    color:color-mix(in srgb, var(--accent) 78%, var(--text));
+    border:1px solid color-mix(in srgb, var(--accent) 22%, transparent);
+    white-space:nowrap;
+  }
+
+  footer{
+    margin-top:clamp(28px,4vw,44px);
+    padding-top:18px;
+    border-top:1px solid var(--line);
+    color:var(--muted);
+    font-size:12.5px;
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px 18px;
+    justify-content:space-between;
+  }
+  footer a{color:inherit}
+
+  @media (prefers-reduced-motion:reduce){
+    a.card{transition:none}
+    a.card:hover{transform:none}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <h1>做题思维训练</h1>
+    <p class="sub">六个训练器的索引。<br />在手机或电脑上点开即可用，数据都写在网页里，离线也能打开。</p>
+  </header>
+
+  <main class="grid">
+
+    <a class="card" href="../index.html" style="--accent:#7c5cd6">
+      <div class="top">
+        <div class="ico" aria-hidden="true">📖</div>
+        <div>
+          <div class="name">英语</div>
+          <div class="file">index.html · 站点首页</div>
+        </div>
+      </div>
+      <p class="desc">沪教广州版单词记背，按单元背词，带发音、拼写比赛，词库可导入导出。</p>
+      <div class="tags">
+        <span class="tag">背单词</span>
+        <span class="tag">播放发音</span>
+        <span class="tag">拼写比赛</span>
+        <span class="tag">单元管理</span>
+        <span class="tag">进度</span>
+      </div>
+    </a>
+
+    <a class="card" href="./道德与法治/核心考点训练.html" style="--accent:#e05252">
+      <div class="top">
+        <div class="ico" aria-hidden="true">⚖</div>
+        <div>
+          <div class="name">道德与法治</div>
+          <div class="file">核心考点训练.html</div>
+        </div>
+      </div>
+      <p class="desc">九上《道德与法治》核心考点，按单元配图，四种方式反复过。</p>
+      <div class="tags">
+        <span class="tag">翻卡背</span>
+        <span class="tag">填空闯</span>
+        <span class="tag">四选一</span>
+        <span class="tag">套卷</span>
+      </div>
+    </a>
+
+    <a class="card" href="./历史/核心考点训练.html" style="--accent:#b4713a">
+      <div class="top">
+        <div class="ico" aria-hidden="true">🏛</div>
+        <div>
+          <div class="name">历史</div>
+          <div class="file">核心考点训练.html</div>
+        </div>
+      </div>
+      <p class="desc">九上历史核心考点，材料题配图，可整套卷子限时作答、答错看解析。</p>
+      <div class="tags">
+        <span class="tag">翻卡背</span>
+        <span class="tag">填空闯</span>
+        <span class="tag">四选一</span>
+        <span class="tag">清单速览</span>
+        <span class="tag">套卷</span>
+      </div>
+    </a>
+
+    <a class="card" href="./数学/函数思维脚手架.html" style="--accent:#3b6fe0">
+      <div class="top">
+        <div class="ico" aria-hidden="true">📐</div>
+        <div>
+          <div class="name">数学</div>
+          <div class="file">函数思维脚手架.html</div>
+        </div>
+      </div>
+      <p class="desc">函数题五步拆解：读条件、找关系、列式、解、回看。带闪练、整卷和得分档案。</p>
+      <div class="tags">
+        <span class="tag">五步引导</span>
+        <span class="tag">闪练</span>
+        <span class="tag">试卷练习</span>
+        <span class="tag">训练报告</span>
+        <span class="tag">题库管理</span>
+      </div>
+    </a>
+
+    <a class="card" href="./物理/物理思维脚手架.html" style="--accent:#0f9b8e">
+      <div class="top">
+        <div class="ico" aria-hidden="true">🔬</div>
+        <div>
+          <div class="name">物理</div>
+          <div class="file">物理思维脚手架.html</div>
+        </div>
+      </div>
+      <p class="desc">九上物理周练原题带图，五步引导加错题回看，配整卷模考与报告。</p>
+      <div class="tags">
+        <span class="tag">概念</span>
+        <span class="tag">五步引导</span>
+        <span class="tag">整卷</span>
+        <span class="tag">错题</span>
+        <span class="tag">报告</span>
+      </div>
+    </a>
+
+    <a class="card" href="./公式记背/公式记背.html" style="--accent:#c58a12">
+      <div class="top">
+        <div class="ico" aria-hidden="true">∑</div>
+        <div>
+          <div class="name">公式记背</div>
+          <div class="file">公式记背.html</div>
+        </div>
+      </div>
+      <p class="desc">按章节背公式，配例题两种解法，公式表可以遮住答案自测。</p>
+      <div class="tags">
+        <span class="tag">背公式</span>
+        <span class="tag">填一填</span>
+        <span class="tag">认一认</span>
+        <span class="tag">例题</span>
+        <span class="tag">公式表</span>
+      </div>
+    </a>
+
+  </main>
+
+  <footer>
+    <span>索引页 · 复制自「做题思维训练」，共 6 个训练器</span>
+    <span><a href="../index.html">← 返回站点首页</a></span>
+  </footer>
+
+</div>
+</body>
+</html>

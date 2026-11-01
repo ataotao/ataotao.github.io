@@ -1,0 +1,75 @@
+# 定时发布（可选）
+#
+# 用法：复制到 .github/workflows/publish.yml（去掉 .example 后缀）并提交，即会生效。
+# 放在 tools/ 下不会被 GitHub Actions 读取，所以现在这份是"备而不用"。
+#
+# 三个仓库都是公开的，clone 和 push 都不需要额外配置密钥。
+
+name: 发布站点
+
+on:
+  schedule:
+    # cron 用 UTC。21:10 UTC = 北京时间次日 05:10
+    - cron: '10 21 * * *'
+  workflow_dispatch:        # 也可以在 Actions 页面手动点一下
+
+permissions:
+  contents: write
+
+concurrency:
+  group: publish-site
+  cancel-in-progress: true
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 检出站点仓库
+        uses: actions/checkout@v4
+
+      # 源根目录 .src，其下要放两个文件夹：
+      #   learn-english\word_table\vocab-app\dist
+      #   做题思维训练\...
+      - name: 检出英语前端工程
+        uses: actions/checkout@v4
+        with:
+          repository: ataotao/learn-english
+          path: .src/learn-english
+
+      - name: 检出做题思维训练
+        uses: actions/checkout@v4
+        with:
+          repository: ataotao/learning-training
+          path: .src/做题思维训练
+
+      - name: 构建 vocab-app
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+          cache-dependency-path: .src/learn-english/word_table/vocab-app/package-lock.json
+
+      - name: 安装依赖并构建
+        working-directory: .src/learn-english/word_table/vocab-app
+        run: |
+          rm -rf dist
+          npm ci
+          npm run build
+
+      - name: 发布到站点
+        shell: pwsh
+        run: ./tools/publish.ps1 -SourceRoot ./.src -Prune
+
+      - name: 提交变化
+        run: |
+          set -euo pipefail
+          rm -rf .src
+          git config user.name  'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          if [ -z "$(git status --porcelain index.html favicon.png assets 1)" ]; then
+            echo '没有变化，跳过提交。'
+            exit 0
+          fi
+          git add index.html favicon.png assets 1
+          git commit -m "定时发布 $(date -u '+%Y-%m-%d %H:%M UTC')"
+          git push

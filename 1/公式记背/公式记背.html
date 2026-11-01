@@ -1,0 +1,977 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>公式记背</title>
+<style>
+:root{
+  --bg:#f5f3ee; --card:#fffdf9; --ink:#20211f; --sub:#6b6660; --line:#e3ded3;
+  --acc:#2b5876; --acc-soft:#e6eef4; --ok:#1f7a4d; --ok-soft:#e2f3e9;
+  --bad:#b3352c; --bad-soft:#fbe7e4; --warn:#a86a12; --warn-soft:#fdf1da;
+  --r:14px; --sh:0 2px 10px rgba(40,35,30,.07);
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);
+  font:16px/1.75 "Noto Sans SC","PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+  -webkit-text-size-adjust:100%}
+button,select,input{font-family:inherit}
+.wrap{max-width:820px;margin:0 auto;padding:0 14px 90px}
+
+/* ---------- 顶栏 ---------- */
+header{position:sticky;top:0;z-index:20;background:rgba(245,243,238,.95);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.hd{max-width:820px;margin:0 auto;padding:10px 14px 0}
+.brand{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.brand b{font-size:17px;letter-spacing:.3px}
+.brand span{font-size:12px;color:var(--sub)}
+.tabs{display:flex;gap:6px;overflow-x:auto;padding:8px 0 9px;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tabs button{flex:0 0 auto;border:1px solid var(--line);background:#fff;color:var(--sub);
+  padding:7px 13px;border-radius:999px;font-size:14px;cursor:pointer;transition:.15s}
+.tabs button:hover{border-color:var(--acc);color:var(--acc)}
+.tabs button[aria-selected="true"]{background:var(--acc);border-color:var(--acc);color:#fff;font-weight:600}
+
+/* ---------- 统计条 ---------- */
+.bar{display:flex;flex-direction:column;gap:7px;margin:12px 0 4px;font-size:13px;color:var(--sub)}
+.bar .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.pill{background:#fff;border:1px solid var(--line);border-radius:999px;padding:3px 11px;white-space:nowrap}
+.pill b{color:var(--ink);font-size:14px}
+.pill.ok b{color:var(--ok)} .pill.bad b{color:var(--bad)}
+.bar select{font-size:13px;padding:4px 8px;border-radius:8px;border:1px solid var(--line);background:#fff;color:var(--ink);max-width:190px}
+.bar .sp{flex:1}
+.linkbtn{background:none;border:0;color:var(--acc);font-size:13px;cursor:pointer;padding:4px 2px;text-decoration:underline dotted}
+.prog{height:4px;background:var(--line);border-radius:9px;overflow:hidden;margin:8px 0 0}
+.prog>i{display:block;height:100%;background:var(--acc);width:0;transition:width .25s}
+
+/* ---------- 卡片 ---------- */
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--sh);padding:18px 18px 16px;margin-top:14px}
+.meta{display:flex;align-items:baseline;gap:10px;font-size:12px;color:var(--sub);line-height:1.6;margin-bottom:10px;word-break:break-word}
+.meta .mt{flex:1 1 auto;min-width:0}
+.meta .u{color:var(--acc);font-weight:600}
+.meta .mr{flex:0 0 auto;display:flex;align-items:center;gap:8px;white-space:nowrap}
+.stars{color:var(--warn);letter-spacing:1px;font-size:12px;vertical-align:2px}
+.q{font-size:19px;line-height:1.6;font-weight:600;margin:0 0 6px}
+.lead{color:var(--sub);font-size:13px;margin:0 0 12px;line-height:1.7}
+.ans{margin-top:14px;padding-top:12px;border-top:1px dashed var(--line)}
+
+/* ---------- 公式 ---------- */
+.fx{
+  margin:12px 0;padding:16px 12px;background:#fff;border:1px solid var(--line);border-radius:12px;
+  text-align:center;overflow-x:auto;
+  font-family:"Cambria Math",Cambria,"Times New Roman",Georgia,serif;
+  font-size:clamp(17px,4.6vw,27px);line-height:2.1;color:#17211f;
+}
+.fx.sm{font-size:clamp(17px,3.6vw,21px);line-height:1.9;margin:0;padding:10px 8px;border:0;border-left:3px solid var(--acc-soft);border-radius:0 8px 8px 0;background:#fbfaf6;text-align:left}
+.fx i.v{font-style:italic;font-family:"Times New Roman",Cambria,Georgia,serif}
+.fx .tx{font-family:"Noto Sans SC","PingFang SC","Microsoft YaHei",sans-serif;font-size:.72em;font-style:normal;color:#33302c;white-space:nowrap;margin:0 .12em}
+.fx sub,.fx sup{font-size:.62em;line-height:0}
+.fr{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;margin:0 .22em;font-size:.95em}
+.fr>.fn{padding:0 .22em .08em;line-height:1.35;text-align:center}
+.fr>.fd{padding:.08em .22em 0;border-top:1.5px solid currentColor;line-height:1.35;text-align:center}
+.rt{display:inline-flex;align-items:flex-start;margin:0 .08em}
+.rt>.rs{font-size:1.12em;line-height:.95;transform:translateY(.1em)}
+.rt>.rd{border-top:1.5px solid currentColor;padding:.06em .07em 0 .05em;margin-left:-.04em}
+.slot{
+  display:inline-block;min-width:1.5em;padding:.08em .45em;margin:0 .12em;
+  border:1.5px dashed var(--acc);border-radius:7px;background:var(--acc-soft);color:var(--acc);
+  font-size:.74em;line-height:1.45;cursor:pointer;vertical-align:.05em;
+  font-family:"Noto Sans SC",sans-serif;
+}
+.slot:hover{background:#dbe8f0}
+.slot[data-active="1"]{background:#c9dbe7;border-style:solid;box-shadow:0 0 0 2px rgba(43,88,118,.18)}
+.slot.filled{font-size:.98em;background:none;border:0;padding:0 .06em;margin:0 .04em;cursor:default;line-height:1.35;font-family:inherit;vertical-align:baseline}
+.slot.ok{color:var(--ok)}
+.slot.bad{color:var(--bad)}
+.fixlist{margin:2px 0 10px;font-size:13.5px;color:var(--sub);line-height:2.2;text-align:center}
+.fixlist b{color:var(--ok);font-weight:400;font-family:"Cambria Math",Cambria,"Times New Roman",serif;font-size:1.15em}
+
+/* ---------- 口诀 / 易错 ---------- */
+.tipbox{margin-top:12px;background:var(--warn-soft);border-left:3px solid var(--warn);border-radius:0 8px 8px 0;padding:9px 13px;font-size:14.5px;line-height:1.75;color:#6d4a12}
+.tipbox b{color:var(--warn);margin-right:6px;font-size:12px;letter-spacing:.5px}
+.trapbox{margin-top:9px;background:var(--bad-soft);border-left:3px solid var(--bad);border-radius:0 8px 8px 0;padding:9px 13px;font-size:14px;line-height:1.75;color:#7d2a23}
+.trapbox b{color:var(--bad);margin-right:6px;font-size:12px;letter-spacing:.5px}
+.whybox{margin-top:9px}
+.whybox summary{cursor:pointer;font-size:13px;color:var(--acc);padding:6px 0}
+.whybox .bd{font-size:13.5px;color:var(--sub);line-height:1.8;padding:2px 12px 4px;border-left:2px solid var(--line)}
+
+/* ---------- 步骤（例题） ---------- */
+.steps{margin-top:8px}
+.steps .grp{font-size:13px;font-weight:700;color:var(--acc);margin:14px 0 6px;padding-left:9px;border-left:3px solid var(--acc)}
+.steps .grp:first-child{margin-top:4px}
+.st{display:flex;gap:9px;margin-bottom:8px}
+.st .n{flex:0 0 20px;height:20px;line-height:20px;text-align:center;border-radius:50%;background:var(--acc-soft);color:var(--acc);font-size:11.5px;font-weight:700;margin-top:6px}
+.st .sb{flex:1;min-width:0}
+.st .nt{font-size:12.5px;color:var(--sub);line-height:1.65;margin:4px 0 0 2px}
+
+/* ---------- 选项 ---------- */
+.opts{display:grid;gap:9px;margin-top:14px}
+.opts.two{grid-template-columns:1fr}
+.opts button{text-align:left;background:#fff;border:1px solid var(--line);border-radius:10px;
+  padding:10px 13px;font-size:16px;line-height:1.7;cursor:pointer;transition:.12s;color:var(--ink);
+  font-family:"Cambria Math",Cambria,"Times New Roman",Georgia,serif}
+.opts button:hover{border-color:var(--acc);background:var(--acc-soft)}
+.opts button:disabled{cursor:default;opacity:.95}
+.opts button.c{background:var(--ok-soft);border-color:var(--ok);color:var(--ok);font-weight:600}
+.opts button.w{background:var(--bad-soft);border-color:var(--bad);color:var(--bad)}
+.opts button .kk{display:inline-block;width:20px;height:20px;line-height:20px;text-align:center;border-radius:5px;background:var(--bg);font-size:12px;margin-right:9px;color:var(--sub);font-family:system-ui,sans-serif;font-weight:400}
+
+/* ---------- 底部操作 ---------- */
+.acts{display:flex;gap:9px;flex-wrap:wrap;align-items:center;margin-top:16px}
+.btn{border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:10px;padding:10px 18px;font-size:15px;cursor:pointer;transition:.12s}
+.btn:hover{border-color:var(--acc);color:var(--acc)}
+.btn.p{background:var(--acc);border-color:var(--acc);color:#fff;font-weight:600}
+.btn.p:hover{filter:brightness(1.08);color:#fff}
+.btn.g{background:var(--ok);border-color:var(--ok);color:#fff}
+.btn.d{background:var(--bad);border-color:var(--bad);color:#fff}
+.btn.sm{padding:6px 12px;font-size:13px;border-radius:8px}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.verdict{margin-top:14px;border-radius:10px;padding:11px 14px;font-size:15px;line-height:1.7}
+.verdict.ok{background:var(--ok-soft);color:var(--ok);border:1px solid #bfe3cd}
+.verdict.bad{background:var(--bad-soft);color:var(--bad);border:1px solid #f0c8c2}
+.verdict b{font-size:16px}
+.nav{display:flex;gap:8px;align-items:center;justify-content:space-between;margin-top:14px;font-size:13px;color:var(--sub)}
+.empty{text-align:center;color:var(--sub);padding:46px 10px;font-size:15px;line-height:2}
+.empty .big{font-size:34px;display:block;margin-bottom:6px}
+
+/* ---------- 今日必背 ---------- */
+.tagtoday{display:inline-block;font-size:11px;font-weight:700;color:#8a5a10;background:#fbeed3;border:1px solid #eed49f;border-radius:5px;padding:0 5px;margin-right:6px;vertical-align:1px;letter-spacing:.5px}
+.todaybox{margin-top:16px;background:#fffcf3;border:1px solid #eed9ae;border-radius:var(--r);padding:14px 16px 10px;box-shadow:var(--sh)}
+.todaybox .thd{display:flex;align-items:flex-start;gap:10px;flex-wrap:wrap;margin-bottom:4px}
+.todaybox h3{margin:0;font-size:15px;color:#8a5a10;line-height:1.5}
+.todaybox h3 b{color:var(--bad);font-size:17px;margin:0 2px}
+.todaybox h3 span{display:block;font-size:12px;font-weight:400;color:var(--sub)}
+.todaybox .sp{flex:1}
+.todaybox .tacts{display:flex;gap:10px;flex-wrap:wrap}
+.todaybox .tacts button{background:none;border:0;color:#8a5a10;font-size:12.5px;cursor:pointer;padding:3px 0;text-decoration:underline dotted}
+.tl{list-style:none;margin:6px 0 0;padding:0}
+.tl>li{border-top:1px dashed #eddcbb;padding:7px 0 4px}
+.tl>li:first-child{border-top:0;padding-top:2px}
+.tlh{display:flex;align-items:center;gap:8px}
+.tlh .no{flex:0 0 19px;height:19px;line-height:19px;text-align:center;border-radius:50%;background:#f7e7c6;color:#8a5a10;font-size:11px;font-weight:700}
+.tlh .nm{flex:1;font-size:14.5px;font-weight:600;min-width:0}
+.tlh .x{flex:0 0 auto;background:none;border:0;color:var(--sub);font-size:12px;cursor:pointer;text-decoration:underline dotted;padding:2px 4px}
+.tlh .x:hover{color:var(--bad)}
+.tl .fx{margin:4px 0 0;padding:6px 6px;background:#fff;border-color:#f0e6d2;font-size:clamp(15px,3.8vw,20px);line-height:1.8}
+/* 例题条目在清单里直接给完整过程，别只放一行答案 */
+.tl .steps{margin-top:2px}
+.tl .steps .grp{font-size:12.5px;margin:10px 0 4px}
+.tl .steps .grp:first-child{margin-top:2px}
+.tl .steps .st{margin-bottom:6px}
+.tl .steps .fx{margin:2px 0 0;padding:5px 8px;background:#fff;border-color:#f0e6d2;
+  border-left:3px solid var(--acc-soft);text-align:left;font-size:clamp(14px,3.5vw,18px);line-height:1.75}
+.tl .steps .nt{font-size:12px;margin-top:3px}
+.tempty{font-size:13.5px;color:var(--sub);line-height:1.8;margin:8px 0 4px}
+
+/* ---------- 公式表 ---------- */
+.unitbox{margin-top:16px}
+.unitbox>h3{font-size:15px;margin:0 0 8px;padding:8px 12px;background:var(--acc-soft);color:var(--acc);border-radius:9px;display:flex;justify-content:space-between;gap:10px;align-items:baseline}
+.unitbox>h3 span{font-size:12px;font-weight:400;color:var(--sub)}
+details.k{margin:0 0 8px;background:var(--card);border:1px solid var(--line);border-radius:11px;overflow:hidden}
+details.k>summary{cursor:pointer;padding:11px 14px;font-size:15px;font-weight:600;line-height:1.6;list-style:none;display:flex;gap:8px;align-items:flex-start}
+details.k>summary::-webkit-details-marker{display:none}
+details.k>summary::before{content:"▸";color:var(--acc);flex:0 0 auto;transition:.15s}
+details.k[open]>summary::before{transform:rotate(90deg)}
+details.k>summary:hover{background:var(--acc-soft)}
+details.k .bd{padding:0 14px 14px}
+.lv{flex:0 0 auto;font-size:11px;font-weight:500;border-radius:6px;padding:1px 7px;margin-top:4px}
+.lv0{background:#eee;color:#8b8b8b}.lv2{background:var(--acc-soft);color:var(--acc)}
+.lv3{background:var(--ok-soft);color:var(--ok)}.lv4{background:var(--bad-soft);color:var(--bad)}
+.searchbox{width:100%;padding:10px 14px;border-radius:10px;border:1px solid var(--line);background:#fff;font-size:15px;margin-top:12px}
+.report{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px;margin-top:16px}
+.report h3{margin:0 0 8px;font-size:15px}
+.report ul{margin:0;padding-left:20px;font-size:14px;line-height:1.9}
+.report li b{color:var(--bad)}
+.ubars{margin:8px 0 0}
+.ubar{display:flex;align-items:center;gap:9px;font-size:13px;margin:5px 0;color:var(--sub)}
+.ubar .nm{flex:0 0 190px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ubar .tr{flex:1;height:7px;background:var(--bg);border:1px solid var(--line);border-radius:9px;overflow:hidden}
+.ubar .tr i{display:block;height:100%;background:var(--ok);width:0}
+.ubar .pc{flex:0 0 44px;text-align:right;font-variant-numeric:tabular-nums}
+.hint{font-size:12.5px;color:var(--sub);margin-top:8px;line-height:1.7}
+.hidef .fx .tx,.hidef .fx i.v,.hidef .fx .fr{transition:.15s}
+/* 遮住公式：整块糊住，点一下这张卡才揭开（不做 hover——鼠标一过就露等于没遮） */
+.maskcur .fx{filter:blur(10px);cursor:pointer;user-select:none;transition:filter .12s}
+.maskcur .tipbox,.maskcur .trapbox{filter:blur(7px);cursor:pointer;user-select:none;transition:filter .12s}
+.maskcur .steps .nt{filter:blur(6px);user-select:none;transition:filter .12s}
+.maskhint{background:#fff8e8;border:1px dashed #e6cf9d;border-radius:9px;padding:8px 12px;font-size:13px;color:#8a5a10;line-height:1.7;margin:10px 0 0}
+
+@media (max-width:520px){
+  .q{font-size:17.5px}
+  .card{padding:15px 13px 13px}
+  .brand b{font-size:15px}
+  .pill{padding:2px 9px}
+  .ubar .nm{flex-basis:120px}
+  .opts button{font-size:15px}
+  .tabs{flex-wrap:wrap;overflow:visible}
+  .tabs button{font-size:13px;padding:6px 11px}
+  .fx{padding:12px 8px}
+}
+@media print{
+  header,.tabs,.bar,.acts,.nav,.searchbox,.tabs+.prog{display:none!important}
+  body{background:#fff}
+  .card,details.k,.unitbox,.report{box-shadow:none;break-inside:avoid;border-color:#ccc}
+  details.k .bd{display:block!important}
+  .fx{border-color:#ddd}
+  /* 只打印今日必背那张清单 */
+  body.print-today .bar,body.print-today .report,body.print-today .unitbox,
+  body.print-today .searchbox,body.print-today .hint,body.print-today .acts,
+  body.print-today .todaybox .tacts,body.print-today .tlh .x{display:none!important}
+  body.print-today .todaybox{border:0;box-shadow:none;background:#fff;padding:0}
+  body.print-today .todaybox h3{font-size:17px;color:#000}
+  body.print-today .tl>li{break-inside:avoid;page-break-inside:avoid}
+  /* 例题条目带完整过程，可能比一页长：允许在步骤之间分页，单步不拆开 */
+  body.print-today .tl>li:has(.steps){break-inside:auto;page-break-inside:auto}
+  body.print-today .tl .st{break-inside:avoid;page-break-inside:avoid}
+  /* 打印时不要糊的 */
+  .maskcur .fx,.maskcur .tipbox,.maskcur .trapbox,.maskcur .steps .nt{filter:none!important}
+  .maskhint{display:none!important}
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="hd">
+    <div class="brand"><b id="ttl">公式记背</b><span id="sb"></span></div>
+    <div class="tabs" id="tabs">
+      <button data-mode="recite" aria-selected="true">① 背公式</button>
+      <button data-mode="fill">② 填一填</button>
+      <button data-mode="name">③ 认一认</button>
+      <button data-mode="wrong">④ 错题</button>
+      <button data-mode="list">⑤ 公式表</button>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="bar" id="bar"></div>
+  <div class="prog" id="prog" hidden><i></i></div>
+  <main id="stage"></main>
+</div>
+
+<script>
+/* ================================================================
+   数据（构建时由 公式数据.json 注入）
+   ================================================================ */
+const DATA = {"subject":"数学","title":"九上数学 · 公式记背","cards":[{"id":"qe-01","unit":"一元二次方程","name":"一元二次方程的一般式","q":"一般形式怎么写？为什么后面必须写明 a≠0？","tex":"ax^2+bx+c=0\\;(a\\ne 0)","cloze":{"tex":"ax^2+bx+c=0\\;\\slot{0}","blanks":[{"ok":"(a\\ne 0)","wrong":["(a\\ne 1)","(a>0)","(a=0)"]}]},"tip":"二次项系数不为零；b、c 随便是零。","trap":"漏写 a≠0 是丢分点：a=0 时它就退化成一次方程，判别式、韦达定理全部不成立。","why":"“一元”指只有一个未知数，“二次”指最高次数是 2。判断一个式子是不是一元二次方程，要先整理成一般式，再看二次项系数是不是 0。","star":2},{"id":"qe-02","today":true,"unit":"一元二次方程","name":"求根公式","q":"ax²+bx+c=0（a≠0）的两个根怎么求？","tex":"x=\\frac{-b\\pm\\sqrt{b^2-4ac}}{2a}","cloze":{"tex":"x=\\frac{\\slot{0}}{\\slot{1}}","blanks":[{"ok":"-b\\pm\\sqrt{b^2-4ac}","wrong":["b\\pm\\sqrt{b^2-4ac}","-b\\pm\\sqrt{b^2+4ac}","-b+\\sqrt{b^2-4ac}"]},{"ok":"2a","wrong":["a","2","4a"]}]},"tip":"负 b 加减根号，b 方减四 ac，全部除以二 a。","trap":"分母是 2a，不是 a 也不是 2；根号里是 b² 减 4ac；分子前的负号、中间的 ± 一个都不能少。","why":"它就是配方法的结果：把 ax²+bx+c=0 配成 (x+b/2a)²=(b²-4ac)/4a²，开方、移项就得到这条公式。","star":3},{"id":"qe-03","today":true,"unit":"一元二次方程","name":"根的判别式","q":"判断根的情况，先算哪个式子？","tex":"\\Delta=b^2-4ac","cloze":{"tex":"\\Delta=\\slot{0}","blanks":[{"ok":"b^2-4ac","wrong":["b^2+4ac","4ac-b^2","b-4ac"]}]},"tip":"b 方减四 ac——是“减”，不是“加”。","trap":"顶点纵坐标的分子是 4ac−b²，和判别式 b²−4ac 正好相反。这两个符号反着记，是九上最经典的一处混淆。","why":"Δ 就是配方后右边 (b²-4ac)/4a² 的分子。它的正负决定右边能不能开平方，也就决定了有几个实数根。","star":3},{"id":"qe-04","today":true,"unit":"一元二次方程","name":"根的情况 ① Δ>0","q":"判别式大于 0 时，方程有几个根？","tex":"\\Delta>0\\;\\Leftrightarrow\\;\\text{两个不相等的实数根}","cloze":{"tex":"\\Delta>0\\;\\Leftrightarrow\\;\\slot{0}","blanks":[{"ok":"\\text{两个不相等的实数根}","wrong":["\\text{两个相等的实数根}","\\text{没有实数根}","\\text{一个实数根}"]}]},"tip":"大于零两不等，等于零两相等，小于零没实根。","trap":"开口方向和这个没关系：Δ>0 只说明抛物线与 x 轴有两个交点、方程有两个不相等的实数根。","star":2},{"id":"qe-05","today":true,"unit":"一元二次方程","name":"根的情况 ② Δ=0","q":"判别式等于 0 时，方程有几个根？","tex":"\\Delta=0\\;\\Leftrightarrow\\;\\text{两个相等的实数根}","cloze":{"tex":"\\Delta=0\\;\\Leftrightarrow\\;\\slot{0}","blanks":[{"ok":"\\text{两个相等的实数根}","wrong":["\\text{一个实数根}","\\text{两个不相等的实数根}","\\text{没有实数根}"]}]},"tip":"等于零，两个根相等（也叫二重根）。","trap":"说“只有一个根”不严谨，标准说法是“两个相等的实数根”；反过来说，题目讲“有两个实数根”时，Δ=0 也算在内。","star":2},{"id":"qe-06","today":true,"unit":"一元二次方程","name":"根的情况 ③ Δ<0","q":"判别式小于 0 时，方程有几个根？","tex":"\\Delta<0\\;\\Leftrightarrow\\;\\text{没有实数根}","cloze":{"tex":"\\Delta<0\\;\\Leftrightarrow\\;\\slot{0}","blanks":[{"ok":"\\text{没有实数根}","wrong":["\\text{有两个相等的实数根}","\\text{有一个实数根}","\\text{有两个不相等的实数根}"]}]},"tip":"小于零，无实根，抛物线与 x 轴不相交。","trap":"初中范围内 Δ<0 就是无解，不用考虑别的数；求参数范围时，题目说“没有实数根”就是让你列 Δ<0。","star":1},{"id":"qe-07","today":true,"unit":"一元二次方程","name":"韦达定理 · 两根之和","q":"x₁、x₂ 是 ax²+bx+c=0 的两根，那么 x₁+x₂ 等于什么？","tex":"x_1+x_2=-\\frac{b}{a}","cloze":{"tex":"x_1+x_2=\\slot{0}","blanks":[{"ok":"-\\frac{b}{a}","wrong":["\\frac{b}{a}","-\\frac{c}{a}","\\frac{c}{a}"]}]},"tip":"和是负 b 比 a，积是 c 比 a。","trap":"负号最容易丢。想不起来就用求根公式加一遍：两根相加，± 抵消，剩下 -2b/2a=-b/a。","star":3},{"id":"qe-08","today":true,"unit":"一元二次方程","name":"韦达定理 · 两根之积","q":"x₁、x₂ 是 ax²+bx+c=0 的两根，那么 x₁x₂ 等于什么？","tex":"x_1x_2=\\frac{c}{a}","cloze":{"tex":"x_1x_2=\\slot{0}","blanks":[{"ok":"\\frac{c}{a}","wrong":["-\\frac{c}{a}","\\frac{b}{a}","-\\frac{b}{a}"]}]},"tip":"积没有负号——分子是常数项 c。","trap":"“和”有负号、“积”没有，两个只差这一个符号。写之前先问自己：这个式子该不该有负号？","star":3},{"id":"qe-09","unit":"一元二次方程","name":"韦达定理的前提","q":"用韦达定理之前，必须先保证什么？","tex":"\\Delta\\ge 0\\;\\Rightarrow\\;x_1+x_2=-\\frac{b}{a},\\;x_1x_2=\\frac{c}{a}","cloze":{"tex":"\\slot{0}\\;\\Rightarrow\\;x_1+x_2=-\\frac{b}{a},\\;x_1x_2=\\frac{c}{a}","blanks":[{"ok":"\\Delta\\ge 0","wrong":["\\Delta>0","\\Delta=0","a\\ne 0"]}]},"tip":"有实数根（Δ≥0），才谈得上两根之和、两根之积。","trap":"含参题里最容易丢的一步：用韦达求出参数后，一定要回头检验 Δ≥0，不然会把不成立的解留下来。注意是“≥0”，Δ=0 时两根相等，韦达照样成立。","why":"a≠0 是方程本身的要求；Δ≥0 是“真的有实数根”的要求。两根存在，才谈两根的和与积。","star":2},{"id":"qe-10","unit":"一元二次方程","name":"变形 · 两根的平方和","q":"已知两根之和与两根之积，怎么求 x₁²+x₂²？","tex":"x_1^2+x_2^2=(x_1+x_2)^2-2x_1x_2=\\frac{b^2-2ac}{a^2}","cloze":{"tex":"x_1^2+x_2^2=(x_1+x_2)^2-\\slot{0}=\\slot{1}","blanks":[{"ok":"2x_1x_2","wrong":["4x_1x_2","x_1x_2","(x_1x_2)^2"]},{"ok":"\\frac{b^2-2ac}{a^2}","wrong":["\\frac{b^2+2ac}{a^2}","\\frac{b^2-2ac}{a}","\\frac{b^2-4ac}{a^2}"]}]},"tip":"平方和 = 和的平方 − 2 倍积。","trap":"这里减的是 2 倍积；减 4 倍积的是“差的平方”。2 和 4 弄反，是这类题最主要的错误。","why":"把 (x₁+x₂)² 展开，中间会多出一个 2x₁x₂，减掉就只剩平方和。","star":2},{"id":"qe-11","unit":"一元二次方程","name":"变形 · 两根的距离","q":"两根之间的距离 |x₁-x₂|，怎么用 a 和 Δ 表示？","tex":"|x_1-x_2|=\\frac{\\sqrt{\\Delta}}{|a|}","cloze":{"tex":"|x_1-x_2|=\\frac{\\sqrt{\\Delta}}{\\slot{0}}","blanks":[{"ok":"|a|","wrong":["a","2a","a^2"]}]},"tip":"差的平方 = 和的平方 − 4 倍积 = Δ/a²；开方取正就得 √Δ/|a|。","trap":"分母是 |a| 不是 a——距离不能是负数；分子是 √Δ，不是 Δ。","why":"(x₁-x₂)²=(x₁+x₂)²-4x₁x₂=b²/a²-4c/a=Δ/a²，两边开平方取正值。","star":2},{"id":"qe-12","unit":"一元二次方程","name":"变形 · 两根的倒数和","q":"1/x₁ + 1/x₂ 怎么用 a、b、c 表示？","tex":"\\frac{1}{x_1}+\\frac{1}{x_2}=\\frac{x_1+x_2}{x_1x_2}=-\\frac{b}{c}","cloze":{"tex":"\\frac{1}{x_1}+\\frac{1}{x_2}=\\frac{x_1+x_2}{\\slot{0}}=-\\frac{b}{c}","blanks":[{"ok":"x_1x_2","wrong":["x_1+x_2","(x_1+x_2)^2","x_1-x_2"]}]},"tip":"见分式先通分，通完只剩“和”和“积”。","trap":"最后结果里 a 被约掉了，剩下 -b/c，不是 -b/a。算完代一组数验一下最稳。","why":"(x₁+x₂)/(x₁x₂)=(-b/a)÷(c/a)=-b/c。","star":1},{"id":"qe-13","unit":"一元二次方程","name":"求根公式是怎么来的（配方法）","q":"把 ax²+bx+c=0 配方成完全平方，左边和右边分别是什么？","tex":"ax^2+bx+c=0\\;\\Rightarrow\\;\\left(x+\\frac{b}{2a}\\right)^2=\\frac{b^2-4ac}{4a^2}","cloze":{"tex":"ax^2+bx+c=0\\;\\Rightarrow\\;\\slot{0}=\\slot{1}","blanks":[{"ok":"\\left(x+\\frac{b}{2a}\\right)^2","wrong":["\\left(x-\\frac{b}{2a}\\right)^2","\\left(x+\\frac{b}{a}\\right)^2","\\left(x+\\frac{b}{2a}\\right)"]},{"ok":"\\frac{b^2-4ac}{4a^2}","wrong":["\\frac{b^2+4ac}{4a^2}","\\frac{b^2-4ac}{2a}","\\frac{4ac-b^2}{4a^2}"]}]},"tip":"两边除以 a，再配 (b/2a)²；右边就是 Δ 除以 4a²。","trap":"括号里是“加” b/2a，可对称轴是 x=-b/2a——因为你把 b/2a 移项过去了。一个加一个减，别混。","why":"开平方得 x+b/2a=±√Δ/2a，移项就得到求根公式。同时能看出来：配方里那个 -b/2a，正是抛物线对称轴的横坐标。这一条把求根公式、判别式、对称轴三样串在了一起。","star":2},{"id":"cf-01","today":true,"unit":"二次函数","name":"二次函数的一般式","q":"一般式怎么写？它的图象与 y 轴交在哪里？","tex":"y=ax^2+bx+c\\;(a\\ne 0)\\quad\\text{与}\\,y\\,\\text{轴交于}\\,(0,c)","cloze":{"tex":"y=ax^2+bx+c\\;(a\\ne 0)\\quad\\text{与}\\,y\\,\\text{轴交于}\\,\\slot{0}","blanks":[{"ok":"(0,c)","wrong":["(c,0)","(0,b)","(0,-c)"]}]},"tip":"令 x=0，剩下的常数项就是与 y 轴交点的纵坐标。","trap":"是 (0,c) 不是 (c,0)：与 y 轴相交时横坐标一定是 0。和 x 轴的交点才要另算——那要解 ax²+bx+c=0。","star":2},{"id":"cf-02","today":true,"unit":"二次函数","name":"顶点式","q":"顶点式怎么写？怎么一眼看出顶点坐标？","tex":"y=a(x-h)^2+k\\;(a\\ne 0)\\quad\\text{顶点坐标}\\;(h,k)","cloze":{"tex":"y=a(x-h)^2+k\\;(a\\ne 0)\\quad\\text{顶点坐标}\\;(\\slot{0})","blanks":[{"ok":"h,k","wrong":["-h,k","h,-k","k,h"]}]},"tip":"括号里解出来是 h，括号外面是 k。","trap":"y=a(x-2)²+3 的顶点是 (2,3)，不是 (-2,3)——括号里是“减 h”，所以要变号。这是顶点式最常错的一处。","why":"(x-h)²≥0，当 x=h 时取到 0，此时 y=k 就是最高点或最低点。","star":3},{"id":"cf-03","today":true,"unit":"二次函数","name":"交点式","q":"交点式怎么写？已知两个交点，对称轴在哪？","tex":"y=a(x-x_1)(x-x_2)\\quad\\text{对称轴}\\;x=\\frac{x_1+x_2}{2}","cloze":{"tex":"y=a(x-x_1)(x-x_2)\\quad\\text{对称轴}\\;x=\\slot{0}","blanks":[{"ok":"\\frac{x_1+x_2}{2}","wrong":["\\frac{x_1-x_2}{2}","x_1+x_2","\\frac{x_1x_2}{2}"]}]},"tip":"两个交点的中点，就是对称轴。","trap":"交点式里的 x₁、x₂ 是与 x 轴交点的横坐标，交点坐标是 (x₁,0)、(x₂,0)，不是 (0,x₁)。","why":"抛物线关于对称轴对称，两个交点也关于它对称，所以对称轴是两点连线中点所在的竖直线。","star":2},{"id":"cf-04","today":true,"unit":"二次函数","name":"顶点坐标公式","q":"一般式 y=ax²+bx+c 的顶点坐标公式是什么？","tex":"\\left(-\\frac{b}{2a},\\;\\frac{4ac-b^2}{4a}\\right)","cloze":{"tex":"\\left(-\\frac{b}{2a},\\;\\slot{0}\\right)","blanks":[{"ok":"\\frac{4ac-b^2}{4a}","wrong":["\\frac{b^2-4ac}{4a}","\\frac{4ac-b^2}{2a}","\\frac{4ac+b^2}{4a}"]}]},"tip":"横坐标负 b 比 2a，纵坐标四 ac 减 b 方比 4a。","trap":"纵坐标分子是 4ac−b²，和判别式 b²−4ac 符号相反；分母是 4a，不是 2a。横坐标和纵坐标的分母不一样，这一点最容易写串。","why":"把一般式配方成 a(x+b/2a)²+(4ac-b²)/4a，对照顶点式就能读出来。","star":3},{"id":"cf-05","today":true,"unit":"二次函数","name":"对称轴公式","q":"抛物线 y=ax²+bx+c 的对称轴是什么？","tex":"x=-\\frac{b}{2a}","cloze":{"tex":"x=\\slot{0}","blanks":[{"ok":"-\\frac{b}{2a}","wrong":["\\frac{b}{2a}","-\\frac{b}{a}","-\\frac{2a}{b}"]}]},"tip":"对称轴就是顶点的横坐标所在的竖直线：x=-b/2a。","trap":"负号不能丢；它是“一条直线 x=…”，不是“一个数”。用交点式算 x=(x₁+x₂)/2，两个结果应该一样——可以互相验算。","star":3},{"id":"cf-06","unit":"二次函数","name":"最值（顶点纵坐标）","q":"二次函数的最大值或最小值怎么算？在哪个 x 取到？","tex":"y_{\\text{最值}}=\\frac{4ac-b^2}{4a}\\quad\\left(x=-\\frac{b}{2a}\\right)","cloze":{"tex":"y_{\\text{最值}}=\\slot{0}\\quad\\left(x=-\\frac{b}{2a}\\right)","blanks":[{"ok":"\\frac{4ac-b^2}{4a}","wrong":["\\frac{b^2-4ac}{4a}","\\frac{4ac-b^2}{2a}","\\frac{4ac-b^2}{4a^2}"]}]},"tip":"最值就是顶点纵坐标：a>0 取最小值，a<0 取最大值。","trap":"a>0 开口向上，顶点是最低点，取到的是最小值；a<0 反过来。别把“有最大值”和“有最小值”说反。","why":"配方后 y=a(x+b/2a)²+(4ac-b²)/4a，a>0 时平方项最小是 0，所以 y 最小；a<0 时平方项让 y 一直往下减，所以有最大值。","star":2},{"id":"cf-07","unit":"二次函数","name":"一般式 → 顶点式（配方）","q":"把一般式配方成顶点式，括号里是加还是减？","tex":"y=ax^2+bx+c=a\\left(x+\\frac{b}{2a}\\right)^2+\\frac{4ac-b^2}{4a}","cloze":{"tex":"y=ax^2+bx+c=a\\left(x+\\slot{0}\\right)^2+\\frac{4ac-b^2}{4a}","blanks":[{"ok":"\\frac{b}{2a}","wrong":["-\\frac{b}{2a}","\\frac{b}{a}","\\frac{2a}{b}"]}]},"tip":"先提 a，再配 (b/2a)²，最后把多加减的补回去。","trap":"配方结果里是“加 b/2a”，对称轴却是“x=-b/2a”。写成 a(x-b/2a)² 就把顶点横坐标的符号弄丢了。","why":"因为 a(x+b/2a)²=a(x-(-b/2a))²，把它对照顶点式 a(x-h)²+k，就得到 h=-b/2a。","star":2},{"id":"cf-08","unit":"二次函数","name":"三种形式怎么选","q":"一般式、顶点式、交点式，做题时该设哪一个？","table":{"head":["已知条件","该设哪种","为什么"],"rows":[["已知顶点 (h,k)，或给了对称轴、最值","顶点式 y=a(x-h)²+k","顶点直接代进去，只剩一个 a 要定"],["已知与 x 轴的两个交点 (x₁,0)、(x₂,0)","交点式 y=a(x-x₁)(x-x₂)","x₁、x₂ 直接代，只剩一个 a"],["已知图象上任意三个点","一般式 y=ax²+bx+c","三个点列三个方程，解 a、b、c"],["题目直接给 a、b、c 或要判断系数符号","一般式（必要时配方）","配方后就能读顶点、对称轴和最值"]]},"tip":"看顶点、最值、对称轴 → 顶点式；看两个交点 → 交点式；什么都没给 → 一般式。","trap":"三种形式是同一个函数的三种写法，a 一定相同（a 相同则开口大小方向相同）。换形式时 a 别跟着改。","star":2},{"id":"cf-09","unit":"二次函数","name":"平移规律（左加右减、上加下减）","q":"顶点式 y=a(x-h)²+k 的图象左右、上下平移时，h 和 k 怎么变？","tex":"\\text{右移}\\,m:\\;h\\to h+m\\quad\\text{上移}\\,n:\\;k\\to k+n","cloze":{"tex":"\\text{右移}\\,m:\\;h\\to\\slot{0}\\quad\\text{上移}\\,n:\\;k\\to\\slot{1}","blanks":[{"ok":"h+m","wrong":["h-m","h","m-h"]},{"ok":"k+n","wrong":["k-n","k","n-k"]}]},"tip":"图象往右、往上走，顶点的坐标就加；写进括号里要变号（左加右减）。","trap":"最容易错在括号里：右移 m 之后是 a(x-h-m)²，看起来是“减得更多”，可顶点横坐标是变大的 h+m。两者不矛盾——(x-(h+m)) 展开就是 x-h-m。","why":"平移只改变位置，不改变形状和开口方向，所以 a 不动，只有顶点在动。","star":2},{"id":"cf-10","unit":"二次函数","name":"a、b、c 与图象位置","q":"怎么由对称轴的位置判断 a、b 是否同号？","tex":"a,b\\;\\text{同号}\\;\\Leftrightarrow\\;-\\frac{b}{2a}<0\\;\\Leftrightarrow\\;\\text{对称轴在}\\,y\\,\\text{轴}\\text{左侧}","cloze":{"tex":"a,b\\;\\text{同号}\\;\\Leftrightarrow\\;-\\frac{b}{2a}<0\\;\\Leftrightarrow\\;\\text{对称轴在}\\,y\\,\\text{轴}\\slot{0}","blanks":[{"ok":"\\text{左侧}","wrong":["\\text{右侧}","\\text{与}\\,y\\,\\text{轴重合}","\\text{上方}"]}]},"tip":"开口看 a，交点看 c，对称轴看“左同右异”：轴在 y 轴左边，a、b 同号；在右边，a、b 异号。","trap":"c 只看图象与 y 轴交点的位置（交在正半轴就 c>0），和开口方向无关；b 单独没有几何意义，必须和 a 一起看。","why":"对称轴是 x=-b/2a。a、b 同号时 -b/2a<0，轴在左边；异号时为正，轴在右边。","star":2},{"id":"cf-11","today":true,"unit":"二次函数","name":"例题：两种方法求顶点坐标","kind":"例","q":"用配方法、公式法求 y=2x²-4x+5 的顶点坐标。","steps":[{"h":"法一 · 配方法","t":"y=2x^2-4x+5\\quad a=2,\\;b=-4,\\;c=5","note":"先认清三个系数：二次项系数 a=2，一次项系数 b=-4（负号一起算），常数项 c=5。后面每一步都用它们"},{"t":"=2(x^2-2x)+5","note":"把前两项的 2 提出来：括号里每一项都是原来那一项除以 2 —— 2x²÷2=x²，-4x÷2=-2x。5÷2=2.5 不是整数，所以 5 不提，留在括号外面"},{"t":"-2\\div 2=-1,\\quad(-1)^2=1","note":"要配的那个数 = 括号里一次项系数一半的平方。括号里一次项系数是 -2：-2÷2=-1，再平方得 1。所以括号里要凑出 1"},{"t":"x^2-2x=(x^2-2x+1)-1","note":"凑完全平方得有一个 +1；可凭空加 1 整个式子就变大了，所以加 1 之后马上减 1 —— 等于加了 0，大小不变"},{"t":"=2(x^2-2x+1-1)+5","note":"把上一步的结果代回第 2 步的括号里，别的都不动"},{"t":"=2[(x-1)^2-1]+5","note":"括号里前三项 x²-2x+1 正好是 (x-1)²（完全平方）；剩下的 -1 单独留在方括号里，还没消掉"},{"t":"=2(x-1)^2+2\\times(-1)+5","note":"外面的 2 要乘到方括号里的每一项，不能只乘第一项；2×(-1)=-2。漏乘这一步，答案就会从 3 变成 5"},{"t":"=2(x-1)^2-2+5=2(x-1)^2+3","note":"-2+5=3，合并完才是顶点式 y=a(x-h)²+k：a=2，h=1，k=3"},{"t":"\\text{顶点坐标}\\;(1,\\,3)","note":"括号里是 x-1，对应 x-h，所以 h=1（不是 -1）；外面 +3 就是 k。横、纵坐标合起来写成点 (1,3)"},{"h":"法二 · 公式法","t":"x=-\\frac{b}{2a}=-\\frac{-4}{2\\times 2}=\\frac{4}{4}=1","note":"a=2，b=-4。分子是 -b，就是给 b 变号：-(-4)=4；分母是 2a=2×2=4。这一步算出的是顶点横坐标"},{"t":"y=\\frac{4ac-b^2}{4a}=\\frac{4\\times 2\\times 5-(-4)^2}{4\\times 2}=\\frac{40-16}{8}=3","note":"a=2，b=-4，c=5。分子：4ac=4×2×5=40，b²=(-4)²=16，40-16=24；分母 4a=8。算出来是顶点纵坐标"},{"t":"\\text{顶点坐标}\\;(1,\\,3)","note":"横坐标 1、纵坐标 3 合成一个点。法一读出来的也是 (1,3)，两法对上才算没算错"}],"cloze":{"tex":"y=2x^2-4x+5=2(x-\\slot{0})^2+\\slot{1}","blanks":[{"ok":"1","wrong":["-1","2","\\frac{1}{2}"]},{"ok":"3","wrong":["-3","5","2"]}]},"tip":"配方法走三步：提 a → 配一半的平方 → 补回去。公式法只记两个位置：-b/2a 和 (4ac-b²)/4a。","trap":"配方法里“加上 1 就要减 1”，而且这个 -1 提出括号时要乘上外面的 2，变成 -2——这一步漏乘，答案就从 3 变成 5。","why":"两种方法其实是同一件事：配方是一步一步算，公式法是把配方的结果背下来直接套。考场上时间紧就套公式，拿不准就用配方法验算。","star":3}]};
+
+/* ================================================================
+   基础工具
+   ================================================================ */
+const $=(s,r=document)=>r.querySelector(s);
+const $$=(s,r=document)=>Array.from(r.querySelectorAll(s));
+const esc=s=>String(s).replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
+const shuffle=a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
+const todayKey=()=>{const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');};
+
+/* ================================================================
+   迷你公式排版：支持 \frac \sqrt ^ _ \text \slot 和常用符号
+   （不联网、不依赖 KaTeX，单文件也能画出分数和根号）
+   ================================================================ */
+const SYM={
+  '\\pm':'±','\\mp':'∓','\\times':'×','\\div':'÷','\\cdot':'·',
+  '\\le':'≤','\\leq':'≤','\\ge':'≥','\\geq':'≥','\\ne':'≠','\\neq':'≠','\\approx':'≈',
+  '\\Rightarrow':'⇒','\\Leftrightarrow':'⇔','\\rightarrow':'→','\\to':'→','\\longrightarrow':'→',
+  '\\because':'∵','\\therefore':'∴','\\infty':'∞',
+  '\\Delta':'Δ','\\delta':'δ','\\alpha':'α','\\beta':'β','\\gamma':'γ','\\theta':'θ','\\pi':'π',
+  '\\quad':'　','\\qquad':'　　','\\,':' ','\\;':' ','\\:':' ','\\!':'','\\ ':' ',
+  '\\left':'','\\right':''
+};
+function parseTex(src){
+  let i=0;
+  function skip(){ while(i<src.length&&/\s/.test(src[i]))i++; }
+  function rawArg(){
+    skip();
+    if(src[i]==='{'){ i++; let s=''; let deep=1;
+      while(i<src.length){ const c=src[i];
+        if(c==='\\'){ s+=c+src[i+1]; i+=2; continue; }
+        if(c==='{')deep++; if(c==='}'){deep--; if(!deep){i++;break;}}
+        s+=c; i++;
+      } return s;
+    }
+    return src[i++]||'';
+  }
+  function atom(){
+    skip();
+    if(i>=src.length)return null;
+    const c=src[i];
+    let node;
+    if(c==='{'){ i++; node={t:'grp',c:seq()}; }
+    else if(c==='}'){ return null; }
+    else if(c==='\\'){
+      i++; let name='';
+      if(/[a-zA-Z]/.test(src[i]||'')){ while(i<src.length&&/[a-zA-Z]/.test(src[i]))name+=src[i++]; }
+      else { name=src[i++]||''; }
+      if(name==='frac'){ const a=arg(); const b=arg(); node={t:'frac',a,b}; }
+      else if(name==='sqrt'){ const a=arg(); node={t:'sqrt',a}; }
+      else if(name==='text'||name==='tx'){ node={t:'text',v:rawArg()}; }
+      else if(name==='slot'){ node={t:'slot',k:parseInt(rawArg(),10)||0}; }
+      else if(Object.prototype.hasOwnProperty.call(SYM,'\\'+name)) node={t:'chr',v:SYM['\\'+name]};
+      else node={t:'chr',v:name};
+    }
+    else { i++; node={t:'chr',v:c}; }
+    for(;;){
+      skip();
+      const d=src[i];
+      if(d!=='^'&&d!=='_')break;
+      i++; const a=arg();
+      node = d==='^' ? {t:'sup',b:node,a} : {t:'sub',b:node,a};
+    }
+    return node;
+  }
+  function arg(){
+    skip();
+    if(src[i]==='{'){ i++; return seq(); }
+    const a=atom(); return a?[a]:[];
+  }
+  function seq(){
+    const out=[];
+    for(;;){
+      skip();
+      if(i>=src.length)break;
+      if(src[i]==='}'){ i++; break; }
+      const a=atom();
+      if(!a){ i++; continue; }
+      out.push(a);
+    }
+    return out;
+  }
+  return seq();
+}
+function texHTML(nodes){
+  return nodes.map(n=>{
+    switch(n.t){
+      case 'chr':
+        if(n.v==='')return '';
+        if(/^[a-zA-Z]$/.test(n.v))return `<i class="v">${n.v}</i>`;
+        return esc(n.v);
+      case 'grp': return texHTML(n.c);
+      case 'frac': return `<span class="fr"><span class="fn">${texHTML(n.a)}</span><span class="fd">${texHTML(n.b)}</span></span>`;
+      case 'sqrt': return `<span class="rt"><span class="rs">√</span><span class="rd">${texHTML(n.a)}</span></span>`;
+      case 'sup': return `${texHTML([n.b])}<sup>${texHTML(n.a)}</sup>`;
+      case 'sub': return `${texHTML([n.b])}<sub>${texHTML(n.a)}</sub>`;
+      case 'text': return `<span class="tx">${esc(n.v)}</span>`;
+      case 'slot': return `<span class="slot" data-k="${n.k}">${n.k+1}</span>`;
+      default: return '';
+    }
+  }).join('');
+}
+const tex=s=>texHTML(parseTex(String(s||'')));
+function fxHTML(s,cls){
+  return `<div class="fx${cls?' '+cls:''}">${tex(s)}</div>`;
+}
+/* 把 \slot{k} 换成正确答案，得到完整公式 */
+function fullTex(c){
+  if(c.tex)return c.tex;
+  if(!c.cloze)return '';
+  let s=c.cloze.tex;
+  c.cloze.blanks.forEach((b,k)=>{ s=s.split(`\\slot{${k}}`).join(`{${b.ok}}`); });
+  return s;
+}
+
+/* ================================================================
+   持久化
+   ================================================================ */
+const SK='gs_v1_'+((DATA&&DATA.subject)||'x');
+let P=loadProg();
+function loadProg(){
+  let d={cards:{},days:{}};
+  try{const raw=localStorage.getItem(SK);if(raw){const o=JSON.parse(raw);if(o&&o.cards)d=o;}}catch(e){}
+  if(!d.days)d.days={};
+  /* 「今日必背」名单：第一次打开时按数据里的 today 标记铺一份，之后由用户手动加减 */
+  if(!d.today||!Array.isArray(d.today.ids)){
+    d.today={ids:((DATA&&DATA.cards)||[]).filter(c=>c.today).map(c=>c.id)};
+  }
+  return d;
+}
+function saveProg(){ try{localStorage.setItem(SK,JSON.stringify(P));}catch(e){} }
+function rec(id,ok,mode){
+  const p=P.cards[id]||(P.cards[id]={seen:0,ok:0,wrong:0,streak:0,last:0,mode:''});
+  p.seen++;p.last=Date.now();p.mode=mode||p.mode;
+  if(ok){p.ok++;p.streak=Math.min(9,p.streak+1);}else{p.wrong++;p.streak=0;}
+  const d=todayKey(),t=P.days[d]||(P.days[d]={n:0,ok:0});
+  t.n++;if(ok)t.ok++;
+  saveProg();
+}
+const getP=id=>P.cards[id]||null;
+const PW=id=>getP(id)||{seen:0,ok:0,wrong:0,streak:0,last:0};
+const scrollTop=()=>{try{window.scrollTo({top:0,behavior:'smooth'});}catch(e){}};
+
+/* ---------- 今日必背名单 ---------- */
+const todayIds=()=>(P.today&&Array.isArray(P.today.ids))?P.today.ids:[];
+const isToday=id=>todayIds().indexOf(id)>=0;
+const todayCards=()=>DATA.cards.filter(c=>isToday(c.id));
+function toggleToday(id){
+  if(!P.today||!Array.isArray(P.today.ids))P.today={ids:[]};
+  const a=P.today.ids,i=a.indexOf(id);
+  if(i>=0)a.splice(i,1);else a.push(id);
+  saveProg();
+}
+function clearToday(){ P.today={ids:[]}; saveProg(); }
+function level(id){
+  const p=getP(id);
+  if(!p||!p.seen)return 0;
+  if(p.streak>=3)return 3;
+  if(p.streak>0)return 2;
+  return 4;
+}
+const LVTXT={0:'未学',2:'记过',3:'熟练',4:'待强化'};
+
+/* ================================================================
+   全局状态
+   ================================================================ */
+const UNITS=[...new Set((DATA?DATA.cards:[]).map(c=>c.unit||'未分单元'))];
+const S={mode:'recite',unit:'全部',scope:'all',queue:[],qi:0,revealed:false,scored:false,
+         fill:null,fillCard:null,optOrder:null,active:0,choice:null,choiceDone:false};
+const hasFill=c=>!!(c.cloze&&c.cloze.blanks&&c.cloze.blanks.length);
+const CARD_BY=id=>DATA.cards.find(c=>c.id===id);
+
+/* ================================================================
+   统计条
+   ================================================================ */
+function renderBar(){
+  const cards=DATA.cards;
+  let ok=0,weak=0;
+  cards.forEach(c=>{const p=getP(c.id);if(!p||!p.seen)return;
+    const lv=level(c.id);if(lv===3)ok++;if(lv===4)weak++;});
+  const d=P.days[todayKey()]||{n:0,ok:0};
+  const rate=d.n?Math.round(d.ok/d.n*100):0;
+  const nt=todayCards().length;
+  $('#bar').innerHTML=
+    `<div class="row"><span class="pill">公式 <b>${cards.length}</b></span>`+
+    `<span class="pill ok">已熟练 <b>${ok}</b></span>`+
+    `<span class="pill bad">待强化 <b>${weak}</b></span>`+
+    `<span class="pill" id="ptd" style="cursor:pointer;border-color:#eed49f;background:#fffcf3" title="跳到「今日必背」清单">今日必背 <b style="color:#8a5a10">${nt}</b></span>`+
+    `<span class="pill">今天 <b>${d.n}</b> 题 · <b>${rate}%</b></span></div>`+
+    `<div class="row">`+
+    `<select id="fu" title="按章节练">${['全部',...UNITS].map(u=>`<option${u===S.unit?' selected':''}>${esc(u)}</option>`).join('')}</select>`+
+    `<select id="fs" title="练习范围">
+      <option value="all"${S.scope==='all'?' selected':''}>全部范围</option>
+      <option value="today"${S.scope==='today'?' selected':''}>只练今日必背</option>
+      <option value="star"${S.scope==='star'?' selected':''}>只练★★核心</option>
+      <option value="weak"${S.scope==='weak'?' selected':''}>只练未熟练</option>
+      <option value="unseen"${S.scope==='unseen'?' selected':''}>只练没练过</option>
+    </select>`+
+    `<span class="sp"></span>`+
+    `<button class="linkbtn" id="exp" title="把练习记录导出成文件（备份/换设备）">导出记录</button>`+
+    `<button class="linkbtn" id="imp" title="从文件导入练习记录">导入记录</button>`+
+    `<button class="linkbtn" id="rst" title="清空本机的练习记录">清空</button></div>`;
+  $('#ptd').onclick=()=>{
+    S.mode='list';S.qi=0;render();
+    const el=$('#todaybox');if(el)try{el.scrollIntoView({block:'start',behavior:'smooth'});}catch(e){}
+  };
+  $('#fu').onchange=e=>{S.unit=e.target.value;S.qi=0;buildQueue();render();};
+  $('#fs').onchange=e=>{S.scope=e.target.value;S.qi=0;buildQueue();render();};
+  $('#exp').onclick=exportProg;
+  $('#imp').onclick=importProg;
+  $('#rst').onclick=()=>{
+    if(!confirm('清空全部练习记录？（不可恢复，建议先「导出记录」）\n（「今日必背」名单会保留）'))return;
+    P={cards:{},days:{},today:{ids:todayIds().slice()}};saveProg();S.qi=0;buildQueue();render();
+  };
+}
+function exportProg(){
+  const blob=new Blob([JSON.stringify({subject:DATA.subject,exported:new Date().toISOString(),data:P},null,2)],{type:'application/json'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download=`${DATA.subject}-公式记录-${todayKey()}.json`;
+  a.click();setTimeout(()=>URL.revokeObjectURL(a.href),3000);
+}
+function importProg(){
+  const inp=document.createElement('input');inp.type='file';inp.accept='.json,application/json';
+  inp.onchange=()=>{
+    const f=inp.files&&inp.files[0];if(!f)return;
+    const r=new FileReader();
+    r.onload=()=>{
+      try{
+        const o=JSON.parse(r.result);
+        const d=o.data&&o.data.cards?o.data:o;
+        if(!d.cards)throw new Error('文件里没有 cards');
+        if(!confirm(`导入会用文件里的记录覆盖本机记录（文件里 ${Object.keys(d.cards).length} 条的记录）。继续？`))return;
+        const keepToday=(d.today&&Array.isArray(d.today.ids))?d.today.ids:todayIds().slice();
+        P={cards:d.cards||{},days:d.days||{},today:{ids:keepToday}};saveProg();S.qi=0;buildQueue();render();
+      }catch(e){alert('导入失败：'+e.message);}
+    };
+    r.readAsText(f);
+  };
+  inp.click();
+}
+
+/* ================================================================
+   队列
+   ================================================================ */
+function pool(){
+  let a=DATA.cards.slice();
+  if(S.unit!=='全部')a=a.filter(c=>(c.unit||'未分单元')===S.unit);
+  if(S.scope==='today')a=a.filter(c=>isToday(c.id));
+  if(S.scope==='star')a=a.filter(c=>(c.star||1)>=3);
+  if(S.scope==='unseen')a=a.filter(c=>!getP(c.id)||!getP(c.id).seen);
+  if(S.scope==='weak')a=a.filter(c=>{const lv=level(c.id);return lv===0||lv===2||lv===4;});
+  return a;
+}
+function buildQueue(){
+  let a=pool();
+  if(S.mode==='fill')a=a.filter(c=>hasFill(c));
+  if(S.mode==='name')a=a.filter(c=>c.kind!=='例'&&(c.tex||c.cloze));
+  if(S.mode==='wrong')a=a.filter(c=>{const p=getP(c.id);return p&&p.wrong>0&&p.streak<2;});
+  if(S.mode==='wrong')a.sort((x,y)=>PW(y.id).wrong-PW(x.id).wrong);
+  else a.sort((x,y)=>(PW(x.id).seen?1:0)-(PW(y.id).seen?1:0));
+  S.queue=a.map(c=>c.id);
+  if(S.qi>=S.queue.length)S.qi=0;
+}
+function setProg(){
+  const el=$('#prog');
+  if(!['recite','fill','name','wrong'].includes(S.mode)||!S.queue.length){el.hidden=true;return;}
+  el.hidden=false;
+  $('i',el).style.width=Math.round((S.qi+1)/S.queue.length*100)+'%';
+}
+
+/* ================================================================
+   渲染入口
+   ================================================================ */
+function render(){
+  $$('#tabs button').forEach(b=>b.setAttribute('aria-selected',b.dataset.mode===S.mode));
+  renderBar();setProg();
+  const st=$('#stage');
+  if(S.mode==='list'){renderList(st);return;}
+  if(!S.queue.length){st.innerHTML=emptyHTML();renderNav(st);return;}
+  const c=CARD_BY(S.queue[S.qi]);
+  if(!c){st.innerHTML=emptyHTML();return;}
+  if(S.mode==='fill')renderFill(st,c);
+  else if(S.mode==='name')renderName(st,c);
+  else renderRecite(st,c);
+  renderNav(st);
+}
+function emptyHTML(){
+  const tips={
+    recite:'把「练习范围」改成“全部范围”，或点上面的章节重新选。',
+    fill:'这些公式没有可挖空的位置，换 ① 背公式 练。',
+    name:'当前范围没有可辨认的公式，换个章节试试。',
+    wrong:'太棒了，错题已经清空。做错的会自动进来；连续答对 2 次才出库。'
+  };
+  return `<div class="card empty"><span class="big">${S.mode==='wrong'?'🎉':'🗂'}</span>${
+    S.mode==='wrong'?'当前范围没有待强化的错题。':(S.scope==='unseen'?'这个范围里的公式都练过了。':'当前范围没有匹配的公式。')}
+    <div class="hint">${tips[S.mode]||''}</div></div>`;
+}
+function renderNav(st){
+  const nav=document.createElement('div');
+  nav.className='nav';
+  const inSess=['recite','fill','name','wrong'].includes(S.mode);
+  nav.innerHTML=inSess&&S.queue.length
+    ? `<button class="btn sm" id="pv"${S.qi===0?' disabled':''}>← 上一个</button>
+       <span>${S.qi+1} / ${S.queue.length}</span>
+       <button class="btn sm" id="nx">下一个 →</button>`
+    : `<span></span><span></span><span></span>`;
+  st.appendChild(nav);
+  const pv=$('#pv',nav),nx=$('#nx',nav);
+  if(pv&&!pv.disabled)pv.onclick=()=>{S.qi--;resetCardState();render();};
+  if(nx)nx.onclick=()=>nextCard();
+}
+function resetCardState(){
+  S.revealed=false;S.scored=false;S.fill=null;S.fillCard=null;S.optOrder=null;S.active=0;S.choiceDone=false;
+}
+function nextCard(){
+  if(S.qi<S.queue.length-1){S.qi++;resetCardState();render();}
+  else{
+    const st=$('#stage');
+    st.insertAdjacentHTML('afterbegin',`<div class="verdict ok" style="margin-bottom:0"><b>这一轮走完了 ✓</b><br>一共 ${S.queue.length} 条。上面统计里标「待强化」的就是还没拿稳的，去 ④ 错题 或 ⑤ 公式表 再看一遍。</div>`);
+    scrollTop();
+  }
+}
+
+/* ---------------- 公式 + 口诀 + 易错（可复用） ---------------- */
+/* 例题的解题过程：背公式、今日必背清单共用，保证「答案」是完整过程而不是一行结论 */
+/* 分组（法一／法二）各自从 1 编号，两种解法是两道并列的完整过程，不是一条被切开的流水账 */
+function stepsHTML(c){
+  if(!c.steps||!c.steps.length)return '';
+  let n=0;
+  return '<div class="steps">'+c.steps.map(s=>{
+    if(s.h)n=0;
+    n++;
+    return (s.h?`<div class="grp">${esc(s.h)}</div>`:'')+
+      `<div class="st"><span class="n">${n}</span><span class="sb">${fxHTML(s.t,'sm')}${
+        s.note?`<div class="nt">${esc(s.note)}</div>`:''}</span></div>`;
+  }).join('')+'</div>';
+}
+function answerHTML(c,opts){
+  const o=opts||{};
+  let h='';
+  if(c.steps&&c.steps.length)h+=stepsHTML(c);
+  if(c.table){
+    h+=`<table class="tb" style="width:100%;border-collapse:collapse;margin:10px 0;font-size:13.5px">
+      <thead><tr>${(c.table.head||[]).map(x=>`<th style="border:1px solid var(--line);background:var(--acc-soft);color:var(--acc);padding:6px 8px;text-align:left">${esc(x)}</th>`).join('')}</tr></thead>
+      <tbody>${(c.table.rows||[]).map(r=>`<tr>${r.map(x=>`<td style="border:1px solid var(--line);padding:6px 8px;vertical-align:top;line-height:1.65">${esc(x)}</td>`).join('')}</tr>`).join('')}</tbody></table>`;
+  }
+  if(!c.steps&&!c.table&&fullTex(c))h+=fxHTML(fullTex(c));
+  if(c.tip)h+=`<div class="tipbox"><b>口诀</b>${esc(c.tip)}</div>`;
+  if(c.trap)h+=`<div class="trapbox"><b>易错</b>${esc(c.trap)}</div>`;
+  if(c.why&&!o.noWhy)h+=`<details class="whybox"><summary>为什么是这样（点开看）</summary><div class="bd">${esc(c.why)}</div></details>`;
+  return h;
+}
+function metaHTML(c){
+  const bits=[];
+  if(c.unit)bits.push(`<span class="u">${esc(c.unit)}</span>`);
+  if(c.name)bits.push(esc(c.name));
+  const lv=level(c.id);
+  return `<div class="meta"><span class="mt">${bits.join(' ／ ')}</span>`+
+    `<span class="mr">${isToday(c.id)?'<span class="tagtoday">今</span>':''}`+
+    `<span class="stars">${(c.star||1)>=3?'★★':(c.star||1)>=2?'★':''}</span>`+
+    `<span class="lv lv${lv}">${LVTXT[lv]}</span></span></div>`;
+}
+
+/* ---------------- ① 背公式 ---------------- */
+function renderRecite(st,c){
+  const q=c.kind==='例'?(c.q||c.name):(c.name||'');
+  st.innerHTML=`<div class="card">${metaHTML(c)}
+    <div class="q">${esc(q)}</div>
+    ${c.q&&c.kind!=='例'?`<div class="lead">${esc(c.q)}</div>`:''}
+    ${S.revealed?`<div class="ans">${answerHTML(c)}</div>`:''}
+    <div class="acts" id="acts"></div>
+  </div>`;
+  const acts=$('#acts',st);
+  if(!S.revealed){
+    acts.innerHTML=`<button class="btn p" id="show">看公式（空格）</button>
+      <span class="hint">先在纸上写一遍，写完再对。</span>`;
+    $('#show',acts).onclick=()=>{S.revealed=true;render();};
+  }else{
+    acts.innerHTML=`<span class="hint" style="margin:0 4px 0 0">刚才写对了吗：</span>
+      <button class="btn g" data-v="1">写对了（1）</button>
+      <button class="btn" data-v="0.5">差不多（2）</button>
+      <button class="btn d" data-v="0">没写出来（3）</button>`;
+    $$('button[data-v]',acts).forEach(b=>b.onclick=()=>{
+      const v=b.dataset.v;
+      if(v==='1')rec(c.id,true,'recite');
+      else if(v==='0')rec(c.id,false,'recite');
+      else{const q2=getP(c.id);if(q2){q2.seen++;q2.streak=0;q2.last=Date.now();saveProg();}else{rec(c.id,false,'recite');}}
+      nextCard();
+    });
+  }
+}
+
+/* ---------------- ② 填一填 ---------------- */
+function renderFill(st,c){
+  const bl=c.cloze;
+  const n=bl.blanks.length;
+  if(S.fillCard!==c.id){S.fill=Array(n).fill(null);S.fillCard=c.id;S.active=0;S.scored=false;S.revealed=false;S.optOrder=null;}
+  if(!S.optOrder){
+    S.optOrder=bl.blanks.map(b=>shuffle([b.ok].concat(b.wrong||[])));
+  }
+  const done=S.fill.every(x=>x!==null);
+  const showAns=S.scored;
+  st.innerHTML=`<div class="card" id="card">${metaHTML(c)}
+    <div class="q">${esc(c.name||'')}</div>
+    <div class="lead">${esc(c.q||'把空缺补上')}</div>
+    <div class="fx" id="fx">${tex(bl.tex)}</div>
+    <div id="pick"></div>
+    <div id="fb"></div>
+    <div class="acts" id="acts"></div>
+  </div>`;
+  const fxEl=$('#fx',st);
+  // 已经选好的填进去（填的过程中只显示选了哪个，不判对错）
+  bl.blanks.forEach((b,k)=>{
+    if(showAns)return;
+    const el=$(`.slot[data-k="${k}"]`,fxEl);
+    if(!el)return;
+    const pick=S.fill[k];
+    if(pick===null)return;
+    el.classList.add('filled');
+    el.innerHTML=tex(S.optOrder[k][pick]);
+  });
+  const cur=$(`.slot[data-k="${S.active}"]`,fxEl);
+  if(cur&&!showAns&&S.fill[S.active]===null)cur.dataset.active='1';
+  const pick=$('#pick',st),acts=$('#acts',st),fb=$('#fb',st);
+
+  if(showAns){
+    const wrongs=[];
+    bl.blanks.forEach((b,k)=>{
+      const el=$(`.slot[data-k="${k}"]`,fxEl);
+      const picked=S.optOrder[k][S.fill[k]];
+      const ok=picked===b.ok;
+      if(el){
+        el.classList.add('filled');
+        el.innerHTML=tex(picked);
+        el.classList.remove('ok','bad');
+        el.classList.add(ok?'ok':'bad');
+      }
+      if(!ok)wrongs.push(`第 ${k+1} 空应为 <b>${tex(b.ok)}</b>`);
+    });
+    fb.innerHTML=(wrongs.length?`<div class="fixlist">${wrongs.join('　·　')}</div>`:'')+
+      `<div class="verdict ${wrongs.length?'bad':'ok'}">${wrongs.length?
+      `<b>错 ${wrongs.length} 处</b>　红色的是你选的，上面小字是正确写法。`:
+      '<b>全对 ✓</b>　这条公式拿住了。'}</div>`+answerHTML(c,{noWhy:true});
+    acts.innerHTML=`<button class="btn p" id="nx2">下一个（回车）</button>
+      ${wrongs.length?'<button class="btn sm" id="again">再填一次</button>':''}`;
+    $('#nx2',acts).onclick=nextCard;
+    const ag=$('#again',acts);
+    if(ag)ag.onclick=()=>{S.fill=Array(n).fill(null);S.active=0;S.scored=false;S.optOrder=null;render();};
+    return;
+  }
+
+  const k=S.active;
+  const opts=S.optOrder[k];
+  pick.innerHTML=`<div class="hint" style="margin:2px 0 6px">第 ${k+1} 空（共 ${n} 空）：下面哪个填进去是对的？</div>
+    <div class="opts" id="opts">${opts.map((o,i)=>`<button data-i="${i}"><span class="kk">${'ABCD'[i]}</span>${tex(o)}</button>`).join('')}</div>`;
+  const btns=$$('#opts button',pick);
+  btns.forEach((b,i)=>b.onclick=()=>{
+    S.fill[k]=i;
+    const next=S.fill.findIndex(x=>x===null);
+    S.active = next>=0?next:(k+1<n?k+1:k);
+    render();
+  });
+  const left=S.fill.filter(x=>x===null).length;
+  acts.innerHTML=`${left?`<span class="hint">还差 ${left} 空。</span>`:
+      `<button class="btn p" id="sub">提交判分</button><span class="hint">点公式里的空可以改。</span>`}
+    <button class="btn sm" id="peek">看答案（算不会）</button>`;
+  const sub=$('#sub',acts);
+  if(sub)sub.onclick=submitFill;
+  $('#peek',acts).onclick=()=>{
+    if(!S.scored){rec(c.id,false,'fill');S.scored=true;}
+    S.fill=bl.blanks.map((b,k)=>S.optOrder[k].indexOf(b.ok));
+    S.scored=true;render();
+  };
+  // 点空回改
+  bl.blanks.forEach((b,kk)=>{
+    const el=$(`.slot[data-k="${kk}"]`,fxEl);
+    if(el)el.onclick=()=>{S.active=kk;render();};
+  });
+  function submitFill(){
+    if(S.fill.some(x=>x===null))return;
+    const badN=S.fill.filter((v,kk)=>S.optOrder[kk][v]!==bl.blanks[kk].ok).length;
+    if(!S.scored){rec(c.id,badN===0,'fill');S.scored=true;}
+    render();
+  }
+}
+
+/* ---------------- ③ 认一认 ---------------- */
+function renderName(st,c){
+  if(!S.choice||S.choice.id!==c.id){
+    const right=c.name;
+    const others=DATA.cards.filter(x=>x.id!==c.id&&x.name&&x.kind!=='例');
+    const same=others.filter(x=>x.unit===c.unit);
+    const pick=[];
+    const used=new Set([right]);
+    const take=arr=>{for(const x of shuffle(arr.slice())){
+      if(pick.length>=3)return;
+      if(used.has(x.name))continue;
+      used.add(x.name);pick.push(x.name);
+    }};
+    take(same);take(others);
+    S.choice={id:c.id,opts:shuffle([right].concat(pick)),right};
+    S.choiceDone=false;
+  }
+  st.innerHTML=`<div class="card">${metaHTML(c)}
+    <div class="q" style="font-size:17px">这是哪个公式？</div>
+    <div class="fx">${tex(fullTex(c))}</div>
+    <div class="opts" id="opts">${S.choice.opts.map((o,i)=>`<button data-i="${i}"><span class="kk">${'ABCD'[i]}</span>${esc(o)}</button>`).join('')}</div>
+    <div id="fb"></div>
+    <div class="acts" id="acts"><span class="hint">点选项或按 1–4。</span></div>
+  </div>`;
+  const btns=$$('#opts button',st);
+  const answer=btn=>{
+    if(S.choiceDone)return;S.choiceDone=true;
+    const ok=S.choice.opts[+btn.dataset.i]===S.choice.right;
+    btns.forEach(b=>{b.disabled=true;
+      if(S.choice.opts[+b.dataset.i]===S.choice.right)b.classList.add('c');});
+    if(!ok)btn.classList.add('w');
+    rec(c.id,ok,'name');
+    renderBar();
+    $('#fb',st).innerHTML=`<div class="verdict ${ok?'ok':'bad'}">${ok?'<b>对 ✓</b>':'<b>认错了</b>　正确的是：'+esc(S.choice.right)}</div>`+
+      (c.tip?`<div class="tipbox"><b>口诀</b>${esc(c.tip)}</div>`:'');
+    const acts=$('#acts',st);
+    acts.innerHTML=`<button class="btn p" id="nx3">下一个（回车）</button>
+      <button class="btn sm" id="all">看整条</button>`;
+    $('#nx3',acts).onclick=nextCard;
+    $('#all',acts).onclick=()=>{
+      $('#fb',st).insertAdjacentHTML('beforeend',answerHTML(c,{noWhy:true}));
+      $('#all',acts).disabled=true;
+    };
+  };
+  btns.forEach(b=>b.onclick=()=>answer(b));
+  st.onkeydown=e=>{
+    if('1234'.includes(e.key)){const i=+e.key-1;if(btns[i]&&!btns[i].disabled)answer(btns[i]);}
+    else if(e.key==='Enter'&&S.choiceDone)nextCard();
+  };
+}
+
+/* ---------------- ⑤ 公式表 ---------------- */
+let LISTQ='',MASKCUR=false;
+
+/* ---------- 今日必背清单（公式表最上面那块） ---------- */
+function todayBoxHTML(){
+  const arr=todayCards();
+  const head=`<div class="thd"><h3>今日必背 <b>${arr.length}</b> 条<span>老师要求明天默写 —— 先背这一批，其他往后放</span></h3>
+    <span class="sp"></span><div class="tacts">${
+      arr.length?`<button id="ttrain">只练这一批</button>
+        <button id="tprint">打印这张清单</button>
+        <button id="tclear">全部取消</button>`
+      :`<button id="tall">把 ★★核心 的标上来</button>`}</div></div>`;
+  const body=arr.length?`<ol class="tl">${arr.map((c,i)=>{
+    const lv=level(c.id),f=fullTex(c),hasSteps=!!(c.steps&&c.steps.length);
+    return `<li class="${MASKCUR?'maskcur':''}">
+      <div class="tlh"><span class="no">${i+1}</span><span class="nm">${esc(c.name)}</span>
+        <span class="lv lv${lv}">${lv===4?'待强化':LVTXT[lv]}</span>
+        <button class="x" data-un="${c.id}" title="从今日必背里去掉">取消</button></div>
+      ${hasSteps?stepsHTML(c):(f?fxHTML(f):'<div class="hint">这条是表格，展开下面看。</div>')}
+      ${hasSteps?`<div class="hint">法一、法二是同一道题的两种解法，最后都要落到同一个顶点坐标——答案必须一样。</div>`:''}
+    </li>`;
+  }).join('')}</ol>`:`<div class="tempty">还没有标。展开下面任意一条，点底部的「标为今日必背」加进来。</div>`;
+  return `<div class="todaybox" id="todaybox">${head}${body}
+    <div class="hint">名单可以随时改：展开下面任意一条，点「标为今日必背 / 取消」。默写完了点「全部取消」，换下一批。</div></div>`;
+}
+function printToday(){
+  document.body.classList.add('print-today');
+  const done=()=>{document.body.classList.remove('print-today');window.removeEventListener('afterprint',done);};
+  window.addEventListener('afterprint',done);
+  try{window.print();}catch(e){}
+  setTimeout(done,2000);
+}
+/* 标记变化后只重画这条清单 + 统计条，保持展开状态 */
+function refreshAfterToday(openIds){
+  renderBar();
+  renderList($('#stage'),openIds);
+}
+
+function renderList(st,keepOpen){
+  const q=LISTQ.trim();
+  const openSet=new Set(keepOpen||[]);
+  const cards=DATA.cards.filter(c=>{
+    if(!q)return true;
+    const hay=(c.name+' '+c.q+' '+fullTex(c)+' '+(c.tip||'')+' '+(c.trap||'')+' '+c.unit).toLowerCase();
+    return hay.includes(q.toLowerCase());
+  });
+  const byUnit=new Map();
+  cards.forEach(c=>{const u=c.unit||'未分单元';if(!byUnit.has(u))byUnit.set(u,[]);byUnit.get(u).push(c);});
+  const ubars=[...byUnit.entries()].map(([u,arr])=>{
+    const doneN=arr.filter(c=>level(c.id)===3).length;
+    const pc=Math.round(doneN/arr.length*100);
+    return `<div class="ubar"><span class="nm" title="${esc(u)}">${esc(u)}</span><span class="tr"><i style="width:${pc}%"></i></span><span class="pc">${pc}%</span></div>`;
+  }).join('');
+  const weak=DATA.cards.map(c=>({c,lv:level(c.id),p:getP(c.id)}))
+    .filter(x=>x.p&&x.p.wrong>0&&x.lv!==3)
+    .sort((a,b)=>b.p.wrong-a.p.wrong||a.lv-b.lv).slice(0,8);
+  const weakHTML=weak.length?`<div class="report"><h3>最该补的 ${weak.length} 条</h3><ul>${
+    weak.map(({c,p})=>`<li>${esc(c.name)} <b>错 ${p.wrong} 次</b></li>`).join('')}</ul></div>`:'';
+
+  st.innerHTML=`<input class="searchbox" id="sq" placeholder="搜公式名或关键词，比如「判别式」「顶点」「韦达」…" value="${esc(LISTQ)}">
+    <div class="bar" style="margin:10px 0 0"><div class="row">
+      <label style="display:flex;gap:6px;align-items:center;cursor:pointer">
+      <input type="checkbox" id="mask"${MASKCUR?' checked':''}> 遮住公式（自测用）</label>
+      <span class="sp"></span><button class="linkbtn" id="prt">打印公式表</button></div></div>
+    ${MASKCUR?`<div class="maskhint">公式已糊住（口诀、易错也一起遮）。展开任意一条，点一下那张卡就揭开；想重新遮住，把这个勾取消再勾上。</div>`:''}
+    ${q?'':todayBoxHTML()}
+    ${ubars&&!q?`<div class="report"><h3>各章节熟练度（连续写对 3 次才算熟练）</h3><div class="ubars">${ubars}</div></div>`:''}
+    ${weakHTML}
+    ${cards.length?[...byUnit.entries()].map(([u,arr])=>`
+      <div class="unitbox">
+        <h3>${esc(u)} <span>${arr.length} 条</span></h3>
+        ${arr.map(c=>{
+          const lv=level(c.id),td=isToday(c.id);
+          return `<details class="k" data-id="${c.id}"${openSet.has(c.id)?' open':''}>
+            <summary><span style="flex:1">${td?'<span class="tagtoday">今</span>':''}${esc(c.name)}</span>
+              <span class="lv lv${lv}">${lv===4?'待强化':LVTXT[lv]}</span></summary>
+            <div class="bd${MASKCUR?' maskcur':''}">
+              ${answerHTML(c,{noWhy:true})}
+              <div class="acts" style="margin-top:10px">
+                <button class="btn sm" data-solo="${c.id}">只练这条</button>
+                <button class="btn sm" data-today="${c.id}">${td?'取消「今日必背」':'标为今日必背'}</button>
+              </div>
+            </div>
+          </details>`;
+        }).join('')}
+      </div>`).join(''):'<div class="card empty"><span class="big">🔍</span>没搜到。换个词试试。</div>'}`;
+
+  const openIdsNow=()=>$$('details.k[open]',st).map(d=>d.dataset.id);
+  $('#sq',st).oninput=e=>{
+    LISTQ=e.target.value;const pos=e.target.selectionStart;
+    renderList(st,openIdsNow());
+    const n=$('#sq',st);n.focus();n.setSelectionRange(pos,pos);
+  };
+  // 勾/取消「遮住公式」：保留已展开的条目，否则一勾全折叠，看着像没生效
+  $('#mask',st).onchange=e=>{
+    MASKCUR=e.target.checked;
+    const open=openIdsNow();
+    if(MASKCUR&&!open.length){const f=$('details.k',st);if(f)open.push(f.dataset.id);}
+    renderList(st,open);
+  };
+  $('#prt',st).onclick=()=>window.print();
+  // 今日必背那块的操作
+  const tt=$('#ttrain',st);
+  if(tt)tt.onclick=()=>{
+    S.scope='today';S.unit='全部';S.mode='recite';S.qi=0;resetCardState();buildQueue();render();scrollTop();
+  };
+  const tp=$('#tprint',st); if(tp)tp.onclick=printToday;
+  const tc=$('#tclear',st);
+  if(tc)tc.onclick=()=>{
+    if(!confirm('清空「今日必背」名单？（练习记录不受影响）'))return;
+    clearToday();const o=$$('details.k[open]',st).map(d=>d.dataset.id);refreshAfterToday(o);
+  };
+  const ta=$('#tall',st);
+  if(ta)ta.onclick=()=>{
+    P.today.ids=DATA.cards.filter(c=>(c.star||1)>=3).map(c=>c.id);
+    saveProg();const o=$$('details.k[open]',st).map(d=>d.dataset.id);refreshAfterToday(o);
+  };
+  $$('[data-un]',st).forEach(b=>b.onclick=()=>{
+    toggleToday(b.dataset.un);
+    refreshAfterToday($$('details.k[open]',st).map(d=>d.dataset.id));
+  });
+  // 遮住公式：点这张卡里的任意位置（按钮除外）就把整张卡的公式/口诀/易错一起揭开
+  $$('.bd.maskcur',st).forEach(bd=>{
+    bd.addEventListener('click',ev=>{
+      if(ev.target.closest('button'))return;
+      bd.classList.remove('maskcur');
+    });
+  });
+  $$('.tl>li.maskcur',st).forEach(li=>{
+    li.addEventListener('click',ev=>{
+      if(ev.target.closest('button'))return;
+      li.classList.remove('maskcur');
+    });
+  });
+  $$('[data-solo]',st).forEach(b=>b.onclick=()=>{
+    S.queue=[b.dataset.solo];S.qi=0;S.mode='recite';resetCardState();S.revealed=true;render();
+  });
+  $$('[data-today]',st).forEach(b=>b.onclick=ev=>{
+    ev.preventDefault();ev.stopPropagation();
+    const openIds=$$('details.k[open]',st).map(d=>d.dataset.id);
+    toggleToday(b.dataset.today);
+    refreshAfterToday(openIds);
+  });
+}
+
+/* ================================================================
+   启动
+   ================================================================ */
+function boot(){
+  if(!DATA||!DATA.cards||!DATA.cards.length){
+    $('#stage').innerHTML='<div class="card empty"><span class="big">⚠</span>没有读到公式数据。<br>请确认这个文件没有被改动过。</div>';
+    return;
+  }
+  document.title=DATA.title||'公式记背';
+  $('#ttl').textContent=DATA.title||'公式记背';
+  const nf=DATA.cards.filter(hasFill).length;
+  $('#sb').textContent=`共 ${DATA.cards.length} 条 · 可填 ${nf} 条 · 记录存本机`;
+  $$('#tabs button').forEach(b=>b.onclick=()=>{
+    if(b.dataset.mode===S.mode)return;
+    S.mode=b.dataset.mode;S.qi=0;resetCardState();buildQueue();render();scrollTop();
+  });
+  buildQueue();render();
+  document.addEventListener('keydown',e=>{
+    const t=e.target;
+    if(t&&t.matches&&t.matches('input,select,textarea'))return;
+    if(S.mode==='recite'){
+      if(!S.revealed&&(e.key===' '||e.code==='Space')){e.preventDefault();S.revealed=true;render();}
+      else if(S.revealed){
+        const map={'1':'1','2':'0.5','3':'0'};
+        if(map[e.key]){e.preventDefault();const f=$(`#acts button[data-v="${map[e.key]}"]`);if(f)f.click();}
+      }
+    }else if(S.mode==='fill'){
+      if(/^[1-4]$/.test(e.key)){const b=$$('#opts button')[+e.key-1];if(b)b.click();}
+      else if(e.key==='Enter'){
+        const s=$('#sub'),nx=$('#nx2');if(s)s.click();else if(nx)nx.click();
+      }
+    }else if(S.mode==='name'&&e.key==='Enter'){nextCard();}
+  });
+}
+boot();
+</script>
+</body>
+</html>

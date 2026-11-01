@@ -1,0 +1,1082 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>核心考点训练</title>
+<style>
+:root{
+  --bg:#f6f4ef; --card:#fffdf8; --ink:#22201d; --sub:#6b6560; --line:#e2ddd2;
+  --acc:#1f6f8b; --acc-soft:#e3eff4; --ok:#1f7a4d; --ok-soft:#e2f3e9;
+  --bad:#b3352c; --bad-soft:#fbe7e4; --warn:#b06a11; --warn-soft:#fdf0dc;
+  --r:14px; --sh:0 2px 10px rgba(40,35,30,.07);
+}
+html[data-subj="历史"]{ --acc:#9a5b18; --acc-soft:#f6ecdd; }
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:var(--bg); color:var(--ink);
+  font:16px/1.75 "Noto Sans SC","PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+  -webkit-text-size-adjust:100%;
+}
+button,select,input{font-family:inherit}
+.wrap{max-width:860px;margin:0 auto;padding:0 14px 90px}
+
+/* ---------- 顶栏 ---------- */
+header{position:sticky;top:0;z-index:20;background:rgba(246,244,239,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.hd{max-width:860px;margin:0 auto;padding:10px 14px 0}
+.brand{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.brand b{font-size:17px;letter-spacing:.3px}
+.brand span{font-size:12px;color:var(--sub)}
+.tabs{display:flex;gap:6px;overflow-x:auto;padding:8px 0 9px;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tabs button{
+  flex:0 0 auto;border:1px solid var(--line);background:#fff;color:var(--sub);
+  padding:7px 13px;border-radius:999px;font-size:14px;cursor:pointer;transition:.15s;
+}
+.tabs button:hover{border-color:var(--acc);color:var(--acc)}
+.tabs button[aria-selected="true"]{background:var(--acc);border-color:var(--acc);color:#fff;font-weight:600}
+
+/* ---------- 统计条 ---------- */
+.bar{display:flex;flex-direction:column;gap:7px;margin:12px 0 4px;font-size:13px;color:var(--sub)}
+.bar .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.pill{background:#fff;border:1px solid var(--line);border-radius:999px;padding:3px 11px;white-space:nowrap}
+.pill b{color:var(--ink);font-size:14px}
+.pill.ok b{color:var(--ok)} .pill.bad b{color:var(--bad)}
+.bar select{font-size:13px;padding:4px 8px;border-radius:8px;border:1px solid var(--line);background:#fff;color:var(--ink);max-width:190px}
+.bar select#fs{max-width:118px}
+.bar .sp{flex:1}
+.linkbtn{background:none;border:0;color:var(--acc);font-size:13px;cursor:pointer;padding:4px 2px;text-decoration:underline dotted}
+.prog{height:4px;background:var(--line);border-radius:9px;overflow:hidden;margin:8px 0 0}
+.prog>i{display:block;height:100%;background:var(--acc);width:0;transition:width .25s}
+
+/* ---------- 卡片 ---------- */
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--sh);padding:18px 18px 16px;margin-top:14px}
+.meta{display:flex;align-items:baseline;gap:10px;font-size:12px;color:var(--sub);line-height:1.6;margin-bottom:10px;word-break:break-word}
+.meta .mt{flex:1 1 auto;min-width:0}
+.meta .mr{flex:0 0 auto;display:flex;align-items:center;gap:8px;white-space:nowrap}
+.meta .u{color:var(--acc);font-weight:600}
+.meta .pg a{color:var(--sub);text-decoration:none;border-bottom:1px dotted var(--line)}
+.stars{color:var(--warn);letter-spacing:1px;font-size:12px;vertical-align:2px}
+.q{font-size:19px;line-height:1.65;font-weight:600;margin:0 0 4px}
+.q .tag{display:inline-block;font-size:12px;font-weight:500;background:var(--acc-soft);color:var(--acc);border-radius:6px;padding:1px 7px;margin-right:7px;vertical-align:2px}
+.ans{margin-top:14px;padding-top:12px;border-top:1px dashed var(--line)}
+.ans .ln{margin:0 0 9px;line-height:1.95}
+.ans .ln:last-child{margin-bottom:0}
+.ans .lead{color:var(--sub);font-size:12px;margin:0 0 8px}
+.kw{font-style:normal;font-weight:700;color:var(--bad);background:var(--bad-soft);border-radius:4px;padding:0 3px;box-decoration-break:clone}
+.hidekw .kw{color:transparent;background:#efece5;border-radius:4px;cursor:pointer;user-select:none}
+.hidekw .kw:hover{color:var(--bad);background:var(--bad-soft)}
+.warn{margin-top:8px;background:var(--warn-soft);border-left:3px solid var(--warn);border-radius:0 8px 8px 0;padding:7px 12px;font-size:13.5px;color:#6d4a12;line-height:1.7}
+.warn b{color:var(--warn);margin-right:5px;font-size:12px}
+.warn.k-必背{background:var(--acc-soft);border-left-color:var(--acc);color:#1c4a5c}
+.warn.k-必背 b{color:var(--acc)}
+.warn.k-注意{background:#fdf6e3;border-left-color:#d9a520;color:#6b5312}
+.warn.k-注意 b{color:#b8860b}
+.warn.k-补充{background:#f3f1ec;border-left-color:#c6bfb2;color:var(--sub);font-size:12.5px}
+.warn.k-补充 b{color:#9a9288}
+table.tb{width:100%;border-collapse:collapse;margin:6px 0 10px;font-size:14px}
+table.tb th,table.tb td{border:1px solid var(--line);padding:6px 9px;text-align:left;vertical-align:top;line-height:1.7}
+table.tb th{background:var(--acc-soft);color:var(--acc);font-weight:600;font-size:13px}
+
+/* ---------- 填空 ---------- */
+.bi{
+  font-size:15px;padding:0 6px;margin:0 2px;border:0;border-bottom:2px dashed var(--acc);
+  background:transparent;border-radius:5px 5px 0 0;color:var(--ink);text-align:center;min-width:56px;
+}
+.bi::placeholder{color:#bdb7ac}
+.bi:focus{outline:2px solid var(--acc);outline-offset:1px;background:#fff;border-bottom-style:solid}
+.bi.ok{background:var(--ok-soft);border-bottom-style:solid}
+.bi.bad{background:var(--bad-soft);border-bottom-style:solid;text-decoration:line-through}
+.given{color:var(--ok);font-weight:700;white-space:nowrap}
+.given::before{content:"→";font-weight:400;color:var(--sub);margin:0 1px}
+
+/* ---------- 选项 ---------- */
+.opts{display:grid;gap:9px;margin-top:14px}
+.opts button{
+  text-align:left;background:#fff;border:1px solid var(--line);border-radius:10px;
+  padding:11px 14px;font-size:16px;line-height:1.6;cursor:pointer;transition:.12s;color:var(--ink);
+}
+.opts button:hover{border-color:var(--acc);background:var(--acc-soft)}
+.opts button:disabled{cursor:default;opacity:.9}
+.opts button.c{background:var(--ok-soft);border-color:var(--ok);font-weight:700;color:var(--ok)}
+.opts button.w{background:var(--bad-soft);border-color:var(--bad);color:var(--bad);text-decoration:line-through}
+.opts button .kk{display:inline-block;width:20px;height:20px;line-height:20px;text-align:center;border-radius:5px;background:var(--bg);font-size:12px;margin-right:9px;color:var(--sub)}
+
+/* ---------- 底部操作 ---------- */
+.acts{display:flex;gap:9px;flex-wrap:wrap;align-items:center;margin-top:16px}
+.btn{border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:10px;padding:10px 18px;font-size:15px;cursor:pointer;transition:.12s}
+.btn:hover{border-color:var(--acc);color:var(--acc)}
+.btn.p{background:var(--acc);border-color:var(--acc);color:#fff;font-weight:600}
+.btn.p:hover{filter:brightness(1.08);color:#fff}
+.btn.g{background:var(--ok);border-color:var(--ok);color:#fff}
+.btn.d{background:var(--bad);border-color:var(--bad);color:#fff}
+.btn.sm{padding:6px 12px;font-size:13px;border-radius:8px}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.verdict{margin-top:14px;border-radius:10px;padding:11px 14px;font-size:15px;line-height:1.7}
+.verdict.ok{background:var(--ok-soft);color:var(--ok);border:1px solid #bfe3cd}
+.verdict.bad{background:var(--bad-soft);color:var(--bad);border:1px solid #f0c8c2}
+.verdict b{font-size:16px}
+.nav{display:flex;gap:8px;align-items:center;justify-content:space-between;margin-top:14px;font-size:13px;color:var(--sub)}
+.nav .btn{flex:0 0 auto}
+.empty{text-align:center;color:var(--sub);padding:46px 10px;font-size:15px;line-height:2}
+.empty .big{font-size:34px;display:block;margin-bottom:6px}
+
+/* ---------- 清单 ---------- */
+.unitbox{margin-top:16px}
+.unitbox>h3{font-size:15px;margin:0 0 8px;padding:8px 12px;background:var(--acc-soft);color:var(--acc);border-radius:9px;display:flex;justify-content:space-between;gap:10px;align-items:baseline}
+.unitbox>h3 span{font-size:12px;font-weight:400;color:var(--sub)}
+details.k{margin:0 0 8px;background:var(--card);border:1px solid var(--line);border-radius:11px;overflow:hidden}
+details.k>summary{cursor:pointer;padding:11px 14px;font-size:15px;font-weight:600;line-height:1.6;list-style:none;display:flex;gap:8px;align-items:flex-start}
+details.k>summary::-webkit-details-marker{display:none}
+details.k>summary::before{content:"▸";color:var(--acc);flex:0 0 auto;transition:.15s}
+details.k[open]>summary::before{transform:rotate(90deg)}
+details.k>summary:hover{background:var(--acc-soft)}
+details.k .bd{padding:0 14px 14px}
+.lv{flex:0 0 auto;font-size:11px;font-weight:500;border-radius:6px;padding:1px 7px;margin-top:4px}
+.lv0{background:#eee;color:#8b8b8b}.lv1{background:var(--warn-soft);color:var(--warn)}
+.lv2{background:var(--acc-soft);color:var(--acc)}.lv3{background:var(--ok-soft);color:var(--ok)}
+.lv4{background:var(--bad-soft);color:var(--bad)}
+.searchbox{width:100%;padding:10px 14px;border-radius:10px;border:1px solid var(--line);background:#fff;font-size:15px;margin-top:12px}
+.report{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px;margin-top:16px}
+.report h3{margin:0 0 8px;font-size:15px}
+.report ul{margin:0;padding-left:20px;font-size:14px;line-height:1.9}
+.report li b{color:var(--bad)}
+.ubars{margin:8px 0 0}
+.ubar{display:flex;align-items:center;gap:9px;font-size:13px;margin:5px 0;color:var(--sub)}
+.ubar .nm{flex:0 0 246px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ubar .tr{flex:1;height:7px;background:var(--bg);border:1px solid var(--line);border-radius:9px;overflow:hidden}
+.ubar .tr i{display:block;height:100%;background:var(--ok);width:0}
+.ubar .pc{flex:0 0 44px;text-align:right;font-variant-numeric:tabular-nums}
+.hint{font-size:12px;color:var(--sub);margin-top:10px;line-height:1.7}
+
+/* ---------- 套卷（⑥） ---------- */
+.pstem{font-size:17px;line-height:1.8;font-weight:600;margin:0 0 10px}
+.pstem p{margin:0 0 8px}
+.pstem p:last-child{margin-bottom:0}
+.figs{display:flex;flex-wrap:wrap;gap:10px;margin:4px 0 12px}
+.figs figure{margin:0;flex:1 1 200px;min-width:120px;max-width:100%}
+.figs img{width:100%;height:auto;border:1px solid var(--line);border-radius:9px;background:#fff;display:block}
+.ptbl{width:100%;border-collapse:collapse;margin:4px 0 12px;font-size:14px;table-layout:auto}
+.ptbl td{border:1px solid var(--line);padding:7px 10px;vertical-align:top;line-height:1.75}
+.ptbl td.cap{background:var(--acc-soft);color:var(--acc);font-weight:600;border-color:var(--acc-soft)}
+.ptbl td img{max-width:100%;height:auto;border-radius:7px;display:block;margin:0 0 6px}
+.ptbl .tx{white-space:pre-line;display:block}
+.whybox{margin-top:12px;border-top:1px dashed var(--line);padding-top:11px}
+.whybox .lead{color:var(--sub);font-size:12px;margin:0 0 8px}
+.whyrow{display:flex;gap:9px;font-size:14.5px;line-height:1.85;margin:0 0 8px;color:var(--sub)}
+.whyrow .k{flex:0 0 auto;width:21px;height:21px;line-height:21px;text-align:center;border-radius:6px;background:var(--bg);border:1px solid var(--line);font-size:12px;color:var(--sub);margin-top:3px}
+.whyrow.right{color:var(--ink)}
+.whyrow.right .k{background:var(--ok);border-color:var(--ok);color:#fff;font-weight:700}
+.whyrow.right .tx{font-weight:600}
+.whysol{font-size:14.5px;line-height:1.9;white-space:pre-line}
+.pno{font-variant-numeric:tabular-nums}
+.jump{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0 0}
+.jump button{border:1px solid var(--line);background:#fff;border-radius:8px;padding:4px 10px;font-size:13px;cursor:pointer;color:var(--bad)}
+.jump button:hover{border-color:var(--acc);color:var(--acc)}
+.optrow{display:flex;gap:9px;align-items:flex-start;border:1px solid var(--line);border-radius:10px;padding:9px 13px;font-size:15.5px;line-height:1.65;margin:0 0 8px;background:#fff}
+.optrow .kk{flex:0 0 auto;width:20px;height:20px;line-height:20px;text-align:center;border-radius:5px;background:var(--bg);font-size:12px;color:var(--sub);margin-top:2px}
+.optrow.c{border-color:var(--ok);background:var(--ok-soft);color:var(--ok);font-weight:700}
+.optrow.c .kk{background:var(--ok);color:#fff}
+.scoreline{font-size:15px;line-height:2}
+.scoreline b{font-size:22px;color:var(--acc);margin:0 3px}
+
+@media (max-width:520px){
+  .q{font-size:17.5px}
+  .card{padding:15px 13px 13px}
+  .brand b{font-size:15px}
+  .pill{padding:2px 9px}
+  .ubar .nm{flex-basis:150px}
+  /* 六个标签尽量一屏放下，手机上不用横向滚才发现 ⑥ */
+  .tabs button{padding:6px 9px;font-size:13px}
+  .tabs{gap:5px}
+  .pstem{font-size:16px}
+  .ptbl{font-size:13px}
+  .ptbl td{padding:6px 8px}
+}
+@media print{
+  header,.tabs,.bar,.acts,.nav,.searchbox,.no-print{display:none!important}
+  body{background:#fff}
+  .card,details.k,.unitbox{box-shadow:none;break-inside:avoid}
+  details.k .bd{display:block!important}
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="hd">
+    <div class="brand"><b id="ttl">核心考点训练</b><span id="sb"></span></div>
+    <div class="tabs" id="tabs">
+      <button data-mode="recite" aria-selected="true">① 翻卡背</button>
+      <button data-mode="cloze">② 填空闯</button>
+      <button data-mode="choice">③ 四选一</button>
+      <button data-mode="wrong">④ 错题强化</button>
+      <button data-mode="list">⑤ 清单</button>
+      <button data-mode="paper" id="tabPaper" hidden>⑥ 套卷</button>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="bar" id="bar"></div>
+  <div class="prog" id="prog" hidden><i></i></div>
+  <main id="stage"></main>
+</div>
+
+<script>
+/* ================================================================
+   数据（构建时由 考点数据.json 注入）
+   ================================================================ */
+const DATA = {"subject":"历史","title":"九年级上册历史核心考点","imgBase":"images/","imgPrefix":"历史_","imgExt":"webp","cards":[{"id":"ls-p1-01","page":1,"unit":"全册主线","lesson":"全书主线","q":"九年级上册历史的全书主线是什么？","a":["人类从原始社会走向【奴隶社会】、【封建社会】；【资本主义萌芽】产生，欧美早期资产阶级革命确立【资本主义制度】；【工业革命】带来生产力飞跃，【马克思主义】诞生，国际工人运动兴起。"],"star":1},{"id":"ls-p1-02","page":1,"unit":"第一单元 文明的产生与古代亚非文明","lesson":"第1课 从原始社会到奴隶社会","node":"知识点1 人类的形成与原始社会","no":"1","q":"人类的起源是什么？（人类是怎样形成的）","a":["约【300万年前】，【古猿】开始直立行走，人类形成。"],"star":1},{"id":"ls-p1-03","page":1,"unit":"第一单元 文明的产生与古代亚非文明","lesson":"第1课 从原始社会到奴隶社会","node":"知识点1 人类的形成与原始社会","no":"2","q":"直立行走的意义是什么？","a":["【解放上肢】，促进手的发展；【开阔视野】，促进大脑发育；是人类进化史上具有【决定性意义】的一步。"],"star":2},{"id":"ls-p1-04","page":1,"unit":"第一单元 文明的产生与古代亚非文明","lesson":"第1课 从原始社会到奴隶社会","node":"知识点1 人类的形成与原始社会","no":"3","q":"原始社会分期的两个时代各有什么特征？","a":["【旧石器时代】：使用【打制石器】，以采集、狩猎为生，过穴居或迁徙生活，已学会使用火。","【新石器时代】：使用【磨制石器】，出现【原始农业】和畜牧业，过定居生活，发明【陶器】。"],"star":1},{"id":"ls-p1-05","page":1,"unit":"第一单元 文明的产生与古代亚非文明","lesson":"第1课 从原始社会到奴隶社会","node":"知识点1 人类的形成与原始社会","no":"4","q":"原始农耕的代表（世界各地区的原始农作物）有哪些？","a":["【西亚】（小麦、大麦）、【中国】（水稻、粟）、【非洲】（高粱）、【美洲】（玉米）。"],"star":1},{"id":"ls-p1-06","page":1,"unit":"第一单元 文明的产生与古代亚非文明","lesson":"第1课 从原始社会到奴隶社会","node":"知识点2 阶级出现与国家产生","no":"5","q":"阶级出现与国家产生的根本原因是什么？","a":["【生产力的发展】。"],"star":2},{"id":"ls-p1-07","page":1,"unit":"第一单元 文明的产生与古代亚非文明","lesson":"第1课 从原始社会到奴隶社会","node":"知识点2 阶级出现与国家产生","no":"6","q":"阶级和国家产生的演变过程是怎样的？","a":["【生产力发展】 → 【剩余产品】 → 【私有财产】 → 【贫富分化】 → 【阶级】 → 【国家】。"],"star":2},{"id":"ls-p1-07b","page":1,"unit":"第一单元 文明的产生与古代亚非文明","lesson":"第1课 从原始社会到奴隶社会","node":"本课必背一句话","q":"第1课 从原始社会到奴隶社会的「本课必背一句话」是什么？","a":["生产力发展推动了私有制、阶级和国家的产生，这是人类进入文明社会的根本动力"],"star":2},{"id":"ls-p1-08","page":1,"unit":"第一单元 文明的产生与古代亚非文明","lesson":"第1课 从原始社会到奴隶社会","node":"知识点2 阶级出现与国家产生","no":"7","q":"早期文明发源地有哪些？（人类最早的文明产生于哪些大河流域）","a":["【西亚两河流域】、【北非尼罗河流域】、【东亚黄河长江流域】、【南亚印度河流域】（大河流域）。"],"star":1},{"id":"ls-p1-09","page":1,"unit":"第一单元 文明的产生与古代亚非文明","lesson":"第1课 从原始社会到奴隶社会","node":"知识点2 阶级出现与国家产生","no":"8","q":"原始社会解体、人类进入奴隶社会的标志是什么？","a":["【阶级的产生】和【国家的出现】，标志着原始社会解体，人类进入奴隶社会。"],"star":2},{"id":"ls-p1-10","page":1,"unit":"第一单元 文明的产生与古代亚非文明","lesson":"第2课 古代两河流域","node":"知识点1 两河流域文明概况","no":"1","q":"两河流域文明的地理范围在哪里？","a":["【幼发拉底河】与【底格里斯河】流域，又称“【美索不达米亚】”（意为“两河之间的土地”）。"],"star":1},{"id":"ls-p1-11","page":1,"unit":"第一单元 文明的产生与古代亚非文明","lesson":"第2课 古代两河流域","node":"知识点1 两河流域文明概况","no":"2","q":"两河流域文明大约产生于什么时候？","a":["约【公元前3500年】。"],"star":1},{"id":"ls-p1-12","page":1,"unit":"第一单元 文明的产生与古代亚非文明","lesson":"第2课 古代两河流域","node":"知识点1 两河流域文明概况","no":"3","q":"苏美尔人的贡献有哪些？","a":["①发明【楔形文字】；②制定【阴历】；③实行【7天一星期制度】；④发明【60进制】。"],"star":2},{"id":"ls-p1-13","page":1,"unit":"第一单元 文明的产生与古代亚非文明","lesson":"第2课 古代两河流域","node":"知识点2 古巴比伦王国","no":"4","q":"古巴比伦王国是怎样实现统一的？（汉谟拉比的统一）","a":["【公元前18世纪】，【汉谟拉比】统一两河流域，建立强大的【中央集权奴隶制国家】，实行【君主专制】。"],"star":1},{"id":"ls-p1-14","page":1,"unit":"第一单元 文明的产生与古代亚非文明","lesson":"第2课 古代两河流域","node":"知识点3 《汉谟拉比法典》","no":"5","q":"《汉谟拉比法典》的地位是什么？","a":["迄今已知世界上【第一部较为完整的成文法典】。"],"star":2},{"id":"ls-p1-15","page":1,"unit":"第一单元 文明的产生与古代亚非文明","lesson":"第2课 古代两河流域","node":"知识点3 《汉谟拉比法典》","no":"6","q":"《汉谟拉比法典》的内容是什么？","a":["社会分为三个等级：【自由民】、【半自由民】、【奴隶】；【商品经济】活跃。"],"star":1},{"id":"ls-p1-16","page":1,"unit":"第一单元 文明的产生与古代亚非文明","lesson":"第2课 古代两河流域","node":"知识点3 《汉谟拉比法典》","no":"7","q":"《汉谟拉比法典》的实质是什么？","a":["严格保护【奴隶主阶级】的利益，是维护【奴隶统治】的工具。"],"star":2},{"id":"ls-p1-16b","page":1,"unit":"第一单元 文明的产生与古代亚非文明","lesson":"第2课 古代两河流域","node":"本课必背一句话","q":"第2课 古代两河流域的「本课必背一句话」是什么？","a":["《汉谟拉比法典》是世界上第一部较为完整的成文法典，其实质是维护奴隶主阶级的利益"],"star":2},{"id":"ls-p1-17","page":1,"unit":"第一单元 文明的产生与古代亚非文明","lesson":"第2课 古代两河流域","node":"知识点3 《汉谟拉比法典》","no":"8","q":"《汉谟拉比法典》的意义是什么？","a":["表明人类社会的【法制传统】源远流长。"],"star":1},{"id":"ls-p2-01","page":2,"unit":"第一单元 文明的产生与古代亚非文明","lesson":"第3课 古代埃及","node":"知识点1 古埃及文明的发展历程","no":"1","q":"古埃及文明的发源地在哪里？","a":["【非洲东北角尼罗河流域】（“埃及是尼罗河的赠礼”）。"],"star":1},{"id":"ls-p2-02","page":2,"unit":"第一单元 文明的产生与古代亚非文明","lesson":"第3课 古代埃及","node":"知识点1 古埃及文明的发展历程","no":"2","q":"古埃及何时实现统一？","a":["【公元前3100年】左右。"],"star":1},{"id":"ls-p2-03","page":2,"unit":"第一单元 文明的产生与古代亚非文明","lesson":"第3课 古代埃及","node":"知识点1 古埃及文明的发展历程","no":"3","q":"古埃及的强盛与灭亡过程是怎样的？","a":["【新王国时代图特摩斯三世】统治时期，成为横跨非、亚两洲的大帝国；【公元前525年】被【波斯帝国】吞并。"],"star":1},{"id":"ls-p2-04","page":2,"unit":"第一单元 文明的产生与古代亚非文明","lesson":"第3课 古代埃及","node":"知识点2 古埃及文明成就","no":"4","q":"古埃及的太阳历有什么地位？","a":["今天世界通用的【公历】的渊源。"],"star":1},{"id":"ls-p2-05","page":2,"unit":"第一单元 文明的产生与古代亚非文明","lesson":"第3课 古代埃及","node":"知识点2 古埃及文明成就","no":"5","q":"古埃及人创造的象形文字是什么？","a":["【象形文字】：古埃及人创造的文字体系。"],"star":1},{"id":"ls-p2-06","page":2,"unit":"第一单元 文明的产生与古代亚非文明","lesson":"第3课 古代埃及","node":"知识点2 古埃及文明成就","no":"6","q":"金字塔的地位是什么？（为什么说金字塔是古埃及文明的象征）","a":["①古埃及文明的【象征】；②反映了古埃及【社会经济发展的较高水平】和法老的【专制权力】；③是古埃及人民【智慧】的结晶。"],"star":2},{"id":"ls-p2-07","page":2,"unit":"第一单元 文明的产生与古代亚非文明","lesson":"第3课 古代埃及","node":"知识点3 法老的统治","no":"7","q":"法老拥有怎样的权力？","a":["集【军、政、财、神】等大权于一身，具有【至高无上的权威】。"],"star":2},{"id":"ls-p2-07b","page":2,"unit":"第一单元 文明的产生与古代亚非文明","lesson":"第3课 古代埃及","node":"本课必背一句话","q":"第3课 古代埃及的「本课必背一句话」是什么？","a":["古埃及文明是尼罗河的赠礼，金字塔是其文明的象征，反映了法老的专制权力"],"star":2},{"id":"ls-p2-08","page":2,"unit":"第一单元 文明的产生与古代亚非文明","lesson":"第4课 古代印度","node":"知识点1 古印度文明概况","no":"1","q":"古印度文明的发源地在哪里？","a":["【南亚印度河流域】。"],"star":1},{"id":"ls-p2-09","page":2,"unit":"第一单元 文明的产生与古代亚非文明","lesson":"第4课 古代印度","node":"知识点1 古印度文明概况","no":"2","q":"古印度文明的鼎盛时期是什么？","a":["【孔雀王朝】。"],"star":1},{"id":"ls-p2-10","page":2,"unit":"第一单元 文明的产生与古代亚非文明","lesson":"第4课 古代印度","node":"知识点2 种姓制度","no":"3","q":"古印度种姓制度的四个等级分别是什么？","a":["【婆罗门】（祭司）、【刹帝利】（国王/武士）、【吠舍】（平民）、【首陀罗】（奴隶）。此外还有“【贱民】”。"],"star":2},{"id":"ls-p2-11","page":2,"unit":"第一单元 文明的产生与古代亚非文明","lesson":"第4课 古代印度","node":"知识点2 种姓制度","no":"4","q":"种姓制度的特点是什么？","a":["各等级【世代相袭】、【贵贱分明】、不同等级之间【禁止通婚】。"],"star":2},{"id":"ls-p2-12","page":2,"unit":"第一单元 文明的产生与古代亚非文明","lesson":"第4课 古代印度","node":"知识点2 种姓制度","no":"5","q":"种姓制度的实质是什么？","a":["维护【奴隶主贵族统治】的工具，是【社会不平等】的根源。"],"star":2},{"id":"ls-p2-12b","page":2,"unit":"第一单元 文明的产生与古代亚非文明","lesson":"第4课 古代印度","node":"本课必背一句话","q":"第4课 古代印度的「本课必背一句话」是什么？","a":["种姓制度是古印度严格的等级制度，其实质是维护奴隶主贵族统治的工具"],"star":2},{"id":"ls-p2-13","page":2,"unit":"第一单元 文明的产生与古代亚非文明","lesson":"第4课 古代印度","node":"知识点3 佛教","no":"6","q":"佛教创立的时间、创始人及所属等级是什么？","a":["【公元前6世纪】，创始人【乔达摩·悉达多】（释迦牟尼），属于【刹帝利】等级。"],"star":1},{"id":"ls-p2-14","page":2,"unit":"第一单元 文明的产生与古代亚非文明","lesson":"第4课 古代印度","node":"知识点3 佛教","no":"7","q":"佛教的核心教义是什么？","a":["“【众生平等】”、【忍耐顺从】。"],"star":2},{"id":"ls-p2-15","page":2,"unit":"第一单元 文明的产生与古代亚非文明","lesson":"第4课 古代印度","node":"知识点3 佛教","no":"8","q":"佛教是怎样传播的？","a":["【公元前3世纪】开始向外传播；【公元前后】传入中国。"],"star":1},{"id":"ls-p2-15b","page":2,"unit":"第一单元 文明的产生与古代亚非文明","lesson":"第4课 古代印度","node":"本课必背一句话","q":"第4课 古代印度的「本课必背一句话」是什么？","a":["佛教的“众生平等”主张对种姓制度形成了一定冲击"],"star":2},{"id":"ls-p2-16","page":2,"unit":"第二单元 古代欧洲文明","lesson":"第5课 古代希腊","node":"知识点1 古希腊文明概况","no":"1","q":"古希腊文明的地位是什么？","a":["【欧洲文明的发祥地】。"],"star":1},{"id":"ls-p2-17","page":2,"unit":"第二单元 古代欧洲文明","lesson":"第5课 古代希腊","node":"知识点1 古希腊文明概况","no":"2","q":"古希腊的地理环境有什么特点？","a":["【环海】、【多山】、【多岛屿】，适宜【航海和海外贸易】（【海洋文明】）。"],"star":1},{"id":"ls-p2-18","page":2,"unit":"第二单元 古代欧洲文明","lesson":"第5课 古代希腊","node":"知识点1 古希腊文明概况","no":"3","q":"古希腊的发展历程是怎样的？","a":["【爱琴文明】 → 【荷马时代】 → 【城邦时代】（【公元前8世纪】开始）。"],"star":1},{"id":"ls-p3-01","page":3,"unit":"第二单元 古代欧洲文明","lesson":"第5课 古代希腊","node":"知识点2 希腊城邦与雅典民主","no":"4","q":"希腊城邦的特点和著名城邦是什么？","a":["城邦特点：【小国寡民】。著名城邦：【雅典】和【斯巴达】。"],"star":1},{"id":"ls-p3-02","page":3,"unit":"第二单元 古代欧洲文明","lesson":"第5课 古代希腊","node":"知识点2 希腊城邦与雅典民主","no":"5","q":"雅典民主政治的高峰出现在什么时候？公民大会的地位如何？","a":["【公元前5世纪中后期】，【伯里克利】主政。【成年男性公民】可参加【公民大会】（最高权力机构），建立【津贴制度】。"],"star":1},{"id":"ls-p3-03","page":3,"unit":"第二单元 古代欧洲文明","lesson":"第5课 古代希腊","node":"知识点2 希腊城邦与雅典民主","no":"6","q":"如何评价雅典民主政治？（积极影响与局限）","a":["①积极：促进【雅典繁荣】，是【现代民主政治的源头】；②局限：【外邦人、奴隶、妇女无权】，属于【奴隶主阶级的民主】。"],"star":2,"warn":"易混易错：雅典民主是“成年男性公民”的民主，不是全民民主；注意区分：古希腊是“民主政治”，古罗马是“完备法律”"},{"id":"ls-p3-04","page":3,"unit":"第二单元 古代欧洲文明","lesson":"第5课 古代希腊","node":"知识点3 亚历山大东征","no":"7","q":"亚历山大东征的影响是什么？（如何评价）","a":["①消极：具有【侵略性质】，给东方人民带来【深重灾难】；②积极：促进了【东西方文化的大交汇】。"],"star":2},{"id":"ls-p3-05","page":3,"unit":"第二单元 古代欧洲文明","lesson":"第5课 古代希腊","node":"知识点4 古希腊文化","no":"8","q":"古希腊文学的代表作品是什么？","a":["《【荷马史诗】》（了解【早期希腊社会】的主要文献）。"],"star":1},{"id":"ls-p3-06","page":3,"unit":"第二单元 古代欧洲文明","lesson":"第5课 古代希腊","node":"知识点4 古希腊文化","no":"9","q":"古希腊雕塑的代表作品有哪些？","a":["【奥林匹亚神庙中的宙斯像】、《【掷铁饼者】》。"],"star":1},{"id":"ls-p3-07","page":3,"unit":"第二单元 古代欧洲文明","lesson":"第5课 古代希腊","node":"知识点4 古希腊文化","no":"10","q":"古希腊建筑的代表是什么？","a":["【雅典帕特农神庙】。"],"star":1},{"id":"ls-p3-08","page":3,"unit":"第二单元 古代欧洲文明","lesson":"第5课 古代希腊","node":"知识点4 古希腊文化","no":"11","q":"古希腊哲学的代表人物及其主张、成就是什么？","a":["【苏格拉底】（主张“【认识你自己】”）、【亚里士多德】（【百科全书式】的学者，创立【逻辑学】）。"],"star":1,"warn":"古希腊文化在哲学、文学、建筑等方面成就辉煌"},{"id":"ls-p3-08b","page":3,"unit":"第二单元 古代欧洲文明","lesson":"第5课 古代希腊","node":"本课必背一句话","q":"第5课 古代希腊的「本课必背一句话」是什么？","a":["雅典民主政治是西方民主的源头，但实质是奴隶主阶级的民主"],"star":2},{"id":"ls-p3-09","page":3,"unit":"第二单元 古代欧洲文明","lesson":"第6课 古代罗马","node":"知识点1 罗马共和国","no":"1","q":"罗马共和国建立于何时？","a":["【公元前509年】建立罗马共和国。"],"star":1},{"id":"ls-p3-10","page":3,"unit":"第二单元 古代欧洲文明","lesson":"第6课 古代罗马","node":"知识点1 罗马共和国","no":"2","q":"罗马共和国的统治机构有哪些？","a":["【元老院】（掌握国家实际权力）、【执政官】、【公民大会】。"],"star":1},{"id":"ls-p3-11","page":3,"unit":"第二单元 古代欧洲文明","lesson":"第6课 古代罗马","node":"知识点2 罗马帝国","no":"3","q":"罗马帝国是怎样建立的？","a":["【公元前27年】，【屋大维】首创“【元首制】”，罗马共和国演变为【罗马帝国】。"],"star":1},{"id":"ls-p3-12","page":3,"unit":"第二单元 古代欧洲文明","lesson":"第6课 古代罗马","node":"知识点2 罗马帝国","no":"4","q":"罗马帝国的鼎盛情况如何？","a":["【2世纪】，地跨【欧亚非三洲】，【地中海】成为罗马帝国的“【内湖】”。"],"star":1},{"id":"ls-p3-13","page":3,"unit":"第二单元 古代欧洲文明","lesson":"第6课 古代罗马","node":"知识点2 罗马帝国","no":"5","q":"罗马帝国是怎样衰亡的？（西罗马帝国灭亡的标志意义）","a":["【395年】分裂；【476年】【西罗马帝国】灭亡，标志着【西欧奴隶社会】的结束，进入【封建社会】。"],"star":1},{"id":"ls-p3-14","page":3,"unit":"第二单元 古代欧洲文明","lesson":"第6课 古代罗马","node":"知识点3 古罗马文化","no":"6","q":"古罗马的历法成就是什么？","a":["【凯撒】命人编制“【儒略历】”（今天【公历】的基础）。"],"star":1},{"id":"ls-p3-15","page":3,"unit":"第二单元 古代欧洲文明","lesson":"第6课 古代罗马","node":"知识点3 古罗马文化","no":"7","q":"古罗马建筑的代表有哪些？","a":["【大竞技场】、【引水道工程】、【凯旋门】、【万神庙】。"],"star":1},{"id":"ls-p3-16","page":3,"unit":"第二单元 古代欧洲文明","lesson":"第6课 古代罗马","node":"知识点3 古罗马文化","no":"8","q":"古罗马的法律成就及其地位是什么？","a":["【罗马法体系完备】，是后世【欧洲法学的渊源】。（《【十二铜表法】》是罗马法制建设的【第一步】。）"],"star":1},{"id":"ls-p3-17","page":3,"unit":"第二单元 古代欧洲文明","lesson":"第6课 古代罗马","node":"知识点3 古罗马文化","no":"9","q":"古罗马的史学成就有哪些？","a":["【李维】：《【罗马史】》（记述罗马建城以来的历史）。","【塔西佗】：《【日耳曼尼亚志】》（记载了日耳曼人的早期情况）。"],"star":2,"warn":"古罗马的儒略历、罗马法以及文学史学成就对后世影响深远"},{"id":"ls-p3-17b","page":3,"unit":"第二单元 古代欧洲文明","lesson":"第6课 古代罗马","node":"本课必背一句话","q":"第6课 古代罗马的「本课必背一句话」是什么？","a":["屋大维建立罗马帝国，西罗马帝国的灭亡标志着西欧进入封建社会"],"star":2},{"id":"ls-p4-01","page":4,"unit":"第三单元 封建时代的欧洲","lesson":"第7课 法兰克王国和西欧封建制度","node":"知识点1 基督教的兴起","no":"1","q":"基督教创立的时间、地点和创始人是什么？","a":["【1世纪】，创立于【巴勒斯坦地区】，创始人是【耶稣】。"],"star":1},{"id":"ls-p4-02","page":4,"unit":"第三单元 封建时代的欧洲","lesson":"第7课 法兰克王国和西欧封建制度","node":"知识点1 基督教的兴起","no":"2","q":"基督教是怎样发展的？","a":["【4世纪末】，基督教成为【罗马帝国的国教】。"],"star":1},{"id":"ls-p4-03","page":4,"unit":"第三单元 封建时代的欧洲","lesson":"第7课 法兰克王国和西欧封建制度","node":"知识点2 法兰克王国","no":"3","q":"法兰克王国建立于何时？由谁建立？","a":["【481年】，【克洛维】建立法兰克王国。"],"star":1},{"id":"ls-p4-04","page":4,"unit":"第三单元 封建时代的欧洲","lesson":"第7课 法兰克王国和西欧封建制度","node":"知识点2 法兰克王国","no":"4","q":"克洛维的统治措施有哪些？","a":["①【皈依基督教】，承认【罗马教会】在欧洲的重要地位；②【保留了原来罗马大地主的土地】；③把【国有土地和无主土地】赐给亲兵和教会，取得了罗马教会和信奉基督教的【高卢罗马人】的支持。"],"star":1},{"id":"ls-p4-05","page":4,"unit":"第三单元 封建时代的欧洲","lesson":"第7课 法兰克王国和西欧封建制度","node":"知识点3 封君封臣制度","no":"5","q":"封君封臣制度是怎样形成的？","a":["【8世纪前期】，以【土地封赐】为纽带，形成封君封臣制度。"],"star":1},{"id":"ls-p4-06","page":4,"unit":"第三单元 封建时代的欧洲","lesson":"第7课 法兰克王国和西欧封建制度","node":"知识点3 封君封臣制度","no":"6","q":"封君与封臣的关系是什么？","a":["①封臣对封君要【忠诚、服兵役】；②封君对封臣要【保护封臣的人身安全和生活】。"],"star":1},{"id":"ls-p4-07","page":4,"unit":"第三单元 封建时代的欧洲","lesson":"第7课 法兰克王国和西欧封建制度","node":"知识点3 封君封臣制度","no":"7","q":"封君封臣制度的特点是什么？","a":["①以【土地的封赐】为纽带；②【等级森严】；③“【我的附庸的附庸，不是我的附庸】”；④【权利与义务交织】。"],"star":2},{"id":"ls-p4-08","page":4,"unit":"第三单元 封建时代的欧洲","lesson":"第7课 法兰克王国和西欧封建制度","node":"知识点4 查理曼帝国","no":"8","q":"查理曼（查理大帝）的称号是怎么来的？","a":["【800年】，教皇在罗马为查理举行【加冕礼】，查理被称为“【查理大帝】”或“查理曼”。"],"star":1},{"id":"ls-p4-09","page":4,"unit":"第三单元 封建时代的欧洲","lesson":"第7课 法兰克王国和西欧封建制度","node":"知识点4 查理曼帝国","no":"9","q":"查理曼帝国是怎样分裂的？","a":["【843年】，查理曼的三个孙子缔结条约，将帝国【一分为三】，形成了后来【德意志、法兰西和意大利】三个国家的雏形。"],"star":1},{"id":"ls-p4-10","page":4,"unit":"第三单元 封建时代的欧洲","lesson":"第7课 法兰克王国和西欧封建制度","node":"知识点5 西欧庄园","no":"10","q":"西欧庄园的性质是什么？","a":["【自给自足】的经济组织和【相对独立】的政治单位。"],"star":1},{"id":"ls-p4-11","page":4,"unit":"第三单元 封建时代的欧洲","lesson":"第7课 法兰克王国和西欧封建制度","node":"知识点5 西欧庄园","no":"11","q":"西欧庄园的居民有哪些？","a":["【领主】和【佃户】，佃户包括【自由的农民】和【缺少自由的农奴】。"],"star":1},{"id":"ls-p4-12","page":4,"unit":"第三单元 封建时代的欧洲","lesson":"第7课 法兰克王国和西欧封建制度","node":"知识点5 西欧庄园","no":"12","q":"领主与佃户之间是什么关系？","a":["【统治与被统治】、【剥削与被剥削】的关系。"],"star":1},{"id":"ls-p4-13","page":4,"unit":"第三单元 封建时代的欧洲","lesson":"第7课 法兰克王国和西欧封建制度","node":"知识点5 西欧庄园","no":"13","q":"庄园法庭的职责与特点是什么？","a":["①维护【领主利益】；②处罚方式通常是【罚金】；③依据【习惯法或村法】；④在一定程度上【限制了领主的特权】。"],"star":2},{"id":"ls-p4-13b","page":4,"unit":"第三单元 封建时代的欧洲","lesson":"第7课 法兰克王国和西欧封建制度","node":"本课必背一句话","q":"第7课 法兰克王国和西欧封建制度的「本课必背一句话」是什么？","a":["封君封臣制度构成了西欧封建社会的政治基础，西欧庄园构成了其经济基础"],"star":2},{"id":"ls-p4-14","page":4,"unit":"第三单元 封建时代的欧洲","lesson":"第8课 西欧的城市和大学","node":"知识点1 西欧城市的兴起","no":"1","q":"西欧城市重新兴起的时间和背景是什么？","a":["从【10世纪】起，西欧开始恢复，城市重新兴起。"],"star":1},{"id":"ls-p4-15","page":4,"unit":"第三单元 封建时代的欧洲","lesson":"第8课 西欧的城市和大学","node":"知识点1 西欧城市的兴起","no":"2","q":"西欧城市主要分布在哪里？","a":["主要集中在【道路交会处】、【港口】、【主教驻地】等。"],"star":1},{"id":"ls-p4-16","page":4,"unit":"第三单元 封建时代的欧洲","lesson":"第8课 西欧的城市和大学","node":"知识点1 西欧城市的兴起","no":"3","q":"西欧城市争取自治的方式有哪些？","a":["①【金钱赎买】；②【武力斗争】。"],"star":2},{"id":"ls-p4-17","page":4,"unit":"第三单元 封建时代的欧洲","lesson":"第8课 西欧的城市和大学","node":"知识点1 西欧城市的兴起","no":"4","q":"西欧城市争取自治的典型案例是什么？","a":["法国【琅城】人民通过【武力斗争】获得自治权。"],"star":1},{"id":"ls-p4-18","page":4,"unit":"第三单元 封建时代的欧洲","lesson":"第8课 西欧的城市和大学","node":"知识点1 西欧城市的兴起","no":"5","q":"农奴怎样才能获得市民身份？","a":["农奴进入城市住满【一年零一天】，即可获得【市民身份】，不再受【领主管辖】。"],"star":2},{"id":"ls-p4-19","page":4,"unit":"第三单元 封建时代的欧洲","lesson":"第8课 西欧的城市和大学","node":"知识点2 大学的兴起","no":"6","q":"欧洲大学兴起的时间及其美誉是什么？","a":["【12世纪】，欧洲出现了许多大学，被誉为中世纪教育“【最美好的花朵】”。"],"star":1},{"id":"ls-p4-20","page":4,"unit":"第三单元 封建时代的欧洲","lesson":"第8课 西欧的城市和大学","node":"知识点2 大学的兴起","no":"7","q":"早期大学有哪些代表？","a":["【博洛尼亚大学】、【巴黎大学】等。"],"star":1},{"id":"ls-p5-01","page":5,"unit":"第三单元 封建时代的欧洲","lesson":"第8课 西欧的城市和大学","node":"知识点2 大学的兴起","no":"8","q":"大学的自治权表现在哪些方面？","a":["大学享有【免赋税特权】、【司法特权】和【教育自主权】。"],"star":2},{"id":"ls-p5-02","page":5,"unit":"第三单元 封建时代的欧洲","lesson":"第8课 西欧的城市和大学","node":"知识点2 大学的兴起","no":"9","q":"大学的课程设置是怎样的？","a":["①【基础课程】包括文法、修辞、逻辑、算术、几何、天文、音乐；②【专业课程】包括法学、医学等。"],"star":1},{"id":"ls-p5-03","page":5,"unit":"第三单元 封建时代的欧洲","lesson":"第8课 西欧的城市和大学","node":"知识点3 城市和大学兴起的意义","no":"10","q":"城市和大学兴起的意义之经济方面是什么？","a":["【经济方面】：促进了【商品经济发展】，为【资本主义的兴起】准备了条件。"],"star":2},{"id":"ls-p5-04","page":5,"unit":"第三单元 封建时代的欧洲","lesson":"第8课 西欧的城市和大学","node":"知识点3 城市和大学兴起的意义","no":"11","q":"城市和大学兴起的意义之文化方面是什么？","a":["【文化方面】：打破了【教会对教育的垄断】，促进了【理性文化】的传播。"],"star":2},{"id":"ls-p5-05","page":5,"unit":"第三单元 封建时代的欧洲","lesson":"第8课 西欧的城市和大学","node":"知识点3 城市和大学兴起的意义","no":"12","q":"城市和大学兴起的意义之社会方面是什么？","a":["【社会方面】：【市民阶层】形成，分化出【早期的资产阶级】，为资本主义的出现准备了条件。"],"star":2},{"id":"ls-p5-06","page":5,"unit":"第三单元 封建时代的欧洲","lesson":"第8课 西欧的城市和大学","q":"第8课《西欧的城市和大学》本课必背一句话是什么？","a":["城市和大学的兴起促进了【商品经济发展】和【市民阶层形成】，为【资本主义的兴起】准备了条件。"],"star":1},{"id":"ls-p5-07","page":5,"unit":"第三单元 封建时代的欧洲","lesson":"第9课 拜占庭帝国","node":"知识点1 拜占庭帝国概况","no":"1","q":"拜占庭帝国的概况如何（名称、首都、疆域）？","a":["拜占庭帝国即【东罗马帝国】，首都【君士坦丁堡】，地跨【欧亚非三洲】。"],"star":1},{"id":"ls-p5-08","page":5,"unit":"第三单元 封建时代的欧洲","lesson":"第9课 拜占庭帝国","node":"知识点1 拜占庭帝国概况","no":"2","q":"拜占庭帝国的经济状况如何？","a":["【经济繁荣】，【商业贸易发达】，是当时欧洲经济最发达的地区之一。"],"star":1},{"id":"ls-p5-09","page":5,"unit":"第三单元 封建时代的欧洲","lesson":"第9课 拜占庭帝国","node":"知识点2 《罗马民法大全》","no":"3","q":"《罗马民法大全》的编纂背景是什么？","a":["编纂背景：【6世纪】，【查士丁尼】组织编纂法典。"],"star":1},{"id":"ls-p5-10","page":5,"unit":"第三单元 封建时代的欧洲","lesson":"第9课 拜占庭帝国","node":"知识点2 《罗马民法大全》","no":"4","q":"《罗马民法大全》由哪几部法律组成？","a":["《【查士丁尼法典】》（历代罗马皇帝法令）、《【法学汇纂】》（法学家著作）、《【法理概要】》（法律教科书）、《【新法典】》（查士丁尼执政时期法令）。"],"star":2},{"id":"ls-p5-11","page":5,"unit":"第三单元 封建时代的欧洲","lesson":"第9课 拜占庭帝国","node":"知识点2 《罗马民法大全》","no":"5","q":"《罗马民法大全》的影响是什么？","a":["标志着【罗马法体系】的最终完成，奠定了【欧洲民法】的基础，对后世法律（如《拿破仑法典》）产生了【深远影响】。"],"star":2},{"id":"ls-p5-12","page":5,"unit":"第三单元 封建时代的欧洲","lesson":"第9课 拜占庭帝国","node":"知识点2 《罗马民法大全》","no":"6","q":"《罗马民法大全》的局限性是什么？","a":["本质上仍是为了维护【奴隶主阶级】（或帝国统治）的利益，【妇女和奴隶】的地位依然低下，具有明显的【阶级局限性】。"],"star":2},{"id":"ls-p5-13","page":5,"unit":"第三单元 封建时代的欧洲","lesson":"第9课 拜占庭帝国","node":"知识点3 拜占庭帝国的灭亡","no":"7","q":"拜占庭帝国衰亡的原因有哪些？","a":["①【长期对外战争】，国力衰弱；②【奥斯曼土耳其】的兴起和扩张。"],"star":1},{"id":"ls-p5-14","page":5,"unit":"第三单元 封建时代的欧洲","lesson":"第9课 拜占庭帝国","node":"知识点3 拜占庭帝国的灭亡","no":"8","q":"拜占庭帝国何时、被谁灭亡？","a":["【1453年】，【奥斯曼土耳其】攻陷【君士坦丁堡】，拜占庭帝国灭亡。"],"star":1},{"id":"ls-p5-15","page":5,"unit":"第三单元 封建时代的欧洲","lesson":"第9课 拜占庭帝国","node":"知识点3 拜占庭帝国的灭亡","no":"9","q":"拜占庭帝国的历史贡献有哪些？","a":["①保存了大量【古希腊罗马文化】；②《罗马民法大全》对后世法律影响深远；③对【东欧斯拉夫文化】的发展产生了重要影响。"],"star":2},{"id":"ls-p5-16","page":5,"unit":"第三单元 封建时代的欧洲","lesson":"第9课 拜占庭帝国","node":"知识点4 拜占庭文化","no":"10","q":"拜占庭文化的特点是什么？","a":["【兼收并蓄】（对基督教、希腊罗马的古典文化传统，以及西亚、北非等地的【东方文化】因素兼收并蓄）。"],"star":2},{"id":"ls-p5-17","page":5,"unit":"第三单元 封建时代的欧洲","lesson":"第9课 拜占庭帝国","node":"知识点4 拜占庭文化","no":"11","q":"拜占庭文化的成就有哪些？","a":["史学：普洛科比的《【战争史】》和《【秘史】》。","建筑：【圣索菲亚大教堂】（展现了【东西方文化的交融】）。"],"star":2},{"id":"ls-p5-18","page":5,"unit":"第三单元 封建时代的欧洲","lesson":"第9课 拜占庭帝国","node":"知识点4 拜占庭文化","no":"12","q":"拜占庭文化的地位与影响是什么？","a":["①保存了大量【希腊罗马古典作品】，为后来【文艺复兴运动】提供了丰富的文化素材。","②【东正教】传入俄罗斯等东欧地区，拜占庭通用的【希腊字母】对后来东欧文字的形成有促进作用。","③是东西方贸易和文化交流的“金桥”。"],"star":2},{"id":"ls-p5-19","page":5,"unit":"第三单元 封建时代的欧洲","lesson":"第9课 拜占庭帝国","q":"第9课《拜占庭帝国》本课必背一句话是什么？","a":["拜占庭帝国文化【兼收并蓄】，其编纂的《罗马民法大全》奠定了【欧洲民法】的基础，保存的古典文化为文艺复兴提供了素材，是东西方交流的“金桥”。"],"star":1},{"id":"ls-p6-01","page":6,"unit":"第四单元 中古时期的亚洲、非洲和美洲","lesson":"第10课 封建时代的日本","node":"知识点1 大和政权","no":"1","q":"5世纪时日本大和政权的情况如何？","a":["【5世纪】，【大和政权】基本统一日本。"],"star":1},{"id":"ls-p6-02","page":6,"unit":"第四单元 中古时期的亚洲、非洲和美洲","lesson":"第10课 封建时代的日本","node":"知识点1 大和政权","no":"2","q":"大和政权的最高统治者如何称呼？","a":["大和的最高统治者称为“【大王】”，后改称“【天皇】”。"],"star":1},{"id":"ls-p6-03","page":6,"unit":"第四单元 中古时期的亚洲、非洲和美洲","lesson":"第10课 封建时代的日本","node":"知识点2 大化改新","no":"3","q":"大化改新开始于哪一年？","a":["时间：【646年】开始。"],"star":1},{"id":"ls-p6-04","page":6,"unit":"第四单元 中古时期的亚洲、非洲和美洲","lesson":"第10课 封建时代的日本","node":"知识点2 大化改新","no":"4","q":"大化改新的内容仿效的是哪国的典章制度？","a":["内容（仿效中国【唐朝的典章制度】）："],"star":2,"warn":"本条仅为总起句，具体内容见第5条（政治）与第6条（经济）"},{"id":"ls-p6-05","page":6,"unit":"第四单元 中古时期的亚洲、非洲和美洲","lesson":"第10课 封建时代的日本","node":"知识点2 大化改新","no":"5","q":"大化改新在政治上的内容是什么？","a":["【政治上】：建立以【天皇为中心】的【中央集权制度】，地方设国、郡、里，由中央派人管理。"],"star":1},{"id":"ls-p6-06","page":6,"unit":"第四单元 中古时期的亚洲、非洲和美洲","lesson":"第10课 封建时代的日本","node":"知识点2 大化改新","no":"6","q":"大化改新在经济上的内容是什么？","a":["【经济上】：将【土地、部民】收归国有，国家将土地分给公民耕种，【统一赋税】。"],"star":1},{"id":"ls-p6-07","page":6,"unit":"第四单元 中古时期的亚洲、非洲和美洲","lesson":"第10课 封建时代的日本","node":"知识点2 大化改新","no":"7","q":"大化改新的意义是什么？","a":["使日本从【奴隶社会】向【封建社会】过渡，是日本历史上的【重大转折点】。"],"star":2},{"id":"ls-p6-08","page":6,"unit":"第四单元 中古时期的亚洲、非洲和美洲","lesson":"第10课 封建时代的日本","node":"知识点2 大化改新","no":"8","q":"大化改新给我们什么启示？","a":["改革是推动【社会发展】的【重要动力】；要善于【学习先进文化】。"],"star":1},{"id":"ls-p6-09","page":6,"unit":"第四单元 中古时期的亚洲、非洲和美洲","lesson":"第10课 封建时代的日本","node":"知识点3 幕府统治","no":"9","q":"日本幕府统治建立的背景是什么？","a":["背景：大化改新百余年后，日本社会出现【庄园】和【武士阶层】。"],"star":1},{"id":"ls-p6-10","page":6,"unit":"第四单元 中古时期的亚洲、非洲和美洲","lesson":"第10课 封建时代的日本","node":"知识点3 幕府统治","no":"10","q":"日本幕府统治是怎样建立的？","a":["建立：【12世纪晚期】，【源赖朝】建立【镰仓幕府】。"],"star":1},{"id":"ls-p6-11","page":6,"unit":"第四单元 中古时期的亚洲、非洲和美洲","lesson":"第10课 封建时代的日本","node":"知识点3 幕府统治","no":"11","q":"日本幕府统治的特点是什么？","a":["①【天皇大权旁落】，【幕府将军】掌握实权；②幕府与天皇并存的局面持续了近【700年】。"],"star":2},{"id":"ls-p6-12","page":6,"unit":"第四单元 中古时期的亚洲、非洲和美洲","lesson":"第10课 封建时代的日本","q":"第10课《封建时代的日本》本课必背一句话是什么？","a":["【大化改新】使日本由【奴隶社会】过渡到【封建社会】，是日本历史的重大转折点。"],"star":1},{"id":"ls-p6-13","page":6,"unit":"第四单元 中古时期的亚洲、非洲和美洲","lesson":"第11课 阿拉伯帝国","node":"知识点1 伊斯兰教的创立","no":"1","q":"伊斯兰教何时、由谁、在哪里创立？","a":["创立：【7世纪初】，【穆罕默德】在【阿拉伯半岛】创立伊斯兰教。"],"star":1},{"id":"ls-p6-14","page":6,"unit":"第四单元 中古时期的亚洲、非洲和美洲","lesson":"第11课 阿拉伯帝国","node":"知识点1 伊斯兰教的创立","no":"2","q":"伊斯兰教创立初期的发展情况如何？","a":["发展：【622年】，穆罕默德率众从【麦加】出走【麦地那】，建立【穆斯林公社】（阿拉伯国家的雏形），622年被定为伊斯兰教【教历元年】。630年，占领麦加。"],"star":1},{"id":"ls-p6-15","page":6,"unit":"第四单元 中古时期的亚洲、非洲和美洲","lesson":"第11课 阿拉伯帝国","node":"知识点2 阿拉伯帝国","no":"3","q":"阿拉伯帝国是怎样建立的？","a":["建立：穆罕默德去世后，其继承者不断【扩张】。"],"star":1},{"id":"ls-p6-16","page":6,"unit":"第四单元 中古时期的亚洲、非洲和美洲","lesson":"第11课 阿拉伯帝国","node":"知识点2 阿拉伯帝国","no":"4","q":"阿拉伯帝国的鼎盛情况如何？","a":["鼎盛：【8世纪中期】，阿拉伯帝国成为地跨【欧亚非三洲】的大帝国。"],"star":1},{"id":"ls-p6-17","page":6,"unit":"第四单元 中古时期的亚洲、非洲和美洲","lesson":"第11课 阿拉伯帝国","node":"知识点2 阿拉伯帝国","no":"5","q":"阿拉伯帝国的特点是什么？","a":["【政教合一】，【哈里发】为最高统治者，掌握军政大权和宗教最高权力。"],"star":2},{"id":"ls-p6-18","page":6,"unit":"第四单元 中古时期的亚洲、非洲和美洲","lesson":"第11课 阿拉伯帝国","node":"知识点3 阿拉伯文化","no":"6","q":"“阿拉伯数字”的来源与传播是怎样的？","a":["阿拉伯数字：改进并传播了【古印度人】从【0到9】的计数法，将其传播到欧洲。"],"star":1,"warn":"阿拉伯数字是古印度人发明的，阿拉伯人改进并传播"},{"id":"ls-p6-19","page":6,"unit":"第四单元 中古时期的亚洲、非洲和美洲","lesson":"第11课 阿拉伯帝国","node":"知识点3 阿拉伯文化","no":"7","q":"阿拉伯人的医学成就是什么？","a":["医学：《【医学集成】》和《【医典】》长期被欧洲医学界奉为【经典】。"],"star":1},{"id":"ls-p6-20","page":6,"unit":"第四单元 中古时期的亚洲、非洲和美洲","lesson":"第11课 阿拉伯帝国","node":"知识点3 阿拉伯文化","no":"8","q":"阿拉伯文学的代表作是什么？","a":["文学：《【一千零一夜】》（又名《【天方夜谭】》）。"],"star":2},{"id":"ls-p6-21","page":6,"unit":"第四单元 中古时期的亚洲、非洲和美洲","lesson":"第11课 阿拉伯帝国","node":"知识点3 阿拉伯文化","no":"9","q":"阿拉伯人是怎样保存古代文献的？","a":["翻译保存：翻译保存了大量【古希腊罗马】文献。"],"star":1},{"id":"ls-p6-22","page":6,"unit":"第四单元 中古时期的亚洲、非洲和美洲","lesson":"第11课 阿拉伯帝国","node":"知识点3 阿拉伯文化","no":"10","q":"阿拉伯人的历史地位如何？","a":["历史地位：阿拉伯人在东西方文化交流中起了【桥梁】作用。"],"star":2},{"id":"ls-p6-23","page":6,"unit":"第四单元 中古时期的亚洲、非洲和美洲","lesson":"第11课 阿拉伯帝国","q":"第11课《阿拉伯帝国》本课必背一句话是什么？","a":["阿拉伯人在东西方文化交流中充当了【桥梁】的作用。"],"star":1},{"id":"ls-p7-01","page":7,"unit":"第四单元 中古时期的亚洲、非洲和美洲","lesson":"第12课 中古时期的非洲和美洲","node":"知识点1 西非三大帝国","no":"1","q":"加纳帝国的概况如何？","a":["加纳：①约【8世纪末】建立；②控制着【黄金和食盐】的贸易；③被称为“【黄金之国】”。"],"star":1},{"id":"ls-p7-02","page":7,"unit":"第四单元 中古时期的亚洲、非洲和美洲","lesson":"第12课 中古时期的非洲和美洲","node":"知识点1 西非三大帝国","no":"2","q":"马里帝国的概况如何？","a":["马里：①【13世纪】独立并取代加纳；②【14世纪】达到鼎盛；③【曼萨·穆萨】1324年前往【麦加朝圣】；④【廷巴克图】成为学术中心。"],"star":1},{"id":"ls-p7-03","page":7,"unit":"第四单元 中古时期的亚洲、非洲和美洲","lesson":"第12课 中古时期的非洲和美洲","node":"知识点1 西非三大帝国","no":"3","q":"桑海帝国的概况如何？","a":["桑海：①【15世纪后期】建立；②【16世纪】达到鼎盛；③16世纪末【摩洛哥】入侵，桑海衰落。"],"star":1},{"id":"ls-p7-04","page":7,"unit":"第四单元 中古时期的亚洲、非洲和美洲","lesson":"第12课 中古时期的非洲和美洲","node":"知识点2 美洲三大文明","no":"4","q":"玛雅文明有哪些特点？","a":["①位于【中美洲】；②【历法精确】；③创造了【象形文字】；④建造了【金字塔神庙】。"],"star":2},{"id":"ls-p7-05","page":7,"unit":"第四单元 中古时期的亚洲、非洲和美洲","lesson":"第12课 中古时期的非洲和美洲","node":"知识点2 美洲三大文明","no":"5","q":"阿兹特克文明有哪些特点？","a":["①【14世纪】兴起于【墨西哥高原】；②建造【浮动园地】扩大耕种面积；③建造【金字塔神庙】。"],"star":1},{"id":"ls-p7-06","page":7,"unit":"第四单元 中古时期的亚洲、非洲和美洲","lesson":"第12课 中古时期的非洲和美洲","node":"知识点2 美洲三大文明","no":"6","q":"印加文明有哪些特点？","a":["①位于【南美安第斯山区】；②【15—16世纪】达到鼎盛；③修建道路和城池；④建造【太阳庙】。"],"star":1},{"id":"ls-p7-07","page":7,"unit":"第四单元 中古时期的亚洲、非洲和美洲","lesson":"第12课 中古时期的非洲和美洲","q":"第12课《中古时期的非洲和美洲》本课必背一句话是什么？","a":["中古时期的非洲和美洲创造了各具特色的文明，其中【玛雅文明】是美洲文明的代表。"],"star":1},{"id":"ls-p7-08","page":7,"unit":"第五单元 走向近代","lesson":"第13课 西欧经济社会发展与文艺复兴运动","node":"知识点1 西欧经济社会发展","no":"1","q":"13世纪以后西欧农村出现了什么变化？","a":["农村变化：【13世纪】以后，农村出现【租地农场】，新的生产经营方式开始出现。"],"star":1},{"id":"ls-p7-09","page":7,"unit":"第五单元 走向近代","lesson":"第13课 西欧经济社会发展与文艺复兴运动","node":"知识点1 西欧经济社会发展","no":"2","q":"西欧手工业出现了什么变化？","a":["手工业变化：【手工工场】出现，劳动者与雇主形成【雇佣与被雇佣】的关系。"],"star":1},{"id":"ls-p7-10","page":7,"unit":"第五单元 走向近代","lesson":"第13课 西欧经济社会发展与文艺复兴运动","node":"知识点1 西欧经济社会发展","no":"3","q":"资本主义生产关系是怎样出现的（标志与特征）？","a":["①【租地农场】和【手工工场】的出现标志着资本主义生产关系的出现；②资本主义生产的两大特征：【雇佣关系】、面向市场。"],"star":2},{"id":"ls-p7-11","page":7,"unit":"第五单元 走向近代","lesson":"第13课 西欧经济社会发展与文艺复兴运动","node":"知识点1 西欧经济社会发展","no":"4","q":"租地农场和手工工场的影响是什么？","a":["①经济：推动农业和手工业逐渐【资本主义化】，开始改变中世纪西欧社会的【整体面貌】。","②政治：【新兴资产阶级】开始形成。"],"star":2},{"id":"ls-p7-12","page":7,"unit":"第五单元 走向近代","lesson":"第13课 西欧经济社会发展与文艺复兴运动","node":"知识点2 文艺复兴运动","no":"5","q":"文艺复兴运动兴起的时间和发源地是什么？","a":["时间：【14世纪】兴起。发源地：【意大利】。"],"star":1},{"id":"ls-p7-13","page":7,"unit":"第五单元 走向近代","lesson":"第13课 西欧经济社会发展与文艺复兴运动","node":"知识点2 文艺复兴运动","no":"6","q":"文艺复兴运动的核心思想是什么？","a":["【人文主义】——以人为中心而不是以神为中心，发扬人的个性，追求享受【现世生活】。"],"star":1},{"id":"ls-p7-14","page":7,"unit":"第五单元 走向近代","lesson":"第13课 西欧经济社会发展与文艺复兴运动","node":"知识点2 文艺复兴运动","no":"7","q":"文艺复兴的代表人物及作品有哪些？","a":["【文学三杰】：但丁（先驱，《【神曲】》）、彼特拉克、薄伽丘（《【十日谈】》）。","【美术三杰】：【达·芬奇】（《【蒙娜丽莎】》《最后的晚餐》）、米开朗琪罗、拉斐尔。"],"star":2},{"id":"ls-p7-15","page":7,"unit":"第五单元 走向近代","lesson":"第13课 西欧经济社会发展与文艺复兴运动","node":"知识点2 文艺复兴运动","no":"8","q":"文艺复兴是怎样扩展的？","a":["扩展：【15、16世纪】，向【西欧其他国家和地区】传播。"],"star":2},{"id":"ls-p7-16","page":7,"unit":"第五单元 走向近代","lesson":"第13课 西欧经济社会发展与文艺复兴运动","node":"知识点2 文艺复兴运动","no":"9","q":"文艺复兴除意大利外还有哪些代表人物？","a":["代表：【莎士比亚】（英国，《哈姆雷特》《罗密欧与朱丽叶》）、【拉伯雷】（法国）、【塞万提斯】（西班牙，《堂吉诃德》）。"],"star":1},{"id":"ls-p7-17","page":7,"unit":"第五单元 走向近代","lesson":"第13课 西欧经济社会发展与文艺复兴运动","node":"知识点2 文艺复兴运动","no":"10","q":"文艺复兴运动的本质是什么？","a":["本质：反映【新兴资产阶级】诉求的【思想解放运动】。"],"star":1},{"id":"ls-p7-18","page":7,"unit":"第五单元 走向近代","lesson":"第13课 西欧经济社会发展与文艺复兴运动","node":"知识点2 文艺复兴运动","no":"11","q":"文艺复兴运动的影响是什么？","a":["①推动了欧洲【文化和思想】的繁荣。","②被认为是【资本主义时代】的曙光。","③冲击了封建时代【神学】的精神束缚，解放了人们的思想，促进了资本主义的发展。","④对欧洲乃至世界历史产生重要影响（为欧洲资本主义社会的产生和发展奠定了【思想文化基础】）。"],"star":2},{"id":"ls-p8-01","page":8,"unit":"第五单元 走向近代","lesson":"第13课 西欧经济社会发展与文艺复兴运动","q":"第13课《西欧经济社会发展与文艺复兴运动》本课必背一句话是什么？","a":["租地农场和手工工场推动西欧经济【资本主义化】，促使【新兴资产阶级】开始形成；","文艺复兴是【资本主义时代的曙光】，解放了人们的思想，为资本主义的产生奠定了【思想文化基础】。"],"star":1},{"id":"ls-p8-02","page":8,"unit":"第五单元 走向近代","lesson":"第14课 探寻新航路","node":"知识点1 新航路开辟的背景","no":"1","q":"新航路开辟的经济根源是什么？","a":["经济根源：欧洲【商品经济】发展，对【东方商品】的需求增加。"],"star":1},{"id":"ls-p8-03","page":8,"unit":"第五单元 走向近代","lesson":"第14课 探寻新航路","node":"知识点1 新航路开辟的背景","no":"2","q":"新航路开辟的社会根源是什么？","a":["社会根源：《【马可·波罗行纪】》的影响，欧洲人对【东方】充满向往。"],"star":1},{"id":"ls-p8-04","page":8,"unit":"第五单元 走向近代","lesson":"第14课 探寻新航路","node":"知识点1 新航路开辟的背景","no":"3","q":"新航路开辟的直接原因是什么？","a":["直接原因：【奥斯曼帝国】控制了东西方传统商路，对过往商品【征收重税】。"],"star":1},{"id":"ls-p8-05","page":8,"unit":"第五单元 走向近代","lesson":"第14课 探寻新航路","node":"知识点1 新航路开辟的背景","no":"4","q":"新航路开辟的客观条件有哪些？","a":["①【地圆学说】的普及；②【航海技术】的进步；③【造船技术】的进步；④【指南针】的应用。","⑤【西班牙、葡萄牙王室】的支持。"],"star":1},{"id":"ls-p8-06","page":8,"unit":"第五单元 走向近代","lesson":"第14课 探寻新航路","node":"知识点2 四大航海活动","no":"5","q":"迪亚士的航海成就是什么？","a":["迪亚士：【1487—1488年】，到达非洲【好望角】。"],"star":1},{"id":"ls-p8-07","page":8,"unit":"第五单元 走向近代","lesson":"第14课 探寻新航路","node":"知识点2 四大航海活动","no":"6","q":"达·伽马的航海成就是什么？","a":["达·伽马：【1497—1498年】，绕过好望角，横渡【印度洋】，到达【印度】。"],"star":1},{"id":"ls-p8-08","page":8,"unit":"第五单元 走向近代","lesson":"第14课 探寻新航路","node":"知识点2 四大航海活动","no":"7","q":"哥伦布的航海成就是什么？","a":["哥伦布：【1492年】，横渡【大西洋】，到达【美洲】（他认为到达了印度，称当地人为“【印第安人】”）。"],"star":1},{"id":"ls-p8-09","page":8,"unit":"第五单元 走向近代","lesson":"第14课 探寻新航路","node":"知识点2 四大航海活动","no":"8","q":"麦哲伦船队的航海成就是什么？","a":["麦哲伦船队：【1519—1522年】，完成了人类历史上第一次【环球航行】。"],"star":1},{"id":"ls-p8-10","page":8,"unit":"第五单元 走向近代","lesson":"第14课 探寻新航路","node":"知识点3 新航路开辟的影响（新教材重点）","no":"①","q":"新航路开辟对世界的影响是什么？","a":["对世界：世界主要的大洋和大陆之间建立起【直接的海上联系】，逐渐【连成为一个整体】。"],"star":2},{"id":"ls-p8-11","page":8,"unit":"第五单元 走向近代","lesson":"第14课 探寻新航路","node":"知识点3 新航路开辟的影响（新教材重点）","no":"②","q":"新航路开辟对物种的影响是什么？","a":["对物种：有利于【动植物物种】的传播，为人们提供了更加丰富的【食物】。"],"star":2},{"id":"ls-p8-12","page":8,"unit":"第五单元 走向近代","lesson":"第14课 探寻新航路","node":"知识点3 新航路开辟的影响（新教材重点）","no":"③","q":"新航路开辟对欧洲的影响是什么？","a":["对欧洲：推动欧洲国家扩大【海外市场】，进行【殖民掠夺】，增加了【资本原始积累】，促进了资本主义发展。"],"star":2},{"id":"ls-p8-13","page":8,"unit":"第五单元 走向近代","lesson":"第14课 探寻新航路","node":"知识点3 新航路开辟的影响（新教材重点）","no":"④","q":"新航路开辟对亚非拉等其他地区的影响是什么？","a":["对亚非拉等其他地区：在非洲、美洲、大洋洲和亚洲的很多地方，当地居民遭到【屠杀与掳掠】，原有的【社会发展轨迹】被打断，一些地区开始沦为欧洲的【殖民地和半殖民地】（带来了深重灾难）。"],"star":2},{"id":"ls-p8-14","page":8,"unit":"第五单元 走向近代","lesson":"第14课 探寻新航路","q":"第14课《探寻新航路》本课必背一句话是什么？","a":["新航路开辟使世界开始【连为一个整体】，促进了【物种传播】和欧洲资本主义的发展，但也开启了【殖民掠夺】，给亚非美等地区带来深重灾难。"],"star":1},{"id":"ls-p8-15","page":8,"unit":"第五单元 走向近代","lesson":"第15课 早期殖民掠夺","node":"知识点1 葡萄牙的殖民扩张","no":"1","q":"葡萄牙殖民扩张的方式是什么？","a":["方式：在【亚洲、非洲、拉丁美洲】建立【殖民据点】和【商站】。"],"star":1},{"id":"ls-p8-16","page":8,"unit":"第五单元 走向近代","lesson":"第15课 早期殖民掠夺","node":"知识点1 葡萄牙的殖民扩张","no":"2","q":"葡萄牙殖民扩张的特点是什么？","a":["特点：进行【劫掠式贸易】，以【欺骗】和【抢劫】获取财富。"],"star":1},{"id":"ls-p8-17","page":8,"unit":"第五单元 走向近代","lesson":"第15课 早期殖民掠夺","node":"知识点2 西班牙的殖民掠夺","no":"3","q":"西班牙殖民掠夺的方式是什么？","a":["方式：在美洲建立【殖民帝国】，掠夺【金银】，强迫【印第安人】劳动。"],"star":1},{"id":"ls-p8-18","page":8,"unit":"第五单元 走向近代","lesson":"第15课 早期殖民掠夺","node":"知识点2 西班牙的殖民掠夺","no":"4","q":"西班牙在殖民扩张中的地位如何？","a":["地位：【16世纪】，西班牙成为最强大的【殖民帝国】。"],"star":1},{"id":"ls-p8-19","page":8,"unit":"第五单元 走向近代","lesson":"第15课 早期殖民掠夺","node":"知识点3 英法荷的殖民扩张","no":"5","q":"英国是怎样成为海上霸主的？","a":["【1588年】，英国击败西班牙“【无敌舰队】”，逐渐成为【海上霸主】。"],"star":1},{"id":"ls-p8-20","page":8,"unit":"第五单元 走向近代","lesson":"第15课 早期殖民掠夺","node":"知识点3 英法荷的殖民扩张","no":"6","q":"17世纪的荷兰被称为什么？","a":["【17世纪】，荷兰成为“【海上马车夫】”。"],"star":1},{"id":"ls-p8-21","page":8,"unit":"第五单元 走向近代","lesson":"第15课 早期殖民掠夺","node":"知识点3 英法荷的殖民扩张","no":"7","q":"英国是怎样建立殖民霸权的？","a":["【18世纪中后期】，英国打败【荷兰、法国】，开始建立【殖民霸权】。"],"star":1},{"id":"ls-p8-22","page":8,"unit":"第五单元 走向近代","lesson":"第15课 早期殖民掠夺","node":"知识点4 “三角贸易”","no":"8","q":"“三角贸易”的路线是怎样的？","a":["①出程：欧洲（携带【手工业品】）→非洲；②中程：非洲（【掳掠黑奴】）→美洲（【出售黑奴】，获取原料）；③归程：美洲→欧洲（运送【原料和金银】回欧洲）。"],"star":2},{"id":"ls-p9-01","page":9,"unit":"第五单元 走向近代","lesson":"第15课 早期殖民掠夺","node":"知识点4 早期殖民掠夺的影响","q":"早期殖民掠夺对非洲产生了什么影响？","a":["①对非洲：对非洲人民犯下【滔天罪行】，非洲损失的人口总数可能有【近亿人】，发展进程受到严重影响。"],"star":1},{"id":"ls-p9-02","page":9,"unit":"第五单元 走向近代","lesson":"第15课 早期殖民掠夺","node":"知识点4 早期殖民掠夺的影响","q":"早期殖民掠夺对欧洲（殖民者）产生了什么影响？","a":["②欧洲：使欧洲殖民者【大发横财】，加速了【资本原始积累】，推动了欧洲资本主义的发展。"],"star":1},{"id":"ls-p9-03","page":9,"unit":"第五单元 走向近代","lesson":"第15课 早期殖民掠夺","node":"知识点5 早期殖民掠夺的整体影响","q":"早期殖民掠夺对欧洲的客观影响是什么？","a":["①★对欧洲：客观上有助于欧洲殖民国家的【资本原始积累】，推动了欧洲资本主义的发展。"],"star":2},{"id":"ls-p9-04","page":9,"unit":"第五单元 走向近代","lesson":"第15课 早期殖民掠夺","node":"知识点5 早期殖民掠夺的整体影响","q":"早期殖民掠夺对世界的影响是什么？","a":["②★对世界：有助于【世界市场】逐渐形成，促进全球文化、物种和经济的交流。"],"star":2},{"id":"ls-p9-05","page":9,"unit":"第五单元 走向近代","lesson":"第15课 早期殖民掠夺","node":"知识点5 早期殖民掠夺的整体影响","q":"早期殖民掠夺对殖民地的影响是什么？","a":["③★对殖民地：给殖民地人民带来了【深重的灾难】；欧洲文化传到殖民地，对殖民地社会的发展产生了【深远的影响】。"],"star":2},{"id":"ls-p9-06","page":9,"unit":"第五单元 走向近代","lesson":"第15课 早期殖民掠夺","node":"本课必背一句话","q":"三角贸易和早期殖民掠夺的影响——本课必背一句话是什么？","a":["三角贸易和早期殖民掠夺加速了欧洲的【资本原始积累】，促进了【世界市场】的形成，但也给亚非拉殖民地人民带来了【深重灾难】。"],"star":1},{"id":"ls-p9-07","page":9,"unit":"第六单元 资本主义制度的初步确立","lesson":"第16课 英国资产阶级革命","node":"知识点1 革命背景","no":"1","q":"英国资产阶级革命的根本原因是什么？","a":["★根本原因：【斯图亚特王朝】的专制统治严重阻碍了英国资本主义的发展。"],"star":2},{"id":"ls-p9-08","page":9,"unit":"第六单元 资本主义制度的初步确立","lesson":"第16课 英国资产阶级革命","node":"知识点1 革命背景","no":"2","q":"英国资产阶级革命的阶级基础是什么？","a":["阶级基础：【资产阶级和新贵族】的形成。"],"star":1},{"id":"ls-p9-09","page":9,"unit":"第六单元 资本主义制度的初步确立","lesson":"第16课 英国资产阶级革命","node":"知识点1 革命背景","no":"3","q":"英国资产阶级革命的导火线是什么？","a":["★导火线：【苏格兰人民起义】。"],"star":2},{"id":"ls-p9-10","page":9,"unit":"第六单元 资本主义制度的初步确立","lesson":"第16课 英国资产阶级革命","node":"知识点2 革命过程","no":"4","q":"英国资产阶级革命开始的标志是什么？","a":["开始：1640年，议会重新召开，揭开了英国资产阶级革命的【序幕】。"],"star":1},{"id":"ls-p9-11","page":9,"unit":"第六单元 资本主义制度的初步确立","lesson":"第16课 英国资产阶级革命","node":"知识点2 革命过程","no":"5","q":"英国内战的结果如何？","a":["内战：【克伦威尔】率领议会军队打败国王军队。"],"star":1},{"id":"ls-p9-12","page":9,"unit":"第六单元 资本主义制度的初步确立","lesson":"第16课 英国资产阶级革命","node":"知识点2 革命过程","no":"6","q":"英国何时宣布为共和国？","a":["共和：1649年，查理一世被推上断头台，英国宣布为【共和国】。"],"star":1},{"id":"ls-p9-13","page":9,"unit":"第六单元 资本主义制度的初步确立","lesson":"第16课 英国资产阶级革命","node":"知识点2 革命过程","no":"7","q":"克伦威尔的独裁与斯图亚特王朝复辟的情况如何？","a":["独裁与复辟：克伦威尔就任“【护国公】”实行独裁；1660年【斯图亚特王朝复辟】。"],"star":1},{"id":"ls-p9-14","page":9,"unit":"第六单元 资本主义制度的初步确立","lesson":"第16课 英国资产阶级革命","node":"知识点2 革命过程","no":"8","q":"英国资产阶级革命结束的标志是什么？","a":["结束：1688年，“【光荣革命】”（资产阶级和新贵族发动宫廷政变，未流血）。"],"star":1},{"id":"ls-p9-15","page":9,"unit":"第六单元 资本主义制度的初步确立","lesson":"第16课 英国资产阶级革命","node":"知识点3 《权利法案》","no":"9","q":"《权利法案》的颁布时间是什么？","a":["颁布时间：【1689年】。"],"star":1},{"id":"ls-p9-16","page":9,"unit":"第六单元 资本主义制度的初步确立","lesson":"第16课 英国资产阶级革命","node":"知识点3 《权利法案》","no":"10","q":"《权利法案》的核心内容是什么？","a":["★核心内容：限制国王权力，确立【议会权力至上】。"],"star":2},{"id":"ls-p9-17","page":9,"unit":"第六单元 资本主义制度的初步确立","lesson":"第16课 英国资产阶级革命","node":"知识点3 《权利法案》","no":"11","q":"《权利法案》的意义是什么？","a":["★意义：①以法律形式对国王的权力进行了明确的制约；②确立了议会在国家政治生活中的【最高地位】；③逐渐形成了【君主立宪制】。"],"star":2},{"id":"ls-p9-18","page":9,"unit":"第六单元 资本主义制度的初步确立","lesson":"第16课 英国资产阶级革命","node":"知识点4 英国资产阶级革命的影响","q":"英国资产阶级革命对英国的影响是什么？","a":["①对英国：推翻了封建君主的【专制统治】，为英国资本主义的进一步发展【开辟了道路】。"],"star":1},{"id":"ls-p9-19","page":9,"unit":"第六单元 资本主义制度的初步确立","lesson":"第16课 英国资产阶级革命","node":"知识点4 英国资产阶级革命的影响","q":"英国资产阶级革命对世界的影响是什么？","a":["②对世界：对世界历史产生了重要影响，标志着人类社会从封建时代走向【资本主义时代】。"],"star":1},{"id":"ls-p9-20","page":9,"unit":"第六单元 资本主义制度的初步确立","lesson":"第16课 英国资产阶级革命","node":"本课必背一句话","q":"《权利法案》与英国资产阶级革命——本课必背一句话是什么？","a":["《权利法案》以法律形式【限制王权】，标志着英国确立了【君主立宪制】，为资本主义发展【开辟了道路】。"],"star":1},{"id":"ls-p9-21","page":9,"unit":"第六单元 资本主义制度的初步确立","lesson":"第17课 美国的独立","node":"知识点1 独立战争的背景与过程","no":"1","q":"美国独立战争的根本原因是什么？","a":["★根本原因：英国殖民统治严重阻碍了【北美资本主义】的发展。"],"star":2},{"id":"ls-p9-22","page":9,"unit":"第六单元 资本主义制度的初步确立","lesson":"第17课 美国的独立","node":"知识点1 独立战争的背景与过程","no":"2","q":"美国独立战争的导火线是什么？","a":["★导火线：1773年【波士顿倾茶事件】。"],"star":2},{"id":"ls-p9-23","page":9,"unit":"第六单元 资本主义制度的初步确立","lesson":"第17课 美国的独立","node":"知识点1 独立战争的背景与过程","no":"3","q":"美国独立战争爆发的标志是什么？","a":["爆发：1775年【来克星顿枪声】。"],"star":1},{"id":"ls-p10-01","page":10,"unit":"第六单元 资本主义制度的初步确立","lesson":"第17课 美国的独立","node":"知识点1 独立战争的背景与过程","no":"4","q":"美国独立战争中的建军情况如何？","a":["建军：第二届大陆会议组建【大陆军】，【华盛顿】任总司令。"],"star":1},{"id":"ls-p10-02","page":10,"unit":"第六单元 资本主义制度的初步确立","lesson":"第17课 美国的独立","node":"知识点1 独立战争的背景与过程","no":"5","q":"美国何时宣告独立？","a":["宣告独立：1776年7月4日，发表【《独立宣言》】，宣告美国诞生。"],"star":1},{"id":"ls-p10-03","page":10,"unit":"第六单元 资本主义制度的初步确立","lesson":"第17课 美国的独立","node":"知识点1 独立战争的背景与过程","no":"6","q":"美国独立战争的转折点是什么？","a":["转折：1777年【萨拉托加大捷】。"],"star":1},{"id":"ls-p10-04","page":10,"unit":"第六单元 资本主义制度的初步确立","lesson":"第17课 美国的独立","node":"知识点1 独立战争的背景与过程","no":"7","q":"美国独立战争胜利与结束的标志是什么？","a":["胜利与结束：1781年【约克镇战役】胜利；1783年英国承认美国独立。"],"star":1},{"id":"ls-p10-05","page":10,"unit":"第六单元 资本主义制度的初步确立","lesson":"第17课 美国的独立","node":"知识点2 《独立宣言》","no":"8","q":"《独立宣言》的内容是什么？","a":["内容：宣布【人人生而平等】，享有生命权、自由权和追求幸福的权利；宣告北美13个殖民地【脱离英国而独立】。"],"star":1},{"id":"ls-p10-06","page":10,"unit":"第六单元 资本主义制度的初步确立","lesson":"第17课 美国的独立","node":"知识点2 《独立宣言》","no":"9","q":"《独立宣言》的局限性是什么？","a":["★局限：没有宣布废除【奴隶制】，也没有给予广大黑人和印第安人基本权利。"],"star":2},{"id":"ls-p10-07","page":10,"unit":"第六单元 资本主义制度的初步确立","lesson":"第17课 美国的独立","node":"知识点3 1787年宪法","no":"10","q":"1787年宪法的设计原则是什么？","a":["原则：依据【分权制衡】原则设计（立法权归国会；行政权归总统；司法权归最高法院）。"],"star":1},{"id":"ls-p10-08","page":10,"unit":"第六单元 资本主义制度的初步确立","lesson":"第17课 美国的独立","node":"知识点3 1787年宪法","no":"11","q":"1787年宪法确立了什么政体？","a":["政体：确立了【联邦制共和国】。"],"star":1},{"id":"ls-p10-09","page":10,"unit":"第六单元 资本主义制度的初步确立","lesson":"第17课 美国的独立","node":"知识点3 1787年宪法","no":"12","q":"1787年宪法的历史地位是什么？","a":["地位：是世界上第一部【资产阶级成文宪法】。"],"star":1},{"id":"ls-p10-10","page":10,"unit":"第六单元 资本主义制度的初步确立","lesson":"第17课 美国的独立","node":"知识点3 1787年宪法","no":"13","q":"1787年宪法的局限性是什么？","a":["★局限：允许奴隶制存在，不承认妇女、黑人和印第安人拥有和白人男子【同等的权利】。"],"star":2},{"id":"ls-p10-11","page":10,"unit":"第六单元 资本主义制度的初步确立","lesson":"第17课 美国的独立","node":"本课必背一句话","q":"《独立宣言》与1787年宪法——本课必背一句话是什么？","a":["《独立宣言》宣告【美国诞生】；1787年宪法确立了【分权制衡】的联邦制共和国，是世界第一部【资产阶级成文宪法】。"],"star":1},{"id":"ls-p10-12","page":10,"unit":"第六单元 资本主义制度的初步确立","lesson":"第18课 法国大革命和拿破仑帝国","node":"知识点1 大革命背景与过程","no":"1","q":"法国大革命的根本原因是什么？","a":["★根本原因：【波旁王朝】的专制统治严重阻碍了法国资本主义的发展。"],"star":2},{"id":"ls-p10-13","page":10,"unit":"第六单元 资本主义制度的初步确立","lesson":"第18课 法国大革命和拿破仑帝国","node":"知识点1 大革命背景与过程","no":"2","q":"法国大革命的思想准备是什么？","a":["思想准备：【启蒙运动】（伏尔泰、孟德斯鸠、卢梭）为法国大革命提供了思想理论基础。"],"star":1},{"id":"ls-p10-14","page":10,"unit":"第六单元 资本主义制度的初步确立","lesson":"第18课 法国大革命和拿破仑帝国","node":"知识点1 大革命背景与过程","no":"3","q":"法国大革命的导火线是什么？","a":["★导火线：1789年，路易十六召开【三级会议】。"],"star":2},{"id":"ls-p10-15","page":10,"unit":"第六单元 资本主义制度的初步确立","lesson":"第18课 法国大革命和拿破仑帝国","node":"知识点1 大革命背景与过程","no":"4","q":"法国大革命爆发的标志是什么？","a":["爆发：1789年7月14日，巴黎人民攻占【巴士底狱】，法国大革命爆发。"],"star":1},{"id":"ls-p10-16","page":10,"unit":"第六单元 资本主义制度的初步确立","lesson":"第18课 法国大革命和拿破仑帝国","node":"知识点1 大革命背景与过程","no":"5","q":"法国大革命的发展表现在哪里？","a":["发展：1792年建立【法兰西第一共和国】；1793年处死路易十六。"],"star":1},{"id":"ls-p10-17","page":10,"unit":"第六单元 资本主义制度的初步确立","lesson":"第18课 法国大革命和拿破仑帝国","node":"知识点2 《人权宣言》","no":"6","q":"《人权宣言》何时由什么机构颁布？","a":["★颁布：1789年，【制宪议会】通过。"],"star":2},{"id":"ls-p10-18","page":10,"unit":"第六单元 资本主义制度的初步确立","lesson":"第18课 法国大革命和拿破仑帝国","node":"知识点2 《人权宣言》","no":"7","q":"《人权宣言》的内容是什么？","a":["★内容：宣告人们生来【自由、权利平等】，【私有财产神圣不可侵犯】。"],"star":2},{"id":"ls-p10-19","page":10,"unit":"第六单元 资本主义制度的初步确立","lesson":"第18课 法国大革命和拿破仑帝国","node":"知识点2 《人权宣言》","no":"8","q":"《人权宣言》的历史地位是什么？","a":["地位：是法国大革命的【纲领性文件】。"],"star":1},{"id":"ls-p10-20","page":10,"unit":"第六单元 资本主义制度的初步确立","lesson":"第18课 法国大革命和拿破仑帝国","node":"知识点3 法国大革命","no":"9","q":"法国大革命是如何深入发展（被推向高潮）的？","a":["深入发展：以【罗伯斯庇尔】为首的【雅各宾派】掌权，把法国大革命推向高潮。"],"star":1},{"id":"ls-p10-21","page":10,"unit":"第六单元 资本主义制度的初步确立","lesson":"第18课 法国大革命和拿破仑帝国","node":"知识点3 法国大革命","no":"10","q":"法国大革命高潮结束的标志是什么？","a":["高潮结束：1794年“【热月政变】”，罗伯斯庇尔等人被处死，法国大革命高潮结束。"],"star":1},{"id":"ls-p10-22","page":10,"unit":"第六单元 资本主义制度的初步确立","lesson":"第18课 法国大革命和拿破仑帝国","node":"知识点3 法国大革命","no":"11","q":"法国大革命对法国的影响是什么？","a":["①对法国：摧毁了法国的【封建君主专制统治】，为法国资本主义的发展【扫清了障碍】。"],"star":2},{"id":"ls-p10-23","page":10,"unit":"第六单元 资本主义制度的初步确立","lesson":"第18课 法国大革命和拿破仑帝国","node":"知识点3 法国大革命","no":"11","q":"法国大革命对思想的影响是什么？","a":["②对思想：传播了资产阶级【自由民主】的进步思想，沉重打击了欧洲的封建制度。"],"star":2},{"id":"ls-p10-24","page":10,"unit":"第六单元 资本主义制度的初步确立","lesson":"第18课 法国大革命和拿破仑帝国","node":"知识点3 法国大革命","no":"11","q":"法国大革命对世界的影响是什么？","a":["③对世界：具有世界性影响。它是世界历史上【规模最大、最彻底】的一次资产阶级革命，对欧洲乃至世界历史的发展产生了深远影响。"],"star":2},{"id":"ls-p10-25","page":10,"unit":"第六单元 资本主义制度的初步确立","lesson":"第18课 法国大革命和拿破仑帝国","node":"知识点4 拿破仑帝国","no":"12","q":"拿破仑帝国何时建立？","a":["建立：1804年，拿破仑【加冕称帝】，建立【法兰西第一帝国】（拿破仑帝国）。"],"star":1},{"id":"ls-p10-26","page":10,"unit":"第六单元 资本主义制度的初步确立","lesson":"第18课 法国大革命和拿破仑帝国","node":"知识点4 拿破仑帝国","no":"13","q":"拿破仑帝国的主要活动——对内采取了哪些措施？","a":["①对内：采取各种措施巩固资产阶级统治，发展经济，改善财政；主持制定【《拿破仑法典》】，该法典肯定了法国大革命的基本成果，确立了【资本主义社会重要的立法规范】。"],"star":2},{"id":"ls-p10-27","page":10,"unit":"第六单元 资本主义制度的初步确立","lesson":"第18课 法国大革命和拿破仑帝国","node":"知识点4 拿破仑帝国","no":"13","q":"拿破仑帝国的主要活动——对外采取了哪些措施？","a":["②对外：多次击退【反法联盟】，发动对外战争。"],"star":2},{"id":"ls-p11-01","page":11,"unit":"第六单元 资本主义制度的初步确立","lesson":"第18课 法国大革命和拿破仑帝国","node":"知识点4 拿破仑帝国","no":"14","q":"评价拿破仑对外战争的革命性（进步性）？","a":["①革命性：沉重打击了欧洲的【封建势力】，传播了法国大革命的思想。"],"star":2},{"id":"ls-p11-02","page":11,"unit":"第六单元 资本主义制度的初步确立","lesson":"第18课 法国大革命和拿破仑帝国","node":"知识点4 拿破仑帝国","no":"14","q":"评价拿破仑对外战争的侵略性？","a":["②侵略性：当地人民遭到【压榨和掠夺】。"],"star":2,"warn":"第10页末为“14.★评价对外战争”，其答案①②在第11页"},{"id":"ls-p11-03","page":11,"unit":"第六单元 资本主义制度的初步确立","lesson":"第18课 法国大革命和拿破仑帝国","node":"知识点4 拿破仑帝国","no":"15","q":"拿破仑帝国覆灭的结果如何？","a":["结果：1812年，拿破仑率军【远征俄国大败而归】；1815年，【滑铁卢战役】失败，拿破仑帝国覆灭。"],"star":1},{"id":"ls-p11-04","page":11,"unit":"第六单元 资本主义制度的初步确立","lesson":"第18课 法国大革命和拿破仑帝国","node":"本课必背一句话","q":"《人权宣言》《拿破仑法典》与法国大革命——本课必背一句话是什么？","a":["《人权宣言》传播了【自由平等】思想；法国大革命是最彻底的资产阶级革命；【《拿破仑法典》】确立了资本主义社会的【立法规范】。"],"star":1},{"id":"ls-p11-05","page":11,"unit":"第七单元 第一次工业革命和马克思主义的诞生","lesson":"第19课 第一次工业革命","node":"知识点1 工业革命的背景与概况","no":"1","q":"第一次工业革命开始的时间是什么时候？","a":["时间：【18世纪60年代】开始。"],"star":1},{"id":"ls-p11-06","page":11,"unit":"第七单元 第一次工业革命和马克思主义的诞生","lesson":"第19课 第一次工业革命","node":"知识点1 工业革命的背景与概况","no":"2","q":"第一次工业革命首先发生在哪个国家、哪个领域？","a":["首先发生国：英国。首先开始领域：【棉纺织业】。"],"star":1},{"id":"ls-p11-07","page":11,"unit":"第七单元 第一次工业革命和马克思主义的诞生","lesson":"第19课 第一次工业革命","node":"知识点1 工业革命的背景与概况","no":"4","q":"英国率先开始工业革命的政治前提是什么？","a":["政治前提：【君主立宪制】确立，政局稳定。"],"star":2,"warn":"本条属于“3.★英国率先开始工业革命的条件”之下的一目"},{"id":"ls-p11-08","page":11,"unit":"第七单元 第一次工业革命和马克思主义的诞生","lesson":"第19课 第一次工业革命","node":"知识点1 工业革命的背景与概况","no":"5","q":"英国率先开始工业革命的经济基础是什么？","a":["经济基础：海外贸易和【殖民掠夺】积累了大量资本。"],"star":2,"warn":"本条属于“3.★英国率先开始工业革命的条件”之下的一目"},{"id":"ls-p11-09","page":11,"unit":"第七单元 第一次工业革命和马克思主义的诞生","lesson":"第19课 第一次工业革命","node":"知识点1 工业革命的背景与概况","no":"6","q":"英国率先开始工业革命在市场和劳动力方面的条件是什么？","a":["市场与劳动力：拥有广阔的【海外市场】，【圈地运动】提供了自由劳动力。"],"star":2,"warn":"本条属于“3.★英国率先开始工业革命的条件”之下的一目"},{"id":"ls-p11-10","page":11,"unit":"第七单元 第一次工业革命和马克思主义的诞生","lesson":"第19课 第一次工业革命","node":"知识点2 工业革命的主要成就","no":"7","q":"工业革命的纺织技术革新有哪些？（发明者与发明）","a":["★纺织技术革新：【哈格里夫斯】发明珍妮纺织机；【阿克莱特】发明水力纺纱机；克隆普顿发明骡机；卡特莱特发明动力织布机。"],"star":2},{"id":"ls-p11-11","page":11,"unit":"第七单元 第一次工业革命和马克思主义的诞生","lesson":"第19课 第一次工业革命","node":"知识点2 工业革命的主要成就","no":"8","q":"工业革命的动力革新是什么？","a":["★动力革新：1785年，英国人【瓦特】改进后的蒸汽机投入使用。"],"star":2},{"id":"ls-p11-12","page":11,"unit":"第七单元 第一次工业革命和马克思主义的诞生","lesson":"第19课 第一次工业革命","node":"知识点2 工业革命的主要成就","no":"9","q":"蒸汽机投入使用（动力革新）的影响是什么？","a":["影响：推动了更多新机器、新技术的发明，极大提高了【生产力】。"],"star":1},{"id":"ls-p11-13","page":11,"unit":"第七单元 第一次工业革命和马克思主义的诞生","lesson":"第19课 第一次工业革命","node":"知识点2 工业革命的主要成就","no":"10","q":"工厂制度是怎样确立的？","a":["★工厂制度：19世纪，传统手工工场逐渐被工厂替代，【工厂制度】最终确立。"],"star":2},{"id":"ls-p11-14","page":11,"unit":"第七单元 第一次工业革命和马克思主义的诞生","lesson":"第19课 第一次工业革命","node":"知识点2 工业革命的主要成就","no":"11","q":"工业革命在交通工具方面的成就是什么？","a":["★交通工具：1825年，【斯蒂芬森】设计的蒸汽机车试车成功。"],"star":2},{"id":"ls-p11-15","page":11,"unit":"第七单元 第一次工业革命和马克思主义的诞生","lesson":"第19课 第一次工业革命","node":"知识点2 工业革命的主要成就","no":"12","q":"蒸汽机车（交通工具革新）的影响是什么？","a":["影响：交通更加快捷、便利，【生产和市场之间的联系】更加紧密。"],"star":1},{"id":"ls-p11-16","page":11,"unit":"第七单元 第一次工业革命和马克思主义的诞生","lesson":"第19课 第一次工业革命","node":"知识点3 工业革命的影响","q":"工业革命对生产生活的影响是什么？","a":["①生产生活：极大地提高了生产力，创造出巨大的社会财富，改变了人们的生产生活方式，人类社会进入“【蒸汽时代】”。"],"star":1},{"id":"ls-p11-17","page":11,"unit":"第七单元 第一次工业革命和马克思主义的诞生","lesson":"第19课 第一次工业革命","node":"知识点3 工业革命的影响","q":"工业革命对社会结构的影响是什么？","a":["②社会结构：引起社会结构的变化，使社会日益分化为【工业资产阶级】和【工业无产阶级】两大对立阶级。"],"star":1},{"id":"ls-p11-18","page":11,"unit":"第七单元 第一次工业革命和马克思主义的诞生","lesson":"第19课 第一次工业革命","node":"知识点3 工业革命的影响","q":"工业革命在环境方面带来了什么后果？","a":["③造成了【环境污染】。"],"star":1},{"id":"ls-p11-19","page":11,"unit":"第七单元 第一次工业革命和马克思主义的诞生","lesson":"第19课 第一次工业革命","node":"知识点3 工业革命的影响","q":"工业革命在贫富差距方面带来了什么后果？","a":["④加剧了【贫富分化】，无产阶级与资产阶级的矛盾日益尖锐。"],"star":1},{"id":"ls-p11-20","page":11,"unit":"第七单元 第一次工业革命和马克思主义的诞生","lesson":"第19课 第一次工业革命","node":"易混易错","q":"工业革命的“开始标志”与“标志性发明”分别是什么？（易混易错）","a":["◇工业革命开始的标志是【珍妮机】的发明；标志性发明是【瓦特改良蒸汽机】。"],"star":1,"warn":"易混易错：开始标志（珍妮机的发明）≠标志性发明（瓦特改良蒸汽机）"},{"id":"ls-p11-21","page":11,"unit":"第七单元 第一次工业革命和马克思主义的诞生","lesson":"第19课 第一次工业革命","node":"易混易错","q":"为什么说工业革命不仅是一场技术革命，也是一场深刻的社会变革？","a":["◇工业革命不仅是一场技术革命，也是一场深刻的【社会变革】（工厂制度确立、两大阶级对立）。"],"star":2,"warn":"易混易错"},{"id":"ls-p11-22","page":11,"unit":"第七单元 第一次工业革命和马克思主义的诞生","lesson":"第19课 第一次工业革命","node":"本课必背一句话","q":"第一次工业革命的影响——本课必背一句话是什么？","a":["【瓦特改良蒸汽机】使人类进入“蒸汽时代”；工业革命极大提高了生产力，使社会日益分化为【工业资产阶级】和【工业无产阶级】两大对立阶级。"],"star":1},{"id":"ls-p12-01","page":12,"unit":"第七单元 第一次工业革命和马克思主义的诞生","lesson":"第20课 马克思主义的诞生","node":"知识点1 马克思主义诞生的背景","no":"1","q":"马克思主义诞生的经济基础是什么？","a":["经济基础：工业革命后，资本主义迅速发展，但【阶级矛盾日益尖锐】。"],"star":1},{"id":"ls-p12-02","page":12,"unit":"第七单元 第一次工业革命和马克思主义的诞生","lesson":"第20课 马克思主义的诞生","node":"知识点1 马克思主义诞生的背景","no":"2","q":"马克思主义诞生的阶级基础是什么？","a":["★阶级基础：三大工人运动（法国里昂工人起义、英国宪章运动、德国西里西亚织工起义）标志着【工人阶级】作为独立的政治力量登上历史舞台。"],"star":2},{"id":"ls-p12-03","page":12,"unit":"第七单元 第一次工业革命和马克思主义的诞生","lesson":"第20课 马克思主义的诞生","node":"知识点1 马克思主义诞生的背景","no":"3","q":"马克思主义诞生的思想基础是什么？","a":["思想基础：【空想社会主义】（圣西门、傅立叶、欧文）。"],"star":1},{"id":"ls-p12-04","page":12,"unit":"第七单元 第一次工业革命和马克思主义的诞生","lesson":"第20课 马克思主义的诞生","node":"知识点2 《共产党宣言》","no":"4","q":"《共产党宣言》的发表时间是什么时候？","a":["★发表时间：【1848年】。"],"star":2},{"id":"ls-p12-05","page":12,"unit":"第七单元 第一次工业革命和马克思主义的诞生","lesson":"第20课 马克思主义的诞生","node":"知识点2 《共产党宣言》","no":"5","q":"《共产党宣言》的内容之一：社会发展的趋势是什么？","a":["①社会日益分裂为【资产阶级】和【无产阶级】两大对立阶级。"],"star":2},{"id":"ls-p12-06","page":12,"unit":"第七单元 第一次工业革命和马克思主义的诞生","lesson":"第20课 马克思主义的诞生","node":"知识点2 《共产党宣言》","no":"5","q":"《共产党宣言》的内容之二：对资本主义前途的判断是什么？","a":["②【资本主义必将被共产主义取代】。"],"star":2},{"id":"ls-p12-07","page":12,"unit":"第七单元 第一次工业革命和马克思主义的诞生","lesson":"第20课 马克思主义的诞生","node":"知识点2 《共产党宣言》","no":"5","q":"《共产党宣言》的内容之三：对工人阶级提出了什么号召？","a":["③号召工人阶级组织起来，建立【共产党】，进行无产阶级革命。"],"star":2},{"id":"ls-p12-08","page":12,"unit":"第七单元 第一次工业革命和马克思主义的诞生","lesson":"第20课 马克思主义的诞生","node":"知识点2 《共产党宣言》","no":"6","q":"《共产党宣言》发表的意义是什么？","a":["★意义：标志着【马克思主义的诞生】。从此，无产阶级的斗争有了【科学理论的指导】，国际共产主义运动兴起并蓬勃发展。"],"star":2},{"id":"ls-p12-09","page":12,"unit":"第七单元 第一次工业革命和马克思主义的诞生","lesson":"第20课 马克思主义的诞生","node":"本课必背一句话","q":"《共产党宣言》的发表——本课必背一句话是什么？","a":["1848年《共产党宣言》的发表，标志着【马克思主义的诞生】，无产阶级斗争有了【科学理论指导】。"],"star":1},{"id":"ls-p12-10","page":12,"unit":"第七单元 第一次工业革命和马克思主义的诞生","lesson":"第21课 第一国际和巴黎公社","node":"知识点1 第一国际","no":"1","q":"第一国际何时何地成立，正式名称是什么？","a":["成立：1864年，英国伦敦，正式名称是“【国际工人协会】”。"],"star":1},{"id":"ls-p12-11","page":12,"unit":"第七单元 第一次工业革命和马克思主义的诞生","lesson":"第21课 第一国际和巴黎公社","node":"知识点1 第一国际","no":"2","q":"第一国际的主要领导人是谁？","a":["主要领导：【马克思】是创始人和主要领导人。"],"star":1},{"id":"ls-p12-12","page":12,"unit":"第七单元 第一次工业革命和马克思主义的诞生","lesson":"第21课 第一国际和巴黎公社","node":"知识点1 第一国际","no":"3","q":"第一国际成立的意义是什么？","a":["意义：标志着国际工人运动【走向联合】，进入了有组织、国际性斗争的【新阶段】。"],"star":1},{"id":"ls-p12-13","page":12,"unit":"第七单元 第一次工业革命和马克思主义的诞生","lesson":"第21课 第一国际和巴黎公社","node":"知识点2 巴黎公社","no":"4","q":"巴黎公社成立的背景是什么？","a":["背景：1871年，法国在【普法战争】中失败，资产阶级政府对外投降、对内镇压。"],"star":1},{"id":"ls-p12-14","page":12,"unit":"第七单元 第一次工业革命和马克思主义的诞生","lesson":"第21课 第一国际和巴黎公社","node":"知识点2 巴黎公社","no":"5","q":"巴黎公社的经过是怎样的？","a":["经过：1871年3月18日，巴黎人民起义；3月28日，【巴黎公社成立】；5月28日，失败（“【五月流血周】”）。"],"star":1},{"id":"ls-p12-15","page":12,"unit":"第七单元 第一次工业革命和马克思主义的诞生","lesson":"第21课 第一国际和巴黎公社","node":"知识点2 巴黎公社","no":"6","q":"巴黎公社的措施之一：在政治机构方面做了什么？","a":["①废除旧军队、旧警察，建立新的【治安、司法和立法机构】。"],"star":2},{"id":"ls-p12-16","page":12,"unit":"第七单元 第一次工业革命和马克思主义的诞生","lesson":"第21课 第一国际和巴黎公社","node":"知识点2 巴黎公社","no":"6","q":"巴黎公社的措施之二：对公职人员有什么规定？","a":["②公职人员由【民主选举】产生，限制公职人员薪资。"],"star":2},{"id":"ls-p12-17","page":12,"unit":"第七单元 第一次工业革命和马克思主义的诞生","lesson":"第21课 第一国际和巴黎公社","node":"知识点2 巴黎公社","no":"6","q":"巴黎公社的措施之三：对逃亡资本家的工厂如何处理？","a":["③没收逃亡资本家的工厂，交由【工人管理】。"],"star":2},{"id":"ls-p12-18","page":12,"unit":"第七单元 第一次工业革命和马克思主义的诞生","lesson":"第21课 第一国际和巴黎公社","node":"知识点2 巴黎公社","no":"6","q":"巴黎公社的措施之四：在教育方面实行什么制度？","a":["④实行小学【免费义务教育】。"],"star":2},{"id":"ls-p12-19","page":12,"unit":"第七单元 第一次工业革命和马克思主义的诞生","lesson":"第21课 第一国际和巴黎公社","node":"知识点2 巴黎公社","no":"7","q":"巴黎公社的性质与意义是什么？","a":["★性质与意义：世界上第一个【无产阶级政权】（【无产阶级专政】的第一次伟大尝试），丰富了马克思主义理论，为未来无产阶级革命留下了宝贵经验。"],"star":2},{"id":"ls-p12-20","page":12,"unit":"第七单元 第一次工业革命和马克思主义的诞生","lesson":"第21课 第一国际和巴黎公社","node":"本课必背一句话","q":"巴黎公社的历史地位——本课必背一句话是什么？","a":["巴黎公社是无产阶级推翻资产阶级统治、建立【无产阶级专政】的【第一次伟大尝试】。"],"star":1}],"paper":{"id":"ls-paper01","name":"九上历史·选择题100题冲刺专练","exam":"","source":"专练01九年级上册选择题100题冲刺2026-2027年期中历史必考重难点专练（解析版）.docx","questions":[{"no":1,"id":"ls-paper01-q001","unit":"第一单元 文明的产生与古代亚非文明","blocks":[{"t":"p","v":"《汉谟拉比法典》正文共有282条,包括诉讼程序、盗窃处罚、租佃雇佣关系、商业高利贷关系、债务、婚姻、遗产继承、奴隶等,比较全面地反映了古巴比伦的社会状况。上述材料反映了《汉谟拉比法典》的特点是（ ）"}],"opts":["内容广泛","思想落后","传播广泛","影响深远"],"ans":0,"why":{"A":"材料说明《汉谟拉比法典》一共 282 条，包括诉讼程序等众多社会领域，能够全面反映古巴比伦社会，直接体现内容广泛，正确。","B":"题干只列举法典包含的各类条文，没有描述观念落后、残酷压迫这类内容，不能得出思想落后的结论，错误。","C":"材料没有提到法典向外流传、被各地学习使用，不存在传播广泛的信息，错误。","D":"影响深远是指它对后世法律产生长久作用，本段材料没有讲后世影响，错误。"},"sol":""},{"no":2,"id":"ls-paper01-q002","unit":"第一单元 文明的产生与古代亚非文明","blocks":[{"t":"p","v":"《全球通史》记载，距今约一万年前后，西亚的居民开始驯化小麦和大麦，中国长江流域的居民培育出水稻，中美洲的居民则培育出玉米。这些地区的先民在互不往来的情况下，各自完成了从采集、狩猎到农耕的转变。这表明（ ）"}],"opts":["农耕技术自西亚向外扩散","早期国家产生于大河流域","世界文明起源具有多元性","文明演进具有同步性特点"],"ans":2,"why":{"A":"材料明确说各地先民互不往来、各自发展，不是西亚向外传播，错误。","B":"题干讲的是原始农耕起源，没有提到早期国家，和材料无关，错误。","C":"材料显示西亚、东亚、中美洲等不同地区各自独立培育出不同的农作物，说明世界农业文明的起源并非单一，而是具有多元性的特点，正确。","D":"题干未涉及不同地区农业发展的时间对比，且各地农业发展实际上并不同步，错误。"},"sol":""},{"no":3,"id":"ls-paper01-q003","unit":"第二单元 古代欧洲文明","blocks":[{"t":"p","v":"德国的一位法学家说：“罗马曾经三次征服世界：第一次以武力，第二次以宗教，第三次则以法律。而这第三次征服也许是其中最为平和、最为持久的一次。”“第三次则以法律征服世界”指的是（ ）"}],"opts":["古代哲学思想的形成","颁布《十二铜表法》","制定《汉谟拉比法典》","使用儒略历"],"ans":1,"why":{"A":"古代哲学思想属于古希腊的成就，不是罗马法律，错误。","B":"《十二铜表法》是罗马成文法的开端，罗马法是罗马留给后世最重要的法律遗产，正确。","C":"《汉谟拉比法典》是古巴比伦的法典，不是罗马，错误。","D":"儒略历是罗马的历法，不属于 “法律”，错误。"},"sol":""},{"no":4,"id":"ls-paper01-q004","unit":"第二单元 古代欧洲文明","blocks":[{"t":"p","v":"亚里士多德曾写道：“国家的面积应有一定的限度。”这样人民可以密集地参与社会和政治活动，最大限度地参与民主管理国家的事务。下面人物的统治最符合这一观点的是（ ）"}],"opts":["汉谟拉比","伯里克利","释迦牟尼","穆罕默德"],"ans":1,"why":{"A":"汉谟拉比是古巴比伦的君主，实行专制统治，不符合民主管理的要求，错误。","B":"题干中亚里士多德的观点是小国寡民的状态下，公民能广泛直接参与民主政治管理。伯里克利是古希腊雅典的执政者，雅典属于城邦小国寡民，在他统治时期雅典奴隶制直接民主政治发展到顶峰，全体成年男性公民可以广泛参与城邦民主事务，完全契合题干观点，正确。","C":"释迦牟尼是佛教创始人，并非国家统治者，和材料描述的政治统治无关，错误。","D":"穆罕默德是阿拉伯帝国的奠基者，建立的是统一的阿拉伯神权国家，推行的是集权统治，不符合小国寡民下的民主参与特征，错误。"},"sol":""},{"no":5,"id":"ls-paper01-q005","unit":"第一单元 文明的产生与古代亚非文明","blocks":[{"t":"p","v":"下列两幅图片共同反映了（ ）"},{"t":"img","src":"images/试卷/q005_1.webp"}],"opts":["奴隶社会，崇拜神灵","文明古国，亚洲领先","古老文字，形象会意","法制传统，源远流长"],"ans":3,"why":{"A":"两幅图片分别涉及古巴比伦的《汉谟拉比法典》和古埃及法老敕令，虽然都属于奴隶社会，但图片重点展示的是“文字记载的法律”，并非“崇拜神灵”，错误。","B":"古埃及位于非洲，并非亚洲，错误。","C":"图片中确实出现了楔形文字和象形文字，但文字在这里的用途是“记载法律/敕令”，突出的是法律层面，而非单纯的文字特征，错误。","D":"材料中“用楔形文字记载的石柱法”对应古巴比伦的《汉谟拉比法典》，“用象形文字记载法老敕令”对应古埃及的法律文献，两者均表明人类早期法制传统十分悠久，共同反映了“法制传统，源远流长”，正确。"},"sol":""},{"no":6,"id":"ls-paper01-q006","unit":"第四单元 中古时期的亚洲、非洲和美洲","blocks":[{"t":"p","v":"以下是某历史探究小组收集的一组图片。据此推断，他们探究的主题是（ ）"},{"t":"img","src":"images/试卷/q006_1.webp"}],"opts":["古代亚非文明","封建时代的欧洲","古代欧洲文明","封建时代的亚洲国家"],"ans":3,"why":{"A":"古代亚非文明多指早期大河文明，材料里日本幕府、阿拉伯帝国属于封建时期，不符合该主题，错误。","B":"图片内容是日本、阿拉伯相关史实，不属于欧洲，错误。","C":"图片对应的是亚洲地区文明，不是古代欧洲文明，错误。","D":"倭王印、源赖朝代表日本封建时代，伊斯兰教兴起、阿拉伯帝国属于亚洲阿拉伯地区封建文明，都属于封建时代的亚洲国家，正确。"},"sol":""},{"no":7,"id":"ls-paper01-q007","unit":"第四单元 中古时期的亚洲、非洲和美洲","blocks":[{"t":"p","v":"14世纪下半期西班牙人绘制的世界地图上，特意将手持金块的马里国王曼萨·穆萨作为西非的标志（见下图）。这一设计主要反映了（ ）"},{"t":"img","src":"images/试卷/q007_1.webp"}],"opts":["马里是当时世界上最强大的国家","黄金贸易是马里重要的财富来源","西班牙人对西非文明的崇拜","曼萨·穆萨是西非唯一的君主"],"ans":1,"why":{"A":"14世纪有很多实力强大的政权，马里只是西非强国，并非世界最强，错误。","B":"曼萨・穆萨统治时期，马里黄金资源丰富、黄金贸易兴盛，是马里重要的财富来源，正确。","C":"西班牙人绘制这个形象，主要是因为马里盛产黄金，并不是出于崇拜西非文明，错误。","D":"当时西非存在多个政权、多位君主，曼萨・穆萨并不是西非唯一的君主，错误。"},"sol":""},{"no":8,"id":"ls-paper01-q008","unit":"第三单元 封建时代的欧洲","blocks":[{"t":"p","v":"庄园在中世纪的西欧和日本曾经是长期存在的最基本的土地经营单位，二者的相似之处是（ ）"}],"opts":["庄园主和农民之间存在雇佣关系","庄园内耕地分为自营地和份地","庄园内组成了私人武装——武士集团","国王或天皇对庄园的控制力不强"],"ans":3,"why":{"A":"西欧庄园、日本庄园里是依附关系，不是雇佣关系，雇佣是资本主义的关系，错误。","B":"耕地分为自营地、份地，这只是西欧庄园的特点，日本庄园不是，错误。","C":"武士集团是日本庄园的产物，西欧庄园没有武士集团，错误。","D":"西欧庄园领主有很大自主权，日本庄园也逐渐获得 “不输不入” 特权，国王（天皇）对庄园控制力不强，这是二者的共同点。符合题意，正确。"},"sol":""},{"no":9,"id":"ls-paper01-q009","unit":"第四单元 中古时期的亚洲、非洲和美洲","blocks":[{"t":"p","v":"“（马里帝国）好事之一是，极少暴政……还有全境安靖，无论是居家还是旅行，不必担心盗贼或抢劫。”材料陈述的是马里帝国（ ）"}],"opts":["繁荣的原因","崛起的过程","改革的成效","衰落的表现"],"ans":0,"why":{"A":"题干材料描述马里帝国暴政极少、境内社会安定，民众居家、出行都无需担忧盗抢问题。稳定清明的社会环境是国家经济、社会能够稳步发展的重要支撑，属于马里帝国走向繁荣的核心有利条件，对应“繁荣的原因”，正确。","B":"崛起的过程侧重描述帝国从弱到强的扩张、发展阶段历程，和材料描述的社会治理特征不符，错误。","C":"材料仅泛泛提及马里帝国整体的社会治理状态，没有任何信息指向这一安定局面是由某场特定改革（如行政改革、军事改革、经济改革）带来的，无法将材料内容对应为改革的成果，错误。","D":"帝国衰落的典型特征通常是统治腐败、社会动荡、治安崩坏、国力衰退等，和材料里“极少暴政、全境安靖”的描述完全相悖，错误。"},"sol":""},{"no":10,"id":"ls-paper01-q010","unit":"第四单元 中古时期的亚洲、非洲和美洲","blocks":[{"t":"p","v":"模仿与创新相结合是日本民族的一大特色，下列能体现这一点的是（ ）"}],"opts":["大化改新","种姓制度","《汉谟拉比法典》","奴隶制民主政治"],"ans":0,"why":{"A":"大化改新是日本孝德天皇于646年颁布《改新之诏》后推行的改革。它以中国隋唐的政治经济制度为蓝本进行模仿，同时又参酌日本本土的旧有习俗进行创新调整，建立了中央集权的天皇制国家，使日本从奴隶社会过渡到封建社会。这充分体现了日本民族“模仿与创新相结合”的特色，正确。","B":"种姓制度是古代印度的社会等级制度，与日本无关，错误。","C":"《汉谟拉比法典》是古巴比伦王国的法律文献，与日本无关，错误。","D":"奴隶制民主政治是古代雅典（希腊）的政治制度，与日本无关，错误。"},"sol":""},{"no":11,"id":"ls-paper01-q011","unit":"第二单元 古代欧洲文明","blocks":[{"t":"p","v":"依据下面知识卡片的内容，可以判断该国是（ ）"},{"t":"tbl","rows":[[{"t":"地中海曾是它的“内湖”\n帝国的版图横跨欧亚非三洲\n和汉朝通过丝绸之路有过经贸交流\n4世纪末帝国分裂为东西两部分","imgs":[]}]]}],"opts":["罗马帝国","亚历山大帝国","阿拉伯帝国","奥斯曼帝国"],"ans":0,"why":{"A":"罗马帝国将地中海变成它的“内湖”，地跨欧亚非三洲，和汉朝通过丝绸之路有贸易往来，4世纪末分裂为东、西罗马帝国，符合卡片信息，正确。","B":"亚历山大帝国在亚历山大死后不久即分裂，没有在4世纪末分裂，和史实不符，错误。","C":"阿拉伯帝国鼎盛时期虽跨欧亚非，但没有把地中海变为“内湖”，错误。","D":"奥斯曼帝国兴起时间晚，和汉朝没有经贸往来，错误。"},"sol":""},{"no":12,"id":"ls-paper01-q012","unit":"第二单元 古代欧洲文明","blocks":[{"t":"p","v":"2世纪初，罗马帝国成为地跨欧亚非三洲的大帝国，拉丁文也随之不断向外传播，逐渐成为被征服地区的官方语言。材料表明帝国的扩张（ ）"}],"opts":["给被征服地区带来了灾难","有利于推行封建制君主专制","客观上促进人类文明传播","促使地中海成为帝国的内湖"],"ans":2,"why":{"A":"罗马帝国的扩张虽然在现实中有可能带来灾难，但材料的叙述重心是拉丁文的向外传播，而非扩张的破坏性影响，错误。","B":"罗马帝国属于奴隶制政权，并非封建制，材料也没有体现君主专制相关内容，错误。","C":"罗马帝国向外扩张的同时，拉丁文向外传播，成为被征服地区的官方语言，客观上促进人类文明传播，符合材料主旨，正确。","D":"虽然罗马帝国扩张使地中海成为内湖，但材料强调的是拉丁文的传播，而非地中海成为内湖这一结果，错误。"},"sol":""},{"no":13,"id":"ls-paper01-q013","unit":"综合","blocks":[{"t":"p","v":"李同学为参加学校主题活动而收集到如下材料，请判断活动的主题应该是（ ）"},{"t":"tbl","rows":[[{"t":"东西方文化大交汇","imgs":[]},{"t":"东西方文化交流发展新高度","imgs":[]},{"t":"东西方贸易和文化交流的金桥","imgs":[]}],[{"t":"沿途建立了许多希腊式城市。这些城市成为希腊文化与东方文化交汇的节点。埃及亚历山大港逐渐成为地中海世界的文化中心之一。","imgs":[]},{"t":"《后汉书》记载过罗马人到达洛阳的事迹。他们冒充罗马帝国使者觐见东汉皇帝、有的还获得了皇帝的赏赐。","imgs":[]},{"t":"许多希腊、罗马古典作品得以保存并流传到阿拉伯帝国，亚欧各地学者聚集在君士坦丁堡进行学术争论。","imgs":[]}]]}],"opts":["古代法律的传承与发展","古代文明的交流与互鉴","民主政治的兴起与极盛","封建制度的产生与衰落"],"ans":1,"why":{"A":"材料未提及任何古代法律相关内容，三则材料分别对应不同时期，不同形式的东西方文化贸易往来，核心指向不同文明之间的互动，错误。","B":"三则材料分别体现军事扩张带动文明交汇、官方外交往来、文化传播与学术交流，均属于古代文明交流与互鉴的范畴，正确。","C":"三则材料核心指向不同文明之间的互动，未涉及民主政治的发展等相关内容，错误。","D":"材料未提及封建制度的产生、衰落相关信息，三则材料核心指向不同文明之间的互动，错误。"},"sol":""},{"no":14,"id":"ls-paper01-q014","unit":"第二单元 古代欧洲文明","blocks":[{"t":"p","v":"“公元2世纪，帝国疆域达到最大规模，西起西班牙、不列颠，东到幼发拉底河上游，南至非洲北部，北达莱茵河与多瑙河一带，广袤的地中海成为帝国的‘内湖’。”材料描述的是（ ）"}],"opts":["亚历山大帝国","罗马共和国","罗马帝国","拜占庭帝国"],"ans":2,"why":{"A":"亚历山大帝国存在于公元前4世纪，时间与题干不符，错误。","B":"罗马共和国在公元前27年转变为帝国，公元2世纪已经不是共和国阶段，错误。","C":"公元2世纪罗马帝国疆域达到最大，地中海成为它的内湖，正确。","D":"拜占庭帝国是东罗马帝国，鼎盛时期是查士丁尼统治时期（527—565年），和题干的时间、疆域描述不匹配，错误。"},"sol":""},{"no":15,"id":"ls-paper01-q015","unit":"第二单元 古代欧洲文明","blocks":[{"t":"p","v":"腾讯上的一则新闻曾引起大家的广泛关注：《从古罗马的衰落，看金融对国家兴衰的影响》。文章论述了古罗马的兴衰史，你认为文中不可能提及（ ）"}],"opts":["《十二铜表法》让古罗马共和国量刑定罪有了法律依据","斯巴达克起义沉重打击了古罗马共和国","凯撒建立了罗马帝国","罗马帝国版图最鼎盛时，地中海是其“内湖”"],"ans":2,"why":{"A":"《十二铜表法》是罗马第一部成文法，使量刑定罪有了法律依据，正确。","B":"斯巴达克起义沉重打击了罗马共和国的统治，正确。","C":"建立罗马帝国的是屋大维（公元前27年），凯撒是共和国末期的独裁者，并未建立帝国，错误。","D":"罗马帝国版图最盛时地跨欧亚非三洲，地中海成为其“内湖”，正确。"},"sol":""},{"no":16,"id":"ls-paper01-q016","unit":"第一单元 文明的产生与古代亚非文明","blocks":[{"t":"p","v":"雅利安人进入印度后，逐渐建立了严格的社会等级制度，史称“种姓制度”，种姓制度下的各等级世代相袭，种姓制度森严，种姓内通婚，激化了社会矛盾，是佛教兴起的（ ）"}],"opts":["影响","特点","背景","目的"],"ans":2,"why":{"A":"“影响”是指佛教兴起之后带来的后续作用，与题干逻辑相反，错误。","B":"“特点”是事物本身具备的独有属性，种姓制度不是佛教兴起的属性特征，错误。","C":"种姓制度的森严压迫、激化社会矛盾的现实状况，是佛教能够在古印度兴起的特定社会前提条件，属于佛教兴起的背景，正确。","D":"题干中描述的种姓制度的森严压迫、激化社会矛盾的社会现实，是佛教兴起之前就已经存在的客观社会环境，并非佛教兴起的目的，错误。"},"sol":""},{"no":17,"id":"ls-paper01-q017","unit":"第四单元 中古时期的亚洲、非洲和美洲","blocks":[{"t":"p","v":"某历史兴趣小组在研学旅行时，到达目的地麦地那，参观了清真寺，了解了穆斯林的生活习俗。该研学旅行的主题与哪一人物有关（ ）"}],"opts":["耶稣","释迦牟尼","穆罕默德","马丁·路德"],"ans":2,"why":{"A":"耶稣是基督教的创始人，和麦地那、穆斯林无关，不符合题意，错误。","B":"释迦摩尼是佛教的创始人，不符合题意，错误。","C":"穆罕默德在阿拉伯半岛创立伊斯兰教，穆斯林是伊斯兰教信徒，麦地那是伊斯兰教发展史上的重要地点，和史实吻合，正确。","D":"马丁路德是宗教改革的代表人物，和伊斯兰教、麦地那无关，不符合题意，错误。"},"sol":""},{"no":18,"id":"ls-paper01-q018","unit":"第四单元 中古时期的亚洲、非洲和美洲","blocks":[{"t":"p","v":"7世纪初，穆罕默德在阿拉伯半岛创立了 ，后来这一宗教推动了阿拉伯半岛的统一。（ ）"}],"opts":["佛教","基督教","伊斯兰教","道教"],"ans":2,"why":{"A":"“佛教”于公元前6世纪在古印度诞生，创立者是乔达摩·悉达多，与材料时间、地点、创立者均不符，错误。","B":"“基督教”于1世纪在巴勒斯坦地区诞生，据传创立者是耶稣，与材料时间、地点、创立者均不符，错误。","C":"7世纪初，穆罕默德在阿拉伯半岛的麦加创立伊斯兰教，它促进了阿拉伯半岛的思想统一，进而推动了阿拉伯半岛走向统一，正确。","D":"“道教”是中国本土宗教，与阿拉伯半岛无关，错误。"},"sol":""},{"no":19,"id":"ls-paper01-q019","unit":"第一单元 文明的产生与古代亚非文明","blocks":[{"t":"p","v":"在日常生活中，我们常常接触到“众生平等”、“大慈大悲”、“阿弥陀佛”、“觉悟”等词语，这些词语与下列哪一宗教有关（ ）"}],"opts":["印度教","基督教","伊斯兰教","佛教"],"ans":3,"why":{"A":"印度教由古印度婆罗门教慢慢发展演变而来，支持、认可种姓制度，认为人天生有高低等级，等级是生来固定的。与材料不符，错误。","B":"基督教教导人们忍受苦难，死后可以升入 “天堂”，与题干内容不符，错误。","C":"伊斯兰教的创始人是穆罕默德，相信安拉是宇宙万物的创造者、恩养者和唯一的主宰，与题干内容不符，错误。","D":"公元前6世纪，乔达摩·悉达多创立佛教，佛教宣扬“众生平等”，反对婆罗门的特权地位。它认为“四大皆空”，劝人们“忍耐服从”为很多统治者接受，大力扶持佛教。“众生平等”“大慈大悲”“阿弥陀佛”“觉悟” 都是佛教的典型用语，正确。"},"sol":""},{"no":20,"id":"ls-paper01-q020","unit":"第一单元 文明的产生与古代亚非文明","blocks":[{"t":"p","v":"在方文山填词的某歌曲中用歌词传递了历史——“思念像底格里斯河般的漫延……深埋在美索不达米亚平原”，下列属于在此地诞生的文明成就的是（ ）"}],"opts":["金字塔","阿拉伯数字","楔形文字","象形文字"],"ans":2,"why":{"A":"金字塔是古埃及文明成就，诞生于尼罗河流域，不是两河流域的美索不达米亚平原，错误。","B":"阿拉伯数字起源于古印度，属于印度河流域文明成果，和两河流域无关，错误。","C":"楔形文字是两河流域（美索不达米亚平原）的苏美尔人创造的文字，正确。","D":"象形文字是古埃及人发明的文字，诞生在尼罗河流域，和两河流域无关，错误。"},"sol":""},{"no":21,"id":"ls-paper01-q021","unit":"第五单元 走向近代","blocks":[{"t":"p","v":"从14世纪中叶到16世纪，欧洲出现了对古典文明的再发现，但最令人感兴趣的成就都是全新的，因此，当时主要是“兴”，而不是“复兴”。其中的“兴”是指（ ）"}],"opts":["对古典文化的全面继承","中世纪西欧城市的兴起","资产阶级思潮逐渐流行","基督教在西欧的进一步传播"],"ans":2,"why":{"A":"文艺复兴是借助古典文化宣传新思想，并非全盘继承古典文化，错误。","B":"城市兴起时间早于14世纪中叶，和题干时间、事件不符，错误。","C":"文艺复兴核心是人文主义，属于新兴资产阶级的思想解放思潮，对应题干里的“兴”，正确。","D":"文艺复兴一定程度冲击了教会思想束缚，不是推动基督教传播，错误。"},"sol":""},{"no":22,"id":"ls-paper01-q022","unit":"第五单元 走向近代","blocks":[{"t":"p","v":"12世纪前后，中世纪的艺术还未涉及儿童。13世纪末，儿童只是身材缩小的成人。15、16世纪的意大利出现了很多表现孩子天真、可爱的世俗画，儿童逐渐被发现。17世纪后，孩子被看作是家庭中的重要成员，关注子女教育成为新风气。导致“儿童被发现”的主要文化因素是（ ）"}],"opts":["家庭教育观念的变化","父母受教育程度提升","人文主义思想的传播","城市化进程持续加快"],"ans":2,"why":{"A":"家庭教育观念的变化是“儿童被发现”之后带来的结果、表现，不是推动这一变化的文化原因，错误。","B":"题干说的是在17世纪后，孩子被看作是家庭中的重要成员，没有说到父母受教育程度提升，错误。","C":"15、16世纪意大利正值文艺复兴，人文主义重视人、尊重人的价值，承认儿童独立的特点，不再把儿童单纯当成缩小版成人，推动了“儿童被发现”，符合题意，正确。","D":"题干侧重于文化因素，与城市化（经济社会因素）无关，错误。"},"sol":""},{"no":23,"id":"ls-paper01-q023","unit":"第五单元 走向近代","blocks":[{"t":"p","v":"作为文艺复兴时期的代表人物，“文学三杰”与“美术三杰”的共同之处是（ ）"}],"opts":["提倡神权至上","宣扬人文主义","推崇民主政治","重视科学研究"],"ans":1,"why":{"A":"文艺复兴的核心是反对神权至上，提倡以人为中心，与“神权至上”相矛盾，错误。","B":"文艺复兴的核心思想是人文主义，文学三杰（但丁、彼特拉克、薄伽丘）和美术三杰（达·芬奇、米开朗基罗、拉斐尔）都以人文主义为创作核心，主张关注人的价值和现实生活，正确。","C":"文艺复兴是文化思想运动，并非政治运动，与“民主政治”无关，错误。","D":"重视科学研究是文艺复兴后期部分人物的特点，但并非文学三杰与美术三杰的共同之处，错误。"},"sol":""},{"no":24,"id":"ls-paper01-q024","unit":"第五单元 走向近代","blocks":[{"t":"p","v":"据题表可知，当时英国手工工场（ ）"},{"t":"tbl","rows":[[{"t":"题表：英国手工工场情况表","imgs":[]}],[{"t":"时间","imgs":[]},{"t":"工场经营情况","imgs":[]}],[{"t":"1562年","imgs":[]},{"t":"利克啤酒厂外国雇工人数达18位，每年生产上千桶的啤酒","imgs":[]}],[{"t":"1565年","imgs":[]},{"t":"罗伯特布里奇钢铁厂雇用了30位国外工人从事生产","imgs":[]}],[{"t":"1637年","imgs":[]},{"t":"莫特雷克挂毯工场的140名工人几乎全部来自荷兰等低地国家","imgs":[]}]]}],"opts":["生产效率提高","雇佣工人劳动","分工日益细化","扩大生产规模"],"ans":1,"why":{"A":"题中表格仅记录了雇工数量和部分产量，没有体现单位时间产出、技术改进等能证明生产效率提升的信息，无法得出该结论，错误。","B":"表格里的三家手工工场都明确出现了雇工、雇佣工人从事生产的描述，直接体现出这些手工工场都采用雇佣工人劳动的生产模式，符合史实和表格信息，正确。","C":"题中表格没有提及生产环节的拆分、不同工种的细分相关内容，无法体现分工细化，错误。","D":"表格仅呈现了三个不同工场的雇工数据，没有展示同一家工场前后规模变化的对比，不能得出“当时英国手工工场整体在扩大生产规模”的结论，错误。"},"sol":""},{"no":25,"id":"ls-paper01-q025","unit":"第五单元 走向近代","blocks":[{"t":"p","v":"“富裕的农民反而成了土地的拥有者，为了解决同样存在的劳动力问题，富裕农民会雇佣贫穷的农民来自己的农场工作。”材料情境主要出现在（ ）"}],"opts":["雅典城邦","租地农场","日本庄园","手工工场"],"ans":1,"why":{"A":"雅典城邦的土地制度以小农个体所有为主，同时存在贵族占有大量土地的情况，其典型的剥削方式是债务奴隶制，并不存在富裕农民集中土地、雇佣贫困农民从事规模化农场经营的主流生产模式，错误。","B":"中世纪晚期欧洲出现租地农场，富裕农民通过承租、购买等方式集中土地，成为土地的实际经营者，雇佣少地或无地的贫苦农民进行生产，属于资本主义性质的农业生产经营模式，正确。","C":"日本庄园的实际管理者是庄园主，庄园的主要劳作群体是依附于庄园的农奴、依附农民等人口，以劳役地租为主要剥削形式，不存在“富裕农民作为土地拥有者、雇佣自由贫穷农民开展生产”的特征，错误。","D":"手工工场属于手工业领域的生产组织形式，核心是商人雇佣工人在工场中从事手工生产，生产对象是手工业产品，错误。"},"sol":""},{"no":26,"id":"ls-paper01-q026","unit":"第五单元 走向近代","blocks":[{"t":"p","v":"文艺复兴时期掌握政治权力的是君主，他们是文艺复兴的支持者和保护者，也是最直接的受益者。但是，由“大写的人站起来”开启的世俗化进程，最终会实质性地摧毁君主制。此观点旨在说明文艺复兴（ ）"}],"opts":["实现了人性的追求","倡导了人人平等思想","冲破了神学的束缚","客观上推动民主进程"],"ans":3,"why":{"A":"“实现人性追求”是文艺复兴的直接目标，未体现对君主制的冲击，错误。","B":"“人人平等”是启蒙运动的重要主张，出现时间晚于文艺复兴，且与材料强调的文艺复兴对君主制的影响无关，错误。","C":"“冲破神学束缚”是文艺复兴的作用，但材料侧重政治结果而非宗教层面，错误。","D":"“‘大写的人站起来’开启的世俗化进程，最终会实质性地摧毁君主制”说明文艺复兴通过人文主义思想推动世俗化，文艺复兴虽由君主支持，但客观上为民主政治创造了条件，削弱了君主制的根基，正确。"},"sol":""},{"no":27,"id":"ls-paper01-q027","unit":"第五单元 走向近代","blocks":[{"t":"p","v":"14—16世纪，英国共建立了67个租地农场（牧场），其中有37个面积超过200英亩，这些农场大量雇佣劳动力进行生产。这一现象（ ）"}],"opts":["推广了农业庄园式劳作方式","体现农业经营方式的近代化","反映了土地国有化迅速发展","表明圈地运动逐渐走向衰退"],"ans":1,"why":{"A":"农业庄园式劳作方式是封建社会的典型特征，以农奴制为基础。题干中“租地农场”和“雇佣劳动力”正是对传统庄园经济的瓦解，而不是推广，错误。","B":"农业经营方式的近代化（即资本主义化）主要表现为：规模化经营、雇佣劳动力生产、产品面向市场。题干中“租地农场”和“大量雇佣劳动力”正是农业经营方式走向近代化的具体体现，符合题意，正确。","C":"14—16世纪的英国，土地主要是通过圈地运动等方式逐渐集中到新贵族和资产阶级手中，变成私有的大农场，而不是“土地国有化”，错误。","D":"14—16世纪正是英国圈地运动兴起和发展的时期。圈地运动剥夺了农民的土地，为租地农场提供了大量廉价的雇佣劳动力，促进了租地农场的发展，而非走向衰退，错误。"},"sol":""},{"no":28,"id":"ls-paper01-q028","unit":"第五单元 走向近代","blocks":[{"t":"p","v":"下面是一部有关“文艺复兴”的历史著作的部分目录，此目录内容突出体现了文艺复兴（ ）"},{"t":"tbl","rows":[[{"t":"第一章 宗教下的束缚与解放\n第一节 祝福与忏悔并存\n第二节 教会的力量\n第三节 拨开乌云见天日\n第二章 舞动的精灵\n第一节 艺术领域的先行者\n第二节 巨人的时代\n第三节 掩藏在阴谋之下\n……","imgs":[]}]]}],"opts":["发扬个性，肯定人的价值","解放思想，推动文化繁荣","打击教会，冲击封建统治","反对禁欲，促进经济发展"],"ans":1,"why":{"A":"材料中“宗教下的束缚与解放”“拨开乌云见天日”“艺术领域的先行者”“巨人的时代”等内容，主要围绕冲破宗教束缚和艺术文化的发展展开，并未侧重体现“发扬个性，肯定人的价值”这一具体内涵，错误。","B":"材料中“宗教下的束缚与解放”“拨开乌云见天日”体现了思想上的解放，“艺术领域的先行者”“巨人的时代”体现了文化艺术的繁荣，这些内容共同突出了文艺复兴解放思想、推动文化繁荣的特点，正确。","C":"材料涉及的是宗教束缚下的思想解放和艺术发展，并未直接体现对教会和封建统治的打击，错误。","D":"材料中“宗教下的束缚与解放”“拨开乌云见天日”涉及冲破禁欲等宗教束缚，但并未提及“促进经济发展”的内容，错误。"},"sol":""},{"no":29,"id":"ls-paper01-q029","unit":"第五单元 走向近代","blocks":[{"t":"p","v":"在近代前期，英国强调古希腊、罗马文化，以对抗中世纪的封建文化，于是许多希腊和拉丁词汇进入英语。据此推断，影响这一时期英语词汇发展的主要事件是（ ）"}],"opts":["文艺复兴运动","十字军东征","新航路的开辟","古代罗马的扩张"],"ans":0,"why":{"A":"文艺复兴运动以复兴古希腊、罗马文化为旗号，反对中世纪封建教会文化，推动大量希腊、拉丁词汇融入英语，正确。","B":"十字军东征属于中世纪对外军事远征，主旨不是复兴古典文化，错误。","C":"新航路开辟主要是探寻新航线、开展海外殖民，和复兴古希腊罗马文化无关，错误。","D":"古代罗马扩张发生在古罗马时期，不属于近代前期，错误。"},"sol":""},{"no":30,"id":"ls-paper01-q030","unit":"第五单元 走向近代","blocks":[{"t":"p","v":"如下表反映了这一时期的时代特征是（ ）"},{"t":"tbl","rows":[[{"t":"13—14世纪","imgs":[]},{"t":"欧洲农村出现新的生产和经营方式，促使早期资产阶级产生","imgs":[]}],[{"t":"14世纪中叶","imgs":[]},{"t":"形成中的资产阶级在反封建的长期斗争中，掀起了思想解放运动——文艺复兴","imgs":[]}],[{"t":"15世纪开始","imgs":[]},{"t":"开拓者将探索目标推向更加广袤的海域，世界历史进入大航海时代","imgs":[]}]]}],"opts":["走向近代","资本主义制度确立","工业时代来临","共产主义运动兴起"],"ans":0,"why":{"A":"表格里新生产经营方式出现、文艺复兴、新航路开辟，都是欧洲步入近代的重要表现，时代特征为走向近代，符合题意，正确。","B":"资本主义制度确立是英法美早期资产阶级革命之后，和表格时间不符，错误。","C":"工业时代来临开始于第一次工业革命，时间晚于材料时段，错误。","D":"共产主义运动兴起是19世纪，与题干时间不符，错误。"},"sol":""},{"no":31,"id":"ls-paper01-q031","unit":"第五单元 走向近代","blocks":[{"t":"p","v":"16世纪，西班牙人到达并征服墨西哥部分地区后，将当地可可豆（巧克力原料）的饮用方法带回欧洲。之后，巧克力饮品在贵族中备受推崇，进而在意大利、法国和英国流行。巧克力的流行说明（ ）"}],"opts":["物种交换丰富饮食","军事征服改变习俗","海外殖民激化矛盾","国家交流改良技术"],"ans":0,"why":{"A":"可可豆原产美洲，原本欧洲没有这个物种。随着新航路开辟，美洲物产传入欧洲，形成跨洲物种交换，巧克力成为新饮品，丰富了欧洲人的饮食。材料核心就是美洲物种传到欧洲并流行，正确。","B":"西班牙的军事征服只是这件事发生的背景，不是材料要表达的主旨。材料并没有说欧洲原有习俗被武力强行改变；可可饮品是人们主动喜爱、自发流行，不是由于征服而被强制改变的习俗，错误。","C":"整段材料只提到物种交换，没有提到冲突、反抗、矛盾、斗争相关内容，错误。","D":"材料只说了把可可的饮用方法带回欧洲、饮品流行，没有提到改良生产、加工技术；而且这一时期是殖民掠夺，也不是平等的国家交流，错误。"},"sol":""},{"no":32,"id":"ls-paper01-q032","unit":"第五单元 走向近代","blocks":[{"t":"p","v":"新航路的开辟促进了世界各大洲之间的联系。最先开辟新航路的两个国家是（ ）"}],"opts":["英国、法国","西班牙、葡萄牙","英国、荷兰","意大利、荷兰"],"ans":1,"why":{"A":"英国、法国参与海外殖民扩张的时间晚于西班牙、葡萄牙，属于后续跟进的国家，并非最先开辟新航路的国家，错误。","B":"西班牙、葡萄牙最早支持并完成开辟新航路的关键航海活动，正确。","C":"英国、荷兰的海外殖民崛起时间更晚，其中荷兰在17世纪才凭借海上贸易优势成为殖民强国，不属于最先开辟新航路的国家，错误。","D":"意大利城邦并未主导早期远洋新航路探险活动，荷兰崛起时间晚，不符合“最先”的要求，错误。"},"sol":""},{"no":33,"id":"ls-paper01-q033","unit":"第五单元 走向近代","blocks":[{"t":"p","v":"哥伦布和达·伽马船队旗舰都属于卡拉克型帆船。15世纪经欧洲人改造后，它们既能在大西洋的强风中高速行驶，也能在地中海和非洲沿岸多变的海风中较好操控。据此可知，卡拉克型帆船的改造（ ）"}],"opts":["激起欧洲人对东方的向往","主要用于贩卖黑人奴隶","助力首次环球航行的完成","为远洋航海提供了条件"],"ans":3,"why":{"A":"材料强调卡拉克型帆船改造后的航行性能，并未涉及欧洲人对东方的向往，且欧洲人对东方的向往是开辟新航路的社会动因，与帆船改造本身无直接因果关系，错误。","B":"材料提到卡拉克型帆船用于哥伦布和达·伽马的远洋航行，并未体现其主要用于贩卖黑人奴隶，且黑奴贸易主要发生在后来，错误。","C":"首次环球航行由麦哲伦船队完成，并非哥伦布和达·伽马船队，且材料未涉及环球航行，错误。","D":"材料中“既能在大西洋的强风中高速行驶，也能在地中海和非洲沿岸多变的海风中较好操控”说明卡拉克型帆船改造后适应了不同海域的航行条件，提高了远洋航行的安全性和效率，为哥伦布、达·伽马等人的远洋航海提供了条件，正确。"},"sol":""},{"no":34,"id":"ls-paper01-q034","unit":"第五单元 走向近代","blocks":[{"t":"p","v":"“由于商品经济的发展和资本主义萌芽，欧洲各国对铸造货币的黄金的需求量日益增大，由于陆上交通被奥斯曼土耳其切断，商业危机促使欧洲人开辟新的航路。……”这段叙述可以用来说明（ ）"}],"opts":["新航路开辟的过程","新航路开辟的背景","新航路开辟的消极影响","新航路开辟的积极影响"],"ans":1,"why":{"A":"过程指的是新航路开辟的路线、时间等，这与题干不符，错误。","B":"题干说的是商品经济、资本主义萌芽（根本原因）、欧洲渴求黄金、奥斯曼帝国阻断传统商路（直接原因），这些都是推动欧洲人开辟新航路的原因，属于新航路开辟的背景，正确。","C":"消极影响一般指殖民掠夺、黑奴贸易、殖民地灾难等后果，与题意不符，错误。","D":"积极影响一般指世界开始连为一个整体、促进欧洲资本主义发展等结果，不符合题意，错误。"},"sol":""},{"no":35,"id":"ls-paper01-q035","unit":"第五单元 走向近代","blocks":[{"t":"p","v":"时空观念是历史学科五大核心素养之一。观察下面“新航路开辟路线”图，选出人物与图中路线对应正确的一组是（ ）"},{"t":"img","src":"images/试卷/q035_1.webp"}],"opts":["①达·伽马","②哥伦布","③迪亚士","④麦哲伦及船队"],"ans":3,"why":{"A":"地图中航线①是横渡大西洋到达美洲的路线，对应的人物是哥伦布，并非达·伽马，错误。","B":"②号所在的那条线是沿着非洲西海岸南下，绕过好望角，是迪亚士的航线。并非哥伦布，错误。","C":"③号所在的那条线绕过好望角后继续向东，穿过印度洋到达印度卡里库特，这是达·伽马的航线，并非迪亚士，错误。","D":"航线④从欧洲出发，向西横渡大西洋，绕过南美洲南端进入太平洋，最终到达菲律宾群岛，并继续向西航行返回欧洲。这标志着人类首次完成了环球航行，对应的人物正是麦哲伦及其船队，正确。"},"sol":""},{"no":36,"id":"ls-paper01-q036","unit":"第五单元 走向近代","blocks":[{"t":"p","v":"马铃薯原产于南美洲，15世纪末以后陆续传播到欧洲、亚洲、非洲等地。其传播源于（ ）"}],"opts":["新航路的开辟","手工工场的建立","启蒙运动兴起","租地农场的出现"],"ans":0,"why":{"A":"“新航路的开辟”打破了世界各大洲相对隔绝的状态，世界开始连为一个整体，原产南美洲的马铃薯等物种得以传播到欧洲、亚洲、非洲等地，正确。","B":"“手工工场的建立”反映欧洲资本主义萌芽，属于欧洲内部生产方式的变化，无法促成跨大洲的物种交流，错误。","C":"“启蒙运动兴起”是思想解放运动，不涉及农作物传播，错误。","D":"“租地农场的出现”是欧洲农业中新的经营方式，局限于欧洲内部，不是马铃薯向外传播的原因，错误。"},"sol":""},{"no":37,"id":"ls-paper01-q037","unit":"第五单元 走向近代","blocks":[{"t":"p","v":"阅读下侧《哥伦布大交换》的目录，可知此书意在说明（ ）"},{"t":"tbl","rows":[[{"t":"第一章 发现新世界\n第二章 细菌战役\n第三章 旧世界植物、动物移居新世界\n第四章 哥伦布将梅毒带回欧洲\n第五章 新世界作为旧世界的农场\n第六章 生物多样性遭破坏","imgs":[]}]]}],"opts":["哥伦布地理大发现对全球的贡献","生态环境视角下新旧大陆的发展","病毒对人类社会造成的重大威胁","新航路对旧世界带来的巨大挑战"],"ans":1,"why":{"A":"哥伦布地理大发现对全球的贡献侧重世界联系加强的意义，目录中细菌战、生物多样性遭破坏等呈现的是疾病传播与生态破坏，与贡献不符，错误。","B":"目录中细菌战役、旧世界动植物移居新世界、新世界作为旧世界的农场、生物多样性遭破坏，均从生态环境角度呈现新旧大陆之间物种、疾病与土地利用的变化，可见此书意在从生态环境视角说明新旧大陆的发展，正确。","C":"病毒对人类社会造成的重大威胁只对应第二章细菌战与第四章哥伦布将梅毒带回欧洲，其余章节讲的是动植物迁移和土地利用，不能概括全书主旨，错误。","D":"新航路对旧世界带来的巨大挑战只强调旧世界受到的冲击，而目录兼有旧世界动植物移居新世界、新世界作为旧世界的农场等新世界的变化，视角不限于旧世界，错误。"},"sol":""},{"no":38,"id":"ls-paper01-q038","unit":"第五单元 走向近代","blocks":[{"t":"p","v":"读下面信息，你认为第五单元的目录应该是（ ）"},{"t":"tbl","rows":[[{"t":"第五单元____\n第13课 西欧经济和社会的发展\n第14课 文艺复兴\n第15课 新航路开辟\n第16课 早期殖民掠夺","imgs":[]}]]}],"opts":["封建时代的欧洲","走向近代","封建时代的亚洲","资本主义制度的初步建立"],"ans":1,"why":{"A":"封建时代的欧洲对应的是封君封臣、庄园、中世纪城市大学等内容，不包含文艺复兴、新航路开辟，错误。","B":"西欧经济新变化、文艺复兴、新航路开辟、早期殖民掠夺，都是欧洲步入近代的重要史实，正确。","C":"题干单元内容全部是西欧相关史实，和亚洲文明无关，错误。","D":"资本主义制度的初步建立对应的是英国资产阶级革命、美国独立战争、法国大革命等内容，不包含文艺复兴、新航路开辟，错误。"},"sol":""},{"no":39,"id":"ls-paper01-q039","unit":"第五单元 走向近代","blocks":[{"t":"p","v":"他的航行可谓意义重大、影响深远，自1519年从西班牙出发，历时3年，行程约8万公里，在大航海时代，留下了浓厚的一笔，其航行经过大西洋段、太平洋段、东南亚段、印度洋段和返航中的大西洋段。此“航行”是指（ ）"}],"opts":["迪亚士抵达非洲好望角","哥伦布“发现”美洲","达·伽马到达印度西海岸","麦哲伦船队环球航行"],"ans":3,"why":{"A":"迪亚士航行是1487年，从葡萄牙出发，只到达非洲南端好望角，这与题意不符，错误。","B":"哥伦布1492年从西班牙出发，只横渡大西洋到达美洲，没有进入太平洋、印度洋，错误。","C":"达・伽马1497年从葡萄牙出发，沿非洲东岸到印度，没有经过太平洋，错误。","D":"1519年，麦哲伦船队从西班牙出发，其航行经过大西洋段、太平洋段、东南亚段、印度洋段和返航中的大西洋段，历时3年，是人类历史上第一次环球航行，正确。"},"sol":""},{"no":40,"id":"ls-paper01-q040","unit":"第五单元 走向近代","blocks":[{"t":"p","v":"获取和解读材料信息，评价历史事件，是学习历史的基本能力。对下图中历史事件评价正确的是（ ）"},{"t":"img","src":"images/试卷/q040_1.webp"}],"opts":["享誉史册的航海","进行殖民掠夺扩张","促进中外友好交流","将世界连为整体"],"ans":0,"why":{"A":"图中既包含郑和下西洋，也包含迪亚士、哥伦布、达·伽马、麦哲伦等开辟新航路的远航，它们都是世界航海史上的伟大壮举，代表了人类远洋航行技术的重大突破，是享誉史册的航海事件，正确。","B":"郑和下西洋是和平友好的远航，没有进行殖民掠夺扩张，错误。","C":"促进中外友好交流主要适用于郑和下西洋，而哥伦布、达·伽马、麦哲伦等人的远航伴随殖民扩张，并非单纯促进友好交流，错误。","D":"将世界连为整体是新航路开辟的影响，郑和下西洋并没有把世界连为一个整体，错误。"},"sol":""},{"no":41,"id":"ls-paper01-q041","unit":"第五单元 走向近代","blocks":[{"t":"p","v":"马克思在《资本论》中描述某一历史事件时说:“美洲金银产地的发现，土著居民的被剿灭、被奴役和被埋葬于矿井，对东印度开始进行的征服和掠夺，……(奴隶制)是殖民地财富的唯一自然基础。”据此可知，这一历史事件（ ）"}],"opts":["表明太平洋贸易发展迅猛","促使白银大量流入亚洲","有利于欧洲资本原始积累","阻碍了美洲经济的发展"],"ans":2,"why":{"A":"太平洋贸易主要指马尼拉大帆船贸易，题干不涉及这条贸易线路，错误。","B":"题干侧重殖民掠夺、奴役土著，没有讲白银流入亚洲，错误。","C":"欧洲殖民者掠夺美洲金银、奴役殖民地人民，掠夺来的财富运回欧洲，推动欧洲资本原始积累，正确。","D":"殖民掠夺确实破坏美洲，但这不是该事件在近代史上最核心的影响，也不是马克思这句话要突出的主旨，错误。"},"sol":""},{"no":42,"id":"ls-paper01-q042","unit":"第五单元 走向近代","blocks":[{"t":"p","v":"对下图所示历史活动的表述中正确的一项是（ ）"},{"t":"img","src":"images/试卷/q042_1.webp"}],"opts":["★代表的是亚洲","它为欧洲输送了大量劳动力","这类活动为英国带来了巨额利润","以获取蔗糖、烟草等原材料为中心"],"ans":2,"why":{"A":"结合三角贸易的路线图，出程从欧洲出发到达★地，中程将★地的“黑奴”运往美洲。历史上黑奴主要来源于非洲，因此★代表的是非洲，并非亚洲，错误。","B":"三角贸易的中程是将黑奴从非洲运往美洲，为美洲的种植园和矿山提供了大量劳动力，而不是输送到欧洲，错误。","C":"图示反映的是“三角贸易”。欧洲殖民者从欧洲出发，携带廉价工业品到非洲换取黑奴（出程）；将黑奴运往美洲卖给种植园主（中程）；再从美洲满载金银和工业原料（如蔗糖、烟草）返回欧洲（归程）。在这个过程中，英国等欧洲国家通过贩卖黑奴和不等价交换，赚取了惊人的暴利，加速了资本的原始积累，正确。","D":"三角贸易的核心是罪恶的黑奴贸易。虽然获取原材料是归程的目的之一，但整个活动是以贩卖黑奴赚取最高额利润为中心的，错误。"},"sol":""},{"no":43,"id":"ls-paper01-q043","unit":"第五单元 走向近代","blocks":[{"t":"p","v":"《早期殖民主义侵略史》中写道：“非洲到处在流血……人们到哪里去了呢？他们被捉去当奴隶，或者在捕捉奴隶者到来时逃走了。那些侥幸逃走的人们……重新过上刀耕火种的原始生活。”这反映出（ ）"}],"opts":["“三角贸易”是正常的人口流动","英国是黑奴贸易的主要国家","贩奴运动使英国获得巨额利润","“三角贸易”造成了非洲的落后"],"ans":3,"why":{"A":"三角贸易是欧洲殖民者掠夺黑奴的罪恶贸易，并非正常人口流动，错误。","B":"题干没有涉及黑奴贸易的参与国家相关内容，无法得出“英国是黑奴贸易的主要国家”的结论，错误。","C":"材料体现的是贩奴运动造成非洲的落后，没有体现贩奴运动使英国获得巨额利润，错误。","D":"题干描述了近代殖民掠夺时期，非洲大量人口被掳为奴隶，剩余的人甚至退回原始生产状态的场景，这正是三角贸易对非洲的直接破坏：上亿精壮劳动力流失，原有社会生产秩序被彻底打乱，直接造成了非洲的长期落后，正确。"},"sol":""},{"no":44,"id":"ls-paper01-q044","unit":"第五单元 走向近代","blocks":[{"t":"p","v":"“乘船在悲惨的航程中横渡大西洋。这些黑色的货物上了镣铐，锁在甲板上，没有卫生设备，他们忍受着可怕的待遇。”与这段描述相关的历史事件是（ ）"}],"opts":["哥伦布发现新大陆","殖民者的“三角贸易”","英国向中国走私鸦片","达·伽马的航行"],"ans":1,"why":{"A":"哥伦布发现新大陆是航海探险活动，不涉及黑奴贩运，错误。","B":"“三角贸易”航程包含横渡大西洋贩运黑奴，黑奴被当作“黑色货物”，和材料描述吻合，正确。","C":"鸦片贸易发生在亚洲区域，不横渡大西洋贩卖黑奴，错误。","D":"达・伽马的航行开辟了通往印度的航线，不属于黑奴贸易，错误。"},"sol":""},{"no":45,"id":"ls-paper01-q045","unit":"第五单元 走向近代","blocks":[{"t":"p","v":"美国黑人作家阿历克斯·哈利在其著作《根》中写道：“1760年，西非少年昆塔在独自外出时，被白人抓走，与其他黑人一起被贩卖到美洲。”与昆塔的悲惨遭遇有直接关系的历史事件是（ ）"}],"opts":["新航路的开辟","罪恶的“三角贸易”","古代罗马的扩张","《十二铜表法》的颁布"],"ans":1,"why":{"A":"新航路开辟发生在15-16世纪，核心是欧洲航海家开辟通往东方的新航路、实现全球航路连通，并非以大规模掳掠贩卖黑奴到美洲为核心内容，与题干场景无直接关联，错误。","B":"罪恶的“三角贸易”是16-19世纪欧洲殖民者开展的跨大西洋黑奴贸易，贸易流程中殖民者会从非洲掳掠黑人，作为奴隶贩卖到美洲供种植园使用，1760年正处于三角贸易的盛行时期，与昆塔的遭遇完全吻合，正确。","C":"古代罗马的扩张发生在公元前后至公元4世纪前后，活动范围以地中海区域为核心，既未到达美洲，时间也与1760年相差近千年，与题干无关，错误。","D":"《十二铜表法》是公元前450年左右古罗马颁布的成文法，是罗马法制建设的重要成果，属于法律文献，与跨大西洋贩卖黑奴的事件没有直接联系，错误。"},"sol":""},{"no":46,"id":"ls-paper01-q046","unit":"第五单元 走向近代","blocks":[{"t":"p","v":"学者刘伟才认为，奴隶贸易冲击了非洲的社会结构和社会稳定……制造了混乱、冲突和仇恨，一些仇恨还延续下来，影响了相关非洲国家独立后的发展。该学者强调了奴隶贸易（ ）"}],"opts":["客观上促进了世界贸易","推动了欧洲社会的发展","深刻影响了非洲的发展","加速了非洲人口的流失"],"ans":2,"why":{"A":"材料体现奴隶贸易影响非洲独立后的发展，没有提到世界贸易，错误。","B":"材料强调奴隶贸易影响了非洲的发展，没有叙述奴隶贸易给欧洲带来的作用，错误。","C":"奴隶贸易冲击非洲的社会秩序，造成冲突、仇恨，这些遗留问题一直影响到非洲国家独立之后的发展，正确。","D":"黑奴贸易确实会造成非洲人口流失，这个说法史实正确，但不是本段材料强调的重点。材料侧重长期的社会遗留问题、对后世发展的影响，而不只是人口减少这一点，错误。"},"sol":""},{"no":47,"id":"ls-paper01-q047","unit":"第五单元 走向近代","blocks":[{"t":"p","v":"据题图《无敌舰队》的书籍简介，推知其谈论的主题是（ ）"},{"t":"tbl","rows":[[{"t":"","imgs":["images/试卷/q047_1.webp"]},{"t":"全书精彩记述了英格兰、西班牙、法国、教皇国等多方势力的角力，清楚交代了各国盘根错节的外交关系以及复杂微妙的政治局势，最终聚焦在英国舰队与西班牙无敌舰队在英吉利海峡内展开的一系列海战，刻画了英格兰女王伊丽莎白一世、西班牙国王腓力二世、海盗德雷克、无敌舰队总司令西多尼亚公爵等性格鲜明的人物。","imgs":[]}]]}],"opts":["贸易垄断","战术更新","政治革命","殖民争霸"],"ans":3,"why":{"A":"虽然殖民争霸的最终目的是为了经济利益和贸易垄断，但材料主要强调的是“多方势力的角力”和“海战”，并没有直接体现贸易垄断的具体内容，错误。","B":"材料聚焦于双方海战及相关的政治外交局势，并未着重探讨或比较双方在海战中的战术变化，错误。","C":"英国资产阶级政治革命爆发于1640年，而英国与西班牙无敌舰队的海战发生于1588年，时间上不符，且材料属于对外战争而非国内政治革命，错误。","D":"材料简介中提到了“英格兰、西班牙、法国、教皇国等多方势力的角力”以及“英国舰队与西班牙无敌舰队在英吉利海峡内展开的一系列海战”。结合所学知识，1588年英国打败西班牙“无敌舰队”，是早期殖民扩张时期的重要事件。这场海战本质上是新兴的英国与老牌殖民帝国西班牙之间争夺海上霸权和殖民霸权的斗争，因此该书探讨的主题是殖民争霸，正确。"},"sol":""},{"no":48,"id":"ls-paper01-q048","unit":"第五单元 走向近代","blocks":[{"t":"p","v":"英国在1709―1787年，对外贸易的航行吨位增加了14倍，大多与黑奴贸易有关。1716―1787年间，法国对外贸易增长达10倍，其中奴隶贸易占相当比重。由此可见，英法两国（ ）"}],"opts":["促使世界市场出现","掌控三角贸易","资本原始积累残酷","垄断东方贸易"],"ans":2,"why":{"A":"世界市场出现是新航路开辟的结果，并非英法奴隶贸易直接促使，错误。","B":"掌控三角贸易夸大事实，当时参与三角贸易的还有葡萄牙、西班牙等国，错误。","C":"“英国在1709至1787年，对外贸易的航行吨位增加了14倍，大多与黑奴贸易有关”“1716―1787年间，法国对外贸易增长达10倍，其中奴隶贸易占相当比重”反映了英法对外贸易增长大多数是黑奴贸易，说明黑奴贸易当时盛行，是资本原始积累的主要手段，体现了资本原始积累残酷，正确。","D":"垄断东方贸易与题干中“奴隶贸易占相当比重”无关，错误。"},"sol":""},{"no":49,"id":"ls-paper01-q049","unit":"第五单元 走向近代","blocks":[{"t":"p","v":"下图是15—18世纪使用人数排名前10位的语言统计。其中，英语、西班牙语排位靠前的主要原因是（ ）"},{"t":"img","src":"images/试卷/q049_1.webp"}],"opts":["这些语言学习难度较低","国内人口基数比较大","该语言母国的殖民扩张","率先完成了工业革命"],"ans":2,"why":{"A":"语言的学习难度是主观且复杂的，并不是导致这两门语言在特定历史时期使用人数暴增的主要原因，错误。","B":"英国和西班牙的国内人口基数相较于当时的中国、印度等并不算大。图表中体现的全球使用人数激增，主要是由于海外殖民地的扩张，而非本土人口自然增长，错误。","C":"15—18世纪正是新航路开辟后，欧洲列强进行大规模海外殖民扩张的时期。西班牙在美洲建立了广阔的殖民地（拉丁美洲），英国则在北美、印度等地扩张。随着殖民活动，英语和西班牙语被带到世界各地，使得使用人数急剧增加，排位靠前，正确。","D":"英国虽然率先完成工业革命，但西班牙并未率先完成。且工业革命发生于18世纪中后期，无法解释在此之前西班牙语已经通过早期殖民扩张广泛传播的历史现象，错误。"},"sol":""},{"no":50,"id":"ls-paper01-q050","unit":"第五单元 走向近代","blocks":[{"t":"p","v":"有人说：“14—18世纪是大迷失的时代，人在这个时代丢掉了人性，没有了世界，只剩下市场。”下列能够论证材料观点的是（ ）"}],"opts":["租地农场出现","早期殖民掠夺","新航路的开辟","彼得一世改革"],"ans":1,"why":{"A":"租地农场是近代资本主义生产经营模式，没有体现“丢掉人性”的特点，错误。","B":"题干观点指出14—18世纪出现了为了市场抛弃人性的现象。早期殖民掠夺过程中，殖民者为了抢占市场、掠夺财富，开展黑奴贸易、屠杀殖民地居民等，完全背弃了人性，只追求市场利益，符合材料描述，正确。","C":"新航路开辟是打破世界隔绝的探索活动，它是后续殖民掠夺的前提，但本身不能直接体现“丢掉人性只剩市场”，错误。","D":"彼得一世改革是俄国的近代化改革，核心是增强国力，和材料描述的特征不符，错误。"},"sol":""},{"no":51,"id":"ls-paper01-q051","unit":"第六单元 资本主义制度的初步确立","blocks":[{"t":"p","v":"目录索引是阅读书籍的方法之一，根据下面内容判断学习的主题是（ ）"},{"t":"tbl","rows":[[{"t":"君主立宪制的英国\n美国独立战争\n法国大革命和拿破仑帝国","imgs":[]}]]}],"opts":["走向近代","封建时代的欧洲","资本主义制度的扩展","资本主义制度的初步建立"],"ans":3,"why":{"A":"走向近代对应的内容包含文艺复兴、新航路开辟等，目录内容以各国资产阶级革命为主，不符合该主题，错误。","B":"封建时代的欧洲聚焦西欧庄园、中世纪城市等内容，和资产阶级革命主题不符，错误。","C":"资本主义制度的扩展以俄国改革、日本明治维新等事件为代表，和题干目录不匹配，错误。","D":"英国资产阶级革命确立君主立宪制、美国独立战争建立共和政体、法国大革命摧毁封建制度，都是早期资产阶级革命，属于资本主义制度的初步建立，符合目录主题，正确。"},"sol":""},{"no":52,"id":"ls-paper01-q052","unit":"第六单元 资本主义制度的初步确立","blocks":[{"t":"p","v":"“17世纪，英国人这种旧瓶装新酒的做法，既体现了英国人的政治智慧，也解释了英国变革得以成功的原因，同时还能让人领悟英国王室今天依然能够存在的历史渊源。”材料中的“旧瓶装新酒”是指（ ）"}],"opts":["处死国王，废除了封建君主制","保留国王，确立君主立宪制","设立议会，建立民主共和制度","制定宪法，实践了分权制衡的原则"],"ans":1,"why":{"A":"英国资产阶级革命后保留了国王，没有彻底废除君主制，不符合“旧瓶装新酒”，错误。","B":"“旧瓶”指保留国王这一旧形式，“新酒”指确立君主立宪制，国王权力受议会限制，符合题意，正确。","C":"英国没有建立民主共和制度，共和制是美国等国的政体，错误。","D":"分权制衡是美国1787年宪法的特点，不是英国，错误。"},"sol":""},{"no":53,"id":"ls-paper01-q053","unit":"第六单元 资本主义制度的初步确立","blocks":[{"t":"p","v":"法学家于明的论文《“旧法律”还是“新权利”？——1689年英国<权利法案>再研究》的目次如下所示。据此推知，他的核心观点是《权利法案》（ ）"},{"t":"tbl","rows":[[{"t":"目次\n一、两种叙事：革命vs.复古\n二、“缩水”的权利——从《请愿条款》到《权利宣言》\n三、古老自由的重申——“旧权利”中的新原则\n四、重塑权力的边界——“新权利”条款解读\n五、新与旧的背后——重新思考宪制转型的意义","imgs":[]}]]}],"opts":["建立了英国政治新秩序","树立了权力制衡的典范","剥夺了英王的政治权力","实现了主权在民的愿望"],"ans":0,"why":{"A":"《权利法案》以旧权利为基础融入新原则，重塑权力边界，逐步构建起英国君主立宪的政治新秩序，它融合复古与革新，推动英国完成宪制转型，建立起全新的政治运行框架，正确。","B":"材料没有重点围绕权力制衡展开论述，论文聚焦旧权利与新权利的关系，不体现权力制衡典范相关内容，错误。","C":"《权利法案》只是限制王权，并没有剥夺英王全部政治权力，错误。","D":"英国此时是君主立宪制，主权属于议会，并没有实现主权在民的愿望，错误。"},"sol":""},{"no":54,"id":"ls-paper01-q054","unit":"第六单元 资本主义制度的初步确立","blocks":[{"t":"p","v":"题表中克伦威尔的经历表明，英国（ ）"},{"t":"tbl","rows":[[{"t":"时间","imgs":[]},{"t":"主要经历","imgs":[]}],[{"t":"1645年","imgs":[]},{"t":"任议会新模范军副司令，击败国王军","imgs":[]}],[{"t":"1653年","imgs":[]},{"t":"使用护国主头衔统治着英格兰、苏格兰和爱尔兰","imgs":[]}],[{"t":"1655年","imgs":[]},{"t":"镇压保王党叛乱","imgs":[]}],[{"t":"1658年","imgs":[]},{"t":"再次解散议会，进一步加强独裁统治","imgs":[]}]]}],"opts":["革命斗争反复曲折","议会力量不断加强","革命成果得以巩固","国王权力严格受限"],"ans":0,"why":{"A":"克伦威尔的经历从领导议会军反封建，到建立护国主独裁统治，期间伴随王党叛乱，说明革命并非一帆风顺，存在反复和曲折，正确。","B":"1658年克伦威尔解散议会，说明议会权力被削弱，并非不断加强，错误。","C":"克伦威尔建立独裁统治、王党叛乱的出现，说明革命成果并未得到稳定巩固，错误。","D":"表格内容未涉及对国王权力的限制，且此时国王已被处死，错误。"},"sol":""},{"no":55,"id":"ls-paper01-q055","unit":"第六单元 资本主义制度的初步确立","blocks":[{"t":"p","v":"17-18世纪，资产阶级革命的时代来临，英、美、法三国分别通过《权利法案》《独立宣言》《人权宣言》这些法律文件所体现的共同理念是（ ）"}],"opts":["否定封建专制","反对殖民统治","限制君主权力","民主法制发展"],"ans":3,"why":{"A":"美国独立战争反抗的是英国殖民统治，本国不存在封建专制，《独立宣言》没有否定封建专制，错误。","B":"反对殖民统治只是美国《独立宣言》的诉求，英国、法国革命不针对殖民统治，错误。","C":"限制君主权力是英国《权利法案》的作用，美国没有君主，《独立宣言》不涉及限制君权，错误。","D":"《权利法案》确立议会主权，《独立宣言》宣扬天赋人权，《人权宣言》宣告人权、法治原则，三份文件都推动民主法制发展，正确。"},"sol":""},{"no":56,"id":"ls-paper01-q056","unit":"第六单元 资本主义制度的初步确立","blocks":[{"t":"p","v":"“研读英国的政治发展史可以发现，其法治文明是如此久远，在1688年之前，英国已经为其宪政完成了必要的铺垫。”下列史实能够证明此观点的是（ ）"}],"opts":["詹姆士一世推崇“君权神授”理论","封建王朝复辟","议会制定的《权利请愿书》","克伦威尔专权"],"ans":2,"why":{"A":"詹姆士一世宣扬君权神授，强化君主专制，和宪政发展方向相悖，错误。","B":"封建王朝复辟，王权重新扩张，不利于宪政铺垫，错误。","C":"议会出台《权利请愿书》，主张限制国王权力，是早期议会对抗王权、走向宪政的重要铺垫，符合题意，正确。","D":"克伦威尔建立独裁统治，实行个人专权，不属于宪政铺垫，错误。"},"sol":""},{"no":57,"id":"ls-paper01-q057","unit":"第六单元 资本主义制度的初步确立","blocks":[{"t":"p","v":"下图为英国发行的《权利法案》300周年纪念币。据此可知，《权利法案》原件颁布于（ ）"},{"t":"img","src":"images/试卷/q057_1.webp"}],"opts":["16世纪80年代","16世纪90年代","17世纪80年代","17世纪90年代"],"ans":2,"why":{},"sol":"根据纪念币上的“1689”“1989”及“300周年”字样，可知《权利法案》颁布于1689年。世纪换算方法为年份前两位数字加 1，16+1=17，1689年属于17世纪，且十位数为8，属于80年代。因此，1689年属于17世纪80年代，故本题选C。"},{"no":58,"id":"ls-paper01-q058","unit":"第六单元 资本主义制度的初步确立","blocks":[{"t":"p","v":"“1688年革命，1789年革命，这两次革命不仅反映了发生革命的地区即英法两国的要求，而且在更大程度上反映了当时整个世界的要求。”“当时整个世界的要求”是（ ）"}],"opts":["确立“王在法下”的原则","摆脱殖民压迫，实现国家独立","扫清资本主义发展的障碍","建立君主立宪制政体"],"ans":2,"why":{"A":"“王在法下”是英国13世纪以来逐渐确立的传统，不能代表当时整个世界的要求，错误。","B":"“摆脱殖民压迫，实现国家独立”是殖民地人民的斗争目标，和英法资产阶级革命不符，错误。","C":"1688年英国资产阶级革命、1789年法国大革命都属于资产阶级革命，两场革命都在为本国资本主义发展扫除障碍，体现当时整个世界的要求，正确。","D":"“建立君主立宪制政体”只是英国革命的结果，法国最终确立共和制，不能代表整个世界的要求，错误。"},"sol":""},{"no":59,"id":"ls-paper01-q059","unit":"第六单元 资本主义制度的初步确立","blocks":[{"t":"p","v":"下图是张燕同学绘制的英国资产阶级革命示意图，她运用物理钟摆实验原理，展现了资产阶级和封建势力反复斗争的过程，并最终找到了平衡点。使双方维持平衡的制度是（ ）"},{"t":"img","src":"images/试卷/q059_1.webp"}],"opts":["封君封臣制","封建君主制","总统共和制","君主立宪制"],"ans":3,"why":{"A":"封君封臣制是中世纪西欧的封建等级制度，以土地封赐为纽带，与英国资产阶级革命后的政治妥协无关，错误。","B":"封建君主制是指君主拥有绝对权力的专制制度。英国资产阶级革命的目的就是推翻这种专制统治，双方不可能在专制制度下达成平衡，错误。","C":"总统共和制是美国独立战争后确立的政治制度，英国保留了君主，没有总统，错误。","D":"英国资产阶级革命后，1689年议会通过了《权利法案》，以法律形式对国王的权力进行明确制约，确立了议会在国家政治生活中的最高地位。这种制度既保留了国王（即“封建势力”的象征），又让议会掌握了实权（保障了“资产阶级”的利益），从而在英国资产阶级和封建势力之间找到了一个“平衡点”，使英国社会得以稳定发展，正确。"},"sol":""},{"no":60,"id":"ls-paper01-q060","unit":"第六单元 资本主义制度的初步确立","blocks":[{"t":"p","v":"《全球通史：1500年以后的世界》一书中说：“英国这场大变动（编者注：资产阶级革命）的根源可以在国会和斯图亚特王朝之间的冲突中找到……”这一“冲突”的根源是（ ）"}],"opts":["封建专制统治阻碍资本主义发展","宗教神学阻碍了科学技术的发展","国王的权力被议会完全剥夺","国王征收重税触动了新贵族的权益"],"ans":0,"why":{"A":"斯图亚特王朝推行封建专制统治，严重阻碍英国资本主义经济发展，这是国会与王权矛盾冲突的根本原因，也是英国资产阶级革命爆发的根源，正确。","B":"材料围绕议会与王权的矛盾展开，没有体现宗教神学和科技发展之间的矛盾，错误。","C":"英国资产阶级革命后国王权力受到限制，并没有被议会完全剥夺，错误。","D":"征税矛盾是冲突的直接导火索，并不是深层次的根本原因，错误。"},"sol":""},{"no":61,"id":"ls-paper01-q061","unit":"第六单元 资本主义制度的初步确立","blocks":[{"t":"p","v":"美国通过制定1787年宪法，构建了一个既强大到足以避免无政府状态，又受适度限制不致陷于暴政的政府体制。这是因为1787年宪法规定实行（ ）"}],"opts":["奴隶制和联邦制","联邦制和分权制衡","议会制和总统制","议会制和分权制衡"],"ans":1,"why":{"A":"奴隶制不是1787年宪法用来防止暴政的设计，错误。","B":"联邦制平衡中央与地方权力，分权制衡将国家权力分为立法、行政、司法三部分，互相制约，既建立强有力政府，又避免专制暴政，正确。","C":"议会制和总统制只是政体组成，无法体现适度限制、防止暴政的核心设计，错误。","D":"美国1787年宪法不是议会制，错误。"},"sol":""},{"no":62,"id":"ls-paper01-q062","unit":"第六单元 资本主义制度的初步确立","blocks":[{"t":"p","v":"美国革命之所以重要，不只因为它创造了一个有着响亮口号的独立国家，还因为它创造了一个以三权分立为原则可以实现“民主”的国家。它的“实现”主要归功于下列哪一历史文件（ ）"}],"opts":["《权利法案》","1787年美国宪法","《十二铜表法》","《大宪章》"],"ans":1,"why":{"A":"“《权利法案》”是英国资产阶级革命后颁布的文献，确立英国君主立宪制，和美国无关，不符合题意，错误。","B":"“1787年美国宪法”这部宪法依据三权分立的原则，将国家权力分为立法、行政、司法三部分，是材料所说实现三权分立民主的文件，和史实吻合，正确。","C":"“《十二铜表法》”是古罗马的成文法，和美国革命无关，不符合题意，错误。","D":"“《大宪章》”是英国中世纪限制王权的文件，不属于美国的文献，不符合题意，错误。"},"sol":""},{"no":63,"id":"ls-paper01-q063","unit":"第六单元 资本主义制度的初步确立","blocks":[{"t":"p","v":"18世纪中后期，为了缓解财政压力，英国决定让北美殖民地为帝国的开销支付更大的份额。英国政府在北美殖民地颁布一系列法令征收捐税，引发了北美人民的强烈反对。由此可见，北美爆发独立战争的原因是（ ）"}],"opts":["英国资产阶级革命造成了财政危机","英国的专制统治阻碍了北美资本主义的发展","英国的殖民统治阻碍了北美资本主义的发展","政治经济发展不平衡使美英矛盾激化"],"ans":2,"why":{"A":"英国财政危机主要是七年战争带来的，不是英国资产阶级革命造成的，错误。","B":"当时英国已经是君主立宪制，不是“专制统治”，错误。","C":"英国在北美的殖民剥削（征税、限制发展）阻碍北美资本主义发展，是独立战争爆发的根源，正确。","D":"“政治经济发展不平衡”是一战爆发的根本原因，和美国独立战争无关，错误。"},"sol":""},{"no":64,"id":"ls-paper01-q064","unit":"第六单元 资本主义制度的初步确立","blocks":[{"t":"p","v":"1775年4月18日，驻扎在波士顿的英军派史密斯中校率领一支700多人的特遣队，连夜向西北出发，目标是捣毁康科德的民兵军火库。英军此举（ ）"}],"opts":["制止了武装冲突","激发北美人民的反抗","废除了奴隶制度","宣告美利坚国家独立"],"ans":1,"why":{"A":"英军此举是主动对北美民兵采取军事行动，旨在镇压反抗，而非“制止武装冲突”，反而会激化矛盾，错误。","B":"英军的军事行动直接侵犯了北美殖民地的利益，暴露了其殖民统治的压迫性，必然激发北美人民的反抗意识，成为后续武装冲突的导火索，正确。","C":"美国废除奴隶制度是在19世纪60年代南北战争期间，与1775年的事件无关，错误。","D":"宣告美利坚国家独立的是1776年《独立宣言》的发表，并非英军的军事行动，错误。"},"sol":""},{"no":65,"id":"ls-paper01-q065","unit":"第六单元 资本主义制度的初步确立","blocks":[{"t":"p","v":"独立战争爆发时，英国人叫独立战争是“兄弟之间的战争”，波士顿人称这场战争为“茶叶战争”，弗吉尼亚人称它为“烟草战争”。这旁证了（ ）"}],"opts":["利益关系影响事实判断","历史叙述影响战争进程","政治立场改变历史认识","历史评价脱离客观事实"],"ans":0,"why":{"A":"英国人、波士顿人、弗吉尼亚人对同一场独立战争称呼各不相同，是因为各方的利益、关注点不一样，正确。","B":"历史叙述只是说法，不能改变战争实际进程，错误。","C":"题干侧重不同地域群体的经济利益(茶叶、烟草)，不是政治立场差异，错误。","D":"题干只是称呼不同，没有说明评价脱离史实，错误。"},"sol":""},{"no":66,"id":"ls-paper01-q066","unit":"第六单元 资本主义制度的初步确立","blocks":[{"t":"p","v":"在美国独立战争时期，各地都有大批“一分钟人”，他们是可以随时把自己的身份从农民和工商业者转换为士兵。这体现了美国独立战争（ ）"}],"opts":["宣传自由民主思想","实现了民族的独立","人民群众广泛参与","具有暴力革命性质"],"ans":2,"why":{"A":"自由民主思想是独立战争宣扬的理念，题干介绍民兵身份转换的特点，没有围绕思想宣传展开，错误。","B":"民族独立是独立战争胜利之后才实现的结果，材料讲民兵构成，无法体现战争带来的最终成果，错误。","C":"“一分钟人”本身就是农民、工商业者，需要时拿起武器参战，说明普通民众主动投身战争，体现人民群众广泛参与，正确。","D":"暴力革命侧重战争武装对抗的形式，材料只介绍民兵身份可以在生产者和士兵之间切换，没有体现武装斗争的暴力特征，错误。"},"sol":""},{"no":67,"id":"ls-paper01-q067","unit":"第六单元 资本主义制度的初步确立","blocks":[{"t":"p","v":"1765年，英国颁布的《印花税法》激怒了北美人民。他们拒绝支付印花税，有些人非常气愤，以致攻击英国的邮局。据此可以了解到（ ）"}],"opts":["北美资本主义经济的发展","英国殖民者与北美人民的矛盾","人文主义思想的广泛传播","北美农业资源丰富且商业发达"],"ans":1,"why":{"A":"题干只说到征税引发反抗，没有体现经济发展相关内容，错误。","B":"英国颁布《印花税法》征税，北美民众抵制、攻击邮局，是英国与北美殖民地矛盾激化的代表性事件，正确。","C":"题干说的是征税引发反抗，与人文主义无关，错误。","D":"题干只说到征税冲突，没有说到农业、资源、商业情况，错误。"},"sol":""},{"no":68,"id":"ls-paper01-q068","unit":"第六单元 资本主义制度的初步确立","blocks":[{"t":"p","v":"编制表格是历史学习的重要方法之一。下面是某同学学习世界近代史编制的知识表格。该表格反映的学习主题是（ ）"},{"t":"tbl","rows":[[{"t":"时间","imgs":[]},{"t":"重要文献","imgs":[]}],[{"t":"1689年","imgs":[]},{"t":"《权利法案》","imgs":[]}],[{"t":"1787年","imgs":[]},{"t":"《1787年宪法》","imgs":[]}],[{"t":"1789年","imgs":[]},{"t":"《人权宣言》","imgs":[]}],[{"t":"1804年","imgs":[]},{"t":"《拿破仑法典》","imgs":[]}]]}],"opts":["西方民主法制建设的进程","国际工人运动的发展历程","殖民地人民的反抗历程","西欧封建专制强化的过程"],"ans":0,"why":{"A":"1689年《权利法案》 (英国君主立宪制确立)、《1787年宪法》(美国共和制度建立)、1789年《人权宣言》、1804年《拿破仑法典》 (法国资本主义法律文献)，都是近代欧美资产阶级革命后颁布的巩固民主制度的法律文件，推动了西方民主法制逐步发展完善，正确。","B":"国际工人运动的发展历程主要涉及工人阶级为争取自身权益而进行的斗争，如宪章运动、巴黎公社、第一国际等，表格中的文献都是资产阶级性质的法律文献，与国际工人运动无关，错误。","C":"表格聚焦西方民主法制建设的逐步确立与完善，没有殖民地反抗斗争的史实，错误。","D":"题干文件是反封建、确立资本主义制度，不是强化封建专制，错误。。"},"sol":""},{"no":69,"id":"ls-paper01-q069","unit":"第六单元 资本主义制度的初步确立","blocks":[{"t":"p","v":"18世纪，美国人普遍抱有“权力和自由二元对立”的思想：一方面，权力是一种天生倾向于腐败的因素；另一方面，美国的建国者大多相信人性倾向于恶。基于这一认识，美国（ ）"}],"opts":["形成了两党交替执政的格局","完善了国会的立法体系","强化了联邦政府的行政权力","确立了分权制衡的原则"],"ans":3,"why":{"A":"美国两党交替执政格局是19世纪中后期才形成的，和题干18世纪防范权力腐败的思想无关，错误。","B":"“完善国会立法体系”只是单一立法方面的调整，不能体现对权力本身的约束，不符合题意，错误。","C":"“强化联邦政府行政权力”会加大权力集中，更容易滋生腐败，和题干防范权力腐败的想法相反，错误。","D":"分权制衡原则就是把权力拆分、互相制约，防止权力滥用、保障自由，和题干中担心权力腐败、防范恶的人性的认识相符，正确。"},"sol":""},{"no":70,"id":"ls-paper01-q070","unit":"综合","blocks":[{"t":"p","v":"纪念碑作为一种纪念性建筑或雕塑，承载着特定的历史记忆。下图的两座纪念碑反映的共同主题是（ ）"},{"t":"tbl","rows":[[{"t":"","imgs":["images/试卷/q070_1.webp"]},{"t":"","imgs":["images/试卷/q070_2.webp"]}],[{"t":"位于美国来克星顿的一座纪念碑，碑座上是一尊手握步枪的民兵铜像 位于哥伦比亚玻利瓦尔广场的一座纪念碑，碑座上的人物被称为南美的“解放者”","imgs":[]}]]}],"opts":["资本主义制度的确立","世界市场的初步形成","争取民族独立的斗争","殖民体系的彻底崩溃"],"ans":2,"why":{"A":"美国来克星顿的民兵纪念碑对应的是美国独立战争，美国独立战争虽带有资产阶级革命性质，但与哥伦比亚玻利瓦尔相关的是拉丁美洲独立运动，斗争目标是摆脱西班牙殖民统治，与资本主义制度确立的主题并不契合，并非两座纪念碑的共同内核，错误。","B":"世界市场初步形成对应的是第一次工业革命后的对外扩张阶段，和美国独立战争、拉丁美洲独立运动的主题均无关联，错误。","C":"来克星顿的民兵是美国独立战争的标志性符号，美国独立战争旨在摆脱英国殖民统治争取国家独立，玻利瓦尔是拉丁美洲独立运动的领袖，带领南美民众反抗西班牙殖民统治，二者的核心主题都是争取民族独立的斗争，正确。","D":"殖民体系的彻底崩溃发生在20世纪后半期，而美国独立战争、拉丁美洲独立运动都处于近代时期，该表述不符合两个历史事件的时间与内涵，错误。"},"sol":""},{"no":71,"id":"ls-paper01-q071","unit":"第六单元 资本主义制度的初步确立","blocks":[{"t":"p","v":"“克伦威尔、拿破仑……他们扬起手中的利剑，将旧的体制、旧的观念劈开让人看,看明白其中弊端的人们，携手把人类社会从‘人治’推到‘法治’的新阶段。”依据材料分析，克伦威尔和拿破仑的历史进步性在于（ ）"}],"opts":["通过“利剑”巩固了专制统治","维护了资产阶级革命的成果","完善了本国的法律体系","赢得了独立战争的胜利"],"ans":1,"why":{"A":"克伦威尔和拿破仑属于资产阶级代表，打击的是封建专制体制，不是巩固专制统治，错误。","B":"克伦威尔领导英国资产阶级革命、拿破仑捍卫法国大革命成果，都打击旧制度，推动社会从人治走向法治，维护资产阶级革命成果，正确。","C":"只有拿破仑颁布《拿破仑法典》，完善法律体系；克伦威尔没有完善本国法律体系这个突出贡献，该选项不能同时概括两个人，错误。","D":"独立战争是美国的，和英国克伦威尔、法国拿破仑无关，错误。"},"sol":""},{"no":72,"id":"ls-paper01-q072","unit":"第六单元 资本主义制度的初步确立","blocks":[{"t":"p","v":"在早期资产阶级革命中，资产阶级为反对封建专制、捍卫民主而制定的重要檄文有（ ）①《权利法案》②《独立宣言》③《人权宣言》④《解放黑人奴隶宣言》"}],"opts":["①②③","①②③④","②③","①③"],"ans":3,"why":{},"sol":"①《权利法案》是英国资产阶级革命后颁布的，以法律形式限制王权，确立了君主立宪制，是反对封建专制的重要文献，正确。\n②《独立宣言》是美国独立战争期间颁布的，宣告北美殖民地脱离英国统治，宣布人人生而平等，是反对殖民专制而非封建专制的重要文献，错误。\n③《人权宣言》是法国大革命期间颁布的，宣扬自由、平等、天赋人权，是反对封建专制的重要文献，正确。\n④《解放黑人奴隶宣言》是美国南北战争期间林肯颁布的，主要目的是废除奴隶制、维护国家统一，属于19世纪中期的资产阶级革命（美国内战）文献，不属于早期资产阶级革命范畴，错误。\n故选D。"},{"no":73,"id":"ls-paper01-q073","unit":"第六单元 资本主义制度的初步确立","blocks":[{"t":"p","v":"“19世纪初期，它不仅敲响了欧洲封建秩序的丧钟，而且使欧洲大陆各国面临罗马帝国崩溃以来最严重的霸权威胁。”材料表述的是（ ）"}],"opts":["西班牙殖民扩张","英国革命的影响","拿破仑对外战争的影响","工业革命的影响"],"ans":2,"why":{"A":"西班牙殖民扩张‌时间集中在16-17世纪，与19世纪初的时间背景不符，且其活动核心在美洲殖民地，错误。","B":"英国资产阶级革命发生在17世纪，时间远早于19世纪初，其影响范围也主要局限于英国本土，错误。","C":"19世纪初，拿破仑的对外战争一方面沉重打击了欧洲各国的封建势力，传播了法国大革命的平等、自由理念，直接敲响了欧洲封建秩序的丧钟；另一方面其横扫欧洲的军事扩张，让除英国外的几乎整个欧洲大陆都臣服于法国，形成了罗马帝国崩溃以来欧洲大陆最严重的单一霸权威胁，正确。","D":"19世纪初工业革命主要在英国起步，其核心影响集中在经济生产领域，并未直接形成对欧洲封建秩序的颠覆性冲击，错误。"},"sol":""},{"no":74,"id":"ls-paper01-q074","unit":"第六单元 资本主义制度的初步确立","blocks":[{"t":"p","v":"1812年远征俄国前夕，拿破仑与国内资产阶级产生了无法克服的矛盾，下层人民也日益不满；欧洲附属国的民族运动和民族战争蓬勃兴起；英国等对手正蠢蠢欲动。材料意在说明，拿破仑（ ）"}],"opts":["巩固统治的迫切性","独裁统治的偶然性","颁布法典的必要性","侵略失败的必然性"],"ans":3,"why":{"A":"材料虽提及国内矛盾和人民不满，但核心是“无法克服的矛盾”“民族运动蓬勃兴起”“对手蠢蠢欲动”，强调的是统治危机的严重性，而非“迫切性”，错误。","B":"拿破仑独裁统治是法国大革命后资产阶级巩固政权的产物，具有历史必然性，材料没有体现其统治的“偶然性”，错误。","C":"《拿破仑法典》颁布于 1804年，与材料时间“1812年”不符，且材料未涉及法典相关内容，错误。","D":"材料中“无法克服的矛盾” “民族运动蓬勃兴起”“对手蠢蠢欲动”等信息，表明拿破仑统治已面临内忧外患，其对外侵略缺乏稳固的国内基础和国际支持，失败具有必然性，正确。"},"sol":""},{"no":75,"id":"ls-paper01-q075","unit":"第六单元 资本主义制度的初步确立","blocks":[{"t":"p","v":"1804年，拿破仑政府颁布《法国民法典》，肯定法律面前人人平等，保护私有财产，把大革命中形成的小土地所有制用法律形式固定下来。这说明拿破仑统治（ ）"}],"opts":["巩固了法国大革命的成果","打击了欧洲其他国家封建制度","成为许多国家编纂民法的蓝本","具有民族民主革命的双重性质"],"ans":0,"why":{"A":"《法国民法典》以法律形式确认了大革命中确立的平等原则、私有财产保护制度与小土地所有制，本质是通过立法巩固法国大革命的成果，正确。","B":"打击欧洲其他国家封建制度是拿破仑对外战争的影响，材料仅涉及法国国内立法内容，未提及对外战争或对其他国家的作用，错误。","C":"《法国民法典》成为许多国家编纂民法的蓝本是其对后世立法的深远影响，但材料未涉及该法典对其他国家的立法借鉴作用，错误。","D":"民族民主革命的双重性质是拿破仑对外战争的特点，而材料仅体现对大革命成果的巩固， 没有涉及民族革命相关内容，错误。"},"sol":""},{"no":76,"id":"ls-paper01-q076","unit":"第六单元 资本主义制度的初步确立","blocks":[{"t":"p","v":"1792年，反法联军攻入法国，《巴黎纪事报》报道如下。据此可知，《马赛曲》（ ）"},{"t":"tbl","rows":[[{"t":"《莱茵军团战歌》（后更名为《马赛曲》）由马赛联盟军带来巴黎。他们合唱这首歌，在挥舞帽子和军刀时会立刻兴奋地高呼：“武装好，公民们!”他们途经各个村庄时，也会唱起这曲调，鼓舞了公民情感与好战氛围。","imgs":[]},{"t":"","imgs":[]}]]}],"opts":["鼓动人民推翻封建专制","宣扬公民权利人人平等","号召法国人民保卫祖国","保护私有财产不受侵犯"],"ans":2,"why":{"A":"材料侧重抵御外敌入侵，没有体现鼓动人民推翻封建专制的内容，错误。","B":"材料只体现歌曲鼓舞民众参战的激昂场景，没有涉及平等、公民权利相关内容，错误。","C":"反法联军入侵法国的背景下，《马赛曲》能够鼓舞民众，号召民众拿起武器抵抗外敌、保卫祖国，契合材料中军队传唱、激发民众斗志的记载，正确。","D":"保护私有财产不受侵犯是《人权宣言》的内容，和材料里《马赛曲》的作用无关，错误。"},"sol":""},{"no":77,"id":"ls-paper01-q077","unit":"第六单元 资本主义制度的初步确立","blocks":[{"t":"p","v":"《拿破仑法典》颁布后，法国在其征服的欧洲国家强行推广。这一做法打击了（ ）"}],"opts":["欧洲的资本主义","欧洲的殖民扩张","法国的启蒙运动","欧洲的封建势力"],"ans":3,"why":{"A":"《拿破仑法典》是资本主义性质的法律，推广它会促进而非打击欧洲资本主义发展，错误。","B":"这一时期法国的对外扩张本身就带有殖民扩张的属性，推广法典和打击欧洲殖民扩张没有关联，错误。","C":"法国启蒙运动是18世纪法国资产阶级领导和发动的思想解放运动，时间早于《拿破仑法典》颁布，没有受到《拿破仑法典》的打击，错误。","D":"《拿破仑法典》以法律形式巩固了法国大革命的成果，传播了资产阶级自由、平等、法治的思想，在法国征服的欧洲国家强行推广，冲击了当地的封建制度和封建势力，正确。"},"sol":""},{"no":78,"id":"ls-paper01-q078","unit":"第六单元 资本主义制度的初步确立","blocks":[{"t":"p","v":"作为19世纪伟大的政治家和军事家，他通过战争建立了庞大的帝国体系，鼎盛时期，欧洲除英国外，其余各国均向他臣服。他沉重打击了欧洲各国的封建制度，完善了欧洲法律体系，奠定了欧洲资本主义国家的社会秩序。材料评价的“他”指的是（ ）"}],"opts":["彼得一世","拿破仑","克伦威尔","罗伯斯庇尔"],"ans":1,"why":{"A":"彼得一世是18世纪俄国统治者，改革以强化农奴制为核心，没有建立称霸欧洲的帝国体系，错误。","B":"拿破仑在19世纪建立法兰西第一帝国，对外战争打击欧洲封建势力，颁布《拿破仑法典》，奠定欧洲资本主义法制基础，正确。","C":"克伦威尔是17世纪英国资产阶级革命领导人，并未建立横跨欧洲的庞大帝国，错误。","D":"罗伯斯庇尔是法国大革命雅各宾派领袖，没有称帝建帝国、主导欧洲大陆格局的经历，错误。"},"sol":""},{"no":79,"id":"ls-paper01-q079","unit":"第六单元 资本主义制度的初步确立","blocks":[{"t":"p","v":"法国大革命之前，对法国贵族常用的一个称呼是“您”。这是当时法国革命者所不能容忍的，所以他们要把“您”取消，大家都以“你”相称，“你”逐渐成为法国社会第二人称的主流。出现这一变化的原因是法国大革命（ ）"}],"opts":["激励了拉美独立运动","形成了资产阶级统治","宣传自由平等的思想","致力于国家独立解放"],"ans":2,"why":{"A":"法国大革命激励拉美独立运动属于对外影响，和国内称呼变化没有关联，错误。","B":"法国大革命形成资产阶级统治是革命带来的政权结果，不是称呼改变的思想根源，错误。","C":"法国大革命传播自由平等思想，反对等级特权，摒弃带有尊卑区别的“您”，改用平等的“你”相互称呼，消除贵族专属的尊称，体现人与人地位平等的理念，正确。","D":"法国大革命的斗争目标不是争取国家独立解放，法国本身属于独立国家，错误。"},"sol":""},{"no":80,"id":"ls-paper01-q080","unit":"第六单元 资本主义制度的初步确立","blocks":[{"t":"p","v":"“7月14日，他们攻破并拆毁了巴黎一座用作监狱的王室古堡，虽然这一事件的实际效果只是救出了狱中的少数人。但是，它摧毁了平民心目中压迫的象征。”材料描述的是（ ）"}],"opts":["召开三级会议","拿破仑称帝","处死路易十六","攻占巴士底狱"],"ans":3,"why":{"A":"召开三级会议是法国大革命爆发的导火线，没有发生题干描述的攻破王室古堡的行为，错误。","B":"拿破仑称帝是大革命后期的事件，和题干的时间、事件特征不符，错误。","C":"处死路易十六是1793年法国大革命进程中推翻封建君主的事件，也不符合“7月14日攻破王室监狱古堡”的描述，错误。","D":"这道题的核心信息是“7月14日”“巴黎王室监狱古堡”“平民心目中压迫的象征”，对应法国大革命的开端事件——1789年7月14日巴黎民众攻占巴士底狱，巴士底狱是当时法国封建专制压迫的标志性象征，符合材料描述，正确。"},"sol":""},{"no":81,"id":"ls-paper01-q081","unit":"第七单元 第一次工业革命和马克思主义的诞生","blocks":[{"t":"p","v":"第一次工业革命使资产阶级力量更加壮大，资产阶级在世界范围内的统治进一步巩固和扩大，美国内战、俄国1861年改革和日本明治维新的共同点是（ ）"}],"opts":["都促进了资本主义的发展","都是对农民的掠夺","都是自上而下的改革","都确立了君主立宪制"],"ans":0,"why":{"A":"美国内战废除奴隶制，清除了资本主义发展障碍；俄国1861年改革、日本明治维新走上资本主义发展道路，三者都推动本国资本主义发展，和史实吻合，正确。","B":"美国内战没有掠夺农民；俄国改革高价赎买土地体现对农民掠夺，该特点不是三者共同点，不符合题意，错误。","C":"美国内战是资产阶级性质的战争，不是改革，不符合题意，错误。","D":"美国是共和制，俄国改革后仍是沙皇专制，只有日本明治维新后建立君主立宪制，不是共同点，不符合题意，错误。"},"sol":""},{"no":82,"id":"ls-paper01-q082","unit":"第七单元 第一次工业革命和马克思主义的诞生","blocks":[{"t":"p","v":"19世纪中叶以后，西欧国家投送人员、物资的能力大幅提升，使距离和地理因素不再是影响国际体系的主要决定性因素。这主要得益于当时（ ）"}],"opts":["国际格局的变化","城市人口的增加","殖民扩张的加剧","工业革命的发展"],"ans":3,"why":{"A":"国际格局的变化是投送能力提升带来的结果或表现，而非其原因，因果倒置，错误。","B":"城市人口的增加属于工业化进程中的社会现象，与跨国跨地域投送能力的提升无直接因果关系，错误。","C":"殖民扩张的加剧需要强大的交通运输能力作为支撑，其本身不能直接解释“投送能力大幅提升”的技术原因，错误。","D":"19世纪中叶，工业革命深入发展，火车、汽船等新式交通工具及电报等通讯手段广泛应用，极大地提高了运输效率，缩短了时空距离，使西欧国家跨地域投送人员和物资的能力大幅提升，正确。"},"sol":""},{"no":83,"id":"ls-paper01-q083","unit":"第七单元 第一次工业革命和马克思主义的诞生","blocks":[{"t":"p","v":"在1866年出使欧洲的清朝使团成员的笔记中记载，“以火灼(烧)水，藉(借)水气之力以运船”。笔记中描写的动力机器最可能是（ ）"}],"opts":["蒸汽机车","蒸汽机","织布机","珍妮纺纱机"],"ans":1,"why":{"A":"蒸汽机车是以蒸汽机为动力的陆上交通工具（火车），本身是蒸汽机的应用载体，并非提供动力的机器本身，且用途为牵引陆上列车，与“运船”的场景不符，错误。","B":"蒸汽机的工作原理正是燃烧燃料加热水产生高压水蒸气，将水蒸气的内能转化为机械能， 可作为通用动力装置为船只、工厂设备、陆上交通工具提供动力，19世纪中期蒸汽机已得到广泛应用，符合材料内容，正确。","C":"织布机包含很多种类，1733年飞梭出现，织布速度提高，1785年卡特莱特发明水力织布机，织布效率提高约40倍，和材料的“借水气之力运船”无关，错误。","D":"珍妮纺纱机是第一次工业革命开端标志性的手摇纺纱机，属于人力操作的纺织设备，与水蒸气动力、船只驱动均无关联，错误。"},"sol":""},{"no":84,"id":"ls-paper01-q084","unit":"第七单元 第一次工业革命和马克思主义的诞生","blocks":[{"t":"p","v":"下图表明英国（ ）"},{"t":"img","src":"images/试卷/q084_1.webp"}],"opts":["从事“三角贸易”","成为工业国家","完成了英国资产阶级革命","建成“福利国家”"],"ans":1,"why":{"A":"三角贸易是16—19世纪欧洲殖民者进行的黑奴贸易，与1854-1856年的进出口贸易结构无关，且图表未体现黑奴贸易相关内容，错误。","B":"1840年前后英国率先完成工业革命，成为世界上第一个工业国家。图表中英国大量出口工业制造品、进口原材料，符合工业国家 “进口原料、出口工业品”的经济特征，正确。","C":"英国资产阶级革命完成于1688年光荣革命，与图表时间不符，且图表体现的是经济方面，不是政治革命，错误。","D":"福利国家是二战后西方资本主义国家为缓和社会矛盾建立的社会福利体系，与19世纪中期的贸易结构无关，错误。"},"sol":""},{"no":85,"id":"ls-paper01-q085","unit":"第七单元 第一次工业革命和马克思主义的诞生","blocks":[{"t":"p","v":"《简明世界历史读本》记载：“英国政府1846年废除《谷物法》，1849年废除《航海条例》；1842年颁布《矿井法》，1844年颁布《工厂法》，1848年颁布《公共卫生法》，1876年颁布《河流防污法》。”据此可知，工业革命（ ）"}],"opts":["使资本高度集中","导致贫富分化加剧","推动英国法制化建设","不断向他国扩展传播"],"ans":2,"why":{"A":"资本高度集中是第二次工业革命后垄断组织的特征，材料只提及英国出台多部法律，没有体现资本集中，错误。","B":"贫富分化加剧是工业革命带来的社会问题，但题干材料没有相关贫富差距的描述，与材料主旨无关，错误。","C":"工业革命开展后，英国陆续废除旧法案、颁布多部新法律，以适应工业化发展的需要，推动英国法制化建设，正确。","D":"材料中的法律文件都属于英国国内立法，没有涉及工业革命向外传播到其他国家的内容，错误。"},"sol":""},{"no":86,"id":"ls-paper01-q086","unit":"第七单元 第一次工业革命和马克思主义的诞生","blocks":[{"t":"p","v":"人们把18世纪60年代生产领域的革命性变化称为“工业革命”，这里的“革命性变化”首先开始于（ ）"}],"opts":["交通运输业","制呢业","棉纺织业","采矿业"],"ans":2,"why":{"A":"交通运输业的革新是工业革命后期才发展起来，并不是工业革命最先开始的行业，错误。","B":"制呢业在英国发展较早，但没有率先出现机器生产的革新，不是工业革命开端，错误。","C":"18世纪60年代英国棉纺织业率先出现珍妮机等机器发明，开启机器生产取代手工劳动的变革，由此拉开工业革命的序幕，是这场生产领域革命性变化的起点，正确。","D":"采矿业是配合蒸汽机推广而发展，不属于工业革命最先开始的领域，错误。"},"sol":""},{"no":87,"id":"ls-paper01-q087","unit":"第七单元 第一次工业革命和马克思主义的诞生","blocks":[{"t":"p","v":"插画反映出（ ）"},{"t":"tbl","rows":[[{"t":"捡骨头求生的穷人","imgs":["images/试卷/q087_1.webp"]},{"t":"图片介绍：该图为1845年9月6日发表在英国报纸《讽刺作家》上的插画。4个饥饿的人正在为抢食骨头（用来粉碎后作肥料）而大打出手。","imgs":[]}]]}],"opts":["资产阶级革命激化了社会矛盾","君主立宪制度阻碍了社会进步","工业革命加剧社会的贫富分化","攻占巴士底狱以反抗封建统治"],"ans":2,"why":{"A":"英国资产阶级革命发生在17世纪，与题干1845年的时间不符，错误。","B":"英国君主立宪制确立后推动了英国资本主义的发展，并没有阻碍社会进步，错误。","C":"题干插画是1845年英国报刊刊登的内容，反映了底层穷人饥饿困苦、争抢肥料用骨头的处境。1845年英国已完成工业革命，工业革命在推动生产力发展的同时，加剧了社会贫富分化，资产阶级积累了大量财富，而底层民众生活极端贫困，正确。","D":"巴黎人民攻占巴士底狱是1789年法国大革命的事件，不符合题意，错误。"},"sol":""},{"no":88,"id":"ls-paper01-q088","unit":"第七单元 第一次工业革命和马克思主义的诞生","blocks":[{"t":"p","v":"“煤烟曾折磨大不列颠……100多年之久，以烟煤为燃料的城市……无不饱受过数十年严重的大气污染之苦，消耗着大量的氧气”。烟煤的大量应用直接源于（ ）"}],"opts":["蒸汽机的发明","汽车的发明","内燃机的发明","火车的运行"],"ans":0,"why":{"A":"瓦特改良后的蒸汽机以烟煤作为燃料，它在工业生产中广泛推广，带动煤炭大规模开采与使用，让英国长期遭受煤烟污染，是烟煤大量应用的直接源头，正确。","B":"汽车依靠汽油驱动，属于第二次工业革命成果，不使用烟煤作为燃料，错误。","C":"内燃机消耗石油制品，燃料和烟煤没有关联，不会造成大规模煤烟污染，错误。","D":"火车只是蒸汽机的应用产物，不是推动烟煤大量使用的源头，错误。"},"sol":""},{"no":89,"id":"ls-paper01-q089","unit":"第七单元 第一次工业革命和马克思主义的诞生","blocks":[{"t":"p","v":"下表中促使曼彻斯特棉纺厂数量产生变化的发明是（ ）"},{"t":"tbl","rows":[[{"t":"英国曼彻斯特棉纺厂发展概况表","imgs":[]}],[{"t":"18世纪80年代初","imgs":[]},{"t":"2家","imgs":[]}],[{"t":"1802年","imgs":[]},{"t":"52家","imgs":[]}],[{"t":"1809年","imgs":[]},{"t":"64家","imgs":[]}],[{"t":"1830年","imgs":[]},{"t":"99家","imgs":[]}]]}],"opts":["珍妮机","蒸汽机","火车","内燃机"],"ans":1,"why":{"A":"珍妮机是纺纱机器，不能推动工厂大规模集中建厂，错误。","B":"瓦特改良蒸汽机为工厂提供稳定动力，推动棉纺厂大量兴建，正确。","C":"火车属于交通工具，不是工厂发展的核心动力发明，错误。","D":"内燃机是第二次工业革命成果，时间不符，错误。"},"sol":""},{"no":90,"id":"ls-paper01-q090","unit":"第七单元 第一次工业革命和马克思主义的诞生","blocks":[{"t":"p","v":"下表反映出在第一次工业革命中（ ）"},{"t":"tbl","rows":[[{"t":"年份","imgs":[]},{"t":"事件","imgs":[]}],[{"t":"1768","imgs":[]},{"t":"瓦特在纽可门机的基础上对蒸汽机做了重大改进，大大提高了蒸汽机的效率","imgs":[]}],[{"t":"1804","imgs":[]},{"t":"利用轨道移动的蒸汽机车首先在煤矿区出现，这就是火车的雏形","imgs":[]}],[{"t":"1807","imgs":[]},{"t":"美国人富尔顿将瓦特蒸汽机运用于轮船。建成“克莱蒙特号”汽船","imgs":[]}]]}],"opts":["科技与生产紧密结合","蒸汽机得到不断改进和发展","推动了现代工厂制度确立","工业化、城市化进程加速推进"],"ans":1,"why":{"A":"“科技与生产紧密结合”是第二次工业革命的特点，第一次工业革命大多是工匠经验总结，错误。","B":"表格中展示从瓦特改进蒸汽机提升效率，到蒸汽机被装到轨道车辆上造出火车雏形，再到被装到船上造出汽船，完整体现了蒸汽机在第一次工业革命中不断被改进、应用范围持续拓展的过程，正确。","C":"现代工厂制度确立是机器生产取代手工工场带来的结果，表格材料没有体现工厂制度相关内容，错误。","D":"表格未提及工业化、城市化相关内容，无法体现该点，错误。"},"sol":""},{"no":91,"id":"ls-paper01-q091","unit":"第七单元 第一次工业革命和马克思主义的诞生","blocks":[{"t":"p","v":"中国人民大学教授郝立新在评价某文献时说：“它吹响了工人阶级革命的号角，成为革命运动的先导。它预示并指导了工人阶级反对资产阶级的革命的发展。”该文献是（ ）"}],"opts":["《人权宣言》","《独立宣言》","《共产党宣言》","《开罗宣言》"],"ans":2,"why":{"A":"《人权宣言》是法国大革命时期颁布的纲领性文件，主要宣扬自由、平等、天赋人权等资产阶级思想，与“工人阶级革命的号角”无关，错误。","B":"《独立宣言》是美国独立战争时期颁布的宣告北美殖民地脱离英国统治、宣布建立独立国家的文件，属于资产阶级革命文献，错误。","C":"材料中“吹响了工人阶级革命的号角，成为革命运动的先导”“指导了工人阶级反对资产阶级的革命的发展”指向《共产党宣言》。《共产党宣言》的发表标志着马克思主义的诞生，为无产阶级斗争提供了科学理论指导，推动了国际工人运动的蓬勃发展，正确。","D":"《开罗宣言》是二战期间中、美、英三国首脑发表的关于对日作战和战后处置日本的国际文件，与工人阶级革命无关，错误。"},"sol":""},{"no":92,"id":"ls-paper01-q092","unit":"第七单元 第一次工业革命和马克思主义的诞生","blocks":[{"t":"p","v":"与“马克思、恩格斯”“号召工人阶级用暴力推翻资产阶级统治”“标志着马克思主义的诞生”等内容有关的著作是（ ）"}],"opts":["《共产党宣言》","《人权宣言》","《独立宣言》","《权利法案》"],"ans":0,"why":{"A":"《共产党宣言》由马克思、恩格斯撰写，号召工人阶级推翻资产阶级统治，它的发表标志着马克思主义诞生，正确。","B":"《人权宣言》是法国大革命的文献，宣扬自由平等，和马克思主义无关，错误。","C":"《独立宣言》是美国独立战争的文献，宣告美国脱离英国殖民统治，错误。","D":"《权利法案》是英国资产阶级革命后限制王权的法律文件，错误。"},"sol":""},{"no":93,"id":"ls-paper01-q093","unit":"第七单元 第一次工业革命和马克思主义的诞生","blocks":[{"t":"p","v":"某部著作既肯定了资本主义的历史进步作用，又揭示了资本主义在积累财富和资本的同时，对工人阶级的残酷剥削必将引起工人阶级反抗。该著作是（ ）"}],"opts":["《独立宣言》","《法国民法典》","《资本论》","《共产党宣言》"],"ans":3,"why":{"A":"《独立宣言》宣告美国独立，没有分析资本主义的进步性与剥削性，错误。","B":"《法国民法典》是拿破仑时期的法典，维护资产阶级私有财产，错误。","C":"《资本论》侧重剖析资本运行规律，不是重点揭示工人反抗，错误。","D":"《共产党宣言》肯定资本主义在历史上的积极作用，同时揭露资产阶级对工人的剥削，号召工人阶级反抗，正确。"},"sol":""},{"no":94,"id":"ls-paper01-q094","unit":"第七单元 第一次工业革命和马克思主义的诞生","blocks":[{"t":"p","v":"马克思、恩格斯广泛汲取人类文明的优秀成果，建立了辩证唯物主义和历史唯物主义等科学理论。这表明，马克思主义理论（ ）"}],"opts":["轻视工人阶级力量","否定传统理论","对传统的继承和创新","指导工人运动"],"ans":2,"why":{"A":"马克思主义理论始终重视工人阶级的革命力量，将无产阶级作为推翻旧世界、建设新社会的核心主体，该选项表述完全不符合马克思主义的核心立场，错误。","B":"马克思、恩格斯并非全盘否定传统理论，而是批判地继承前人思想中的合理内核，并非对传统理论的彻底否定，错误。","C":"马克思、恩格斯广泛汲取人类文明的优秀成果，批判吸收德国古典哲学、英国古典政治经济学等传统思想的合理部分，在此基础上创立了辩证唯物主义和历史唯物主义等全新的科学理论，这一过程正体现了对传统优秀成果的继承，同时实现了理论层面的创新，正确。","D":"马克思主义确实起到了指导工人运动的作用，但题干描述的是马克思主义理论的创立过程，并未涉及该理论诞生之后的实践指导作用，错误。"},"sol":""},{"no":95,"id":"ls-paper01-q095","unit":"第七单元 第一次工业革命和马克思主义的诞生","blocks":[{"t":"p","v":"小历同学所在班级开展了主题研讨活动，他在学校的图书馆查阅了以下书籍：《马克思主义经典著作解读》、《共产党宣言》、《毛泽东选集》，据此推测，他们研讨的主题最有可能是（ ）"}],"opts":["社会主义的发展与挫折","资本主义制度的扩展","科学社会主义的发展史","共产主义运动的兴起"],"ans":2,"why":{"A":"“ 社会主义的发展与挫折”侧重社会主义从建立到后来遇到困境（如苏联解体、东欧剧变等）的过程，材料中的书籍侧重理论成果与理论发展，没有涉及社会主义发展中的挫折相关内容，错误。","B":"资本主义制度的扩展对应19世纪俄国农奴制改革、美国南北战争、日本明治维新等史实，和题干中的马克思主义、社会主义相关书籍完全无关，错误。","C":"《共产党宣言》标志科学社会主义诞生，《马克思主义经典著作解读》是对科学社会主义理论体系的阐释与梳理，《毛泽东选集》体现科学社会主义理论在中国的发展延伸，三者串联正好对应科学社会主义从诞生到发展的历程，正确。","D":"“共产主义运动的兴起”只对应《共产党宣言》发表后初期工人运动兴起的阶段，无法涵盖后续马克思主义发展到中国形成毛泽东思想的内容，覆盖范围不匹配，错误。"},"sol":""},{"no":96,"id":"ls-paper01-q096","unit":"第七单元 第一次工业革命和马克思主义的诞生","blocks":[{"t":"p","v":"列宁曾经评价道：“欧洲无产阶级可以说，它的科学是由两位学者和战士创造的，他们的关系超过了古人关于人类友谊的一切最动人的传说。”材料中的“两位学者和战士” （ ）"}],"opts":["创立了《国际歌》","建立世界上第一个无产阶级政权","创立科学理论以指导国际工人运动","提出了“一国两制”构想"],"ans":2,"why":{"A":"《国际歌》是欧仁・鲍狄埃创作的，不是马克思、恩格斯，错误。","B":"世界上第一个无产阶级政权是巴黎公社，错误。","C":"“两位学者和战士”指马克思和恩格斯，他们创立马克思主义，用来指导国际工人运动，正确。","D":"“一国两制”是邓小平提出的，错误。"},"sol":""},{"no":97,"id":"ls-paper01-q097","unit":"第七单元 第一次工业革命和马克思主义的诞生","blocks":[{"t":"p","v":"马克思主义诞生后，国际工人运动进入一个新的历史时期。1871年建立了世界上第一个无产阶级政权。这个政权是（ ）"}],"opts":["共产主义者同盟","俄国十月革命","拿破仑帝国","巴黎公社"],"ans":3,"why":{"A":"“共产主义者同盟”是1847年成立的无产阶级革命政党，是早期工人政党组织，并非掌握国家权力的政权，时间和性质均不符合要求，错误。","B":"1917年俄国十月革命，建立了世界上第一个社会主义国家，错误。","C":"拿破仑帝国是资产阶级性质的帝国，不是无产阶级政权性质，错误。","D":"1871年，巴黎无产阶级发动武装起义，推翻资产阶级临时政府统治，建立巴黎公社，这是世界上第一个无产阶级政权，符合题意要求，正确。"},"sol":""},{"no":98,"id":"ls-paper01-q098","unit":"第七单元 第一次工业革命和马克思主义的诞生","blocks":[{"t":"p","v":"歌曲是文学艺术的重要形式，许多歌曲反映了历史的变迁。为纪念巴黎公社而创作的《国际歌》，在其副歌部分，反复回荡着“团结起来到明天，英特纳雄耐尔就一定要实现！”这句歌词，展现了共产主义者的（ ）"}],"opts":["甘愿捐躯的爱国情怀","严谨治学的科学态度","改革创新的工匠精神","坚定的信念和乐观主义精神"],"ans":3,"why":{},"sol":"根据材料中“团结起来到明天，英特纳雄耐尔就一定要实现”，体现了巴黎公社战士的坚定信念和乐观主义精神，故本题选D。"},{"no":99,"id":"ls-paper01-q099","unit":"第七单元 第一次工业革命和马克思主义的诞生","blocks":[{"t":"p","v":"观察下图（纪念巴黎公社100周年邮票），下列表述与其纪念事件关联最密切的是（ ）"},{"t":"img","src":"images/试卷/q099_1.webp"}],"opts":["攻占了巴士底狱","诞生了拿破仑帝国","法国里昂纺织工人起义","建立了第一个无产阶级政权"],"ans":3,"why":{"A":"攻占巴士底狱是法国大革命开始的标志，和巴黎公社无关，错误。","B":"拿破仑帝国的诞生和巴黎公社无关，错误。","C":"法国里昂纺织工人起义是巴黎公社之前的早期工人运动，和巴黎公社无关，错误。","D":"巴黎公社建立了世界上第一个无产阶级政权，符合巴黎公社的历史定位，正确。"},"sol":""},{"no":100,"id":"ls-paper01-q100","unit":"第七单元 第一次工业革命和马克思主义的诞生","blocks":[{"t":"p","v":"“起来，饥寒交迫的奴隶，起来，全世界受苦的人！满腔的热血已经沸腾，要为真理而斗争！旧世界打个落花流水，奴隶们起来，起来！”这是巴黎公社战士、公社委员、诗人鲍狄埃的诗句，其中“旧世界”指的是（ ）"}],"opts":["法国的封建君主专制制度","英国的殖民统治","欧洲封建制度","资产阶级的统治"],"ans":3,"why":{"A":"巴黎公社时期法国已经是资本主义社会，不存在封建君主专制制度，错误。","B":"巴黎公社发生在法国，是法国无产阶级反抗本国资产阶级统治的革命斗争，和英国的殖民统治没有关联，错误。","C":"巴黎公社斗争对象不是封建制度，此时法国封建制度早已被推翻，错误。","D":"巴黎公社是无产阶级建立政权的第一次伟大尝试，矛头对准资产阶级的统治，诗句里的“旧世界”指资产阶级的统治，正确。"},"sol":""}]}};
+
+/* ================================================================
+   基础工具
+   ================================================================ */
+const $=(s,r=document)=>r.querySelector(s);
+const $$=(s,r=document)=>Array.from(r.querySelectorAll(s));
+const esc=s=>String(s).replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
+const shuffle=a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
+const todayKey=()=>{const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');};
+const STAR=n=>'★'.repeat(Math.max(0,(n||1)-1));
+
+/* 判分归一化：去空白、去标点、全角转半角 */
+function norm(s){
+  return String(s)
+    .replace(/[\uFF01-\uFF5E]/g,c=>String.fromCharCode(c.charCodeAt(0)-0xFEE0))
+    .replace(/[\s，。、；：""''（）()《》〈〉·—…\-__,.;:"'`~!@#$%^&*+=|\\/\[\]{}<>?！？]/g,'')
+    .toLowerCase();
+}
+/* 长答案包容性判分：去掉"的地得了着和与及其之"再比，避免因为虚词差一个字就判错 */
+const loose=s=>norm(s).replace(/[的地得了着和与及其之]/g,'');
+
+/* ================================================================
+   持久化
+   ================================================================ */
+const SK='kss_v1_'+(DATA&&DATA.subject||'x');
+let P=loadProg();
+function loadProg(){
+  let d={cards:{},days:{},paper:{}};
+  try{const raw=localStorage.getItem(SK);if(raw){const o=JSON.parse(raw);if(o&&o.cards)d=o;}}catch(e){}
+  if(!d.days)d.days={};
+  if(!d.paper)d.paper={};
+  return d;
+}
+function saveProg(){ try{localStorage.setItem(SK,JSON.stringify(P));}catch(e){console.warn('保存失败',e);} }
+function rec(cardId,ok,mode,opts){
+  const p=P.cards[cardId]||(P.cards[cardId]={seen:0,ok:0,wrong:0,streak:0,last:0,mode:''});
+  p.seen++;p.last=Date.now();p.mode=mode||p.mode;
+  if(ok){p.ok++;p.streak=Math.min(9,p.streak+1);}else{p.wrong++;p.streak=0;}
+  if(opts&&opts.skim)p.skim=(p.skim||0)+1;
+  const d=todayKey(),t=P.days[d]||(P.days[d]={n:0,ok:0});
+  t.n++;if(ok)t.ok++;
+  saveProg();
+}
+const getP=id=>P.cards[id]||null;
+/* 安全取值：还没练过的卡也要能排序、能比大小 */
+const PW=id=>getP(id)||{seen:0,ok:0,wrong:0,streak:0,last:0};
+const scrollTop=()=>{try{window.scrollTo({top:0,behavior:'smooth'});}catch(e){/* 有些环境没实现 */}};
+function level(id){
+  const p=getP(id);
+  if(!p||!p.seen)return 0;
+  if(p.streak>=3)return 3;
+  if(p.streak>0)return 2;
+  return 4; /* 有错待强化 */
+}
+const LVTXT={0:'未学',1:'未学',2:'记过',3:'熟练',4:'待强化'};
+
+/* ================================================================
+   考点解析：把【关键词】切出来
+   ================================================================ */
+function tokens(text){
+  const out=[];let last=0,m;const re=/【([^】]+)】/g;
+  while((m=re.exec(text))){
+    if(m.index>last)out.push({t:'s',v:text.slice(last,m.index)});
+    out.push({t:'b',v:m[1].split('|').map(s=>s.trim()).filter(Boolean)});
+    last=m.index+m[0].length;
+  }
+  if(last<text.length)out.push({t:'s',v:text.slice(last)});
+  return out;
+}
+/* 生成一张卡的渲染计划：段落 + 表格，占位符按出现顺序编号 */
+function planOf(c){
+  let k=0;const blanks=[];
+  const paint=toks=>toks.map(t=>{
+    if(t.t!=='b')return t;
+    const o={t:'b',v:t.v,k:k};blanks.push(t.v);k++;return o;
+  });
+  const body=(c.a||[]).map(txt=>({type:'p',toks:paint(tokens(txt))}));
+  if(c.table){
+    const rows=(c.table.rows||[]).map(r=>r.map(cell=>paint(tokens(cell))));
+    body.push({type:'table',head:c.table.head||[],rows});
+  }
+  return {body,blanks,count:k};
+}
+const PLAN={};DATA&&DATA.cards.forEach(c=>{PLAN[c.id]=planOf(c);});
+
+function nowLine(toks){
+  return toks.map(t=>t.t==='s'?esc(t.v):`<em class="kw" title="${esc(t.v.slice(1).join(' / ')||t.v[0])}">${esc(t.v[0])}</em>`).join('');
+}
+function inputLine(toks){
+  return toks.map(t=>{
+    if(t.t==='s')return esc(t.v);
+    const w=Math.max(3,Math.min(11,t.v[0].length+1));
+    return `<input class="bi" data-k="${t.k}" size="${w}" autocomplete="off" spellcheck="false" aria-label="填空">`;
+  }).join('');
+}
+
+function renderAns(c,plan,cloze){
+  const html=plan.body.map(it=>{
+    if(it.type==='p'){
+      return `<p class="ln">${cloze?inputLine(it.toks):nowLine(it.toks)}</p>`;
+    }
+    const head=it.head.map(h=>`<th>${esc(h)}</th>`).join('');
+    const rows=it.rows.map(r=>'<tr>'+r.map(cell=>`<td>${cloze?inputLine(cell):nowLine(cell)}</td>`).join('')+'</tr>').join('');
+    return `<table class="tb"><thead><tr>${head}</tr></thead><tbody>${rows}</tbody></table>`;
+  }).join('');
+  return html;
+}
+/* 批注分色显示：本课必背 / 易错 / 注意 / 补充（转录备注） */
+function warnHTML(c){
+  if(!c.warn)return '';
+  return String(c.warn).split('；').map(s=>s.trim()).filter(Boolean).map(s=>{
+    let kind='补充',body=s,m;
+    if(m=s.match(/^本课必背(一句话)?[：:]?\s*(.*)$/)){kind='必背';body=m[2];}
+    else if(m=s.match(/^(易错点|易混易错|易错|易混)[：:]?\s*(.*)$/)){kind='易错';body=m[2];}
+    else if(m=s.match(/^(注意提法|注意)[：:]?\s*(.*)$/)){kind='注意';body=m[2];}
+    return `<div class="warn k-${kind}"><b>${kind}</b>${esc(body)}</div>`;
+  }).join('');
+}
+function pageLink(c){
+  if(!c.page)return '';
+  const base=(DATA.imgBase||'images/'),pre=DATA.imgPrefix||'',ext=DATA.imgExt||'jpg';
+  return ` <a href="${esc(base+pre+c.page+'.'+ext)}" target="_blank" rel="noopener">对照原页 p${c.page}</a>`;
+}
+function metaHTML(c){
+  const bits=[];
+  if(c.unit)bits.push(`<span class="u">${esc(c.unit)}</span>`);
+  if(c.lesson)bits.push(esc(c.lesson));
+  if(c.node)bits.push(esc(c.node));
+  const lv=level(c.id);
+  return `<div class="meta"><span class="mt">${bits.join(' ／ ')}</span>`+
+    `<span class="mr">${pageLink(c)}<span class="stars">${STAR(c.star)}</span>`+
+    `<span class="lv lv${lv}">${lv===4?'待强化':LVTXT[lv]}</span></span></div>`;
+}
+
+/* ================================================================
+   全局状态
+   ================================================================ */
+const UNITS=[...new Set((DATA?DATA.cards:[]).map(c=>c.unit||'未分单元'))];
+const S={mode:'recite',unit:'全部',scope:'all',queue:[],qi:0,revealed:false,scored:false,cur:null,curPlan:null,choice:null,optDone:false,
+  paper:{unit:'全部',range:'seq',queue:[],qi:0,log:{},pick:null}};
+const hasBlanks=c=>PLAN[c.id].count>0;
+const CARD_BY=id=>DATA.cards.find(c=>c.id===id);
+
+/* ================================================================
+   统计条
+   ================================================================ */
+function renderBar(){
+  if(S.mode==='paper'&&PAPER){paperBar();return;}
+  const cards=DATA.cards;
+  const n=cards.length;
+  let ok=0,weak=0,done=0;
+  cards.forEach(c=>{const p=getP(c.id);if(!p||!p.seen)return;done++;
+    const lv=level(c.id);if(lv===3)ok++;if(lv===4)weak++;});
+  const d=P.days[todayKey()]||{n:0,ok:0};
+  const rate=d.n?Math.round(d.ok/d.n*100):0;
+  $('#bar').innerHTML=
+    `<div class="row"><span class="pill">考点 <b>${n}</b></span>`+
+    `<span class="pill ok">已熟练 <b>${ok}</b></span>`+
+    `<span class="pill bad">待强化 <b>${weak}</b></span>`+
+    `<span class="pill">今天 <b>${d.n}</b> 题 · <b>${rate}%</b></span></div>`+
+    `<div class="row">`+
+    `<select id="fu" title="按单元（做题和 ⑤ 清单 都按它筛）">${['全部',...UNITS].map(u=>`<option${u===S.unit?' selected':''}>${esc(u)}</option>`).join('')}</select>`+
+    `<select id="fs" title="${S.mode==='list'?'筛选范围（清单里只显示符合条件的卡）':'练习范围（做题和 ⑤ 清单 都按它筛）'}">
+      <option value="all"${S.scope==='all'?' selected':''}>全部范围</option>
+      <option value="star"${S.scope==='star'?' selected':''}>${S.mode==='list'?'只看★必背':'只练★必背'}</option>
+      <option value="weak"${S.scope==='weak'?' selected':''}>${S.mode==='list'?'只看待强化':'只练未熟练'}</option>
+      <option value="unseen"${S.scope==='unseen'?' selected':''}>${S.mode==='list'?'只看没练过':'只练没练过'}</option>
+    </select>`+
+    `<span class="sp"></span>`+
+    `<button class="linkbtn" id="exp" title="把练习记录导出成文件（备份/换设备）">导出记录</button>`+
+    `<button class="linkbtn" id="imp" title="从文件导入练习记录">导入记录</button>`+
+    `<button class="linkbtn" id="rst" title="清空本机的练习记录">清空</button></div>`;
+  $('#fu').onchange=e=>{S.unit=e.target.value;S.qi=0;buildQueue();render();};
+  $('#fs').onchange=e=>{S.scope=e.target.value;S.qi=0;buildQueue();render();};
+  $('#exp').onclick=exportProg;
+  $('#imp').onclick=importProg;
+  $('#rst').onclick=()=>{
+    if(!confirm('清空全部练习记录？（不可恢复，建议先「导出记录」）'))return;
+    P={cards:{},days:{},paper:{}};saveProg();
+    if(S.mode==='paper')buildPaper();
+    S.qi=0;buildQueue();render();
+  };
+}
+function exportProg(){
+  const blob=new Blob([JSON.stringify({subject:DATA.subject,exported:new Date().toISOString(),data:P},null,2)],{type:'application/json'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download=`${DATA.subject}-练习记录-${todayKey()}.json`;
+  a.click();setTimeout(()=>URL.revokeObjectURL(a.href),3000);
+}
+function importProg(){
+  const inp=document.createElement('input');inp.type='file';inp.accept='.json,application/json';
+  inp.onchange=()=>{
+    const f=inp.files&&inp.files[0];if(!f)return;
+    const r=new FileReader();
+    r.onload=()=>{
+      try{
+        const o=JSON.parse(r.result);
+        const d=o.data&&o.data.cards?o.data:o;
+        if(!d.cards)throw new Error('文件里没有 cards');
+        if(!confirm(`导入后会用文件里的记录覆盖本机记录（文件里 ${Object.keys(d.cards).length} 张卡的记录）。继续？`))return;
+        P={cards:d.cards||{},days:d.days||{},paper:d.paper||{}};saveProg();
+        if(S.mode==='paper')buildPaper();
+        S.qi=0;buildQueue();render();
+      }catch(e){alert('导入失败：'+e.message);}
+    };
+    r.readAsText(f);
+  };
+  inp.click();
+}
+
+/* ================================================================
+   队列
+   ================================================================ */
+function pool(){
+  let a=DATA.cards.slice();
+  if(S.unit!=='全部')a=a.filter(c=>(c.unit||'未分单元')===S.unit);
+  if(S.scope==='star')a=a.filter(c=>(c.star||1)>=2);
+  if(S.scope==='unseen')a=a.filter(c=>!getP(c.id)||!getP(c.id).seen);
+  if(S.scope==='weak')a=a.filter(c=>{const lv=level(c.id);return lv===0||lv===2||lv===4;});
+  return a;
+}
+function buildQueue(){
+  let a=pool();
+  if(S.mode==='cloze')a=a.filter(hasBlanks);
+  if(S.mode==='wrong')a=a.filter(c=>{const p=getP(c.id);return p&&p.wrong>0&&p.streak<2;});
+  if(S.mode==='choice')a=a.filter(hasBlanks);
+  if(S.mode==='wrong'||S.mode==='choice')a.sort((x,y)=>PW(y.id).wrong-PW(x.id).wrong);
+  else a.sort((x,y)=>(PW(x.id).seen?1:0)-(PW(y.id).seen?1:0));
+  S.queue=a.map(c=>c.id);
+  if(S.qi>=S.queue.length)S.qi=0;
+}
+function setProg(){
+  const el=$('#prog');
+  if(S.mode==='paper'){
+    if(!S.paper.queue.length){el.hidden=true;return;}
+    el.hidden=false;
+    $('i',el).style.width=Math.round((S.paper.qi+1)/S.paper.queue.length*100)+'%';
+    return;
+  }
+  if(!['recite','cloze','choice','wrong'].includes(S.mode)||!S.queue.length){el.hidden=true;return;}
+  el.hidden=false;
+  $('i',el).style.width=Math.round((S.qi+1)/S.queue.length*100)+'%';
+}
+
+/* ================================================================
+   渲染入口
+   ================================================================ */
+function render(){
+  $$('#tabs button').forEach(b=>b.setAttribute('aria-selected',b.dataset.mode===S.mode));
+  renderBar();setProg();
+  const st=$('#stage');
+  if(S.mode==='list'){renderList(st);return;}
+  if(S.mode==='paper'){renderPaper(st);return;}
+  if(!S.queue.length){st.innerHTML=emptyHTML();renderNav(st);return;}
+  const c=CARD_BY(S.queue[S.qi]);
+  if(!c){st.innerHTML=emptyHTML();return;}
+  if(S.mode==='choice')renderChoice(st,c);
+  else if(S.mode==='cloze')renderCloze(st,c);
+  else renderRecite(st,c);
+  renderNav(st);
+}
+function emptyHTML(){
+  if(S.mode==='paper'){
+    const tips={
+      weak:'做错的题会自动进来；在「只做错题」里连续答对 2 次才出库。',
+      unseen:'这个范围里的题都做过了，换成「整卷顺序」或「只做错题」。',
+      seq:'换一个单元，或把范围改成「整卷顺序」。',
+      round:'这一份卷子没有匹配的题。'
+    };
+    return `<div class="card empty"><span class="big">${S.paper.range==='weak'?'🎉':'🗂'}</span>${
+      S.paper.range==='weak'?'当前范围没有待强化的错题。':'当前范围没有可做的题。'}
+      <div class="hint">${tips[S.paper.range]||''}</div></div>`;
+  }
+  const tips={
+    recite:'把「练习范围」改成"全部范围"，或点上面的单元重新选。',
+    cloze:'这一类里没有可挖空的考点，换「翻卡背」练。',
+    choice:'这一类里没有可挖空的考点，换「翻卡背」练。',
+    wrong:'太棒了，错题已经清空。做错的题会自动进来；连续答对 2 次才出库。'
+  };
+  return `<div class="card empty"><span class="big">${S.mode==='wrong'?'🎉':'🗂'}</span>${
+    S.mode==='wrong'?'当前范围没有待强化的错题。':(S.scope==='unseen'?'这个范围里的考点都练过了。':'当前范围没有匹配的考点。')}
+    <div class="hint">${tips[S.mode]||''}</div></div>`;
+}
+function renderNav(st){
+  const nav=document.createElement('div');
+  nav.className='nav';
+  if(S.mode==='paper'){
+    if(!S.paper.queue.length)return;
+    nav.innerHTML=`<button class="btn sm" id="pv"${S.paper.qi===0?' disabled':''}>← 上一题</button>
+       <span>${S.paper.qi+1} / ${S.paper.queue.length}</span>
+       <button class="btn sm" id="nx">下一题 →</button>`;
+    st.appendChild(nav);
+    const pv=$('#pv',nav),nx=$('#nx',nav);
+    if(pv&&!pv.disabled)pv.onclick=()=>{S.paper.qi--;render();scrollTop();};
+    if(nx)nx.onclick=()=>paperNext();
+    return;
+  }
+  const inSess=['recite','cloze','choice','wrong'].includes(S.mode);
+  nav.innerHTML=inSess&&S.queue.length
+    ? `<button class="btn sm" id="pv"${S.qi===0?' disabled':''}>← 上一题</button>
+       <span>${S.qi+1} / ${S.queue.length}</span>
+       <button class="btn sm" id="nx">下一题 →</button>`
+    : `<span></span><span></span><span></span>`;
+  st.appendChild(nav);
+  const pv=$('#pv',nav),nx=$('#nx',nav);
+  if(pv&&!pv.disabled)pv.onclick=()=>{S.qi--;S.revealed=false;S.scored=false;render();};
+  if(nx)nx.onclick=()=>{nextCard();};
+}
+function nextCard(){
+  if(S.qi<S.queue.length-1){S.qi++;S.revealed=false;S.scored=false;render();}
+  else{
+    const st=$('#stage');
+    st.insertAdjacentHTML('afterbegin',`<div class="verdict ok" style="margin-bottom:0"><b>这一轮走完了 ✓</b><br>一共 ${S.queue.length} 题。看看上面的统计：标「待强化」的就是还没拿稳的，去 ④ 错题强化 或 ⑤ 清单 里再处理。</div>`);
+    scrollTop();
+  }
+}
+
+/* ---------------- ① 翻卡背 ---------------- */
+function renderRecite(st,c){
+  const p=PLAN[c.id];
+  st.innerHTML=`<div class="card">${metaHTML(c)}
+    <div class="q" id="q">${esc(c.q)}</div>
+    ${S.revealed?`<div class="ans" id="ans"><div class="lead">答案要点：</div>${renderAns(c,p,false)}${warnHTML(c)}</div>`:''}
+    <div class="acts" id="acts"></div>
+  </div>`;
+  const acts=$('#acts',st);
+  if(!S.revealed){
+    acts.innerHTML=`<button class="btn p" id="show">显示答案（空格）</button>
+      <span class="hint">先在心里／纸上说一遍，说完再看。</span>`;
+    $('#show',acts).onclick=()=>{S.revealed=true;render();};
+  }else{
+    acts.innerHTML=`<span class="hint" style="margin:0 4px 0 0">老实说：</span>
+      <button class="btn g" data-v="1">会了（1）</button>
+      <button class="btn" data-v="0.5">有点模糊（2）</button>
+      <button class="btn d" data-v="0">不会（3）</button>`;
+    $$('button[data-v]',acts).forEach(b=>b.onclick=()=>{
+      const v=b.dataset.v;
+      if(v==='1'){rec(c.id,true,'recite');}
+      else if(v==='0'){rec(c.id,false,'recite');}
+      else{const q=getP(c.id);if(q){q.seen++;q.streak=0;q.last=Date.now();saveProg();}else{rec(c.id,false,'recite');}}
+      nextCard();
+    });
+  }
+}
+
+/* ---------------- ② 填空闯 ---------------- */
+function renderCloze(st,c){
+  const p=PLAN[c.id];
+  st.innerHTML=`<div class="card">${metaHTML(c)}
+    <div class="q" style="font-size:16.5px">${esc(c.q)}</div>
+    <div class="ans" id="ans"><div class="lead">把空缺填出来${p.count>1?`（共 ${p.count} 空）`:''}，填完按「提交」：</div>
+      ${renderAns(c,p,true)}
+      <div id="fb"></div>${S.revealed?`<div class="warn"><b>原答案：</b></div>${renderAns(c,p,false)}${warnHTML(c)}`:''}</div>
+    <div class="acts" id="acts"></div>
+  </div>`;
+  const acts=$('#acts',st);
+  const inputs=$$('.bi',st);
+  const submit=()=>{
+    let bad=0,empty=0;
+    inputs.forEach(inp=>{
+      const k=+inp.dataset.k,alts=p.blanks[k];
+      const v=norm(inp.value);
+      // 长答案（≥8字）容错：虚词差一个字不算错，见 loose()
+      const ok=v!=='' && (alts.some(a=>norm(a)===v) ||
+        (norm(alts[0]).length>=8 && alts.some(a=>loose(a)===loose(v))));
+      inp.classList.toggle('ok',ok);inp.classList.toggle('bad',!ok);
+      if(!ok){bad++;if(v==='')empty++;
+        inp.insertAdjacentHTML('afterend',`<span class="given">${esc(alts[0])}</span>`);}
+      inp.disabled=true;
+    });
+    if(!S.scored){rec(c.id,bad===0,'cloze');S.scored=true;}
+    $('#fb',st).innerHTML=`<div class="verdict ${bad===0?'ok':'bad'}">${
+      bad===0?'<b>全对 ✓</b> 这张卡记得住。':
+      `<b>错 ${bad} 处</b>${empty?`（其中 ${empty} 空没填）`:''}，前面绿色的是正解，红色的是你填的。`}</div>`;
+    acts.innerHTML=`<button class="btn p" id="nx2">下一题（回车）</button>
+      <button class="btn" id="again">再填一次</button>
+      ${bad>0?'<button class="btn sm" id="forgive">我其实答对了（算对）</button>':''}
+      <span class="hint">这一题已记入${bad>0?'错题本':'熟练'}。</span>`;
+    $('#nx2',acts).onclick=nextCard;
+    $('#again',acts).onclick=()=>{
+      inputs.forEach(inp=>{inp.disabled=false;inp.value='';inp.classList.remove('ok','bad');});
+      $$('.given',st).forEach(e=>e.remove());
+      $('#fb',st).innerHTML='';S.scored=true; // 重练不重复计分
+      acts.innerHTML=`<button class="btn p" id="sub">提交判分</button>`;
+      $('#sub',acts).onclick=submit;
+      inputs[0]&&inputs[0].focus();
+    };
+    const fg=$('#forgive',acts);
+    if(fg)fg.onclick=()=>{const q=getP(c.id);if(q){q.wrong=Math.max(0,q.wrong-1);q.streak=1;saveProg();}renderBar();fg.textContent='已改判 ✓';fg.disabled=true;};
+  };
+  acts.innerHTML=`<button class="btn p" id="sub">提交判分（回车）</button>
+    <button class="btn sm" id="peek">看答案（算不会）</button>`;
+  $('#sub',acts).onclick=submit;
+  $('#peek',acts).onclick=()=>{
+    if(!S.scored){rec(c.id,false,'cloze');S.scored=true;}
+    S.revealed=true;render();
+  };
+  inputs.forEach((inp,i)=>{
+    inp.onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();if(S.scored)nextCard();else submit();}};
+    if(i===0)inp.focus({preventScroll:true});
+  });
+}
+
+/* ---------------- ③ 四选一 ---------------- */
+function termPool(){
+  if(termPool._c)return termPool._c;
+  const all=[];
+  DATA.cards.forEach(c=>{
+    const p=PLAN[c.id];
+    p.blanks.forEach(alts=>{if(alts[0])all.push({t:alts[0],unit:c.unit||'',id:c.id});});
+  });
+  termPool._c=all;return all;
+}
+function distractors(card,plan,k,n){
+  const right=plan.blanks[k][0];
+  const all=termPool();
+  const sameUnit=all.filter(x=>x.unit===(card.unit||'')&&norm(x.t)!==norm(right));
+  const other=all.filter(x=>x.unit!==(card.unit||'')&&norm(x.t)!==norm(right));
+  const picked=[];const seen=new Set([norm(right)]);
+  const take=arr=>{
+    const sh=shuffle(arr.slice());
+    for(const x of sh){
+      if(picked.length>=n)return;
+      const key=norm(x.t);
+      if(seen.has(key))continue;
+      seen.add(key);picked.push(x.t);
+    }
+  };
+  take(sameUnit);take(other);
+  return picked;
+}
+function renderChoice(st,c){
+  const p=PLAN[c.id];
+  // 选一个空（优先没练过的位置）
+  if(!S.choice||S.choice.id!==c.id||S.choice.k>=p.count)S.choice={id:c.id,k:0};
+  const k=S.choice.k;
+  const right=p.blanks[k][0];
+  const opts=shuffle([right,...distractors(c,p,k,3)]);
+  const toks=PICK_TOKENS(p,k);
+  st.innerHTML=`<div class="card">${metaHTML(c)}
+    <div class="q" style="font-size:16px">${esc(c.q)}</div>
+    <div class="ans" id="ans"><div class="lead">补全下面这句话（第 ${k+1}/${p.count} 空）：</div>
+      <p class="ln" style="font-size:17px">${toks.before}<span style="display:inline-block;min-width:72px;border-bottom:2px solid var(--acc);text-align:center;color:var(--acc);font-weight:700">?</span>${toks.after}</p>
+      ${p.count>1&&k+1<p.count?`<div class="hint">还可以练这题的第 ${k+2} 空 →</div>`:''}
+    </div>
+    <div class="opts" id="opts">${opts.map((o,i)=>`<button data-i="${i}" data-o="${esc(o)}"><span class="kk">${'ABCD'[i]}</span>${esc(o)}</button>`).join('')}</div>
+    <div id="fb"></div>
+    <div class="acts" id="acts"><span class="hint">点选项或按 1–4；答错自动进错题本。</span></div>
+  </div>`;
+  const btns=$$('#opts button',st);
+  let done=false;
+  const answer=btn=>{
+    if(done)return;done=true;
+    const val=btn.dataset.o;
+    const ok=norm(val)===norm(right);
+    btns.forEach(b=>{
+      b.disabled=true;
+      if(norm(b.dataset.o)===norm(right))b.classList.add('c');
+    });
+    if(!ok)btn.classList.add('w');
+    rec(c.id,ok,'choice');
+    renderBar();
+    const acts=$('#acts',st);
+    const more=k+1<p.count;
+    acts.innerHTML=`<button class="btn p" id="nx3">下一题（回车）</button>`+
+      (more?`<button class="btn" id="nb">再练这题下一空</button>`:'')+
+      (ok?'':'<button class="btn sm" id="why">看整条答案</button>');
+    $('#nx3',acts).onclick=nextCard;
+    if(more)$('#nb',acts).onclick=()=>{S.choice={id:c.id,k:k+1};S.revealed=false;render();};
+    const wy=$('#why',acts);
+    if(wy)wy.onclick=()=>{
+      $('#ans',st).insertAdjacentHTML('beforeend',renderAns(c,p,false)+warnHTML(c));
+      wy.disabled=true;
+    };
+  };
+  btns.forEach(b=>b.onclick=()=>answer(b));
+  st.onkeydown=e=>{
+    if('1234'.includes(e.key)){const i=+e.key-1;if(btns[i]&&!btns[i].disabled)answer(btns[i]);}
+    else if(e.key==='Enter'){if(done)nextCard();}
+  };
+}
+/* 取出第 k 个空所在的那一句话，切成 前 / 空 / 后 */
+function PICK_TOKENS(p,k){
+  for(const it of p.body){
+    if(it.type==='p'){
+      const idx=it.toks.findIndex(t=>t.t==='b'&&t.k===k);
+      if(idx>=0){
+        const before=it.toks.slice(0,idx).map(t=>t.t==='s'?esc(t.v):`<em class="kw">${esc(t.v[0])}</em>`).join('');
+        const after=it.toks.slice(idx+1).map(t=>t.t==='s'?esc(t.v):`<em class="kw">${esc(t.v[0])}</em>`).join('');
+        return {before,after};
+      }
+    }else{
+      for(const r of it.rows)for(const cell of r){
+        const idx=cell.findIndex(t=>t.t==='b'&&t.k===k);
+        if(idx>=0){
+          const before=cell.slice(0,idx).map(t=>t.t==='s'?esc(t.v):`<em class="kw">${esc(t.v[0])}</em>`).join('');
+          const after=cell.slice(idx+1).map(t=>t.t==='s'?esc(t.v):`<em class="kw">${esc(t.v[0])}</em>`).join('');
+          return {before,after};
+        }
+      }
+    }
+  }
+  return {before:'',after:''};
+}
+
+/* ---------------- ⑤ 清单 ---------------- */
+let LISTQ='',LISTHIDE=false;
+const SCOPE_TXT={all:'全部范围',star:'只看★必背',weak:'只看待强化',unseen:'只看没练过'};
+function renderList(st){
+  const q=LISTQ.trim();
+  /* 顶部「按单元 / 练习范围」两个下拉框在清单里同样生效，而不是只影响做题队列 */
+  const base=pool();
+  const hit=c=>{
+    if(!q)return true;
+    const hay=(c.q+' '+(c.a||[]).join(' ')+' '+(c.warn||'')+' '+(c.lesson||'')+' '+(c.unit||'')+' '+(c.node||'')).toLowerCase();
+    return hay.includes(q.toLowerCase());
+  };
+  const cards=base.filter(hit);
+  const filtering=S.unit!=='全部'||S.scope!=='all';
+  const byUnit=new Map();
+  cards.forEach(c=>{
+    const u=c.unit||'未分单元';
+    if(!byUnit.has(u))byUnit.set(u,[]);
+    byUnit.get(u).push(c);
+  });
+  // 单元进度（按筛选后的范围算，不受搜索词影响）
+  const baseByUnit=new Map();
+  base.forEach(c=>{
+    const u=c.unit||'未分单元';
+    if(!baseByUnit.has(u))baseByUnit.set(u,[]);
+    baseByUnit.get(u).push(c);
+  });
+  const ubars=[...baseByUnit.entries()].map(([u,arr])=>{
+    const doneN=arr.filter(c=>level(c.id)===3).length;
+    const pc=Math.round(doneN/arr.length*100);
+    return `<div class="ubar"><span class="nm" title="${esc(u)}">${esc(u)}</span><span class="tr"><i style="width:${pc}%"></i></span><span class="pc">${pc}%</span></div>`;
+  }).join('');
+  // 最该补的 10 张（同样只看当前筛选范围）
+  const weak=base.map(c=>({c,lv:level(c.id),p:getP(c.id)}))
+    .filter(x=>x.p&&x.p.wrong>0&&x.lv!==3)
+    .sort((a,b)=>b.p.wrong-a.p.wrong||a.lv-b.lv).slice(0,10);
+  const weakHTML=weak.length?`<div class="report"><h3>最该补的 ${weak.length} 张（错得最多 / 还没拿稳）</h3><ul>${
+    weak.map(({c,p})=>`<li>${esc(c.q)} <b>错 ${p.wrong} 次</b> <span class="hint">· ${esc(c.lesson||c.unit||'')}</span></li>`).join('')
+  }</ul><div class="hint">这些卡会优先出现在 ④ 错题强化 里。</div></div>`:'';
+  const chips=filtering?`<div class="row" style="font-size:13px">
+      <span class="pill">筛选结果 <b>${cards.length}</b> 张</span>
+      <span class="pill">${esc(S.unit==='全部'?'全部单元':S.unit)} · ${esc(SCOPE_TXT[S.scope]||'')}</span>
+      <button class="linkbtn" id="lclr">清除筛选（显示全部 ${DATA.cards.length} 张）</button></div>`:'';
+  const empty=filtering||q
+    ? `<div class="card empty"><span class="big">🔍</span>${q?`没搜到「${esc(LISTQ)}」。`:'这个筛选下没有考点。'}
+        <div class="hint">${filtering?'把顶部两个下拉框改回「全部范围 / 全部」，或点下面的按钮。':'换个词试试。'}</div>
+        ${filtering?'<div class="acts" style="justify-content:center"><button class="btn sm" id="lclr2">清除筛选</button></div>':''}</div>`
+    : '<div class="card empty"><span class="big">🗂</span>没有考点数据。</div>';
+
+  st.innerHTML=`<input class="searchbox" id="sq" placeholder="搜索考点关键词，比如「民主」「瓦特」「条约」…" value="${esc(LISTQ)}">
+    <div class="bar" style="margin-top:10px"><div class="row">
+      <label style="display:flex;gap:6px;align-items:center;cursor:pointer">
+      <input type="checkbox" id="hide"${LISTHIDE?' checked':''}> 遮住红字（自测用，点一下灰块能揭开）</label>
+      <span class="sp"></span><button class="linkbtn" id="prt">打印这份清单</button></div>
+      ${chips}</div>
+    ${ubars?`<div class="report"><h3>各单元熟练度（连续答对 3 次才算熟练）</h3><div class="ubars">${ubars}</div></div>`:''}
+    ${weakHTML}
+    ${cards.length?[...byUnit.entries()].map(([u,arr])=>`
+      <div class="unitbox">
+        <h3>${esc(u)} <span>${arr.length} 个考点</span></h3>
+        ${arr.map(c=>{
+          const lv=level(c.id);
+          return `<details class="k" data-id="${c.id}">
+            <summary><span style="flex:1">${esc(c.q)}</span>
+              <span class="lv lv${lv}">${lv===4?'待强化':LVTXT[lv]}</span></summary>
+            <div class="bd${LISTHIDE?' hidekw':''}">
+              <div class="meta"><span class="mt">${esc(c.lesson||'')}${c.node?' ／ '+esc(c.node):''}</span><span class="mr">${pageLink(c)}<span class="stars">${STAR(c.star)}</span></span></div>
+              <div class="ans" style="border-top:0;padding-top:0;margin-top:6px">${renderAns(c,PLAN[c.id],false)}</div>
+              ${warnHTML(c)}
+              <div class="acts"><button class="btn sm" data-solo="${c.id}">只练这张</button></div>
+            </div>
+          </details>`;
+        }).join('')}
+      </div>`).join(''):empty}`;
+
+  $('#sq',st).oninput=e=>{LISTQ=e.target.value;const pos=e.target.selectionStart;renderList(st);const n=$('#sq',st);n.focus();n.setSelectionRange(pos,pos);};
+  $('#hide',st).onchange=e=>{LISTHIDE=e.target.checked;renderList(st);};
+  $('#prt',st).onclick=()=>window.print();
+  const clear=()=>{S.unit='全部';S.scope='all';S.qi=0;buildQueue();render();};
+  const c1=$('#lclr',st);if(c1)c1.onclick=clear;
+  const c2=$('#lclr2',st);if(c2)c2.onclick=clear;
+  $$('[data-solo]',st).forEach(b=>b.onclick=()=>{
+    S.queue=[b.dataset.solo];S.qi=0;S.mode='recite';S.revealed=true;S.scored=false;render();
+  });
+}
+
+/* ================================================================
+   ⑥ 套卷（可选的 DATA.paper：一整份带解析的选择题卷）
+   ================================================================ */
+const PAPER=DATA&&DATA.paper?DATA.paper:null;
+const PQ=PAPER?(PAPER.questions||[]):[];
+const PQ_BY=id=>PQ.find(q=>q.id===id);
+const PUNITS=[...new Set(PQ.map(q=>q.unit||'未分单元'))];
+const PPLAN={};PQ.forEach((q,i)=>{PPLAN[q.id]=i;});
+function pState(id){return (P.paper||{})[id]||null;}
+function pTally(){
+  let seen=0,att=0,right=0,weak=0;
+  PQ.forEach(q=>{const p=pState(q.id);if(!p||!p.seen)return;
+    seen++;att+=p.seen;right+=p.ok;if(p.wrong>0&&p.streak<2)weak++;});
+  return {n:PQ.length,seen,att,right,weak,rate:att?Math.round(right/att*100):0};
+}
+function recPaper(q,ok,pick){
+  if(!P.paper)P.paper={};
+  const p=P.paper[q.id]||(P.paper[q.id]={seen:0,ok:0,wrong:0,streak:0,last:0,pick:-1});
+  p.seen++;p.last=Date.now();p.pick=pick;
+  if(ok){p.ok++;p.streak=Math.min(9,p.streak+1);}else{p.wrong++;p.streak=0;}
+  const d=todayKey(),t=P.days[d]||(P.days[d]={n:0,ok:0});
+  t.n++;if(ok)t.ok++;
+  saveProg();
+}
+/* 队列：整套顺序 / 随机 20 题 / 只做错题 / 只做没做过，可按单元筛 */
+function buildPaper(){
+  const st=S.paper;
+  let a=PQ.slice();
+  if(st.unit!=='全部')a=a.filter(q=>(q.unit||'未分单元')===st.unit);
+  if(st.range==='weak')a=a.filter(q=>{const p=pState(q.id);return p&&p.wrong>0&&p.streak<2;});
+  if(st.range==='unseen')a=a.filter(q=>!pState(q.id)||!pState(q.id).seen);
+  if(st.range==='weak')a.sort((x,y)=>pState(y.id).wrong-pState(x.id).wrong);
+  else if(st.range!=='seq')a=shuffle(a.slice());
+  if(st.range==='round')a=a.slice(0,20);
+  if(st.range==='seq')a.sort((x,y)=>x.no-y.no);
+  st.queue=a.map(q=>q.id);
+  st.qi=0;st.log={};st.pick=null;
+}
+function paperBar(){
+  const t=pTally();
+  $('#bar').innerHTML=
+    `<div class="row"><span class="pill">套卷 <b>${t.n}</b> 题</span>`+
+    `<span class="pill">已做 <b>${t.seen}</b>/${t.n}</span>`+
+    `<span class="pill ok">正确率 <b>${t.rate}%</b></span>`+
+    `<span class="pill bad">待强化 <b>${t.weak}</b></span>`+
+    `<span class="pill">今天 <b>${(P.days[todayKey()]||{n:0}).n}</b> 题</span></div>`+
+    `<div class="row">`+
+    `<select id="pu" title="按单元做">${['全部',...PUNITS].map(u=>`<option${u===S.paper.unit?' selected':''}>${esc(u)}</option>`).join('')}</select>`+
+    `<select id="pr" title="做题范围">
+      <option value="seq"${S.paper.range==='seq'?' selected':''}>整卷顺序</option>
+      <option value="round"${S.paper.range==='round'?' selected':''}>随机 20 题</option>
+      <option value="weak"${S.paper.range==='weak'?' selected':''}>只做错题</option>
+      <option value="unseen"${S.paper.range==='unseen'?' selected':''}>只做没做过</option>
+    </select>`+
+    `<span class="sp"></span>`+
+    `<button class="linkbtn" id="exp" title="把练习记录导出成文件（备份/换设备）">导出记录</button>`+
+    `<button class="linkbtn" id="imp" title="从文件导入练习记录">导入记录</button>`+
+    `<button class="linkbtn" id="prt2" title="打印整份试卷（题干+答案+解析）">打印整卷</button></div>`;
+  $('#pu').onchange=e=>{S.paper.unit=e.target.value;buildPaper();render();};
+  $('#pr').onchange=e=>{S.paper.range=e.target.value;buildPaper();render();};
+  $('#exp').onclick=exportProg;
+  $('#imp').onclick=importProg;
+  $('#prt2').onclick=()=>paperPrint();
+}
+/* 整卷打印视图：题干 + 选项（正确项标绿）+ 解析，一份可打印的解析版 */
+function paperPrint(){
+  const st=$('#stage');
+  st.innerHTML=`<div class="card no-print"><div class="acts" style="margin:0">
+      <button class="btn" id="pback">← 返回做题</button>
+      <button class="btn p" id="pprt">打印 / 存成 PDF</button>
+    </div><div class="hint" style="margin-top:8px">整份 ${PQ.length} 题，含答案与逐项解析。打印时会自动去掉顶栏和按钮。</div></div>`+
+    PQ.map(q=>`<div class="card">
+      <div class="meta"><span class="mt"><b>第 ${q.no} 题</b> ／ ${esc(q.unit||'')}</span><span class="mr">答案 ${'ABCD'[q.ans]}</span></div>
+      <div class="pstem">${paperBody(q)}</div>
+      ${q.opts.map((o,i)=>`<div class="optrow${i===q.ans?' c':''}"><span class="kk">${'ABCD'[i]}</span><span>${esc(o)}</span></div>`).join('')}
+      ${whyHTML(q)}
+    </div>`).join('');
+  $('#pback').onclick=()=>render();
+  $('#pprt').onclick=()=>window.print();
+  scrollTop();
+}
+const pImg=s=>`<a href="${esc(s)}" target="_blank" rel="noopener"><img src="${esc(s)}" alt="题目配图" loading="lazy"></a>`;
+function paperTable(b){
+  const rows0=b.rows||[];
+  const cols=Math.max(1,...rows0.filter(r=>r.length>1).map(r=>r.length));
+  const rows=rows0.map(r=>{
+    if(r.length===1){
+      const c=r[0];
+      return `<tr><td class="cap" colspan="${cols}">${esc(c.t)}${(c.imgs||[]).map(pImg).join('')}</td></tr>`;
+    }
+    return '<tr>'+r.map(c=>`<td>${(c.imgs||[]).map(pImg).join('')}<span class="tx">${esc(c.t)}</span></td>`).join('')+'</tr>';
+  }).join('');
+  return `<table class="ptbl">${rows}</table>`;
+}
+function paperBody(q){
+  let out='',figs=[];
+  const flush=()=>{if(figs.length){out+=`<div class="figs">${figs.join('')}</div>`;figs=[];}};
+  (q.blocks||[]).forEach(b=>{
+    if(b.t==='p'){flush();out+=`<p>${esc(b.v)}</p>`;}
+    else if(b.t==='img'){figs.push(`<figure>${pImg(b.src)}</figure>`);}
+    else if(b.t==='tbl'){flush();out+=paperTable(b);}
+  });
+  flush();
+  return out;
+}
+function whyHTML(q){
+  const L=['A','B','C','D'];
+  if(q.why&&Object.keys(q.why).length){
+    return `<div class="whybox"><div class="lead">逐项解析（绿的是正确项）</div>`+
+      L.map((k,i)=>{
+        const t=q.why[k];if(!t)return '';
+        return `<div class="whyrow${i===q.ans?' right':''}"><span class="k">${k}</span><span class="tx">${esc(t)}</span></div>`;
+      }).join('')+`</div>`;
+  }
+  return `<div class="whybox"><div class="lead">解析</div><div class="whysol">${esc(q.sol||'')}</div></div>`;
+}
+function renderPaper(st){
+  const id=S.paper.queue[S.paper.qi];
+  if(!id){st.innerHTML=emptyHTML();return;}
+  const q=PQ_BY(id),t=pTally();
+  const logged=S.paper.log[id];
+  const done=logged!==undefined;
+  const pick=done?logged:null;
+  st.innerHTML=`<div class="card">
+    <div class="meta"><span class="mt"><b>第 ${q.no} 题</b> ／ 共 ${t.n} 题 ／ ${esc(q.unit||'未分单元')}</span>
+      <span class="mr"><span class="pno">${S.paper.qi+1} / ${S.paper.queue.length}</span></span></div>
+    <div class="pstem">${paperBody(q)}</div>
+    <div class="opts" id="opts">${q.opts.map((o,i)=>
+      `<button data-i="${i}"${done?' disabled':''} class="${done?(i===q.ans?'c':(i===pick?'w':'')):''}"><span class="kk">${'ABCD'[i]}</span>${esc(o)}</button>`).join('')}</div>
+    <div id="fb">${done?paperVerdict(q,pick):''}</div>
+    ${done?whyHTML(q):''}
+    <div class="acts" id="acts">${done?paperActs(q,pick):`<span class="hint">点选项或按 1–4；答完立刻给解析，错题自动进「只做错题」。</span>`}</div>
+  </div>`;
+  const btns=$$('#opts button',st);
+  if(!done)btns.forEach(b=>b.onclick=()=>answerPaper(+b.dataset.i));
+  else bindPaperActs(st,q);
+  renderNav(st);
+}
+function paperVerdict(q,pick){
+  const L='ABCD';
+  if(pick===q.ans)return `<div class="verdict ok"><b>答对了 ✓</b> 正确答案 ${L[q.ans]}。</div>`;
+  return `<div class="verdict bad"><b>答错了</b> 你选的是 ${L[pick]}，正确答案是 <b>${L[q.ans]}</b>。看完下面的解析再往下走。</div>`;
+}
+function paperActs(q,pick){
+  const more=S.paper.qi<S.paper.queue.length-1;
+  return `<button class="btn p" id="pnx">${more?'下一题（回车）':'本轮完成（回车）'}</button>`+
+    (pick===q.ans?'':`<button class="btn sm" id="pgo" title="去⑤清单看这一单元的考点卡">看本单元考点</button>`)+
+    `<span class="hint">${S.paper.qi+1} / ${S.paper.queue.length}</span>`;
+}
+function bindPaperActs(st,q){
+  const nx=$('#pnx',st);
+  if(nx)nx.onclick=()=>paperNext();
+  const go=$('#pgo',st);
+  if(go)go.onclick=()=>{S.mode='list';LISTQ=q.unit||'';buildQueue();render();scrollTop();};
+}
+function answerPaper(i){
+  const id=S.paper.queue[S.paper.qi];
+  if(S.paper.log[id]!==undefined)return;
+  const q=PQ_BY(id);
+  S.paper.log[id]=i;
+  recPaper(q,i===q.ans,i);
+  render();
+}
+function paperNext(){
+  const st=$('#stage');
+  if(S.paper.qi<S.paper.queue.length-1){
+    S.paper.qi++;render();scrollTop();return;
+  }
+  st.innerHTML=paperSummary();
+  $$('[data-jump]',st).forEach(b=>b.onclick=()=>{
+    const id=b.dataset.jump;
+    S.paper.qi=S.paper.queue.indexOf(id);
+    render();scrollTop();
+  });
+  const again=$('#pagain',st);
+  if(again)again.onclick=()=>{S.paper.log={};S.paper.qi=0;render();scrollTop();};
+  const next=$('#pnext',st);
+  if(next)next.onclick=()=>{S.paper.range='round';buildPaper();render();scrollTop();};
+  const weak=$('#pweak',st);
+  if(weak&&!weak.disabled)weak.onclick=()=>{S.paper.range='weak';buildPaper();render();scrollTop();};
+  scrollTop();
+}
+function paperSummary(){
+  const ids=S.paper.queue;
+  let right=0;const wrong=[];
+  ids.forEach(id=>{const p=pickOf(id);if(p===undefined)return;
+    const q=PQ_BY(id);if(p===q.ans)right++;else wrong.push(q);});
+  const tot=ids.length,rate=tot?Math.round(right/tot*100):0;
+  const t=pTally();
+  return `<div class="card">
+    <div class="meta"><span class="mt">本轮走完了</span><span class="mr">${tot} 题</span></div>
+    <div class="scoreline">对 <b>${right}</b> 题 · 错 <b>${wrong.length}</b> 题 · 正确率 <b>${rate}%</b></div>
+    ${wrong.length?`<div class="hint" style="margin-top:6px">做错的题（点题号回到那一题看解析）：</div>
+      <div class="jump">${wrong.map(q=>`<button data-jump="${esc(q.id)}">第 ${q.no} 题</button>`).join('')}</div>`
+      :'<div class="verdict ok" style="margin-top:10px"><b>全对 ✓</b> 这一轮没有错题。</div>'}    <div class="acts">
+      <button class="btn p" id="pagain">重做这一轮</button>
+      <button class="btn" id="pnext">换一批（随机 20 题）</button>
+      <button class="btn" id="pweak"${t.weak?'':' disabled'}>只做错题（${t.weak}）</button>
+    </div>
+    <div class="hint">全卷进度：已做 ${t.seen}/${t.n} 题，累计正确率 ${t.rate}%。错题在「只做错题」里连对 2 次才算过关。</div>
+  </div>`;
+}
+function pickOf(id){
+  const l=S.paper.log;
+  return l[id];
+}
+
+/* ================================================================
+   启动
+   ================================================================ */
+function boot(){
+  if(!DATA||!DATA.cards||!DATA.cards.length){
+    $('#stage').innerHTML='<div class="card empty"><span class="big">⚠</span>没有读到考点数据。<br>请确认这个文件没有被改动过。</div>';
+    return;
+  }
+  document.documentElement.dataset.subj=DATA.subject||'';
+  document.title=DATA.title||'核心考点训练';
+  $('#ttl').textContent=DATA.title||'核心考点训练';
+  $('#sb').textContent=PAPER
+    ? `共 ${DATA.cards.length} 个考点 · 套卷 ${PQ.length} 题 · 记录存在本机浏览器`
+    : `共 ${DATA.cards.length} 个考点 · 记录存在本机浏览器`;
+  if(PAPER&&PQ.length){
+    const tp=$('#tabPaper');
+    if(tp){tp.hidden=false;tp.textContent='⑥ 套卷';}
+  }
+  $$('#tabs button').forEach(b=>b.onclick=()=>{
+    if(b.dataset.mode===S.mode)return;
+    S.mode=b.dataset.mode;S.qi=0;S.revealed=false;S.scored=false;S.cur=null;S.choice=null;
+    if(S.mode==='paper')buildPaper();
+    buildQueue();render();scrollTop();
+  });
+  buildQueue();render();
+  document.addEventListener('keydown',e=>{
+    if(e.target.matches('input,select,textarea'))return;
+    if(S.mode==='paper'){
+      const id=S.paper.queue[S.paper.qi];
+      if(!id)return;
+      const answered=S.paper.log.hasOwnProperty(id);
+      if(!answered&&'1234'.includes(e.key)){e.preventDefault();answerPaper(+e.key-1);}
+      else if(answered&&(e.key==='Enter'||e.key===' ')){e.preventDefault();paperNext();}
+      else if(e.key==='ArrowLeft'&&S.paper.qi>0){e.preventDefault();S.paper.qi--;render();scrollTop();}
+      return;
+    }
+    if(S.mode==='recite'){
+      if(!S.revealed&&(e.key===' '||e.code==='Space')){e.preventDefault();S.revealed=true;render();}
+      else if(S.revealed){
+        const map={'1':'1','2':'0.5','3':'0'};
+        if(map[e.key]){e.preventDefault();const f=$(`#acts button[data-v="${map[e.key]}"]`);if(f)f.click();}
+      }
+    }else if(S.mode==='cloze'&&e.key==='Enter'){
+      const s=$('#sub'),n=$('#nx2');if(s)s.click();else if(n)n.click();
+    }else if(S.mode==='choice'&&e.key==='Enter'){
+      const n=$('#nx3');if(n)n.click();
+    }
+  });
+}
+boot();
+</script>
+</body>
+</html>
