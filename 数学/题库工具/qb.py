@@ -745,6 +745,20 @@ def cmd_verify(args):
                         ok = False
                         print('✗ %s 第 %s 题：steps 的 pt 合计 %s ≠ score %s'
                               % (p.get('id'), no, pts, s))
+                fg = q.get('fig')
+                if fg is not None:
+                    if not isinstance(fg, dict) or not isinstance(fg.get('svg'), str) or not fg['svg'].strip():
+                        ok = False
+                        print('✗ %s 第 %s 题：fig 需要 {w, h, svg}（svg 是内层 SVG 片段，由 figs.py 生成）'
+                              % (p.get('id'), no))
+                    elif not (isinstance(fg.get('w'), (int, float)) and isinstance(fg.get('h'), (int, float))
+                              and fg['w'] > 0 and fg['h'] > 0):
+                        ok = False
+                        print('✗ %s 第 %s 题：fig 的 w / h 必须是正数（viewBox 宽高）'
+                              % (p.get('id'), no))
+                    elif '<script' in fg['svg'].lower():
+                        ok = False
+                        print('✗ %s 第 %s 题：fig.svg 里不能有 script' % (p.get('id'), no))
             print('  %-20s 分值 %2d/%2d 题（合计 %s）　知识点 %2d 题'
                   % (p.get('id'), n_score, len(p['questions']),
                      fmt_num(total) if n_score else '—', n_kp))

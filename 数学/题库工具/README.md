@@ -8,6 +8,7 @@
 ```
 题库工具/
   qb.py                  主工具（只需 Python 3 + 标准库；sheets 子命令需要 Pillow）
+  figs.py                原卷插图生成器（只需标准库；--preview 需要 Pillow）
   sync.ps1               受限环境下的落盘脚本（qb.py 暂存到 %TEMP%\qb_stage 后运行）
   answers/               每套卷一份"答卷答案"文本（唯一需要手填的东西）
     反比例函数单元测-第8周.txt
@@ -96,6 +97,30 @@ python 题库工具\qb.py verify
 - `qb.py verify` 会检查：`score` 为正数、`kp` 是非空字符串数组、`steps` 的 `pt` 合计与 `score` 一致。
 - `check` / `apply` / `template` 已兼容 `steps`（把每步当成一个 field，忽略 `pt`）。
 
+## 原卷插图（`fig` 字段 + `figs.py`）
+
+试卷里"墙角围花园""隧道拱形""冷柜温度曲线"这类**几何示意图**，用 `plot`（坐标纸风格：网格 + 刻度）画出来一定和卷面不同，所以改成**按原卷描图**：
+
+```json
+"fig": { "w": 300, "h": 215, "svg": "<path d=\"...\"/>…<text …>A</text>" }
+```
+
+- `w` / `h`：画布尺寸（页面按 viewBox 显示，1:1 不放大）；`svg`：**内层** SVG 片段（不带 `<svg>`）；
+- 有 `fig` 就不再显示 `plot`（页面优先 `fig`；`validatePack` 会给警告）；
+- 题包里改 `fig` 之后照样要 `qb.py build` 才会进 HTML；
+- 旧版本地导入包（localStorage 里没有 `fig`）在页面启动时会被 `mergePackMeta()` 自动补上内置图，不用手动重新导入。
+
+图由 `figs.py` 生成，别手敲坐标：
+
+```powershell
+python 题库工具\figs.py --pack 题库\pack-九上数学期中模拟练习.json --write   # 写回 fig 字段
+python 题库工具\qb.py build                                                    # 注入 HTML
+python 题库工具\qb.py verify                                                   # 结构 + 脚本语法
+python 题库工具\figs.py --preview %TEMP%\fig.png                               # 只出 PNG 预览（Pillow）
+```
+
+`figs.py` 的约定：SVG 坐标（y 向下）、字号 16（数字/单位 15）、墨色 `#1b2430`、`line/quad/poly/text/dot/hatch` 几个小函数；要加新图就写一个 `fig_q??()` 并登记到 `FIGS`。
+
 ## 闪练题库（`题库/drills.json`）
 
 闪练题也走 build 注入（HTML 里 `/* DRILLS:BEGIN */ … /* DRILLS:END */` 之间）：
@@ -136,8 +161,7 @@ python 题库工具\qb.py verify
 
 - **解析文字写错、方法写错**时，工具不会自动改（它只对答案字段）。直接改单卷 JSON 里的
   `solution`，然后 `qb.py build`。
-- 页面里"题库管理"导入过的题包会覆盖 HTML 内置数据（localStorage）。改完源码后，
-  若之前导入过该卷，需要**重新导入**同 id 的 JSON（或删掉该题包）再刷新。
+- 页面里"题库管理"导入过的题包会覆盖 HTML 内置数据（localStorage）。改完源码后：**分值、知识点、图示（fig）、解析（solution）、提示（tip）会在页面启动时自动用内置版刷新**（`mergePackMeta()`）；只有**改了题目数量 / 选项结构 / 题型**这类结构变更时，才需要重新导入同 id 的 JSON（或删掉该题包）再刷新。
 - 备份文件为 `*.bak-<时间戳>`，可随时回滚。
 - 如果当前环境里 python 子进程无权写仓库目录（DSH 沙箱常见），`qb.py` 会自动把结果写到
   `%TEMP%\qb_stage`，此时再跑一次 `pwsh -File 题库工具\sync.ps1` 就会备份+落盘。普通终端里
