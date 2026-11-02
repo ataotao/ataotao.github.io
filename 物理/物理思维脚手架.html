@@ -206,18 +206,54 @@ hr.sep{border:0;border-top:1px dashed var(--line);margin:14px 0}
 
 /* ---------------- 小屏 ---------------- */
 @media (max-width:640px){
+  /* 手机端整体小一档：正文 16→15px、题干 15.5→14px，卡片/顶栏/导航一起收紧 */
+  body{font-size:15px;line-height:1.68}
   .app{padding:0 12px 64px}
+  .appbar{padding:13px 0 10px}
+  .brand h1{font-size:16px}
+  .brand p{font-size:11.5px}
+  .logo{width:34px;height:34px;flex:0 0 34px;font-size:19px}
+  #nav{gap:5px;padding-top:8px}
+  .navlink{font-size:12.5px;padding:6px 10px}
+  .navlink i{font-size:13px}
+  .screen{margin-top:14px}
+  .card{padding:13px 13px;margin-bottom:11px;border-radius:12px}
+  .card h2{font-size:15.5px}
+  .card h3{font-size:14px}
+  .btn{padding:8px 14px;font-size:13px}
+  .btn-mini{font-size:12px;padding:4px 9px}
+  .hero{padding:18px 16px 16px}
+  .hero h2{font-size:17px}
+  .hero .why{font-size:13px}
   .flow{grid-template-columns:repeat(5,1fr);gap:5px}
   .flow span{font-size:11.5px}.flow i{display:none}
   .modes{grid-template-columns:1fr}
+  .mode{padding:13px 14px}
+  .mode h3{font-size:14.5px}
+  .mode p{font-size:12px}
   .grid2{grid-template-columns:1fr}
-  .hero{padding:20px 16px}
-  .hero h2{font-size:18.5px}
-  .card{padding:15px 15px}
-  .rail .n{min-width:0;flex:1;justify-content:center;padding:6px 4px;font-size:11px}
+  .rail .n{min-width:0;flex:1;justify-content:center;padding:5px 6px;font-size:11px}
   .rail .n span{display:none}
-  .inp{width:110px}
-  .hint{min-width:100%}
+  .step-hd h2{font-size:15px}
+  .step-hd p{font-size:11.5px}
+  .stem{font-size:14px;line-height:1.8}
+  .ask{font-size:14px}
+  .opt{font-size:13.5px;padding:9px 12px}
+  .opt .why{font-size:12.2px}
+  .field{font-size:13.5px}
+  .inp{width:110px;font-size:14px;padding:7px 10px}
+  .fb{font-size:13px;padding:10px 12px}
+  .sol ol,.sol ul{font-size:13px}
+  .sol .tip{font-size:12.5px}
+  .hint{min-width:100%;font-size:12px;padding:8px 10px}
+  .small{font-size:12.5px}
+  .tiny{font-size:11.5px}
+  .tag,.tag-soft{font-size:11.5px}
+  .kv{font-size:13px}
+  .empty{font-size:13px;padding:22px 12px}
+  .modal{padding:16px 16px}
+  .modal h3{font-size:15px}
+  .toast{font-size:12.5px}
 }
 @media print{
   #nav,.appbar,.btn,.hints{display:none!important}
