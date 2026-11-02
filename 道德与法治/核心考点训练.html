@@ -50,6 +50,18 @@ header{position:sticky;top:0;z-index:20;background:rgba(246,244,239,.94);backdro
 .prog{height:4px;background:var(--line);border-radius:9px;overflow:hidden;margin:8px 0 0}
 .prog>i{display:block;height:100%;background:var(--acc);width:0;transition:width .25s}
 
+/* ---------- 续练提示（退出/刷新后回到上次位置） ---------- */
+.resume{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:12px 0 0;padding:8px 12px;
+  border:1px solid var(--line);border-left:3px solid var(--acc);border-radius:0 10px 10px 0;
+  background:var(--acc-soft);font-size:13px;line-height:1.6;color:#1c4a5c}
+.resume b{color:var(--acc);font-weight:700}
+.resume .sp{flex:1}
+.resume .muted{color:var(--sub);font-size:12px}
+.resume .rbtns{display:flex;gap:6px;flex-wrap:wrap}
+.resume button{border:1px solid var(--line);background:#fff;border-radius:7px;padding:4px 11px;font-size:12.5px;color:var(--acc);cursor:pointer}
+.resume button:hover{border-color:var(--acc)}
+.resume button.p{background:var(--acc);border-color:var(--acc);color:#fff;font-weight:600}
+
 /* ---------- 卡片 ---------- */
 .card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--sh);padding:18px 18px 16px;margin-top:14px}
 .meta{display:flex;align-items:baseline;gap:10px;font-size:12px;color:var(--sub);line-height:1.6;margin-bottom:10px;word-break:break-word}
@@ -182,17 +194,60 @@ details.k .bd{padding:0 14px 14px}
 .scoreline b{font-size:22px;color:var(--acc);margin:0 3px}
 
 @media (max-width:520px){
-  .q{font-size:17.5px}
-  .card{padding:15px 13px 13px}
-  .brand b{font-size:15px}
-  .pill{padding:2px 9px}
-  .ubar .nm{flex-basis:150px}
+  /* 手机端整体小一档：正文 16→15px、题干 19→16.5px、行高 1.75→1.68，
+     顶栏/统计条/卡片一起收紧，一屏大约能多显示 15%–20% 的内容 */
+  body{font-size:15px;line-height:1.68}
+  .wrap{padding:0 12px 72px}
+  .hd{padding:8px 12px 0}
+  .brand b{font-size:14.5px}
+  .brand span{font-size:11.5px}
+  .tabs{gap:5px;padding:6px 0 7px}
   /* 六个标签尽量一屏放下，手机上不用横向滚才发现 ⑥ */
-  .tabs button{padding:6px 9px;font-size:13px}
-  .tabs{gap:5px}
-  .pstem{font-size:16px}
-  .ptbl{font-size:13px}
-  .ptbl td{padding:6px 8px}
+  .tabs button{padding:5px 9px;font-size:12.5px}
+  .bar{font-size:12px;gap:6px;margin:9px 0 2px}
+  .bar .row{gap:5px}
+  .pill{padding:2px 8px}
+  .pill b{font-size:13px}
+  .bar select{font-size:12.5px;padding:3px 7px;max-width:108px}
+  .bar select#fs{max-width:84px}
+  .linkbtn{font-size:12px;padding:3px 2px}
+  .prog{margin:6px 0 0}
+  .resume{margin-top:9px;padding:7px 10px;font-size:12.5px;gap:6px;border-radius:0 9px 9px 0}
+  .resume .sp{display:none}
+  .resume .rtext{flex:1 1 100%}
+  .resume .muted{font-size:11.5px}
+  .resume button{font-size:12px;padding:3px 8px}
+  .card{padding:13px 12px 12px;margin-top:10px}
+  .meta{font-size:11.5px;margin-bottom:8px}
+  .q{font-size:16.5px;line-height:1.55}
+  .q .tag{font-size:11px}
+  .ans{margin-top:11px;padding-top:10px}
+  .ans .ln{line-height:1.8}
+  .ans .lead{font-size:11.5px}
+  .warn{font-size:12.5px;line-height:1.6;padding:6px 10px}
+  table.tb{font-size:12.5px}
+  table.tb th{font-size:12px}
+  .bi{font-size:14px}
+  .opts{gap:7px;margin-top:11px}
+  .opts button{padding:9px 12px;font-size:14.5px}
+  .acts{gap:7px;margin-top:12px}
+  .btn{padding:8px 15px;font-size:14px}
+  .btn.sm{padding:5px 10px;font-size:12.5px}
+  .verdict{font-size:14px;padding:9px 12px}
+  .nav{font-size:12px;margin-top:11px}
+  .pstem{font-size:15px;line-height:1.7}
+  .ptbl{font-size:12.5px}
+  .ptbl td{padding:5px 7px}
+  .optrow{font-size:14px;padding:8px 11px}
+  .whyrow{font-size:13.2px;line-height:1.75}
+  .whysol{font-size:13.2px;line-height:1.8}
+  .scoreline{font-size:14px}
+  .scoreline b{font-size:20px}
+  .unitbox>h3{font-size:14px}
+  details.k>summary{font-size:14px;padding:9px 12px}
+  .searchbox{font-size:14px;padding:8px 12px}
+  .ubar .nm{flex-basis:140px}
+  .report ul{font-size:13px}
 }
 @media print{
   header,.tabs,.bar,.acts,.nav,.searchbox,.no-print{display:none!important}
@@ -220,6 +275,7 @@ details.k .bd{padding:0 14px 14px}
 <div class="wrap">
   <div class="bar" id="bar"></div>
   <div class="prog" id="prog" hidden><i></i></div>
+  <div class="resume" id="resume" hidden></div>
   <main id="stage"></main>
 </div>
 
@@ -253,6 +309,11 @@ const loose=s=>norm(s).replace(/[的地得了着和与及其之]/g,'');
    持久化
    ================================================================ */
 const SK='kss_v1_'+(DATA&&DATA.subject||'x');
+/* 续练会话单独存一个 key：不属于练习记录，系统「清空/导入记录」时一并重置 */
+const SSK='kss_sess_v1_'+(DATA&&DATA.subject||'x');
+const SCOPES=['all','star','weak','unseen'];
+const SESS_MODES=['recite','cloze','choice','wrong','list','paper'];
+const MODE_TXT={recite:'① 翻卡背',cloze:'② 填空闯',choice:'③ 四选一',wrong:'④ 错题强化',list:'⑤ 清单',paper:'⑥ 套卷'};
 let P=loadProg();
 function loadProg(){
   let d={cards:{},days:{},paper:{}};
@@ -262,6 +323,19 @@ function loadProg(){
   return d;
 }
 function saveProg(){ try{localStorage.setItem(SK,JSON.stringify(P));}catch(e){console.warn('保存失败',e);} }
+/* ---- 续练会话：记住"练到哪一张/哪一轮"，退出或刷新后能接着练 ---- */
+function saveSess(){
+  if(!DATA)return;
+  /* ⑤ 清单只是查看，不算"练到哪"：不覆盖上一次的练习位置 */
+  if(S.mode==='list')return;
+  const o={v:1,mode:S.mode,unit:S.unit,scope:S.scope,qi:S.qi,queue:S.queue.slice(),revealed:!!S.revealed,ts:Date.now()};
+  if(PAPER)o.paper={unit:S.paper.unit,range:S.paper.range,qi:S.paper.qi,queue:S.paper.queue.slice(),log:S.paper.log};
+  try{localStorage.setItem(SSK,JSON.stringify(o));}catch(e){/* 隐私模式等存不了就算了 */}
+}
+function loadSess(){
+  try{const raw=localStorage.getItem(SSK);if(!raw)return null;const o=JSON.parse(raw);return o&&o.v===1?o:null;}catch(e){return null;}
+}
+function clearSess(){try{localStorage.removeItem(SSK);}catch(e){}const el=$('#resume');if(el){el.hidden=true;el.innerHTML='';}}
 function rec(cardId,ok,mode,opts){
   const p=P.cards[cardId]||(P.cards[cardId]={seen:0,ok:0,wrong:0,streak:0,last:0,mode:''});
   p.seen++;p.last=Date.now();p.mode=mode||p.mode;
@@ -407,6 +481,7 @@ function renderBar(){
   $('#rst').onclick=()=>{
     if(!confirm('清空全部练习记录？（不可恢复，建议先「导出记录」）'))return;
     P={cards:{},days:{},paper:{}};saveProg();
+    clearSess();
     if(S.mode==='paper')buildPaper();
     S.qi=0;buildQueue();render();
   };
@@ -430,6 +505,7 @@ function importProg(){
         if(!d.cards)throw new Error('文件里没有 cards');
         if(!confirm(`导入后会用文件里的记录覆盖本机记录（文件里 ${Object.keys(d.cards).length} 张卡的记录）。继续？`))return;
         P={cards:d.cards||{},days:d.days||{},paper:d.paper||{}};saveProg();
+        clearSess();
         if(S.mode==='paper')buildPaper();
         S.qi=0;buildQueue();render();
       }catch(e){alert('导入失败：'+e.message);}
@@ -480,15 +556,21 @@ function render(){
   $$('#tabs button').forEach(b=>b.setAttribute('aria-selected',b.dataset.mode===S.mode));
   renderBar();setProg();
   const st=$('#stage');
-  if(S.mode==='list'){renderList(st);return;}
-  if(S.mode==='paper'){renderPaper(st);return;}
-  if(!S.queue.length){st.innerHTML=emptyHTML();renderNav(st);return;}
-  const c=CARD_BY(S.queue[S.qi]);
-  if(!c){st.innerHTML=emptyHTML();return;}
-  if(S.mode==='choice')renderChoice(st,c);
-  else if(S.mode==='cloze')renderCloze(st,c);
-  else renderRecite(st,c);
-  renderNav(st);
+  if(S.mode==='list')renderList(st);
+  else if(S.mode==='paper')renderPaper(st);
+  else if(!S.queue.length){st.innerHTML=emptyHTML();renderNav(st);}
+  else{
+    const c=CARD_BY(S.queue[S.qi]);
+    if(!c)st.innerHTML=emptyHTML();
+    else{
+      if(S.mode==='choice')renderChoice(st,c);
+      else if(S.mode==='cloze')renderCloze(st,c);
+      else renderRecite(st,c);
+      renderNav(st);
+    }
+  }
+  /* 每次状态变化都顺手记下位置：手机切走/刷新/被杀掉后能回到这里 */
+  saveSess();
 }
 function emptyHTML(){
   if(S.mode==='paper'){
@@ -628,7 +710,7 @@ function renderCloze(st,c){
   };
   inputs.forEach((inp,i)=>{
     inp.onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();if(S.scored)nextCard();else submit();}};
-    if(i===0)inp.focus({preventScroll:true});
+    if(i===0&&!BOOTING)inp.focus({preventScroll:true});
   });
 }
 
@@ -1028,6 +1110,85 @@ function pickOf(id){
 }
 
 /* ================================================================
+   续练：启动时恢复上次位置 + 顶部提示条
+   ================================================================ */
+let RESUME=null;
+let BOOTING=false;
+const clampQi=(q,n)=>Math.max(0,Math.min(n-1,Number.isFinite(+q)?+q:0));
+function applySess(o){
+  if(!o||o.v!==1||SESS_MODES.indexOf(o.mode)<0)return false;
+  const mode=o.mode;
+  const unit=(o.unit==='全部'||UNITS.indexOf(o.unit)>=0)?o.unit:'全部';
+  const scope=SCOPES.indexOf(o.scope)>=0?o.scope:'all';
+  /* ⑥ 套卷：队列+本轮作答记录都恢复，做了一半的卷子接着做 */
+  if(mode==='paper'){
+    if(!PAPER||!o.paper)return false;
+    const ids=(o.paper.queue||[]).filter(id=>PQ_BY(id));
+    if(!ids.length)return false;
+    S.mode='paper';
+    S.paper.unit=(o.paper.unit==='全部'||PUNITS.indexOf(o.paper.unit)>=0)?o.paper.unit:'全部';
+    S.paper.range=['seq','round','weak','unseen'].indexOf(o.paper.range)>=0?o.paper.range:'seq';
+    S.paper.queue=ids;
+    S.paper.qi=clampQi(o.paper.qi,ids.length);
+    S.paper.log=(o.paper.log&&typeof o.paper.log==='object')?o.paper.log:{};
+    RESUME={mode,pos:S.paper.qi+1,total:ids.length,ts:+o.ts||0,unit:S.paper.unit,scope:''};
+    return true;
+  }
+  /* ⑤ 清单没有"第几题"，只恢复筛选，不弹续练条 */
+  if(mode==='list'){
+    S.mode='list';S.unit=unit;S.scope=scope;
+    return true;
+  }
+  let ids=(o.queue||[]).filter(id=>CARD_BY(id));
+  if(mode==='cloze'||mode==='choice')ids=ids.filter(id=>hasBlanks(CARD_BY(id)));
+  if(!ids.length)return false;
+  S.mode=mode;S.unit=unit;S.scope=scope;
+  S.queue=ids;S.qi=clampQi(o.qi,ids.length);
+  S.revealed=(mode==='recite')?!!o.revealed:false;
+  S.scored=false;S.choice=null;S.cur=null;
+  /* 只有确实"练到一半"才提示；刚打开、默认第 1 题不打扰 */
+  if(S.qi>0||mode!=='recite'||unit!=='全部'||scope!=='all'){
+    RESUME={mode,pos:S.qi+1,total:ids.length,ts:+o.ts||0,unit,scope};
+  }
+  return true;
+}
+function fmtWhen(ts){
+  if(!ts)return '';
+  const d=new Date(ts),now=new Date();
+  const hm=String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
+  const day0=x=>new Date(x.getFullYear(),x.getMonth(),x.getDate()).getTime();
+  if(day0(d)===day0(now))return '今天 '+hm;
+  if(day0(now)-day0(d)===86400000)return '昨天 '+hm;
+  return (d.getMonth()+1)+'月'+d.getDate()+'日 '+hm;
+}
+function hideResume(){
+  RESUME=null;
+  const el=$('#resume');
+  if(el){el.hidden=true;el.innerHTML='';}
+}
+function showResumeBar(){
+  const el=$('#resume');
+  if(!el||!RESUME)return;
+  const r=RESUME;
+  const what=r.mode==='paper'
+    ? `⑥ 套卷${r.unit&&r.unit!=='全部'?' · '+esc(r.unit):''}`
+    : `${MODE_TXT[r.mode]||r.mode}${r.scope&&r.scope!=='all'?' · '+esc(SCOPE_TXT[r.scope]||''):''}${r.unit&&r.unit!=='全部'?' · '+esc(r.unit):''}`;
+  el.innerHTML=`<span class="rtext">上次练到：<b>${what}</b> · 第 <b>${r.pos}/${r.total}</b> 题`+
+    `${r.ts?` <span class="muted">（${esc(fmtWhen(r.ts))}）</span>`:''}</span>`+
+    `<span class="sp"></span>`+
+    `<span class="rbtns"><button id="rgo" class="p" title="留在上次的位置">接着练</button>`+
+    `<button id="rnew" title="从这一轮第 1 题重新开始">从头开始</button></span>`;
+  el.hidden=false;
+  $('#rgo',el).onclick=hideResume;
+  $('#rnew',el).onclick=()=>{
+    hideResume();
+    if(S.mode==='paper'){S.paper.qi=0;S.paper.log={};}
+    else{S.qi=0;S.revealed=false;S.scored=false;S.choice=null;}
+    render();scrollTop();
+  };
+}
+
+/* ================================================================
    启动
    ================================================================ */
 function boot(){
@@ -1047,11 +1208,19 @@ function boot(){
   }
   $$('#tabs button').forEach(b=>b.onclick=()=>{
     if(b.dataset.mode===S.mode)return;
+    hideResume();
     S.mode=b.dataset.mode;S.qi=0;S.revealed=false;S.scored=false;S.cur=null;S.choice=null;
     if(S.mode==='paper')buildPaper();
     buildQueue();render();scrollTop();
   });
-  buildQueue();render();
+  /* 上次练到一半就接着上次；否则正常开新一轮 */
+  BOOTING=true;
+  const restored=applySess(loadSess());
+  if(!restored)buildQueue();
+  render();
+  BOOTING=false;
+  if(RESUME)showResumeBar();
+  window.addEventListener('pagehide',saveSess);
   document.addEventListener('keydown',e=>{
     if(e.target.matches('input,select,textarea'))return;
     if(S.mode==='paper'){

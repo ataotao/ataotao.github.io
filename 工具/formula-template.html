@@ -188,15 +188,56 @@ details.k .bd{padding:0 14px 14px}
 .maskhint{background:#fff8e8;border:1px dashed #e6cf9d;border-radius:9px;padding:8px 12px;font-size:13px;color:#8a5a10;line-height:1.7;margin:10px 0 0}
 
 @media (max-width:520px){
-  .q{font-size:17.5px}
-  .card{padding:15px 13px 13px}
-  .brand b{font-size:15px}
-  .pill{padding:2px 9px}
+  /* 手机端整体小一档：正文 16→15px、卡片标题 19→16.5px、公式 17→16px 起，
+     顶栏/统计条/卡片一起收紧，一屏大约能多显示 15%–20% 的内容 */
+  body{font-size:15px;line-height:1.68}
+  .wrap{padding:0 12px 72px}
+  .hd{padding:8px 12px 0}
+  .brand b{font-size:14.5px}
+  .brand span{font-size:11.5px}
+  .tabs{flex-wrap:wrap;overflow:visible;gap:4px;padding:6px 0 7px}
+  .tabs button{font-size:12px;padding:5px 8px}
+  .bar{font-size:12px;gap:6px;margin:9px 0 2px}
+  .bar .row{gap:5px}
+  .pill{padding:2px 8px}
+  .pill b{font-size:13px}
+  .bar select{font-size:12.5px;padding:3px 7px;max-width:96px}
+  .bar select#fs{max-width:96px}
+  .linkbtn{font-size:12px;padding:3px 2px}
+  .prog{margin:6px 0 0}
+  .card{padding:13px 12px 12px;margin-top:10px}
+  .meta{font-size:11.5px;margin-bottom:8px}
+  .q{font-size:16.5px;line-height:1.5}
+  .lead{font-size:12.5px;margin-bottom:9px}
+  .ans{margin-top:11px;padding-top:10px}
+  .fx{padding:11px 7px;font-size:clamp(16px,4.2vw,24px);line-height:1.95}
+  .fx.sm{font-size:clamp(15.5px,3.4vw,20px);line-height:1.85;padding:8px 7px}
+  .fixlist{font-size:12.5px;line-height:2}
+  .tipbox{font-size:13px;line-height:1.65;padding:7px 10px}
+  .trapbox{font-size:12.8px;line-height:1.65;padding:7px 10px}
+  .whybox summary{font-size:12.5px}
+  .whybox .bd{font-size:12.8px;line-height:1.7}
+  .steps .grp{font-size:12px;margin:11px 0 5px}
+  .st .nt{font-size:12px;line-height:1.6}
+  .opts{gap:7px;margin-top:11px}
+  .opts button{font-size:14.5px;padding:9px 12px;line-height:1.6}
+  .acts{gap:7px;margin-top:12px}
+  .btn{padding:8px 15px;font-size:14px}
+  .btn.sm{padding:5px 10px;font-size:12.5px}
+  .verdict{font-size:14px;padding:9px 12px}
+  .nav{font-size:12px;margin-top:11px}
+  .todaybox{padding:11px 12px 8px}
+  .todaybox h3{font-size:14px}
+  .tlh .nm{font-size:13.5px}
+  .tl .fx{font-size:clamp(14.5px,3.6vw,18px)}
+  .tl .steps .fx{font-size:clamp(13.5px,3.3vw,17px)}
+  .unitbox>h3{font-size:14px}
+  details.k>summary{font-size:14px;padding:9px 12px}
+  .searchbox{font-size:14px;padding:8px 12px}
   .ubar .nm{flex-basis:120px}
-  .opts button{font-size:15px}
-  .tabs{flex-wrap:wrap;overflow:visible}
-  .tabs button{font-size:13px;padding:6px 11px}
-  .fx{padding:12px 8px}
+  .report ul{font-size:13px}
+  .hint{font-size:11.5px}
+  .empty{font-size:14px;padding:36px 10px}
 }
 @media print{
   header,.tabs,.bar,.acts,.nav,.searchbox,.tabs+.prog{display:none!important}

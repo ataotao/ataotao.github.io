@@ -273,6 +273,43 @@ const CASES = {
       ok('清空后套卷统计归零', P.paper && Object.keys(P.paper).length===0);
     }
   `,
+  resume: `
+    // ---- 续练会话：退出/刷新后能回到上次位置 ----
+    S.mode='cloze';S.unit='全部';S.scope='all';buildQueue();
+    S.qi=Math.min(2,S.queue.length-1);S.revealed=false;render();
+    const raw=localStorage.getItem(SSK);
+    ok('会话写入 localStorage', !!raw, raw?'v1':'空');
+    const o=JSON.parse(raw);
+    ok('会话记住模式/位置/队列', o.mode==='cloze'&&o.qi===S.qi&&o.queue.length===S.queue.length, o.mode+' '+o.qi+'/'+o.queue.length);
+    const wantId=S.queue[S.qi];
+    // 模拟刷新：状态清空后按会话恢复
+    S.mode='recite';S.qi=0;S.revealed=false;
+    ok('能恢复上次位置', !!applySess(o) && S.mode==='cloze' && S.queue[S.qi]===wantId, S.mode+' '+S.qi);
+    ok('续练提示数据正确', !!RESUME && RESUME.pos===S.qi+1 && RESUME.total===S.queue.length, JSON.stringify(RESUME));
+    showResumeBar();
+    const rb=document.querySelector('#resume');
+    ok('续练提示显示出来', !!rb && rb.hidden===false && /上次练到/.test(rb.textContent), rb&&rb.textContent.trim().slice(0,40));
+    document.querySelector('#rnew').click();
+    ok('「从头开始」回到第 1 题', S.qi===0 && document.querySelector('#resume').hidden===true, 'qi='+S.qi);
+    // 坏会话不能把页面搞崩（队列里的卡 id 都不存在）
+    S.mode='recite';S.qi=0;
+    ok('无效队列安全回退', applySess({v:1,mode:'recite',qi:5,queue:['不存在']})===false && S.qi===0);
+    // ---- ⑥ 套卷：做了一半退出也要接着做（含本轮已答记录）----
+    if(DATA.paper){
+      document.querySelector('#tabPaper').click();
+      const q0=PQ_BY(S.paper.queue[0]);
+      $$('#opts button')[q0.ans].click();
+      document.querySelector('#pnx').click();
+      const raw2=JSON.parse(localStorage.getItem(SSK));
+      ok('套卷会话保存位置和本轮作答', raw2.mode==='paper' && raw2.paper.qi===1 && Object.keys(raw2.paper.log).length===1, raw2.mode+' '+raw2.paper.qi+' '+Object.keys(raw2.paper.log).length);
+      S.paper.queue=[];S.paper.qi=0;S.paper.log={};S.mode='recite';
+      ok('套卷能恢复到原题', !!applySess(raw2) && S.mode==='paper' && S.paper.qi===1, S.mode+' '+S.paper.qi);
+      render();
+      ok('恢复后停在原题', !!document.querySelector('.pstem') && S.paper.qi===1);
+      document.querySelector('#pv').click();
+      ok('恢复后已答题仍有解析', $$('.whyrow').length===4, $$('.whyrow').length+' 条');
+    }
+  `,
 };
 
 function runCase(name, body) {
