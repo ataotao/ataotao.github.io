@@ -1,0 +1,304 @@
+{
+  "unit": "U4",
+  "title": "九上 U4 过关卷",
+  "header": {
+    "class": null,
+    "name": null,
+    "id": null
+  },
+  "items": [
+    {
+      "no": 1,
+      "kind": "fill",
+      "stem": "This lecture shows teenagers the harm of being a ______ to the Internet.",
+      "cn": null,
+      "options": null,
+      "marked": null,
+      "handwriting": null,
+      "note": "大题「一、单词拼写」第1题；横线空白，未见作答；卷面无班级/姓名/学号栏"
+    },
+    {
+      "no": 2,
+      "kind": "fill",
+      "stem": "If you are under too much p______, you can listen to music to relax yourself.",
+      "cn": null,
+      "options": null,
+      "marked": null,
+      "handwriting": [
+        "ressure"
+      ],
+      "note": "大题「一、单词拼写」第2题；卷面已印首字母 p，横线上手写 ressu(re)，完整单词为 pressure"
+    },
+    {
+      "no": 3,
+      "kind": "mc",
+      "stem": "If you don't know how to ______ the problem, you can turn to you teacher.",
+      "cn": null,
+      "options": [
+        {
+          "k": "A",
+          "t": "think about"
+        },
+        {
+          "k": "B",
+          "t": "deal with"
+        },
+        {
+          "k": "C",
+          "t": "pay attention to"
+        },
+        {
+          "k": "D",
+          "t": "come up with"
+        }
+      ],
+      "marked": "B",
+      "handwriting": null,
+      "note": "大题「二、单项选择」第1题；左侧页边手写字母 B；卷面印作 you teacher（疑漏印 your 的 r）"
+    },
+    {
+      "no": 4,
+      "kind": "mc",
+      "stem": "Though the girl had trouble in hearing, she managed ______ a college degree.",
+      "cn": null,
+      "options": [
+        {
+          "k": "A",
+          "t": "to get"
+        },
+        {
+          "k": "B",
+          "t": "getting"
+        },
+        {
+          "k": "C",
+          "t": "to getting"
+        },
+        {
+          "k": "D",
+          "t": "got"
+        }
+      ],
+      "marked": "A",
+      "handwriting": null,
+      "note": "大题「二、单项选择」第2题；左侧页边手写字母 A"
+    },
+    {
+      "no": 5,
+      "kind": "mc",
+      "stem": "It is kind ______ him ______ to me and give me so much advice to solve the problems.",
+      "cn": null,
+      "options": [
+        {
+          "k": "A",
+          "t": "for; listening"
+        },
+        {
+          "k": "B",
+          "t": "of; listening"
+        },
+        {
+          "k": "C",
+          "t": "for; to listen"
+        },
+        {
+          "k": "D",
+          "t": "of; to listen"
+        }
+      ],
+      "marked": "C",
+      "handwriting": null,
+      "note": "大题「二、单项选择」第3题；左侧页边手写字母 C"
+    },
+    {
+      "no": 6,
+      "kind": "mc",
+      "stem": "With my parents' help, I can focus more ______ my schoolwork.",
+      "cn": null,
+      "options": [
+        {
+          "k": "A",
+          "t": "at"
+        },
+        {
+          "k": "B",
+          "t": "in"
+        },
+        {
+          "k": "C",
+          "t": "for"
+        },
+        {
+          "k": "D",
+          "t": "on"
+        }
+      ],
+      "marked": "D",
+      "handwriting": null,
+      "note": "大题「二、单项选择」第4题；左侧页边手写字母 D"
+    },
+    {
+      "no": 7,
+      "kind": "mc",
+      "stem": "Too much ______ is bad for health. We should learn to relax ourselves in daily life.",
+      "cn": null,
+      "options": [
+        {
+          "k": "A",
+          "t": "noise"
+        },
+        {
+          "k": "B",
+          "t": "danger"
+        },
+        {
+          "k": "C",
+          "t": "pressure"
+        },
+        {
+          "k": "D",
+          "t": "attention"
+        }
+      ],
+      "marked": "C",
+      "handwriting": null,
+      "note": "大题「二、单项选择」第5题；左侧页边手写字母 C"
+    },
+    {
+      "no": 8,
+      "kind": "mc",
+      "stem": "Lots of young people get addicted ______ short videos, which takes up most of their spare time.",
+      "cn": null,
+      "options": [
+        {
+          "k": "A",
+          "t": "watch"
+        },
+        {
+          "k": "B",
+          "t": "watching"
+        },
+        {
+          "k": "C",
+          "t": "to watch"
+        },
+        {
+          "k": "D",
+          "t": "to watching"
+        }
+      ],
+      "marked": "D",
+      "handwriting": null,
+      "note": "大题「二、单项选择」第6题；左侧页边手写字母 D"
+    },
+    {
+      "no": 9,
+      "kind": "fill",
+      "stem": "Don't touch my books, or you will ______ ______ ______.",
+      "cn": "别碰我的书，不然你会把它们弄乱。",
+      "options": null,
+      "marked": null,
+      "handwriting": [
+        "mess",
+        "them",
+        "up"
+      ],
+      "note": "大题「三、完成句子」第1题；三条横线依次手写 mess / them / up"
+    },
+    {
+      "no": 10,
+      "kind": "fill",
+      "stem": "Lily ______ ______ ______ ______ ______ going to bed early.",
+      "cn": "莉莉有早睡的好习惯。",
+      "options": null,
+      "marked": null,
+      "handwriting": [
+        "has",
+        "a",
+        "good",
+        "habit",
+        "of"
+      ],
+      "note": "大题「三、完成句子」第2题；手写依次 has / a / good / habit of，habit 连笔形似 hodif，按语义读作 habit 卷面为 5 段横线，学生手写 has/a/good/habit/of 分置五空。"
+    },
+    {
+      "no": 11,
+      "kind": "fill",
+      "stem": "It's not wise to just go ______ ______ ______ to lose weight.",
+      "cn": "仅仅依靠节食来减肥是不明智的。",
+      "options": null,
+      "marked": null,
+      "handwriting": [
+        "on",
+        "a",
+        "diet"
+      ],
+      "note": "大题「三、完成句子」第3题；三条横线依次手写 on / a / diet"
+    },
+    {
+      "no": 12,
+      "kind": "fill",
+      "stem": "I am writing an email to my teacher to ______ him ______ ______.",
+      "cn": "我正在给我的老师写邮件，向他寻求建议。",
+      "options": null,
+      "marked": null,
+      "handwriting": [
+        "ask",
+        "advice",
+        "from"
+      ],
+      "note": "大题「三、完成句子」第4题；第二条横线手写 advice from（语序/介词有误，正确应为 for advice） 卷面为 3 段横线，学生手写 ask/advice/from 分置三空（语序、介词均有误）。"
+    },
+    {
+      "no": 13,
+      "kind": "fill",
+      "stem": "She is ______ ______ ______ ______ the School Food Festival.",
+      "cn": "她负责组织本次校园美食节。",
+      "options": null,
+      "marked": null,
+      "handwriting": [
+        "in",
+        "charge",
+        "of",
+        "t."
+      ],
+      "note": "卷面为 4 段横线；学生手写 in/charge/of，第 4 空写「t.」（疑为 to organize 未写完）。"
+    },
+    {
+      "no": 14,
+      "kind": "fill",
+      "stem": "他经常在敬老院帮忙。（S+A+V+A）",
+      "cn": "句型翻译：按括号内要求的句型结构翻译句子",
+      "options": null,
+      "marked": null,
+      "handwriting": [
+        "He often helps in the old people's home."
+      ],
+      "note": "大题「6. 句型翻译」第(1)题；手写作 He often helps in the old people's home."
+    },
+    {
+      "no": 15,
+      "kind": "fill",
+      "stem": "简的演讲让我激动。（S+V+O+C）",
+      "cn": "句型翻译：按括号内要求的句型结构翻译句子",
+      "options": null,
+      "marked": null,
+      "handwriting": [
+        "Jane's speech makes me excited."
+      ],
+      "note": "大题「6. 句型翻译」第(2)题；手写作 Jane's speech makes me excited."
+    },
+    {
+      "no": 16,
+      "kind": "fill",
+      "stem": "上周末，我给我爸爸买了一些茶叶。（S+V+IO+DO+A）",
+      "cn": "句型翻译：按括号内要求的句型结构翻译句子",
+      "options": null,
+      "marked": null,
+      "handwriting": [
+        "I bought my father some tea last weekend."
+      ],
+      "note": "大题「6. 句型翻译」第(3)题；手写作 I bought my father some tea last weekend."
+    }
+  ]
+}

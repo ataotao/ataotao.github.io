@@ -720,7 +720,7 @@ def cmd_verify(args):
         d = read_json(f)
         ps = d['packs'] if isinstance(d, dict) and 'packs' in d else d
         for p in ps:
-            n_score, n_kp, total = 0, 0, 0
+            n_score, n_kp, n_fm, total = 0, 0, 0, 0
             for q in p['questions']:
                 no = q.get('no', '?')
                 s = q.get('score')
@@ -738,6 +738,17 @@ def cmd_verify(args):
                         print('✗ %s 第 %s 题：kp 必须是非空字符串数组' % (p.get('id'), no))
                     else:
                         n_kp += 1
+                fm = q.get('formula')
+                if fm is not None:
+                    if not (isinstance(fm, str) and fm.strip()):
+                        ok = False
+                        print('✗ %s 第 %s 题：formula 必须是非空字符串（应用公式）' % (p.get('id'), no))
+                    elif len(fm) > 400:
+                        n_fm += 1
+                        print('· %s 第 %s 题：formula 有 %d 字，解析页会显得很长，建议精简'
+                              % (p.get('id'), no, len(fm)))
+                    else:
+                        n_fm += 1
                 st = q.get('steps')
                 if st and s is not None:
                     pts = sum((x.get('pt') or 0) for x in st)
@@ -759,9 +770,9 @@ def cmd_verify(args):
                     elif '<script' in fg['svg'].lower():
                         ok = False
                         print('✗ %s 第 %s 题：fig.svg 里不能有 script' % (p.get('id'), no))
-            print('  %-20s 分值 %2d/%2d 题（合计 %s）　知识点 %2d 题'
+            print('  %-20s 分值 %2d/%2d 题（合计 %s）　知识点 %2d 题　公式 %2d 题'
                   % (p.get('id'), n_score, len(p['questions']),
-                     fmt_num(total) if n_score else '—', n_kp))
+                     fmt_num(total) if n_score else '—', n_kp, n_fm))
     # 闪练题库
     if os.path.exists(DRILLS_JSON):
         try:

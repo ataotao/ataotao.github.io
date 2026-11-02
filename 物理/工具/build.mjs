@@ -138,6 +138,15 @@ for (const p of usedPacks) {
     }
     if (!q.solution && !q.ansImg) warn(wt + '：没有 solution 也没有 ansImg，学生看不到答案');
     if (!q.ask) warn(wt + '：缺少 ask 文本（搜索/复习列表会显示为空）');
+    /* 考点 / 公式：解析区专门有一块，缺了不算错，但学生看到的内容会少一截 */
+    if (!q.point) warn(wt + '：缺少 point（考点），解析区会少一块');
+    else if (typeof q.point !== 'string') err(wt + '：point 必须是字符串');
+    if (!Array.isArray(q.formulas)) warn(wt + '：缺少 formulas（应用公式），解析区只有考点没有式子');
+    else q.formulas.forEach((f, i) => {
+      const ft = wt + ' formulas 第' + (i + 1) + '条';
+      if (!f || typeof f.f !== 'string' || !f.f.trim()) err(ft + '：缺 f（公式文本）');
+      if (f && f.m !== undefined && typeof f.m !== 'string') err(ft + '：m（怎么用）必须是字符串');
+    });
   }
 }
 function imgExistsCheck(v) { return !!v; }

@@ -33,6 +33,7 @@ function isPending(sol) {
 
 let total = 0, choiceN = 0, fillN = 0, selfN = 0;
 let withAnsImg = 0, noAnsImg = 0, pending = 0;
+let pointN = 0, formulaN = 0;   // 解析区「考点 / 应用公式」的覆盖情况
 const cLevel = [];   // 需要人工看一眼的题
 const bLevel = [];   // 有答案图但数值靠人工从图上转录
 const packRows = [];
@@ -48,6 +49,8 @@ for (const pk of packs) {
     else { fillN++; f++; }
     if (aiHave) withAnsImg++; else noAnsImg++;
     if (isPending(q.solution)) pending++;
+    if (q.point) pointN++;
+    if (Array.isArray(q.formulas) && q.formulas.some(x => x && String(x.f || '').trim())) formulaN++;
     if (q.type !== 'choice' && aiHave && q.fields && q.fields.length) {
       bLevel.push({ pack: pk.id, no: q.no, id: q.id, what: '数值字段是人从原卷答案图转录的（建议抽看 1 题对图）' });
     }
@@ -81,6 +84,8 @@ p('| 自评题（画图/说理，不判分） | ' + selfN + ' |');
 p('| **非选择题有原卷答案图可对照** | **' + withAnsImg + ' / ' + (fillN + selfN) + ' 题（100%）** |');
 p('| 选择题（答案来自答案表，不需要答案图） | ' + choiceN + ' 题 |');
 p('| 解析仍为占位（待补） | ' + pending + ' 题 |');
+p('| 解析区已标「考点」（point） | ' + pointN + ' / ' + total + ' 题 |');
+p('| 解析区已标「应用公式」（formulas，画图/概念题可留空） | ' + formulaN + ' / ' + total + ' 题 |');
 p('| 概念卡（AI 归纳初稿） | ' + concepts.length + ' 张 |');
 p('| 五步母题（AI 设计，数值已与题包对拍） | ' + guided.length + ' 组 |');
 p('');
