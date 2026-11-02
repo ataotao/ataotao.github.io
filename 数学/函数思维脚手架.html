@@ -247,6 +247,27 @@ code{font-family:ui-monospace,Consolas,monospace;background:#f2efe8;padding:1px 
 .sol{font-size:14.5px;line-height:1.9}
 .sol li{margin:7px 0}
 .sol .key{background:#f7f5f0;border-radius:9px;padding:10px 13px;font-size:13.5px;margin-top:12px;border-left:3px solid var(--brand)}
+/* 考点 · 应用公式（试卷解析页顶部的重点块，文字比正文大一档加粗） */
+.exkp{margin-top:14px;padding:13px 16px 15px;border-radius:12px;background:#f4faf7;
+  border:1px solid #cfe4da;border-left:5px solid var(--brand)}
+.exkp-hd{font-size:13.5px;font-weight:800;color:var(--brand-d);letter-spacing:.04em;margin-bottom:9px;
+  display:flex;align-items:center;gap:7px}
+.exkp-hd::before{content:"◆";font-size:11px;color:var(--brand)}
+.exkp-row{display:flex;gap:10px;align-items:flex-start}
+.exkp-row+.exkp-row{margin-top:11px;padding-top:11px;border-top:1px dashed #cfe4da}
+.exkp-lab{flex:0 0 auto;font-size:12.5px;font-weight:700;color:#fff;background:var(--brand);
+  padding:2px 10px;border-radius:99px;line-height:1.75;white-space:nowrap;margin-top:2px}
+.exkp-chips{display:flex;flex-wrap:wrap;gap:7px}
+.exkp-chips i{font-style:normal;font-size:15px;font-weight:700;color:var(--ink);background:#fff;
+  border:1px solid #cfe4da;border-radius:8px;padding:3px 11px;line-height:1.6}
+.exkp-fm{display:flex;flex-direction:column;gap:5px}
+.exkp-fm span{display:block;font-size:16px;font-weight:700;line-height:1.75;color:#12202c;
+  font-variant-numeric:tabular-nums;letter-spacing:.01em}
+@media (max-width:700px){
+  .exkp{padding:11px 12px 13px}
+  .exkp-chips i{font-size:14px;padding:2px 9px}
+  .exkp-fm span{font-size:15px}
+}
 
 /* 变式 */
 details.var{border:1px solid var(--line);border-radius:11px;padding:11px 14px;background:#fdfcf9;margin-top:8px}
@@ -1377,6 +1398,11 @@ var PACKS = [
         "no": "1",
         "group": "选择",
         "type": "choice",
+        "kp": [
+          "函数与图象",
+          "反比例函数"
+        ],
+        "formula": "y = k/x（k ≠ 0）：分母是一次 x、分子为常数",
         "diff": 1,
         "focus": "trans",
         "ask": "下列函数中，y 是关于 x 的反比例函数的是（　）",
@@ -1398,6 +1424,11 @@ var PACKS = [
         "no": "2",
         "group": "选择",
         "type": "choice",
+        "kp": [
+          "函数与图象",
+          "反比例函数"
+        ],
+        "formula": "k = xy：k = 1 × (−3) = −3",
         "diff": 1,
         "focus": "model",
         "ask": "若点 (1, -3) 在反比例函数 y = k/x 的图象上，则 k 的值是（　）",
@@ -1419,6 +1450,11 @@ var PACKS = [
         "no": "3",
         "group": "选择",
         "type": "choice",
+        "kp": [
+          "函数与图象",
+          "反比例函数"
+        ],
+        "formula": "k > 0 ⟹ 每一支上 y 随 x 增大而减小；k < 0 ⟹ 每一支上 y 随 x 增大而增大\n2m + 3 < 0 ⟹ m < −3/2",
         "diff": 2,
         "focus": "graph",
         "ask": "已知反比例函数 y = (2m + 3)/x，当 x > 0 时，y 随 x 的增大而增大，那么 m 的取值范围是（　）",
@@ -1441,6 +1477,12 @@ var PACKS = [
         "no": "4",
         "group": "选择",
         "type": "choice",
+        "kp": [
+          "函数与图象",
+          "反比例函数",
+          "综合与实践"
+        ],
+        "formula": "V = Sh ⟹ S = V/h（V 为定值）\nS > 0、h > 0 ⟹ 图象只在第一象限的一支",
         "diff": 2,
         "focus": "graph",
         "ask": "某工厂建一个容积 V(m³) 一定的污水处理池，池的底面积 S(m²) 与其深度 h(m) 满足 V = Sh（V≠0），则 S 关于 h 的函数图象大致是（　）",
@@ -1515,6 +1557,12 @@ var PACKS = [
         "no": "5",
         "group": "选择",
         "type": "choice",
+        "kp": [
+          "函数与图象",
+          "反比例函数",
+          "图形的变换"
+        ],
+        "formula": "平行四边形 OA ∥ CB 且 OA = CB ⟹ A = O + (B − C) = (−2, −3)\nk = xy = (−2) × (−3) = 6 ⟹ y = 6/x",
         "diff": 2,
         "focus": "trans",
         "ask": "如图，B(3, -3)，C(5, 0)，以 OC、CB 为边作平行四边形 OABC，则经过点 A 的反比例函数的解析式为（　）",
@@ -1537,6 +1585,11 @@ var PACKS = [
         "no": "6",
         "group": "选择",
         "type": "choice",
+        "kp": [
+          "函数与图象",
+          "反比例函数"
+        ],
+        "formula": "先按象限定符号：x < 0 ⟹ y < 0；x > 0 ⟹ y > 0\n同一支上 k > 0 ⟹ x 越大 y 越小：x₁ < x₂ ⟹ y₁ > y₂",
         "diff": 2,
         "focus": "graph",
         "ask": "双曲线 y = 1/x 上有三个点 (x₁,y₁)、(x₂,y₂)、(x₃,y₃)，其中 x₁ < x₂ < 0 < x₃，则 y₁、y₂、y₃ 的大小关系是（　）",
@@ -1560,6 +1613,11 @@ var PACKS = [
         "no": "7",
         "group": "选择",
         "type": "choice",
+        "kp": [
+          "函数与图象",
+          "反比例函数"
+        ],
+        "formula": "交点 ⟹ 联立；k = xy 先补出 B(−2, −1)，直线 y = x + 1\n不等式 ax + b ≥ k/x 看图：直线在双曲线上方的 x 范围\n注意 x < 0 时两边乘 x 要变号",
         "diff": 3,
         "focus": "model",
         "ask": "如图，一次函数 y = ax + b 与反比例函数 y = k/x 的图象交于点 A(1, 2)、B(m, -1)，则 ax + b ≥ k/x 的解集是（　）",
@@ -1584,6 +1642,12 @@ var PACKS = [
         "no": "8",
         "group": "选择",
         "type": "choice",
+        "kp": [
+          "函数与图象",
+          "反比例函数",
+          "几何综合"
+        ],
+        "formula": "设 C(a, 1/a)；AC ∥ y 轴 ⟹ AC = 3/a − 1/a = 2/a\nBC ∥ x 轴 ⟹ BC = 3a − a = 2a；AC = BC ⟹ a = 1\nAB = √((Δx)² + (Δy)²)",
         "diff": 3,
         "focus": "plan",
         "ask": "如图，点 A、B 在双曲线 y = 3/x（x>0）上，点 C 在双曲线 y = 1/x（x>0）上。若 AC ∥ y 轴，BC ∥ x 轴，且 AC = BC，则 AB 的长为（　）",
@@ -1607,9 +1671,22 @@ var PACKS = [
         "no": "9",
         "group": "选择",
         "type": "choice",
+        "kp": [
+          "函数与图象",
+          "反比例函数",
+          "综合与实践"
+        ],
+        "formula": "y = k/x 过 (10, 80) ⟹ k = 800，y = 800/x\n不拥堵 ⟺ y ≥ 20 ⟹ 800/x ≥ 20 ⟹ x ≤ 40（x > 0，乘 x 不变号）",
         "diff": 2,
         "focus": "trans",
         "ask": "某段高架桥上车辆的行驶速度 y（千米/时）与每百米拥有车的数量 x（辆）的关系如图：当 x ≥ 10 时，y 与 x 成反比例。当行驶速度低于 20 千米/时时交通拥堵，为避免拥堵，x 应满足的范围是（　）",
+        "opts": [
+          "x ≤ 40",
+          "x ≥ 40",
+          "x > 40",
+          "x < 40"
+        ],
+        "ans": 0,
         "plot": {
           "poly": [
             [
@@ -1678,13 +1755,6 @@ var PACKS = [
             }
           ]
         },
-        "opts": [
-          "x ≤ 40",
-          "x ≥ 40",
-          "x > 40",
-          "x < 40"
-        ],
-        "ans": 0,
         "tip": "先把 k 求出来，再把\"避免拥堵\"翻译成 y ≥ 20（注意两边乘 x 时不等号方向）。",
         "solution": [
           "x ≥ 10 时 y = k/x，过点 (10, 80)，所以 k = 800，y = 800/x。",
@@ -1698,6 +1768,11 @@ var PACKS = [
         "no": "10",
         "group": "选择",
         "type": "choice",
+        "kp": [
+          "函数与图象",
+          "反比例函数"
+        ],
+        "formula": "联立 x² + mx − k = 0\n唯一公共点 ⟹ Δ = 0 ⟹ k = −1\n两个公共点 ⟹ Δ = m² − 4 > 0 ⟹ m > 2 或 m < −2",
         "diff": 3,
         "focus": "model",
         "ask": "直线 y = x + 2 与反比例函数 y = k/x 的图象有唯一公共点；若直线 y = x + m 与 y = k/x 的图象有 2 个公共点，则 m 的取值范围是（　）",
@@ -1720,6 +1795,11 @@ var PACKS = [
         "no": "11",
         "group": "填空",
         "type": "fill",
+        "kp": [
+          "函数与图象",
+          "反比例函数"
+        ],
+        "formula": "k = xy = 3 × 2 = 6 > 0 ⟹ 图象在第一、三象限",
         "diff": 1,
         "focus": "model",
         "ask": "反比例函数 y = k/x 的图象经过点 (3, 2)，则该函数的图象分别在第 ______ 象限。",
@@ -1747,6 +1827,11 @@ var PACKS = [
         "no": "12",
         "group": "填空",
         "type": "fill",
+        "kp": [
+          "函数与图象",
+          "反比例函数"
+        ],
+        "formula": "k < 0 ⟹ 图象在第二、四象限\nk − 3 < 0 ⟹ k < 3（答案不唯一，任取一个小于 3 的数）",
         "diff": 1,
         "focus": "graph",
         "ask": "若双曲线 y = (k - 3)/x 位于第二、四象限内，则 k 的值可以是 ______。（写出一个即可）",
@@ -1774,6 +1859,11 @@ var PACKS = [
         "no": "13",
         "group": "填空",
         "type": "fill",
+        "kp": [
+          "函数与图象",
+          "反比例函数"
+        ],
+        "formula": "y = kx 与 y = k/x 的图象都关于原点对称\n⟹ 两个交点关于原点对称：(x, y) 与 (−x, −y) ⟹ (1, −2)\n也可联立 −2x = k/x 求 k = −2",
         "diff": 2,
         "focus": "trans",
         "ask": "若直线 y = -2x 与双曲线 y = k/x 的一个交点坐标为 (-1, 2)，则另一个交点的坐标为 ______。",
@@ -1800,9 +1890,22 @@ var PACKS = [
         "no": "14",
         "group": "填空",
         "type": "fill",
+        "kp": [
+          "函数与图象",
+          "反比例函数",
+          "几何综合"
+        ],
+        "formula": "k = xy ⟹ A(3, 2)、B(3/2, 4)，C(3, 0)、D(0, 4)\nS阴影 = S矩形 ODPC − S△OBD − S△OAC = 12 − 3 − 3",
         "diff": 3,
         "focus": "plan",
         "ask": "如图，过点 P(3, 4) 作 PC ⊥ x 轴于点 C，PD ⊥ y 轴于点 D，PC、PD 分别交反比例函数 y = 6/x（x>0）的图象于点 A、B，则图中阴影部分的面积是 ______。",
+        "fields": [
+          {
+            "type": "num",
+            "label": "阴影面积 =",
+            "ans": 6
+          }
+        ],
         "plot": {
           "expr": "6/x",
           "x0": 0.3,
@@ -1841,13 +1944,6 @@ var PACKS = [
             }
           ]
         },
-        "fields": [
-          {
-            "type": "num",
-            "label": "阴影面积 =",
-            "ans": 6
-          }
-        ],
         "tip": "先把 A、B、C、D、P 的坐标都写出来，再用\"矩形 − 两个直角三角形\"算。",
         "solution": [
           "PC：x = 3，与 y = 6/x 交于 A(3, 2)；PD：y = 4，与 y = 6/x 交于 B(3/2, 4)。",
@@ -1861,6 +1957,11 @@ var PACKS = [
         "no": "15",
         "group": "填空",
         "type": "fill",
+        "kp": [
+          "函数与图象",
+          "反比例函数"
+        ],
+        "formula": "k = xy ⟹ ab = 6；b = a − 4 ⟹ a − b = 4\n1/a − 1/b = (b − a)/(ab) = −4/6 = −2/3（整体代换，不必解 a、b）",
         "diff": 3,
         "focus": "plan",
         "ask": "反比例函数 y = 6/x 的图象与一次函数 y = x - 4 的图象交于点 (a, b)，则 1/a - 1/b 的值为 ______。",
@@ -1883,6 +1984,11 @@ var PACKS = [
         "no": "16",
         "group": "解答",
         "type": "solve",
+        "kp": [
+          "函数与图象",
+          "反比例函数"
+        ],
+        "formula": "设 y = k/x（k ≠ 0），代 (1, 1) 得 k = 1 ⟹ y = 1/x\nx = 3 时 y = 1/3",
         "diff": 1,
         "focus": "trans",
         "ask": "已知 y 与 x 成反比例，且当 x = 1 时，y = 1。\n(1) 求 y 与 x 的函数关系式；\n(2) 当 x = 3 时，求 y 的值。",
@@ -1912,6 +2018,12 @@ var PACKS = [
         "no": "17",
         "group": "解答",
         "type": "solve",
+        "kp": [
+          "函数与图象",
+          "反比例函数",
+          "综合与实践"
+        ],
+        "formula": "I = U/R（U 为定值），U = IR = 4 × 9 = 36 ⟹ I = 36/R\nR = 10 ⟹ I = 3.6 A ≠ 4 A",
         "diff": 2,
         "focus": "plan",
         "ask": "蓄电池的电压为定值。使用此电源时，电流 I(A) 是电阻 R(Ω) 的反比例函数，其图象如图（过点 M(4, 9)）。\n(1) 求这个反比例函数的解析式；\n(2) 当 R = 10 Ω 时，电流是 4 A 吗？为什么？",
@@ -1948,6 +2060,12 @@ var PACKS = [
         "no": "18",
         "group": "解答",
         "type": "solve",
+        "kp": [
+          "函数与图象",
+          "反比例函数",
+          "几何综合"
+        ],
+        "formula": "点在直线上 ⟹ 代入求 m：A(2, 3)，k = xy = 6，y = 6/x\nOC = 4 ⟹ B(4, 1.5)、D(4, 5)，BD = 3.5（竖直段）\nS = ½ · BD ·（A 到 x = 4 的水平距离 2）= 3.5",
         "diff": 3,
         "focus": "plan",
         "ask": "如图，反比例函数 y = k/x（x>0）与一次函数 y = x + 1 的图象交于点 A(2, m)，B 是反比例函数图象上一点，BC ⊥ x 轴于点 C，交一次函数的图象于点 D，连接 AB。\n(1) 求反比例函数的解析式；\n(2) 当 OC = 4 时，求 △ABD 的面积。",
@@ -1979,6 +2097,12 @@ var PACKS = [
         "no": "19",
         "group": "解答",
         "type": "solve",
+        "kp": [
+          "函数与图象",
+          "反比例函数",
+          "几何综合"
+        ],
+        "formula": "m = xy = 4 ⟹ y = 4/x\n中点坐标公式：C 的纵坐标 = (y_B + y_D)/2 = 1 ⟹ C(4, 1)\n代 C 入 y = 2x + b ⟹ b = −7",
         "diff": 3,
         "focus": "plan",
         "ask": "如图，函数 y = m/x（x>0）的图象经过点 A(2, 2)。\n(1) 求 m 的值；\n(2) 过点 A 作 x 轴的平行线 l，直线 y = 2x + b 与直线 l 交于点 B，与函数 y = m/x（x>0）的图象交于点 C，与 x 轴交于点 D。当 C 是线段 BD 的中点时，求 b 的值。",
@@ -2008,6 +2132,12 @@ var PACKS = [
         "no": "20",
         "group": "解答",
         "type": "solve",
+        "kp": [
+          "函数与图象",
+          "反比例函数",
+          "图形的变换"
+        ],
+        "formula": "绕过 90°：向量 (−1, 2) → (2, 1)，边长 √5 ⟹ C(2, 3)、D(3, 1)\nk = xy = 3，y = 3/x\n左移 m ⟹ x 换成 x − m：3 = 3/(2 − m) ⟹ m = 1",
         "diff": 3,
         "focus": "model",
         "ask": "如图，直线 y = -2x + 2 与 x 轴、y 轴分别相交于 A、B 两点，双曲线 y = k/x 在第一象限的图象经过正方形 ABCD 的顶点 D。\n(1) 求双曲线的解析式；\n(2) 将正方形 ABCD 沿 x 轴向左平移 m 个单位长度，此时点 C 的对应点 C′ 恰好落在双曲线上，求 m 的值。",
@@ -2040,9 +2170,32 @@ var PACKS = [
         "no": "21",
         "group": "解答",
         "type": "solve",
+        "kp": [
+          "函数与图象",
+          "反比例函数",
+          "综合与实践"
+        ],
+        "formula": "升温段：y = 20 + 10x（0 ≤ x ≤ 8），a = 8\n降温段：y = k/x 过 (8, 100) ⟹ k = 800；y = 20 时 x = 40 ⟹ b = 40\n保温时长 = 各段解不等式 y ≥ 50 后相加",
         "diff": 3,
         "focus": "graph",
         "ask": "某饮水机接通电源就进入自动程序：开机加热时每分钟上升 10℃，加热到 100℃ 停止加热，水温开始下降，此时水温 y(℃) 与开机后用时 x(min) 成反比例，直至水温降至 20℃ 时自动开机加热，重复上述程序。若在水温为 20℃ 时接通电源，图象如图。\n(1) 填空：a = ______，b = ______；\n(2) 求 y 关于 x 的函数关系式；\n(3) 饮水机有多少时间能使水温保持在 50℃ 及以上？",
+        "fields": [
+          {
+            "type": "num",
+            "label": "(1) a =",
+            "ans": 8
+          },
+          {
+            "type": "num",
+            "label": "(1) b =",
+            "ans": 40
+          },
+          {
+            "type": "num",
+            "label": "(3) 保持 50℃ 及以上的时间 =（分钟）",
+            "ans": 13
+          }
+        ],
         "plot": {
           "poly": [
             [
@@ -2079,23 +2232,6 @@ var PACKS = [
             }
           ]
         },
-        "fields": [
-          {
-            "type": "num",
-            "label": "(1) a =",
-            "ans": 8
-          },
-          {
-            "type": "num",
-            "label": "(1) b =",
-            "ans": 40
-          },
-          {
-            "type": "num",
-            "label": "(3) 保持 50℃ 及以上的时间 =（分钟）",
-            "ans": 13
-          }
-        ],
         "tip": "分三段看：升温段是一次函数，降温段是反比例，两个\"连接点\"是关键。",
         "solution": [
           "升温段：从 20℃ 起每分钟升 10℃，到 100℃ 用 (100-20)/10 = 8 分钟，所以 a = 8。",
@@ -2110,6 +2246,12 @@ var PACKS = [
         "no": "22",
         "group": "解答",
         "type": "solve",
+        "kp": [
+          "函数与图象",
+          "反比例函数",
+          "几何综合"
+        ],
+        "formula": "k = xy：A(1, 3) ⟹ y = 3/x；代 A 求 b = 9/4\n面积比 = 底边比（同高）：BP : PC = 1 : 3 或 3 : 1\nB、C 由 y = 0 求，BC = 7",
         "diff": 3,
         "focus": "plan",
         "ask": "如图，直线 y₁ = -x + 4，y₂ = (3/4)x + b 都与双曲线 y = k/x 交于点 A(1, m)，这两条直线分别与 x 轴交于 B、C 两点。\n(1) 求双曲线的解析式；\n(2) 直接写出当 x > 0 时，不等式 (3/4)x + b > k/x 的解集；\n(3) 若点 P 在 x 轴上，连接 AP 把 △ABC 的面积分成 1 : 3 两部分，求此时点 P 的坐标。",
@@ -2157,6 +2299,12 @@ var PACKS = [
         "no": "23",
         "group": "解答",
         "type": "solve",
+        "kp": [
+          "函数与图象",
+          "反比例函数",
+          "综合与实践"
+        ],
+        "formula": "分母 ≠ 0 ⟹ x ≠ −1\ny = (x − 1)/(x + 1) = −2/(x + 1) + 1 ⟹ 由 y = −2/x 左移 1、上移 1，对称中心 (−1, 1)\n方程有解 ⟹ Δ ≥ 0 或分离参数求范围",
         "diff": 3,
         "focus": "check",
         "ask": "函数复习课后，小勤对函数 y = (x-1)/(x+1) 的图象与性质进行如下探究：\n(1) 【初步感知】自变量 x 的取值范围是 ______；\n(2) 【画出图象】①列表：x = -3, -2, -5/3, -3/2, n, 0, 1, 2, 3 对应的 y = 2, 3, 4, m, -3, -1, 0, 1/3, 1/2，则 m = ______，n = ______；\n(3) 【研究性质】y = (x-1)/(x+1) = -2/(x+1) + 1 的图象是将反比例函数 y = -2/x 的图象向左平移 ____ 个单位，再向上平移 ____ 个单位得到的，对称中心为 ______；\n(4) 【拓展应用】当 -3 ≤ x ≤ 3（x ≠ -1）时，关于 x 的方程 kx + 1 = (x-1)/(x+1) 有实数解，直接写出 k 的取值范围。",
@@ -2212,6 +2360,11 @@ var PACKS = [
         "group": "选择",
         "type": "choice",
         "score": 4,
+        "kp": [
+          "函数与图象",
+          "反比例函数"
+        ],
+        "formula": "y = k/x（k ≠ 0）：x 在分母、次数为 1、分子是常数",
         "diff": 1,
         "focus": "trans",
         "ask": "下列函数是 y 关于 x 的反比例函数的是（　）",
@@ -2234,6 +2387,11 @@ var PACKS = [
         "group": "选择",
         "type": "choice",
         "score": 4,
+        "kp": [
+          "函数与图象",
+          "二次函数"
+        ],
+        "formula": "左加右减动 x（左移 2 ⟹ x 换成 x + 2），上加下减动常数\ny = x² + 1 → y = (x + 2)² + 1 → y = (x + 2)² − 2",
         "diff": 1,
         "focus": "model",
         "ask": "将抛物线 y = x² + 1 向左平移 2 个单位，再向下平移 3 个单位，所得抛物线是（　）",
@@ -2257,9 +2415,21 @@ var PACKS = [
         "group": "选择",
         "type": "choice",
         "score": 4,
+        "kp": [
+          "函数与图象",
+          "二次函数"
+        ],
+        "formula": "方程 f(x) = 0 的解 ⟺ 图象与 x 轴交点的横坐标\n函数值在 1.1～1.2 之间由 −0.49 变号到 0.04 ⟹ 解在 1.1 < x < 1.2",
         "diff": 2,
         "focus": "graph",
         "ask": "根据表格数据，方程 x² + 3x - 5 = 0 的一个解 x 的取值范围为（　）",
+        "opts": [
+          "1 < x < 1.1",
+          "1.1 < x < 1.2",
+          "1.2 < x < 1.3",
+          "1.3 < x < 1.4"
+        ],
+        "ans": 1,
         "table": {
           "head": [
             "x",
@@ -2278,13 +2448,6 @@ var PACKS = [
             ]
           ]
         },
-        "opts": [
-          "1 < x < 1.1",
-          "1.1 < x < 1.2",
-          "1.2 < x < 1.3",
-          "1.3 < x < 1.4"
-        ],
-        "ans": 1,
         "tip": "方程的解 = 函数值为 0 的 x；表格里看哪两个数\"变号\"。",
         "solution": [
           "设 y = x² + 3x - 5，方程的解就是 y = 0 时的 x。",
@@ -2298,6 +2461,12 @@ var PACKS = [
         "group": "选择",
         "type": "choice",
         "score": 4,
+        "kp": [
+          "函数与图象",
+          "二次函数",
+          "综合与实践"
+        ],
+        "formula": "s = 30t − 5t² = −5(t − 3)² + 45，顶点 t = 3 ⟹ 停下用时 3 s\n令 s = 0 得 t = 6 是「回到起点」，不是刹车结束",
         "diff": 2,
         "focus": "graph",
         "ask": "汽车紧急刹车后前行的距离 s（米）与行驶时间 t（秒）的关系是 s = 30t - 5t²，则该车从开始刹车到停下来一共用时（　）",
@@ -2321,9 +2490,22 @@ var PACKS = [
         "group": "选择",
         "type": "choice",
         "score": 4,
+        "kp": [
+          "函数与图象",
+          "二次函数",
+          "综合与实践"
+        ],
+        "formula": "顶点在 y 轴：y = ax² + 2，代 (2, 0) 得 a = −1/2\ny = 1 ⟹ x² = 2 ⟹ x = ±√2，水面宽 = 2√2",
         "diff": 3,
         "focus": "plan",
         "ask": "如图，一抛物线型拱桥，当拱顶到水面的距离为 2m 时，水面宽度为 4m，那么水位上涨 1m 时，水面的宽度为（　）m",
+        "opts": [
+          "2√2",
+          "√2",
+          "√6 - 2",
+          "2√6 - 2"
+        ],
+        "ans": 0,
         "plot": {
           "expr": "-0.5x^2+2",
           "x0": -3.2,
@@ -2347,13 +2529,6 @@ var PACKS = [
             }
           ]
         },
-        "opts": [
-          "2√2",
-          "√2",
-          "√6 - 2",
-          "2√6 - 2"
-        ],
-        "ans": 0,
         "tip": "建坐标系：以拱顶正下方为原点、水面为 x 轴，先把抛物线求出来。",
         "solution": [
           "以水面为 x 轴、拱顶正下方为原点建系，则拱顶是 (0, 2)，水面宽 4m 说明过 (-2, 0)、(2, 0)。",
@@ -2368,9 +2543,21 @@ var PACKS = [
         "group": "选择",
         "type": "choice",
         "score": 4,
+        "kp": [
+          "函数与图象",
+          "二次函数"
+        ],
+        "formula": "对称轴 x = −b/(2a) = −1 ⟹ b = 2a\na + b + c 就是 x = 1 时的函数值（看图定符号）\nabc 的符号由 a、b、c 各自符号相乘判定",
         "diff": 3,
         "focus": "graph",
         "ask": "如图是二次函数 y = ax² + bx + c 的图象，对称轴是直线 x = -1，下列结论正确的是（　）",
+        "opts": [
+          "b² - 4ac < 0",
+          "a + b + c > 0",
+          "b = 2a",
+          "abc < 0"
+        ],
+        "ans": 2,
         "plot": {
           "expr": "-(x+1)^2+3",
           "x0": -4.2,
@@ -2382,13 +2569,6 @@ var PACKS = [
           "w": 320,
           "h": 220
         },
-        "opts": [
-          "b² - 4ac < 0",
-          "a + b + c > 0",
-          "b = 2a",
-          "abc < 0"
-        ],
-        "ans": 2,
         "tip": "a±b+c 这类式子，永远先翻译成\"x = ±1 时的函数值\"。",
         "solution": [
           "开口向下 → a < 0；对称轴 x = -b/(2a) = -1 → b = 2a < 0；图象与 x 轴有两个交点 → Δ = b² - 4ac > 0，A 错。",
@@ -2403,6 +2583,12 @@ var PACKS = [
         "group": "选择",
         "type": "choice",
         "score": 4,
+        "kp": [
+          "函数与图象",
+          "二次函数",
+          "综合与实践"
+        ],
+        "formula": "木栏只花在三边：2x + (y − 2) = 30 ⟹ y = 32 − 2x\nS = xy = x(32 − 2x)\n范围：y ≤ 18 且 y ≥ 2 ⟹ 7 ≤ x ≤ 15",
         "diff": 3,
         "focus": "trans",
         "ask": "某农场建长方形养鸡场，一边靠墙（墙长 18m），墙对面有一个 2m 宽的门，另外三边用木栏围成，木栏长 30m。若鸡场的宽为 x m，面积为 S m²，则 S 与 x 的关系式为（　）",
@@ -2427,6 +2613,12 @@ var PACKS = [
         "group": "选择",
         "type": "choice",
         "score": 4,
+        "kp": [
+          "函数与图象",
+          "二次函数",
+          "几何综合"
+        ],
+        "formula": "分段列式：① 0 ≤ x ≤ 8，y = 0.3x²；② 8 < x ≤ 10，y = −0.4x² + 5.6x；③ 10 < x ≤ 14，y = 4(14 − x)\nAB = √(6² + 8²) = 10，全程 x 最大 14",
         "diff": 3,
         "focus": "plan",
         "ask": "如图，Rt△ABC 中 ∠C = 90°，AC = 8，BC = 6，动点 P 从 B 沿 BA 向 A 匀速运动，同时动点 Q 从 A 出发沿 AC → CB 向 B 匀速运动，速度相同，到各自终点停止。点 Q 运动的路程为 x，△BPQ 的面积为 y，则能反映 y 与 x 关系的图象是（　）",
@@ -2452,6 +2644,11 @@ var PACKS = [
         "group": "填空",
         "type": "fill",
         "score": 4,
+        "kp": [
+          "函数与图象",
+          "反比例函数"
+        ],
+        "formula": "点在图象上 ⟹ 坐标满足解析式：2 = (k + 1)/3 ⟹ k + 1 = 6 ⟹ k = 5\n（等价写法 k = xy 用不上，因为分子是 k + 1）",
         "diff": 1,
         "focus": "model",
         "ask": "若点 P(3, 2) 在反比例函数 y = (k+1)/x 的图象上，则 k = ______。",
@@ -2473,6 +2670,11 @@ var PACKS = [
         "group": "填空",
         "type": "fill",
         "score": 4,
+        "kp": [
+          "函数与图象",
+          "二次函数"
+        ],
+        "formula": "交点相同 ⟹ 令 y = 0 解出同样的 x\nx² = 4 ⟹ x = ±2；x² = 2k ⟹ x = ±√(2k) ⟹ √(2k) = 2 ⟹ k = 2",
         "diff": 3,
         "focus": "trans",
         "ask": "若两条抛物线开口方向相同、与 x 轴有相同交点，则它们所围成的封闭曲线称为\"月牙线\"。如图是由抛物线 y₁ = -(1/4)x² + 1 和抛物线 y₂ = -(1/2)x² + k 组成的\"月牙线\"，则 k 的值为 ______。",
@@ -2496,6 +2698,12 @@ var PACKS = [
         "group": "填空",
         "type": "fill",
         "score": 4,
+        "kp": [
+          "函数与图象",
+          "二次函数",
+          "几何综合"
+        ],
+        "formula": "四个角上的直角三角形全等 ⟹ 直角边为 x 与 2 − x\nS = x² + (2 − x)² = 2(x − 1)² + 2 ⟹ x = 1 时 S 最小 = 2",
         "diff": 3,
         "focus": "plan",
         "ask": "如图，正方形 ABCD 的边长是 2，正方形 EFGH 的顶点分别在 AB、BC、CD、AD 上。设正方形 EFGH 的面积是 S，AE 的长是 x（x > 0），则当 x = ______ 时，S 取得最小值 ______。",
@@ -2525,6 +2733,11 @@ var PACKS = [
         "group": "填空",
         "type": "fill",
         "score": 4,
+        "kp": [
+          "函数与图象",
+          "二次函数"
+        ],
+        "formula": "上方部分沿 x 轴翻折 ⟹ y 换成 −y：y = x² − 2x − 3（−1 < x < 3）\ny = −x² + 2x + 3 = −(x − 1)² + 4，顶点 (1, 4)\n公共点个数 ⟺ 直线与各段抛物线的交点个数（含相切）",
         "diff": 3,
         "focus": "check",
         "selfCheck": true,
@@ -2547,6 +2760,11 @@ var PACKS = [
         "group": "解答",
         "type": "solve",
         "score": 13,
+        "kp": [
+          "函数与图象",
+          "反比例函数"
+        ],
+        "formula": "一支在第一象限 ⟹ k = m − 3 > 0；另一支在第三象限\nk > 0：每一支上 y 随 x 增大而减小（跨支不能直接比）\nk = xy：−4 = (m − 3)/(−1) ⟹ m = 7",
         "diff": 2,
         "focus": "graph",
         "ask": "如图，是反比例函数 y = (m-3)/x 的图象的一支（在第一象限），根据图象回答问题：\n(1) 常数 m 的取值范围是 ______；图象的另一支在第 ______ 象限；\n(2) 在每个象限内 y 随 x 的增大而 ______；\n(3) 在该函数图象上取点 A(x₁,y₁)、B(x₂,y₂)、C(x₃,y₃)，如果 x₁ < 0 < x₂ < x₃，比较 y₁、y₂、y₃ 的大小；\n(4) 若点 C(-1,-4) 在该反比例函数的图象上，求 m 的值。",
@@ -2604,6 +2822,12 @@ var PACKS = [
         "group": "解答",
         "type": "solve",
         "score": 13,
+        "kp": [
+          "函数与图象",
+          "二次函数",
+          "综合与实践"
+        ],
+        "formula": "S = x(20 − 2x) = −2(x − 5)² + 50\n墙长卡范围：20 − 2x ≤ 8 ⟹ 6 ≤ x < 10\n顶点 x = 5 取不到 ⟹ 最大值落在端点 x = 6，S = 48",
         "diff": 3,
         "focus": "plan",
         "ask": "如图，要建一个矩形场地，一面靠墙（墙长 8m），另三边用篱笆围成，篱笆总长 20m。设垂直于墙的一边 AD 为 x m，矩形场地的面积为 S m²。\n(1) S 与 x 的函数关系式：S = ______，x 的取值范围是 ______；\n(2) 若矩形场地的面积为 42 m²，求矩形的长与宽；\n(3) 求矩形场地面积的最大值，并写出此时的长与宽。",
@@ -2658,6 +2882,12 @@ var PACKS = [
         "group": "解答",
         "type": "solve",
         "score": 13,
+        "kp": [
+          "函数与图象",
+          "二次函数",
+          "综合与实践"
+        ],
+        "formula": "每件利润 10 + x，销量 210 − 10x ⟹ w = (10 + x)(210 − 10x) = −10(x − 5.5)² + 2402.5\nx 取整数 ⟹ x = 5 或 6，w 最大 2400\nw ≥ 2280 ⟹ 2 ≤ x ≤ 9",
         "diff": 3,
         "focus": "model",
         "ask": "某商品进价每件 40 元，售价每件 50 元时每月可卖 210 件；售价每上涨 1 元，每月少卖 10 件，且每件售价不能超过 60 元。设每件售价上涨 x 元（x 为正整数），每月销售利润为 w 元。\n(1) 求 w 与 x 的函数关系式，并写出 x 的取值范围；\n(2) 售价定为多少元时月利润最大？最大月利润是多少？\n(3) 售价定为多少元时月利润恰为 2280 元？并直接写出售价 m 在什么范围时月利润不低于 2280 元。",
@@ -2727,6 +2957,12 @@ var PACKS = [
         "group": "解答",
         "type": "solve",
         "score": 13,
+        "kp": [
+          "函数与图象",
+          "二次函数",
+          "几何综合"
+        ],
+        "formula": "交点式：y = a(x + 1)(x − 3)，令 x = 0 得 a = −1\n面积：S = ½·BC·d = ½·DF·OB（铅垂高法），|t² − 3t| = 2\n角相等 ⟹ 按射线方向分类，只解「两直线夹角」会多出解",
         "diff": 3,
         "focus": "plan",
         "ask": "如图，抛物线 y = ax² + bx + 3 与 x 轴交于 A(-1, 0)、B(3, 0)，与 y 轴交于点 C。点 P 为抛物线上一动点。\n(1) 求抛物线的解析式；\n(2) 若 △BCP 的面积为 3，且点 P 在第一象限，求点 P 的坐标；\n(3) 当 ∠ACP 与 Rt△ACO 的一个内角相等时，求点 P 的坐标。",
@@ -2796,6 +3032,7 @@ var PACKS = [
           "图形的变换",
           "轴对称与中心对称"
         ],
+        "formula": "① 轴对称：存在直线 l，沿 l 对折后两部分完全重合\n② 中心对称：绕点 O 旋转 180° 后与原图重合\n③ 坐标式：关于原点对称 (x, y) → (−x, −y)",
         "diff": 1,
         "focus": "trans",
         "ask": "下列图形中，既是轴对称图形，又是中心对称图形的是（　）",
@@ -2826,6 +3063,7 @@ var PACKS = [
           "方程与应用",
           "一元二次方程"
         ],
+        "formula": "韦达定理：x₁ + x₂ = −b/a，x₁x₂ = c/a ⟹ 另一根 = −b/a − x₁\n也可代根求参：x = 3 代入 9 − 15 + b = 0 得 b = 6",
         "diff": 1,
         "focus": "model",
         "ask": "若一元二次方程 x² − 5x + b = 0 的一个根是 x = 3，则另一个根是（　）",
@@ -2854,6 +3092,7 @@ var PACKS = [
           "函数与图象",
           "反比例函数"
         ],
+        "formula": "y = k/x（k = 2 > 0）：图象在一、三象限，每一支上 y 随 x 增大而减小\n跨支比大小先定符号：x < 0 的 y < 0，x > 0 的 y > 0\n求值式：y = k/x ⟹ a = 2/(−5) = −2/5",
         "diff": 2,
         "focus": "graph",
         "ask": "若点 (−5, a)、(−3, b)、(1, c) 都在反比例函数 y = 2/x 的图象上，则（　）",
@@ -2883,6 +3122,7 @@ var PACKS = [
           "图形的变换",
           "旋转"
         ],
+        "formula": "旋转角 = 对应点与旋转中心连线的夹角：∠CBC′ = ∠ABC = 40°\n旋转保长：BA = BA′ ⟹ 等腰 △ABA′，底角 = (180° − 40°)/2 = 70°\n∠CAA′ = ∠CAB + ∠BAA′ = 50° + 70°",
         "diff": 2,
         "focus": "trans",
         "ask": "如图，△ABC 中，∠ACB = 90°，∠ABC = 40°。将 △ABC 绕点 B 逆时针旋转得到 △A′BC′，使点 C 的对应点 C′ 恰好落在边 AB 上，则 ∠CAA′ 的度数是（　）",
@@ -2913,6 +3153,7 @@ var PACKS = [
           "方程与应用",
           "一元二次方程"
         ],
+        "formula": "单循环场数 = ½·x(x − 1)（每两队只赛 1 场，要除以 2）\n双循环（主客场）= x(x − 1)\n解方程 x² − x − 72 = 0 ⟹ (x − 9)(x + 8) = 0",
         "diff": 2,
         "focus": "model",
         "ask": "要组织一次排球邀请赛，赛制为单循环形式（每两支球队之间比赛 1 场），根据场地和时间等条件，计划安排 36 场比赛，设比赛组织者邀请 x 支球队参赛，则 x 满足的关系式为（　）",
@@ -2940,6 +3181,7 @@ var PACKS = [
           "函数与图象",
           "二次函数"
         ],
+        "formula": "公共点 ⟺ 联立后方程有解：x² = k/x ⟹ x³ = k（x ≠ 0）\nx³ = k（k > 0）只有一个实根 x = ∛k ⟹ 只有 1 个公共点",
         "diff": 2,
         "focus": "graph",
         "ask": "二次函数 y = x² 与反比例函数 y = k/x（k > 0）的图象的公共点个数为（　）",
@@ -2981,6 +3223,7 @@ var PACKS = [
           "函数与图象",
           "二次函数"
         ],
+        "formula": "配方：y = −(x + 1)² + (c² − 2c + 1)，对称轴 x = −1，开口向下\n开口向下时区间最小值在端点，离对称轴越远值越小\n代 x = 2：c² − 2c − 8 = −5",
         "diff": 3,
         "focus": "plan",
         "ask": "二次函数 y = −x² − 2x + c² − 2c 在 −3 ≤ x ≤ 2 的范围内有最小值为 −5，则 c 的值为（　）",
@@ -3009,6 +3252,7 @@ var PACKS = [
           "函数与图象",
           "二次函数"
         ],
+        "formula": "开口向上 ⟹ a > 0；与 x 轴无公共点 ⟹ b² − 4ac < 0\n对称轴 x = −b/(2a) = 1 ⟹ b = −2a\n顶点式 y = a(x − 1)² + 1，代 (3, 3) 得 a = 1/2\n解不等式 ½(x − 1)(x − 3) < 0 ⟹ 1 < x < 3",
         "diff": 3,
         "focus": "graph",
         "ask": "已知二次函数 y = ax² + bx + c 的图象如图所示，下列结论：\n①a > 0；②b² − 4ac > 0；③4a + b = 0；④不等式 ax² + (b − 1)x + c < 0 的解集为 1 < x < 3。\n正确的结论个数是（　）",
@@ -3063,6 +3307,7 @@ var PACKS = [
           "函数与图象",
           "二次函数"
         ],
+        "formula": "交点式 y = a(x + 1)(x − 3)，令 x = 0 得 c = −1、a = 1/3\n对称轴 x = 1，顶点 (1, −4/3)，最小值 −4/3\n两图象比大小 ⟹ 解不等式 x/3 − 1 > x²/3 − 2x/3 − 1",
         "diff": 3,
         "focus": "model",
         "ask": "抛物线 y = ax² + bx + c 的图象经过 A(0, −1)，B(−1, 0)，C(3, 0) 三点，下面结论中正确的是（　）",
@@ -3093,6 +3338,7 @@ var PACKS = [
           "图形的变换",
           "旋转"
         ],
+        "formula": "旋转 60° 造等边：△AOO″ 边长 3，S = (√3/4)a² = 9√3/4\n3-4-5 直角三角形：S = ½ × 3 × 4 = 6\n面积割补：S△AOC + S△AOB = S四边形 AOCO″ = S△AOO″ + S△COO″",
         "diff": 3,
         "focus": "plan",
         "ask": "如图，O 是等边 △ABC 内一点，OA = 3，OB = 4，OC = 5，将线段 BO 绕点 B 逆时针旋转 60° 得到线段 BO′，则 S△AOC + S△AOB 的值为（　）",
@@ -3123,6 +3369,7 @@ var PACKS = [
           "图形的变换",
           "坐标与对称"
         ],
+        "formula": "关于原点对称：P(x, y) → P′(−x, −y)\n关于 x 轴对称：(x, −y)；关于 y 轴对称：(−x, y)",
         "diff": 1,
         "focus": "trans",
         "ask": "点 P(2, 3) 关于原点对称点 P′ 的坐标是 ______。",
@@ -3154,6 +3401,7 @@ var PACKS = [
           "函数与图象",
           "二次函数"
         ],
+        "formula": "左加右减动 x：右移 1 ⟹ 把 x 换成 x − 1\n上加下减动常数：上移 2 ⟹ 常数 + 2\n结果 y = 2(x − 2)² + 5",
         "diff": 1,
         "focus": "trans",
         "ask": "将抛物线 y = 2(x − 1)² + 3 向右移 1 个单位，上移 2 个单位所得到的新抛物线解析式为 ______。",
@@ -3187,6 +3435,7 @@ var PACKS = [
           "图形的变换",
           "旋转"
         ],
+        "formula": "旋转中心 O 满足 OA = OC、OB = OD\n⟹ O 在 AC 的垂直平分线上，也在 BD 的垂直平分线上，两线交点即中心",
         "diff": 2,
         "focus": "trans",
         "ask": "如图，在方格纸中，线段 AB 绕某个点旋转一定角度得到线段 CD，其中点 A 的对应点是点 C，则旋转中心是点 ______。",
@@ -3223,6 +3472,7 @@ var PACKS = [
           "二次函数",
           "综合与实践"
         ],
+        "formula": "配方 y = −1.5(t − 20)² + 600，顶点 t = 20 ⟹ 滑行 20 s 停下\n最后 4 s 路程 = y(20) − y(16)，不是 y(4)\ny(16) = 960 − 384 = 576 ⟹ 600 − 576 = 24 m",
         "diff": 2,
         "focus": "model",
         "ask": "若飞机着陆后滑行的距离 y（单位：m）关于滑行时间 t（单位：s）的函数解析式是 y = 60t − 1.5t²。飞机着陆后，滑行 ______ 秒才能停下来，最后 4s 滑行了 ______ 米。",
@@ -3256,9 +3506,23 @@ var PACKS = [
           "几何综合",
           "函数图象"
         ],
+        "formula": "动点距离：AD² = (x − BH)² + AH²\n图象最低点 ⟹ AD ⊥ BC，最小值 = AH；对称轴 x = 4 ⟹ BH = 4\n代 (1, √13)：9 + AH² = 13 ⟹ AH = 2\nAB² = BH² + AH² = 20 ⟹ AB = 2√5",
         "diff": 3,
         "focus": "graph",
         "ask": "如图 1，在 △ABC 中，AB > AC，D 是边 BC 上的动点。设 B，D 两点之间的距离为 x，A，D 两点之间的距离为 y，表示 y 与 x 的函数关系的图象如图 2 所示，线段 AB 的长为 ______。",
+        "fields": [
+          {
+            "type": "choice",
+            "label": "AB =",
+            "options": [
+              "2√5",
+              "√13",
+              "4",
+              "2√2"
+            ],
+            "ans": 0
+          }
+        ],
         "plot": {
           "expr": "sqrt(4+(x-4)^2)",
           "x0": 0,
@@ -3287,19 +3551,6 @@ var PACKS = [
             }
           ]
         },
-        "fields": [
-          {
-            "type": "choice",
-            "label": "AB =",
-            "options": [
-              "2√5",
-              "√13",
-              "4",
-              "2√2"
-            ],
-            "ans": 0
-          }
-        ],
         "tip": "图象最低点对应 AD ⊥ BC（垂足 H）；图象关于 x = 4 对称说明 BH = 4，两端 y = √13 给出一条直角三角形方程。",
         "solution": [
           "作 AH ⊥ BC 于 H。设 BH = h，AH = m，则 AB² = h² + m²，AD² = (x − h)² + m²。",
@@ -3321,9 +3572,23 @@ var PACKS = [
           "函数与图象",
           "二次函数"
         ],
+        "formula": "顶点在 y 轴上 ⟹ 设 y = ax² + c，代 (2, 0) 得 y = x² − 4\ny > 0 ⟺ x² − 4 > 0 ⟺ x < −2 或 x > 2\nS△PAB = ½·AB·|y_P| ⟹ |y_P| = 2（y = ±2 两种情况都要算）\nDP = y_BC − y_抛 = −t² + 2t = −(t − 1)² + 1",
         "diff": 3,
         "focus": "graph",
         "ask": "如图，抛物线与 x 轴交于 A，B 两点，顶点 C(0, −4) 在 y 轴上，则下列结论：\n①抛物线解析式是 y = x² − 4；\n②若函数值 y > 0，则 x 的取值范围是 x < −2 或 x > 2；\n③若点 P 为抛物线上的一点，且 S△PAB = 4，则点 P 的坐标为 (√6, 2) 或 (−√6, 2)；\n④连接 BC，D 为线段 BC 上一点，过点 D 作 y 轴的平行线交抛物线于点 P，则 DP 有最大值为 1。\n其中正确的结论有 ______。",
+        "fields": [
+          {
+            "type": "choice",
+            "label": "正确的结论有",
+            "options": [
+              "①③",
+              "①②④",
+              "②③④",
+              "①②③④"
+            ],
+            "ans": 1
+          }
+        ],
         "plot": {
           "expr": "x^2-4",
           "expr2": "2x-4",
@@ -3353,19 +3618,6 @@ var PACKS = [
             }
           ]
         },
-        "fields": [
-          {
-            "type": "choice",
-            "label": "正确的结论有",
-            "options": [
-              "①③",
-              "①②④",
-              "②③④",
-              "①②③④"
-            ],
-            "ans": 1
-          }
-        ],
         "tip": "顶点在 y 轴上就设 y = ax² − 4；S△PAB 以 AB 为底，高是 |y_P|——③别只算 y > 0 的情况；④设 D 的横坐标为 t，把 DP 写成 t 的二次函数求最值。",
         "solution": [
           "①顶点 C(0, −4) 在 y 轴上，设 y = ax² − 4；图象开口向上且过 A、B，与 x 轴交于 (−2, 0)、(2, 0)，代 (2,0) 得 4a − 4 = 0，a = 1，所以 y = x² − 4，①正确。",
@@ -3388,6 +3640,7 @@ var PACKS = [
           "方程与应用",
           "一元二次方程"
         ],
+        "formula": "求根公式 x = (−b ± √(b² − 4ac))/(2a)，Δ = 9 + 4 = 13\n提公因式：x(x + 4) = 2(x + 4) ⟹ (x + 4)(x − 2) = 0\n切勿两边同除 (x + 4)，会丢掉根 x = −4",
         "diff": 2,
         "focus": "model",
         "ask": "解下列方程：\n（1）x² − 3x − 1 = 0；\n（2）x(x + 4) = 2x + 8。",
@@ -3434,6 +3687,7 @@ var PACKS = [
           "图形的变换",
           "旋转与作图"
         ],
+        "formula": "绕 A(a, b) 逆时针 90°：(x, y) → (a − (y − b), b + (x − a))\n关于原点对称：(x, y) → (−x, −y)\nC(4, −1) → C₁(−2, −1)，C₂(−4, 1)",
         "diff": 3,
         "focus": "trans",
         "selfCheck": true,
@@ -3458,6 +3712,7 @@ var PACKS = [
           "方程与应用",
           "判别式与韦达"
         ],
+        "formula": "两个不相等实根 ⟹ Δ = b² − 4ac > 0：(2k − 1)² − 4k² > 0 ⟹ k < 1/4\n韦达：x₁ + x₂ = 2k − 1，x₁x₂ = k²\n展开：(x₁ − 1)(x₂ − 1) = x₁x₂ − (x₁ + x₂) + 1",
         "diff": 2,
         "focus": "model",
         "ask": "已知关于 x 的一元二次方程 x² − (2k − 1)x + k² = 0 有两个不相等的实数根。\n（1）求 k 的取值范围；\n（2）若此方程的两实数根 x₁，x₂ 满足 (x₁ − 1)(x₂ − 1) = 5，求 k 的值。",
@@ -3500,14 +3755,10 @@ var PACKS = [
           "一元二次方程",
           "综合与实践"
         ],
+        "formula": "篱笆只围两边：BC = 28 − x，S = x(28 − x) = −(x − 14)² + 196\n树的条件 ⟹ 不等式组 x ≥ 6 且 28 − x ≥ 15 ⟹ 6 ≤ x ≤ 13\n顶点 x = 14 取不到 ⟹ 最大值落在端点 x = 13，S = 195",
         "diff": 3,
         "focus": "plan",
         "ask": "在美化校园的活动中，某兴趣小组想借助如图所示的直角墙角（两边足够长），用 28 m 长的篱笆围成一个矩形花园 ABCD（篱笆只围 AB，BC 两边），设 AB = x m。\n（1）若花园的面积为 192 m²，求 x 的值；\n（2）若在 P 处有一棵树与墙 CD，AD 的距离分别是 15 m 和 6 m，要将这棵树围在花园内（含边界，不考虑树的粗细），求花园面积 S 的最大值。",
-        "fig": {
-          "w": 300,
-          "h": 215,
-          "svg": "<path d=\"M38 11.5L38 187.6\" fill=\"none\" stroke=\"#1b2430\" stroke-width=\"2\" stroke-linecap=\"round\"/><path d=\"M38 13.5L31 20.5M38 23.5L31 30.5M38 33.5L31 40.5M38 43.5L31 50.5M38 53.5L31 60.5M38 63.5L31 70.5M38 73.5L31 80.5M38 83.5L31 90.5M38 93.5L31 100.5M38 103.5L31 110.5M38 113.5L31 120.5M38 123.5L31 130.5M38 133.5L31 140.5M38 143.5L31 150.5M38 153.5L31 160.5M38 163.5L31 170.5M38 173.5L31 180.5M38 183.5L31 190.5\" fill=\"none\" stroke=\"#1b2430\" stroke-width=\"1.1\" stroke-linecap=\"round\"/><path d=\"M38 187.6L261.6 187.6\" fill=\"none\" stroke=\"#1b2430\" stroke-width=\"2\" stroke-linecap=\"round\"/><path d=\"M43 187.6L36 194.6M53 187.6L46 194.6M63 187.6L56 194.6M73 187.6L66 194.6M83 187.6L76 194.6M93 187.6L86 194.6M103 187.6L96 194.6M113 187.6L106 194.6M123 187.6L116 194.6M133 187.6L126 194.6M143 187.6L136 194.6M153 187.6L146 194.6M163 187.6L156 194.6M173 187.6L166 194.6M183 187.6L176 194.6M193 187.6L186 194.6M203 187.6L196 194.6M213 187.6L206 194.6M223 187.6L216 194.6M233 187.6L226 194.6M243 187.6L236 194.6M253 187.6L246 194.6\" fill=\"none\" stroke=\"#1b2430\" stroke-width=\"1.1\" stroke-linecap=\"round\"/><path d=\"M38 58.4L227.6 58.4M227.6 58.4L227.6 187.6\" fill=\"none\" stroke=\"#1b2430\" stroke-width=\"1.5\" stroke-linecap=\"round\"/><circle cx=\"206.3\" cy=\"125.1\" r=\"3\" fill=\"#1b2430\"/><text x=\"198.3\" y=\"114.9\" font-family=\"'Times New Roman', 'Songti SC', 'SimSun', Georgia, serif\" font-size=\"16\" fill=\"#1b2430\" text-anchor=\"middle\"><tspan font-style=\"italic\">P</tspan></text><text x=\"25.2\" y=\"60.5\" font-family=\"'Times New Roman', 'Songti SC', 'SimSun', Georgia, serif\" font-size=\"16\" fill=\"#1b2430\" text-anchor=\"middle\"><tspan font-style=\"italic\">C</tspan></text><text x=\"240.5\" y=\"50.6\" font-family=\"'Times New Roman', 'Songti SC', 'SimSun', Georgia, serif\" font-size=\"16\" fill=\"#1b2430\" text-anchor=\"middle\"><tspan font-style=\"italic\">B</tspan></text><text x=\"25.4\" y=\"209.2\" font-family=\"'Times New Roman', 'Songti SC', 'SimSun', Georgia, serif\" font-size=\"16\" fill=\"#1b2430\" text-anchor=\"middle\"><tspan font-style=\"italic\">D</tspan></text><text x=\"239.7\" y=\"209.2\" font-family=\"'Times New Roman', 'Songti SC', 'SimSun', Georgia, serif\" font-size=\"16\" fill=\"#1b2430\" text-anchor=\"middle\"><tspan font-style=\"italic\">A</tspan></text>"
-        },
         "fields": [
           {
             "type": "choice",
@@ -3531,6 +3782,11 @@ var PACKS = [
             "ans": 13
           }
         ],
+        "fig": {
+          "w": 300,
+          "h": 215,
+          "svg": "<path d=\"M38 11.5L38 187.6\" fill=\"none\" stroke=\"#1b2430\" stroke-width=\"2\" stroke-linecap=\"round\"/><path d=\"M38 13.5L31 20.5M38 23.5L31 30.5M38 33.5L31 40.5M38 43.5L31 50.5M38 53.5L31 60.5M38 63.5L31 70.5M38 73.5L31 80.5M38 83.5L31 90.5M38 93.5L31 100.5M38 103.5L31 110.5M38 113.5L31 120.5M38 123.5L31 130.5M38 133.5L31 140.5M38 143.5L31 150.5M38 153.5L31 160.5M38 163.5L31 170.5M38 173.5L31 180.5M38 183.5L31 190.5\" fill=\"none\" stroke=\"#1b2430\" stroke-width=\"1.1\" stroke-linecap=\"round\"/><path d=\"M38 187.6L261.6 187.6\" fill=\"none\" stroke=\"#1b2430\" stroke-width=\"2\" stroke-linecap=\"round\"/><path d=\"M43 187.6L36 194.6M53 187.6L46 194.6M63 187.6L56 194.6M73 187.6L66 194.6M83 187.6L76 194.6M93 187.6L86 194.6M103 187.6L96 194.6M113 187.6L106 194.6M123 187.6L116 194.6M133 187.6L126 194.6M143 187.6L136 194.6M153 187.6L146 194.6M163 187.6L156 194.6M173 187.6L166 194.6M183 187.6L176 194.6M193 187.6L186 194.6M203 187.6L196 194.6M213 187.6L206 194.6M223 187.6L216 194.6M233 187.6L226 194.6M243 187.6L236 194.6M253 187.6L246 194.6\" fill=\"none\" stroke=\"#1b2430\" stroke-width=\"1.1\" stroke-linecap=\"round\"/><path d=\"M38 58.4L227.6 58.4M227.6 58.4L227.6 187.6\" fill=\"none\" stroke=\"#1b2430\" stroke-width=\"1.5\" stroke-linecap=\"round\"/><circle cx=\"206.3\" cy=\"125.1\" r=\"3\" fill=\"#1b2430\"/><text x=\"198.3\" y=\"114.9\" font-family=\"'Times New Roman', 'Songti SC', 'SimSun', Georgia, serif\" font-size=\"16\" fill=\"#1b2430\" text-anchor=\"middle\"><tspan font-style=\"italic\">P</tspan></text><text x=\"25.2\" y=\"60.5\" font-family=\"'Times New Roman', 'Songti SC', 'SimSun', Georgia, serif\" font-size=\"16\" fill=\"#1b2430\" text-anchor=\"middle\"><tspan font-style=\"italic\">C</tspan></text><text x=\"240.5\" y=\"50.6\" font-family=\"'Times New Roman', 'Songti SC', 'SimSun', Georgia, serif\" font-size=\"16\" fill=\"#1b2430\" text-anchor=\"middle\"><tspan font-style=\"italic\">B</tspan></text><text x=\"25.4\" y=\"209.2\" font-family=\"'Times New Roman', 'Songti SC', 'SimSun', Georgia, serif\" font-size=\"16\" fill=\"#1b2430\" text-anchor=\"middle\"><tspan font-style=\"italic\">D</tspan></text><text x=\"239.7\" y=\"209.2\" font-family=\"'Times New Roman', 'Songti SC', 'SimSun', Georgia, serif\" font-size=\"16\" fill=\"#1b2430\" text-anchor=\"middle\"><tspan font-style=\"italic\">A</tspan></text>"
+        },
         "tip": "篱笆只围两条边：BC = 28 − x，S = x(28 − x)。树的限制要翻译成两个不等式：离墙 AD 有 6 m → x ≥ 6；离墙 CD 有 15 m → 28 − x ≥ 15。",
         "solution": [
           "（1）由题意得 x(28 − x) = 192，整理得 x² − 28x + 192 = 0，配方得 x² − 28x + 196 = 4，∴ (x − 14)² = 4，",
@@ -3552,14 +3808,10 @@ var PACKS = [
           "二次函数",
           "综合与实践"
         ],
+        "formula": "顶点在 y 轴上：设 y = ax² + c，代 B(5, 0)、C(0, 5) 得 y = −1/5·x² + 5\n通过条件：车靠一侧且留隔离带 ⟹ x = 3 + 0.4/2 = 3.2，y = 2.952\n比较 y − 0.5 与车高：2.452 < 2.5 ⟹ 不能通过",
         "diff": 3,
         "focus": "model",
         "ask": "一个横截面为抛物线形的隧道，其底部的宽 AB 为 10 m，拱高为 5 m，该隧道为双向车道，且两车道之间有 0.4 m 的隔离带，一辆宽为 3 m 的货车要安全通过这条隧道，需保持其顶部与隧道间有不少于 0.5 m 的空隙，按如图建立直角坐标系。\n（1）求抛物线的解析式；\n（2）若该辆货车高 2.5 m，请问它能否安全通过此隧道？并说明理由。",
-        "fig": {
-          "w": 300,
-          "h": 240,
-          "svg": "<path d=\"M45 196L272 196\" fill=\"none\" stroke=\"#1b2430\" stroke-width=\"1.3\" stroke-linecap=\"round\"/><polygon points=\"272,196 265,199.4 265,192.6\" fill=\"#1b2430\"/><path d=\"M150 232L150 76\" fill=\"none\" stroke=\"#1b2430\" stroke-width=\"1.3\" stroke-linecap=\"round\"/><polygon points=\"150,76 153.4,83 146.6,83\" fill=\"#1b2430\"/><path d=\"M65 196Q150 26 235 196\" fill=\"none\" stroke=\"#1b2430\" stroke-width=\"1.8\" stroke-linecap=\"round\"/><text x=\"66\" y=\"215\" font-family=\"'Times New Roman', 'Songti SC', 'SimSun', Georgia, serif\" font-size=\"16\" fill=\"#1b2430\" text-anchor=\"middle\"><tspan font-style=\"italic\">A</tspan></text><text x=\"232\" y=\"215\" font-family=\"'Times New Roman', 'Songti SC', 'SimSun', Georgia, serif\" font-size=\"16\" fill=\"#1b2430\" text-anchor=\"middle\"><tspan font-style=\"italic\">B</tspan></text><text x=\"137\" y=\"210\" font-family=\"'Times New Roman', 'Songti SC', 'SimSun', Georgia, serif\" font-size=\"16\" fill=\"#1b2430\" text-anchor=\"middle\"><tspan font-style=\"italic\">O</tspan></text><text x=\"140\" y=\"106\" font-family=\"'Times New Roman', 'Songti SC', 'SimSun', Georgia, serif\" font-size=\"16\" fill=\"#1b2430\" text-anchor=\"middle\"><tspan font-style=\"italic\">C</tspan></text><text x=\"159\" y=\"92\" font-family=\"'Times New Roman', 'Songti SC', 'SimSun', Georgia, serif\" font-size=\"16\" fill=\"#1b2430\" text-anchor=\"middle\"><tspan font-style=\"italic\">y</tspan></text><text x=\"266\" y=\"214\" font-family=\"'Times New Roman', 'Songti SC', 'SimSun', Georgia, serif\" font-size=\"16\" fill=\"#1b2430\" text-anchor=\"middle\"><tspan font-style=\"italic\">x</tspan></text>"
-        },
         "fields": [
           {
             "type": "choice",
@@ -3582,6 +3834,11 @@ var PACKS = [
             "ans": 1
           }
         ],
+        "fig": {
+          "w": 300,
+          "h": 240,
+          "svg": "<path d=\"M45 196L272 196\" fill=\"none\" stroke=\"#1b2430\" stroke-width=\"1.3\" stroke-linecap=\"round\"/><polygon points=\"272,196 265,199.4 265,192.6\" fill=\"#1b2430\"/><path d=\"M150 232L150 76\" fill=\"none\" stroke=\"#1b2430\" stroke-width=\"1.3\" stroke-linecap=\"round\"/><polygon points=\"150,76 153.4,83 146.6,83\" fill=\"#1b2430\"/><path d=\"M65 196Q150 26 235 196\" fill=\"none\" stroke=\"#1b2430\" stroke-width=\"1.8\" stroke-linecap=\"round\"/><text x=\"66\" y=\"215\" font-family=\"'Times New Roman', 'Songti SC', 'SimSun', Georgia, serif\" font-size=\"16\" fill=\"#1b2430\" text-anchor=\"middle\"><tspan font-style=\"italic\">A</tspan></text><text x=\"232\" y=\"215\" font-family=\"'Times New Roman', 'Songti SC', 'SimSun', Georgia, serif\" font-size=\"16\" fill=\"#1b2430\" text-anchor=\"middle\"><tspan font-style=\"italic\">B</tspan></text><text x=\"137\" y=\"210\" font-family=\"'Times New Roman', 'Songti SC', 'SimSun', Georgia, serif\" font-size=\"16\" fill=\"#1b2430\" text-anchor=\"middle\"><tspan font-style=\"italic\">O</tspan></text><text x=\"140\" y=\"106\" font-family=\"'Times New Roman', 'Songti SC', 'SimSun', Georgia, serif\" font-size=\"16\" fill=\"#1b2430\" text-anchor=\"middle\"><tspan font-style=\"italic\">C</tspan></text><text x=\"159\" y=\"92\" font-family=\"'Times New Roman', 'Songti SC', 'SimSun', Georgia, serif\" font-size=\"16\" fill=\"#1b2430\" text-anchor=\"middle\"><tspan font-style=\"italic\">y</tspan></text><text x=\"266\" y=\"214\" font-family=\"'Times New Roman', 'Songti SC', 'SimSun', Georgia, serif\" font-size=\"16\" fill=\"#1b2430\" text-anchor=\"middle\"><tspan font-style=\"italic\">x</tspan></text>"
+        },
         "tip": "以拱顶正下方为原点、地面为 x 轴建系：顶点 (0, 5)，底部两端 (±5, 0)。判断能否通过，要看货车靠边行驶时最不利的那条边——离中线最远处 x = 3 + 0.4/2。",
         "solution": [
           "（1）如图，B(5, 0)、C(0, 5)。设抛物线的解析式为 y = ax² + c，由题意得方程组：25a + c = 0 且 c = 5，解得 a = −1/5，c = 5，",
@@ -3601,14 +3858,10 @@ var PACKS = [
           "反比例函数",
           "综合与实践"
         ],
+        "formula": "一次函数过 (0, −4)、(4, −20) ⟹ y = −4x − 4\n反比例过 (4, −20) ⟹ k = −80，y = −80/x\n求 t：令 y = −4 ⟹ x = 20\n有效制冷时长 = 两个 y = −10 的时刻之差",
         "diff": 3,
         "focus": "graph",
         "ask": "如图是某型号冷柜循环制冷过程中温度变化的部分示意图。该冷柜的工作过程是：当冷柜温度达到 −4℃ 时制冷开始，温度开始逐渐下降，当温度下降到 −20℃ 时制冷停止，温度开始逐渐上升，当温度上升到 −4℃ 时，制冷再次开始，…，按照以上方式循环工作。通过分析发现，当 0 ≤ x < 4 时，温度 y 是时间 x 的一次函数；当 4 ≤ x < t 时，温度 y 是时间 x 的反比例函数。\n（1）当 0 ≤ x < 4 时，求 y 关于 x 的一次函数解析式；\n（2）求 t 的值；\n（3）若规定温度低于 −10℃ 的时间为有效制冷时间，那么在一次循环过程中有多长时间属于有效制冷时间？",
-        "fig": {
-          "w": 340,
-          "h": 250,
-          "svg": "<path d=\"M36 81.9L291 81.9\" fill=\"none\" stroke=\"#1b2430\" stroke-width=\"1.3\" stroke-linecap=\"round\"/><polygon points=\"291,81.92 284,85.32 284,78.52\" fill=\"#1b2430\"/><path d=\"M80.5 214.4L80.5 19\" fill=\"none\" stroke=\"#1b2430\" stroke-width=\"1.3\" stroke-linecap=\"round\"/><polygon points=\"80.52,19 83.92,26 77.12,26\" fill=\"#1b2430\"/><path d=\"M80.5 113L218.8 113M105.8 81.9L105.8 188.3M218.8 81.9L218.8 113M80.5 188.3L105.8 188.3\" fill=\"none\" stroke=\"#1b2430\" stroke-width=\"1.2\" stroke-linecap=\"round\" stroke-dasharray=\"5 4\"/><polyline points=\"80.5,113 84.7,125.5 88.9,138.1 93.1,150.7 97.3,163.2 101.5,175.8 105.8,188.3 105.8,188.3 107.6,182.5 109.5,177.3 111.4,172.6 113.3,168.5 115.2,164.8 117.1,161.4 118.9,158.4 120.8,155.6 122.7,153 124.6,150.7 126.5,148.5 128.4,146.5 130.3,144.6 132.1,142.8 134,141.2 135.9,139.7 137.8,138.3 139.7,136.9 141.6,135.7 143.4,134.5 145.3,133.4 147.2,132.3 149.1,131.3 151,130.3 152.9,129.4 154.8,128.6 156.6,127.8 158.5,127 160.4,126.2 162.3,125.5 164.2,124.8 166.1,124.2 168,123.6 169.8,123 171.7,122.4 173.6,121.8 175.5,121.3 177.4,120.8 179.3,120.3 181.1,119.8 183,119.3 184.9,118.9 186.8,118.5 188.7,118.1 190.6,117.7 192.5,117.3 194.3,116.9 196.2,116.5 198.1,116.2 200,115.8 201.9,115.5 203.8,115.2 205.7,114.9 207.5,114.6 209.4,114.3 211.3,114 213.2,113.7 215.1,113.5 217,113.2 218.8,113\" fill=\"none\" stroke=\"#1b2430\" stroke-width=\"1.8\" stroke-linejoin=\"round\" stroke-linecap=\"round\"/><text x=\"67\" y=\"79\" font-family=\"'Times New Roman', 'Songti SC', 'SimSun', Georgia, serif\" font-size=\"15\" fill=\"#1b2430\" text-anchor=\"middle\"><tspan font-style=\"italic\">O</tspan></text><text x=\"106\" y=\"79\" font-family=\"'Times New Roman', 'Songti SC', 'SimSun', Georgia, serif\" font-size=\"15\" fill=\"#1b2430\" text-anchor=\"middle\"><tspan>4</tspan></text><text x=\"219\" y=\"79\" font-family=\"'Times New Roman', 'Songti SC', 'SimSun', Georgia, serif\" font-size=\"15\" fill=\"#1b2430\" text-anchor=\"middle\"><tspan font-style=\"italic\">t</tspan></text><text x=\"75\" y=\"117\" font-family=\"'Times New Roman', 'Songti SC', 'SimSun', Georgia, serif\" font-size=\"15\" fill=\"#1b2430\" text-anchor=\"end\"><tspan>−4</tspan></text><text x=\"76\" y=\"192\" font-family=\"'Times New Roman', 'Songti SC', 'SimSun', Georgia, serif\" font-size=\"15\" fill=\"#1b2430\" text-anchor=\"end\"><tspan>−20</tspan></text><text x=\"89\" y=\"29\" font-family=\"'Times New Roman', 'Songti SC', 'SimSun', Georgia, serif\" font-size=\"15\" fill=\"#1b2430\" text-anchor=\"start\"><tspan font-style=\"italic\">y</tspan><tspan>/℃</tspan></text><text x=\"284\" y=\"113\" font-family=\"'Times New Roman', 'Songti SC', 'SimSun', Georgia, serif\" font-size=\"15\" fill=\"#1b2430\" text-anchor=\"middle\"><tspan font-style=\"italic\">x</tspan><tspan>/min</tspan></text>"
-        },
         "fields": [
           {
             "type": "coef",
@@ -3630,6 +3883,11 @@ var PACKS = [
             "ans": 6.5
           }
         ],
+        "fig": {
+          "w": 340,
+          "h": 250,
+          "svg": "<path d=\"M36 81.9L291 81.9\" fill=\"none\" stroke=\"#1b2430\" stroke-width=\"1.3\" stroke-linecap=\"round\"/><polygon points=\"291,81.92 284,85.32 284,78.52\" fill=\"#1b2430\"/><path d=\"M80.5 214.4L80.5 19\" fill=\"none\" stroke=\"#1b2430\" stroke-width=\"1.3\" stroke-linecap=\"round\"/><polygon points=\"80.52,19 83.92,26 77.12,26\" fill=\"#1b2430\"/><path d=\"M80.5 113L218.8 113M105.8 81.9L105.8 188.3M218.8 81.9L218.8 113M80.5 188.3L105.8 188.3\" fill=\"none\" stroke=\"#1b2430\" stroke-width=\"1.2\" stroke-linecap=\"round\" stroke-dasharray=\"5 4\"/><polyline points=\"80.5,113 84.7,125.5 88.9,138.1 93.1,150.7 97.3,163.2 101.5,175.8 105.8,188.3 105.8,188.3 107.6,182.5 109.5,177.3 111.4,172.6 113.3,168.5 115.2,164.8 117.1,161.4 118.9,158.4 120.8,155.6 122.7,153 124.6,150.7 126.5,148.5 128.4,146.5 130.3,144.6 132.1,142.8 134,141.2 135.9,139.7 137.8,138.3 139.7,136.9 141.6,135.7 143.4,134.5 145.3,133.4 147.2,132.3 149.1,131.3 151,130.3 152.9,129.4 154.8,128.6 156.6,127.8 158.5,127 160.4,126.2 162.3,125.5 164.2,124.8 166.1,124.2 168,123.6 169.8,123 171.7,122.4 173.6,121.8 175.5,121.3 177.4,120.8 179.3,120.3 181.1,119.8 183,119.3 184.9,118.9 186.8,118.5 188.7,118.1 190.6,117.7 192.5,117.3 194.3,116.9 196.2,116.5 198.1,116.2 200,115.8 201.9,115.5 203.8,115.2 205.7,114.9 207.5,114.6 209.4,114.3 211.3,114 213.2,113.7 215.1,113.5 217,113.2 218.8,113\" fill=\"none\" stroke=\"#1b2430\" stroke-width=\"1.8\" stroke-linejoin=\"round\" stroke-linecap=\"round\"/><text x=\"67\" y=\"79\" font-family=\"'Times New Roman', 'Songti SC', 'SimSun', Georgia, serif\" font-size=\"15\" fill=\"#1b2430\" text-anchor=\"middle\"><tspan font-style=\"italic\">O</tspan></text><text x=\"106\" y=\"79\" font-family=\"'Times New Roman', 'Songti SC', 'SimSun', Georgia, serif\" font-size=\"15\" fill=\"#1b2430\" text-anchor=\"middle\"><tspan>4</tspan></text><text x=\"219\" y=\"79\" font-family=\"'Times New Roman', 'Songti SC', 'SimSun', Georgia, serif\" font-size=\"15\" fill=\"#1b2430\" text-anchor=\"middle\"><tspan font-style=\"italic\">t</tspan></text><text x=\"75\" y=\"117\" font-family=\"'Times New Roman', 'Songti SC', 'SimSun', Georgia, serif\" font-size=\"15\" fill=\"#1b2430\" text-anchor=\"end\"><tspan>−4</tspan></text><text x=\"76\" y=\"192\" font-family=\"'Times New Roman', 'Songti SC', 'SimSun', Georgia, serif\" font-size=\"15\" fill=\"#1b2430\" text-anchor=\"end\"><tspan>−20</tspan></text><text x=\"89\" y=\"29\" font-family=\"'Times New Roman', 'Songti SC', 'SimSun', Georgia, serif\" font-size=\"15\" fill=\"#1b2430\" text-anchor=\"start\"><tspan font-style=\"italic\">y</tspan><tspan>/℃</tspan></text><text x=\"284\" y=\"113\" font-family=\"'Times New Roman', 'Songti SC', 'SimSun', Georgia, serif\" font-size=\"15\" fill=\"#1b2430\" text-anchor=\"middle\"><tspan font-style=\"italic\">x</tspan><tspan>/min</tspan></text>"
+        },
         "tip": "一次函数过 (0, −4) 和 (4, −20)；反比例函数也过 (4, −20)，先求 k，再令 y = −4 求 t。第（3）问分别解 y = −10 的两个时间，相减就是时长。",
         "solution": [
           "（1）设一次函数的关系式为 y = kx − 4（0 ≤ x < 4）。把 (4, −20) 代入，得 −20 = 4k − 4，解得 k = −4，∴ y = −4x − 4（0 ≤ x < 4）。",
@@ -3650,38 +3908,10 @@ var PACKS = [
           "函数与图象",
           "反比例函数"
         ],
+        "formula": "直线 AB：代 A(1, 0)、B(0, 2) ⟹ y = −2x + 2\n旋转 90° 造全等 △ABO ≌ △CAD ⟹ AD = OB、CD = OA ⟹ C(3, 1)\nk = xy = 3；距离最短 ⟺ 平行线 y = −2x + h 与双曲线只有一个公共点（Δ = 0）",
         "diff": 3,
         "focus": "graph",
         "ask": "如图，直线 AB 与 x 轴交于点 A(1, 0)，与 y 轴交于点 B(0, 2)，将线段 AB 绕点 A 顺时针旋转 90° 得到线段 AC，反比例函数 y = k/x（k ≠ 0，x > 0）的图象经过点 C。\n（1）求直线 AB 的解析式；\n（2）求反比例函数 y = k/x（k ≠ 0，x > 0）；\n（3）已知点 P 是反比例函数 y = k/x 图象上的一个动点，求点 P 到直线 AB 距离最短时的坐标。",
-        "plot": {
-          "expr": "-2x+2",
-          "expr2": "3/x",
-          "x0": -1.5,
-          "x1": 6,
-          "y0": -2,
-          "y1": 6,
-          "sx": 1,
-          "sy": 1,
-          "w": 320,
-          "h": 240,
-          "marks": [
-            {
-              "x": 1,
-              "y": 0,
-              "l": "A"
-            },
-            {
-              "x": 0,
-              "y": 2,
-              "l": "B"
-            },
-            {
-              "x": 3,
-              "y": 1,
-              "l": "C"
-            }
-          ]
-        },
         "fields": [
           {
             "type": "coef",
@@ -3712,6 +3942,35 @@ var PACKS = [
             "ans": 0
           }
         ],
+        "plot": {
+          "expr": "-2x+2",
+          "expr2": "3/x",
+          "x0": -1.5,
+          "x1": 6,
+          "y0": -2,
+          "y1": 6,
+          "sx": 1,
+          "sy": 1,
+          "w": 320,
+          "h": 240,
+          "marks": [
+            {
+              "x": 1,
+              "y": 0,
+              "l": "A"
+            },
+            {
+              "x": 0,
+              "y": 2,
+              "l": "B"
+            },
+            {
+              "x": 3,
+              "y": 1,
+              "l": "C"
+            }
+          ]
+        },
         "tip": "旋转 90° 找 C：过 C 作 x 轴的垂线，用 AAS 证 △AOB ≌ △CDA 得 C(3, 1)。第（3）问把「距离最短」翻译成「与 AB 平行且与双曲线只有一个公共点的直线」。",
         "solution": [
           "（1）将点 A(1, 0)、B(0, 2) 代入 y = mx + b，得 { m + b = 0, b = 2 }，解得 { m = −2, b = 2 }，",
@@ -3733,37 +3992,10 @@ var PACKS = [
           "函数与图象",
           "二次函数"
         ],
+        "formula": "两点求解析式：y = −x² + 2x + 3，C(0, 3)，BC：y = −x + 3\n铅垂高：DF = y_抛 − y_线 = −m² + 3m，S△BCD = ½·DF·OB\nS△AOC = ½·OA·OC；角相等 ⟹ 构造对称或全等（可能有两解）",
         "diff": 3,
         "focus": "plan",
         "ask": "如图①，已知抛物线 y = ax² + bx + 3（a ≠ 0）与 x 轴交于 A(−1, 0)，B(3, 0) 两点，与 y 轴交于点 C。\n（1）求该抛物线的表达式；\n（2）若点 D 是抛物线上第一象限内的一个动点，连接 CD，BD，BC，AC。当 △BCD 的面积等于 △AOC 面积的 2 倍时，求点 D 的坐标；\n（3）抛物线上是否存在点 P，使 ∠CBP + ∠ACO = ∠ABC？若存在，请求出点 P 坐标；若不存在请说明理由。",
-        "plot": {
-          "expr": "-x^2+2x+3",
-          "x0": -1.5,
-          "x1": 3.6,
-          "y0": -1,
-          "y1": 4.5,
-          "sx": 1,
-          "sy": 1,
-          "w": 320,
-          "h": 240,
-          "marks": [
-            {
-              "x": -1,
-              "y": 0,
-              "l": "A"
-            },
-            {
-              "x": 3,
-              "y": 0,
-              "l": "B"
-            },
-            {
-              "x": 0,
-              "y": 3,
-              "l": "C"
-            }
-          ]
-        },
         "fields": [
           {
             "type": "coef",
@@ -3798,6 +4030,34 @@ var PACKS = [
             "ans": 0
           }
         ],
+        "plot": {
+          "expr": "-x^2+2x+3",
+          "x0": -1.5,
+          "x1": 3.6,
+          "y0": -1,
+          "y1": 4.5,
+          "sx": 1,
+          "sy": 1,
+          "w": 320,
+          "h": 240,
+          "marks": [
+            {
+              "x": -1,
+              "y": 0,
+              "l": "A"
+            },
+            {
+              "x": 3,
+              "y": 0,
+              "l": "B"
+            },
+            {
+              "x": 0,
+              "y": 3,
+              "l": "C"
+            }
+          ]
+        },
         "tip": "（2）用「水平宽 × 铅垂高 ÷ 2」把面积条件翻译成关于横坐标的方程；（3）先算出 ∠ABC = 45°、∠ACO 的正切，再把条件转化成「构造全等/对称」去找 P——注意 P 有两解。",
         "solution": [
           "（1）把 A(−1, 0)、B(3, 0) 代入 y = ax² + bx + 3（a ≠ 0）中，得 { a − b + 3 = 0, 9a + 3b + 3 = 0 }，解得 { a = −1, b = 2 }，",
@@ -3832,6 +4092,7 @@ var PACKS = [
           "几何综合",
           "新定义"
         ],
+        "formula": "勾股四边形：相邻两边平方和 = 一条对角线的平方（勾股定理逆用）\n旋转 n° ⟹ AC = CE、∠ACE = n°；n = 60 ⟹ △ACE 是等边三角形\n等腰三角形三线合一：底边中线 ⟂ 底边",
         "diff": 3,
         "focus": "check",
         "ask": "给出如下定义：若一个四边形中存在相邻两边的平方和等于一条对角线的平方，则称该四边形为勾股四边形。\n（1）以下四边形中，是勾股四边形的为 ______（填序号即可）；\n①平行四边形；②矩形；③有一个角为直角的任意凸四边形；④有一个角为 60° 的菱形。\n（2）如图 1，将 △ABC 绕顶点 C 按顺时针方向旋转 n° 得到 △EDC。\n①连接 AD，当 n = 60，∠BAD = 30° 时，求证：四边形 ABCD 是勾股四边形。\n②如图 2，将 DE 绕点 E 顺时针方向旋转得到 EF，连接 BF，BF 与 AE 交于点 P，连接 CP，若 ∠DEF = (180 − n)°，CP = 2，AE = 8，求 AC 的长度。",
@@ -7923,6 +8184,27 @@ function qScore(q){
   return null;
 }
 function kpOf(q){ return (q && q.kp && q.kp.length) ? String(q.kp[0]) : ''; }
+function kpAll(q){
+  if(!q || !q.kp || !q.kp.length) return [];
+  return q.kp.filter(function(k){ return k; }).map(String);
+}
+/* 解析页顶部的「考点 · 应用公式」重点块：考点做成标签、公式逐行加粗 */
+function kpFormulaHTML(q){
+  var kp = kpAll(q), fm = String((q && q.formula) || '').replace(/\r/g, '').trim();
+  if(!kp.length && !fm) return '';
+  var h = ['<div class="exkp">', '<div class="exkp-hd">本题考点 · 应用公式</div>'];
+  if(kp.length){
+    h.push('<div class="exkp-row"><span class="exkp-lab">考点</span><span class="exkp-chips">' +
+           kp.map(function(k){ return '<i>' + esc(k) + '</i>'; }).join('') + '</span></div>');
+  }
+  if(fm){
+    h.push('<div class="exkp-row"><span class="exkp-lab">应用公式</span><span class="exkp-fm">' +
+           fm.split('\n').map(function(l){ l = l.trim(); return l ? '<span>' + esc(l) + '</span>' : ''; }).join('') +
+           '</span></div>');
+  }
+  h.push('</div>');
+  return h.join('');
+}
 function splitPts(total, n){
   if(!total || !n) return [];
   var base = Math.floor(total / n), rest = total - base * n, out = [];
@@ -8003,7 +8285,8 @@ function mergePackMeta(){
       var b = byId[q.id];
       if(!b) return;
       if(q.score == null && b.score != null){ q.score = b.score; changed++; }
-      if(!q.kp && b.kp){ q.kp = b.kp.slice(); changed++; }
+      if(b.kp && JSON.stringify(q.kp || []) !== JSON.stringify(b.kp)){ q.kp = b.kp.slice(); changed++; }
+      if(b.formula && q.formula !== b.formula){ q.formula = b.formula; changed++; }   /* 考点/应用公式按内置版刷新 */
       if(!q.steps && b.steps){ q.steps = b.steps; }
       if(!q.fig && b.fig){ q.fig = b.fig; delete q.plot; changed++; }   /* 旧导入包缺原卷插图时补上 */
       if(b.solution && JSON.stringify(q.solution || []) !== JSON.stringify(b.solution)){
@@ -8308,6 +8591,7 @@ function viewPaperQ(){
       h.push('<div class="fb soft"><h4>自评题：对照答案自己判</h4><div class="small">这道题的图形/答案口径以老师讲的为准，工具不判分。</div></div>');
     }
     var hasAns = (q.type === 'choice') || !!(q.fields || q.steps);
+    h.push(kpFormulaHTML(q));                      /* 考点 · 应用公式：每题解析顶部的重点块 */
     h.push('<div class="card" style="box-shadow:none;margin-top:12px"><div class="sol">');
     if(hasAns){
       h.push('<div style="font-size:15px;font-weight:600;margin-bottom:6px">参考答案</div><ul style="list-style:none;margin:0;padding:0">');
@@ -8378,6 +8662,8 @@ function viewManage(){
          '要"按原卷画"的图用 <code>fig:{w,h,svg}</code>（SVG 片段，用 <code>题库工具/figs.py</code> 生成）。' +
          '<br>可选：<code>focus</code>（trans/graph/model/plan/check）、<code>tip</code>、<code>diff</code>（1～3）、<code>selfCheck:true</code>（不判分）。' +
          '<br><b>分值</b>：<code>score:8</code>；<b>知识点</b>：<code>kp:["函数与图象","二次函数"]</code>（第一个决定报告里的板块）。' +
+         '<br><b>考点 + 应用公式</b>：<code>formula:"① 对称轴 x = −b/(2a)\\n② Δ = b² − 4ac"</code>（多行用 <code>\\n</code> 分隔）；' +
+         '解析页会把考点做标签、公式逐行加粗显示。' +
          '<br><b>分步给分</b>：把 <code>fields</code> 换成 <code>steps:[{pt:2,label,type:"num",ans:…}, …]</code>，<code>pt</code> 之和应等于 <code>score</code>。' +
          '</div></div>');
   return h.join('');
@@ -8411,6 +8697,8 @@ function validatePack(obj){
         err.push(tag + '：kp 必须是非空字符串数组，如 ["函数与图象","二次函数"]');
       else if(q.kp.length > 3) warn.push(tag + '：kp 建议不超过 3 个（第一个决定报告板块）');
     }
+    if(q.formula != null && (typeof q.formula !== 'string' || !q.formula.trim()))
+      warn.push(tag + '：formula（应用公式）建议写成非空字符串，多行用 \\n 分隔');
     if(q.type === 'choice'){
       if(!Array.isArray(q.opts) || q.opts.length < 2) err.push(tag + '：选择题需要 opts 数组（至少 2 项）');
       else {

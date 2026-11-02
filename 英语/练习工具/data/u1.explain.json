@@ -1,0 +1,155 @@
+{
+  "unit": "U1",
+  "items": {
+    "1": {
+      "topic": "形式主语 it",
+      "point": "It is + adj. + that 从句：it 是形式主语，真正主语是 that 从句；表语用形容词，也可用 a fact。",
+      "why": "空在系动词 is 后作表语，用形容词 true；若填名词 fact 就必须带冠词写成 a fact。it 只是形式主语，that 从句才是真正主语，不能用 There/This 顶替。",
+      "trap": "单词空写 fact 会缺冠词；见 that 从句先找形式主语，别选 There。"
+    },
+    "2": {
+      "topic": "but 转折选词",
+      "point": "but 表转折，前后评价必须相反：前半被否定，后半才是「我很喜欢」，空内需消极评价的词。",
+      "why": "前半 Some people think… 与后半 I like it very much 由 but 连接，说明别人认为写信「过时」，填 outdated。outstanding 是褒义「杰出的」，与转折关系矛盾。",
+      "trap": "别被 outstanding 的字面「出」误导：它表优秀；先定前半褒贬再选词。"
+    },
+    "3": {
+      "topic": "介词 beyond",
+      "point": "beyond 表「超出（范围、限度）」，beyond his lifetime = 超出他短暂的一生，即精神长存。",
+      "why": "Though 让步句说他英年早逝，主句 his spirit lives 与 beyond his short lifetime 搭配，表示精神延续到生命之外；in/after 只表时间位置，表达不出「超越」。",
+      "trap": "别按中文「在他一生之后」直译成 after；beyond 后接名词表范围。"
+    },
+    "4": {
+      "topic": "be confident that",
+      "point": "be confident that + 从句 =「确信会……」；confident 是形容词作表语，也可接 of/about + 名词。",
+      "why": "that she can achieve her goal 是从句，前面需要形容词 confident 作表语，句意「玛丽确信努力就能实现目标」。sure、certain 同义可替换；confidence 是名词，不能作表语。",
+      "trap": "别填名词 confidence；confident 后的 that 不能换成 what。"
+    },
+    "5": {
+      "topic": "it 作形式主语",
+      "point": "It is + adj. + that 从句：it 作形式主语，that 从句是真正主语；此处不能用 this/that/there。",
+      "why": "空格后是 is fitting that…，真正主语是后面的 that 从句，句首必须是形式主语 It，故选 B。There 表存在，This/That 是指示代词，都不能占据形式主语的位置。",
+      "trap": "中文「这是合适的」易误选 This；判断依据是有没有 that 从句。"
+    },
+    "6": {
+      "topic": "convinced of",
+      "point": "be convinced of + 名词 =「确信、信服某事」；接从句时用 be convinced that…，不跟 about/in/with。",
+      "why": "the importance of protecting the environment 是名词短语，前面用介词 of，构成 be convinced of sth。about、in、with 都不能与 convinced 搭配，故排除 B、C、D。",
+      "trap": "受 be interested in、believe in 影响易误选 in；convinced 只跟 of 或 that。"
+    },
+    "7": {
+      "topic": "in addition to",
+      "point": "in addition to 是介词短语，后接名词/代词/动名词；in addition 是副词，不能直接带宾语。",
+      "why": "空后 his achievements 是名词宾语，必须有介词 to，故选 B。A 缺 to 不能带宾语；Except for 表「除……之外（排除）」、Instead of 表「而不是」，与「他还是优秀艺术家」的递进不符。",
+      "trap": "最容易漏掉 to 选 A；空后直接跟名词就用 in addition to。"
+    },
+    "8": {
+      "topic": "talented in",
+      "point": "be talented in + 领域 =「在……方面有天赋」；名词形式是 have a talent for + 领域/动名词。",
+      "why": "句子缺谓语，主语单数，用 is talented in acting。A has a talent in 介词错（应为 for）；C has talent for 缺冠词 a；D is talented for 介词错，均排除。",
+      "trap": "talented 后接 in，talent 后接 for，两个介词别对调。"
+    },
+    "9": {
+      "topic": "made to do",
+      "point": "主动 make sb do sth 不带 to；变被动必须还原 to：sb be made to do sth。",
+      "why": "People were made… 是被动语态，主语 people 是被使得相信的人，故用 to believe。A 缺 to；B believing 不能作主语补足语；D to believing 后应跟动词原形，故排除。",
+      "trap": "别照搬主动式省略 to；被动后一定把 to 加回来，to 后接原形。"
+    },
+    "10": {
+      "topic": "need doing",
+      "point": "主语是物、表「需要被做」用 need doing（主动形式表被动）或 need to be done；主语是人用 need to do。",
+      "why": "第一空主语 The computer 是修理对象，用 fixing；第二空主语 I 是主动去求助的人，用 to go，故选 C。A、B 第二空 going 无此搭配；D 第一空 to fix 表主动，与 computer 矛盾。",
+      "trap": "两个 need 主语不同，别都填 to do；先看主语是人还是物。"
+    },
+    "11": {
+      "topic": "no less than",
+      "point": "no less + 形容词 + than =「不亚于」，是加强语气的肯定比较；not as…as 与 less…than 都表「不如」。",
+      "why": "句意赞颂王贞仪「不亚于同时代男科学家」，用 no less important than，故选 D。B、C 都表「不如」，与赞颂语气相反；A 的 so…as 只用于否定句。",
+      "trap": "no less 是双重否定表肯定，别读成「不重要」；先判断褒贬再选比较级。"
+    },
+    "12": {
+      "topic": "made up of",
+      "point": "be made up of 表「由……组成」；be made of 看得出原料，be made from 看不出原料，be made by 后接制作者。",
+      "why": "沙拉由多种蔬果「组成」，用 is made up of；果汁由葡萄榨成、看不出葡萄原形，用 is made from。A、B 第二空 made of 与果汁不符；C 第一空 made by 后应接人，故排除。",
+      "trap": "of/from 的界线是能否看出原料；up of 强调整体由部分构成。"
+    },
+    "13": {
+      "topic": "as…as 比较",
+      "point": "同级比较用 as + 形容词/副词原级 + as；比较级不能放进 as…as 中间，so…as 只用于否定句。",
+      "why": "中文「和天赋一样必要」是同级比较，形容词用原级 necessary，前后各一个 as，故填 as necessary as。more necessary 是比较级，不能放在 as…as 中。",
+      "trap": "别写成 as more necessary as；第一个 as 不能省，否则结构不完整。"
+    },
+    "14": {
+      "topic": "need 被动",
+      "point": "need to be done = need doing，表「需要被做」；主语是动作承受者时不能用 need to do。",
+      "why": "主语 these vegetables 是被浇水的对象，且 every day 提示一般现在时、主语复数，故用 need to be watered。or they will die 用将来时，说明这是客观需要。",
+      "trap": "别写 need to water（蔬菜不会自己浇水）；复数主语 need 不加 s。"
+    },
+    "15": {
+      "topic": "介词后接动名词",
+      "point": "in addition to 的 to 是介词，后接名词或动名词（相当于 besides doing），不能接动词原形。",
+      "why": "「除了看电影」中的「看」是动作，作介词宾语要用动名词 watching，故填 In addition to watching。若写 to watch，to 会被误当不定式符号；In addition 是副词，不能直接带宾语。",
+      "trap": "两个坑：漏 -ing 写成 to watch；漏 to 写成 In addition watching。"
+    },
+    "16": {
+      "topic": "talent for",
+      "point": "be famous for + 名词/动名词，表「因……出名」；talent 后接 for doing，表「做某事的天赋」。",
+      "why": "空在 for 后，后面又已印 for playing the piano，需名词短语 her talent 作宾语：be famous for her talent for playing the piano；being talented 也可接受。",
+      "trap": "空后已印 for，别重复介词；分清 be famous for（因……）与 as（作为……）。"
+    },
+    "17": {
+      "topic": "keep in mind",
+      "point": "It is fitting that + 从句：it 是形式主语，that 从句是真正主语；keep sth in mind 是固定搭配，宾语放 in mind 前。",
+      "why": "「这是理所应当的」用 It is fitting that；and 连接 learn 和 keep 两个并列谓语，形式用原形；their spirits 是 keep 的宾语，故依次填 It is fitting that / keep / in mind。",
+      "trap": "顺序最易错：别写成 keep in mind their spirits；and 后动词与 learn 并列。"
+    },
+    "18": {
+      "topic": "made up of",
+      "point": "be made up of 表「由……组成」；on one's own =「独自、靠自己」，one's 随主语变化。",
+      "why": "主语 The model 是单数，用 is made up of several simple things；第二空「她独自完成」与 she 对应，用 on her own（= by herself），作方式状语。",
+      "trap": "别写 by her own（应为 by herself）；主语单数别漏 is。"
+    },
+    "19": {
+      "topic": "that 从句省略",
+      "point": "be sorry 后的宾语从句用 that 引导，口语常省略；从句成分完整时不能填 what/which/whose。",
+      "why": "I'm sorry 后接 I broke your glass，主谓宾齐全，that 可省略，故选 A（不填）。what 需在从句中作主语或宾语，而 broke 已有宾语 your glass；which、whose 需有先行词。",
+      "trap": "先划从句成分：主语 I、谓语 broke、宾语 your glass 都有了，就不缺连接代词。"
+    },
+    "20": {
+      "topic": "whether 从句",
+      "point": "whether 可与 or not 直接连用，表「是否」引导宾语从句；if 一般不直接跟 or not，that 不表疑问。",
+      "why": "be not certain 后需要「是否」的宾语从句，句末 or not 是 whether…or not 的固定结构，故选 B。that 不表「是否」；what、how 要在从句中作成分，而从句主谓宾齐全。",
+      "trap": "见 or not 优先 whether；别因从句完整就选 that。"
+    },
+    "21": {
+      "topic": "宾语从句时态",
+      "point": "宾语从句的时态看从句自己的时间状语：tomorrow 等将来时间用 will do，主句现在时不改变它。",
+      "why": "从句 it ______ rainy tomorrow 有将来时间状语 tomorrow，描述明天的天气，用 will be，故选 D。was 是过去时、has been 是现在完成时，都与 tomorrow 矛盾；is 缺将来意义。",
+      "trap": "「主将从现」只管 if/when 引导的条件、时间状语从句，别套到宾语从句。"
+    },
+    "22": {
+      "topic": "宾语从句连接词",
+      "point": "宾语从句连接词看从句缺什么：成分完整、问原因用 why；问地点才用 where。",
+      "why": "句意「我好奇北极光为什么常在极地出现」。appear 是不及物动词，in the polar regions 已是地点状语，从句不缺地点，故用 why。where 会与已给地点重复；which、what 需在从句中作主语或宾语。",
+      "trap": "见 polar regions 就选 where 是典型错法；先划成分，再看缺原因还是地点。"
+    },
+    "23": {
+      "topic": "主语从句 that",
+      "point": "It 作形式主语时，若 that 从句结构完整、不缺成分，就用 that；that 只起连接作用，不作句子成分。",
+      "why": "从句主谓宾齐全（a small team…completed the project），用 that，选 C。what 必须在从句中作主语或宾语；whether 表「是否」，与「确实令人惊讶」不符；when 无时间信息。",
+      "trap": "中文「真是令人惊讶」易误选 what；判断只看从句缺不缺主语或宾语。"
+    },
+    "24": {
+      "topic": "if 双用法",
+      "point": "if 引导宾语从句时意为「是否」，按句意可用将来时；if 引导条件状语从句时遵循「主将从现」。",
+      "why": "第一空 I'm not sure if… 是「不确定他明天是否会来」，if=是否，从句用 will come；第二空 if he… 是条件状语从句，主句 he will give you a call 为将来时，从句用 comes，故选 B。",
+      "trap": "同一 if 两种身份：表「是否」用将来时，表「如果」的从句用现在时。"
+    },
+    "25": {
+      "topic": "certain 从句",
+      "point": "be certain that… 从句成分完整用 that（口语可省略）；be unsure 后表「是否」用 whether 引导宾语从句。",
+      "why": "第一空 something is wrong with him 主谓完整，用 that；第二空「不确定他是否会死于这种病」表「是否」，用 whether。本题选项未印在本页，只能按句意判断第一空 that、第二空 whether。",
+      "trap": "unsure 后不能用 that（不表「是否」）；也别把 that 与 if 混搭，书面语用 whether。"
+    }
+  }
+}

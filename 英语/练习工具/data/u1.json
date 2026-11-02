@@ -1,0 +1,521 @@
+{
+  "unit": "U1",
+  "title": "九上 U1 过关",
+  "header": {
+    "class": "柯三9",
+    "name": "陶宸欣",
+    "id": "0909"
+  },
+  "items": [
+    {
+      "no": 1,
+      "kind": "fill",
+      "stem": "It is ______ that Wang Zhenyi is remembered for her great work.",
+      "cn": null,
+      "options": null,
+      "marked": null,
+      "handwriting": [
+        "fact"
+      ],
+      "note": "横线手写词辨为 fact（卷面横线前未印冠词，按字面转写）"
+    },
+    {
+      "no": 2,
+      "kind": "fill",
+      "stem": "Some people think writing letters is ______ but I like it very much.",
+      "cn": null,
+      "options": null,
+      "marked": null,
+      "handwriting": [
+        "outstanding"
+      ],
+      "note": "手写词辨为 outstanding（语境疑应为 outdated，按字面转写）"
+    },
+    {
+      "no": 3,
+      "kind": "fill",
+      "stem": "Though he passed away at a young age, his spirit lives ______ his short lifetime.",
+      "cn": null,
+      "options": null,
+      "marked": null,
+      "handwriting": [
+        "beyond"
+      ],
+      "note": "手写单词潦草，辨为 beyond（首字母 b 清晰，后半辨读）"
+    },
+    {
+      "no": 4,
+      "kind": "fill",
+      "stem": "Mary is ______ that she can achieve her goal as long as she keeps making efforts.",
+      "cn": null,
+      "options": null,
+      "marked": null,
+      "handwriting": [
+        "confident"
+      ],
+      "note": "手写词辨为 confident"
+    },
+    {
+      "no": 5,
+      "kind": "mc",
+      "stem": "______ is fitting that hard work finally leads to good results.",
+      "cn": null,
+      "options": [
+        {
+          "k": "A",
+          "t": "There"
+        },
+        {
+          "k": "B",
+          "t": "It"
+        },
+        {
+          "k": "C",
+          "t": "This"
+        },
+        {
+          "k": "D",
+          "t": "That"
+        }
+      ],
+      "marked": "B",
+      "handwriting": null,
+      "note": "题号左侧页边手写 B；选项 B. It 处有手画圈，与页边一致"
+    },
+    {
+      "no": 6,
+      "kind": "mc",
+      "stem": "Scientists are convinced ______ the importance of protecting the environment.",
+      "cn": null,
+      "options": [
+        {
+          "k": "A",
+          "t": "of"
+        },
+        {
+          "k": "B",
+          "t": "about"
+        },
+        {
+          "k": "C",
+          "t": "in"
+        },
+        {
+          "k": "D",
+          "t": "with"
+        }
+      ],
+      "marked": "A",
+      "handwriting": null,
+      "note": "题号左侧页边手写 A（其横画长长延伸，压到选项行）"
+    },
+    {
+      "no": 7,
+      "kind": "mc",
+      "stem": "______ his achievements in science, he is an excellent artist.",
+      "cn": null,
+      "options": [
+        {
+          "k": "A",
+          "t": "In addition"
+        },
+        {
+          "k": "B",
+          "t": "In addition to"
+        },
+        {
+          "k": "C",
+          "t": "Except for"
+        },
+        {
+          "k": "D",
+          "t": "Instead of"
+        }
+      ],
+      "marked": "B",
+      "handwriting": null,
+      "note": "题号左侧页边手写 B（草写形似 ß/ℬ）"
+    },
+    {
+      "no": 8,
+      "kind": "mc",
+      "stem": "The young girl ______ acting, and she practises it day and night.",
+      "cn": null,
+      "options": [
+        {
+          "k": "A",
+          "t": "has a talent in"
+        },
+        {
+          "k": "B",
+          "t": "is talented in"
+        },
+        {
+          "k": "C",
+          "t": "has talent for"
+        },
+        {
+          "k": "D",
+          "t": "is talented for"
+        }
+      ],
+      "marked": "B",
+      "handwriting": null,
+      "note": "题号左侧页边手写 B（卷面为英式拼写 practises）"
+    },
+    {
+      "no": 9,
+      "kind": "mc",
+      "stem": "People were made ______ that eclipses were a sign of anger from heaven in the past.",
+      "cn": null,
+      "options": [
+        {
+          "k": "A",
+          "t": "Believe"
+        },
+        {
+          "k": "B",
+          "t": "believing"
+        },
+        {
+          "k": "C",
+          "t": "to believe"
+        },
+        {
+          "k": "D",
+          "t": "to believing"
+        }
+      ],
+      "marked": "C",
+      "handwriting": null,
+      "note": "题号左侧页边手写 C；选项 C 被手画圈，与页边一致"
+    },
+    {
+      "no": 10,
+      "kind": "mc",
+      "stem": "The computer needs ______. I think I need ______ to ask Mr Zhang for help.",
+      "cn": null,
+      "options": [
+        {
+          "k": "A",
+          "t": "fixing; going"
+        },
+        {
+          "k": "B",
+          "t": "to fix; going"
+        },
+        {
+          "k": "C",
+          "t": "fixing; to go"
+        },
+        {
+          "k": "D",
+          "t": "to fix; to go"
+        }
+      ],
+      "marked": "C",
+      "handwriting": null,
+      "note": "题号左侧页边手写 C（形近圆弧）；选项 C 被圈，A、B 有划线"
+    },
+    {
+      "no": 11,
+      "kind": "mc",
+      "stem": "Wang Zhenyi was ______ male scientists of her time.",
+      "cn": null,
+      "options": [
+        {
+          "k": "A",
+          "t": "so important as"
+        },
+        {
+          "k": "B",
+          "t": "not as important as"
+        },
+        {
+          "k": "C",
+          "t": "less important than"
+        },
+        {
+          "k": "D",
+          "t": "no less important than"
+        }
+      ],
+      "marked": "B",
+      "handwriting": null,
+      "note": "题号左侧页边手写 B"
+    },
+    {
+      "no": 12,
+      "kind": "mc",
+      "stem": "This salad ______ fresh vegetables and fruits, and the juice ______ grapes.",
+      "cn": null,
+      "options": [
+        {
+          "k": "A",
+          "t": "is made by; is made of"
+        },
+        {
+          "k": "B",
+          "t": "is made up of; is made of"
+        },
+        {
+          "k": "C",
+          "t": "is made by; is made from"
+        },
+        {
+          "k": "D",
+          "t": "is made up of; is made from"
+        }
+      ],
+      "marked": "D",
+      "handwriting": null,
+      "note": "题号左侧页边手写字形辨为 B（与 7/8/11 题同一草写体）；但选项区 A、B 前有划线、D 前有类似勾选记号，疑学生最终改选 D，页边字母与选项标记不一致 页边原写 B，选项区 A/B 被划掉、D 前有勾，按最终作答记 D（用户确认）。"
+    },
+    {
+      "no": 13,
+      "kind": "fill",
+      "stem": "Practice is ______ talent.",
+      "cn": "练习和天赋一样必要。",
+      "options": null,
+      "marked": null,
+      "handwriting": [
+        "as necessary as"
+      ],
+      "note": null
+    },
+    {
+      "no": 14,
+      "kind": "fill",
+      "stem": "These vegetables in the garden ______ every day, or they will die.",
+      "cn": "花园里的这些蔬菜每天都需要浇水，否则它们会死的。",
+      "options": null,
+      "marked": null,
+      "handwriting": [
+        "need to be watered"
+      ],
+      "note": null
+    },
+    {
+      "no": 15,
+      "kind": "fill",
+      "stem": "______ English movies, I also listen to English songs to learn English.",
+      "cn": "除了看英文电影，我还听英文歌曲来学习英语。",
+      "options": null,
+      "marked": null,
+      "handwriting": [
+        "In addition to watching"
+      ],
+      "note": null
+    },
+    {
+      "no": 16,
+      "kind": "fill",
+      "stem": "Nancy was famous for ______ for playing the piano when she was a child.",
+      "cn": "南希从小就因弹钢琴有天赋而出名。",
+      "options": null,
+      "marked": null,
+      "handwriting": [
+        "having a talent"
+      ],
+      "note": "横线上先写 being talented 并划掉，上方改写为 having a talent（空后 for 为印刷体） 横线上先写 being talented 被划掉，改写 having a talent；此处只保留最终作答。"
+    },
+    {
+      "no": 17,
+      "kind": "fill",
+      "stem": "______ we learn from great people and ______ their spirits ______.",
+      "cn": "我们向伟人学习，并牢记他们的精神，这是理所应当的。",
+      "options": null,
+      "marked": null,
+      "handwriting": [
+        "It is fitting",
+        "that"
+      ],
+      "note": "句首两处横线上手写 It is fitting；and 后横线写 that；their spirits 之后的横线未填写"
+    },
+    {
+      "no": 18,
+      "kind": "fill",
+      "stem": "The model of lunar eclipse ______ several simple things, and she made it ______.",
+      "cn": "这个月食模型由几样简单物品组成，并且是她独自完成的。",
+      "options": null,
+      "marked": null,
+      "handwriting": [
+        "is made up of",
+        "on her own"
+      ],
+      "note": "第二个空移至下一行行首，学生写 on her own"
+    },
+    {
+      "no": 19,
+      "kind": "mc",
+      "stem": "I'm sorry ______ I broke your glass just now.",
+      "cn": null,
+      "options": [
+        {
+          "k": "A",
+          "t": "/"
+        },
+        {
+          "k": "B",
+          "t": "what"
+        },
+        {
+          "k": "C",
+          "t": "which"
+        },
+        {
+          "k": "D",
+          "t": "whose"
+        }
+      ],
+      "marked": "A",
+      "handwriting": null,
+      "note": "题号左侧页边手写 A；选项 A 印刷为斜杠 /（即不填）"
+    },
+    {
+      "no": 20,
+      "kind": "mc",
+      "stem": "I am not certain ______ the new student will join our English Club or not.",
+      "cn": null,
+      "options": [
+        {
+          "k": "A",
+          "t": "that"
+        },
+        {
+          "k": "B",
+          "t": "whether"
+        },
+        {
+          "k": "C",
+          "t": "what"
+        },
+        {
+          "k": "D",
+          "t": "how"
+        }
+      ],
+      "marked": "C",
+      "handwriting": null,
+      "note": "题号左侧页边手写 C"
+    },
+    {
+      "no": 21,
+      "kind": "mc",
+      "stem": "My grandma is worried that it ______ rainy tomorrow.",
+      "cn": null,
+      "options": [
+        {
+          "k": "A",
+          "t": "is"
+        },
+        {
+          "k": "B",
+          "t": "was"
+        },
+        {
+          "k": "C",
+          "t": "has been"
+        },
+        {
+          "k": "D",
+          "t": "will be"
+        }
+      ],
+      "marked": "B",
+      "handwriting": null,
+      "note": "题号左侧页边手写 B"
+    },
+    {
+      "no": 22,
+      "kind": "mc",
+      "stem": "I'm curious ______ the Northern Lights usually appear in the polar regions.",
+      "cn": null,
+      "options": [
+        {
+          "k": "A",
+          "t": "where"
+        },
+        {
+          "k": "B",
+          "t": "why"
+        },
+        {
+          "k": "C",
+          "t": "which"
+        },
+        {
+          "k": "D",
+          "t": "what"
+        }
+      ],
+      "marked": "B",
+      "handwriting": null,
+      "note": "题号左侧页边手写 B"
+    },
+    {
+      "no": 23,
+      "kind": "mc",
+      "stem": "It was truly surprising ______ a small team of only five people completed such a huge project.",
+      "cn": null,
+      "options": [
+        {
+          "k": "A",
+          "t": "what"
+        },
+        {
+          "k": "B",
+          "t": "whether"
+        },
+        {
+          "k": "C",
+          "t": "that"
+        },
+        {
+          "k": "D",
+          "t": "when"
+        }
+      ],
+      "marked": "C",
+      "handwriting": null,
+      "note": "题号左侧页边手写 C"
+    },
+    {
+      "no": 24,
+      "kind": "mc",
+      "stem": "—I'm not sure if he ______ tomorrow. —Don't worry. I think if he ______, he will give you a call.",
+      "cn": null,
+      "options": [
+        {
+          "k": "A",
+          "t": "will come; will come"
+        },
+        {
+          "k": "B",
+          "t": "will come; comes"
+        },
+        {
+          "k": "C",
+          "t": "comes; will come"
+        },
+        {
+          "k": "D",
+          "t": "comes; comes"
+        }
+      ],
+      "marked": "B",
+      "handwriting": null,
+      "note": "题号左侧页边手写 B"
+    },
+    {
+      "no": 25,
+      "kind": "mc",
+      "stem": "We're certain ______ something is wrong with him, but we are unsure ______ he will die of the disease.",
+      "cn": null,
+      "options": null,
+      "marked": "A",
+      "handwriting": null,
+      "note": "本页正文到 disease. 结束，第 25 题选项未印在本页（疑在下一页或照片未拍到），故 options 为 null；题号左侧页边有手写 A"
+    }
+  ]
+}

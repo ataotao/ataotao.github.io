@@ -80,21 +80,23 @@ python 题库工具\qb.py verify
 | `qb.py apply --dry-run` | 只看会改哪些答案，不落盘 |
 | `qb.py check --report r.json` | 差异表另存 JSON，便于批量统计 |
 
-## v2 新增字段（分值 / 知识点 / 分步）
+## v2 新增字段（分值 / 知识点 / 应用公式 / 分步）
 
-题包里每题可以带三个新字段，`template` 会把分值打在题号后面：
+题包里每题可以带这些字段，`template` 会把分值打在题号后面：
 
 ```json
 { "id": "m21", "no": "21", "type": "solve", "score": 8,
   "kp": ["函数与图象", "二次函数"],
+  "formula": "① 顶点在 y 轴上：设 y = ax² + c\n② 代底部端点 (±5, 0) 求 a\n③ 通过判断：比较 y 与 车高 + 0.5",
   "steps": [ {"pt": 4, "type": "choice", "label": "(1) 解析式", "options": [...], "ans": 1},
              {"pt": 4, "type": "choice", "label": "(2) 能否通过", "options": [...], "ans": 0} ] }
 ```
 
 - `score`：本题分值（数字，正数）。
 - `kp`：知识点数组，第一个决定报告里的板块。
+- `formula`：应用公式（字符串，多行用 `\n`）。**解析页把 `kp` 做成标签、`formula` 逐行加粗，显示在「本题考点 · 应用公式」重点块里**；页面启动时按内置版刷新，本地导入的同 id 题包不用重新导入。
 - `steps`：分步给分，`pt` 之和应等于 `score`；不给 `steps` 时按 `fields` 整数均分。
-- `qb.py verify` 会检查：`score` 为正数、`kp` 是非空字符串数组、`steps` 的 `pt` 合计与 `score` 一致。
+- `qb.py verify` 会检查：`score` 为正数、`kp` 是非空字符串数组、`formula` 是非空字符串（超 400 字提示精简）、`steps` 的 `pt` 合计与 `score` 一致。
 - `check` / `apply` / `template` 已兼容 `steps`（把每步当成一个 field，忽略 `pt`）。
 
 ## 原卷插图（`fig` 字段 + `figs.py`）

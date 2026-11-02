@@ -58,6 +58,24 @@
 .ex-chip:hover{border-color:#c9c2b4}
 .ex-chip.on{background:var(--brand);border-color:var(--brand);color:#fff;font-weight:700}
 .ex-opttext{flex:1;min-width:0}
+/* 考点 · 公式（解析区第一块，刻意做得比解析更抢眼） */
+.ex-key{margin-top:12px;border:1px solid #d7e5ef;border-left:4px solid var(--brand);border-radius:12px;
+  background:linear-gradient(180deg,#f4fafd 0%,#fff 70%);padding:11px 13px 12px}
+.ex-key-h{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.ex-key-h b{font-size:13px;font-weight:800;letter-spacing:.08em;color:var(--brand-d)}
+.ex-key-h span{font-size:11.5px;color:var(--muted)}
+.ex-key-row{display:flex;gap:8px;align-items:flex-start;margin-top:9px}
+.ex-key-lb{flex:0 0 auto;font-size:11px;font-weight:800;letter-spacing:.06em;color:#fff;background:var(--brand);
+  border-radius:6px;padding:2px 7px;margin-top:1px}
+.ex-key-txt{font-size:14px;font-weight:700;line-height:1.6;color:var(--ink)}
+.ex-key-fs{margin-top:9px;display:flex;flex-direction:column;gap:6px}
+.ex-key-f{background:#fff;border:1px solid var(--line);border-radius:9px;padding:7px 10px 8px}
+.ex-key-f .ex-f{display:block;font-size:15px;font-weight:800;line-height:1.5;color:var(--brand-d);
+  letter-spacing:.01em;font-variant-numeric:tabular-nums;word-break:break-word}
+.ex-key-f .ex-fm{display:block;font-size:12px;color:var(--muted);line-height:1.6;margin-top:3px}
+.ex-inkey{color:var(--brand-d);font-weight:700;background:#dceaf5;border-radius:4px;padding:0 3px;
+  -webkit-box-decoration-break:clone;box-decoration-break:clone}
+.ex-key-empty{font-size:12.5px;color:var(--muted);margin-top:8px}
 .ex-empty-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
 .ex-bar a.btn-ghost,.ex-btns a,.ex-empty-actions a,.ex-wright a,.ex-link{text-decoration:none;display:inline-flex;align-items:center;justify-content:center}
 .ex-bar a.btn-ghost,.ex-btns a:not(.btn-primary),.ex-empty-actions a:not(.btn-primary),.ex-wright a,.ex-link:not(.btn-primary){color:inherit}
@@ -111,6 +129,92 @@
     var b = h('div', { class: 'bar ' + (cls || '') });
     b.appendChild(h('i', { style: 'width:' + Math.round(U.clamp(ratio || 0, 0, 1) * 100) + '%' }));
     return b;
+  }
+
+  /* ---------- 考点 · 公式 ---------- */
+  /* 题库字段：point（考点一句话）、formulas（[{f:公式, m:怎么用/什么时候用}]） */
+  function formulasOf(q) {
+    return (q && Array.isArray(q.formulas) ? q.formulas : []).filter(function (x) { return x && x.f; });
+  }
+
+  function keyBlock(q) {
+    var point = (q && q.point) || '';
+    var fs = formulasOf(q);
+    if (!point && !fs.length) return null;
+    var box = h('div', { class: 'ex-key' });
+    var head = h('div', { class: 'ex-key-h' });
+    head.appendChild(h('b', { text: '考点 · 公式' }));
+    head.appendChild(h('span', { text: '先看这一块，再往下读解析' }));
+    box.appendChild(head);
+
+    if (point) {
+      var row = h('div', { class: 'ex-key-row' });
+      row.appendChild(h('span', { class: 'ex-key-lb', text: '考点' }));
+      row.appendChild(h('span', { class: 'ex-key-txt', text: point }));
+      box.appendChild(row);
+    }
+    if (fs.length) {
+      var wrap = h('div', { class: 'ex-key-fs' });
+      fs.forEach(function (it) {
+        var one = h('div', { class: 'ex-key-f' });
+        one.appendChild(h('span', { class: 'ex-f', text: String(it.f) }));
+        if (it.m) one.appendChild(h('span', { class: 'ex-fm', text: String(it.m) }));
+        wrap.appendChild(one);
+      });
+      box.appendChild(wrap);
+    } else {
+      box.appendChild(h('p', { class: 'ex-key-empty', text: '这题不用套公式，判断依据在上面的考点里。' }));
+    }
+    return box;
+  }
+
+  /* 把解析原文压成「去空白」串，同时记住每个字符在原文的位置，方便回切 */
+  function flatOf(s) {
+    var out = '', map = [];
+    for (var i = 0; i < s.length; i++) {
+      var c = s.charAt(i);
+      if (/\s/.test(c)) continue;
+      out += (c === '＝' ? '=' : c);
+      map.push(i);
+    }
+    return { flat: out, map: map };
+  }
+
+  /* 解析里出现的公式加底色：只在本题公式表里出现过才标，找不到就原样输出 */
+  function hlFormula(text, q) {
+    var src = String(text || '');
+    var fs = formulasOf(q);
+    if (!src || !fs.length) return esc(src);
+    var f = flatOf(src), hits = [];
+    fs.forEach(function (it) {
+      /* 只按「分句符号」拆，不按「·」拆：· 在物理式子里常常是乘号 */
+      String(it.f).split(/[；;、→]/).forEach(function (seg) {
+        var s = seg.trim();
+        if (s.length < 4 || !/[=＝<>＜＞→⇔]/.test(s)) return;
+        var sf = flatOf(s).flat;
+        if (sf.length < 4) return;
+        var from = 0, at;
+        while ((at = f.flat.indexOf(sf, from)) >= 0) {
+          hits.push([f.map[at], f.map[at + sf.length - 1] + 1]);
+          from = at + sf.length;
+        }
+      });
+    });
+    if (!hits.length) return esc(src);
+    hits.sort(function (a, b) { return a[0] - b[0]; });
+    var merged = [];
+    hits.forEach(function (r) {
+      var last = merged[merged.length - 1];
+      if (last && r[0] <= last[1]) last[1] = Math.max(last[1], r[1]);
+      else merged.push([r[0], r[1]]);
+    });
+    var out = '', cur = 0;
+    merged.forEach(function (r) {
+      if (r[0] > cur) out += esc(src.slice(cur, r[0]));
+      out += '<b class="ex-inkey">' + esc(src.slice(r[0], r[1])) + '</b>';
+      cur = r[1];
+    });
+    return out + esc(src.slice(cur));
   }
 
   /* 题图块：按 SPEC 第 6 节，默认宽度 100%、最大 720px，点击可全屏 */
@@ -564,6 +668,10 @@
         if (mine) fbHost.appendChild(h('p', { class: 'small muted', style: 'margin-top:4px', text: '你填的是：' + mine }));
       }
 
+      /* 考点 · 公式：放在解析最前面，先锁定「考什么、用哪条式子」 */
+      var kb = keyBlock(q);
+      if (kb) fbHost.appendChild(kb);
+
       /* 答案图：默认折叠，先想后看 */
       if (q.ansImg) {
         var abtn = h('button', { class: 'btn ex-ansbtn', type: 'button', text: '先自己再想一遍 · 看答案图' });
@@ -588,7 +696,11 @@
         if (solArr.length) {
           sol.appendChild(h('h4', { text: '解析' }));
           var ol = h('ol');
-          solArr.forEach(function (s) { ol.appendChild(h('li', { text: s })); });
+          solArr.forEach(function (s) {
+            var li = h('li');
+            li.innerHTML = hlFormula(s, q);
+            ol.appendChild(li);
+          });
           sol.appendChild(ol);
         }
         if (q.tip) sol.appendChild(h('div', { class: 'tip', text: '一句话记住：' + q.tip }));
@@ -655,6 +767,15 @@
   function renderResult(root) {
     var pack = V.pack, qs = qsOf(pack), rec = packRec(pack.id);
     var st = packStat(pack);
+    /* 本卷考点：用规范考点标签按题序去重，比 point 整句更适合做标签 */
+    var keyNames = [], keySeen = {};
+    qs.forEach(function (q) {
+      (q.tags || []).forEach(function (t) {
+        if (!t || keySeen[t]) return;
+        keySeen[t] = true;
+        keyNames.push(t);
+      });
+    });
     var wrong = [], undone = [];
     qs.forEach(function (q, i) {
       if (isSelf(q)) return;
@@ -692,6 +813,14 @@
       good.innerHTML = '<b>这一套全对了。</b>下一步：过一两周再回来做一遍，看是不是还这么顺；顺手去「错题回炉」看看别的断点。';
       card.appendChild(good);
     }
+    if (keyNames.length) {
+      var kbox = h('div', { style: 'margin-top:14px' });
+      kbox.appendChild(h('div', { class: 'small', style: 'font-weight:700;margin-bottom:7px', text: '这张卷子考了这些（按题序去重）' }));
+      var ktags = h('div', { class: 'ex-tags' });
+      keyNames.forEach(function (n) { ktags.appendChild(h('span', { class: 'tag-soft', text: n })); });
+      kbox.appendChild(ktags);
+      card.appendChild(kbox);
+    }
     if (undone.length) {
       var un = h('div', { class: 'fb warn', style: 'margin-top:12px' });
       un.innerHTML = '<b>还有 ' + undone.length + ' 题没录：</b>第 ' + undone.map(function (x) { return x.q.no; }).join('、') + ' 题。';
@@ -710,6 +839,7 @@
         var row = h('div', { class: 'ex-wrow' });
         var main = h('div', { class: 'ex-wmain' });
         main.appendChild(h('div', { class: 'ex-wtitle', text: '第 ' + it.q.no + ' 题 · ' + (it.q.tags || []).join(' / ') }));
+        if (it.q.point) main.appendChild(h('div', { class: 'tiny', style: 'color:var(--brand-d);margin-top:2px', text: '考点：' + it.q.point }));
         var mine = userText(it.q, it.r.user);
         main.appendChild(h('div', { class: 'tiny muted', text: '你的答案：' + (mine || '（空）') }));
         row.appendChild(main);
@@ -823,7 +953,8 @@
       ? p.name + ' · 第 ' + (q ? q.no : '?') + ' 题'
       : '题包 ' + w.packId + ' 的题 ' + w.qid;
     var note = [];
-    if (q && q.tags) note.push(q.tags.join(' / '));
+    if (q && q.point) note.push(q.point);
+    else if (q && q.tags) note.push(q.tags.join(' / '));
     if (q && focusOf(q)) note.push('断点：' + focusOf(q).n);
     if (q && q.ask) note.push(q.ask.length > 26 ? q.ask.slice(0, 26) + '…' : q.ask);
     if (!p) note.push('（题包可能已更新）');

@@ -1,0 +1,143 @@
+{
+  "unit": "U2",
+  "items": {
+    "m1": {
+      "topic": "seem to do",
+      "point": "「似乎做某事」用 seem to do sth.；seem 后接不定式，主语第三人称单数时用 seems，to suggest 表「表明」。",
+      "why": "句中缺谓语，横线前 s 是词首，应补 seems，后接 to suggest 构成 seem to do。学生写 shows，但 show 后不能接 to do（接宾语或 that 从句），故排除。",
+      "trap": "别被 s 后的 hows 带偏写成 shows；牢记 seem 三用法：seem to do、seem + adj.、it seems that。"
+    },
+    "m2": {
+      "topic": "a bowl of",
+      "point": "「一大碗米饭」用 a large bowl of rice；bowl 可数，a large 修饰 bowl，of 后接不可数名词 rice。",
+      "why": "so...that 表结果，ate 的宾语是 a bowl of rice。横线前 b 提示 bowl；rice 不可数，不能直接加 a，须借量词表达「一碗」。",
+      "trap": "别写 bowls（a large 后接单数）；不可数名词前不能直接加 a，要用「冠词/数词 + 量词 + of + 不可数名词」。"
+    },
+    "m3": {
+      "topic": "名词辨析（存疑）",
+      "point": "空格在 because of 后、of basic scientific knowledge 前，需一个表「缺乏/无知」的名词；但卷面已印前缀 in，手写又被重涂，无法确定唯一词。",
+      "why": "语境是「因不懂基础科学知识而犯大错」，常见表达为 their ignorance of...，但 ignorance 以 ig 开头，与印出的 in- 不符；以 in- 开头又合语境的词也难以锁定，故不给答案。",
+      "trap": "别凭语感硬填：先看固定搭配（of + 名词），再核对卷面已给字母；字母与候选词冲突时必须存疑、不猜。"
+    },
+    "m4": {
+      "topic": "被动语态词形",
+      "point": "are gradually ___ by the new methods 是被动语态，需填及物动词的过去分词，构成 be + done + by「被……取代/淘汰」。",
+      "why": "参考答案 displaced：be displaced by 意为「被……取代」，与 gradually、by the new methods 契合。disappear 不及物、无被动语态，不能填 disappearing/disappeared。",
+      "trap": "照片上手写与下一行 by 重叠、字形难辨，本题只能存疑；先判语态再选词，凡不及物动词（disappear 等）一律排除。"
+    },
+    "m5": {
+      "topic": "made of/from",
+      "point": "be made of 指物理变化、成品仍看得出原材料；be made from 指经化学或加工变化、成品看不出原材料。",
+      "why": "模型飞机由 wood and glass 做成仍能看出材质，用 of；纸由木材加工而成、看不出木，用 from，故 B。A、C、D 或把模型填 from，或把纸填 of，均错。",
+      "trap": "别死背「看得出」三个字，判断的是成品能否辨认原材料；纸、酒、酱油类由原料加工而来，习惯用 from。"
+    },
+    "m6": {
+      "topic": "seem to do",
+      "point": "seem 后接不定式 to do，seem to have less time 意为「似乎时间更少」；seem 不能接 doing，也不能直接接动词原形。",
+      "why": "句子已有谓语 are，seem 与 are 并列共用主语 we，其后须跟 to have；having（C）不能跟在 seem 后，have（A）、had（D）同样不成立，故选 B。",
+      "trap": "受前面 busy 影响易误选 having；记牢 seem 的搭配只有 to do、+ adj.、it seems that 三类。"
+    },
+    "m7": {
+      "topic": "ask sb for",
+      "point": "ask sb for sth「向某人要/征求某物」，for 是固定介词；ask sb to do sth 才是「请某人做某事」。",
+      "why": "空格后 their suggestions 是名词，只能搭配 ask the customers for；选 to 则后面须是动词原形，with、in 也不构成 ask sb 的搭配，故 B。",
+      "trap": "先看空格后接名词还是动词：名词用 for，动词才用 to do；suggestions 是名词，别误接 to。"
+    },
+    "m8": {
+      "topic": "be full of",
+      "point": "be full of = be filled with「充满」：full 是形容词，后接 of + 名词；filled 是过去分词，后接 with + 名词。",
+      "why": "第一空前有 is、后接 challenges，用 full of；第二空 it is ___ something different 需被动 filled with，故 C。A 项 fill with 缺 be，B 项 full into 搭配错，D 项错位。",
+      "trap": "同一意思两种形式别混：full 后跟 of，filled 后跟 with；is 后必须是分词才构成被动。"
+    },
+    "m9": {
+      "topic": "感叹句 What a",
+      "point": "感叹句 What a/an + 形容词 + 可数名词单数 + 主语 + 谓语！a/an 由后接形容词的首音素决定。",
+      "why": "movie 是可数名词单数，wonderful 以辅音音素 /w/ 开头用 a，故 What a wonderful movie it is，选 B。C 缺冠词，A 的 an 与读音不符，D 的 How 后应直接接形容词。",
+      "trap": "别见 What 就选 What a：先确认名词可数单数，再看 a/an 由读音（元音音素）决定，不看拼写字母。"
+    },
+    "m10": {
+      "topic": "fool sb into",
+      "point": "fool sb into doing sth「骗某人做某事」，into 后接动名词；fool 作动词，过去式为 fooled。",
+      "why": "who 引导定语从句修饰 the man，从句缺谓语须用 fooled（foolish 是形容词）；主句 ___ giving 需 into 构成 fool sb into doing，故 C。A 缺 into，B 从句用形容词，D 两处都错。",
+      "trap": "两处分别判断：从句缺谓语用 fooled，主句介词用 into；foolish 只能作形容词，不能作谓语。"
+    },
+    "m11": {
+      "topic": "be satisfied",
+      "point": "be satisfied with sth「对……满意」；否定在 be 后加 not，即 be not satisfied with，with 后接宾语。",
+      "why": "中文是「不满意这个不公平的决定」，are 后先填 not，再填 satisfied with；satisfied 由过去分词形容词化，表示人「感到满意」，介词固定用 with。",
+      "trap": "别漏 with，也别把 not 提到 are 前；satisfied（人感到满意）≠ satisfying（令人满意的）。"
+    },
+    "m12": {
+      "topic": "感叹句 How",
+      "point": "感叹句 How + 形容词/副词 + 主语 + 谓语！中心词是形容词时用 How，且 How 后不加 a/an。",
+      "why": "it is to see... 中 it 是形式主语、真正主语是 to see these creative achievements；被感叹的是形容词 amazing，故用 How amazing it is to see...，不能套 What a。",
+      "trap": "看到 it is 就套 What a 是典型错误：先找被感叹的中心词，形容词用 How，名词才用 What。"
+    },
+    "m13": {
+      "topic": "straight to",
+      "point": "straight 作副词「直接地」修饰 go，go straight to + 地点；after the meeting 表过去，谓语用一般过去时 went。",
+      "why": "中文「直接去了咖啡店」：go + straight + to + 地点，straight 在动词后、介词前，to 不能省；after the meeting 是过去时间，故填 went / straight to。",
+      "trap": "别写成 went to straight（语序错）或 went straight the coffee shop（漏 to）；时态不要用现在完成时。"
+    },
+    "g1": {
+      "topic": "until 时间状语",
+      "point": "until 引导时间状语从句，主句谓语用延续性动词；从句 the rain stopped 是过去，主句用一般过去时 stayed。",
+      "why": "「他一直在图书馆待到雨停」：stay 是延续性动词，用肯定式 stayed；didn't stay 意思相反，stays 时态不符，hasn't stayed 与过去时间矛盾，故 A。",
+      "trap": "区分 stay until（待到……）与 not...until（直到……才）；until 从句不用将来时，主句时态与从句一致。"
+    },
+    "g2": {
+      "topic": "How soon 提问",
+      "point": "How soon 对「in + 一段时间」提问，意为「多久以后」，答语常用 in another ten minutes。",
+      "why": "答语 in another ten minutes 表示「再过十分钟后」，是将来时间，故用 How soon。How far 问距离，How often 问频率，How long 问时长，都无法与 in... 对应。",
+      "trap": "in + 时间 → How soon；for + 时间 → How long；次数/频率 → How often；距离 → How far，别混。"
+    },
+    "g3": {
+      "topic": "选择疑问句",
+      "point": "or 连接的选择疑问句不能用 Yes/No 回答，必须从给出的选项中选择；答语还要符合事实线索。",
+      "why": "问句 by bus or on foot 是二选一，答语 It's only 5 minutes' walk 说明走路，故选 On foot。A、B 是 Yes/No 回答，D 与「步行 5 分钟」矛盾。",
+      "trap": "看到 or 就答 yes/no 是高频错；先锁定两个选项，再用答语中的事实线索（步行 5 分钟）排除。"
+    },
+    "g4": {
+      "topic": "感叹句不可数名词",
+      "point": "information 不可数，感叹句用 What + 形容词 + 不可数名词 + 主语 + 谓语，不能加 a/an；How 后不直接接名词。",
+      "why": "被感叹的中心是 information（不可数），排除含 a 的 C、D；How 后只能接形容词/副词，不能直接接名词短语，A 错，故 B。",
+      "trap": "information、news、advice、homework 都不可数，前不加 a/an；感叹不可数名词只能用 What。"
+    },
+    "g5": {
+      "topic": "satisfied 问句",
+      "point": "be satisfied with「对……满意」；一般疑问句把 be 动词提前到主语前：Are you satisfied with...? satisfied 是形容词。",
+      "why": "中文是「你对……感到满意吗」，主语 you 前用 Are 构成一般疑问句；表语用 satisfied（人感到满意），不是 satisfying（令人满意）。",
+      "trap": "别写 Do you satisfy：satisfy 是及物动词「使满意」，人作主语要用 be satisfied；with 不能漏。"
+    },
+    "g6": {
+      "topic": "turn down 短语",
+      "point": "turn down「调小（火/音量）」，动副短语；boil over「（液体）沸腾溢出」，不及物；祈使句 + or + 一般将来时。",
+      "why": "「把火调小」用 Turn down the heat，句首大写；or 表「否则」，后接 will boil over。boil over 是固定搭配，over 不能换成 out/off，故填 Turn down / boil over。",
+      "trap": "or 前用祈使句、后接 will + 动词原形；turn down 是动副短语，代词宾语才放中间，名词可放后面。"
+    },
+    "g7": {
+      "topic": "have been to",
+      "point": "have been to + 地点「去过某地（人已回来）」；疑问句把 Have 提前，答语 Yes, I have；twice 前不再加 to。",
+      "why": "第一空助动词 Have 提前，第二空用过去分词 been；答语 Yes, I have been twice before 中 twice 是次数副词，后面不再接 to，故四空为 Have / been / have / been。",
+      "trap": "have been to（去过已回）≠ have gone to（去了未回）；答语中 twice、ever 前不加 to。"
+    },
+    "g8": {
+      "topic": "pick up",
+      "point": "pick up「捡起、拿起」，动词 + 副词；代词宾语须放中间（pick it up），名词宾语可放 up 前后。",
+      "why": "「把箱子抬起来」用 pick up the box，up 是副词；Please 后接动词原形，故填 pick up，不能连写成 pickup（那是名词）。",
+      "trap": "别把动词短语连写成 pickup；代词 it/them 必须放 pick 与 up 之间，名词则两种位置都可。"
+    },
+    "g9": {
+      "topic": "感叹句 What a",
+      "point": "experience 作「一次经历」是可数名词单数，感叹句用 What a + 形容词 + 名词 + 主语 + 谓语。",
+      "why": "题干已给 a，句式 ______ a ______ experience it is!：第一空填 What，第二空填修饰 experience 的形容词「有意义的」meaningful，wonderful 等合理形容词也可。",
+      "trap": "experience 作「经验」不可数、作「经历」可数；a 已给出，别再填 What an 或 How；meaningful 别漏词尾 -ful。"
+    },
+    "g10": {
+      "topic": "hear about",
+      "point": "hear about/of「听说……」，现在完成时疑问句为 Have you ever heard about...?；ever 常与完成时连用。",
+      "why": "中文「你听说过……吗」问的是至今的经历，用现在完成时：助动词 Have 提前，heard 是 hear 的过去分词；about 已在题干，故填 Have / heard。",
+      "trap": "别用一般过去时 Did you hear；hear 的过去分词是 heard（不是 heared）；about/of 后接名词或动名词。"
+    }
+  }
+}
