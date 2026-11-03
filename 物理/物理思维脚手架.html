@@ -2608,6 +2608,22 @@ window.PHYS_DATA = {"packs":[{"id":"pk-w1","name":"第1周 · 简单机械（杠
 .ex-bar a.btn-ghost,.ex-btns a:not(.btn-primary),.ex-empty-actions a:not(.btn-primary),.ex-wright a,.ex-link:not(.btn-primary){color:inherit}
 .ex-bar a.btn-ghost{min-height:38px}
 .ex-imgs img{width:100%;max-width:880px}
+/* ---------- 宽屏（PC）：左边作答 / 右边考点 · 公式 · 解析 ---------- */
+.app.ex-wide{max-width:1480px}
+.ex-split{display:grid;grid-template-columns:minmax(0,1fr);gap:0}
+.ex-right{min-width:0}
+.ex-ph{font-size:13px;color:var(--muted);line-height:1.85}
+.ex-ph b{color:var(--brand-d)}
+@media (min-width:1080px){
+  .ex-split{grid-template-columns:minmax(0,1fr) minmax(400px,500px);gap:22px;align-items:start}
+  .ex-right{position:sticky;top:12px;max-height:calc(100vh - 28px);overflow-y:auto;overscroll-behavior:contain;
+    background:#fcfbf8;border:1px solid var(--line);border-radius:12px;padding:14px 15px;scrollbar-width:thin}
+  .ex-right::-webkit-scrollbar{width:8px}
+  .ex-right::-webkit-scrollbar-thumb{background:#ded8cc;border-radius:99px}
+  .ex-right .ex-feedback{margin-top:0;padding-top:0;border-top:0}
+  .ex-right .ex-feedback > .fb:first-child{margin-top:0}
+  .ex-imgs img{max-width:100%}
+}
 @media (max-width:640px){
   .ex-mega{font-size:27px}
   .ex-jump{grid-template-columns:repeat(5,1fr)}
@@ -2623,6 +2639,27 @@ window.PHYS_DATA = {"packs":[{"id":"pk-w1","name":"第1周 · 简单机械（杠
   function packs() { return (PHYS.DATA && PHYS.DATA.packs) || []; }
   function concepts() { return (PHYS.DATA && PHYS.DATA.concepts) || []; }
   function guidedItems() { return (PHYS.DATA && PHYS.DATA.guided) || []; }
+
+  /* 宽屏（PC）才分栏：左边题干与选项，右边考点 · 公式 · 解析。
+     手机上仍然是上下一条流，不改原来的阅读顺序。 */
+  var SPLIT_MIN = 1080;
+  function useSplit() { return window.innerWidth >= SPLIT_MIN; }
+  function setWide(on) {
+    var app = document.querySelector('.app');
+    if (app) app.classList.toggle('ex-wide', !!on);
+  }
+  /* 窗口拉宽/拉窄时，正在做的题要跟着换回单栏或两栏（防抖 180ms） */
+  var _wideNow = null, _rzTimer = 0;
+  window.addEventListener('resize', function () {
+    clearTimeout(_rzTimer);
+    _rzTimer = setTimeout(function () {
+      var now = useSplit();
+      if (now === _wideNow) return;
+      var root = document.getElementById('screen');
+      if (!root || !root.querySelector('.ex-feedback')) { _wideNow = now; return; }
+      if (V && V.pack) renderQ(root); else { _wideNow = now; setWide(false); }
+    }, 180);
+  });
 
   function findPack(id) {
     var ps = packs();
@@ -2951,6 +2988,7 @@ window.PHYS_DATA = {"packs":[{"id":"pk-w1","name":"第1周 · 简单机械（杠
 
   function renderList(root) {
     root.innerHTML = '';
+    setWide(false);
     var ps = packs();
     var wrongN = PHYS.progress.wrongList().filter(function (w) { return w.kind === 'exam'; }).length;
 
@@ -3094,8 +3132,23 @@ window.PHYS_DATA = {"packs":[{"id":"pk-w1","name":"第1周 · 简单机械（杠
       st.rate === null ? '' : (st.rate >= 0.75 ? 'ok' : (st.rate >= 0.4 ? '' : 'warn'))));
     root.appendChild(pr);
 
-    /* 题目卡 */
+    /* 题目卡：宽屏拆成两栏 —— 左边题干+选项+提交，右边考点·公式·解析，
+       省掉"选完还要往下翻半屏看解析"的那段距离 */
+    var split = useSplit();
+    setWide(split);
+    _wideNow = split;
     var card = h('div', { class: 'card' });
+    var left = card, right = null, ph = null;
+    if (split) {
+      left = h('div', { class: 'ex-left' });
+      right = h('aside', { class: 'ex-right' });
+      card.appendChild(h('div', { class: 'ex-split' }, [left, right]));
+      ph = h('div', { class: 'ex-ph' });
+      ph.innerHTML = '<b>这边先空着是故意的。</b>在左边选好答案、点「提交本题」，这里就会出现这道题的' +
+        '<b>考点 · 公式</b>、正确答案和逐句解析。<br>' +
+        '想不出来的时候，先在左边按五步走一遍：情境 → 条件 → 规律 → 代入 → 验结果。';
+      right.appendChild(ph);
+    }
     var head = h('div', { class: 'qhead' });
     head.appendChild(h('span', { class: 'stepbadge', text: String(q.no || '?') }));
     if (q.group) head.appendChild(h('span', { class: 'tag', text: q.group }));
@@ -3106,13 +3159,13 @@ window.PHYS_DATA = {"packs":[{"id":"pk-w1","name":"第1周 · 简单机械（杠
       head.appendChild(h('span', { class: 'pill', text: '已做 ' + (rec.tries || 1) + ' 次 · 对 ' + cumOk(rec) + ' 次' }));
     }
     if (q.diff) head.appendChild(h('span', { class: 'pill', text: '难度 ' + q.diff }));
-    card.appendChild(head);
+    left.appendChild(head);
 
     /* 有原题图时以图为准（和卷面一致）；文字版折叠起来，避免重复占屏 */
     if (q.askImg) {
-      card.appendChild(imgBlock(q.askImg, '第 ' + q.no + ' 题原题'));
-      card.appendChild(h('p', { class: 'tiny muted', style: 'margin:-4px 0 2px;text-align:center', text: '点图可放大 · 图上已印有选项，下面点选作答' }));
-      if (q.stem) card.appendChild(h('p', { class: 'small muted', style: 'margin-top:6px', text: q.stem }));
+      left.appendChild(imgBlock(q.askImg, '第 ' + q.no + ' 题原题'));
+      left.appendChild(h('p', { class: 'tiny muted', style: 'margin:-4px 0 2px;text-align:center', text: '点图可放大 · 图上已印有选项，下面点选作答' }));
+      if (q.stem) left.appendChild(h('p', { class: 'small muted', style: 'margin-top:6px', text: q.stem }));
       if (q.ask) {
         var txtBox = h('div', { class: 'stem', text: q.ask });
         txtBox.style.display = 'none';
@@ -3122,13 +3175,13 @@ window.PHYS_DATA = {"packs":[{"id":"pk-w1","name":"第1周 · 简单机械（杠
           txtBox.style.display = show ? 'block' : 'none';
           tg.textContent = show ? '收起文字版 ▴' : '显示文字版 ▾';
         });
-        card.appendChild(tg);
-        card.appendChild(txtBox);
+        left.appendChild(tg);
+        left.appendChild(txtBox);
       }
     } else {
-      if (q.ask) card.appendChild(h('div', { class: 'stem', text: q.ask }));
-      if (q.stem) card.appendChild(h('p', { class: 'small muted', style: 'margin-top:6px', text: q.stem }));
-      card.appendChild(h('div', { class: 'fb warn', text: '这题没有原题图，先按上面的文字作答；看不清就回原卷核对。' }));
+      if (q.ask) left.appendChild(h('div', { class: 'stem', text: q.ask }));
+      if (q.stem) left.appendChild(h('p', { class: 'small muted', style: 'margin-top:6px', text: q.stem }));
+      left.appendChild(h('div', { class: 'fb warn', text: '这题没有原题图，先按上面的文字作答；看不清就回原卷核对。' }));
     }
 
     /* 作答区 */
@@ -3152,7 +3205,8 @@ window.PHYS_DATA = {"packs":[{"id":"pk-w1","name":"第1周 · 简单机械（杠
       if (PHYS.shell && PHYS.shell.refreshChip) PHYS.shell.refreshChip();
       V.echo = q.id;          /* 提交后这一次才回显判分与解析 */
       renderQ(root);
-      var fb = root.querySelector('.ex-feedback');
+      /* 宽屏两栏时右侧就在眼前，不用再滚页面；手机仍然滚到解析 */
+      var fb = split ? null : root.querySelector('.ex-feedback');
       if (fb && fb.scrollIntoView) { try { fb.scrollIntoView({ block: 'center' }); } catch (e) { } }
     }
 
@@ -3167,11 +3221,10 @@ window.PHYS_DATA = {"packs":[{"id":"pk-w1","name":"第1周 · 简单机械（杠
       area.appendChild(h('div', { class: 'fb warn', text: '这题的判分字段没配好（缺 fields），先跳过这题，告诉家长补题库。' }));
       submitBtn.disabled = true;
     }
-    card.appendChild(area);
+    left.appendChild(area);
 
     /* 重做提示条：上次的记录只当"档案"，作答区从空白开始（放在作答区上面） */
-    if (!isSelf(q) && rec) {
-      var rw = h('div', { class: 'fb ' + (echo ? 'info' : 'warn') + ' ex-redo' });
+    if (!isSelf(q) && rec) {      var rw = h('div', { class: 'fb ' + (echo ? 'info' : 'warn') + ' ex-redo' });
       if (echo) {
         rw.innerHTML = '<b>这是你上次的作答与判分。</b>看懂了就点「重新做一遍」，作答区会清空；记录只累加，不会被覆盖。';
         var again2 = h('button', { class: 'btn', type: 'button', text: '重新做一遍（清空作答）', style: 'margin-top:8px' });
@@ -3184,14 +3237,14 @@ window.PHYS_DATA = {"packs":[{"id":"pk-w1","name":"第1周 · 简单机械（杠
         peek.addEventListener('click', function () { V.echo = q.id; rerender(); });
         rw.appendChild(h('div', { style: 'margin-top:8px' }, [peek]));
       }
-      card.insertBefore(rw, area);
+      left.insertBefore(rw, area);
     }
 
     var acts = h('div', { class: 'ex-btns' });
     acts.appendChild(submitBtn);
     if (!isSelf(q) && rec && (rec.tries || 1) > 0) acts.appendChild(h('span', { class: 'tiny muted', text: '再提交一次会累加次数（不会覆盖累计错次）' }));
-    card.appendChild(acts);
-    card.appendChild(fbHost);
+    left.appendChild(acts);
+    (right || card).appendChild(fbHost);
 
     submitBtn.addEventListener('click', doSubmit);
 
@@ -3210,13 +3263,15 @@ window.PHYS_DATA = {"packs":[{"id":"pk-w1","name":"第1周 · 简单机械（杠
       buildAnswer();
       submitBtn.disabled = true;
       submitBtn.textContent = '答案已展开';
-      var fb2 = root.querySelector('.ex-feedback');
+      var fb2 = split ? null : root.querySelector('.ex-feedback');
       if (fb2 && fb2.scrollIntoView) { try { fb2.scrollIntoView({ block: 'center' }); } catch (e) { } }
     }
 
     /* 反馈 + 答案 + 解析 */
     function buildAnswer() {
       fbHost.innerHTML = '';
+      if (ph) ph.style.display = 'none';   /* 右侧占位提示让位给真的解析 */
+      if (right) right.scrollTop = 0;
       var ok = rec ? !!rec.ok : false;
       if (!isSelf(q)) {
         var fb = h('div', { class: 'fb ' + (ok ? 'ok' : 'bad') });
@@ -3354,6 +3409,7 @@ window.PHYS_DATA = {"packs":[{"id":"pk-w1","name":"第1周 · 简单机械（杠
   function renderResult(root) {
     var pack = V.pack, qs = qsOf(pack), rec = packRec(pack.id);
     var st = packStat(pack);
+    setWide(false);
     /* 本卷考点：用规范考点标签按题序去重，比 point 整句更适合做标签 */
     var keyNames = [], keySeen = {};
     qs.forEach(function (q) {
@@ -3516,7 +3572,7 @@ window.PHYS_DATA = {"packs":[{"id":"pk-w1","name":"第1周 · 简单机械（杠
       }
       renderQ(root);
     },
-    unmount: function () { V = null; }
+    unmount: function () { V = null; setWide(false); }
   });
 
   /* ---------------- 错题回炉 ---------------- */
