@@ -112,6 +112,31 @@
   function isSelf(q) { return q.type === 'selfcheck' || q.selfCheck === true; }
   function recOf(packId, qid) { return PHYS.store.get('exam.' + packId + '.' + qid, null); }
   function packRec(packId) { return PHYS.store.get('exam.' + packId, {}) || {}; }
+  /* 累计做错 / 做对次数（老记录只有 ok+tries，兜底估一个起点） */
+  function cumWrong(rec) {
+    if (!rec) return 0;
+    if (rec.wrongN !== undefined && rec.wrongN !== null) return rec.wrongN;
+    return rec.ok ? 0 : Math.max(1, rec.tries || 1);
+  }
+  function cumOk(rec) {
+    if (!rec) return 0;
+    if (rec.okN !== undefined && rec.okN !== null) return rec.okN;
+    return rec.ok ? 1 : 0;
+  }
+  /* 这道题还在不在错题本里（试卷错题改对了也留着，勾「我会了」才清） */
+  function inWrongBook(packId, qid) {
+    return !!PHYS.store.get('wrong.e:' + packId + ':' + qid, null);
+  }
+  /* 这套卷要回炉的题：错题本里还没清的 + 当前还错着的 */
+  function wrongIdxOf(pack) {
+    var qs = qsOf(pack), out = [];
+    qs.forEach(function (q, i) {
+      if (isSelf(q)) return;
+      var rec = recOf(pack.id, q.id);
+      if (inWrongBook(pack.id, q.id) || (rec && !rec.ok)) out.push(i);
+    });
+    return out;
+  }
   function letter(i) { return String.fromCharCode(65 + Number(i)); }
   function lettersOf(v) {
     if (v === null || v === undefined || v === '') return '';
@@ -229,20 +254,25 @@
     try { window.history.replaceState(null, '', '#' + h); } catch (e) { }
   }
 
-  /* 一套题的统计（selfcheck 不判分，单独计数） */
+  /* 一套题的统计（selfcheck 不判分，单独计数）
+     wrong     = 最近一次还错着的题数
+     wrongBook = 错题本里还没清的题数（改对了也留着，直到勾「我会了」）
+     cumWrong  = 这套卷累计做错的总次数（同一题错两次算两次） */
   function packStat(pack) {
     var rec = packRec(pack.id), qs = qsOf(pack);
-    var graded = 0, gradedDone = 0, ok = 0, selfTotal = 0, nextId = '';
+    var graded = 0, gradedDone = 0, ok = 0, selfTotal = 0, nextId = '', cum = 0, book = 0;
     qs.forEach(function (q) {
       var r = rec[q.id];
       if (isSelf(q)) { selfTotal++; return; }
       graded++;
-      if (r) { gradedDone++; if (r.ok) ok++; }
+      if (r) { gradedDone++; if (r.ok) ok++; cum += cumWrong(r); }
       else if (!nextId) nextId = q.id;
+      if (inWrongBook(pack.id, q.id)) book++;
     });
     return {
       total: qs.length, graded: graded, gradedDone: gradedDone,
       selfTotal: selfTotal, ok: ok, wrong: gradedDone - ok,
+      wrongBook: book, cumWrong: cum,
       rate: gradedDone ? ok / gradedDone : null, nextId: nextId
     };
   }
@@ -426,7 +456,8 @@
     head.appendChild(h('h3', { class: 'ex-name', text: p.name }));
     head.appendChild(h('span', { class: 'spacer' }));
     if (!st.gradedDone) head.appendChild(h('span', { class: 'pill', text: '还没做' }));
-    else if (st.wrong > 0) head.appendChild(h('span', { class: 'tag tag-bad', text: st.wrong + ' 道错' }));
+    else if (st.wrong > 0) head.appendChild(h('span', { class: 'tag tag-bad', text: st.wrong + ' 道还错着' }));
+    else if (st.wrongBook > 0) head.appendChild(h('span', { class: 'tag tag-warn', text: '已改对 · 错题本还有 ' + st.wrongBook + ' 道' }));
     else head.appendChild(h('span', { class: 'tag tag-ok', text: '全对' }));
     card.appendChild(head);
 
@@ -454,6 +485,7 @@
 
     var line = '共 ' + st.graded + ' 题（判分）· 已录 ' + st.gradedDone;
     if (st.gradedDone) line += ' · 对 ' + st.ok + ' · 错 ' + st.wrong + ' · 正确率 ' + U.fmtPct(st.rate);
+    if (st.cumWrong) line += ' · 累计做错 ' + st.cumWrong + ' 次';
     if (st.selfTotal) line += ' · 另有 ' + st.selfTotal + ' 题对答案不判分';
     card.appendChild(h('p', { class: 'ex-statline', text: line }));
     card.appendChild(barEl(st.graded ? st.gradedDone / st.graded : 0,
@@ -469,8 +501,8 @@
     });
     btns.appendChild(start);
 
-    if (st.wrong > 0) {
-      var only = h('button', { class: 'btn', type: 'button', text: '只练错的 ' + st.wrong + ' 道' });
+    if (st.wrongBook > 0) {
+      var only = h('button', { class: 'btn', type: 'button', text: '回炉错题 ' + st.wrongBook + ' 道' });
       only.addEventListener('click', function () {
         PHYS.route.go('exam/' + encodeURIComponent(p.id), { only: 'wrong' });
       });
@@ -511,6 +543,9 @@
     var q = qs[qi];
     if (!q) { renderResult(root); return; }
     var rec = recOf(pack.id, q.id);
+    /* echo：刚提交完 / 主动点「看上次答案」时才回显上次作答与解析；
+       其它情况一律空白作答 —— 老题再进来必须重新做一遍，不能带着上次的选项。 */
+    var echo = !!V.echo && V.echo === q.id;
     var rerender = function () { renderQ(root); window.scrollTo(0, 0); };
     var st = packStat(pack);
 
@@ -526,7 +561,8 @@
 
     /* 整套进度 */
     var pr = h('div', { class: 'ex-prog' });
-    pr.appendChild(h('span', { text: '整套已录 ' + st.gradedDone + ' / ' + st.graded + ' · 对 ' + st.ok }));
+    pr.appendChild(h('span', { text: '整套已录 ' + st.gradedDone + ' / ' + st.graded + ' · 对 ' + st.ok +
+      (st.cumWrong ? ' · 累计错 ' + st.cumWrong + ' 次' : '') }));
     pr.appendChild(barEl(st.graded ? st.gradedDone / st.graded : 0,
       st.rate === null ? '' : (st.rate >= 0.75 ? 'ok' : (st.rate >= 0.4 ? '' : 'warn'))));
     root.appendChild(pr);
@@ -539,7 +575,8 @@
     (q.tags || []).forEach(function (t) { head.appendChild(h('span', { class: 'tag-soft', text: t })); });
     if (rec) {
       head.appendChild(h('span', { class: 'tag ' + (rec.ok ? 'tag-ok' : 'tag-bad'), text: rec.ok ? '上次做对' : '上次做错' }));
-      if (rec.tries > 1) head.appendChild(h('span', { class: 'pill', text: '第 ' + rec.tries + ' 次' }));
+      if (cumWrong(rec) > 0) head.appendChild(h('span', { class: 'tag tag-bad', text: '累计错 ' + cumWrong(rec) + ' 次' }));
+      head.appendChild(h('span', { class: 'pill', text: '已做 ' + (rec.tries || 1) + ' 次 · 对 ' + cumOk(rec) + ' 次' }));
     }
     if (q.diff) head.appendChild(h('span', { class: 'pill', text: '难度 ' + q.diff }));
     card.appendChild(head);
@@ -586,6 +623,7 @@
       if (r.allFilled === false) { UI.toast('还有空没填完，检查一下', 'info'); return; }
       PHYS.progress.examAnswer({ packId: pack.id, qid: q.id, ok: r.ok, user: r.user });
       if (PHYS.shell && PHYS.shell.refreshChip) PHYS.shell.refreshChip();
+      V.echo = q.id;          /* 提交后这一次才回显判分与解析 */
       renderQ(root);
       var fb = root.querySelector('.ex-feedback');
       if (fb && fb.scrollIntoView) { try { fb.scrollIntoView({ block: 'center' }); } catch (e) { } }
@@ -595,25 +633,43 @@
       area.appendChild(h('div', { class: 'fb info', text: '这题不判分：答案可能不止一种写法。先自己在纸上写完整，再点下面看答案图。' }));
       submitBtn.textContent = '我写完了 · 看答案与解析';
     } else if (q.type === 'choice') {
-      reader = choiceArea(area, q, rec);
+      reader = choiceArea(area, q, echo ? rec : null);
     } else if (q.fields && q.fields.length) {
-      reader = fieldsArea(area, q, rec, doSubmit);
+      reader = fieldsArea(area, q, echo ? rec : null, doSubmit);
     } else {
       area.appendChild(h('div', { class: 'fb warn', text: '这题的判分字段没配好（缺 fields），先跳过这题，告诉家长补题库。' }));
       submitBtn.disabled = true;
     }
     card.appendChild(area);
 
+    /* 重做提示条：上次的记录只当"档案"，作答区从空白开始（放在作答区上面） */
+    if (!isSelf(q) && rec) {
+      var rw = h('div', { class: 'fb ' + (echo ? 'info' : 'warn') + ' ex-redo' });
+      if (echo) {
+        rw.innerHTML = '<b>这是你上次的作答与判分。</b>看懂了就点「重新做一遍」，作答区会清空；记录只累加，不会被覆盖。';
+        var again2 = h('button', { class: 'btn', type: 'button', text: '重新做一遍（清空作答）', style: 'margin-top:8px' });
+        again2.addEventListener('click', function () { V.echo = null; rerender(); });
+        rw.appendChild(h('div', { style: 'margin-top:8px' }, [again2]));
+      } else {
+        rw.innerHTML = '<b>这题上次' + (rec.ok ? '做对了' : '做错了') + '，累计错 ' + cumWrong(rec) + ' 次、做对 ' + cumOk(rec) + ' 次。</b>' +
+          '这次请<b>不看上次的痕迹重做一遍</b>，写完再提交。';
+        var peek = h('button', { class: 'btn', type: 'button', text: '看上次的答案与解析', style: 'margin-top:8px' });
+        peek.addEventListener('click', function () { V.echo = q.id; rerender(); });
+        rw.appendChild(h('div', { style: 'margin-top:8px' }, [peek]));
+      }
+      card.insertBefore(rw, area);
+    }
+
     var acts = h('div', { class: 'ex-btns' });
     acts.appendChild(submitBtn);
-    if (!isSelf(q) && rec) acts.appendChild(h('span', { class: 'tiny muted', text: '改答案后可以再提交一次（覆盖上次记录）' }));
+    if (!isSelf(q) && rec && (rec.tries || 1) > 0) acts.appendChild(h('span', { class: 'tiny muted', text: '再提交一次会累加次数（不会覆盖累计错次）' }));
     card.appendChild(acts);
     card.appendChild(fbHost);
 
     submitBtn.addEventListener('click', doSubmit);
 
-    /* 已做过的题：回显上次的判分 + 答案 */
-    if (!isSelf(q) && rec && rec.user !== undefined && reader) {
+    /* 回显上次的作答 + 解析：只在刚提交完 / 主动点开时 */
+    if (!isSelf(q) && echo && rec && reader) {
       try {
         if (q.type === 'choice') reader.mark(true);
         else { var rr = reader.read(); if (rr.res) reader.mark(rr.res); }
@@ -638,11 +694,14 @@
       if (!isSelf(q)) {
         var fb = h('div', { class: 'fb ' + (ok ? 'ok' : 'bad') });
         if (ok) {
-          fb.innerHTML = '<b>对了。</b>' + (rec.tries > 1
-            ? '这是第 ' + rec.tries + ' 次做，能改过来就是真的会了——记住这次是怎么想的。'
-            : '思路保持住，下一题也照这样走。');
+          fb.innerHTML = '<b>对了。</b>' + ((rec.tries || 1) > 1
+            ? '这次是第 ' + (rec.tries || 1) + ' 次做、第 ' + cumOk(rec) + ' 次做对，能改过来就是真的会了——记住这次是怎么想的。'
+            : '思路保持住，下一题也照这样走。') +
+            (inWrongBook(pack.id, q.id)
+              ? '<br><span class="tiny">这题累计错过 ' + cumWrong(rec) + ' 次，仍然留在错题本里：<b>过几天再回炉一遍</b>，确认真会了再去「错题回炉」勾「我会了」。</span>'
+              : '');
         } else {
-          fb.innerHTML = '<b>这题没对上。</b>不扣分，也不批评。已经放进错题本，过两天再来一次就行。';
+          fb.innerHTML = '<b>这题没对上。</b>不扣分，也不批评。已经放进错题本（累计错 ' + cumWrong(rec) + ' 次），过两天再来一次就行。';
         }
         fbHost.appendChild(fb);
 
@@ -721,7 +780,7 @@
     var nav = h('div', { class: 'ex-nav' });
     var prev = h('button', { class: 'btn', type: 'button', text: '← 上一题' });
     prev.disabled = V.pos <= 0;
-    prev.addEventListener('click', function () { if (V.pos > 0) { V.pos--; rerender(); } });
+    prev.addEventListener('click', function () { if (V.pos > 0) { V.pos--; V.echo = null; rerender(); } });
     nav.appendChild(prev);
 
     var last = V.pos >= V.order.length - 1;
@@ -730,7 +789,7 @@
       text: last ? '完成整卷，看结果' : '下一题 →'
     });
     next.addEventListener('click', function () {
-      if (last) renderResult(root); else { V.pos++; rerender(); }
+      if (last) renderResult(root); else { V.pos++; V.echo = null; rerender(); }
     });
     nav.appendChild(next);
 
@@ -748,9 +807,10 @@
     V.order.forEach(function (qi2, pos) {
       var qq = qs[qi2] || {};
       var r2 = recOf(pack.id, qq.id);
+      var cw = cumWrong(r2);
       var cls = 'ex-num' + (pos === V.pos ? ' on' : '') + (r2 ? (r2.ok ? ' ok' : ' no') : '');
-      var b = h('button', { class: cls, type: 'button', title: '第 ' + qq.no + ' 题', text: String(qq.no || '?') });
-      b.addEventListener('click', function () { V.pos = pos; rerender(); });
+      var b = h('button', { class: cls, type: 'button', title: '第 ' + qq.no + ' 题' + (cw ? ' · 累计错 ' + cw + ' 次' : ''), text: String(qq.no || '?') });
+      b.addEventListener('click', function () { V.pos = pos; V.echo = null; rerender(); });
       jumpBox.appendChild(b);
     });
     jumpBtn.addEventListener('click', function () {
@@ -776,12 +836,13 @@
         keyNames.push(t);
       });
     });
-    var wrong = [], undone = [];
+    var wrong = [], undone = [], fixed = [];
     qs.forEach(function (q, i) {
       if (isSelf(q)) return;
       var r = rec[q.id];
       if (!r) undone.push({ q: q, i: i });
       else if (!r.ok) wrong.push({ q: q, i: i, r: r });
+      else if (inWrongBook(pack.id, q.id)) fixed.push({ q: q, i: i, r: r });
     });
     root.innerHTML = '';
 
@@ -802,6 +863,7 @@
     var meta = h('div', { class: 'small muted' });
     meta.innerHTML = (st.rate === null ? '还没开始录' : '正确率 ' + U.fmtPct(st.rate)) +
       '<br>已录 ' + st.gradedDone + ' / ' + st.graded + ' 题' +
+      (st.cumWrong ? ' · 累计做错 ' + st.cumWrong + ' 次' : '') +
       (st.selfTotal ? ' · ' + st.selfTotal + ' 题对答案不判分' : '');
     score.appendChild(meta);
     card.appendChild(score);
@@ -833,7 +895,7 @@
       card.appendChild(un);
     }
     if (wrong.length) {
-      card.appendChild(h('h3', { style: 'margin-top:14px', text: '错的 ' + wrong.length + ' 题（点重做，当场改）' }));
+      card.appendChild(h('h3', { style: 'margin-top:14px', text: '这一轮还错着 ' + wrong.length + ' 题（点重做，当场改）' }));
       var list = h('div', { class: 'ex-wlist' });
       wrong.forEach(function (it) {
         var row = h('div', { class: 'ex-wrow' });
@@ -842,10 +904,11 @@
         if (it.q.point) main.appendChild(h('div', { class: 'tiny', style: 'color:var(--brand-d);margin-top:2px', text: '考点：' + it.q.point }));
         var mine = userText(it.q, it.r.user);
         main.appendChild(h('div', { class: 'tiny muted', text: '你的答案：' + (mine || '（空）') }));
+        main.appendChild(h('div', { class: 'tiny muted', text: '这题累计错 ' + cumWrong(it.r) + ' 次 · 做对 ' + cumOk(it.r) + ' 次' }));
         row.appendChild(main);
         var rb = h('button', { class: 'btn', type: 'button', text: '重做 →' });
         rb.addEventListener('click', function () {
-          V.mode = 'all'; V.order = qs.map(function (_, i) { return i; }); V.pos = it.i;
+          V.mode = 'all'; V.order = qs.map(function (_, i) { return i; }); V.pos = it.i; V.echo = null;
           renderQ(root);
         });
         row.appendChild(rb);
@@ -853,18 +916,33 @@
       });
       card.appendChild(list);
     }
+    if (fixed.length) {
+      var fx = h('div', { class: 'fb info', style: 'margin-top:12px' });
+      fx.innerHTML = '<b>还有 ' + fixed.length + ' 题已经改对，但仍留在错题本：</b>第 ' +
+        fixed.map(function (x) { return x.q.no; }).join('、') + ' 题。' +
+        '<br><span class="tiny muted">留着是给你过几天再回炉一遍用的；确认真会了，去「错题回炉」勾「我会了」即可清掉。</span>';
+      card.appendChild(fx);
+    }
 
     var btns = h('div', { class: 'ex-btns' });
     if (wrong.length) {
       var only = h('button', { class: 'btn btn-primary', type: 'button', text: '只练错的 ' + wrong.length + ' 道' });
       only.addEventListener('click', function () {
-        V.mode = 'wrong'; V.order = wrong.map(function (x) { return x.i; }); V.pos = 0; renderQ(root);
+        V.mode = 'wrong'; V.order = wrong.map(function (x) { return x.i; }); V.pos = 0; V.echo = null; renderQ(root);
       });
       btns.appendChild(only);
     }
+    var bookIdx = wrongIdxOf(pack);
+    if (bookIdx.length > wrong.length) {
+      var bookBtn = h('button', { class: 'btn', type: 'button', text: '回炉错题本 ' + bookIdx.length + ' 道（含已改对的）' });
+      bookBtn.addEventListener('click', function () {
+        V.mode = 'wrong'; V.order = bookIdx.slice(); V.pos = 0; V.echo = null; renderQ(root);
+      });
+      btns.appendChild(bookBtn);
+    }
     var again = h('button', { class: 'btn', type: 'button', text: '再来一遍' });
     again.addEventListener('click', function () {
-      V.mode = 'all'; V.order = qs.map(function (_, i) { return i; }); V.pos = 0; renderQ(root);
+      V.mode = 'all'; V.order = qs.map(function (_, i) { return i; }); V.pos = 0; V.echo = null; renderQ(root);
     });
     btns.appendChild(again);
     btns.appendChild(h('a', { class: 'btn', href: '#/exam', text: '回题包列表' }));
@@ -885,17 +963,12 @@
       if (!pack) { V = null; renderMissingPack(root, pid); return; }
       if (!qsOf(pack).length) { V = null; renderEmptyPack(root, pack); return; }
 
-      V = { pack: pack, order: [], pos: 0, mode: 'all' };
+      V = { pack: pack, order: [], pos: 0, mode: 'all', echo: null };
       var all = qsOf(pack).map(function (_, i) { return i; });
 
       if (params.only === 'wrong') {
-        var wr = [];
-        all.forEach(function (i) {
-          var q = qsOf(pack)[i];
-          if (isSelf(q)) return;
-          var r = recOf(pack.id, q.id);
-          if (r && !r.ok) wr.push(i);
-        });
+        /* 回炉范围 = 错题本里还没清的（含已改对的）+ 当前还错着的 */
+        var wr = wrongIdxOf(pack);
         if (wr.length) { V.mode = 'wrong'; V.order = wr; } else { V.order = all; UI.toast('这套已经没有错题了', 'ok'); }
       } else {
         V.order = all;
@@ -952,15 +1025,20 @@
     var label = p
       ? p.name + ' · 第 ' + (q ? q.no : '?') + ' 题'
       : '题包 ' + w.packId + ' 的题 ' + w.qid;
+    var rec = p ? recOf(w.packId, w.qid) : null;
+    var cn = w.n || cumWrong(rec) || 1;
     var note = [];
     if (q && q.point) note.push(q.point);
     else if (q && q.tags) note.push(q.tags.join(' / '));
     if (q && focusOf(q)) note.push('断点：' + focusOf(q).n);
     if (q && q.ask) note.push(q.ask.length > 26 ? q.ask.slice(0, 26) + '…' : q.ask);
+    if (rec && rec.ok) note.push('上次已经改对：确认真会了就勾「我会了」清掉');
+    else note.push('还不熟：再去回炉做一遍');
     if (!p) note.push('（题包可能已更新）');
     return {
       label: label, href: '#/exam/' + encodeURIComponent(w.packId) + '?q=' + encodeURIComponent(w.qid),
-      tagText: '试卷练习', tagCls: 'tag', note: note.join(' · ')
+      tagText: '累计错 ' + cn + ' 次', tagCls: 'tag-bad', note: note.join(' · '),
+      extra: rec ? '已做 ' + (rec.tries || 1) + ' 次 · 对 ' + cumOk(rec) + ' 次' : ''
     };
   }
 
@@ -982,7 +1060,7 @@
 
   var KIND_META = {
     guided: { name: '五步断点', info: guidedInfo, hint: '五步引导没走通的地方' },
-    exam: { name: '试卷错题', info: examInfo, hint: '试卷练习里做错的题' },
+    exam: { name: '试卷错题', info: examInfo, hint: '试卷里错过的题（改对了也留着，累计错次数记着）' },
     concept: { name: '概念错卡', info: conceptInfo, hint: '概念闪练里答错的卡（答错过就留着，手动勾「我会了」才清）' }
   };
 
@@ -1088,7 +1166,7 @@
           main.appendChild(h('div', { class: 'ex-wtitle', text: info.label }));
           var sub = h('div', { class: 'tiny muted' });
           sub.appendChild(h('span', { class: 'tag ' + info.tagCls, style: 'margin-right:6px', text: info.tagText }));
-          sub.appendChild(document.createTextNode(info.note || ''));
+          sub.appendChild(document.createTextNode((info.note || '') + (info.extra ? ' · ' + info.extra : '')));
           main.appendChild(sub);
           row.appendChild(main);
 

@@ -191,7 +191,7 @@
       var p = (PHYS.DATA.packs || []).filter(function (x) { return x.id === w.packId; })[0];
       var q = p ? p.questions.filter(function (x) { return x.id === w.qid; })[0] : null;
       label = (p ? p.name : w.packId) + ' 第 ' + (q ? q.no : '?') + ' 题';
-      sub = q && q.tags ? q.tags.join(' · ') : '试卷练习';
+      sub = (q && q.tags ? q.tags.join(' · ') : '试卷练习') + (w.n ? ' · 累计错 ' + w.n + ' 次' : '');
       href = '#/exam/' + encodeURIComponent(w.packId) + '?q=' + encodeURIComponent(w.qid);
     } else if (w.kind === 'concept') {
       var c = (PHYS.DATA.concepts || []).filter(function (x) { return x.id === w.cid; })[0];
