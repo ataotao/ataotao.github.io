@@ -81,6 +81,25 @@
 .ex-bar a.btn-ghost,.ex-btns a:not(.btn-primary),.ex-empty-actions a:not(.btn-primary),.ex-wright a,.ex-link:not(.btn-primary){color:inherit}
 .ex-bar a.btn-ghost{min-height:38px}
 .ex-imgs img{width:100%;max-width:880px}
+/* ---------- 今晚急救标记：★ 重点题 ---------- */
+.ex-nightlist{border:1px solid #eed9a8;background:#fffaf1}
+.ex-nightlist .nl-h{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.ex-nightlist .nl-h b{font-size:15px;color:#8a5309}
+.ex-nightitem{display:flex;gap:10px;align-items:flex-start;padding:11px 0;border-top:1px dashed #eadfc6}
+.ex-nightitem:first-of-type{border-top:0}
+.ex-nightitem .nm{flex:0 0 auto;font-size:12px;font-weight:700;color:#8a5309;background:#fbeed2;border-radius:6px;padding:2px 8px;margin-top:2px;white-space:nowrap}
+.ex-nightitem .mn{flex:1;min-width:0}
+.ex-nightitem .mn b{display:block;font-size:14.5px;font-weight:600}
+.ex-nightitem .mn span{display:block;font-size:12.5px;color:var(--muted);margin-top:2px;line-height:1.65}
+.ex-night{border:1px solid #eed9a8;border-left:4px solid var(--warn);background:#fffaf1;
+  border-radius:12px;padding:12px 14px;margin:-2px 0 12px}
+.ex-night .t{font-size:12.5px;font-weight:800;letter-spacing:.05em;color:#8a5309}
+.ex-night .d{font-size:13.5px;color:var(--ink2);margin-top:5px;line-height:1.75}
+.ex-night .go{margin-top:10px}
+.ex-skip{border:1px dashed var(--line);background:#fbfaf7;border-radius:11px;padding:9px 13px;margin:-2px 0 12px;
+  font-size:12.5px;color:var(--muted);line-height:1.7}
+.ex-num.tonight{box-shadow:inset 0 0 0 2px #eec277;color:#8a5309;font-weight:800;border-color:#e3b95f}
+.ex-num.tonight::after{content:'★';margin-left:2px;font-size:10px;vertical-align:2px}
 /* ---------- 宽屏（PC）：左边作答 / 右边考点 · 公式 · 解析 ---------- */
 .app.ex-wide{max-width:1480px}
 .ex-split{display:grid;grid-template-columns:minmax(0,1fr);gap:0}
@@ -140,6 +159,14 @@
     return null;
   }
   function qsOf(pack) { return (pack && pack.questions) || []; }
+  /* 今晚急救清单：题库里标了 tonight 的题（可以跨题包） */
+  function tonightList() {
+    var out = [];
+    packs().forEach(function (p) {
+      qsOf(p).forEach(function (q) { if (q && q.tonight) out.push({ pack: p, q: q }); });
+    });
+    return out;
+  }
   function qIndexOf(pack, qid) {
     var qs = qsOf(pack);
     for (var i = 0; i < qs.length; i++) if (qs[i].id === qid) return i;
@@ -476,6 +503,34 @@
     intro.appendChild(links);
     root.appendChild(intro);
 
+    /* 今晚急救清单：有题被标了 tonight 才出现，置顶，避免孩子乱点 */
+    var tonight = tonightList();
+    if (tonight.length) {
+      var nc = h('div', { class: 'card ex-nightlist' });
+      var nh = h('div', { class: 'nl-h' });
+      nh.appendChild(h('b', { text: '★ 今晚急救清单（只做这几道）' }));
+      nh.appendChild(h('span', { class: 'pill', text: tonight.length + ' 道大题' }));
+      nc.appendChild(nh);
+      nc.appendChild(h('p', { class: 'small muted', style: 'margin-top:6px',
+        text: '今晚只有这一个晚上：先做「基础速练」把判断题刷熟，再做下面这 ' + tonight.length +
+          ' 道大题，练习写公式、代入、单位和答句。其余题今晚先跳过 —— 刷题不求多，求这一遍能记住。' }));
+      tonight.forEach(function (t, i) {
+        var row = h('div', { class: 'ex-nightitem' });
+        row.appendChild(h('span', { class: 'nm', text: '第 ' + (i + 1) + ' 道' }));
+        var mn = h('div', { class: 'mn' });
+        mn.appendChild(h('b', { text: t.pack.name + ' · 第 ' + t.q.no + ' 题' }));
+        mn.appendChild(h('span', { text: (t.q.point || '') + (t.q.tonightWhy ? ' —— ' + t.q.tonightWhy : '') }));
+        row.appendChild(mn);
+        var b = h('button', { class: 'btn btn-primary', type: 'button', text: '开始这道' });
+        b.addEventListener('click', function () {
+          PHYS.route.go('exam/' + encodeURIComponent(t.pack.id), { q: t.q.id });
+        });
+        row.appendChild(b);
+        nc.appendChild(row);
+      });
+      root.appendChild(nc);
+    }
+
     if (!ps.length) {
       var e = h('div', { class: 'card' });
       e.innerHTML = '<h2>还没有题包</h2>' +
@@ -633,6 +688,36 @@
     }
     if (q.diff) head.appendChild(h('span', { class: 'pill', text: '难度 ' + q.diff }));
     left.appendChild(head);
+
+    /* 今晚急救标记：★ 重点题给横幅；同一题包里的其它题给一行"先跳过"提示 */
+    var tonight = tonightList();
+    var tIdx = -1;
+    for (var ti = 0; ti < tonight.length; ti++) {
+      if (tonight[ti].q.id === q.id) { tIdx = ti; break; }
+    }
+    if (tIdx >= 0) {
+      var nb = h('div', { class: 'ex-night' });
+      nb.appendChild(h('div', { class: 't', text: '★ 今晚重点题 · 第 ' + (tIdx + 1) + ' / ' + tonight.length + ' 道' }));
+      nb.appendChild(h('div', { class: 'd', text: q.tonightWhy || '写满四行：公式 → 代入 → 单位 → 答句。' }));
+      if (tonight[tIdx + 1]) {
+        var nx = h('button', { class: 'btn btn-mini go', type: 'button', text: '下一道今晚重点题 →' });
+        nx.addEventListener('click', function () {
+          var nt = tonight[tIdx + 1];
+          PHYS.route.go('exam/' + encodeURIComponent(nt.pack.id), { q: nt.q.id });
+        });
+        nb.appendChild(nx);
+      }
+      left.appendChild(nb);
+    } else {
+      var packHas = tonight.filter(function (x) { return x.pack.id === pack.id; });
+      if (packHas.length) {
+        var sk = h('div', { class: 'ex-skip' });
+        sk.textContent = '【今晚安排】本卷要重点做的是' +
+          packHas.map(function (x) { return '第 ' + x.q.no + ' 题（★）'; }).join('、') +
+          '，这一道今晚先跳过 —— 今晚时间短，题做多了反而记不住。';
+        left.appendChild(sk);
+      }
+    }
 
     /* 有原题图时以图为准（和卷面一致）；文字版折叠起来，避免重复占屏 */
     if (q.askImg) {
@@ -863,8 +948,8 @@
       var qq = qs[qi2] || {};
       var r2 = recOf(pack.id, qq.id);
       var cw = cumWrong(r2);
-      var cls = 'ex-num' + (pos === V.pos ? ' on' : '') + (r2 ? (r2.ok ? ' ok' : ' no') : '');
-      var b = h('button', { class: cls, type: 'button', title: '第 ' + qq.no + ' 题' + (cw ? ' · 累计错 ' + cw + ' 次' : ''), text: String(qq.no || '?') });
+      var cls = 'ex-num' + (pos === V.pos ? ' on' : '') + (r2 ? (r2.ok ? ' ok' : ' no') : '') + (qq.tonight ? ' tonight' : '');
+      var b = h('button', { class: cls, type: 'button', title: '第 ' + qq.no + ' 题' + (cw ? ' · 累计错 ' + cw + ' 次' : '') + (qq.tonight ? ' · 今晚重点' : ''), text: String(qq.no || '?') });
       b.addEventListener('click', function () { V.pos = pos; V.echo = null; rerender(); });
       jumpBox.appendChild(b);
     });
