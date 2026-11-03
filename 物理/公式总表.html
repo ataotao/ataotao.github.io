@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>物理题库 · 公式总表</title>
+<style>
+  :root{
+    --bg:#f7f8fa;
+    --paper:#ffffff;
+    --ink:#1b1f24;
+    --ink-2:#4a5361;
+    --ink-3:#8a94a3;
+    --line:#e3e7ee;
+    --line-2:#eef1f6;
+    --accent:#2f6fd0;
+    --accent-soft:#eaf1fc;
+    --warm:#c2551f;
+    --warm-soft:#fdf0e8;
+    --green:#2f7d5d;
+    --green-soft:#e9f5ef;
+    --purple:#6c4fb0;
+    --purple-soft:#f1ecfa;
+  }
+  *{box-sizing:border-box;}
+  html{-webkit-text-size-adjust:100%;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+    font-size:15px;
+    line-height:1.7;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1080px;margin:0 auto;padding:36px 28px 80px;}
+
+  /* ---------- header ---------- */
+  header.top{
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-radius:16px;
+    padding:28px 30px;
+    margin-bottom:22px;
+  }
+  .eyebrow{
+    font-size:12px;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--accent);font-weight:600;margin-bottom:8px;
+  }
+  h1{margin:0 0 10px;font-size:28px;line-height:1.3;letter-spacing:-.01em;}
+  .sub{color:var(--ink-2);font-size:14px;margin:0;}
+  .stats{
+    display:flex;flex-wrap:wrap;gap:10px;margin-top:20px;
+    padding-top:18px;border-top:1px solid var(--line-2);
+  }
+  .stat{
+    background:var(--bg);border-radius:9px;padding:8px 14px;
+    font-size:13px;color:var(--ink-2);
+  }
+  .stat b{color:var(--ink);font-size:16px;font-weight:700;margin-right:3px;font-variant-numeric:tabular-nums;}
+
+  /* ---------- toc ---------- */
+  nav.toc{
+    display:flex;flex-wrap:wrap;gap:8px;margin-bottom:26px;
+  }
+  nav.toc a{
+    text-decoration:none;color:var(--ink-2);background:var(--paper);
+    border:1px solid var(--line);border-radius:999px;
+    padding:6px 14px;font-size:13px;transition:.15s;
+  }
+  nav.toc a:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-soft);}
+  nav.toc a span{color:var(--ink-3);margin-right:5px;font-variant-numeric:tabular-nums;}
+
+  /* ---------- section ---------- */
+  section{margin-bottom:30px;}
+  .sec-head{
+    display:flex;align-items:baseline;gap:12px;
+    margin:0 0 4px;padding-left:2px;
+  }
+  .sec-no{
+    font-size:12px;font-weight:700;color:#fff;background:var(--accent);
+    border-radius:6px;padding:2px 8px;line-height:1.5;
+    font-variant-numeric:tabular-nums;
+    transform:translateY(-2px);
+  }
+  .sec-head h2{margin:0;font-size:19px;letter-spacing:-.005em;}
+  .sec-desc{color:var(--ink-3);font-size:13px;margin:0 0 14px;padding-left:2px;}
+
+  /* ---------- formula card ---------- */
+  .cards{display:flex;flex-direction:column;gap:10px;}
+  .card{
+    background:var(--paper);border:1px solid var(--line);border-radius:12px;
+    padding:16px 20px;display:grid;
+    grid-template-columns:220px 1fr;
+    gap:4px 22px;align-items:start;
+    transition:.15s;
+  }
+  .card:hover{border-color:#cdd7e6;box-shadow:0 2px 10px rgba(30,50,90,.05);}
+  .f-name{font-size:14px;font-weight:600;color:var(--ink);padding-top:3px;}
+  .f-name .ref{
+    display:inline-block;margin-left:6px;font-size:10.5px;font-weight:500;
+    color:var(--ink-3);background:var(--bg);border-radius:4px;
+    padding:1px 6px;vertical-align:2px;letter-spacing:.02em;
+  }
+  .f-body{min-width:0;}
+  .formula{
+    font-family:"Cambria Math","Times New Roman",Georgia,"Songti SC",serif;
+    font-size:19px;line-height:1.55;color:var(--ink);
+    letter-spacing:.01em;
+  }
+  .formula + .formula{margin-top:2px;}
+  .formula em{font-style:italic;}
+  .note{
+    margin-top:7px;font-size:13px;color:var(--ink-2);line-height:1.65;
+  }
+  .note b{color:var(--ink);font-weight:600;}
+  .warn{
+    margin-top:7px;font-size:13px;color:var(--warm);
+    background:var(--warm-soft);border-radius:7px;
+    padding:6px 10px;line-height:1.6;
+  }
+  .warn::before{content:"易错 ";font-weight:700;font-size:11.5px;letter-spacing:.06em;}
+
+  /* ---------- units table ---------- */
+  .units{
+    width:100%;border-collapse:collapse;background:var(--paper);
+    border:1px solid var(--line);border-radius:12px;overflow:hidden;
+    font-size:13.5px;
+  }
+  .units th,.units td{padding:9px 16px;text-align:left;border-bottom:1px solid var(--line-2);}
+  .units th{background:var(--bg);font-weight:600;color:var(--ink-2);font-size:12.5px;letter-spacing:.03em;}
+  .units tr:last-child td{border-bottom:none;}
+  .units td:first-child{font-family:"Cambria Math","Times New Roman",serif;font-size:15px;width:150px;}
+  .units td:nth-child(2){color:var(--ink-3);width:200px;}
+  .units td:last-child{color:var(--ink-2);}
+
+  /* ---------- index table ---------- */
+  .wk{width:100%;border-collapse:collapse;background:var(--paper);border:1px solid var(--line);border-radius:12px;overflow:hidden;font-size:13.5px;}
+  .wk th,.wk td{padding:10px 14px;text-align:left;border-bottom:1px solid var(--line-2);vertical-align:top;}
+  .wk th{background:var(--bg);font-weight:600;color:var(--ink-2);font-size:12.5px;}
+  .wk tr:last-child td{border-bottom:none;}
+  .wk td:first-child{white-space:nowrap;font-weight:600;}
+  .wk td:nth-child(2){color:var(--ink-3);white-space:nowrap;font-variant-numeric:tabular-nums;}
+  .tag{
+    display:inline-block;font-size:11.5px;padding:1px 8px;border-radius:5px;
+    background:var(--accent-soft);color:var(--accent);margin:1px 4px 1px 0;
+  }
+  .tag.g{background:var(--green-soft);color:var(--green);}
+  .tag.p{background:var(--purple-soft);color:var(--purple);}
+
+  footer.end{
+    margin-top:34px;padding:18px 22px;background:var(--paper);
+    border:1px solid var(--line);border-left:3px solid var(--accent);
+    border-radius:10px;font-size:13.5px;color:var(--ink-2);line-height:1.75;
+  }
+  footer.end b{color:var(--ink);}
+
+  @media (max-width:820px){
+    .wrap{padding:20px 14px 60px;}
+    .card{grid-template-columns:1fr;gap:2px;padding:14px 16px;}
+    .f-name{padding-top:0;margin-bottom:2px;}
+    .cards{gap:8px;}
+    .formula{font-size:17.5px;}
+  }
+  @media print{
+    body{background:#fff;font-size:12px;}
+    .wrap{max-width:none;padding:0;}
+    header.top,nav.toc{display:none;}
+    .card{break-inside:avoid;box-shadow:none;border-color:#ddd;padding:8px 12px;}
+    section{break-inside:auto;}
+    .sec-head{break-after:avoid;}
+    .wk,.units{break-inside:avoid;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="top">
+  <div class="eyebrow">初三物理 · 公式速查</div>
+  <h1>题库公式总表</h1>
+  <p class="sub">把 8 套练习卷中每道题标注的公式去重、归类，按“简单机械 → 功与效率 → 内能与热机 → 电学初步”的考点顺序排成一张表。编号 <b>W3Q5</b> 表示“第 3 套第 5 题”，方便回到原题对照。</p>
+  <div class="stats">
+    <div class="stat"><b>8</b>套练习卷</div>
+    <div class="stat"><b>118</b>道题</div>
+    <div class="stat"><b>9</b>个知识模块</div>
+    <div class="stat"><b>68</b>条公式</div>
+    <div class="stat">覆盖：杠杆 · 滑轮 · 功和功率 · 机械效率 · 比热容 · 热值 · 热机 · 电学初步</div>
+  </div>
+</header>
+
+<nav class="toc">
+  <a href="#s1"><span>01</span>杠杆</a>
+  <a href="#s2"><span>02</span>滑轮与滑轮组</a>
+  <a href="#s3"><span>03</span>功和功率</a>
+  <a href="#s4"><span>04</span>机械效率</a>
+  <a href="#s5"><span>05</span>分子动理论与内能</a>
+  <a href="#s6"><span>06</span>比热容</a>
+  <a href="#s7"><span>07</span>燃料热值</a>
+  <a href="#s8"><span>08</span>热机与能量转化</a>
+  <a href="#s9"><span>09</span>电学初步</a>
+  <a href="#units">单位与常量</a>
+  <a href="#index">按周次索引</a>
+</nav>
+
+<!-- ============ 01 杠杆 ============ -->
+<section id="s1">
+  <div class="sec-head"><span class="sec-no">01</span><h2>杠杆</h2></div>
+  <p class="sec-desc">题库里出现频率最高的模块（17 道题考平衡条件，12 道考五要素）。核心只有一句：<b>力 × 力臂，两边相等</b>；所有难题都是在这句话上换力臂、换支点。</p>
+  <div class="cards">
+
+    <div class="card">
+      <div class="f-name">杠杆平衡条件<span class="ref">W1Q2</span></div>
+      <div class="f-body">
+        <div class="formula"><em>F</em><sub>1</sub><em>l</em><sub>1</sub> = <em>F</em><sub>2</sub><em>l</em><sub>2</sub></div>
+        <div class="note">动力 × 动力臂 = 阻力 × 阻力臂。静止或匀速转动即视为平衡，与力的方向无关。</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="f-name">力臂的定义<span class="ref">W1Q15</span></div>
+      <div class="f-body">
+        <div class="formula"><em>l</em> = 支点 <em>O</em> 到力的<b>作用线</b>的垂线段</div>
+        <div class="note">不是 O 到作用点的连线。作图时垂足处必须标直角符号。</div>
+        <div class="warn">把力臂画成 OA、AB 的连线是整卷最高频的错法（W1Q4 的阻力臂是 OB，不是 OA 也不是 AB）。</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="f-name">斜拉力臂<span class="ref">W1Q16</span></div>
+      <div class="f-body">
+        <div class="formula"><em>l</em><sub>1</sub> = <em>OB</em> · sin <em>α</em></div>
+        <div class="note">力与杠杆成 α 角时，只有垂直于杠杆的分量产生力臂。α = 90° 时 <em>l</em> 最大，所需力最小。</div>
+        <div class="warn">α = 30° 时 <em>l</em><sub>1</sub> = <em>L</em>/2，正好与 <em>l</em><sub>2</sub> 相等 → 变成等臂杠杆，别想当然判成省力。</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="f-name">杠杆分类<span class="ref">W1Q1</span></div>
+      <div class="f-body">
+        <div class="formula"><em>l</em><sub>1</sub> &gt; <em>l</em><sub>2</sub> 省力 · <em>l</em><sub>1</sub> = <em>l</em><sub>2</sub> 等臂 · <em>l</em><sub>1</sub> &lt; <em>l</em><sub>2</sub> 费力</div>
+        <div class="note">只看两力臂的长短，不看力的大小、方向、杠杆形状。省力必然费距离。</div>
+        <div class="warn">船桨、筷子、镊子、自拍杆都是费力杠杆——支点靠近用力的一端。</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="f-name">变形：求力<span class="ref">W2Q3</span></div>
+      <div class="f-body">
+        <div class="formula"><em>F</em><sub>1</sub> = <em>F</em><sub>2</sub><em>l</em><sub>2</sub> / <em>l</em><sub>1</sub></div>
+        <div class="note"><em>F</em><sub>1</sub> 与 <em>l</em><sub>1</sub> 成反比：阻力不变时，动力臂越长越省力。</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="f-name">力矩与力矩变化<span class="ref">W1Q6</span></div>
+      <div class="f-body">
+        <div class="formula"><em>M</em> = <em>F</em> · <em>l</em>　　Δ<em>M</em> = <em>G</em> · Δ<em>l</em></div>
+        <div class="note">两侧同时外移相同距离 Δ<em>l</em> 时，重力大的一侧力矩增加得多 → 该端下沉。</div>
+        <div class="warn">比较的是 Δ<em>M</em>，不是比较力臂谁长、也不是比较谁移动得多。</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="f-name">均匀棒重心<span class="ref">W1Q5</span></div>
+      <div class="f-body">
+        <div class="formula"><em>F</em> · 2<em>l</em> = <em>G</em> · <em>l</em> → <em>G</em> = 2<em>F</em>，<em>m</em> = <em>G</em>/<em>g</em></div>
+        <div class="note">重心在中点，支点在没抬起的一端时，动力臂是阻力臂的 2 倍，抬起一端只需一半重力。</div>
+        <div class="warn">最后一步别忘了除以 g；选项里带 N 的是重力不是质量。</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="f-name">人体杠杆<span class="ref">W2Q4</span></div>
+      <div class="f-body">
+        <div class="formula"><em>F</em> · <em>OB</em> = <em>G</em> · <em>OA</em></div>
+        <div class="note">脚尖为支点，两个力都近似垂直于身体，力臂就是 OA、OB。手离支点越远，手撑的力越小。</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="f-name">多力平衡（含未知力）<span class="ref">W2Q1</span></div>
+      <div class="f-body">
+        <div class="formula"><em>F</em> = <em>G</em><sub>M</sub> + <em>G</em><sub>H</sub>　　<em>F</em> · <em>AB</em> = <em>G</em><sub>H</sub> · <em>x</em></div>
+        <div class="note">先用力平衡判断该力是否独自撑住全部重物，再对支点取矩求位置 x。</div>
+        <div class="warn">支点选在“方向未知的那个力”的作用点上，这个力就不进力矩方程——这是最省事的技巧（W6Q8 同理）。</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="f-name">最小力<span class="ref">W1Q2</span></div>
+      <div class="f-body">
+        <div class="formula">作用点取离支点<b>最远</b>处，<em>F</em> ⊥ 杠杆 ⇔ <em>l</em> 最大 ⇔ <em>F</em> 最小</div>
+        <div class="note">力臂最大时最省力。题目问“至少多大的力”就是让你这样取。</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="f-name">杆秤（换砣问题）<span class="ref">W1Q3</span></div>
+      <div class="f-body">
+        <div class="formula"><em>m</em><sub>砣</sub><em>g</em> · <em>L</em> = <em>m</em><sub>物</sub><em>g</em> · <em>OA</em> + <em>M</em><sub>零</sub><em>g</em></div>
+        <div class="formula"><em>m</em><sub>读</sub> = (<em>m</em><sub>砣</sub> · <em>L</em> − <em>M</em><sub>零</sub>) / <em>OA</em></div>
+        <div class="note">定盘星（零刻度）标定出杆和盘自重的力矩项 <em>M</em><sub>零</sub>，之后才能反推读数。</div>
+        <div class="warn">换了秤砣不能直接 3 ÷ 0.8，必须先把零刻度找回来（本题 <em>M</em><sub>零</sub> = 2 kg·cm，读得 3.8 kg）。</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="f-name">杆秤刻度均匀<span class="ref">W5AQ13</span></div>
+      <div class="f-body">
+        <div class="formula"><em>m</em> ∝ <em>x</em>　（每 50 g 对应 5 cm → 250 g 在 26 cm）</div>
+        <div class="note">平衡式对 L 是一次的，所以质量与力臂成正比，刻度等间距。可用比例直接换算。</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="f-name">平衡螺母调节<span class="ref">W5AQ13</span></div>
+      <div class="f-body">
+        <div class="formula">螺母向<b>高</b>的一端调</div>
+        <div class="note">哪端翘起就往哪端移，把重心拉回支点上方。</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============ 02 滑轮 ============ -->
+<section id="s2">
+  <div class="sec-head"><span class="sec-no">02</span><h2>滑轮与滑轮组</h2></div>
+  <p class="sec-desc">15 道题考定/动滑轮，12 道考滑轮组。所有结论都从两件事推出来：<b>几段绳在吊着重物（n）</b>、<b>滑轮自身有多重（G动）</b>。</p>
+  <div class="cards">
+
+    <div class="card">
+      <div class="f-name">定滑轮<span class="ref">W1Q7</span></div>
+      <div class="f-body">
+        <div class="formula"><em>F</em> = <em>G</em>　　<em>s</em> = <em>h</em></div>
+        <div class="note">轴不动。只改变力的方向，既不省力也不费距离。</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="f-name">动滑轮<span class="ref">W1Q9</span></div>
+      <div class="f-body">
+        <div class="formula"><em>F</em> = (<em>G</em> + <em>G</em><sub>动</sub>) / 2　　<em>s</em> = 2<em>h</em></div>
+        <div class="note">省一半力，绳端走 2 倍距离。只有题目明确“不计滑轮重和摩擦”时才能写成 <em>F</em> = <em>G</em>/2。</div>
+        <div class="warn">漏掉 <em>G</em><sub>动</sub> 是最常见失分：G=10 N、G动=1 N 时 F=5.5 N，不是 5 N。</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="f-name">滑轮组<span class="ref">W5BQ11</span></div>
+      <div class="f-body">
+        <div class="formula"><em>F</em> = (<em>G</em> + <em>G</em><sub>动</sub>) / <em>n</em>　　<em>s</em> = <em>nh</em></div>
+        <div class="note"><em>n</em> = 吊着动滑轮的绳子段数。n = 2 省一半力，n = 3 省三分之二，方向由绕法决定。</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="f-name">数绳段数<span class="ref">W5AQ15</span></div>
+      <div class="f-body">
+        <div class="formula"><em>n</em> = <em>s</em> / <em>h</em></div>
+        <div class="note">题目给绳端移动距离和提升高度时，直接用这个式子反推 n，比数图更可靠。</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="f-name">反推动滑轮重<span class="ref">W8Q17</span></div>
+      <div class="f-body">
+        <div class="formula"><em>G</em><sub>动</sub> = <em>nF</em> − <em>G</em></div>
+        <div class="note">由 F = (G+G动)/n 变形。<em>G</em><sub>动</sub> 在同一装置中不变，可用来算换重物后的效率。</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="f-name">最大提升重<span class="ref">W6Q11</span></div>
+      <div class="f-body">
+        <div class="formula"><em>G</em><sub>max</sub> = <em>n</em> · <em>F</em><sub>max</sub></div>
+        <div class="note">绳子最大承受力决定能吊多重。n = 2、Fmax = 3×10⁴ N → Gmax = 6×10⁴ N → m = 6000 kg。</div>
+        <div class="warn">算质量要再除以 g；水平移动那段重力不做功，别混进有用功。</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="f-name">同一根绳张力相等<span class="ref">W1Q12</span></div>
+      <div class="f-body">
+        <div class="formula"><em>F</em><sub>1</sub> = <em>F</em><sub>2</sub></div>
+        <div class="note">不计绳重和摩擦时，同一根绳上各处拉力相同——两个测力计串在同一根绳上示数必然相同。</div>
+        <div class="warn">“串联”两个测力计不能分流，示数仍等于 G，照样超量程（W2Q7）。</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="f-name">绳速与功率<span class="ref">W6Q12</span></div>
+      <div class="f-body">
+        <div class="formula"><em>v</em><sub>绳</sub> = <em>n</em> · <em>v</em><sub>物</sub>　　<em>P</em> = <em>F</em> · <em>v</em><sub>绳</sub></div>
+        <div class="note">绳端速度是物体速度的 n 倍；已知拉力和绳速可不算功直接得功率。</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="f-name">绕线判断<span class="ref">W8Q15</span></div>
+      <div class="f-body">
+        <div class="formula">固定端系在动滑轮 → 向下拉且 <em>n</em> = 2；固定端系在定滑轮 → 向上拉</div>
+        <div class="note">要“向下拉又省力”，绳的固定端必须拴在动滑轮的钩上。</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============ 03 功和功率 ============ -->
+<section id="s3">
+  <div class="sec-head"><span class="sec-no">03</span><h2>功和功率</h2></div>
+  <p class="sec-desc">9 道题考功、9 道考功率。功率的一切比较都落到同一个分式：<b>W 除以 t</b>，所以“时间相同比功、功相同比时间”能省掉一半计算。</p>
+  <div class="cards">
+
+    <div class="card">
+      <div class="f-name">功的定义式<span class="ref">W2Q10</span></div>
+      <div class="f-body">
+        <div class="formula"><em>W</em> = <em>F</em> · <em>s</em></div>
+        <div class="note">F 与 s 必须同方向。重力方向竖直，所以水平移动时重力不做功。</div>
+        <div class="warn">水平拉物体时有用功是 <em>f</em>·<em>s</em>（克服摩擦），不是 G·s。</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="f-name">重力<span class="ref">W1Q10</span></div>
+      <div class="f-body">
+        <div class="formula"><em>G</em> = <em>mg</em>　（<em>g</em> 取 10 N/kg）</div>
+        <div class="note">质量必须换成 kg：100 g = 0.1 kg → G = 1 N。</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="f-name">功率<span class="ref">W2Q8</span></div>
+      <div class="f-body">
+        <div class="formula"><em>P</em> = <em>W</em> / <em>t</em></div>
+        <div class="note">功率表示做功快慢，与做功多少、机械效率高低都无关。</div>
+        <div class="warn">不知道时间就无法比较功率大小（W5AQ5 的 D 项就是这样设的坑）。</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="f-name">功率的另一形式<span class="ref">W6Q12</span></div>
+      <div class="f-body">
+        <div class="formula"><em>P</em> = <em>F</em> · <em>v</em></div>
+        <div class="note">由 P = W/t = Fs/t 得到。汽车、起重机、绳端拉力的功率常用它。</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="f-name">由功率求功<span class="ref">W8Q18</span></div>
+      <div class="f-body">
+        <div class="formula"><em>W</em> = <em>Pt</em></div>
+        <div class="note">发电机、电加热器给的是功率，先乘时间得到能量，再进入效率计算。</div>
+        <div class="warn">注意“每台 / 总共”：3×10⁶ W × 3600 s = 1.08×10¹⁰ J 只是单台的量。</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="f-name">速度<span class="ref">W5BQ14</span></div>
+      <div class="f-body">
+        <div class="formula"><em>v</em> = <em>s</em> / <em>t</em></div>
+        <div class="note">斜面、滑轮组题的第一问常是求速度，注意 s 是沿运动方向的路程。</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============ 04 机械效率 ============ -->
+<section id="s4">
+  <div class="sec-head"><span class="sec-no">04</span><h2>机械效率</h2></div>
+  <p class="sec-desc">全卷最高频模块，20 道题涉及。只有三条主干：<b>η = W有/W总</b>、<b>W总 = W有 + W额</b>、<b>W有 只看目的</b>（提货物就是 Gh，水平拉就是 fs）。三种装置各有一套变形。</p>
+  <div class="cards">
+
+    <div class="card">
+      <div class="f-name">效率定义<span class="ref">W2Q11</span></div>
+      <div class="f-body">
+        <div class="formula"><em>η</em> = <em>W</em><sub>有</sub> / <em>W</em><sub>总</sub> × 100%</div>
+        <div class="note">有用功占总功的比例。效率永远小于 1（无单位，不是“效率多少焦”）。</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="f-name">功的分解<span class="ref">W2Q8</span></div>
+      <div class="f-body">
+        <div class="formula"><em>W</em><sub>总</sub> = <em>W</em><sub>有</sub> + <em>W</em><sub>额</sub>　　<em>W</em><sub>有</sub> = <em>W</em><sub>总</sub> − <em>W</em><sub>额</sub></div>
+        <div class="note">甲 1200−800 = 400 J，乙 800−400 = 400 J：有用功相同，效率却差一倍。</div>
+        <div class="warn">比较机械效率要回到 W有/W总 这个比值，不能只看总功或只看额外功。</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="f-name">竖直滑轮组效率<span class="ref">W8Q17</span></div>
+      <div class="f-body">
+        <div class="formula"><em>η</em> = <em>Gh</em> / (<em>Fs</em>) = <em>G</em> / (<em>nF</em>) = <em>G</em> / (<em>G</em> + <em>G</em><sub>动</sub>)</div>
+        <div class="note">三个式子等价，按题目给的数据挑一个用。第三式说明效率只由物重和动滑轮重决定。</div>
+        <div class="warn">0.6 = G/(G+20) → G = 30 N：解这个方程比绕一圈算功更快。</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="f-name">滑轮组最大效率<span class="ref">W5AQ15</span></div>
+      <div class="f-body">
+        <div class="formula"><em>η</em><sub>max</sub> = <em>G</em><sub>max</sub> / (<em>G</em><sub>max</sub> + <em>G</em><sub>动</sub>)</div>
+        <div class="note">同一装置，物重越大效率越高（额外功几乎不变）。Gmax 由绳的最大承受力决定。</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="f-name">水平拉物体效率<span class="ref">W2Q10</span></div>
+      <div class="f-body">
+        <div class="formula"><em>W</em><sub>有</sub> = <em>f</em> · <em>s</em>　　<em>η</em> = <em>fs</em> / (<em>Fs</em>)</div>
+        <div class="note">目的是克服摩擦力移动物体，所以有用功是 f·s；重力与位移垂直，不做功。</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="f-name">斜面三式<span class="ref">W2Q9</span></div>
+      <div class="f-body">
+        <div class="formula"><em>W</em><sub>有</sub> = <em>Gh</em>　　<em>W</em><sub>总</sub> = <em>Fs</em>　　<em>η</em> = <em>Gh</em> / (<em>Fs</em>)</div>
+        <div class="note">s 是沿斜面移动的距离（长），h 是高度（短），h = s·sinθ（θ = 30° 时 h = s/2）。</div>
+        <div class="warn">写成 F₁s/(F₂h) 是最经典的错法——有用功里永远只有 h，总功里永远只有 s。</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="f-name">斜面摩擦阻力<span class="ref">W5BQ6</span></div>
+      <div class="f-body">
+        <div class="formula"><em>W</em><sub>额</sub> = <em>W</em><sub>总</sub> − <em>W</em><sub>有</sub> = <em>fs</em> → <em>f</em> = <em>W</em><sub>额</sub> / <em>s</em></div>
+        <div class="note">额外功全部用来克服斜面摩擦，所以除以斜面长 s，不是除以 h。</div>
+        <div class="warn">滑动摩擦力与速度无关，所以斜面效率也不随速度改变（仍是 75%）。</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="f-name">由图求总功<span class="ref">W6Q10</span></div>
+      <div class="f-body">
+        <div class="formula"><em>W</em><sub>总</sub> = <em>W</em><sub>额</sub> ÷ 额外功占比</div>
+        <div class="note">扇形图/条形图给出各项损失比例时，先用“额外功 ÷ 它占的比例”还原总功，再求有用功。</div>
+        <div class="warn">甲：3000 J ÷ 60% = 5000 J，有用功 = 2000 J 而不是 3000 J。</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="f-name">三个反推<span class="ref">W2Q14</span></div>
+      <div class="f-body">
+        <div class="formula"><em>W</em><sub>总</sub> = <em>W</em><sub>有</sub> / <em>η</em>　　<em>h</em> = <em>W</em><sub>有</sub> / <em>G</em>　　<em>m</em> = <em>G</em> / <em>g</em></div>
+        <div class="note">综合题的标准链条：m ← G ← W有 = Gh ← W总 = W有/η ← P = W总/t ← F = W总/s。</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="f-name">效率与物重的关系<span class="ref">W5AQ10</span></div>
+      <div class="f-body">
+        <div class="formula"><em>W</em><sub>有</sub> = <em>Gh</em> 不变时，<em>W</em><sub>额</sub> ↑ → <em>η</em> ↓</div>
+        <div class="note">同一重物同一高度，效率升高只说明额外功变少（装置更轻、润滑更好），有用功并没变。</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============ 05 内能 ============ -->
+<section id="s5">
+  <div class="sec-head"><span class="sec-no">05</span><h2>分子动理论与内能</h2></div>
+  <p class="sec-desc">11 道题考内能、8 道考分子动理论。这一块几乎全是<b>概念判断</b>，公式少但要分清三对词：温度 / 热量 / 内能，分子 / 颗粒，做功 / 热传递。</p>
+  <div class="cards">
+
+    <div class="card">
+      <div class="f-name">内能的组成<span class="ref">W4Q8</span></div>
+      <div class="f-body">
+        <div class="formula">内能 = 分子动能 + 分子势能</div>
+        <div class="note">一切物体在任何温度下都有内能，0℃ 的冰也有。内能由温度、质量、状态共同决定。</div>
+        <div class="warn">温度高但质量小，内能不一定大（W8Q13：无法比较，选“不能确定”）。</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="f-name">温度与分子动能<span class="ref">W5AQ6</span></div>
+      <div class="f-body">
+        <div class="formula"><em>T</em> ↑ → 分子平均动能 ↑ → 分子热运动加剧</div>
+        <div class="note">温度是分子平均动能的标志。这是“温度升高内能一定增大”的依据。</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="f-name">改变内能的两条路<span class="ref">W9Q1</span></div>
+      <div class="f-body">
+        <div class="formula">做功 <em>W</em>　／　热传递 <em>Q</em></div>
+        <div class="note">摩擦、压缩、敲打、弯折 = 做功；加热、冷却、接触 = 热传递。</div>
+        <div class="warn">两者对改变内能是等效的，内能增加不一定是吸了热（也可能外界对它做了功）。</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="f-name">热传递三要素<span class="ref">W4Q7</span></div>
+      <div class="f-body">
+        <div class="formula">条件：存在温度差　方向：高温 → 低温　传递的是热量 <em>Q</em></div>
+        <div class="note">传递的是内能（热量），不是温度。温度相同就不发生热传递。</div>
+        <div class="warn">“甲向乙传热”只能推出甲温度高，推不出甲内能大。图线还在降温，说明环境温度比末温更低。</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="f-name">压缩气体做功<span class="ref">W5AQ11</span></div>
+      <div class="f-body">
+        <div class="formula">外界对气体做功 → 内能 ↑ → 温度 ↑</div>
+        <div class="note">达到着火点即可点燃（压缩空气引火仪）。等温压缩则是“做功的同时向外放热”，内能不变。</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="f-name">扩散现象<span class="ref">W4Q4</span></div>
+      <div class="f-body">
+        <div class="formula">扩散 = 分子无规则运动 + 分子间有间隙</div>
+        <div class="note">闻到气味、墨水散开、两种气体自动混匀都是扩散；分子运动永不停止。</div>
+        <div class="warn">雪花、灰尘、雾、细菌是“大量分子组成的颗粒”，它们的运动是机械运动，不是分子运动。</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="f-name">分子间的作用力<span class="ref">W5AQ2</span></div>
+      <div class="f-body">
+        <div class="formula">引力与斥力<b>同时存在</b>，看哪个起主要作用</div>
+        <div class="note">拉不开 / 弹簧测力计示数变大 / 两铅柱粘住 → 引力为主；很难被压缩 → 斥力为主。</div>
+        <div class="warn">“只有引力”“分子间没有间隙”都是错误表述。</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="f-name">热胀冷缩<span class="ref">W6Q04</span></div>
+      <div class="f-body">
+        <div class="formula"><em>ρ</em> = <em>m</em> / <em>V</em></div>
+        <div class="note">温度升高体积变大 → 密度变小；质量不变，温度升高内能增大。</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="f-name">机械能<span class="ref">W6Q03</span></div>
+      <div class="f-body">
+        <div class="formula"><em>E</em><sub>k</sub> = ½<em>mv</em><sup>2</sup>　　<em>E</em><sub>p</sub> = <em>mgh</em>　　<em>E</em><sub>机</sub> = <em>E</em><sub>k</sub> + <em>E</em><sub>p</sub></div>
+        <div class="note">匀速 → 动能不变；下降 → 重力势能减小。克服阻力做功时机械能转化为内能，总量减少。</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============ 06 比热容 ============ -->
+<section id="s6">
+  <div class="sec-head"><span class="sec-no">06</span><h2>比热容</h2></div>
+  <p class="sec-desc">13 道题考比热容、15 道考热量计算。整块内容就是一个式子 <b>Q = cmΔt</b> 的四种用法：求热量、求 c、求 Δt、求质量。</p>
+  <div class="cards">
+
+    <div class="card">
+      <div class="f-name">吸放热公式<span class="ref">W4Q9</span></div>
+      <div class="f-body">
+        <div class="formula"><em>Q</em> = <em>cm</em>Δ<em>t</em></div>
+        <div class="formula"><em>Q</em><sub>吸</sub> = <em>cm</em>(<em>t</em> − <em>t</em><sub>0</sub>)　　<em>Q</em><sub>放</sub> = <em>cm</em>(<em>t</em><sub>0</sub> − <em>t</em>)</div>
+        <div class="note">Δt 是温度变化量（大减小，永远为正），不是末温。</div>
+        <div class="warn">质量必须换成 kg：4.2×10³ × 0.001 × 1 = 4.2 J，用 1 g 直接算会差 1000 倍。</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="f-name">求比热容<span class="ref">W4Q11</span></div>
+      <div class="f-body">
+        <div class="formula"><em>c</em> = <em>Q</em> / (<em>m</em>Δ<em>t</em>)</div>
+        <div class="note">单位 J/(kg·℃)。1.26×10⁴ ÷ (2×3) = 2.1×10³ J/(kg·℃)，对应冰或煤油。</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="f-name">求温度变化<span class="ref">W4Q13</span></div>
+      <div class="f-body">
+        <div class="formula">Δ<em>t</em> = <em>Q</em> / (<em>cm</em>)　　<em>t</em><sub>末</sub> = <em>t</em><sub>初</sub> + Δ<em>t</em></div>
+        <div class="note">反解出来的是变化量，必须加回初温，并检查是否超过沸点（标准大气压 100℃）。</div>
+        <div class="warn">算到 20+80=100℃ 就到顶了，若超过 100℃ 说明水已沸腾、温度不再上升。</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="f-name">热平衡方程<span class="ref">W4Q12</span></div>
+      <div class="f-body">
+        <div class="formula"><em>Q</em><sub>吸</sub> = <em>Q</em><sub>放</sub>　（不计热损失）</div>
+        <div class="note">混合、热传递题的通用式。温度—时间图上，两条曲线最终趋于同一温度。</div>
+        <div class="warn">绝热容器里两组物质比较时用 <em>c</em><sub>A</sub><em>m</em><sub>A</sub>Δ<em>t</em><sub>A</sub> = <em>c</em><sub>B</sub><em>m</em><sub>B</sub>Δ<em>t</em><sub>B</sub> 反推 c 的大小。</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="f-name">加热器给热<span class="ref">W5AQ12</span></div>
+      <div class="f-body">
+        <div class="formula"><em>Q</em> = <em>Pt</em></div>
+        <div class="note">同一热源、相同加热时间 → 吸收热量相同。这是“比较比热容”实验的控制变量核心。</div>
+        <div class="warn">图线陡不陡反映的是比热容小（升温快），不是“吸热多”。功率不同时更不能比陡峭程度。</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="f-name">比热容的性质<span class="ref">W4Q5</span></div>
+      <div class="f-body">
+        <div class="formula"><em>c</em> 只由物质<b>种类和状态</b>决定</div>
+        <div class="note">与质量、温度、形状、吸放热多少都无关。水 → 冰，状态变了 c 才变（冰约 2.1×10³）。</div>
+        <div class="warn">同样 Q、同样 m 时，Δt 小的那个 c 大（升温慢 = 比热容大）。</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============ 07 热值 ============ -->
+<section id="s7">
+  <div class="sec-head"><span class="sec-no">07</span><h2>燃料热值</h2></div>
+  <p class="sec-desc">12 道题涉及。关键判断只有一条：<b>固体液体用质量，气体用体积</b>；热值是燃料自身的属性，与燃烧是否充分无关。</p>
+  <div class="cards">
+
+    <div class="card">
+      <div class="f-name">固体 / 液体燃料<span class="ref">W5AQ14</span></div>
+      <div class="f-body">
+        <div class="formula"><em>Q</em><sub>放</sub> = <em>mq</em>　（<em>q</em> 单位 J/kg）</div>
+        <div class="note">完全燃烧放出的热量。酒精、焦炭、柴油都用这个式子。</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="f-name">气体燃料<span class="ref">W5BQ15</span></div>
+      <div class="f-body">
+        <div class="formula"><em>Q</em><sub>放</sub> = <em>qV</em>　（<em>q</em> 单位 J/m³）</div>
+        <div class="note">天然气、煤气按体积算：3×10⁷ × 1.8 = 5.4×10⁷ J。</div>
+        <div class="warn">气体燃料写成 qm 是失分点；燃气表题给的是“两次读数之差”即用气体积。</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="f-name">热值的定义<span class="ref">W9Q11</span></div>
+      <div class="f-body">
+        <div class="formula"><em>q</em> = <em>Q</em> / <em>m</em>　（或 <em>q</em> = <em>Q</em> / <em>V</em>）</div>
+        <div class="note">1 kg（或 1 m³）燃料完全燃烧放出的热量。食物用“每 100 g 多少千卡”表达的是同一含义。</div>
+        <div class="warn">热值与是否充分燃烧无关，烧不完只是“放出的热量少”，q 本身不变。</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="f-name">热值与比热容的区别<span class="ref">W5AQ1</span></div>
+      <div class="f-body">
+        <div class="formula"><em>q</em>：放热本领（J/kg）　　<em>c</em>：升温难易（J/(kg·℃)）</div>
+        <div class="note">选火箭燃料、选“燃料好坏”看 q；选暖手宝液体、选冷却剂看 c。</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============ 08 热机 ============ -->
+<section id="s8">
+  <div class="sec-head"><span class="sec-no">08</span><h2>热机与能量转化</h2></div>
+  <p class="sec-desc">9 道题考热机效率、7 道考能量守恒。效率的分母永远是<b>燃料完全燃烧放出的热量</b>，分子是你想要的那部分能量。</p>
+  <div class="cards">
+
+    <div class="card">
+      <div class="f-name">热机效率<span class="ref">W8Q16</span></div>
+      <div class="f-body">
+        <div class="formula"><em>η</em> = <em>Q</em><sub>吸</sub> / <em>Q</em><sub>放</sub> = <em>W</em><sub>有用</sub> / <em>Q</em><sub>放</sub></div>
+        <div class="note">锅炉题分子是水吸收的热量，汽车题分子是输出的机械功，分母都是燃料放热。</div>
+        <div class="warn">只烧了 0.1 kg 时效率从 3.5% 变成 35%——分母变小，不能拿总消耗量算比。</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="f-name">效率链<span class="ref">W8Q18</span></div>
+      <div class="f-body">
+        <div class="formula"><em>W</em><sub>有用</sub> = <em>η</em> · <em>Q</em><sub>放</sub>　　<em>Q</em><sub>放</sub> = <em>W</em><sub>总</sub> / <em>η</em>　　<em>m</em> = <em>Q</em><sub>放</sub> / <em>q</em></div>
+        <div class="note">发电机组耗煤量的标准解法：先 W=Pt，再除效率得放热，最后除以 q 得质量。</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="f-name">能量流向图<span class="ref">W6Q10</span></div>
+      <div class="f-body">
+        <div class="formula"><em>η</em> = 100% − 各项损失占比</div>
+        <div class="note">100% − 33% − 30% − 7% = 30%，再乘 Q放 得有用功。</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="f-name">四个冲程<span class="ref">W9Q3</span></div>
+      <div class="f-body">
+        <div class="formula">吸气 → 压缩 → 做功 → 排气</div>
+        <div class="note">压缩：机械能 → 内能；做功：内能 → 机械能（内能对外做功，温度降低）。</div>
+        <div class="warn">压缩、排气靠飞轮惯性；只有做功冲程是燃气推动活塞对外做功。化学能 → 内能只发生在做功冲程点火后。</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="f-name">能量守恒<span class="ref">W5AQ4</span></div>
+      <div class="f-body">
+        <div class="formula"><em>E</em><sub>总</sub> 不变：<em>E</em><sub>输入</sub> = <em>E</em><sub>有用</sub> + <em>E</em><sub>损失</sub></div>
+        <div class="note">能量只能转移或转化，不能凭空产生、也不能消失。</div>
+        <div class="warn">“守恒”不等于“没有损失”，散失的内能不能自动再用来做功；凡是“不需要能量”的说法都违反守恒。</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="f-name">常见能量转化<span class="ref">W5BQ5</span></div>
+      <div class="f-body">
+        <div class="formula">燃烧：化学能 → 内能　热机：内能 → 机械能</div>
+        <div class="formula">充电：电能 → 化学能　供电：化学能 → 电能　植物：光能 → 化学能</div>
+        <div class="note">逐个核对装置再选，别把发电机/电动机当成热机。</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============ 09 电学 ============ -->
+<section id="s9">
+  <div class="sec-head"><span class="sec-no">09</span><h2>电学初步</h2></div>
+  <p class="sec-desc">题库后半段夹带的电学小题（6 道），都是定性判断加一个并联电流公式，属于送分但要细心。</p>
+  <div class="cards">
+
+    <div class="card">
+      <div class="f-name">电荷间的相互作用<span class="ref">W8Q3</span></div>
+      <div class="f-body">
+        <div class="formula">同种电荷相斥，异种电荷相吸；带电体吸引轻小物体</div>
+        <div class="note">排斥能确定“同种”，吸引只能说“可能”——被吸引的物体可能带异种电荷，也可能不带电。</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="f-name">电流方向<span class="ref">W8Q12</span></div>
+      <div class="f-body">
+        <div class="formula">电流方向 = 正电荷定向移动方向 = 电子移动方向的<b>反</b>方向</div>
+        <div class="note">电子从 B 跑到 A，则电流从 A 经外部电路流向 B（M → N）。</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="f-name">并联电流<span class="ref">W9Q8</span></div>
+      <div class="f-body">
+        <div class="formula"><em>I</em> = <em>I</em><sub>1</sub> + <em>I</em><sub>2</sub></div>
+        <div class="note">干路电流等于各支路之和；各支路互不影响，拆掉一条另一条仍工作。</div>
+        <div class="warn">同一指针 0~3 A 档读数是 0~0.6 A 档的 5 倍：指 0.3 实为 1.5 A，再减支路 0.5 A 得 1.0 A。</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="f-name">开关位置<span class="ref">W9Q7</span></div>
+      <div class="f-body">
+        <div class="formula">与谁串联就控制谁；在干路上控制全部</div>
+        <div class="note">判断电路要先顺着电流找分支：有分支就是并联，无分支就是串联。</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="f-name">压强与单位换算<span class="ref">W5AQ11</span></div>
+      <div class="f-body">
+        <div class="formula"><em>p</em> = <em>F</em> / <em>S</em> → <em>F</em> = <em>pS</em>　　1 hPa = 100 Pa</div>
+        <div class="note">2030 hPa = 2.03×10⁵ Pa。算出的力与重力的差值就是摩擦力与大气压力。</div>
+        <div class="warn">hPa 直接写成 2030 Pa 会让结果差 100 倍。</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============ 单位 ============ -->
+<section id="units">
+  <div class="sec-head"><span class="sec-no">10</span><h2>符号、单位与常量</h2></div>
+  <p class="sec-desc">题库里所有计算题的答案单位，都能在这一张表里查回来。</p>
+  <table class="units">
+    <tr><th>符号</th><th>物理量</th><th>单位 / 取值</th></tr>
+    <tr><td><em>F</em></td><td>力、拉力、动力</td><td>N（牛）</td></tr>
+    <tr><td><em>G</em></td><td>重力</td><td>N；G = mg</td></tr>
+    <tr><td><em>m</em></td><td>质量</td><td>kg（题目常给 g，须 ÷1000）</td></tr>
+    <tr><td><em>g</em></td><td>重力常数</td><td>10 N/kg</td></tr>
+    <tr><td><em>l</em></td><td>力臂</td><td>m / cm（同题内统一）</td></tr>
+    <tr><td><em>s</em></td><td>路程、绳端移动距离、斜面长</td><td>m</td></tr>
+    <tr><td><em>h</em></td><td>高度、提升高度</td><td>m</td></tr>
+    <tr><td><em>n</em></td><td>承担重物的绳子段数</td><td>正整数（2、3…）</td></tr>
+    <tr><td><em>W</em></td><td>功</td><td>J（焦）</td></tr>
+    <tr><td><em>P</em></td><td>功率</td><td>W（瓦）；1 kW = 10³ W</td></tr>
+    <tr><td><em>η</em></td><td>机械效率 / 热机效率</td><td>百分数，无单位，恒小于 1</td></tr>
+    <tr><td><em>Q</em></td><td>热量</td><td>J</td></tr>
+    <tr><td><em>c</em></td><td>比热容</td><td>J/(kg·℃)</td></tr>
+    <tr><td><em>q</em></td><td>热值</td><td>J/kg（固液）或 J/m³（气体）</td></tr>
+    <tr><td><em>Δt</em></td><td>温度变化量</td><td>℃（大减小，取正）</td></tr>
+    <tr><td><em>c</em><sub>水</sub></td><td>水的比热容</td><td>4.2×10³ J/(kg·℃)</td></tr>
+    <tr><td><em>c</em><sub>冰</sub></td><td>冰的比热容</td><td>≈2.1×10³ J/(kg·℃)</td></tr>
+    <tr><td><em>p</em></td><td>压强</td><td>Pa；1 hPa = 100 Pa</td></tr>
+    <tr><td><em>I</em></td><td>电流</td><td>A（安）</td></tr>
+  </table>
+</section>
+
+<!-- ============ 索引 ============ -->
+<section id="index">
+  <div class="sec-head"><span class="sec-no">11</span><h2>按周次索引</h2></div>
+  <p class="sec-desc">每套卷子主要考哪几个模块，方便按进度专项复习。</p>
+  <table class="wk">
+    <tr><th>练习卷</th><th>题数</th><th>核心考点</th><th>主要公式</th></tr>
+    <tr>
+      <td>第 1 周 · 简单机械</td><td>16</td>
+      <td><span class="tag">杠杆五要素</span><span class="tag">杠杆分类</span><span class="tag">定/动滑轮</span></td>
+      <td>F₁l₁ = F₂l₂；l = 垂线段；F=G、F=(G+G动)/2；s=nh</td>
+    </tr>
+    <tr>
+      <td>第 2 周 · 含机械效率</td><td>14</td>
+      <td><span class="tag g">机械效率</span><span class="tag">功能关系</span><span class="tag">测力计</span></td>
+      <td>η=W有/W总；W总=W有+W额；η=Gh/(Fs)；W有=fs</td>
+    </tr>
+    <tr>
+      <td>第 4 周 · 中秋卷</td><td>14</td>
+      <td><span class="tag p">比热容</span><span class="tag">分子动理论</span><span class="tag g">斜面效率</span></td>
+      <td>Q=cmΔt；c=Q/(mΔt)；W有=Gh、W总=Fs</td>
+    </tr>
+    <tr>
+      <td>第 5 周_1 · 国庆2</td><td>15</td>
+      <td><span class="tag p">热值</span><span class="tag p">比热容</span><span class="tag g">机械效率</span><span class="tag">能量守恒</span></td>
+      <td>Q放=mq；η=Q吸/Q放；G动=nF−G；ηmax=G/(G+G动)</td>
+    </tr>
+    <tr>
+      <td>第 5 周_2 · 国庆1</td><td>15</td>
+      <td><span class="tag">分子与内能</span><span class="tag">斜面</span><span class="tag p">气体热值</span></td>
+      <td>h=s·sinθ；f=W额/s；Q放=qV；c=Q/(mΔt)</td>
+    </tr>
+    <tr>
+      <td>第 6 周 · 分子热运动</td><td>12</td>
+      <td><span class="tag">机械能</span><span class="tag p">热机效率</span><span class="tag g">滑轮组</span></td>
+      <td>Ek=½mv²、Ep=mgh；η=100%−Σ损失；Gmax=nFmax</td>
+    </tr>
+    <tr>
+      <td>第 8 周 · 功与热机</td><td>18</td>
+      <td><span class="tag g">机械效率</span><span class="tag">功和功率</span><span class="tag p">热机</span><span class="tag">电荷</span></td>
+      <td>W=Pt；η=Gh/(Fs)；m=Q放/q；I 方向判断</td>
+    </tr>
+    <tr>
+      <td>第 9 周 · 内能与热机</td><td>14</td>
+      <td><span class="tag p">比热容</span><span class="tag p">热值</span><span class="tag">电路</span></td>
+      <td>Q=cmΔt；Q放=qm 或 qV；η=Q吸/Q放；I=I₁+I₂</td>
+    </tr>
+  </table>
+</section>
+
+<footer class="end">
+  <b>怎么用这张表：</b>① 先看公式左边的名字，能自己想出公式再往下看说明，想不出就是没掌握；
+  ② 卡住的题回到表里找对应公式，再看“易错”那一行——绝大多数错题不是不会算，而是<b>用错了力臂、漏掉了 G动、把 h 和 s 放反、质量忘了换 kg</b>；
+  ③ 综合题按第 04 模块末尾那条链条（m ← G ← W有 ← W总 ← P ← F）倒着列式，一步一问，不要一步到底。
+</footer>
+
+</div>
+</body>
+</html>
