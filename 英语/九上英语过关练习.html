@@ -513,7 +513,7 @@
 <div class="errbar" id="errbar"></div>
 
 <script>window.QUIZ_DATA = {
- "generatedAt": "2026-11-02T16:00:05.742Z",
+ "generatedAt": "2026-11-03T03:23:14.713Z",
  "units": [
   {
    "unit": "U1",
@@ -3593,9 +3593,10 @@
   function loadStore(){
     try{
       var s = JSON.parse(localStorage.getItem(STORE_KEY) || "{}");
-      return { picks: s.picks || {}, fills: s.fills || {}, unit: s.unit || (UNITS[0] ? UNITS[0].unit : "U1") };
+      return { picks: s.picks || {}, fills: s.fills || {}, stat: s.stat || {}, cleared: s.cleared || {},
+        unit: s.unit || (UNITS[0] ? UNITS[0].unit : "U1") };
     }catch(e){
-      return { picks: {}, fills: {}, unit: UNITS[0] ? UNITS[0].unit : "U1" };
+      return { picks: {}, fills: {}, stat: {}, cleared: {}, unit: UNITS[0] ? UNITS[0].unit : "U1" };
     }
   }
   function saveStore(){
@@ -3728,16 +3729,21 @@
     var out = [];
     UNITS.forEach(function(u){
       u.mc.forEach(function(it){
+        if (store.cleared[it.id]) return;
         var p = pickOf(it);
         var paperWrong = it.marked && it.marked !== it.answer;
         var practiceWrong = p && p !== it.answer;
-        if (paperWrong || practiceWrong){
-          out.push({ it: it, unit: u, paperPick: it.marked, practicePick: p, type: "mc" });
+        var stt = store.stat[it.id] || null;
+        var wrongN = stt && stt.wrong ? stt.wrong : (paperWrong ? 1 : 0);
+        /* 做对了也不自动出库：错过就留着（记着累计错几次），确认真会了点「我会了」才清 */
+        if (paperWrong || practiceWrong || wrongN > 0){
+          out.push({ it: it, unit: u, paperPick: it.marked, practicePick: p, type: "mc", wrongN: wrongN });
         }
       });
       u.fills.forEach(function(it){
+        if (store.cleared[it.id]) return;
         if (fillPaperGrade(it) === "wrong"){
-          out.push({ it: it, unit: u, paperPick: hwFull(it), practicePick: null, type: "fill" });
+          out.push({ it: it, unit: u, paperPick: hwFull(it), practicePick: null, type: "fill", wrongN: 1 });
         }
       });
     });
@@ -3872,8 +3878,14 @@
         if (!it) return;
         if (store.picks[id]) return; // 已答不可改，用“重做本题”
         store.picks[id] = btn.dataset.k;
+        /* 累计作答次数：改对了也不清零，错题本靠它显示「累计错 N 次」 */
+        var stt = store.stat[id] || (store.stat[id] = { att: 0, wrong: 0, ok: 0 });
+        stt.att++;
+        if (btn.dataset.k === it.answer) stt.ok = (stt.ok || 0) + 1;
+        else { stt.wrong = (stt.wrong || 0) + 1; delete store.cleared[id]; }
         saveStore();
         applyAnswered(it);
+        ensureRedoBtn(it);
         updateSheetStats();
         updateTabCounts();
       });
@@ -3895,14 +3907,33 @@
       });
     });
 
-    // 恢复已答状态
+    // 恢复已答状态（旧页面结构里可能没有重做按钮，补上）
     list.forEach(function(it){
-      if (pickOf(it)) applyAnswered(it);
+      if (pickOf(it)) { applyAnswered(it); ensureRedoBtn(it); }
     });
     updateSheetStats();
   }
 
   var onlyWrong = false;
+
+  /* 答完当场就补一个「重做本题」（以前要切视图触发重渲染才出现） */
+  function ensureRedoBtn(it){
+    var node = document.getElementById("q-" + it.id);
+    if (!node) return;
+    var tools = node.querySelector(".q-tools");
+    if (!tools || tools.querySelector('[data-act="again"]')) return;
+    var b = document.createElement("button");
+    b.type = "button"; b.dataset.act = "again"; b.textContent = "重做本题";
+    b.addEventListener("click", function(){
+      delete store.picks[it.id]; saveStore();
+      applyUnanswered(it);
+      updateSheetStats(); updateTabCounts();
+    });
+    var reveal = tools.querySelector('[data-act="reveal"]');
+    if (reveal) tools.insertBefore(b, reveal); else tools.appendChild(b);
+  }
+
+  function statOf(it){ return store.stat[it.id] || null; }
 
   function questionHTML(it){
     var pick = pickOf(it);
@@ -3912,6 +3943,8 @@
     var html = '<li class="q" id="q-' + esc(it.id) + '" data-id="' + esc(it.id) + '" data-result="' + resultAttr + '">';
     html += '<div class="q-no"><span class="mark" aria-hidden="true">' + (answered ? (right ? "✓" : "✗") : "") + "</span>" + esc(it.seq);
     if (it.marked) html += '<span class="pen-letter" title="原卷手写作答，已批改">原 ' + esc(it.marked) + "</span>";
+    var st0 = statOf(it);
+    if (st0 && st0.wrong > 0) html += '<span class="pen-letter stat-wrong" title="这题累计做错次数（改对了也不清零）">错 ' + st0.wrong + " 次</span>";
     html += "</div>";
     html += '<div class="q-body">';
     html += '<p class="stem" lang="en">' + stemHTML(it) + "</p>";
@@ -3948,6 +3981,21 @@
     var node = document.getElementById("q-" + it.id);
     if (!node) return;
     var pick = store.picks[it.id];
+    /* 题号旁的「错 N 次」要当场更新（不能等下次重渲染） */
+    (function(){
+      var qno = node.querySelector(".q-no");
+      var stt = store.stat[it.id] || null;
+      var badge = node.querySelector(".stat-wrong");
+      if (stt && stt.wrong > 0 && qno){
+        if (!badge){
+          badge = document.createElement("span");
+          badge.className = "pen-letter stat-wrong";
+          badge.title = "这题累计做错次数（改对了也不清零）";
+          qno.appendChild(badge);
+        }
+        badge.textContent = "错 " + stt.wrong + " 次";
+      } else if (badge) badge.remove();
+    })();
     var right = pick === it.answer;
     node.dataset.result = right ? "right" : "wrong";
     var mark = node.querySelector(".mark");
@@ -3974,6 +4022,9 @@
     });
     var v = document.getElementById("verify-" + it.id);
     if (v) v.style.display = "none";
+    /* 回到"未作答"：重做按钮没用了，去掉（答完时 ensureRedoBtn 会补回来） */
+    var ag = node.querySelector('[data-act="again"]');
+    if (ag) ag.remove();
   }
   function updateSheetStats(){
     var u = curUnit, s = unitStats(u);
@@ -4155,6 +4206,14 @@
         switchView("practice", { focus: "q-" + id });
       });
     });
+    Array.prototype.forEach.call(mistakesEl.querySelectorAll("[data-clear]"), function(b){
+      b.addEventListener("click", function(){
+        var id = b.dataset.clear;
+        store.cleared[id] = true;
+        saveStore();
+        renderMistakes(); updateTabCounts(); updateSheetStats();
+      });
+    });
     Array.prototype.forEach.call(mistakesEl.querySelectorAll("[data-jump-fill]"), function(b){
       b.addEventListener("click", function(){
         var id = b.dataset.jumpFill, it = BY_ID[id];
@@ -4177,6 +4236,7 @@
     html += '<span class="unit">' + esc(it.unit) + "</span>";
     html += '<span class="no">' + (it.section ? esc(it.section) + " · " : "") + "第 " + esc(it.no) + " 题</span>";
     if (it.topic) html += '<span class="topic">' + esc(it.topic) + "</span>";
+    if (w.wrongN) html += '<span class="topic" style="color:var(--red);border-color:rgba(192,57,47,.3);background:var(--red-wash)">累计错 ' + w.wrongN + " 次</span>";
     html += '<span class="src">' + esc(src.join(" · ") || "已重做对") + "</span>";
     html += "</div>";
     html += '<p class="stem" lang="en">' + stemHTML(it) + "</p>";
@@ -4203,6 +4263,7 @@
     bits.push('<span class="r">正确答案 <b>' + esc(it.answer || "?") + "</b></span>");
     html += '<div class="answer-summary">' + bits.join("") +
       '<button class="tool" data-jump="' + esc(it.id) + '" style="margin-left:auto;padding:4px 10px;font-size:12px">去重做</button>' +
+      '<button class="tool" data-clear="' + esc(it.id) + '" style="padding:4px 10px;font-size:12px">我会了，清掉</button>' +
       "</div>";
     html += "</article>";
     return html;
@@ -4229,6 +4290,7 @@
       '<span class="r">参考答案 <b style="font-family:var(--serif)">' + esc(it.answerRaw || "?") + "</b></span>" +
       (it.alt && it.alt.length ? '<span style="color:var(--ink-3)">也可：' + esc(it.alt.join(" / ")) + "</span>" : "") +
       '<button class="tool" data-jump-fill="' + esc(it.id) + '" style="margin-left:auto;padding:4px 10px;font-size:12px">去重做</button>' +
+      '<button class="tool" data-clear="' + esc(it.id) + '" style="padding:4px 10px;font-size:12px">我会了，清掉</button>' +
       "</div>";
     html += "</article>";
     return html;

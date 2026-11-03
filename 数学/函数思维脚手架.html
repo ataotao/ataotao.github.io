@@ -8088,20 +8088,46 @@ function viewReport(){
            '<button class="btn" data-act="start" data-mode="guide">再走一轮引导</button></div></div>');
   }
 
-  var wrongPaper = (DB.paper || []).filter(function(r){ return r.ok === false; }).slice().reverse().slice(0, 8);
-  if(wrongPaper.length){
+  /* 试卷错题本：按题聚合历史（同一题错过几次就记几次），做对了不自动消失，方便反复回炉 */
+  var wrongAgg = (function(){
+    var g = {};
+    (DB.paper || []).forEach(function(r){
+      if(!r || r.pack == null || r.qid == null) return;
+      var k = r.pack + '|' + r.qid;
+      (g[k] = g[k] || []).push(r);
+    });
+    var out = [];
+    Object.keys(g).forEach(function(k){
+      var list = g[k].sort(function(a, b){ return a.ts - b.ts; });
+      var last = list[list.length - 1];
+      var wn = list.filter(function(x){ return x.ok === false; }).length;
+      if(!wn) return;
+      out.push({ rec: last, att: list.length, wrongN: wn, pack: last.pack, qid: last.qid });
+    });
+    out.sort(function(a, b){ return (b.rec.ts || 0) - (a.rec.ts || 0); });
+    return out;
+  })();
+  if(wrongAgg.length){
     h.push('<div class="card"><div class="qhead"><span class="tag tag-bad">试卷错题本</span>' +
-           '<span class="tiny muted">做完学校的卷子，错题会自动进这里</span></div>');
-    wrongPaper.forEach(function(r){
-      var pk = findPack(r.pack), q = null;
-      if(pk) q = pk.questions.filter(function(x){ return x.id === r.qid; })[0];
+           '<span class="tiny muted">错过的题都在这（做对了也留着）：累计错 ' + wrongAgg.length + ' 题，可随时回炉</span></div>');
+    wrongAgg.slice(0, 8).forEach(function(w){
+      var pk = findPack(w.pack), q = null;
+      if(pk) q = pk.questions.filter(function(x){ return x.id === w.qid; })[0];
       if(!q) return;
-      h.push('<div class="wrongitem"><div class="row"><b>第 ' + esc(q.no || '') + ' 题</b>' +
+      var idx = pk.questions.indexOf(q);
+      var lastOk = w.rec.ok === true;
+      h.push('<div class="wrongitem"><div class="row" style="flex-wrap:wrap">' +
+             '<b>第 ' + esc(q.no || '') + ' 题</b>' +
              '<span class="tag-soft">' + esc(pk.name) + '</span>' +
-             (q.focus ? '<span class="tag-soft">' + focusTag(q.focus) + '</span>' : '') + '</div>' +
+             (q.focus ? '<span class="tag-soft">' + focusTag(q.focus) + '</span>' : '') +
+             '<span class="tag tag-bad">累计错 ' + w.wrongN + ' 次</span>' +
+             '<span class="tiny muted">做过 ' + w.att + ' 次 · ' + (lastOk ? '上次已改对' : '上次还错着') + '</span>' +
+             '<button class="btn-mini" style="margin-left:auto" data-act="dueopen" data-pack="' + esc(w.pack) + '" data-idx="' + idx + '">重做 →</button>' +
+             '</div>' +
              '<div class="tiny muted" style="margin-top:3px">' + esc((q.ask || '').split('\n')[0].slice(0, 50)) + '…</div>' +
              '<div class="tiny muted">' + esc(q.tip || '') + '</div></div>');
     });
+    if(wrongAgg.length > 8) h.push('<div class="tiny muted" style="margin-top:4px">还有 ' + (wrongAgg.length - 8) + ' 道，去「只练错题」按到期顺序过。</div>');
     h.push('<div class="tools" style="margin-top:10px"><button class="btn-mini" data-act="papers">去试卷练习</button></div></div>');
   }
 

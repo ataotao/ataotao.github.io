@@ -229,17 +229,37 @@
       if (o.ok) delWrong('g:' + o.qid); else addWrong('g:' + o.qid, { kind: 'guided', qid: o.qid });
       persist();
     },
-    /** 试卷练习：一题作答 */
+    /** 试卷练习：一题作答
+     *  rec.tries   总提交次数
+     *  rec.okN     累计做对次数
+     *  rec.wrongN  累计做错次数（后来改对了也不清零 —— 错题反复回炉要用）
+     *  rec.ok      最近一次是否做对
+     *  试卷错题进错题本后不再自动清除：改对了也留着，由本人在「错题回炉」
+     *  勾「我会了」手动清（和概念错卡一致），这样同一道题可以反复回炉。 */
     examAnswer: function (o) {
       var pack = state.exam[o.packId] = state.exam[o.packId] || {};
-      var rec = pack[o.qid] = pack[o.qid] || { tries: 0 };
+      var rec = pack[o.qid] = pack[o.qid] || { tries: 0, okN: 0, wrongN: 0 };
+      if (rec.tries === undefined) rec.tries = 0;
+      /* 老记录没有累计字段：按「最近一次」估一个起点，之后正常累加 */
+      if (rec.okN === undefined) rec.okN = rec.ok ? 1 : 0;
+      if (rec.wrongN === undefined) rec.wrongN = rec.ok ? 0 : Math.max(1, rec.tries);
       rec.tries++;
       rec.ok = !!o.ok;
+      if (o.ok) rec.okN++; else rec.wrongN++;
       rec.user = o.user;
       rec.at = new Date().toISOString();
+      if (o.ok) rec.lastOkAt = rec.at; else rec.lastWrongAt = rec.at;
       bump(U.today(), 'exam');
-      if (o.ok) delWrong('e:' + o.packId + ':' + o.qid);
-      else addWrong('e:' + o.packId + ':' + o.qid, { kind: 'exam', packId: o.packId, qid: o.qid });
+      var key = 'e:' + o.packId + ':' + o.qid;
+      if (!o.ok) {
+        addWrong(key, { kind: 'exam', packId: o.packId, qid: o.qid, n: rec.wrongN, lastOk: false });
+      } else if (state.wrong[key]) {
+        var w = state.wrong[key];
+        w.n = rec.wrongN;
+        w.lastOk = true;
+        w.lastAt = rec.at;
+        w.at = rec.lastWrongAt || w.at;
+      }
       persist();
     },
     /** 概念闪练：一张卡 */
