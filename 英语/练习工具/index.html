@@ -81,12 +81,27 @@
   .stem .cn{display:block;font-size:14px;color:var(--ink-3);margin-bottom:4px}
   .blank{display:inline-block;min-width:64px;border-bottom:1.6px solid var(--ink-3);margin:0 3px;
     vertical-align:baseline;height:1.1em}
-  .passage{margin:0 0 12px;font-size:14.5px;color:var(--ink-2);background:#f8f4ea;border:1px solid var(--line-2);
-    border-radius:9px;padding:10px 12px}
-  .passage summary{cursor:pointer;font-size:12.5px;color:var(--ink-3);list-style:none}
-  .passage summary::-webkit-details-marker{display:none}
-  .passage p{margin:8px 0 0;line-height:1.85}
-  .passage .pb{color:var(--brand);font-weight:700}
+  /* 语篇填空：短文 + 行内输入框 + 逐空讲评 */
+  .passage-card .passage-text{font-size:17px;line-height:2.15;color:var(--ink);background:#fcf9f1;
+    border:1px solid var(--line-2);border-radius:10px;padding:14px 16px;
+    font-family:Georgia,"Times New Roman","Songti SC","Noto Serif SC",serif;word-break:break-word}
+  .inline-blank-wrap{display:inline-flex;align-items:baseline;gap:3px;margin:0 3px;vertical-align:baseline}
+  .blank-no{font-size:11px;color:var(--brand);font-family:system-ui,sans-serif;position:relative;top:-.4em}
+  .field.inline-blank{width:7.2em;min-width:88px;padding:3px 8px;font-size:16.5px;line-height:1.5;
+    border-radius:7px;border-bottom-width:2px;margin:0 1px;text-align:center}
+  .blank-list{margin-top:16px;border-top:1px dashed var(--line-2);padding-top:12px}
+  .blank-row{border:1px solid var(--line-2);border-radius:9px;margin-bottom:8px;background:#fff;overflow:hidden}
+  .blank-row summary{display:flex;flex-wrap:wrap;gap:10px;align-items:baseline;cursor:pointer;padding:9px 12px;
+    font-size:13px;list-style:none}
+  .blank-row summary::-webkit-details-marker{display:none}
+  .blank-row .bn{color:var(--brand);font-size:12px;flex:0 0 auto}
+  .blank-row .ba{font-weight:600;font-family:Georgia,serif;word-break:break-word}
+  .blank-row .ba.ok{color:var(--ok)}
+  .blank-row .ba.bad{color:var(--bad)}
+  .blank-row .ba.warn{color:var(--warn)}
+  .blank-row .bk{color:var(--bad);font-size:12.5px;word-break:break-word}
+  .blank-row .bt{margin-left:auto;color:var(--ink-3);font-size:11.5px}
+  .blank-row .verify{margin:0;border-radius:0;border-left:none;background:#fdf6f2}
 
   .opts{display:grid;grid-template-columns:1fr 1fr;gap:9px}
   .opt{display:flex;align-items:center;gap:10px;min-height:48px;padding:9px 12px;text-align:left;
@@ -109,6 +124,7 @@
   .field:focus{outline:none;border-color:var(--pick);box-shadow:0 0 0 3px var(--pick-bg)}
   .field[data-state="right"]{border-color:var(--ok);background:var(--ok-bg)}
   .field[data-state="wrong"]{border-color:var(--bad);background:var(--bad-bg)}
+  .field[data-state="unknown"]{border-color:var(--warn);background:var(--warn-bg)}
   .fields .sentence{width:100%}
   .fields .sentence .field{width:100%}
 
@@ -220,6 +236,8 @@
     .qcard{padding:14px 14px 12px}
     .stem{font-size:16.5px}
     .opts{grid-template-columns:1fr}
+    .passage-card .passage-text{font-size:15.5px;line-height:2.05;padding:12px}
+    .field.inline-blank{width:6.2em;min-width:74px;font-size:15px}
     .prow .ref{width:auto;flex:0 0 auto}
     .prow{flex-wrap:wrap}
     .prow .pick{flex:1 1 100%;order:3}
@@ -227,6 +245,7 @@
   /* 桌面端（≥960px）：解析与考点放大一档，英文正文换成更清晰的衬线栈 */
   @media (min-width:960px){
     body{font-size:16.5px}
+    .passage-card .passage-text{font-size:17.5px}
     .stem{font-size:19px; line-height:1.72; letter-spacing:.1px;
       font-family:Georgia,"Times New Roman","Songti SC","Noto Serif SC",serif}
     .stem .cn{font-size:15px}
@@ -503,7 +522,35 @@
     var u = unit();
     return S.onlyFills ? u.fills : u.items;
   }
-  function current() { return items()[Math.min(S.idx, items().length - 1)]; }
+  /* 语篇题（目前只有 U2 语法填空）：一整段短文里的多个空算「一步」，
+     像原卷那样一次看完整篇、一起作答，而不是拆成孤立的一空一卡。 */
+  function passageSection(it) {
+    return it && it.section && unit().passages[it.section] ? it.section : null;
+  }
+  function steps() {
+    var u = unit(), list = items(), out = [], seen = {};
+    list.forEach(function (it) {
+      var sec = passageSection(it);
+      if (!sec) { out.push({ kind: "single", items: [it] }); return; }
+      if (seen[sec]) return;
+      seen[sec] = true;
+      out.push({ kind: "passage", section: sec, items: u.items.filter(function (x) { return x.section === sec; }) });
+    });
+    return out;
+  }
+  function stepAt(i) {
+    var a = steps();
+    return a[Math.max(0, Math.min(i, a.length - 1))];
+  }
+  function currentStep() { return stepAt(S.idx); }
+  function current() { return currentStep().items[0]; }
+  function stepIndexFor(itemId) {
+    var a = steps();
+    for (var i = 0; i < a.length; i++) {
+      if (a[i].items.some(function (x) { return x.id === itemId; })) return i;
+    }
+    return 0;
+  }
   function isExam() { return S.mode === "exam"; }
   function examAnswers() { return S.exam ? S.exam.answers : {}; }
   function currentSelection(it) {
@@ -511,7 +558,20 @@
     return S.picked[it.id];
   }
   function shownState(it) { return !!S.reveals[it.id]; }
-  function progressText() { return (S.idx + 1) + " / " + items().length; }
+  function stepRevealed(step) {
+    return step.items.some(function (it) { return shownState(it); });
+  }
+  function stepState(step) {
+    if (step.items.every(function (it) { return shownState(it); })) {
+      return step.items.every(function (it) { return isRight(it); }) ? "right" : "wrong";
+    }
+    var any = step.items.some(function (it) {
+      var sel = currentSelection(it);
+      return Array.isArray(sel) && sel.some(function (x) { return String(x || "").trim(); });
+    });
+    return any ? "picked" : "unanswered";
+  }
+  function progressText() { return (S.idx + 1) + " / " + steps().length; }
 
   /* ══ toast / 错误条 ════════════════════════════════ */
   var toastEl = document.getElementById("toast");
@@ -589,7 +649,20 @@
     }
 
     html += '<div class="pmain">';
-    html += '<article class="qcard" data-id="' + esc(it.id) + '" data-state="' + cardState(it) + '"' +
+    var step = currentStep();
+    html += step.kind === "passage" ? passageCardHTML(step) : singleCardHTML(step.items[0]);
+    html += '<aside class="sidecards" aria-label="答题卡"><h4><span>答题卡</span><span class="hint">共 ' +
+      u.items.length + " 题</span></h4>" + sheetGroupsHTML() + "</aside>";
+    html += "</div>";
+
+    document.getElementById("view-practice").innerHTML = html + bottombarHTML();
+    bindPractice();
+  }
+
+  /* 单题卡（选择 / 普通填空） */
+  function singleCardHTML(it) {
+    var u = unit();
+    var html = '<article class="qcard" data-id="' + esc(it.id) + '" data-state="' + cardState(it) + '"' +
       (S.marks[it.id] ? ' data-marked="1"' : "") + ">";
     html += '<div class="qhead">';
     html += '<span class="ref">' + esc(itemRef(it)) + "</span>";
@@ -597,14 +670,6 @@
     if (S.marks[it.id]) html += '<span class="mark-badge">已标记</span>';
     html += '<span class="unit">' + esc(u.title) + " · " + (isExam() ? "模拟考" : "过关") + "</span>";
     html += "</div>";
-
-    var passage = u.passages[it.section];
-    if (passage) {
-      var ptext = String(passage).split(/\{\{(\d+)\}\}/).map(function (seg, i) {
-        return i % 2 === 1 ? '<span class="pb">(' + seg + ")</span>" : esc(seg);
-      }).join("");
-      html += '<details class="passage"><summary>短文（点击展开）</summary><p>' + ptext + "</p></details>";
-    }
 
     html += '<div class="stem">' + (it.cn ? '<span class="cn" lang="zh">' + esc(it.cn) + "</span>" : "") +
       esc(it.stem).replace(/_{3,}/g, '<span class="blank"></span>') + "</div>";
@@ -646,12 +711,80 @@
     }
     html += "</div>";
     html += "</article>";
-    html += '<aside class="sidecards" aria-label="答题卡"><h4><span>答题卡</span><span class="hint">共 ' +
-      u.items.length + " 题</span></h4>" + sheetGroupsHTML() + "</aside>";
+    return html;
+  }
+
+  /* 语篇卡（U2 语法填空）：整段短文 + 文中内嵌输入框，一次提交、逐空判分 */
+  function passageCardHTML(step) {
+    var u = unit();
+    var list = step.items;
+    var first = list[0], last = list[list.length - 1];
+    var revealed = stepRevealed(step);
+    var html = '<article class="qcard passage-card" data-id="' + esc(first.id) + '" data-section="' + esc(step.section) + '" data-state="' + stepState(step) + '">';
+    html += '<div class="qhead">';
+    html += '<span class="ref">' + esc(step.section) + " · 第 " + first.no + "–" + last.no + " 空</span>";
+    html += '<span class="type">语篇填空</span>';
+    html += '<span class="unit">' + esc(u.title) + " · " + (isExam() ? "模拟考" : "过关") + "</span>";
     html += "</div>";
 
-    document.getElementById("view-practice").innerHTML = html + bottombarHTML();
-    bindPractice();
+    var text = String(u.passages[step.section] || "");
+    html += '<div class="passage-text">';
+    text.split(/\{\{(\d+)\}\}/).forEach(function (seg, i) {
+      if (i % 2 === 0) { html += esc(seg); return; }
+      var it = list[+seg - 1];
+      if (it) html += inlineBlankHTML(it);
+    });
+    html += "</div>";
+
+    html += '<div class="qtools">';
+    if (!isExam() && revealed) html += '<button data-act="redo-passage">整篇重做</button>';
+    if (!ONLINE) html += '<a href="' + esc(scanHref(first)) + '" target="_blank" rel="noopener">看原卷</a>';
+    html += '<span class="hint">共 ' + list.length + " 空 · 一次提交，按空判分</span>";
+    html += "</div>";
+
+    if (revealed) html += blankExplainsHTML(step);
+    html += "</article>";
+    return html;
+  }
+
+  function inlineBlankHTML(it) {
+    var vals = shownState(it) ? fillOf(it) || [] : currentSelection(it);
+    var v = Array.isArray(vals) ? vals[0] || "" : "";
+    var parts = answerParts(it);
+    var judged = S.reveals[it.id];
+    var st = "";
+    if (judged) st = !it.answerRaw ? "unknown" : norm(v) === norm(parts[0]) ? "right" : "wrong";
+    return '<span class="inline-blank-wrap">' +
+      '<span class="blank-no">' + esc(it.no) + "</span>" +
+      '<input class="field inline-blank" data-id="' + esc(it.id) + '" data-i="0" type="text" ' +
+      'autocomplete="off" spellcheck="false" enterkeyhint="next" value="' + esc(v) + '"' +
+      (judged ? " readonly" : "") + ' data-state="' + st + '" placeholder=""' +
+      ' aria-label="第 ' + esc(it.no) + ' 空">' +
+      "</span>";
+  }
+
+  function blankExplainsHTML(step) {
+    var html = '<div class="blank-list">';
+    step.items.forEach(function (it) {
+      var parts = answerParts(it);
+      var vals = fillOf(it) || [];
+      var mine = vals[0] || "";
+      var noAnswer = !it.answerRaw;
+      var ok = !noAnswer && !!mine && norm(mine) === norm(parts[0]);
+      html += '<details class="blank-row" ' + (ok ? "" : "open") + ">";
+      html += '<summary><span class="bn">第 ' + esc(it.no) + " 空</span>" +
+        '<span class="ba ' + (noAnswer ? "warn" : ok ? "ok" : "bad") + '">你的 ' + esc(mine || "（未填）") + "</span>" +
+        '<span class="bk"' + (noAnswer ? ' style="color:var(--warn)"' : "") + ">" + esc(noAnswer ? "待核对" : "答案 " + it.answerRaw) + "</span>" +
+        '<span class="bt">' + esc(it.topic || "") + "</span></summary>";
+      html += '<div class="verify">';
+      if (it.point) html += '<div class="vlab">规则</div><div class="vtxt">' + esc(it.point) + "</div>";
+      html += '<div class="vlab">解析</div><div class="vtxt">' + esc(it.why || "（暂无解析）") +
+        (it.doubt ? ' <span class="vdoubt">· 该题存疑</span>' : "") + "</div>";
+      if (it.trap) html += '<div class="vlab">易错点</div><div class="vtxt"><span class="vtrap">' + esc(it.trap) + "</span></div>";
+      html += "</div></details>";
+    });
+    html += "</div>";
+    return html;
   }
 
   function sectionCount(sec) {
@@ -734,11 +867,15 @@
   }
 
   function bottombarHTML() {
-    var it = current();
-    var judged = shownState(it);
+    var step = currentStep();
+    var it = step.items[0];
+    var judged = stepRevealed(step);
+    var ref = step.kind === "passage"
+      ? step.section + " · 第 " + step.items[0].no + "–" + step.items[step.items.length - 1].no + " 空"
+      : itemRef(it);
     var html = '<div class="bottombar"><div class="line top">';
     html += '<span class="progress">' + progressText() + "</span>";
-    html += "<span>" + esc(itemRef(it)) + "</span>";
+    html += "<span>" + esc(ref) + "</span>";
     html += "<span>已答 " + answeredCount() + " / " + items().length + "</span>";
     html += '<span style="margin-left:auto">' + (isExam() ? "模拟考 · 交卷后可看解析" : "过关 · 提交即判分") + "</span>";
     html += '</div><div class="line">';
@@ -816,7 +953,8 @@
     });
     root.querySelectorAll(".field").forEach(function (inp) {
       inp.addEventListener("input", function () {
-        var it = current();
+        var it = inp.dataset.id ? BY_ID[inp.dataset.id] : current();
+        if (!it) return;
         var cur = currentSelection(it);
         var arr = Array.isArray(cur) ? cur.slice() : new Array(it.fields).fill("");
         arr[+inp.dataset.i] = inp.value;
@@ -827,16 +965,20 @@
         if (e.key !== "Enter") return;
         e.preventDefault();
         var all = root.querySelectorAll(".field");
-        var i = +inp.dataset.i;
-        if (i < all.length - 1) { all[i + 1].focus(); return; }
+        var i = Array.prototype.indexOf.call(all, inp);
+        if (i >= 0 && i < all.length - 1) { all[i + 1].focus(); return; }
         doSubmit();
       });
     });
     var acts = {
       prev: function () { go(-1); },
-      next: function () { if (isExam() || shownState(current())) go(1); else doSubmit(); },
+      next: function () { if (isExam() || stepRevealed(currentStep())) go(1); else doSubmit(); },
       submit: function () { doSubmit(); },
       redo: function () { delete S.picked[current().id]; delete S.reveals[current().id]; renderPractice(); },
+      "redo-passage": function () {
+        currentStep().items.forEach(function (it) { delete S.picked[it.id]; delete S.reveals[it.id]; });
+        renderPractice();
+      },
       mark: function () {
         var it = current();
         if (S.marks[it.id]) delete S.marks[it.id]; else S.marks[it.id] = true;
@@ -864,15 +1006,13 @@
     root.querySelectorAll("[data-jump]").forEach(function (b) {
       b.addEventListener("click", function () {
         S.settle = false;
-        var idx = items().indexOf(BY_ID[b.dataset.jump]);
-        if (idx >= 0) S.idx = idx;
+        S.idx = stepIndexFor(b.dataset.jump);
         renderPractice();
       });
     });
     root.querySelectorAll(".sidecards [data-id]").forEach(function (b) {
       b.addEventListener("click", function () {
-        var idx = items().indexOf(BY_ID[b.dataset.id]);
-        if (idx >= 0) S.idx = idx;
+        S.idx = stepIndexFor(b.dataset.id);
         renderPractice();
         window.scrollTo(0, 0);
       });
@@ -880,7 +1020,7 @@
   }
 
   function go(delta) {
-    var n = items().length;
+    var n = steps().length;
     S.idx = Math.max(0, Math.min(n - 1, S.idx + delta));
     renderPractice();
     window.scrollTo(0, 0);
@@ -888,7 +1028,9 @@
 
   function doSubmit() {
     if (isExam()) { go(1); return; }
-    var it = current();
+    var step = currentStep();
+    if (step.kind === "passage") { submitPassage(step); return; }
+    var it = step.items[0];
     if (shownState(it)) { go(1); return; }
     var sel = S.picked[it.id];
     if (it.kind === "mc") {
@@ -896,13 +1038,33 @@
     } else {
       if (!Array.isArray(sel) || !sel.some(function (x) { return String(x || "").trim(); })) { toast("先写出答案"); return; }
     }
-    var ok = it.kind === "mc" ? sel === it.answer : acceptedList(it).indexOf(norm(sel.join(" / "))) >= 0;
+    var ok = judge(it, sel);
     recordAnswer(it, sel, ok);
     S.reveals[it.id] = true;
     delete S.picked[it.id];
     updateBadge();
     renderPractice();
     if (!ok) toast("错了，看下面的解析");
+  }
+
+  /* 语篇填空：一次提交，按空判分；没填的空也标出来（不记作答次数） */
+  function submitPassage(step) {
+    var filled = 0, wrongN = 0;
+    step.items.forEach(function (it) {
+      var sel = currentSelection(it);
+      var has = Array.isArray(sel) && sel.some(function (x) { return String(x || "").trim(); });
+      delete S.picked[it.id];
+      if (!has) { S.reveals[it.id] = true; return; }
+      filled++;
+      var ok = judge(it, sel);
+      if (!ok) wrongN++;
+      recordAnswer(it, sel, ok);
+      S.reveals[it.id] = true;
+    });
+    if (!filled) { toast("先填几个空再提交"); step.items.forEach(function (it) { delete S.reveals[it.id]; }); renderPractice(); return; }
+    updateBadge();
+    renderPractice();
+    toast(filled + " 空已判分" + (wrongN ? "（错 " + wrongN + " 空）" : "（全对）"));
   }
 
   function finishExam() {
@@ -961,9 +1123,9 @@
       sec.items.forEach(function (it) { if (cellState(it) !== "unanswered") done++; });
       html += '<div class="sheet-group"><h4>' + esc(sec.name || "（卷面开头，无大题标题）") + "</h4><div class=\"grid\">";
       sec.items.forEach(function (it) {
-        var here = it.id === current().id;
+        var here = currentStep().items.some(function (x) { return x.id === it.id; });
         html += '<button class="cell" data-id="' + esc(it.id) + '" data-state="' + cellState(it) + '"' +
-          (here ? ' data-here="1"' : "") + ">" + esc(shortRef(it)) +
+          (here ? ' data-here="1"' : "") + ">" + esc(it.noLabel || it.no) +
           (S.marks[it.id] ? '<span class="dot"></span>' : "") + "</button>";
       });
       html += "</div></div>";
@@ -984,7 +1146,7 @@
     document.getElementById("cardsheet").classList.add("is-open");
     panel.querySelectorAll("[data-id]").forEach(function (b) {
       b.addEventListener("click", function () {
-        var idx = items().indexOf(BY_ID[b.dataset.id]);
+        var idx = stepIndexFor(b.dataset.id);
         if (idx >= 0) S.idx = idx;
         closeCards();
         renderPractice();
@@ -1039,7 +1201,7 @@
         var it = BY_ID[b.dataset.goto];
         if (!it) return;
         S.unit = it.unit; store.unit = S.unit; saveStore();
-        S.idx = items().indexOf(it);
+        S.idx = stepIndexFor(it.id);
         if (S.mode === "exam") { S.mode = "drill"; S.exam = null; }
         switchView("practice");
       });

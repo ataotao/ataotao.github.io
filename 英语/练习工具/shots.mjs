@@ -116,6 +116,25 @@ await evaluate(`(() => { const b = document.querySelector('#view-review [data-rt
 await sleep(500);
 await shot("05-复盘-原卷批改");
 
+// 6) 语篇填空：整段短文 + 行内空（U2 语法填空）
+await send("Page.navigate", { url: url });
+await sleep(1200);
+await evaluate(`document.querySelector('[data-unit="U2"]')?.click()`);
+await sleep(400);
+await click('[data-act="cards"]');
+await sleep(300);
+await click('#cardsheet .cell[data-id="U2-gf1"]');
+await sleep(500);
+await evaluate(`(() => {
+  const ans = ["doubtful", "to check", "was needed", "in", "", "applies"];
+  [...document.querySelectorAll('#view-practice .qcard.passage-card .field.inline-blank')]
+    .forEach((f, i) => { if (ans[i]) { f.value = ans[i]; f.dispatchEvent(new Event('input', { bubbles: true })); } });
+})()`);
+await sleep(200);
+await evaluate(`document.querySelector('[data-act="submit"]')?.click()`);
+await sleep(600);
+await shot("06-语篇填空");
+
 // 清理旧版截图（只删 2026-11-04 改版前那 5 个文件名；新图直接覆盖）
 for (const f of ["00-解析示例.png", "01-练习批改.png", "02-批改报告.png", "03-错题本.png", "04-填空自测.png"]) {
   try { unlinkSync(join(outDir, f)); } catch {}

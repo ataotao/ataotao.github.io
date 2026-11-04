@@ -186,6 +186,35 @@ await $(`(() => { const parts = ${JSON.stringify(u1_17)}; const fs = [...documen
 await key("Enter", "Enter", 13);
 ok("整题判分（全对才算对）", (await $(`document.querySelector('#view-practice .qcard').dataset.state`)) === "right");
 ok("提交后输入框回填原答案", (await $(`[...document.querySelectorAll('#view-practice .qcard .field')].map(f => f.value).join('|')`)) === (u1_17 || []).join("|"));
+/* ── 5b. 语篇填空：整段短文 + 行内空 ─────────── */
+group("语篇填空");
+await $(`document.querySelector('[data-unit="U2"]').click()`);
+await sleep(300);
+await $(`document.querySelector('[data-act="cards"]').click()`);
+await sleep(200);
+await $(`document.querySelector('#cardsheet .cell[data-id="U2-gf1"]').click()`);
+await sleep(400);
+ok("语篇题是一张整段短文卡", !!(await $(`document.querySelector('#view-practice .qcard.passage-card')`)));
+ok("短文里有 6 个行内输入框", (await $(`document.querySelectorAll('#view-practice .qcard.passage-card .field.inline-blank').length`)) === 6);
+ok("短文正文在卡里（不是折叠的）", /For thousands of years/.test((await $(`document.querySelector('#view-practice .passage-text')?.textContent`)) || ""));
+const gfAns = await $(`(() => { const u = window.QUIZ_DATA.units.find(x => x.unit === 'U2');
+  return u.items.filter(i => i.section === '语法填空').map(i => (u.key.items[i.id] || {}).answer); })()`);
+await $(`(() => { const ans = ${JSON.stringify(gfAns)};
+  const fs = [...document.querySelectorAll('#view-practice .qcard.passage-card .field.inline-blank')];
+  fs.forEach((f, i) => { f.value = ans[i] || ''; f.dispatchEvent(new Event('input', { bubbles: true })); });
+  return fs.length; })()`);
+await $(`document.querySelector('[data-act="submit"]').click()`);
+await sleep(500);
+ok("语篇按空判分（有答案的 5 空对、1 空待核对）", (await $(`(() => { const fs = [...document.querySelectorAll('#view-practice .qcard.passage-card .field.inline-blank')];
+  return fs.filter(f => f.dataset.state === 'right').length === 5 && fs.filter(f => f.dataset.state === 'unknown').length === 1; })()`)) === true);
+ok("逐空讲评列出 6 空", (await $(`document.querySelectorAll('#view-practice .blank-row').length`)) === 6);
+ok("有答案的空都记了一次作答", (await $(`['gf1','gf2','gf3','gf4','gf6'].every(id => (JSON.parse(localStorage.getItem('eng9a-practice-v1')).stat['U2-' + id] || {}).att === 1)`)) === true);
+ok("无参考答案的空标「待核对」", /待核对/.test((await $(`[...document.querySelectorAll('#view-practice .blank-row')].map(r => r.textContent).join(' ')`)) || ""));
+await $(`document.querySelector('[data-act="redo-passage"]').click()`);
+await sleep(300);
+ok("整篇重做回到未作答", (await $(`document.querySelector('#view-practice .qcard.passage-card')?.dataset.state`)) === "unanswered");
+await $(`document.querySelector('[data-unit="U1"]').click()`);
+await sleep(300);
 
 /* ── 6. 模拟考：交卷前不剧透 ─────────────────── */
 group("模拟考");
