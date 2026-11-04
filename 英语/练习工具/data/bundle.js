@@ -1,15 +1,16 @@
 window.QUIZ_DATA = {
- "generatedAt": "2026-11-04T07:53:08.685Z",
+ "generatedAt": "2026-11-04T09:22:33.344Z",
  "units": [
   {
    "unit": "U1",
    "title": "九上 U1 过关",
    "header": {
-    "class": "柯三9",
-    "name": "陶宸欣",
-    "id": "0909"
+    "class": null,
+    "name": null,
+    "id": "099"
    },
    "note": "",
+   "passages": {},
    "items": [
     {
      "no": 1,
@@ -21,7 +22,8 @@ window.QUIZ_DATA = {
      "handwriting": [
       "fact"
      ],
-     "note": "横线手写词辨为 fact（卷面横线前未印冠词，按字面转写）"
+     "note": "横线手写词辨为 fact（卷面横线前未印冠词，按字面转写）",
+     "fields": 1
     },
     {
      "no": 2,
@@ -33,7 +35,8 @@ window.QUIZ_DATA = {
      "handwriting": [
       "outstanding"
      ],
-     "note": "手写词辨为 outstanding（语境疑应为 outdated，按字面转写）"
+     "note": "手写词辨为 outstanding（语境疑应为 outdated，按字面转写）",
+     "fields": 1
     },
     {
      "no": 3,
@@ -45,7 +48,8 @@ window.QUIZ_DATA = {
      "handwriting": [
       "beyond"
      ],
-     "note": "手写单词潦草，辨为 beyond（首字母 b 清晰，后半辨读）"
+     "note": "手写单词潦草，辨为 beyond（首字母 b 清晰，后半辨读）",
+     "fields": 1
     },
     {
      "no": 4,
@@ -57,7 +61,8 @@ window.QUIZ_DATA = {
      "handwriting": [
       "confident"
      ],
-     "note": "手写词辨为 confident"
+     "note": "手写词辨为 confident",
+     "fields": 1
     },
     {
      "no": 5,
@@ -285,7 +290,8 @@ window.QUIZ_DATA = {
      "handwriting": [
       "as necessary as"
      ],
-     "note": null
+     "note": null,
+     "fields": 1
     },
     {
      "no": 14,
@@ -297,7 +303,8 @@ window.QUIZ_DATA = {
      "handwriting": [
       "need to be watered"
      ],
-     "note": null
+     "note": null,
+     "fields": 1
     },
     {
      "no": 15,
@@ -309,7 +316,8 @@ window.QUIZ_DATA = {
      "handwriting": [
       "In addition to watching"
      ],
-     "note": null
+     "note": null,
+     "fields": 1
     },
     {
      "no": 16,
@@ -321,7 +329,8 @@ window.QUIZ_DATA = {
      "handwriting": [
       "having a talent"
      ],
-     "note": "横线上先写 being talented 并划掉，上方改写为 having a talent（空后 for 为印刷体） 横线上先写 being talented 被划掉，改写 having a talent；此处只保留最终作答。"
+     "note": "横线上先写 being talented 并划掉，上方改写为 having a talent（空后 for 为印刷体） 横线上先写 being talented 被划掉，改写 having a talent；此处只保留最终作答。",
+     "fields": 1
     },
     {
      "no": 17,
@@ -334,7 +343,8 @@ window.QUIZ_DATA = {
       "It is fitting",
       "that"
      ],
-     "note": "句首两处横线上手写 It is fitting；and 后横线写 that；their spirits 之后的横线未填写"
+     "note": "句首两处横线上手写 It is fitting；and 后横线写 that；their spirits 之后的横线未填写",
+     "fields": 3
     },
     {
      "no": 18,
@@ -347,7 +357,8 @@ window.QUIZ_DATA = {
       "is made up of",
       "on her own"
      ],
-     "note": "第二个空移至下一行行首，学生写 on her own"
+     "note": "第二个空移至下一行行首，学生写 on her own",
+     "fields": 2
     },
     {
      "no": 19,
@@ -516,10 +527,49 @@ window.QUIZ_DATA = {
      "kind": "mc",
      "stem": "We're certain ______ something is wrong with him, but we are unsure ______ he will die of the disease.",
      "cn": null,
-     "options": null,
+     "options": [
+      {
+       "k": "A",
+       "t": "if; whether"
+      },
+      {
+       "k": "B",
+       "t": "that; that"
+      },
+      {
+       "k": "C",
+       "t": "whether; if"
+      },
+      {
+       "k": "D",
+       "t": "that; whether"
+      }
+     ],
      "marked": "A",
      "handwriting": null,
-     "note": "本页正文到 disease. 结束，第 25 题选项未印在本页（疑在下一页或照片未拍到），故 options 为 null；题号左侧页边有手写 A"
+     "note": "选项印在下一页首行（页2 顶部）；题干 certain ___ … unsure ___ → that; whether，作 D"
+    },
+    {
+     "no": 26,
+     "kind": "fill",
+     "stem": "He is ______ ______ he has made a mistake.",
+     "cn": "他没有意识到自己犯了错误。",
+     "options": null,
+     "marked": null,
+     "handwriting": null,
+     "note": "本页属 U1（跨页题）：题干在页1 末、题号在页2 顶部",
+     "fields": 2
+    },
+    {
+     "no": 27,
+     "kind": "fill",
+     "stem": "______ ______ I can't attend your birthday party this Saturday.",
+     "cn": "恐怕这个星期六我不能参加你的生日聚会了。",
+     "options": null,
+     "marked": null,
+     "handwriting": null,
+     "note": "本页属 U1（跨页题）：题干在页1 末、题号在页2 顶部",
+     "fields": 2
     }
    ],
    "key": {
@@ -708,10 +758,30 @@ window.QUIZ_DATA = {
       "doubt": false
      },
      "25": {
-      "answer": null,
+      "answer": "D",
       "topic": "that / whether 从句",
-      "why": "按句意应为 certain that…, unsure whether…，但本页未印选项，无法确定字母答案，故存疑。",
-      "doubt": true
+      "why": "certain 后接 that 从句（确信某事），unsure 后接 whether 从句（不确定是否）；四个选项中只有 D 是 that; whether。",
+      "doubt": false
+     },
+     "26": {
+      "answer": "not aware / that",
+      "alt": [
+       "unaware / that",
+       "not aware that"
+      ],
+      "topic": "be aware that 从句",
+      "why": "「没有意识到」用 be not aware that…；第二个空填引导宾语从句的 that。",
+      "doubt": false
+     },
+     "27": {
+      "answer": "I'm afraid / that",
+      "alt": [
+       "I am afraid / that",
+       "I'm afraid that"
+      ],
+      "topic": "I'm afraid that 从句",
+      "why": "「恐怕」用 I'm afraid (that)…，that 引导宾语从句，口语中可省略。",
+      "doubt": false
      }
     }
    },
@@ -861,10 +931,22 @@ window.QUIZ_DATA = {
      "trap": "同一 if 两种身份：表「是否」用将来时，表「如果」的从句用现在时。"
     },
     "25": {
-     "topic": "certain 从句",
-     "point": "be certain that… 从句成分完整用 that（口语可省略）；be unsure 后表「是否」用 whether 引导宾语从句。",
-     "why": "第一空 something is wrong with him 主谓完整，用 that；第二空「不确定他是否会死于这种病」表「是否」，用 whether。本题选项未印在本页，只能按句意判断第一空 that、第二空 whether。",
-     "trap": "unsure 后不能用 that（不表「是否」）；也别把 that 与 if 混搭，书面语用 whether。"
+     "topic": "certain that / unsure whether",
+     "point": "certain 后接 that 从句表示「确信……」；unsure 后接 whether 从句表示「不确定是否……」；宾语从句缺成分时用 that/what/who 等，表「是否」只能用 whether/if。",
+     "why": "句意：我们确信他出了问题，但不确定他会不会死于这种病。前一空后是完整陈述，用 that；后一空是「是否」的疑问含义，用 whether。A 的 if; whether 顺序反了，B 的 that; that 第二空语义不对，C 的 whether; if 第一空不能表确信。",
+     "trap": "把「不确定是否」写成 that，或受口语影响在后一空用 if 而前一空用 whether。判断顺序：先看谓语（certain/unsure）要什么从句，再看从句是否缺成分。"
+    },
+    "26": {
+     "topic": "be aware that 从句",
+     "point": "be aware of sth 表示「意识到某事」；后接从句用 be aware that…。「没有意识到」即 be not aware that…，第二个空填引导宾语从句的 that。",
+     "why": "句意：他没有意识到自己犯了错误。He is ___ ___ he has made a mistake. 第一空与 is 构成「没有意识到」，只能用 not aware（也可写 unaware，题面两空仍按 not aware 计）；第二空后面的 he has made a mistake 结构完整，用 that 引导。",
+     "trap": "第二个空容易漏掉或填 what：从句成分完整时用 that；看见「错误」不要联想到 what。"
+    },
+    "27": {
+     "topic": "I'm afraid (that)…",
+     "point": "「恐怕……」用 I'm afraid (that) + 从句；口语里 that 可省略，但填空要把两空分别写成 I'm afraid 与 that。",
+     "why": "句意：恐怕这个星期六我不能参加你的生日聚会了。第一空对应「恐怕」= I'm afraid（也可写 I am afraid）；第二空引导 I can't attend… 这个完整从句，用 that。",
+     "trap": "把「恐怕」直译成 I fear / Maybe；或漏写 I'm 的撇号（答卷上照抄时注意）。"
     }
    }
   },
@@ -877,13 +959,16 @@ window.QUIZ_DATA = {
     "id": null,
     "note": "本页未见班级/姓名/学号栏；页眉只有大标题「九上 U2 过关卷」"
    },
-   "note": "no 一律照抄卷面序号；因「语法」小节从 1 重新编号，另加 id 作唯一键（p=页顶残留, m=主体, g=语法, gf=语法填空），与 u2.key.json 的键一一对应。",
+   "note": "「语法填空」短文跨页 2–3（页3 顶部之前是它的后半）；第 4 空附近被白色修正带遮挡，短文可能存在未拍到/被遮内容，第 4、5 空答案存疑。",
+   "passages": {
+    "语法填空": "For thousands of years, people could not measure temperature exactly. They only knew if something was hot or cold by touching it. People were {{1}}(doubt) whether this was a safe or accurate way. Doctors needed a tool {{2}}(check) fevers, and scientists needed one to study heat. A better way to measure temperature {{3}}(need). The thermometer helps us {{4}} many ways. Cooks use it for baking, {{5}}. Factories use it to keep machines safe. It {{6}}(apply) to many aspects of our daily lives, bringing great convenience."
+   },
    "items": [
     {
      "id": "m1",
      "no": 1,
      "kind": "fill",
-     "section": "主体",
+     "section": null,
      "stem": "Her smile s______ to suggest that she knew the secret.",
      "cn": null,
      "options": null,
@@ -891,25 +976,29 @@ window.QUIZ_DATA = {
      "handwriting": [
       "hows"
      ],
-     "note": "横线前已有印刷字母 s，学生手写补 hows，合成 shows（应为 seems）。"
+     "note": "横线前已有印刷字母 s，学生手写补 hows，合成 shows（应为 seems）。",
+     "paperNo": 1,
+     "fields": 1
     },
     {
      "id": "m2",
      "no": 2,
      "kind": "fill",
-     "section": "主体",
+     "section": null,
      "stem": "My brother was so hungry that he ate a large b______ of rice just now.",
      "cn": null,
      "options": null,
      "marked": null,
      "handwriting": null,
-     "note": "横线空白，未作答。"
+     "note": "横线空白，未作答。",
+     "paperNo": 2,
+     "fields": 1
     },
     {
      "id": "m3",
      "no": 3,
      "kind": "fill",
-     "section": "主体",
+     "section": null,
      "stem": "Many people make serious mistakes because of their in______ of basic scientific knowledge.",
      "cn": null,
      "options": null,
@@ -917,13 +1006,15 @@ window.QUIZ_DATA = {
      "handwriting": [
       "[看不清]"
      ],
-     "note": "横线前印刷字母为 in（放大可辨 i+n）；横线处手写被重涂、笔画重叠，无法辨认（起笔似 mag…）。 印刷前缀被手写覆盖，in（→in ignorance of?）与 ig（→ignorance）均有可能，故不给答案。"
+     "note": "横线前印刷字母为 in（放大可辨 i+n）；横线处手写被重涂、笔画重叠，无法辨认（起笔似 mag…）。 印刷前缀被手写覆盖，in（→in ignorance of?）与 ig（→ignorance）均有可能，故不给答案。",
+     "paperNo": 3,
+     "fields": 1
     },
     {
      "id": "m4",
      "no": 4,
      "kind": "fill",
-     "section": "主体",
+     "section": null,
      "stem": "These traditional teaching practices are gradually d______ by the new methods.",
      "cn": null,
      "options": null,
@@ -931,13 +1022,15 @@ window.QUIZ_DATA = {
      "handwriting": [
       "[看不清]"
      ],
-     "note": "手写压在横线上并向右下与下一行印刷 by 重叠，形似 disappearing/disappeared，无法确认。"
+     "note": "手写压在横线上并向右下与下一行印刷 by 重叠，形似 disappearing/disappeared，无法确认。",
+     "paperNo": 4,
+     "fields": 1
     },
     {
      "id": "m5",
      "no": 5,
      "kind": "mc",
-     "section": "主体",
+     "section": null,
      "stem": "The model plane is made ______ used wood and glass, and the paper is made ______ wood.",
      "cn": null,
      "options": [
@@ -960,13 +1053,14 @@ window.QUIZ_DATA = {
      ],
      "marked": "B",
      "handwriting": null,
-     "note": "题号左侧页边手写大写 B。"
+     "note": "题号左侧页边手写大写 B。",
+     "paperNo": 5
     },
     {
      "id": "m6",
      "no": 6,
      "kind": "mc",
-     "section": "主体",
+     "section": null,
      "stem": "We are all busy and seem ______ less time to get together than before.",
      "cn": null,
      "options": [
@@ -989,13 +1083,14 @@ window.QUIZ_DATA = {
      ],
      "marked": "C",
      "handwriting": null,
-     "note": "6 题号左侧页边为 C；其下方（第 6 题选项行左端）另有一处 B 形笔迹，归属不确定。"
+     "note": "6 题号左侧页边为 C；其下方（第 6 题选项行左端）另有一处 B 形笔迹，归属不确定。",
+     "paperNo": 6
     },
     {
      "id": "m7",
      "no": 7,
      "kind": "mc",
-     "section": "主体",
+     "section": null,
      "stem": "The owner often asks the customers ______ their suggestions.",
      "cn": null,
      "options": [
@@ -1018,13 +1113,14 @@ window.QUIZ_DATA = {
      ],
      "marked": "B",
      "handwriting": null,
-     "note": "该题号附近页边有三处笔迹：上方一处 B；7 题号左侧一个 C 被长斜线划掉；其下一行（选项行）左端又有一个 C。综合判为改答，取 B，存疑。"
+     "note": "该题号附近页边有三处笔迹：上方一处 B；7 题号左侧一个 C 被长斜线划掉；其下一行（选项行）左端又有一个 C。综合判为改答，取 B，存疑。",
+     "paperNo": 7
     },
     {
      "id": "m8",
      "no": 8,
      "kind": "mc",
-     "section": "主体",
+     "section": null,
      "stem": "Life is ______ challenges and chances, and it is ______ something different.",
      "cn": null,
      "options": [
@@ -1047,13 +1143,14 @@ window.QUIZ_DATA = {
      ],
      "marked": "B",
      "handwriting": null,
-     "note": "8 题号左侧页边为 B（笔迹夸张带斜划）；其上一行（第 7 题选项行）左端另有一个 C，归属不确定。"
+     "note": "8 题号左侧页边为 B（笔迹夸张带斜划）；其上一行（第 7 题选项行）左端另有一个 C，归属不确定。",
+     "paperNo": 8
     },
     {
      "id": "m9",
      "no": 9,
      "kind": "mc",
-     "section": "主体",
+     "section": null,
      "stem": "—______ wonderful movie it is! —I couldn't agree more.",
      "cn": null,
      "options": [
@@ -1076,13 +1173,14 @@ window.QUIZ_DATA = {
      ],
      "marked": "B",
      "handwriting": null,
-     "note": "题号左侧页边手写大写 B。"
+     "note": "题号左侧页边手写大写 B。",
+     "paperNo": 9
     },
     {
      "id": "m10",
      "no": 10,
      "kind": "mc",
-     "section": "主体",
+     "section": null,
      "stem": "The man who ______ Ms Yang ______ giving him all her savings was finally caught.",
      "cn": null,
      "options": [
@@ -1105,13 +1203,14 @@ window.QUIZ_DATA = {
      ],
      "marked": "C",
      "handwriting": null,
-     "note": "题号左侧页边手写大写 C。"
+     "note": "题号左侧页边手写大写 C。",
+     "paperNo": 10
     },
     {
      "id": "m11",
      "no": 11,
      "kind": "fill",
-     "section": "主体",
+     "section": null,
      "stem": "The group members are ______ ______ the unfair decision.",
      "cn": "小组成员们不满意这个不公平的决定。",
      "options": null,
@@ -1120,13 +1219,15 @@ window.QUIZ_DATA = {
       "not",
       "satisfied with"
      ],
-     "note": "第二空手写为 satisfied，with 写在横线末端外。"
+     "note": "第二空手写为 satisfied，with 写在横线末端外。",
+     "paperNo": 11,
+     "fields": 2
     },
     {
      "id": "m12",
      "no": 12,
      "kind": "fill",
-     "section": "主体",
+     "section": null,
      "stem": "______ it is to see these creative achievements!",
      "cn": "看到这些创意成果多么令人惊讶啊！",
      "options": null,
@@ -1134,13 +1235,15 @@ window.QUIZ_DATA = {
      "handwriting": [
       "How amazing"
      ],
-     "note": "该题只有一处长横线，手写两个词 How amazing。"
+     "note": "该题只有一处长横线，手写两个词 How amazing。",
+     "paperNo": 12,
+     "fields": 1
     },
     {
      "id": "m13",
      "no": 13,
      "kind": "fill",
-     "section": "主体",
+     "section": null,
      "stem": "After the meeting, he ______ ______ the coffee shop to relax.",
      "cn": "会议结束后，他直接去了咖啡店放松。",
      "options": null,
@@ -1149,7 +1252,9 @@ window.QUIZ_DATA = {
       "went",
       "straight to"
      ],
-     "note": "第二空手写 straight to 两词。"
+     "note": "第二空手写 straight to 两词。",
+     "paperNo": 13,
+     "fields": 2
     },
     {
      "id": "g1",
@@ -1178,7 +1283,8 @@ window.QUIZ_DATA = {
      ],
      "marked": "A",
      "handwriting": null,
-     "note": "「语法」小节卷面重新从 1 编号；题号左侧手写 A，另有一条长勾从 A 行斜划下去（勾不作答案，以页边字母为准）。"
+     "note": "「语法」小节卷面重新从 1 编号；题号左侧手写 A，另有一条长勾从 A 行斜划下去（勾不作答案，以页边字母为准）。",
+     "paperNo": 1
     },
     {
      "id": "g2",
@@ -1207,7 +1313,8 @@ window.QUIZ_DATA = {
      ],
      "marked": "C",
      "handwriting": null,
-     "note": "题号左侧页边手写大写 C。"
+     "note": "题号左侧页边手写大写 C。",
+     "paperNo": 2
     },
     {
      "id": "g3",
@@ -1236,7 +1343,8 @@ window.QUIZ_DATA = {
      ],
      "marked": "C",
      "handwriting": null,
-     "note": "题号左侧页边手写 C；另有一条长勾从 A. Yes, I do. 斜划到选项区，勾不作答案。"
+     "note": "题号左侧页边手写 C；另有一条长勾从 A. Yes, I do. 斜划到选项区，勾不作答案。",
+     "paperNo": 3
     },
     {
      "id": "g4",
@@ -1265,7 +1373,8 @@ window.QUIZ_DATA = {
      ],
      "marked": "B",
      "handwriting": null,
-     "note": "题号左侧页边手写 B；B 选项前另有手写勾，二者不冲突。"
+     "note": "题号左侧页边手写 B；B 选项前另有手写勾，二者不冲突。",
+     "paperNo": 4
     },
     {
      "id": "g5",
@@ -1280,7 +1389,9 @@ window.QUIZ_DATA = {
       "Are",
       "satisfied"
      ],
-     "note": "两空手写 Are / satisfied。"
+     "note": "两空手写 Are / satisfied。",
+     "paperNo": 5,
+     "fields": 2
     },
     {
      "id": "g6",
@@ -1295,7 +1406,9 @@ window.QUIZ_DATA = {
       "Turn down",
       "boil over"
      ],
-     "note": "两空各手写两个词。"
+     "note": "两空各手写两个词。",
+     "paperNo": 6,
+     "fields": 2
     },
     {
      "id": "g7",
@@ -1312,7 +1425,9 @@ window.QUIZ_DATA = {
       "have",
       "been to"
      ],
-     "note": "四个空依次为 Have / been / have / been to。"
+     "note": "四个空依次为 Have / been / have / been to。",
+     "paperNo": 7,
+     "fields": 4
     },
     {
      "id": "g8",
@@ -1326,7 +1441,9 @@ window.QUIZ_DATA = {
      "handwriting": [
       "pick up"
      ],
-     "note": "一空手写两个词 pick up。"
+     "note": "一空手写两个词 pick up。",
+     "paperNo": 8,
+     "fields": 1
     },
     {
      "id": "g9",
@@ -1341,7 +1458,9 @@ window.QUIZ_DATA = {
       "what",
       "[看不清]"
      ],
-     "note": "第一空手写 what；第二空手写被反复涂画成一团黑，无法辨认。"
+     "note": "第一空手写 what；第二空手写被反复涂画成一团黑，无法辨认。",
+     "paperNo": 9,
+     "fields": 2
     },
     {
      "id": "g10",
@@ -1356,33 +1475,101 @@ window.QUIZ_DATA = {
       "Have",
       "heard"
      ],
-     "note": "两空手写 Have / heard。"
+     "note": "两空手写 Have / heard。",
+     "paperNo": 10,
+     "fields": 2
+    },
+    {
+     "id": "gf1",
+     "no": 1,
+     "section": "语法填空",
+     "kind": "fill",
+     "stem": "People were ______(doubt) whether this was a safe or accurate way.",
+     "cn": null,
+     "options": null,
+     "marked": null,
+     "handwriting": [
+      "doubtful"
+     ],
+     "note": "页顶为短文语法填空（属本卷上一页末段，原文前半未拍到），此为其第1空；手写 doubtful。本页该部分题号与「阅读」1-6 重复，故连续编号为 18",
+     "fields": 1
+    },
+    {
+     "id": "gf2",
+     "no": 2,
+     "section": "语法填空",
+     "kind": "fill",
+     "stem": "Doctors needed a tool ______(check) fevers, and scientists needed one to study heat.",
+     "cn": null,
+     "options": null,
+     "marked": null,
+     "handwriting": [
+      "to check"
+     ],
+     "note": "同上一题短文第2空；手写潦草，疑为 to check",
+     "fields": 1
+    },
+    {
+     "id": "gf3",
+     "no": 3,
+     "section": "语法填空",
+     "kind": "fill",
+     "stem": "A better way to measure temperature ______(need).",
+     "cn": null,
+     "options": null,
+     "marked": null,
+     "handwriting": [
+      "[看不清]"
+     ],
+     "note": "短文第3空；手写字迹潦草（形似 in need / is needed），无法确认",
+     "fields": 1
+    },
+    {
+     "id": "gf4",
+     "no": 4,
+     "section": "语法填空",
+     "kind": "fill",
+     "stem": "The thermometer helps us ______ many ways.",
+     "cn": null,
+     "options": null,
+     "marked": null,
+     "handwriting": [],
+     "note": "短文第4空；该空（含可能的括号提示）被白色涂改带整块遮挡，仅见左右两侧 helps us 与 many ways，故题干只保留空格",
+     "fields": 1
+    },
+    {
+     "id": "gf5",
+     "no": 5,
+     "section": "语法填空",
+     "kind": "fill",
+     "stem": "Cooks use it for baking, ______. Factories use it to keep machines safe.",
+     "cn": null,
+     "options": null,
+     "marked": null,
+     "handwriting": [
+      "[看不清]"
+     ],
+     "note": "短文第5空；空及提示被白色涂改带遮挡（涂改带上有手写字迹，形似 Mony），无法确认；右侧 Factories 的 Fa 亦被覆盖",
+     "fields": 1
+    },
+    {
+     "id": "gf6",
+     "no": 6,
+     "section": "语法填空",
+     "kind": "fill",
+     "stem": "It ______(apply) to many aspects of our daily lives, bringing great convenience.",
+     "cn": null,
+     "options": null,
+     "marked": null,
+     "handwriting": [],
+     "note": "短文第6空；该空未见手写作答",
+     "fields": 1
     }
    ],
    "key": {
     "unit": "U2",
     "note": "items 的键 = u2.json 里每题的 id（p=页顶残留, m=主体, g=语法, gf=语法填空），因为「主体 1-13」与「语法 1-10」在卷面上各从 1 编号，单用 no 会重号。",
     "items": {
-     "p26": {
-      "answer": "not aware / that",
-      "alt": [
-       "unaware / that",
-       "not aware that"
-      ],
-      "topic": "be aware that 从句",
-      "why": "「没有意识到」用 be not aware that…；第二个空填引导宾语从句的 that。",
-      "doubt": false
-     },
-     "p27": {
-      "answer": "I'm afraid / that",
-      "alt": [
-       "I am afraid / that",
-       "I'm afraid that"
-      ],
-      "topic": "I'm afraid that 从句",
-      "why": "「恐怕」用 I'm afraid (that)…，that 引导宾语从句，口语中可省略。",
-      "doubt": false
-     },
      "m1": {
       "answer": "seems",
       "alt": [
@@ -1573,12 +1760,58 @@ window.QUIZ_DATA = {
       "why": "「听说过」用 hear about/of，现在完成时疑问句为 Have you ever heard about…。",
       "doubt": false
      },
-     "gf11": {
-      "answer": null,
-      "alt": null,
-      "topic": "语法填空短文",
-      "why": "只拍到短文开头两句，空格与题号被照片下边缘截断，无法作答。",
+     "gf1": {
+      "answer": "doubtful",
+      "alt": [
+       "doubtful"
+      ],
+      "topic": "doubt 变形容词",
+      "why": "were 后需要形容词作表语，doubt 的形容词是 doubtful「怀疑的」。",
+      "doubt": false
+     },
+     "gf2": {
+      "answer": "to check",
+      "alt": [
+       "to check"
+      ],
+      "topic": "不定式表目的",
+      "why": "need a tool to do sth，用不定式表目的：a tool to check fevers。",
+      "doubt": false
+     },
+     "gf3": {
+      "answer": "was needed",
+      "alt": [
+       "is needed",
+       "was needed"
+      ],
+      "topic": "need 被动语态",
+      "why": "way 与 need 是被动关系；上文为过去时故用 was needed，但下句转现在时，存疑。",
       "doubt": true
+     },
+     "gf4": {
+      "answer": "in",
+      "alt": [
+       "in"
+      ],
+      "topic": "介词 in many ways",
+      "why": "该空被涂改带遮挡，按 helps us in many ways 推断填 in，答案存疑。",
+      "doubt": true
+     },
+     "gf5": {
+      "answer": null,
+      "topic": "短文第5空",
+      "why": "该空及括号提示被白色涂改带整块遮挡，无法判断所填词，故不猜。",
+      "doubt": true,
+      "manual": true
+     },
+     "gf6": {
+      "answer": "applies",
+      "alt": [
+       "applies"
+      ],
+      "topic": "apply 三单形式",
+      "why": "主语 It 是第三人称单数，一般现在时 apply 变为 applies（apply to 适用于）。",
+      "doubt": false
      }
     }
    },
@@ -1720,6 +1953,42 @@ window.QUIZ_DATA = {
      "point": "hear about/of「听说……」，现在完成时疑问句为 Have you ever heard about...?；ever 常与完成时连用。",
      "why": "中文「你听说过……吗」问的是至今的经历，用现在完成时：助动词 Have 提前，heard 是 hear 的过去分词；about 已在题干，故填 Have / heard。",
      "trap": "别用一般过去时 Did you hear；hear 的过去分词是 heard（不是 heared）；about/of 后接名词或动名词。"
+    },
+    "gf1": {
+     "topic": "doubt 变形容词",
+     "point": "be 动词后需要形容词作表语；doubt（动词/名词「怀疑」）的形容词是 doubtful「怀疑的」。",
+     "why": "句意：人们怀疑这是否是一种安全或准确的方法。were 后缺表语，主语 People 表人「感到怀疑」，用形容词 doubtful；填名词 doubt 或动词形式都缺系动词后的表语成分，故错。",
+     "trap": "在 be 动词后直接填原形 doubt。词形题先定词性，再由 doubt → doubtful 变形。"
+    },
+    "gf2": {
+     "topic": "不定式表用途",
+     "point": "need a tool to do sth：不定式作后置定语或目的状语，说明工具的用途，结构为 to + 动词原形。",
+     "why": "句意：医生需要一种工具来检查发烧，科学家也需要一种来研究热量。tool 与 check 之间是「用来做」的关系，用 to check；填 checking 缺少介词，填 checked 表被动完成，都与「用途」不符。",
+     "trap": "受 need 影响把后面也写 needs/needed，或写成 for check。看到「工具/方法 + 用来做」就填 to do。"
+    },
+    "gf3": {
+     "topic": "need 的被动语态",
+     "point": "主语 a better way 是动作的承受者，需用被动 be + 过去分词；时态随上文，前文 were doubtful、needed 都是过去时。",
+     "why": "句意：需要一种更好的测量温度的方法。方法不能自己「需要」，只能「被需要」，故用 was needed；若填 needed 就变成主动，逻辑不通。全篇若按现在时叙述，也可作 is needed，故本题参考两个答案。",
+     "trap": "直接填 needed 漏掉被动。判断法：主语能否发出该动作？不能就用 be done；另注意 need doing 表被动含义的用法。"
+    },
+    "gf4": {
+     "topic": "in many ways",
+     "point": "in many ways 意为「在许多方面」，是固定介词短语；不给提示的空优先考虑介词、连词等虚词。",
+     "why": "句意：温度计在许多方面帮助了我们。helps us 后需表示「在……方面」的介词，many ways 前用 in。注意：本题空格被白色涂改带遮挡，in 是按搭配推断的参考值，实际以原卷为准。",
+     "trap": "按汉语「用许多方式」写成 by/with many ways。记搭配：in many ways 在许多方面、in this way 用这种方式。"
+    },
+    "gf5": {
+     "topic": "信息缺失题的处理",
+     "point": "空格和提示词都被白色涂改带盖住，只剩「Cooks use it for baking, ______. Factories use it...」可见，无法判断填什么。",
+     "why": "句意只看出：厨师用它烘焙，工厂用它保护机器安全。空格处应是与前句并列的成分，但提示词被涂掉，任何具体答案都只是猜测，所以本题只标存疑、留待与老师核对。",
+     "trap": "遇到信息缺失硬按语感填一个词。正确做法：标记存疑、课后核对；考场上选与上下文结构最接近的形式。"
+    },
+    "gf6": {
+     "topic": "apply 三单形式",
+     "point": "主语 It 为第三人称单数，一般现在时谓语加 -s；apply 是「辅音字母 + y」结尾，变 y 为 i 再加 -es → applies。",
+     "why": "句意：它适用于我们日常生活的许多方面，带来极大便利。全句陈述普遍事实用一般现在时，主语 It 是三单，故用 applies；填原形 apply 或过去式 applied 都与时态、主谓一致不符。",
+     "trap": "直接写 applys（忘了 y 变 i）。规则：辅音 + y 结尾，三单变 -ies，如 study→studies、apply→applies。"
     }
    }
   },
@@ -1732,6 +2001,7 @@ window.QUIZ_DATA = {
     "id": null
    },
    "note": "",
+   "passages": {},
    "items": [
     {
      "no": 1,
@@ -1743,7 +2013,11 @@ window.QUIZ_DATA = {
      "handwriting": [
       "atches"
      ],
-     "note": "阅读部分第1题（卷面 1）；题干已印首字母 m，横线手写 atches，即 matches"
+     "note": "阅读部分第1题（卷面 1）；题干已印首字母 m，横线手写 atches，即 matches",
+     "id": "r1",
+     "paperNo": 1,
+     "section": "阅读",
+     "fields": 1
     },
     {
      "no": 2,
@@ -1755,7 +2029,11 @@ window.QUIZ_DATA = {
      "handwriting": [
       "hame"
      ],
-     "note": "卷面 2；题干已印首字母 s，手写形似 hame（a/o 难辨），应为 shame"
+     "note": "卷面 2；题干已印首字母 s，手写形似 hame（a/o 难辨），应为 shame",
+     "id": "r2",
+     "paperNo": 2,
+     "section": "阅读",
+     "fields": 1
     },
     {
      "no": 3,
@@ -1767,7 +2045,11 @@ window.QUIZ_DATA = {
      "handwriting": [
       "emoved"
      ],
-     "note": "卷面 3；题干已印首字母 r，横线手写 emoved，即 removed"
+     "note": "卷面 3；题干已印首字母 r，横线手写 emoved，即 removed",
+     "id": "r3",
+     "paperNo": 3,
+     "section": "阅读",
+     "fields": 1
     },
     {
      "no": 4,
@@ -1779,7 +2061,11 @@ window.QUIZ_DATA = {
      "handwriting": [
       "heated"
      ],
-     "note": "卷面 4；题干已印首字母 c，横线手写 heated，即 cheated"
+     "note": "卷面 4；题干已印首字母 c，横线手写 heated，即 cheated",
+     "id": "r4",
+     "paperNo": 4,
+     "section": "阅读",
+     "fields": 1
     },
     {
      "no": 5,
@@ -1791,7 +2077,11 @@ window.QUIZ_DATA = {
      "handwriting": [
       "ractice"
      ],
-     "note": "卷面 5；题干已印首字母 p，横线手写 ractice，即 practice"
+     "note": "卷面 5；题干已印首字母 p，横线手写 ractice，即 practice",
+     "id": "r5",
+     "paperNo": 5,
+     "section": "阅读",
+     "fields": 1
     },
     {
      "no": 6,
@@ -1803,7 +2093,11 @@ window.QUIZ_DATA = {
      "handwriting": [
       "dmiration"
      ],
-     "note": "卷面 6；题干已印首字母 a，横线手写 dmiration，即 admiration"
+     "note": "卷面 6；题干已印首字母 a，横线手写 dmiration，即 admiration",
+     "id": "r6",
+     "paperNo": 6,
+     "section": "阅读",
+     "fields": 1
     },
     {
      "no": 7,
@@ -1830,7 +2124,10 @@ window.QUIZ_DATA = {
      ],
      "marked": "D",
      "handwriting": null,
-     "note": "卷面 7；左侧页边手写大写 D（学生作答）；选项本身无勾画"
+     "note": "卷面 7；左侧页边手写大写 D（学生作答）；选项本身无勾画",
+     "id": "r7",
+     "paperNo": 7,
+     "section": "阅读"
     },
     {
      "no": 8,
@@ -1857,7 +2154,10 @@ window.QUIZ_DATA = {
      ],
      "marked": "B",
      "handwriting": null,
-     "note": "卷面 8；左侧页边手写大写 B（学生作答）"
+     "note": "卷面 8；左侧页边手写大写 B（学生作答）",
+     "id": "r8",
+     "paperNo": 8,
+     "section": "阅读"
     },
     {
      "no": 9,
@@ -1884,7 +2184,10 @@ window.QUIZ_DATA = {
      ],
      "marked": "C",
      "handwriting": null,
-     "note": "卷面 9；左侧页边手写大写 C（学生作答）"
+     "note": "卷面 9；左侧页边手写大写 C（学生作答）",
+     "id": "r9",
+     "paperNo": 9,
+     "section": "阅读"
     },
     {
      "no": 10,
@@ -1911,7 +2214,10 @@ window.QUIZ_DATA = {
      ],
      "marked": "A",
      "handwriting": null,
-     "note": "卷面 10；左侧页边手写大写 A（学生作答）；选项按 AB/CD 两行排布，已理顺"
+     "note": "卷面 10；左侧页边手写大写 A（学生作答）；选项按 AB/CD 两行排布，已理顺",
+     "id": "r10",
+     "paperNo": 10,
+     "section": "阅读"
     },
     {
      "no": 11,
@@ -1938,7 +2244,10 @@ window.QUIZ_DATA = {
      ],
      "marked": "D",
      "handwriting": null,
-     "note": "卷面 11；左侧页边手写大写 D（学生作答）"
+     "note": "卷面 11；左侧页边手写大写 D（学生作答）",
+     "id": "r11",
+     "paperNo": 11,
+     "section": "阅读"
     },
     {
      "no": 12,
@@ -1965,7 +2274,10 @@ window.QUIZ_DATA = {
      ],
      "marked": "C",
      "handwriting": null,
-     "note": "卷面 12；左侧页边手写大写 C（学生作答）"
+     "note": "卷面 12；左侧页边手写大写 C（学生作答）",
+     "id": "r12",
+     "paperNo": 12,
+     "section": "阅读"
     },
     {
      "no": 13,
@@ -1992,10 +2304,13 @@ window.QUIZ_DATA = {
      ],
      "marked": "C",
      "handwriting": null,
-     "note": "卷面 13；左侧页边手写大写 C（学生作答）；题干为两行对话，已合并"
+     "note": "卷面 13；左侧页边手写大写 C（学生作答）；题干为两行对话，已合并",
+     "id": "r13",
+     "paperNo": 13,
+     "section": "阅读"
     },
     {
-     "no": 14,
+     "no": 1,
      "kind": "mc",
      "stem": "—How about playing computer games? —That sounds ______. Let's play basketball.",
      "cn": null,
@@ -2019,10 +2334,13 @@ window.QUIZ_DATA = {
      ],
      "marked": "B",
      "handwriting": null,
-     "note": "语法部分第1题（卷面 1，连续编号为 14）；左侧页边手写大写 B（学生作答），字母纵跨该行与上一行之间，按行高判定属本题"
+     "note": "语法部分第1题（卷面 1，连续编号为 14）；左侧页边手写大写 B（学生作答），字母纵跨该行与上一行之间，按行高判定属本题",
+     "id": "g1",
+     "paperNo": 1,
+     "section": "语法"
     },
     {
-     "no": 15,
+     "no": 2,
      "kind": "mc",
      "stem": "The new bed ______ very hard.  I couldn't sleep well last night.",
      "cn": null,
@@ -2046,10 +2364,13 @@ window.QUIZ_DATA = {
      ],
      "marked": "C",
      "handwriting": null,
-     "note": "语法部分第2题（卷面 2，连续编号为 15）；左侧页边手写大写 C（学生作答）"
+     "note": "语法部分第2题（卷面 2，连续编号为 15）；左侧页边手写大写 C（学生作答）",
+     "id": "g2",
+     "paperNo": 2,
+     "section": "语法"
     },
     {
-     "no": 16,
+     "no": 3,
      "kind": "fill",
      "stem": "Though we sometimes argue with each other, we ______ ______.",
      "cn": "尽管我们有时互相争吵，但我们仍是朋友。",
@@ -2059,10 +2380,14 @@ window.QUIZ_DATA = {
       "still",
       "friends"
      ],
-     "note": "语法部分第3题（卷面 3，连续编号为 16）；卷面为两个空，依次手写 still、friends（缺系动词 are）；中文句下「我们仍是朋友」被铅笔圈画"
+     "note": "语法部分第3题（卷面 3，连续编号为 16）；卷面为两个空，依次手写 still、friends（缺系动词 are）；中文句下「我们仍是朋友」被铅笔圈画",
+     "id": "g3",
+     "paperNo": 3,
+     "section": "语法",
+     "fields": 2
     },
     {
-     "no": 17,
+     "no": 4,
      "kind": "fill",
      "stem": "你穿这条裙子看上去很漂亮。",
      "cn": "翻译",
@@ -2071,81 +2396,17 @@ window.QUIZ_DATA = {
      "handwriting": [
       "You look beautiful in this dress."
      ],
-     "note": "语法部分第4题（卷面 4，连续编号为 17）；手写译文照抄"
-    },
-    {
-     "no": 18,
-     "kind": "fill",
-     "stem": "People were ______(doubt) whether this was a safe or accurate way.",
-     "cn": null,
-     "options": null,
-     "marked": null,
-     "handwriting": [
-      "doubtful"
-     ],
-     "note": "页顶为短文语法填空（属本卷上一页末段，原文前半未拍到），此为其第1空；手写 doubtful。本页该部分题号与「阅读」1-6 重复，故连续编号为 18"
-    },
-    {
-     "no": 19,
-     "kind": "fill",
-     "stem": "Doctors needed a tool ______(check) fevers, and scientists needed one to study heat.",
-     "cn": null,
-     "options": null,
-     "marked": null,
-     "handwriting": [
-      "to check"
-     ],
-     "note": "同上一题短文第2空；手写潦草，疑为 to check"
-    },
-    {
-     "no": 20,
-     "kind": "fill",
-     "stem": "A better way to measure temperature ______(need).",
-     "cn": null,
-     "options": null,
-     "marked": null,
-     "handwriting": [
-      "[看不清]"
-     ],
-     "note": "短文第3空；手写字迹潦草（形似 in need / is needed），无法确认"
-    },
-    {
-     "no": 21,
-     "kind": "fill",
-     "stem": "The thermometer helps us ______ many ways.",
-     "cn": null,
-     "options": null,
-     "marked": null,
-     "handwriting": null,
-     "note": "短文第4空；该空（含可能的括号提示）被白色涂改带整块遮挡，仅见左右两侧 helps us 与 many ways，故题干只保留空格"
-    },
-    {
-     "no": 22,
-     "kind": "fill",
-     "stem": "Cooks use it for baking, ______. Factories use it to keep machines safe.",
-     "cn": null,
-     "options": null,
-     "marked": null,
-     "handwriting": [
-      "[看不清]"
-     ],
-     "note": "短文第5空；空及提示被白色涂改带遮挡（涂改带上有手写字迹，形似 Mony），无法确认；右侧 Factories 的 Fa 亦被覆盖"
-    },
-    {
-     "no": 23,
-     "kind": "fill",
-     "stem": "It ______(apply) to many aspects of our daily lives, bringing great convenience.",
-     "cn": null,
-     "options": null,
-     "marked": null,
-     "handwriting": null,
-     "note": "短文第6空；该空未见手写作答"
+     "note": "语法部分第4题（卷面 4，连续编号为 17）；手写译文照抄",
+     "id": "g4",
+     "paperNo": 4,
+     "section": "语法",
+     "fields": 1
     }
    ],
    "key": {
     "unit": "U3",
     "items": {
-     "1": {
+     "r1": {
       "answer": "matches",
       "alt": [
        "matches"
@@ -2154,7 +2415,7 @@ window.QUIZ_DATA = {
       "why": "use sth to light candles，火柴要用复数 matches。",
       "doubt": false
      },
-     "2": {
+     "r2": {
       "answer": "shame",
       "alt": [
        "shame"
@@ -2163,7 +2424,7 @@ window.QUIZ_DATA = {
       "why": "已印首字母 s，in shame 意为「羞愧地」，因为撒了谎。",
       "doubt": false
      },
-     "3": {
+     "r3": {
       "answer": "removed",
       "alt": [
        "removed"
@@ -2172,7 +2433,7 @@ window.QUIZ_DATA = {
       "why": "yesterday 表明动作在过去，remove 直接加 -d 变 removed。",
       "doubt": false
      },
-     "4": {
+     "r4": {
       "answer": "cheated",
       "alt": [
        "cheated"
@@ -2181,7 +2442,7 @@ window.QUIZ_DATA = {
       "why": "will be done 为被动结构，cheat 的过去分词是 cheated。",
       "doubt": false
      },
-     "5": {
+     "r5": {
       "answer": "practice",
       "alt": [
        "practice"
@@ -2190,7 +2451,7 @@ window.QUIZ_DATA = {
       "why": "put sth into practice「付诸实践」，介词 into 后接名词 practice。",
       "doubt": false
      },
-     "6": {
+     "r6": {
       "answer": "admiration",
       "alt": [
        "admiration"
@@ -2199,61 +2460,61 @@ window.QUIZ_DATA = {
       "why": "介词 with 后接名词，with admiration「钦佩地」，故填 admiration。",
       "doubt": false
      },
-     "7": {
+     "r7": {
       "answer": "D",
       "topic": "not...but... 并列",
       "why": "「不是留鱼而是放生」用 not...but... 并列两个不定式，故填 but。",
       "doubt": false
      },
-     "8": {
+     "r8": {
       "answer": "B",
       "topic": "ashamed 形容词",
       "why": "feel 后接形容词作表语，ashamed 表人「羞愧」；shame 是名词，shameful 指事物可耻。",
       "doubt": false
      },
-     "9": {
+     "r9": {
       "answer": "C",
       "topic": "and 并列谓语",
       "why": "and 连接 go around 与 strengthen 两个动词原形，其余选项是名词或形容词。",
       "doubt": false
      },
-     "10": {
+     "r10": {
       "answer": "A",
       "topic": "形容词后置",
       "why": "修饰 something 的形容词须后置：something special；specially 是副词不能作定语。",
       "doubt": false
      },
-     "11": {
+     "r11": {
       "answer": "D",
       "topic": "every time 引导状语",
       "why": "every time 本身即可引导时间状语从句，后面不能再加 when 或 that，故选「/」。",
       "doubt": false
      },
-     "12": {
+     "r12": {
       "answer": "C",
       "topic": "as...as 副词原级",
       "why": "as...as 中间用副词原级修饰 played，skilfully 正确；D 是比较级不能用于 as...as。",
       "doubt": false
      },
-     "13": {
+     "r13": {
       "answer": "C",
       "topic": "名词词义辨析",
       "why": "「没被选进队」是糟糕的决定，用名词 decision；其余三项词义（事故/承诺/挑战）不符。",
       "doubt": false
      },
-     "14": {
+     "g1": {
       "answer": "B",
       "topic": "-ing/-ed 形容词",
       "why": "主语 That 指打电脑游戏这件事，用 boring「令人厌烦的」；bored 修饰人。",
       "doubt": false
      },
-     "15": {
+     "g2": {
       "answer": "A",
       "topic": "feel 作系动词",
       "why": "床「摸起来」很硬，feel 是系动词，无被动也不用进行时，故用 feels。",
       "doubt": false
      },
-     "16": {
+     "g3": {
       "answer": "are / still friends",
       "alt": [
        "are still / friends",
@@ -2263,7 +2524,7 @@ window.QUIZ_DATA = {
       "why": "Though 引导让步从句，主句应是 we are still friends；卷面手写漏了系动词 are。",
       "doubt": false
      },
-     "17": {
+     "g4": {
       "answer": "You look beautiful in this dress.",
       "alt": [
        "You look beautiful in this dress",
@@ -2273,200 +2534,111 @@ window.QUIZ_DATA = {
       "topic": "汉译英 look 系动词",
       "why": "「看上去」用系动词 look 接形容词 beautiful，in this dress 表示穿着这条裙子。",
       "doubt": false
-     },
-     "18": {
-      "answer": "doubtful",
-      "alt": [
-       "doubtful"
-      ],
-      "topic": "doubt 变形容词",
-      "why": "were 后需要形容词作表语，doubt 的形容词是 doubtful「怀疑的」。",
-      "doubt": false
-     },
-     "19": {
-      "answer": "to check",
-      "alt": [
-       "to check"
-      ],
-      "topic": "不定式表目的",
-      "why": "need a tool to do sth，用不定式表目的：a tool to check fevers。",
-      "doubt": false
-     },
-     "20": {
-      "answer": "was needed",
-      "alt": [
-       "is needed",
-       "was needed"
-      ],
-      "topic": "need 被动语态",
-      "why": "way 与 need 是被动关系；上文为过去时故用 was needed，但下句转现在时，存疑。",
-      "doubt": true
-     },
-     "21": {
-      "answer": "in",
-      "alt": [
-       "in"
-      ],
-      "topic": "介词 in many ways",
-      "why": "该空被涂改带遮挡，按 helps us in many ways 推断填 in，答案存疑。",
-      "doubt": true
-     },
-     "22": {
-      "answer": null,
-      "topic": "短文第5空",
-      "why": "该空及括号提示被白色涂改带整块遮挡，无法判断所填词，故不猜。",
-      "doubt": true,
-      "manual": true
-     },
-     "23": {
-      "answer": "applies",
-      "alt": [
-       "applies"
-      ],
-      "topic": "apply 三单形式",
-      "why": "主语 It 是第三人称单数，一般现在时 apply 变为 applies（apply to 适用于）。",
-      "doubt": false
      }
     }
    },
    "explain": {
-    "1": {
+    "r1": {
      "topic": "名词复数 matches",
      "point": "used 后需名词作宾语；match「火柴」是可数名词，泛指一类东西要用复数，以 ch 结尾加 -es → matches。",
      "why": "句意：过去人们常用火柴点蜡烛。空格在 used 之后作宾语，且指一类东西而非某一根，必须用复数 matches；首字母 m 只是提示，不能只写 match。",
      "trap": "只写 match 漏掉复数，或误填 lights（点灯用的是火柴，不是灯）。泛指可数名词时先问：要不要加 -s/-es？"
     },
-    "2": {
+    "r2": {
      "topic": "in shame 搭配",
      "point": "in + 抽象名词常表状态或方式：in shame 羞愧地、in surprise 惊讶地；介词 in 后必须是名词。",
      "why": "句意：我羞愧地站在父亲面前，因为刚才撒了谎。空格前有介词 in、后无冠词，需不可数名词 shame；ashamed 是形容词（be ashamed of），shameful 修饰事物，都不能直接跟在 in 后。",
      "trap": "把「羞愧」一律写成 ashamed。先看空格前的 in：介词后只能接名词，形容词要变名词才能填。"
     },
-    "3": {
+    "r3": {
      "topic": "一般过去时 + 拼写",
      "point": "yesterday 是明确的过去时间状语，谓语用一般过去式；remove 以不发音的 e 结尾，直接加 -d → removed。",
      "why": "句意：昨天我把那把没用的椅子从卧室搬走了。主语 I 后缺谓语，yesterday 把时态锁在过去，故用 removed；不能填现在时 remove，也不能填名词 removal。",
      "trap": "记混去 e/双写规则，写成 removd 或 remuved。规则：以不发音 e 结尾的动词，过去式只加 -d。"
     },
-    "4": {
+    "r4": {
      "topic": "被动语态 be done",
      "point": "will be + 过去分词构成一般将来时的被动语态；主语是动作承受者时用被动，cheat 的过去分词是 cheated。",
      "why": "句意：在网上和人交朋友要格外小心，否则你会上当受骗。you 与 cheat 是被动关系（你被骗），or 后接将来结果，故用 will be cheated；若用主动 will cheat，句意变成「你去骗别人」，方向反了。",
      "trap": "见动词就填主动形式。判断法：主语能不能自己做出这个动作？不能就用 be + 过去分词。"
     },
-    "5": {
+    "r5": {
      "topic": "practice 搭配",
      "point": "put sth into practice 意为「把……付诸实践」，into 是介词，后面必须接名词 practice，不能接动词 practise。",
      "why": "句意：新规定听起来不错，但真正落实时可能带来很多麻烦。空格前是介词 into，只能填名词 practice；practise 是英式动词拼写，此处词性不符。",
      "trap": "英式 practise（动词）/ practice（名词）混用。记搭配：in practice 实际上、put into practice 付诸实践。"
     },
-    "6": {
+    "r6": {
      "topic": "with + 抽象名词",
      "point": "with + 抽象名词作方式状语：with admiration 钦佩地。介词后要用名词，动词 admire 需变名词 admiration。",
      "why": "句意：她钦佩地看着那幅画，目光久久无法移开。空格前是介词 with，需名词 admiration；admiring 是分词/形容词，admire 是动词，都不能直接跟在介词后作状语。",
      "trap": "把「钦佩」直接写成 admire 或 admiring。介词后的空先定词性：这里要名词。"
     },
-    "7": {
+    "r7": {
      "topic": "not...but...",
      "point": "not A but B 表「不是 A 而是 B」，A、B 必须同形并列；此句并列两个不定式 not to keep... but to set...。",
      "why": "句意：最后他决定不养这条鱼，而是把它放生。前面是否定不定式 not to keep the fish，后面 to set it free 正好与之对应，只能用 but 连接；and 只表并列不表转折，so/or 逻辑不通。",
      "trap": "看到 not 就用 and/or。记公式：not to do A but to do B，but 前后结构要一致。"
     },
-    "8": {
+    "r8": {
      "topic": "ashamed 表人",
      "point": "feel 是系动词，后接形容词作表语；-ed 形容词表人「感到……」，ashamed 指人羞愧，shameful 指事物可耻。",
      "why": "句意：那个男孩因为做错了事感到很羞愧。主语 The boy 是人，feel 后需形容词，故选 ashamed；A 项 shame 是名词不能作表语，D 项 shamefully 是副词，都不能填。",
      "trap": "只看词根 shame 就选 A。记搭配：sb be ashamed of sth；sth be shameful。"
     },
-    "9": {
+    "r9": {
      "topic": "and 并列谓语",
      "point": "and 连接两个并列成分，前面是 to go around（动词原形），后面也必须是动词原形 strengthen。",
      "why": "句意：骑自行车是到处走走、强健身体的好方式。空格与 go around 并列作 way to do 的内容，需动词 strengthen；strong（形容词）、strength（名词）、strongly（副词）都无法与 go 并列。",
      "trap": "看见 bodies 就填形容词 strong。判断依据是 and 前面的 go，而不是后面的名词。"
     },
-    "10": {
+    "r10": {
      "topic": "形容词修饰不定代词后置",
      "point": "修饰 something/anything/nothing 等不定代词的形容词必须后置；肯定句用 something，否定和疑问句用 anything。",
      "why": "句意：我有件特别的事要告诉你，就当是我们之间的秘密吧。本句为肯定句用 something，形容词 special 后置成 something special；specially 是副词不能修饰名词，D 项 anything 用于肯定句不当。",
      "trap": "按汉语语序写成 special something，或用副词 specially。口诀：不定代词 + 形容词，形容词永远在后。"
     },
-    "11": {
+    "r11": {
      "topic": "时间状语引导词",
      "point": "every time、each time、the moment 等名词短语可直接引导时间状语从句，起连词作用，后面不再加 when 或 that。",
      "why": "句意：每次看到中国国旗升起，我内心都充满自豪。空格前已有 every time 引导从句，不能再叠 when/that；while 表「当……时」强调持续动作，此处是每次的瞬间动作，不合。故选「/」。",
      "trap": "习惯性补连词写成 every time when，这是典型错句。every time 后直接跟主语即可。"
     },
-    "12": {
+    "r12": {
      "topic": "as...as 原级",
      "point": "as + 形容词/副词原级 + as 表同级比较；空格修饰动词 played，需副词原级 skilfully。",
      "why": "句意：这位年轻钢琴家把这首难曲子弹得和有经验的音乐家一样娴熟。修饰 played 要用副词，as...as 之间必须用原级，故 skilfully；D 项 more skilfully 是比较级，不能用于 as...as 结构。",
      "trap": "一看到比较就加 -er/more。先判断修饰谁（动词→副词），再定原级。"
     },
-    "13": {
+    "r13": {
      "topic": "decision 词义",
      "point": "a bad + 可数名词单数；结合对话内容「没被选进队」可知这是某人做出的决定，选 decision。",
      "why": "句意：——Tony 没被选进队，那是个糟糕的决定。——你说得对，没有他我们赢不了。decision 与「做出选择」吻合；accident 意外、promise 承诺、challenge 挑战都不能指「选人」这个决定。",
      "trap": "把「糟糕的事」一律理解成 accident。辨析题要回到对话逻辑：被评价的是一个选择。"
     },
-    "14": {
+    "g1": {
      "topic": "-ing/-ed 形容词",
      "point": "sound 是系动词，后接形容词；-ing 形容词表「令人……的」，修饰引起感受的事物；-ed 表「感到……的」，修饰人。",
      "why": "句意：——打电脑游戏怎么样？——那听起来很无聊，我们去打篮球吧。主语 That 指「打游戏」这件事，令人厌烦，用 boring；bored 指人感到无聊，interested/interesting 意为「有趣的」，与后文「去打篮球」矛盾。",
      "trap": "按「谁无聊」去选 bored。判断标准：事物让人产生感受→-ing；人自己感到→-ed。"
     },
-    "15": {
+    "g2": {
      "topic": "feel 系动词无被动",
      "point": "feel 表「摸起来」时是系动词，后接形容词，用主动形式表被动意义，不用被动语态，也不用进行时。",
      "why": "句意：这张新床摸起来很硬，我昨晚没睡好。床与 feel 不是被动关系，is felt 错；系动词不用进行时，is feeling 错；felt 是过去式，与后句现在语境不符。主语 The new bed 为三单，故选 feels。",
      "trap": "见「床被摸」就选被动 is felt，或按「正在」选 is feeling。smell/taste/sound/feel 作系动词一律主动、一般现在时。"
     },
-    "16": {
+    "g3": {
      "topic": "though 让步",
      "point": "Though 引导让步状语从句，主句不再加 but；主句必须是完整的主系表结构：we are still friends。",
      "why": "句意：尽管我们有时互相争吵，但我们仍是朋友。中文「仍是」含系动词「是」，英文必须有 are；still 放在 be 之后、名词之前。卷面只写 still/friends，缺 are 属句子结构不完整，判为错。",
      "trap": "受汉语影响漏掉 be 动词，或把语序写成 we still are friends。检查法：主句单独读一遍，主谓是否齐全。"
     },
-    "17": {
+    "g4": {
      "topic": "汉译英 look",
      "point": "「看上去……」用系动词 look + 形容词作表语；「穿着某件衣服」用 in + 衣服，不能再用一个动词 wear 作谓语。",
      "why": "句意：你穿这条裙子看上去很漂亮。look 是系动词，后接形容词 beautiful；「穿这条裙子」用 in this dress 作状语。写成 You wear this dress look beautiful 会出现两个谓语，结构错误。",
      "trap": "按汉语顺序写成 You wear this dress very beautiful。记句型：sb looks + adj. + in + 衣服。"
-    },
-    "18": {
-     "topic": "doubt 变形容词",
-     "point": "be 动词后需要形容词作表语；doubt（动词/名词「怀疑」）的形容词是 doubtful「怀疑的」。",
-     "why": "句意：人们怀疑这是否是一种安全或准确的方法。were 后缺表语，主语 People 表人「感到怀疑」，用形容词 doubtful；填名词 doubt 或动词形式都缺系动词后的表语成分，故错。",
-     "trap": "在 be 动词后直接填原形 doubt。词形题先定词性，再由 doubt → doubtful 变形。"
-    },
-    "19": {
-     "topic": "不定式表用途",
-     "point": "need a tool to do sth：不定式作后置定语或目的状语，说明工具的用途，结构为 to + 动词原形。",
-     "why": "句意：医生需要一种工具来检查发烧，科学家也需要一种来研究热量。tool 与 check 之间是「用来做」的关系，用 to check；填 checking 缺少介词，填 checked 表被动完成，都与「用途」不符。",
-     "trap": "受 need 影响把后面也写 needs/needed，或写成 for check。看到「工具/方法 + 用来做」就填 to do。"
-    },
-    "20": {
-     "topic": "need 的被动语态",
-     "point": "主语 a better way 是动作的承受者，需用被动 be + 过去分词；时态随上文，前文 were doubtful、needed 都是过去时。",
-     "why": "句意：需要一种更好的测量温度的方法。方法不能自己「需要」，只能「被需要」，故用 was needed；若填 needed 就变成主动，逻辑不通。全篇若按现在时叙述，也可作 is needed，故本题参考两个答案。",
-     "trap": "直接填 needed 漏掉被动。判断法：主语能否发出该动作？不能就用 be done；另注意 need doing 表被动含义的用法。"
-    },
-    "21": {
-     "topic": "in many ways",
-     "point": "in many ways 意为「在许多方面」，是固定介词短语；不给提示的空优先考虑介词、连词等虚词。",
-     "why": "句意：温度计在许多方面帮助了我们。helps us 后需表示「在……方面」的介词，many ways 前用 in。注意：本题空格被白色涂改带遮挡，in 是按搭配推断的参考值，实际以原卷为准。",
-     "trap": "按汉语「用许多方式」写成 by/with many ways。记搭配：in many ways 在许多方面、in this way 用这种方式。"
-    },
-    "22": {
-     "topic": "信息缺失题的处理",
-     "point": "空格和提示词都被白色涂改带盖住，只剩「Cooks use it for baking, ______. Factories use it...」可见，无法判断填什么。",
-     "why": "句意只看出：厨师用它烘焙，工厂用它保护机器安全。空格处应是与前句并列的成分，但提示词被涂掉，任何具体答案都只是猜测，所以本题只标存疑、留待与老师核对。",
-     "trap": "遇到信息缺失硬按语感填一个词。正确做法：标记存疑、课后核对；考场上选与上下文结构最接近的形式。"
-    },
-    "23": {
-     "topic": "apply 三单形式",
-     "point": "主语 It 为第三人称单数，一般现在时谓语加 -s；apply 是「辅音字母 + y」结尾，变 y 为 i 再加 -es → applies。",
-     "why": "句意：它适用于我们日常生活的许多方面，带来极大便利。全句陈述普遍事实用一般现在时，主语 It 是三单，故用 applies；填原形 apply 或过去式 applied 都与时态、主谓一致不符。",
-     "trap": "直接写 applys（忘了 y 变 i）。规则：辅音 + y 结尾，三单变 -ies，如 study→studies、apply→applies。"
     }
    }
   },
@@ -2479,6 +2651,7 @@ window.QUIZ_DATA = {
     "id": null
    },
    "note": "",
+   "passages": {},
    "items": [
     {
      "no": 1,
@@ -2488,7 +2661,11 @@ window.QUIZ_DATA = {
      "options": null,
      "marked": null,
      "handwriting": null,
-     "note": "大题「一、单词拼写」第1题；横线空白，未见作答；卷面无班级/姓名/学号栏"
+     "note": "大题「一、单词拼写」第1题；横线空白，未见作答；卷面无班级/姓名/学号栏",
+     "id": "m1",
+     "paperNo": 1,
+     "section": "单词拼写",
+     "fields": 1
     },
     {
      "no": 2,
@@ -2500,10 +2677,14 @@ window.QUIZ_DATA = {
      "handwriting": [
       "ressure"
      ],
-     "note": "大题「一、单词拼写」第2题；卷面已印首字母 p，横线上手写 ressu(re)，完整单词为 pressure"
+     "note": "大题「一、单词拼写」第2题；卷面已印首字母 p，横线上手写 ressu(re)，完整单词为 pressure",
+     "id": "m2",
+     "paperNo": 2,
+     "section": "单词拼写",
+     "fields": 1
     },
     {
-     "no": 3,
+     "no": 1,
      "kind": "mc",
      "stem": "If you don't know how to ______ the problem, you can turn to you teacher.",
      "cn": null,
@@ -2527,10 +2708,13 @@ window.QUIZ_DATA = {
      ],
      "marked": "B",
      "handwriting": null,
-     "note": "大题「二、单项选择」第1题；左侧页边手写字母 B；卷面印作 you teacher（疑漏印 your 的 r）"
+     "note": "大题「二、单项选择」第1题；左侧页边手写字母 B；卷面印作 you teacher（疑漏印 your 的 r）",
+     "id": "c1",
+     "paperNo": 1,
+     "section": "单项选择"
     },
     {
-     "no": 4,
+     "no": 2,
      "kind": "mc",
      "stem": "Though the girl had trouble in hearing, she managed ______ a college degree.",
      "cn": null,
@@ -2554,10 +2738,13 @@ window.QUIZ_DATA = {
      ],
      "marked": "A",
      "handwriting": null,
-     "note": "大题「二、单项选择」第2题；左侧页边手写字母 A"
+     "note": "大题「二、单项选择」第2题；左侧页边手写字母 A",
+     "id": "c2",
+     "paperNo": 2,
+     "section": "单项选择"
     },
     {
-     "no": 5,
+     "no": 3,
      "kind": "mc",
      "stem": "It is kind ______ him ______ to me and give me so much advice to solve the problems.",
      "cn": null,
@@ -2581,10 +2768,13 @@ window.QUIZ_DATA = {
      ],
      "marked": "C",
      "handwriting": null,
-     "note": "大题「二、单项选择」第3题；左侧页边手写字母 C"
+     "note": "大题「二、单项选择」第3题；左侧页边手写字母 C",
+     "id": "c3",
+     "paperNo": 3,
+     "section": "单项选择"
     },
     {
-     "no": 6,
+     "no": 4,
      "kind": "mc",
      "stem": "With my parents' help, I can focus more ______ my schoolwork.",
      "cn": null,
@@ -2608,10 +2798,13 @@ window.QUIZ_DATA = {
      ],
      "marked": "D",
      "handwriting": null,
-     "note": "大题「二、单项选择」第4题；左侧页边手写字母 D"
+     "note": "大题「二、单项选择」第4题；左侧页边手写字母 D",
+     "id": "c4",
+     "paperNo": 4,
+     "section": "单项选择"
     },
     {
-     "no": 7,
+     "no": 5,
      "kind": "mc",
      "stem": "Too much ______ is bad for health. We should learn to relax ourselves in daily life.",
      "cn": null,
@@ -2635,10 +2828,13 @@ window.QUIZ_DATA = {
      ],
      "marked": "C",
      "handwriting": null,
-     "note": "大题「二、单项选择」第5题；左侧页边手写字母 C"
+     "note": "大题「二、单项选择」第5题；左侧页边手写字母 C",
+     "id": "c5",
+     "paperNo": 5,
+     "section": "单项选择"
     },
     {
-     "no": 8,
+     "no": 6,
      "kind": "mc",
      "stem": "Lots of young people get addicted ______ short videos, which takes up most of their spare time.",
      "cn": null,
@@ -2662,10 +2858,13 @@ window.QUIZ_DATA = {
      ],
      "marked": "D",
      "handwriting": null,
-     "note": "大题「二、单项选择」第6题；左侧页边手写字母 D"
+     "note": "大题「二、单项选择」第6题；左侧页边手写字母 D",
+     "id": "c6",
+     "paperNo": 6,
+     "section": "单项选择"
     },
     {
-     "no": 9,
+     "no": 1,
      "kind": "fill",
      "stem": "Don't touch my books, or you will ______ ______ ______.",
      "cn": "别碰我的书，不然你会把它们弄乱。",
@@ -2676,10 +2875,14 @@ window.QUIZ_DATA = {
       "them",
       "up"
      ],
-     "note": "大题「三、完成句子」第1题；三条横线依次手写 mess / them / up"
+     "note": "大题「三、完成句子」第1题；三条横线依次手写 mess / them / up",
+     "id": "s1",
+     "paperNo": 1,
+     "section": "完成句子",
+     "fields": 3
     },
     {
-     "no": 10,
+     "no": 2,
      "kind": "fill",
      "stem": "Lily ______ ______ ______ ______ ______ going to bed early.",
      "cn": "莉莉有早睡的好习惯。",
@@ -2692,10 +2895,14 @@ window.QUIZ_DATA = {
       "habit",
       "of"
      ],
-     "note": "大题「三、完成句子」第2题；手写依次 has / a / good / habit of，habit 连笔形似 hodif，按语义读作 habit 卷面为 5 段横线，学生手写 has/a/good/habit/of 分置五空。"
+     "note": "大题「三、完成句子」第2题；手写依次 has / a / good / habit of，habit 连笔形似 hodif，按语义读作 habit 卷面为 5 段横线，学生手写 has/a/good/habit/of 分置五空。",
+     "id": "s2",
+     "paperNo": 2,
+     "section": "完成句子",
+     "fields": 5
     },
     {
-     "no": 11,
+     "no": 3,
      "kind": "fill",
      "stem": "It's not wise to just go ______ ______ ______ to lose weight.",
      "cn": "仅仅依靠节食来减肥是不明智的。",
@@ -2706,10 +2913,14 @@ window.QUIZ_DATA = {
       "a",
       "diet"
      ],
-     "note": "大题「三、完成句子」第3题；三条横线依次手写 on / a / diet"
+     "note": "大题「三、完成句子」第3题；三条横线依次手写 on / a / diet",
+     "id": "s3",
+     "paperNo": 3,
+     "section": "完成句子",
+     "fields": 3
     },
     {
-     "no": 12,
+     "no": 4,
      "kind": "fill",
      "stem": "I am writing an email to my teacher to ______ him ______ ______.",
      "cn": "我正在给我的老师写邮件，向他寻求建议。",
@@ -2720,10 +2931,14 @@ window.QUIZ_DATA = {
       "advice",
       "from"
      ],
-     "note": "大题「三、完成句子」第4题；第二条横线手写 advice from（语序/介词有误，正确应为 for advice） 卷面为 3 段横线，学生手写 ask/advice/from 分置三空（语序、介词均有误）。"
+     "note": "大题「三、完成句子」第4题；第二条横线手写 advice from（语序/介词有误，正确应为 for advice） 卷面为 3 段横线，学生手写 ask/advice/from 分置三空（语序、介词均有误）。",
+     "id": "s4",
+     "paperNo": 4,
+     "section": "完成句子",
+     "fields": 3
     },
     {
-     "no": 13,
+     "no": 5,
      "kind": "fill",
      "stem": "She is ______ ______ ______ ______ the School Food Festival.",
      "cn": "她负责组织本次校园美食节。",
@@ -2735,10 +2950,14 @@ window.QUIZ_DATA = {
       "of",
       "t."
      ],
-     "note": "卷面为 4 段横线；学生手写 in/charge/of，第 4 空写「t.」（疑为 to organize 未写完）。"
+     "note": "卷面为 4 段横线；学生手写 in/charge/of，第 4 空写「t.」（疑为 to organize 未写完）。",
+     "id": "s5",
+     "paperNo": 5,
+     "section": "完成句子",
+     "fields": 4
     },
     {
-     "no": 14,
+     "no": 1,
      "kind": "fill",
      "stem": "他经常在敬老院帮忙。（S+A+V+A）",
      "cn": "句型翻译：按括号内要求的句型结构翻译句子",
@@ -2747,10 +2966,15 @@ window.QUIZ_DATA = {
      "handwriting": [
       "He often helps in the old people's home."
      ],
-     "note": "大题「6. 句型翻译」第(1)题；手写作 He often helps in the old people's home."
+     "note": "大题「6. 句型翻译」第(1)题；手写作 He often helps in the old people's home.",
+     "id": "t1",
+     "paperNo": 1,
+     "section": "句型翻译",
+     "noLabel": "(1)",
+     "fields": 1
     },
     {
-     "no": 15,
+     "no": 2,
      "kind": "fill",
      "stem": "简的演讲让我激动。（S+V+O+C）",
      "cn": "句型翻译：按括号内要求的句型结构翻译句子",
@@ -2759,10 +2983,15 @@ window.QUIZ_DATA = {
      "handwriting": [
       "Jane's speech makes me excited."
      ],
-     "note": "大题「6. 句型翻译」第(2)题；手写作 Jane's speech makes me excited."
+     "note": "大题「6. 句型翻译」第(2)题；手写作 Jane's speech makes me excited.",
+     "id": "t2",
+     "paperNo": 2,
+     "section": "句型翻译",
+     "noLabel": "(2)",
+     "fields": 1
     },
     {
-     "no": 16,
+     "no": 3,
      "kind": "fill",
      "stem": "上周末，我给我爸爸买了一些茶叶。（S+V+IO+DO+A）",
      "cn": "句型翻译：按括号内要求的句型结构翻译句子",
@@ -2771,13 +3000,18 @@ window.QUIZ_DATA = {
      "handwriting": [
       "I bought my father some tea last weekend."
      ],
-     "note": "大题「6. 句型翻译」第(3)题；手写作 I bought my father some tea last weekend."
+     "note": "大题「6. 句型翻译」第(3)题；手写作 I bought my father some tea last weekend.",
+     "id": "t3",
+     "paperNo": 3,
+     "section": "句型翻译",
+     "noLabel": "(3)",
+     "fields": 1
     }
    ],
    "key": {
     "unit": "U4",
     "items": {
-     "1": {
+     "m1": {
       "answer": "addict",
       "alt": [
        "an addict",
@@ -2787,7 +3021,7 @@ window.QUIZ_DATA = {
       "why": "填名词 addict（网瘾者）；卷面作 a addict，冠词疑误应为 an，故存疑。",
       "doubt": true
      },
-     "2": {
+     "m2": {
       "answer": "pressure",
       "alt": [
        "pressure"
@@ -2796,43 +3030,43 @@ window.QUIZ_DATA = {
       "why": "much 修饰不可数名词，too much pressure 意为「压力太大」，由首字母 p 提示。",
       "doubt": false
      },
-     "3": {
+     "c1": {
       "answer": "B",
       "topic": "deal with 辨析",
       "why": "deal with 意为「处理问题」；think about 只表考虑，come up with 后接办法。",
       "doubt": false
      },
-     "4": {
+     "c2": {
       "answer": "A",
       "topic": "manage to do",
       "why": "manage to do sth 表示「设法做成某事」，强调结果成功，故填 to get。",
       "doubt": false
      },
-     "5": {
+     "c3": {
       "answer": "D",
       "topic": "it is kind of sb to do",
       "why": "kind、nice 等描述人的品质时用 of sb；后一空用不定式 to listen 与 give 并列。",
       "doubt": false
      },
-     "6": {
+     "c4": {
       "answer": "D",
       "topic": "focus on",
       "why": "focus on sth 意为「专注于某事」，focus more on my schoolwork。",
       "doubt": false
      },
-     "7": {
+     "c5": {
       "answer": "C",
       "topic": "pressure 词义",
       "why": "下文 relax ourselves「放松自己」提示是压力，too much pressure 压力过大对健康不利。",
       "doubt": false
      },
-     "8": {
+     "c6": {
       "answer": "D",
       "topic": "be addicted to doing",
       "why": "be/get addicted to 中 to 是介词，后接动名词，故用 to watching。",
       "doubt": false
      },
-     "9": {
+     "s1": {
       "answer": "mess / them / up",
       "alt": [
        "mess / them / up"
@@ -2841,7 +3075,7 @@ window.QUIZ_DATA = {
       "why": "mess up 意为「弄乱」；代词 them 要放在动词与副词之间，即 mess them up。",
       "doubt": false
      },
-     "10": {
+     "s2": {
       "answer": "has / a / good / habit / of",
       "alt": [
        "has / a / good / habit of"
@@ -2850,7 +3084,7 @@ window.QUIZ_DATA = {
       "why": "「有……的好习惯」= have a good habit of doing sth；Lily 第三人称单数用 has，五空依次 has / a / good / habit / of。",
       "doubt": false
      },
-     "11": {
+     "s3": {
       "answer": "on / a / diet",
       "alt": [
        "on / a / diet"
@@ -2859,7 +3093,7 @@ window.QUIZ_DATA = {
       "why": "go on a diet 意为「节食」，just go on a diet to lose weight 结构完整。",
       "doubt": false
      },
-     "12": {
+     "s4": {
       "answer": "ask / for / advice",
       "alt": [
        "ask / for advice"
@@ -2868,7 +3102,7 @@ window.QUIZ_DATA = {
       "why": "「向某人征求建议」= ask sb for advice；advice 不可数，不加 s；三空依次 ask / for / advice。",
       "doubt": false
      },
-     "13": {
+     "s5": {
       "answer": "in / charge / of / organizing",
       "alt": [
        "in / charge of / organizing"
@@ -2877,7 +3111,7 @@ window.QUIZ_DATA = {
       "why": "「负责组织」= be in charge of organizing；organizing 作介词 of 的宾语，须用动名词；四空依次 in / charge / of / organizing。",
       "doubt": true
      },
-     "14": {
+     "t1": {
       "answer": "He often helps in the old people's home.",
       "alt": [
        "He often helps in the nursing home.",
@@ -2887,7 +3121,7 @@ window.QUIZ_DATA = {
       "why": "按 S+A+V+A 排：He often helps in the old people's home。",
       "doubt": false
      },
-     "15": {
+     "t2": {
       "answer": "Jane's speech makes me excited.",
       "alt": [
        "Jane's speech made me excited.",
@@ -2897,7 +3131,7 @@ window.QUIZ_DATA = {
       "why": "按 S+V+O+C 用 make sb + 形容词作宾补：Jane's speech makes me excited。",
       "doubt": false
      },
-     "16": {
+     "t3": {
       "answer": "I bought my father some tea last weekend.",
       "alt": [
        "I bought some tea for my father last weekend.",
@@ -2910,97 +3144,97 @@ window.QUIZ_DATA = {
     }
    },
    "explain": {
-    "1": {
+    "m1": {
      "topic": "addict 名词拼写",
      "point": "冠词 a 之后、介词 to 之前须填名词；be an addict to sth 意为「对……上瘾的人」，addict 是名词「成瘾者」。",
      "why": "句意：这场讲座让青少年看清成为网络成瘾者的危害。空格前有 a、后接 to the Internet，只能填名词 addict；卷面印成 a addict，冠词疑为排版疏漏，实应为 an addict。",
      "trap": "易写成形容词 addicted 或自造词。见 a … to 结构先判断词性：此处要名词 addict，addicted 只用于 be addicted to。"
     },
-    "2": {
+    "m2": {
      "topic": "pressure 拼写",
      "point": "much 只修饰不可数名词；pressure 不可数，too much pressure 表示「压力过大」，不加 s、不加 a。",
      "why": "句意：若你压力太大，可以听音乐放松自己。too much 后接不可数名词，结合语境与首字母 p 拼作 pressure；不可数名词 pressure 直接用原形，不写复数和冠词。",
      "trap": "易少写一个 s 变成 presure，或误写成复数 pressures。记 pres-sure 双 s，且被 much 修饰的只能是不可数形式。"
     },
-    "3": {
+    "c1": {
      "topic": "deal with 处理问题",
      "point": "deal with sth = 处理、应付（问题/困难）；how to 后接动词原形，宾语 the problem 是被处理的对象。",
      "why": "句意：不知怎么处理这个问题就向老师求助。the problem 是被处理的对象，deal with 表「处理」，选 B；think about 只表考虑，come up with 后接办法，pay attention to 表注意。",
      "trap": "中文「解决」易误选 come up with（D）。它后面接 idea、plan 等想出的东西，the problem 要用 deal with 或 solve。"
     },
-    "4": {
+    "c2": {
      "topic": "manage to do sth",
      "point": "manage to do sth = 设法做成某事（强调结果成功）；manage 后只接不定式，不接动名词。",
      "why": "句意：虽然这个女孩听力有困难，她还是设法拿到了大学学位。manage 后只接不定式，故用 managed to get；Though 表让步，与「有困难」对照，正合「还是成功」。B getting、D got 不符合 manage 的后接形式，C to getting 中 to 后不能接 doing。",
      "trap": "易被 had trouble doing 带偏误选 getting。trouble 后用 doing，manage 后用 to do，两个搭配分开记。"
     },
-    "5": {
+    "c3": {
      "topic": "It is kind of sb to do",
      "point": "It is + 评价人的形容词（kind/nice/clever/foolish）+ of sb + to do sth；评价事情本身则用 for sb。",
      "why": "句意：他真好，愿意听我说，还给我那么多建议。kind 评价 him 的品质，第一空用 of；第二空与 give 并列作真正主语，须用不定式 to listen。B「of; listening」的 listening 不能与 give 并列，A、C 的 for 不用于评价人的品质。",
      "trap": "易误选 C。判断 of/for：能说「He is kind.」就用 of；It is hard for him to do 这类评价事情才用 for。"
     },
-    "6": {
+    "c4": {
      "topic": "focus on 搭配",
      "point": "focus on sth = 把注意力集中于某事；focus 后的介词固定用 on，more 是副词，修饰 focus。",
      "why": "句意：在父母的帮助下，我能更专注于学业了。focus on my schoolwork 意为「专注于功课」，介词只能用 on，故选 D；at、in、for 都不能与 focus 搭配表示专注。",
      "trap": "受中文「在……上」影响易选 at 或 in。focus 后固定用 on，同类有 depend on、insist on、concentrate on。"
     },
-    "7": {
+    "c5": {
      "topic": "pressure 词义辨析",
      "point": "too much 后接不可数名词；由后文 relax ourselves 反推前文说的是「压力」，pressure 不可数。",
      "why": "句意：压力太大会损害健康，我们应学会在日常生活中放松。后句 relax ourselves 说明要缓解的是压力，too much pressure 指压力过大，故选 C。noise、danger、attention 都不需「放松自己」来缓解。",
      "trap": "易凭「注意力」的常见搭配误选 D attention。抓 relax ourselves 这个提示：只有压力大才需要放松。"
     },
-    "8": {
+    "c6": {
      "topic": "be addicted to doing",
      "point": "be/get addicted to sth 中 to 是介词，后接名词或动名词；addicted 是形容词，不能直接带宾语。",
      "why": "句意：许多年轻人沉迷短视频，占用了大部分空闲时间。get addicted to 中 to 是介词，后接动名词 watching，故选 D。A watch、B watching 都缺介词 to，C to watch 把 to 当成了不定式符号。",
      "trap": "易误选 C to watch。凡是 be addicted to、be used to、look forward to 里的 to 都是介词，后接 doing。"
     },
-    "9": {
+    "s1": {
      "topic": "mess up 代词位置",
      "point": "mess up = 弄乱、搞糟；宾语是代词时必须放在动词与副词之间：mess it/them up，名词宾语则可前可后。",
      "why": "句意：别碰我的书，否则你会把它们弄乱。指代 my books 用代词 them，mess up 属「动词+副词」短语，代词宾语要放中间，故填 mess them up；写成 mess up them 不合语序。",
      "trap": "易写成 mess up them。牢记 turn it on、take them off、mess them up：代词一律夹在动词和副词中间。"
     },
-    "10": {
+    "s2": {
      "topic": "have a habit of doing",
      "point": "have a good habit of doing sth = 有做某事的好习惯；of 是介词，后接动名词；主语三单时 have 变 has。",
      "why": "句意：莉莉有早睡的好习惯。主语 Lily 是第三人称单数，have 要变 has；of 后接动名词 going to bed early，故填 has a good habit of，与后面 going 连成 of going。",
      "trap": "易写成 have 或 habit to go。两处失分点：主语三单用 has，of 后用 doing 而非不定式。"
     },
-    "11": {
+    "s3": {
      "topic": "go on a diet",
      "point": "go on a diet = 节食（为减肥而控制饮食）；diet 前必须用冠词 a，on 表示「处于……状态」。",
      "why": "句意：仅仅靠节食来减肥是不明智的。go on a diet 意为「节食」，与后文 to lose weight 语义呼应，故填 on a diet；diet 前冠词 a 不可省。",
      "trap": "易漏冠词写成 go on diet，或误用复数 diets。固定搭配就是 go on a diet。"
     },
-    "12": {
+    "s4": {
      "topic": "ask sb for advice",
      "point": "ask sb for sth = 向某人要/征求某物；advice 是不可数名词，不加 s、不加 a。",
      "why": "句意：我正在给我的老师写邮件，向他寻求建议。ask sb for advice 意为「向某人征求建议」，him 之后接 for advice；advice 不可数，只能用 some 或 much 修饰。",
      "trap": "易漏 for 写成 ask him advice，或写成 advices。记 ask sb for advice 与 give sb advice，advice 不加 s。"
     },
-    "13": {
+    "s5": {
      "topic": "be in charge of doing",
      "point": "be in charge of doing sth = 负责做某事，主语是负责人；of 是介词，后接名词或动名词；in the charge of sb 才是「由某人负责」。",
      "why": "句意：她负责组织本次校园美食节。主语 She 是负责人，用 be in charge of organizing the School Food Festival，故填 in charge of / organizing；organizing 作介词 of 的宾语，必须用动名词，不能用 organize 或 to organize。",
      "trap": "两大易错：漏写 organizing（只写 in charge of 就丢了「组织」）；或把 of 后写成 organize/to organize。见 of 就接 doing。"
     },
-    "14": {
+    "t1": {
      "topic": "S+A+V+A 句型",
      "point": "S+A+V+A = 主语+状语+谓语+状语；频度副词 often 放在实义动词之前，地点状语放句末。",
      "why": "正确句：He often helps in the old people's home. He 是主语(S)，often 是频度状语(A)，helps 是谓语(V)，in the old people's home 是地点状语(A)，语序合 S+A+V+A。",
      "trap": "易写成 He helps often… 或把地点状语提到动词前。频度副词要放实义动词前，地点状语放句末。"
     },
-    "15": {
+    "t2": {
      "topic": "S+V+O+C 宾补",
      "point": "S+V+O+C = 主语+谓语+宾语+宾补；make sb + 形容词，形容词作宾补说明宾语的状态。",
      "why": "正确句：Jane's speech makes me excited. Jane's speech 是主语(S)，makes 是谓语(V)，me 是宾语(O)，excited 是形容词作宾补(C)。excited 修饰人，表示「感到激动」。",
      "trap": "易写成 me exciting（exciting 修饰物、令人激动的）或 makes me to be excited。make 后宾补用形容词，不加 to。"
     },
-    "16": {
+    "t3": {
      "topic": "S+V+IO+DO 双宾",
      "point": "S+V+IO+DO+A = 主语+谓语+间接宾语(人)+直接宾语(物)+状语；buy sb sth = buy sth for sb。",
      "why": "正确句：I bought my father some tea last weekend. I 是主语，bought 是谓语，my father 是间接宾语，some tea 是直接宾语，last weekend 是状语，合 S+V+IO+DO+A。",

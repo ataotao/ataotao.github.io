@@ -1,101 +1,101 @@
 {
-  "unit": "U4",
-  "items": {
-    "1": {
-      "topic": "addict 名词拼写",
-      "point": "冠词 a 之后、介词 to 之前须填名词；be an addict to sth 意为「对……上瘾的人」，addict 是名词「成瘾者」。",
-      "why": "句意：这场讲座让青少年看清成为网络成瘾者的危害。空格前有 a、后接 to the Internet，只能填名词 addict；卷面印成 a addict，冠词疑为排版疏漏，实应为 an addict。",
-      "trap": "易写成形容词 addicted 或自造词。见 a … to 结构先判断词性：此处要名词 addict，addicted 只用于 be addicted to。"
-    },
-    "2": {
-      "topic": "pressure 拼写",
-      "point": "much 只修饰不可数名词；pressure 不可数，too much pressure 表示「压力过大」，不加 s、不加 a。",
-      "why": "句意：若你压力太大，可以听音乐放松自己。too much 后接不可数名词，结合语境与首字母 p 拼作 pressure；不可数名词 pressure 直接用原形，不写复数和冠词。",
-      "trap": "易少写一个 s 变成 presure，或误写成复数 pressures。记 pres-sure 双 s，且被 much 修饰的只能是不可数形式。"
-    },
-    "3": {
-      "topic": "deal with 处理问题",
-      "point": "deal with sth = 处理、应付（问题/困难）；how to 后接动词原形，宾语 the problem 是被处理的对象。",
-      "why": "句意：不知怎么处理这个问题就向老师求助。the problem 是被处理的对象，deal with 表「处理」，选 B；think about 只表考虑，come up with 后接办法，pay attention to 表注意。",
-      "trap": "中文「解决」易误选 come up with（D）。它后面接 idea、plan 等想出的东西，the problem 要用 deal with 或 solve。"
-    },
-    "4": {
-      "topic": "manage to do sth",
-      "point": "manage to do sth = 设法做成某事（强调结果成功）；manage 后只接不定式，不接动名词。",
-      "why": "句意：虽然这个女孩听力有困难，她还是设法拿到了大学学位。manage 后只接不定式，故用 managed to get；Though 表让步，与「有困难」对照，正合「还是成功」。B getting、D got 不符合 manage 的后接形式，C to getting 中 to 后不能接 doing。",
-      "trap": "易被 had trouble doing 带偏误选 getting。trouble 后用 doing，manage 后用 to do，两个搭配分开记。"
-    },
-    "5": {
-      "topic": "It is kind of sb to do",
-      "point": "It is + 评价人的形容词（kind/nice/clever/foolish）+ of sb + to do sth；评价事情本身则用 for sb。",
-      "why": "句意：他真好，愿意听我说，还给我那么多建议。kind 评价 him 的品质，第一空用 of；第二空与 give 并列作真正主语，须用不定式 to listen。B「of; listening」的 listening 不能与 give 并列，A、C 的 for 不用于评价人的品质。",
-      "trap": "易误选 C。判断 of/for：能说「He is kind.」就用 of；It is hard for him to do 这类评价事情才用 for。"
-    },
-    "6": {
-      "topic": "focus on 搭配",
-      "point": "focus on sth = 把注意力集中于某事；focus 后的介词固定用 on，more 是副词，修饰 focus。",
-      "why": "句意：在父母的帮助下，我能更专注于学业了。focus on my schoolwork 意为「专注于功课」，介词只能用 on，故选 D；at、in、for 都不能与 focus 搭配表示专注。",
-      "trap": "受中文「在……上」影响易选 at 或 in。focus 后固定用 on，同类有 depend on、insist on、concentrate on。"
-    },
-    "7": {
-      "topic": "pressure 词义辨析",
-      "point": "too much 后接不可数名词；由后文 relax ourselves 反推前文说的是「压力」，pressure 不可数。",
-      "why": "句意：压力太大会损害健康，我们应学会在日常生活中放松。后句 relax ourselves 说明要缓解的是压力，too much pressure 指压力过大，故选 C。noise、danger、attention 都不需「放松自己」来缓解。",
-      "trap": "易凭「注意力」的常见搭配误选 D attention。抓 relax ourselves 这个提示：只有压力大才需要放松。"
-    },
-    "8": {
-      "topic": "be addicted to doing",
-      "point": "be/get addicted to sth 中 to 是介词，后接名词或动名词；addicted 是形容词，不能直接带宾语。",
-      "why": "句意：许多年轻人沉迷短视频，占用了大部分空闲时间。get addicted to 中 to 是介词，后接动名词 watching，故选 D。A watch、B watching 都缺介词 to，C to watch 把 to 当成了不定式符号。",
-      "trap": "易误选 C to watch。凡是 be addicted to、be used to、look forward to 里的 to 都是介词，后接 doing。"
-    },
-    "9": {
-      "topic": "mess up 代词位置",
-      "point": "mess up = 弄乱、搞糟；宾语是代词时必须放在动词与副词之间：mess it/them up，名词宾语则可前可后。",
-      "why": "句意：别碰我的书，否则你会把它们弄乱。指代 my books 用代词 them，mess up 属「动词+副词」短语，代词宾语要放中间，故填 mess them up；写成 mess up them 不合语序。",
-      "trap": "易写成 mess up them。牢记 turn it on、take them off、mess them up：代词一律夹在动词和副词中间。"
-    },
-    "10": {
-      "topic": "have a habit of doing",
-      "point": "have a good habit of doing sth = 有做某事的好习惯；of 是介词，后接动名词；主语三单时 have 变 has。",
-      "why": "句意：莉莉有早睡的好习惯。主语 Lily 是第三人称单数，have 要变 has；of 后接动名词 going to bed early，故填 has a good habit of，与后面 going 连成 of going。",
-      "trap": "易写成 have 或 habit to go。两处失分点：主语三单用 has，of 后用 doing 而非不定式。"
-    },
-    "11": {
-      "topic": "go on a diet",
-      "point": "go on a diet = 节食（为减肥而控制饮食）；diet 前必须用冠词 a，on 表示「处于……状态」。",
-      "why": "句意：仅仅靠节食来减肥是不明智的。go on a diet 意为「节食」，与后文 to lose weight 语义呼应，故填 on a diet；diet 前冠词 a 不可省。",
-      "trap": "易漏冠词写成 go on diet，或误用复数 diets。固定搭配就是 go on a diet。"
-    },
-    "12": {
-      "topic": "ask sb for advice",
-      "point": "ask sb for sth = 向某人要/征求某物；advice 是不可数名词，不加 s、不加 a。",
-      "why": "句意：我正在给我的老师写邮件，向他寻求建议。ask sb for advice 意为「向某人征求建议」，him 之后接 for advice；advice 不可数，只能用 some 或 much 修饰。",
-      "trap": "易漏 for 写成 ask him advice，或写成 advices。记 ask sb for advice 与 give sb advice，advice 不加 s。"
-    },
-    "13": {
-      "topic": "be in charge of doing",
-      "point": "be in charge of doing sth = 负责做某事，主语是负责人；of 是介词，后接名词或动名词；in the charge of sb 才是「由某人负责」。",
-      "why": "句意：她负责组织本次校园美食节。主语 She 是负责人，用 be in charge of organizing the School Food Festival，故填 in charge of / organizing；organizing 作介词 of 的宾语，必须用动名词，不能用 organize 或 to organize。",
-      "trap": "两大易错：漏写 organizing（只写 in charge of 就丢了「组织」）；或把 of 后写成 organize/to organize。见 of 就接 doing。"
-    },
-    "14": {
-      "topic": "S+A+V+A 句型",
-      "point": "S+A+V+A = 主语+状语+谓语+状语；频度副词 often 放在实义动词之前，地点状语放句末。",
-      "why": "正确句：He often helps in the old people's home. He 是主语(S)，often 是频度状语(A)，helps 是谓语(V)，in the old people's home 是地点状语(A)，语序合 S+A+V+A。",
-      "trap": "易写成 He helps often… 或把地点状语提到动词前。频度副词要放实义动词前，地点状语放句末。"
-    },
-    "15": {
-      "topic": "S+V+O+C 宾补",
-      "point": "S+V+O+C = 主语+谓语+宾语+宾补；make sb + 形容词，形容词作宾补说明宾语的状态。",
-      "why": "正确句：Jane's speech makes me excited. Jane's speech 是主语(S)，makes 是谓语(V)，me 是宾语(O)，excited 是形容词作宾补(C)。excited 修饰人，表示「感到激动」。",
-      "trap": "易写成 me exciting（exciting 修饰物、令人激动的）或 makes me to be excited。make 后宾补用形容词，不加 to。"
-    },
-    "16": {
-      "topic": "S+V+IO+DO 双宾",
-      "point": "S+V+IO+DO+A = 主语+谓语+间接宾语(人)+直接宾语(物)+状语；buy sb sth = buy sth for sb。",
-      "why": "正确句：I bought my father some tea last weekend. I 是主语，bought 是谓语，my father 是间接宾语，some tea 是直接宾语，last weekend 是状语，合 S+V+IO+DO+A。",
-      "trap": "易错两处：上周末须用过去式 bought，不能写 buy；some tea 不可数，别写成 some teas。"
-    }
+ "unit": "U4",
+ "items": {
+  "m1": {
+   "topic": "addict 名词拼写",
+   "point": "冠词 a 之后、介词 to 之前须填名词；be an addict to sth 意为「对……上瘾的人」，addict 是名词「成瘾者」。",
+   "why": "句意：这场讲座让青少年看清成为网络成瘾者的危害。空格前有 a、后接 to the Internet，只能填名词 addict；卷面印成 a addict，冠词疑为排版疏漏，实应为 an addict。",
+   "trap": "易写成形容词 addicted 或自造词。见 a … to 结构先判断词性：此处要名词 addict，addicted 只用于 be addicted to。"
+  },
+  "m2": {
+   "topic": "pressure 拼写",
+   "point": "much 只修饰不可数名词；pressure 不可数，too much pressure 表示「压力过大」，不加 s、不加 a。",
+   "why": "句意：若你压力太大，可以听音乐放松自己。too much 后接不可数名词，结合语境与首字母 p 拼作 pressure；不可数名词 pressure 直接用原形，不写复数和冠词。",
+   "trap": "易少写一个 s 变成 presure，或误写成复数 pressures。记 pres-sure 双 s，且被 much 修饰的只能是不可数形式。"
+  },
+  "c1": {
+   "topic": "deal with 处理问题",
+   "point": "deal with sth = 处理、应付（问题/困难）；how to 后接动词原形，宾语 the problem 是被处理的对象。",
+   "why": "句意：不知怎么处理这个问题就向老师求助。the problem 是被处理的对象，deal with 表「处理」，选 B；think about 只表考虑，come up with 后接办法，pay attention to 表注意。",
+   "trap": "中文「解决」易误选 come up with（D）。它后面接 idea、plan 等想出的东西，the problem 要用 deal with 或 solve。"
+  },
+  "c2": {
+   "topic": "manage to do sth",
+   "point": "manage to do sth = 设法做成某事（强调结果成功）；manage 后只接不定式，不接动名词。",
+   "why": "句意：虽然这个女孩听力有困难，她还是设法拿到了大学学位。manage 后只接不定式，故用 managed to get；Though 表让步，与「有困难」对照，正合「还是成功」。B getting、D got 不符合 manage 的后接形式，C to getting 中 to 后不能接 doing。",
+   "trap": "易被 had trouble doing 带偏误选 getting。trouble 后用 doing，manage 后用 to do，两个搭配分开记。"
+  },
+  "c3": {
+   "topic": "It is kind of sb to do",
+   "point": "It is + 评价人的形容词（kind/nice/clever/foolish）+ of sb + to do sth；评价事情本身则用 for sb。",
+   "why": "句意：他真好，愿意听我说，还给我那么多建议。kind 评价 him 的品质，第一空用 of；第二空与 give 并列作真正主语，须用不定式 to listen。B「of; listening」的 listening 不能与 give 并列，A、C 的 for 不用于评价人的品质。",
+   "trap": "易误选 C。判断 of/for：能说「He is kind.」就用 of；It is hard for him to do 这类评价事情才用 for。"
+  },
+  "c4": {
+   "topic": "focus on 搭配",
+   "point": "focus on sth = 把注意力集中于某事；focus 后的介词固定用 on，more 是副词，修饰 focus。",
+   "why": "句意：在父母的帮助下，我能更专注于学业了。focus on my schoolwork 意为「专注于功课」，介词只能用 on，故选 D；at、in、for 都不能与 focus 搭配表示专注。",
+   "trap": "受中文「在……上」影响易选 at 或 in。focus 后固定用 on，同类有 depend on、insist on、concentrate on。"
+  },
+  "c5": {
+   "topic": "pressure 词义辨析",
+   "point": "too much 后接不可数名词；由后文 relax ourselves 反推前文说的是「压力」，pressure 不可数。",
+   "why": "句意：压力太大会损害健康，我们应学会在日常生活中放松。后句 relax ourselves 说明要缓解的是压力，too much pressure 指压力过大，故选 C。noise、danger、attention 都不需「放松自己」来缓解。",
+   "trap": "易凭「注意力」的常见搭配误选 D attention。抓 relax ourselves 这个提示：只有压力大才需要放松。"
+  },
+  "c6": {
+   "topic": "be addicted to doing",
+   "point": "be/get addicted to sth 中 to 是介词，后接名词或动名词；addicted 是形容词，不能直接带宾语。",
+   "why": "句意：许多年轻人沉迷短视频，占用了大部分空闲时间。get addicted to 中 to 是介词，后接动名词 watching，故选 D。A watch、B watching 都缺介词 to，C to watch 把 to 当成了不定式符号。",
+   "trap": "易误选 C to watch。凡是 be addicted to、be used to、look forward to 里的 to 都是介词，后接 doing。"
+  },
+  "s1": {
+   "topic": "mess up 代词位置",
+   "point": "mess up = 弄乱、搞糟；宾语是代词时必须放在动词与副词之间：mess it/them up，名词宾语则可前可后。",
+   "why": "句意：别碰我的书，否则你会把它们弄乱。指代 my books 用代词 them，mess up 属「动词+副词」短语，代词宾语要放中间，故填 mess them up；写成 mess up them 不合语序。",
+   "trap": "易写成 mess up them。牢记 turn it on、take them off、mess them up：代词一律夹在动词和副词中间。"
+  },
+  "s2": {
+   "topic": "have a habit of doing",
+   "point": "have a good habit of doing sth = 有做某事的好习惯；of 是介词，后接动名词；主语三单时 have 变 has。",
+   "why": "句意：莉莉有早睡的好习惯。主语 Lily 是第三人称单数，have 要变 has；of 后接动名词 going to bed early，故填 has a good habit of，与后面 going 连成 of going。",
+   "trap": "易写成 have 或 habit to go。两处失分点：主语三单用 has，of 后用 doing 而非不定式。"
+  },
+  "s3": {
+   "topic": "go on a diet",
+   "point": "go on a diet = 节食（为减肥而控制饮食）；diet 前必须用冠词 a，on 表示「处于……状态」。",
+   "why": "句意：仅仅靠节食来减肥是不明智的。go on a diet 意为「节食」，与后文 to lose weight 语义呼应，故填 on a diet；diet 前冠词 a 不可省。",
+   "trap": "易漏冠词写成 go on diet，或误用复数 diets。固定搭配就是 go on a diet。"
+  },
+  "s4": {
+   "topic": "ask sb for advice",
+   "point": "ask sb for sth = 向某人要/征求某物；advice 是不可数名词，不加 s、不加 a。",
+   "why": "句意：我正在给我的老师写邮件，向他寻求建议。ask sb for advice 意为「向某人征求建议」，him 之后接 for advice；advice 不可数，只能用 some 或 much 修饰。",
+   "trap": "易漏 for 写成 ask him advice，或写成 advices。记 ask sb for advice 与 give sb advice，advice 不加 s。"
+  },
+  "s5": {
+   "topic": "be in charge of doing",
+   "point": "be in charge of doing sth = 负责做某事，主语是负责人；of 是介词，后接名词或动名词；in the charge of sb 才是「由某人负责」。",
+   "why": "句意：她负责组织本次校园美食节。主语 She 是负责人，用 be in charge of organizing the School Food Festival，故填 in charge of / organizing；organizing 作介词 of 的宾语，必须用动名词，不能用 organize 或 to organize。",
+   "trap": "两大易错：漏写 organizing（只写 in charge of 就丢了「组织」）；或把 of 后写成 organize/to organize。见 of 就接 doing。"
+  },
+  "t1": {
+   "topic": "S+A+V+A 句型",
+   "point": "S+A+V+A = 主语+状语+谓语+状语；频度副词 often 放在实义动词之前，地点状语放句末。",
+   "why": "正确句：He often helps in the old people's home. He 是主语(S)，often 是频度状语(A)，helps 是谓语(V)，in the old people's home 是地点状语(A)，语序合 S+A+V+A。",
+   "trap": "易写成 He helps often… 或把地点状语提到动词前。频度副词要放实义动词前，地点状语放句末。"
+  },
+  "t2": {
+   "topic": "S+V+O+C 宾补",
+   "point": "S+V+O+C = 主语+谓语+宾语+宾补；make sb + 形容词，形容词作宾补说明宾语的状态。",
+   "why": "正确句：Jane's speech makes me excited. Jane's speech 是主语(S)，makes 是谓语(V)，me 是宾语(O)，excited 是形容词作宾补(C)。excited 修饰人，表示「感到激动」。",
+   "trap": "易写成 me exciting（exciting 修饰物、令人激动的）或 makes me to be excited。make 后宾补用形容词，不加 to。"
+  },
+  "t3": {
+   "topic": "S+V+IO+DO 双宾",
+   "point": "S+V+IO+DO+A = 主语+谓语+间接宾语(人)+直接宾语(物)+状语；buy sb sth = buy sth for sb。",
+   "why": "正确句：I bought my father some tea last weekend. I 是主语，bought 是谓语，my father 是间接宾语，some tea 是直接宾语，last weekend 是状语，合 S+V+IO+DO+A。",
+   "trap": "易错两处：上周末须用过去式 bought，不能写 buy；some tea 不可数，别写成 some teas。"
   }
+ }
 }

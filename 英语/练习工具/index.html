@@ -588,6 +588,52 @@
   UNITS.forEach(function(u){ u.items.forEach(function(i){ BY_ID[i.id] = i; }); });
 
   /* ══ 本地存储 ═══════════════════════════════════════ */
+  /* 题目 id 迁移（2026-11-04：数据改为「按原卷大题分区 + 大题内题号」）
+     只做一次：旧 id → 新 id；迁移后旧键消失，重复加载不会二次迁移。 */
+  var ID_MIGRATION = {
+    "U3-1": "U3-r1",
+    "U3-2": "U3-r2",
+    "U3-3": "U3-r3",
+    "U3-4": "U3-r4",
+    "U3-5": "U3-r5",
+    "U3-6": "U3-r6",
+    "U3-7": "U3-r7",
+    "U3-8": "U3-r8",
+    "U3-9": "U3-r9",
+    "U3-10": "U3-r10",
+    "U3-11": "U3-r11",
+    "U3-12": "U3-r12",
+    "U3-13": "U3-r13",
+    "U3-14": "U3-g1",
+    "U3-15": "U3-g2",
+    "U3-16": "U3-g3",
+    "U3-17": "U3-g4",
+    "U4-1": "U4-m1",
+    "U4-2": "U4-m2",
+    "U4-3": "U4-c1",
+    "U4-4": "U4-c2",
+    "U4-5": "U4-c3",
+    "U4-6": "U4-c4",
+    "U4-7": "U4-c5",
+    "U4-8": "U4-c6",
+    "U4-9": "U4-s1",
+    "U4-10": "U4-s2",
+    "U4-11": "U4-s3",
+    "U4-12": "U4-s4",
+    "U4-13": "U4-s5",
+    "U4-14": "U4-t1",
+    "U4-15": "U4-t2",
+    "U4-16": "U4-t3"
+  };
+  function remapRecord(o){
+    var out = {}, changed = false;
+    Object.keys(o).forEach(function(k){
+      var nk = ID_MIGRATION[k];
+      if (nk && !Object.prototype.hasOwnProperty.call(o, nk)) { out[nk] = o[k]; changed = true; }
+      else out[k] = o[k];
+    });
+    return changed ? out : o;
+  }
   var STORE_KEY = "eng9a-practice-v1";
   var AT_KEEP = 10; /* atList 每题只保留最近 N 次作答时间 */
   var store = loadStore();
@@ -597,8 +643,8 @@
     s = (s && typeof s === "object" && !Array.isArray(s)) ? s : {};
     function objOf(v){ return (v && typeof v === "object" && !Array.isArray(v)) ? v : {}; }
     return {
-      picks: objOf(s.picks), fills: objOf(s.fills), stat: objOf(s.stat), cleared: objOf(s.cleared),
-      at: objOf(s.at), atList: objOf(s.atList),
+      picks: remapRecord(objOf(s.picks)), fills: remapRecord(objOf(s.fills)), stat: remapRecord(objOf(s.stat)),
+      cleared: remapRecord(objOf(s.cleared)), at: remapRecord(objOf(s.at)), atList: remapRecord(objOf(s.atList)),
       unit: s.unit || (UNITS[0] ? UNITS[0].unit : "U1")
     };
   }
