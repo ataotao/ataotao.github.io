@@ -1,143 +1,107 @@
 {
-  "unit": "U3",
-  "items": {
-    "1": {
-      "topic": "名词复数 matches",
-      "point": "used 后需名词作宾语；match「火柴」是可数名词，泛指一类东西要用复数，以 ch 结尾加 -es → matches。",
-      "why": "句意：过去人们常用火柴点蜡烛。空格在 used 之后作宾语，且指一类东西而非某一根，必须用复数 matches；首字母 m 只是提示，不能只写 match。",
-      "trap": "只写 match 漏掉复数，或误填 lights（点灯用的是火柴，不是灯）。泛指可数名词时先问：要不要加 -s/-es？"
-    },
-    "2": {
-      "topic": "in shame 搭配",
-      "point": "in + 抽象名词常表状态或方式：in shame 羞愧地、in surprise 惊讶地；介词 in 后必须是名词。",
-      "why": "句意：我羞愧地站在父亲面前，因为刚才撒了谎。空格前有介词 in、后无冠词，需不可数名词 shame；ashamed 是形容词（be ashamed of），shameful 修饰事物，都不能直接跟在 in 后。",
-      "trap": "把「羞愧」一律写成 ashamed。先看空格前的 in：介词后只能接名词，形容词要变名词才能填。"
-    },
-    "3": {
-      "topic": "一般过去时 + 拼写",
-      "point": "yesterday 是明确的过去时间状语，谓语用一般过去式；remove 以不发音的 e 结尾，直接加 -d → removed。",
-      "why": "句意：昨天我把那把没用的椅子从卧室搬走了。主语 I 后缺谓语，yesterday 把时态锁在过去，故用 removed；不能填现在时 remove，也不能填名词 removal。",
-      "trap": "记混去 e/双写规则，写成 removd 或 remuved。规则：以不发音 e 结尾的动词，过去式只加 -d。"
-    },
-    "4": {
-      "topic": "被动语态 be done",
-      "point": "will be + 过去分词构成一般将来时的被动语态；主语是动作承受者时用被动，cheat 的过去分词是 cheated。",
-      "why": "句意：在网上和人交朋友要格外小心，否则你会上当受骗。you 与 cheat 是被动关系（你被骗），or 后接将来结果，故用 will be cheated；若用主动 will cheat，句意变成「你去骗别人」，方向反了。",
-      "trap": "见动词就填主动形式。判断法：主语能不能自己做出这个动作？不能就用 be + 过去分词。"
-    },
-    "5": {
-      "topic": "practice 搭配",
-      "point": "put sth into practice 意为「把……付诸实践」，into 是介词，后面必须接名词 practice，不能接动词 practise。",
-      "why": "句意：新规定听起来不错，但真正落实时可能带来很多麻烦。空格前是介词 into，只能填名词 practice；practise 是英式动词拼写，此处词性不符。",
-      "trap": "英式 practise（动词）/ practice（名词）混用。记搭配：in practice 实际上、put into practice 付诸实践。"
-    },
-    "6": {
-      "topic": "with + 抽象名词",
-      "point": "with + 抽象名词作方式状语：with admiration 钦佩地。介词后要用名词，动词 admire 需变名词 admiration。",
-      "why": "句意：她钦佩地看着那幅画，目光久久无法移开。空格前是介词 with，需名词 admiration；admiring 是分词/形容词，admire 是动词，都不能直接跟在介词后作状语。",
-      "trap": "把「钦佩」直接写成 admire 或 admiring。介词后的空先定词性：这里要名词。"
-    },
-    "7": {
-      "topic": "not...but...",
-      "point": "not A but B 表「不是 A 而是 B」，A、B 必须同形并列；此句并列两个不定式 not to keep... but to set...。",
-      "why": "句意：最后他决定不养这条鱼，而是把它放生。前面是否定不定式 not to keep the fish，后面 to set it free 正好与之对应，只能用 but 连接；and 只表并列不表转折，so/or 逻辑不通。",
-      "trap": "看到 not 就用 and/or。记公式：not to do A but to do B，but 前后结构要一致。"
-    },
-    "8": {
-      "topic": "ashamed 表人",
-      "point": "feel 是系动词，后接形容词作表语；-ed 形容词表人「感到……」，ashamed 指人羞愧，shameful 指事物可耻。",
-      "why": "句意：那个男孩因为做错了事感到很羞愧。主语 The boy 是人，feel 后需形容词，故选 ashamed；A 项 shame 是名词不能作表语，D 项 shamefully 是副词，都不能填。",
-      "trap": "只看词根 shame 就选 A。记搭配：sb be ashamed of sth；sth be shameful。"
-    },
-    "9": {
-      "topic": "and 并列谓语",
-      "point": "and 连接两个并列成分，前面是 to go around（动词原形），后面也必须是动词原形 strengthen。",
-      "why": "句意：骑自行车是到处走走、强健身体的好方式。空格与 go around 并列作 way to do 的内容，需动词 strengthen；strong（形容词）、strength（名词）、strongly（副词）都无法与 go 并列。",
-      "trap": "看见 bodies 就填形容词 strong。判断依据是 and 前面的 go，而不是后面的名词。"
-    },
-    "10": {
-      "topic": "形容词修饰不定代词后置",
-      "point": "修饰 something/anything/nothing 等不定代词的形容词必须后置；肯定句用 something，否定和疑问句用 anything。",
-      "why": "句意：我有件特别的事要告诉你，就当是我们之间的秘密吧。本句为肯定句用 something，形容词 special 后置成 something special；specially 是副词不能修饰名词，D 项 anything 用于肯定句不当。",
-      "trap": "按汉语语序写成 special something，或用副词 specially。口诀：不定代词 + 形容词，形容词永远在后。"
-    },
-    "11": {
-      "topic": "时间状语引导词",
-      "point": "every time、each time、the moment 等名词短语可直接引导时间状语从句，起连词作用，后面不再加 when 或 that。",
-      "why": "句意：每次看到中国国旗升起，我内心都充满自豪。空格前已有 every time 引导从句，不能再叠 when/that；while 表「当……时」强调持续动作，此处是每次的瞬间动作，不合。故选「/」。",
-      "trap": "习惯性补连词写成 every time when，这是典型错句。every time 后直接跟主语即可。"
-    },
-    "12": {
-      "topic": "as...as 原级",
-      "point": "as + 形容词/副词原级 + as 表同级比较；空格修饰动词 played，需副词原级 skilfully。",
-      "why": "句意：这位年轻钢琴家把这首难曲子弹得和有经验的音乐家一样娴熟。修饰 played 要用副词，as...as 之间必须用原级，故 skilfully；D 项 more skilfully 是比较级，不能用于 as...as 结构。",
-      "trap": "一看到比较就加 -er/more。先判断修饰谁（动词→副词），再定原级。"
-    },
-    "13": {
-      "topic": "decision 词义",
-      "point": "a bad + 可数名词单数；结合对话内容「没被选进队」可知这是某人做出的决定，选 decision。",
-      "why": "句意：——Tony 没被选进队，那是个糟糕的决定。——你说得对，没有他我们赢不了。decision 与「做出选择」吻合；accident 意外、promise 承诺、challenge 挑战都不能指「选人」这个决定。",
-      "trap": "把「糟糕的事」一律理解成 accident。辨析题要回到对话逻辑：被评价的是一个选择。"
-    },
-    "14": {
-      "topic": "-ing/-ed 形容词",
-      "point": "sound 是系动词，后接形容词；-ing 形容词表「令人……的」，修饰引起感受的事物；-ed 表「感到……的」，修饰人。",
-      "why": "句意：——打电脑游戏怎么样？——那听起来很无聊，我们去打篮球吧。主语 That 指「打游戏」这件事，令人厌烦，用 boring；bored 指人感到无聊，interested/interesting 意为「有趣的」，与后文「去打篮球」矛盾。",
-      "trap": "按「谁无聊」去选 bored。判断标准：事物让人产生感受→-ing；人自己感到→-ed。"
-    },
-    "15": {
-      "topic": "feel 系动词无被动",
-      "point": "feel 表「摸起来」时是系动词，后接形容词，用主动形式表被动意义，不用被动语态，也不用进行时。",
-      "why": "句意：这张新床摸起来很硬，我昨晚没睡好。床与 feel 不是被动关系，is felt 错；系动词不用进行时，is feeling 错；felt 是过去式，与后句现在语境不符。主语 The new bed 为三单，故选 feels。",
-      "trap": "见「床被摸」就选被动 is felt，或按「正在」选 is feeling。smell/taste/sound/feel 作系动词一律主动、一般现在时。"
-    },
-    "16": {
-      "topic": "though 让步",
-      "point": "Though 引导让步状语从句，主句不再加 but；主句必须是完整的主系表结构：we are still friends。",
-      "why": "句意：尽管我们有时互相争吵，但我们仍是朋友。中文「仍是」含系动词「是」，英文必须有 are；still 放在 be 之后、名词之前。卷面只写 still/friends，缺 are 属句子结构不完整，判为错。",
-      "trap": "受汉语影响漏掉 be 动词，或把语序写成 we still are friends。检查法：主句单独读一遍，主谓是否齐全。"
-    },
-    "17": {
-      "topic": "汉译英 look",
-      "point": "「看上去……」用系动词 look + 形容词作表语；「穿着某件衣服」用 in + 衣服，不能再用一个动词 wear 作谓语。",
-      "why": "句意：你穿这条裙子看上去很漂亮。look 是系动词，后接形容词 beautiful；「穿这条裙子」用 in this dress 作状语。写成 You wear this dress look beautiful 会出现两个谓语，结构错误。",
-      "trap": "按汉语顺序写成 You wear this dress very beautiful。记句型：sb looks + adj. + in + 衣服。"
-    },
-    "18": {
-      "topic": "doubt 变形容词",
-      "point": "be 动词后需要形容词作表语；doubt（动词/名词「怀疑」）的形容词是 doubtful「怀疑的」。",
-      "why": "句意：人们怀疑这是否是一种安全或准确的方法。were 后缺表语，主语 People 表人「感到怀疑」，用形容词 doubtful；填名词 doubt 或动词形式都缺系动词后的表语成分，故错。",
-      "trap": "在 be 动词后直接填原形 doubt。词形题先定词性，再由 doubt → doubtful 变形。"
-    },
-    "19": {
-      "topic": "不定式表用途",
-      "point": "need a tool to do sth：不定式作后置定语或目的状语，说明工具的用途，结构为 to + 动词原形。",
-      "why": "句意：医生需要一种工具来检查发烧，科学家也需要一种来研究热量。tool 与 check 之间是「用来做」的关系，用 to check；填 checking 缺少介词，填 checked 表被动完成，都与「用途」不符。",
-      "trap": "受 need 影响把后面也写 needs/needed，或写成 for check。看到「工具/方法 + 用来做」就填 to do。"
-    },
-    "20": {
-      "topic": "need 的被动语态",
-      "point": "主语 a better way 是动作的承受者，需用被动 be + 过去分词；时态随上文，前文 were doubtful、needed 都是过去时。",
-      "why": "句意：需要一种更好的测量温度的方法。方法不能自己「需要」，只能「被需要」，故用 was needed；若填 needed 就变成主动，逻辑不通。全篇若按现在时叙述，也可作 is needed，故本题参考两个答案。",
-      "trap": "直接填 needed 漏掉被动。判断法：主语能否发出该动作？不能就用 be done；另注意 need doing 表被动含义的用法。"
-    },
-    "21": {
-      "topic": "in many ways",
-      "point": "in many ways 意为「在许多方面」，是固定介词短语；不给提示的空优先考虑介词、连词等虚词。",
-      "why": "句意：温度计在许多方面帮助了我们。helps us 后需表示「在……方面」的介词，many ways 前用 in。注意：本题空格被白色涂改带遮挡，in 是按搭配推断的参考值，实际以原卷为准。",
-      "trap": "按汉语「用许多方式」写成 by/with many ways。记搭配：in many ways 在许多方面、in this way 用这种方式。"
-    },
-    "22": {
-      "topic": "信息缺失题的处理",
-      "point": "空格和提示词都被白色涂改带盖住，只剩「Cooks use it for baking, ______. Factories use it...」可见，无法判断填什么。",
-      "why": "句意只看出：厨师用它烘焙，工厂用它保护机器安全。空格处应是与前句并列的成分，但提示词被涂掉，任何具体答案都只是猜测，所以本题只标存疑、留待与老师核对。",
-      "trap": "遇到信息缺失硬按语感填一个词。正确做法：标记存疑、课后核对；考场上选与上下文结构最接近的形式。"
-    },
-    "23": {
-      "topic": "apply 三单形式",
-      "point": "主语 It 为第三人称单数，一般现在时谓语加 -s；apply 是「辅音字母 + y」结尾，变 y 为 i 再加 -es → applies。",
-      "why": "句意：它适用于我们日常生活的许多方面，带来极大便利。全句陈述普遍事实用一般现在时，主语 It 是三单，故用 applies；填原形 apply 或过去式 applied 都与时态、主谓一致不符。",
-      "trap": "直接写 applys（忘了 y 变 i）。规则：辅音 + y 结尾，三单变 -ies，如 study→studies、apply→applies。"
-    }
+ "unit": "U3",
+ "items": {
+  "r1": {
+   "topic": "名词复数 matches",
+   "point": "used 后需名词作宾语；match「火柴」是可数名词，泛指一类东西要用复数，以 ch 结尾加 -es → matches。",
+   "why": "句意：过去人们常用火柴点蜡烛。空格在 used 之后作宾语，且指一类东西而非某一根，必须用复数 matches；首字母 m 只是提示，不能只写 match。",
+   "trap": "只写 match 漏掉复数，或误填 lights（点灯用的是火柴，不是灯）。泛指可数名词时先问：要不要加 -s/-es？"
+  },
+  "r2": {
+   "topic": "in shame 搭配",
+   "point": "in + 抽象名词常表状态或方式：in shame 羞愧地、in surprise 惊讶地；介词 in 后必须是名词。",
+   "why": "句意：我羞愧地站在父亲面前，因为刚才撒了谎。空格前有介词 in、后无冠词，需不可数名词 shame；ashamed 是形容词（be ashamed of），shameful 修饰事物，都不能直接跟在 in 后。",
+   "trap": "把「羞愧」一律写成 ashamed。先看空格前的 in：介词后只能接名词，形容词要变名词才能填。"
+  },
+  "r3": {
+   "topic": "一般过去时 + 拼写",
+   "point": "yesterday 是明确的过去时间状语，谓语用一般过去式；remove 以不发音的 e 结尾，直接加 -d → removed。",
+   "why": "句意：昨天我把那把没用的椅子从卧室搬走了。主语 I 后缺谓语，yesterday 把时态锁在过去，故用 removed；不能填现在时 remove，也不能填名词 removal。",
+   "trap": "记混去 e/双写规则，写成 removd 或 remuved。规则：以不发音 e 结尾的动词，过去式只加 -d。"
+  },
+  "r4": {
+   "topic": "被动语态 be done",
+   "point": "will be + 过去分词构成一般将来时的被动语态；主语是动作承受者时用被动，cheat 的过去分词是 cheated。",
+   "why": "句意：在网上和人交朋友要格外小心，否则你会上当受骗。you 与 cheat 是被动关系（你被骗），or 后接将来结果，故用 will be cheated；若用主动 will cheat，句意变成「你去骗别人」，方向反了。",
+   "trap": "见动词就填主动形式。判断法：主语能不能自己做出这个动作？不能就用 be + 过去分词。"
+  },
+  "r5": {
+   "topic": "practice 搭配",
+   "point": "put sth into practice 意为「把……付诸实践」，into 是介词，后面必须接名词 practice，不能接动词 practise。",
+   "why": "句意：新规定听起来不错，但真正落实时可能带来很多麻烦。空格前是介词 into，只能填名词 practice；practise 是英式动词拼写，此处词性不符。",
+   "trap": "英式 practise（动词）/ practice（名词）混用。记搭配：in practice 实际上、put into practice 付诸实践。"
+  },
+  "r6": {
+   "topic": "with + 抽象名词",
+   "point": "with + 抽象名词作方式状语：with admiration 钦佩地。介词后要用名词，动词 admire 需变名词 admiration。",
+   "why": "句意：她钦佩地看着那幅画，目光久久无法移开。空格前是介词 with，需名词 admiration；admiring 是分词/形容词，admire 是动词，都不能直接跟在介词后作状语。",
+   "trap": "把「钦佩」直接写成 admire 或 admiring。介词后的空先定词性：这里要名词。"
+  },
+  "r7": {
+   "topic": "not...but...",
+   "point": "not A but B 表「不是 A 而是 B」，A、B 必须同形并列；此句并列两个不定式 not to keep... but to set...。",
+   "why": "句意：最后他决定不养这条鱼，而是把它放生。前面是否定不定式 not to keep the fish，后面 to set it free 正好与之对应，只能用 but 连接；and 只表并列不表转折，so/or 逻辑不通。",
+   "trap": "看到 not 就用 and/or。记公式：not to do A but to do B，but 前后结构要一致。"
+  },
+  "r8": {
+   "topic": "ashamed 表人",
+   "point": "feel 是系动词，后接形容词作表语；-ed 形容词表人「感到……」，ashamed 指人羞愧，shameful 指事物可耻。",
+   "why": "句意：那个男孩因为做错了事感到很羞愧。主语 The boy 是人，feel 后需形容词，故选 ashamed；A 项 shame 是名词不能作表语，D 项 shamefully 是副词，都不能填。",
+   "trap": "只看词根 shame 就选 A。记搭配：sb be ashamed of sth；sth be shameful。"
+  },
+  "r9": {
+   "topic": "and 并列谓语",
+   "point": "and 连接两个并列成分，前面是 to go around（动词原形），后面也必须是动词原形 strengthen。",
+   "why": "句意：骑自行车是到处走走、强健身体的好方式。空格与 go around 并列作 way to do 的内容，需动词 strengthen；strong（形容词）、strength（名词）、strongly（副词）都无法与 go 并列。",
+   "trap": "看见 bodies 就填形容词 strong。判断依据是 and 前面的 go，而不是后面的名词。"
+  },
+  "r10": {
+   "topic": "形容词修饰不定代词后置",
+   "point": "修饰 something/anything/nothing 等不定代词的形容词必须后置；肯定句用 something，否定和疑问句用 anything。",
+   "why": "句意：我有件特别的事要告诉你，就当是我们之间的秘密吧。本句为肯定句用 something，形容词 special 后置成 something special；specially 是副词不能修饰名词，D 项 anything 用于肯定句不当。",
+   "trap": "按汉语语序写成 special something，或用副词 specially。口诀：不定代词 + 形容词，形容词永远在后。"
+  },
+  "r11": {
+   "topic": "时间状语引导词",
+   "point": "every time、each time、the moment 等名词短语可直接引导时间状语从句，起连词作用，后面不再加 when 或 that。",
+   "why": "句意：每次看到中国国旗升起，我内心都充满自豪。空格前已有 every time 引导从句，不能再叠 when/that；while 表「当……时」强调持续动作，此处是每次的瞬间动作，不合。故选「/」。",
+   "trap": "习惯性补连词写成 every time when，这是典型错句。every time 后直接跟主语即可。"
+  },
+  "r12": {
+   "topic": "as...as 原级",
+   "point": "as + 形容词/副词原级 + as 表同级比较；空格修饰动词 played，需副词原级 skilfully。",
+   "why": "句意：这位年轻钢琴家把这首难曲子弹得和有经验的音乐家一样娴熟。修饰 played 要用副词，as...as 之间必须用原级，故 skilfully；D 项 more skilfully 是比较级，不能用于 as...as 结构。",
+   "trap": "一看到比较就加 -er/more。先判断修饰谁（动词→副词），再定原级。"
+  },
+  "r13": {
+   "topic": "decision 词义",
+   "point": "a bad + 可数名词单数；结合对话内容「没被选进队」可知这是某人做出的决定，选 decision。",
+   "why": "句意：——Tony 没被选进队，那是个糟糕的决定。——你说得对，没有他我们赢不了。decision 与「做出选择」吻合；accident 意外、promise 承诺、challenge 挑战都不能指「选人」这个决定。",
+   "trap": "把「糟糕的事」一律理解成 accident。辨析题要回到对话逻辑：被评价的是一个选择。"
+  },
+  "g1": {
+   "topic": "-ing/-ed 形容词",
+   "point": "sound 是系动词，后接形容词；-ing 形容词表「令人……的」，修饰引起感受的事物；-ed 表「感到……的」，修饰人。",
+   "why": "句意：——打电脑游戏怎么样？——那听起来很无聊，我们去打篮球吧。主语 That 指「打游戏」这件事，令人厌烦，用 boring；bored 指人感到无聊，interested/interesting 意为「有趣的」，与后文「去打篮球」矛盾。",
+   "trap": "按「谁无聊」去选 bored。判断标准：事物让人产生感受→-ing；人自己感到→-ed。"
+  },
+  "g2": {
+   "topic": "feel 系动词无被动",
+   "point": "feel 表「摸起来」时是系动词，后接形容词，用主动形式表被动意义，不用被动语态，也不用进行时。",
+   "why": "句意：这张新床摸起来很硬，我昨晚没睡好。床与 feel 不是被动关系，is felt 错；系动词不用进行时，is feeling 错；felt 是过去式，与后句现在语境不符。主语 The new bed 为三单，故选 feels。",
+   "trap": "见「床被摸」就选被动 is felt，或按「正在」选 is feeling。smell/taste/sound/feel 作系动词一律主动、一般现在时。"
+  },
+  "g3": {
+   "topic": "though 让步",
+   "point": "Though 引导让步状语从句，主句不再加 but；主句必须是完整的主系表结构：we are still friends。",
+   "why": "句意：尽管我们有时互相争吵，但我们仍是朋友。中文「仍是」含系动词「是」，英文必须有 are；still 放在 be 之后、名词之前。卷面只写 still/friends，缺 are 属句子结构不完整，判为错。",
+   "trap": "受汉语影响漏掉 be 动词，或把语序写成 we still are friends。检查法：主句单独读一遍，主谓是否齐全。"
+  },
+  "g4": {
+   "topic": "汉译英 look",
+   "point": "「看上去……」用系动词 look + 形容词作表语；「穿着某件衣服」用 in + 衣服，不能再用一个动词 wear 作谓语。",
+   "why": "句意：你穿这条裙子看上去很漂亮。look 是系动词，后接形容词 beautiful；「穿这条裙子」用 in this dress 作状语。写成 You wear this dress look beautiful 会出现两个谓语，结构错误。",
+   "trap": "按汉语顺序写成 You wear this dress very beautiful。记句型：sb looks + adj. + in + 衣服。"
   }
+ }
 }
