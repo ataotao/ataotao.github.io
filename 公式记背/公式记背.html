@@ -17,6 +17,8 @@ body{background:var(--bg);color:var(--ink);
   font:16px/1.75 "Noto Sans SC","PingFang SC","Microsoft YaHei",system-ui,sans-serif;
   -webkit-text-size-adjust:100%}
 button,select,input{font-family:inherit}
+/* hidden 属性统一用 display:none 收口（避免被 .resume/.prog 之类带 display 的类覆盖） */
+[hidden]{display:none!important}
 .wrap{max-width:820px;margin:0 auto;padding:0 14px 90px}
 
 /* ---------- 顶栏 ---------- */
@@ -981,6 +983,41 @@ function renderList(st,keepOpen){
 }
 
 /* ================================================================
+   深链（给「开始.html」的任务卡直达用）
+   契约：#mode=recite|fill|name|wrong|table  #fs=all|star|weak|unseen|today
+        可组合，如 #mode=fill&fs=star；table = ⑤ 公式表（内部模式名是 list）。
+        非法值静默忽略，回到默认；只在启动时读一次，运行中不回写 hash。
+   ================================================================ */
+const DEEP_MODES=['recite','fill','name','wrong','list'];   /* list = 契约里的 table */
+const DEEP_SCOPES=['all','star','weak','unseen','today'];
+function readDeepLink(){
+  let raw='';
+  try{raw=String(location.hash||'').replace(/^#/,'');}catch(e){return null;}
+  if(!raw)return null;
+  const q={};
+  raw.split('&').forEach(seg=>{
+    const i=seg.indexOf('=');
+    if(i<0)return;
+    let k='',v='';
+    try{k=decodeURIComponent(seg.slice(0,i)).trim().toLowerCase();v=decodeURIComponent(seg.slice(i+1)).trim().toLowerCase();}catch(e){return;}
+    if(k==='mode'||k==='fs')q[k]=v;
+  });
+  let mode=q.mode||'';
+  if(mode==='table')mode='list';                            /* 契约名 → 内部名 */
+  if(DEEP_MODES.indexOf(mode)<0)mode='';
+  const scope=DEEP_SCOPES.indexOf(q.fs)>=0?q.fs:'';
+  if(!mode&&!scope)return null;
+  return {mode:mode,scope:scope};
+}
+function applyDeepLink(d){
+  if(d.mode)S.mode=d.mode;
+  if(d.scope)S.scope=d.scope;
+  /* 停在第一题：队列随后由 buildQueue() 按新 mode/scope 重建 */
+  S.qi=0;resetCardState();
+  return d;
+}
+
+/* ================================================================
    启动
    ================================================================ */
 function boot(){
@@ -996,6 +1033,9 @@ function boot(){
     if(b.dataset.mode===S.mode)return;
     S.mode=b.dataset.mode;S.qi=0;resetCardState();buildQueue();render();scrollTop();
   });
+  /* 深链（任务卡直达）：启动时按 hash 切一次模式/范围，之后运行中不再回写 */
+  const deep=readDeepLink();
+  if(deep)applyDeepLink(deep);
   buildQueue();render();
   document.addEventListener('keydown',e=>{
     const t=e.target;

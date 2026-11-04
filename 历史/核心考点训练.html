@@ -20,6 +20,9 @@ body{
   -webkit-text-size-adjust:100%;
 }
 button,select,input{font-family:inherit}
+/* hidden 属性统一用 display:none 收口：下面 .resume{display:flex} 会把 [hidden] 覆盖掉，
+   历史首页因此一直挂着一条空白「继续上次」横条 */
+[hidden]{display:none!important}
 .wrap{max-width:860px;margin:0 auto;padding:0 14px 90px}
 
 /* ---------- 顶栏 ---------- */
@@ -1281,6 +1284,40 @@ function pickOf(id){
 }
 
 /* ================================================================
+   深链（给「开始.html」的任务卡直达用）
+   契约：#mode=recite|cloze|choice|wrong|list|paper  #fs=all|star|weak|unseen
+        可组合，如 #mode=choice&fs=star；非法值静默忽略，回到默认。
+   只在启动时读一次；运行中切模式不回写 hash（免得一条条写进浏览器历史）。
+   ================================================================ */
+function readDeepLink(){
+  let raw='';
+  try{raw=String(location.hash||'').replace(/^#/,'');}catch(e){return null;}
+  if(!raw)return null;
+  const q={};
+  raw.split('&').forEach(seg=>{
+    const i=seg.indexOf('=');
+    if(i<0)return;
+    let k='',v='';
+    try{k=decodeURIComponent(seg.slice(0,i)).trim().toLowerCase();v=decodeURIComponent(seg.slice(i+1)).trim().toLowerCase();}catch(e){return;}
+    if(k==='mode'||k==='fs')q[k]=v;
+  });
+  let mode=SESS_MODES.indexOf(q.mode)>=0?q.mode:'';
+  /* ⑥ 套卷没有卷子数据就别切过去（道法、公式版都没有） */
+  if(mode==='paper'&&(!PAPER||!PQ.length))mode='';
+  const scope=SCOPES.indexOf(q.fs)>=0?q.fs:'';
+  if(!mode&&!scope)return null;
+  return {mode:mode,scope:scope};
+}
+function applyDeepLink(d){
+  if(d.mode)S.mode=d.mode;
+  if(d.scope)S.scope=d.scope;
+  /* 停在第一题：队列随后由 buildQueue() 按新 mode/scope 重建 */
+  S.qi=0;S.revealed=false;S.scored=false;S.cur=null;S.curPlan=null;S.choice=null;S.optDone=false;
+  if(S.mode==='paper')buildPaper();
+  return d;
+}
+
+/* ================================================================
    续练：启动时恢复上次位置 + 顶部提示条
    ================================================================ */
 let RESUME=null;
@@ -1385,9 +1422,12 @@ function boot(){
     if(S.mode==='paper')buildPaper();
     buildQueue();render();scrollTop();
   });
-  /* 上次练到一半就接着上次；否则正常开新一轮 */
+  /* 上次练到一半就接着上次；否则正常开新一轮
+     带深链过来（任务卡直达）时不恢复上次位置，直接按 hash 指定的模式/范围开 */
+  const deep=readDeepLink();
   BOOTING=true;
-  const restored=applySess(loadSess());
+  const restored=deep?false:applySess(loadSess());
+  if(deep)applyDeepLink(deep);
   if(!restored)buildQueue();
   render();
   BOOTING=false;

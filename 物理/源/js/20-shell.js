@@ -207,9 +207,48 @@
   PHYS._kvRow = kvRow;
   PHYS._wrongRow = wrongRow;
 
-  /* 顶栏按钮 */
+  /* ---------------- 导航横滑提示 ---------------- */
+  /* #nav 在手机上靠 overflow-x 横滑，项目一多后面的模式就推在屏幕外，且没有滚动条。
+     CSS 用 mask-image 做边缘渐隐，这里只负责告诉 CSS「左边/右边还有没有内容」：
+     只读 scrollWidth / clientWidth / scrollLeft，不碰路由、不碰题目逻辑。 */
+  function syncNavEdges(nav) {
+    var max = nav.scrollWidth - nav.clientWidth;
+    var canRight = max > 1 && nav.scrollLeft < max - 1;
+    var canLeft = max > 1 && nav.scrollLeft > 1;
+    nav.classList.toggle('can-scroll-right', canRight);
+    nav.classList.toggle('can-scroll-left', canLeft);
+  }
+
+  function initNavScrollHint(tries) {
+    var nav = document.getElementById('nav');
+    if (!nav) return;
+    /* 导航条目由 PHYS.boot（00-core.js）渲染，而本文件先于 90-app.js 执行：
+       拿到空 nav 就等下一拍再试（最多约 1 秒，失败也不影响页面） */
+    if (!nav.children.length) {
+      if ((tries || 0) < 40) setTimeout(function () { initNavScrollHint((tries || 0) + 1); }, 25);
+      return;
+    }
+    if (nav.getAttribute('data-scroll-hint') === 'on') return;
+    nav.setAttribute('data-scroll-hint', 'on');
+    nav.addEventListener('scroll', function () { syncNavEdges(nav); }, { passive: true });
+    window.addEventListener('resize', function () { syncNavEdges(nav); });
+    window.addEventListener('orientationchange', function () { syncNavEdges(nav); });
+    window.addEventListener('load', function () { syncNavEdges(nav); });
+    if (document.fonts && document.fonts.ready) {
+      try { document.fonts.ready.then(function () { syncNavEdges(nav); }); } catch (e) { }
+    }
+    if (typeof ResizeObserver === 'function') {
+      try { new ResizeObserver(function () { syncNavEdges(nav); }).observe(nav); } catch (e) { }
+    }
+    syncNavEdges(nav);
+    nav.classList.add('nav-ready'); /* 关掉窄屏的纯 CSS 兜底遮罩，改由上面精确控制 */
+  }
+
+  /* 顶栏按钮 + 导航横滑提示 */
   document.addEventListener('DOMContentLoaded', function () {
     var h = document.getElementById('btn-help');
     if (h) h.addEventListener('click', PHYS.shell.help);
+    /* boot 的 DOMContentLoaded 监听在本文件之后注册，推迟一拍才能拿到已渲染的导航 */
+    setTimeout(function () { initNavScrollHint(); }, 0);
   });
 })();

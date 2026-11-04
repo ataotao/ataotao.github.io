@@ -48,6 +48,19 @@ img{max-width:100%}
 .navlink:hover{background:#f1eee7;color:var(--ink)}
 .navlink.on{background:var(--brand);color:#fff;border-color:var(--brand);box-shadow:var(--sh)}
 
+/* 导航可横滑提示：右边还有内容时右缘渐隐，滚到最右自动消失（不添加任何可见控件）。
+   class（.nav-ready / .can-scroll-left / .can-scroll-right）由 20-shell.js 按 scrollLeft 维护；
+   滚到两端都没有遮罩时 = 没有未读内容，视觉上完全恢复原样。 */
+#nav.can-scroll-right{
+  -webkit-mask-image:linear-gradient(to right,#000 calc(100% - 26px),transparent);
+          mask-image:linear-gradient(to right,#000 calc(100% - 26px),transparent)}
+#nav.can-scroll-left{
+  -webkit-mask-image:linear-gradient(to right,transparent,#000 26px);
+          mask-image:linear-gradient(to right,transparent,#000 26px)}
+#nav.can-scroll-left.can-scroll-right{
+  -webkit-mask-image:linear-gradient(to right,transparent,#000 26px,#000 calc(100% - 26px),transparent);
+          mask-image:linear-gradient(to right,transparent,#000 26px,#000 calc(100% - 26px),transparent)}
+
 /* ---------------- 通用 ---------------- */
 .screen{margin-top:18px}
 .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--sh);padding:18px 20px;margin-bottom:14px}
@@ -214,6 +227,10 @@ hr.sep{border:0;border-top:1px dashed var(--line);margin:14px 0}
   .brand p{font-size:11.5px}
   .logo{width:34px;height:34px;flex:0 0 34px;font-size:19px}
   #nav{gap:5px;padding-top:8px}
+  /* 纯 CSS 兜底：窄屏一定放不下 7 项，JS 还没切 class 时也先给右缘渐隐（宁可多提示，不能没提示） */
+  #nav:not(.nav-ready){
+    -webkit-mask-image:linear-gradient(to right,#000 calc(100% - 26px),transparent);
+            mask-image:linear-gradient(to right,#000 calc(100% - 26px),transparent)}
   .navlink{font-size:12.5px;padding:6px 10px}
   .navlink i{font-size:13px}
   .screen{margin-top:14px}
@@ -1206,10 +1223,49 @@ window.PHYS_DATA = {"packs":[{"id":"pk-w1","name":"第1周 · 简单机械（杠
   PHYS._kvRow = kvRow;
   PHYS._wrongRow = wrongRow;
 
-  /* 顶栏按钮 */
+  /* ---------------- 导航横滑提示 ---------------- */
+  /* #nav 在手机上靠 overflow-x 横滑，项目一多后面的模式就推在屏幕外，且没有滚动条。
+     CSS 用 mask-image 做边缘渐隐，这里只负责告诉 CSS「左边/右边还有没有内容」：
+     只读 scrollWidth / clientWidth / scrollLeft，不碰路由、不碰题目逻辑。 */
+  function syncNavEdges(nav) {
+    var max = nav.scrollWidth - nav.clientWidth;
+    var canRight = max > 1 && nav.scrollLeft < max - 1;
+    var canLeft = max > 1 && nav.scrollLeft > 1;
+    nav.classList.toggle('can-scroll-right', canRight);
+    nav.classList.toggle('can-scroll-left', canLeft);
+  }
+
+  function initNavScrollHint(tries) {
+    var nav = document.getElementById('nav');
+    if (!nav) return;
+    /* 导航条目由 PHYS.boot（00-core.js）渲染，而本文件先于 90-app.js 执行：
+       拿到空 nav 就等下一拍再试（最多约 1 秒，失败也不影响页面） */
+    if (!nav.children.length) {
+      if ((tries || 0) < 40) setTimeout(function () { initNavScrollHint((tries || 0) + 1); }, 25);
+      return;
+    }
+    if (nav.getAttribute('data-scroll-hint') === 'on') return;
+    nav.setAttribute('data-scroll-hint', 'on');
+    nav.addEventListener('scroll', function () { syncNavEdges(nav); }, { passive: true });
+    window.addEventListener('resize', function () { syncNavEdges(nav); });
+    window.addEventListener('orientationchange', function () { syncNavEdges(nav); });
+    window.addEventListener('load', function () { syncNavEdges(nav); });
+    if (document.fonts && document.fonts.ready) {
+      try { document.fonts.ready.then(function () { syncNavEdges(nav); }); } catch (e) { }
+    }
+    if (typeof ResizeObserver === 'function') {
+      try { new ResizeObserver(function () { syncNavEdges(nav); }).observe(nav); } catch (e) { }
+    }
+    syncNavEdges(nav);
+    nav.classList.add('nav-ready'); /* 关掉窄屏的纯 CSS 兜底遮罩，改由上面精确控制 */
+  }
+
+  /* 顶栏按钮 + 导航横滑提示 */
   document.addEventListener('DOMContentLoaded', function () {
     var h = document.getElementById('btn-help');
     if (h) h.addEventListener('click', PHYS.shell.help);
+    /* boot 的 DOMContentLoaded 监听在本文件之后注册，推迟一拍才能拿到已渲染的导航 */
+    setTimeout(function () { initNavScrollHint(); }, 0);
   });
 })();
 
