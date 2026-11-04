@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>今晚急救包 · 九上数学期中</title>
+<style>
+:root{
+  --ink:#1b2430; --muted:#6b7684; --line:#e3ded4;
+  --paper:#faf8f4; --card:#ffffff; --brand:#1f6f5c; --brand-d:#155043; --brand-l:#e8f3ef;
+  --accent:#3d6ea8; --warn:#b4690e; --warn-bg:#fdf3e3; --bad:#a32b2b; --bad-bg:#fbeceb;
+  --ok:#1f7a4d; --ok-bg:#e9f6ee; --radius:14px;
+  --sh:0 1px 2px rgba(27,36,48,.05),0 6px 20px -12px rgba(27,36,48,.18);
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--ink);
+  font-family:"PingFang SC","Hiragino Sans GB","Microsoft YaHei",system-ui,-apple-system,"Segoe UI",sans-serif;
+  font-size:16px;line-height:1.75}
+h1,h2,h3,h4,p,ul,ol{margin:0}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
+.app{max-width:880px;margin:0 auto;padding:0 16px 80px}
+.m{font-family:Georgia,"Times New Roman","Songti SC",serif}
+
+/* 顶栏 */
+.appbar{display:flex;align-items:center;gap:12px;padding:16px 0 13px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:11px;min-width:0}
+.logo{width:38px;height:38px;flex:0 0 38px;border-radius:11px;background:var(--brand);color:#fff;
+  display:grid;place-items:center;font:700 19px/1 "PingFang SC",sans-serif}
+.brand h1{font-size:16.5px;line-height:1.25;letter-spacing:.02em}
+.brand p{font-size:12px;color:var(--muted);line-height:1.4}
+.bar-right{margin-left:auto;display:flex;align-items:center;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.chip{font-size:12px;padding:3px 10px;border-radius:999px;background:var(--brand-l);color:var(--brand-d);white-space:nowrap}
+.chip-btn{font-size:12.5px;padding:5px 11px;border-radius:999px;background:#fff;border:1px solid var(--line);
+  color:var(--muted);font-weight:600;font-variant-numeric:tabular-nums}
+.chip-btn:hover{border-color:var(--brand);color:var(--brand-d)}
+.chip-btn.run{background:var(--warn-bg);border-color:#eccfa4;color:var(--warn)}
+
+/* tab */
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin:14px 0 0}
+.tab{padding:7px 13px;border-radius:9px;border:1px solid var(--line);background:#fff;
+  font-size:13.5px;font-weight:600;color:var(--muted);transition:.14s}
+.tab:hover{border-color:#bfd6cd;color:var(--ink)}
+.tab.on{background:var(--brand);border-color:var(--brand);color:#fff}
+.tab .no{font-size:11.5px;opacity:.7;margin-right:4px}
+
+.screen{margin-top:18px;display:none}
+.screen.on{display:block}
+
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  box-shadow:var(--sh);padding:18px 20px;margin-bottom:13px}
+.tag{display:inline-block;font-size:12px;font-weight:700;letter-spacing:.03em;color:var(--brand-d);
+  background:var(--brand-l);padding:2px 9px;border-radius:6px}
+.tag-soft{display:inline-block;font-size:12px;color:var(--muted);background:#f2efe8;padding:2px 9px;border-radius:6px}
+.tag-warn{background:var(--warn-bg);color:var(--warn)}
+.row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.muted{color:var(--muted)}
+.small{font-size:13px}
+.tiny{font-size:12px}
+.spacer{flex:1}
+h2.sec{font-size:19px;line-height:1.4;margin-bottom:4px}
+.sub{font-size:13px;color:var(--muted);margin-bottom:14px}
+
+.btn{padding:9px 17px;border-radius:10px;background:#fff;border:1px solid var(--line);
+  font-size:14px;font-weight:600;transition:.15s;white-space:nowrap}
+.btn:hover{border-color:#c9c2b4;background:#fdfcf9}
+.btn-primary{background:var(--brand);border-color:var(--brand);color:#fff}
+.btn-primary:hover{background:var(--brand-d);border-color:var(--brand-d)}
+.btn-mini{padding:5px 11px;font-size:12.5px;border-radius:8px;border:1px solid var(--line);background:#fff}
+.btn-mini:hover{border-color:var(--brand);color:var(--brand-d)}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+
+/* 首页 */
+.hero{padding:22px 22px 18px;background:linear-gradient(180deg,#fff,#fbf9f5);border:1px solid var(--line);
+  border-radius:16px;box-shadow:var(--sh);margin-bottom:14px}
+.hero h2{font-size:21px;line-height:1.5}
+.hero .why{margin-top:10px;font-size:14px;color:var(--muted);max-width:64ch}
+.hero .why b{color:var(--ink)}
+.plan{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-top:6px}
+.pcard{text-align:left;background:#fff;border:1px solid var(--line);border-radius:var(--radius);
+  padding:15px 17px;box-shadow:var(--sh);transition:.16s;display:flex;flex-direction:column}
+.pcard:hover{border-color:var(--brand);transform:translateY(-1px)}
+.pcard .t{font-size:12px;font-weight:700;color:var(--brand);letter-spacing:.06em}
+.pcard h3{font-size:15.5px;margin-top:3px}
+.pcard p{font-size:12.8px;color:var(--muted);margin-top:5px;line-height:1.6}
+.pcard .go{font-size:12.5px;color:var(--brand);font-weight:700;margin-top:auto;padding-top:9px}
+.note{font-size:12.5px;color:var(--muted);line-height:1.75;background:#f7f5f0;border:1px solid var(--line);
+  border-radius:11px;padding:11px 14px;margin-top:12px}
+
+/* 分数账 */
+.tbl{width:100%;border-collapse:collapse;font-size:13.5px}
+.tbl th,.tbl td{padding:7px 6px;border-bottom:1px solid #efebe2;text-align:left}
+.tbl th{font-size:12px;color:var(--muted);font-weight:600}
+.tbl td.n{text-align:right;font-variant-numeric:tabular-nums}
+.tbl tr:last-child td{border-bottom:0}
+.tbl .inc{color:var(--ok);font-weight:700}
+
+/* 基础快练 */
+.qbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.pbar{height:6px;border-radius:99px;background:#eee9df;overflow:hidden;margin-bottom:14px}
+.pbar i{display:block;height:100%;background:var(--brand);border-radius:99px;transition:.3s;width:0}
+.qmeta{font-size:12.5px;color:var(--muted);display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:9px}
+.stem{font-size:15.5px;line-height:1.95;white-space:pre-wrap}
+.opts{display:flex;flex-direction:column;gap:8px;margin-top:14px}
+.opt{display:flex;gap:11px;align-items:flex-start;text-align:left;padding:11px 14px;border-radius:11px;
+  border:1.5px solid var(--line);background:#fff;font-size:14.5px;line-height:1.65;transition:.13s;width:100%}
+.opt:hover{border-color:#bfd6cd;background:#fcfdfc}
+.opt .k{width:20px;height:20px;flex:0 0 20px;border-radius:6px;background:#f0ede6;color:var(--muted);
+  font-size:12px;font-weight:700;display:grid;place-items:center;margin-top:2px}
+.opt.ok{border-color:#9dd3b4;background:var(--ok-bg)}
+.opt.ok .k{background:var(--ok);color:#fff}
+.opt.no{border-color:#e5b3af;background:var(--bad-bg)}
+.opt.no .k{background:var(--bad);color:#fff}
+.opt.dim{opacity:.5}
+.fb{margin-top:13px;padding:12px 14px;border-radius:11px;font-size:13.6px;line-height:1.8;display:none}
+.fb.show{display:block}
+.fb.good{background:var(--ok-bg);border:1px solid #cfe6d8}
+.fb.bad{background:var(--bad-bg);border:1px solid #eed3d0}
+.fb b{display:block;margin-bottom:3px}
+.fb .tip{display:block;margin-top:6px;padding-top:6px;border-top:1px dashed rgba(0,0,0,.1);color:var(--warn)}
+.qfoot{display:flex;gap:8px;align-items:center;margin-top:14px;flex-wrap:wrap}
+
+/* 公式卡 */
+.fcards{display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:start}
+.fcard{background:#fff;border:1px solid var(--line);border-radius:12px;padding:13px 15px;text-align:left;
+  transition:.15s;box-shadow:var(--sh)}
+.fcard:hover{border-color:#bfd6cd}
+.fcard .ft{font-size:13.5px;font-weight:700;color:var(--brand-d)}
+.fcard .fq{font-size:12px;color:var(--muted);margin-top:3px}
+.fcard .fa{display:none;margin-top:9px;padding-top:9px;border-top:1px dashed var(--line);
+  font-size:14.5px;line-height:1.85;color:var(--ink);white-space:pre-wrap}
+.fcard.open .fa{display:block}
+.fcard.open{border-color:var(--brand);background:#fbfdfc;grid-column:1 / -1}
+.fcard .hint{font-size:11.5px;color:var(--accent);margin-top:5px}
+.fcard.open .hint{display:none}
+
+/* 得分点卡 */
+.ccard{background:#fff;border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--sh);
+  padding:17px 19px;margin-bottom:12px}
+.chead{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-bottom:10px}
+.cask{font-size:14.5px;line-height:1.9;white-space:pre-wrap;background:#fbfaf7;border:1px solid var(--line);
+  border-radius:11px;padding:12px 14px}
+.slist{list-style:none;margin:12px 0 0;padding:0;display:flex;flex-direction:column;gap:9px}
+.slist li{border:1px solid var(--line);border-radius:11px;padding:11px 13px;background:#fff}
+.slist .sh{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.slist .sl{font-size:13.5px;font-weight:700;color:var(--brand-d)}
+.slist .sp{font-size:11.5px;font-weight:700;color:var(--warn);background:var(--warn-bg);padding:1px 7px;border-radius:5px}
+.slist .sx{display:none;margin-top:9px;font-size:13.6px;line-height:1.85;color:#2b3542;white-space:pre-wrap;
+  background:#f4f8fb;border:1px dashed #c9d9e8;border-radius:9px;padding:10px 12px}
+.slist li.open .sx{display:block}
+.slist .ck{display:none;margin-top:9px;font-size:13px;color:var(--muted);align-items:center;gap:7px;cursor:pointer;width:fit-content}
+.slist li.open .ck{display:flex}
+.slist .ck input{width:16px;height:16px;accent-color:var(--brand)}
+.slist li.done{border-color:#9dd3b4;background:var(--ok-bg)}
+.cnote{font-size:12.5px;color:var(--warn);margin-top:10px;line-height:1.75;background:var(--warn-bg);
+  border-radius:9px;padding:9px 12px}
+
+/* 考场 */
+.rule{display:flex;gap:11px;padding:10px 0;border-bottom:1px dashed var(--line);font-size:14px;line-height:1.75}
+.rule:last-child{border-bottom:0}
+.rule .rn{flex:0 0 24px;height:24px;border-radius:7px;background:var(--brand-l);color:var(--brand-d);
+  font-size:12px;font-weight:700;display:grid;place-items:center;margin-top:2px}
+.redline{display:flex;gap:9px;font-size:13.8px;line-height:1.8;padding:8px 0;border-bottom:1px dashed var(--line)}
+.redline:last-child{border-bottom:0}
+.redline .x{flex:0 0 18px;color:var(--bad);font-weight:700}
+
+@media (max-width:640px){
+  .plan,.fcards{grid-template-columns:1fr}
+  .card,.ccard{padding:15px 15px}
+  .hero{padding:18px 16px}
+  .hero h2{font-size:19px}
+  .stem{font-size:15px}
+}
+@media print{
+  .appbar,.tabs,.btn,.chip-btn,.qbar,.qfoot{display:none!important}
+  .screen{display:none!important}
+  .screen.on{display:block!important}
+  body{background:#fff}
+  .card,.ccard{box-shadow:none;break-inside:avoid}
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <div class="appbar">
+    <div class="brand">
+      <div class="logo">急</div>
+      <div>
+        <h1>今晚急救包 · 九上数学期中</h1>
+        <p>只练能拿分的那部分 · 约 60 分钟</p>
+      </div>
+    </div>
+    <div class="bar-right">
+      <span class="chip" id="ptsChip">抢分 0</span>
+      <button class="chip-btn" id="tclock" title="点击开始 / 暂停倒计时">剩余 60:00</button>
+    </div>
+  </div>
+
+  <div class="tabs" id="tabs">
+    <button class="tab on" data-v="home"><span class="no">0</span>今晚怎么用</button>
+    <button class="tab" data-v="a"><span class="no">A</span>基础快练</button>
+    <button class="tab" data-v="b"><span class="no">B</span>公式速查</button>
+    <button class="tab" data-v="c"><span class="no">C</span>只写得分点</button>
+    <button class="tab" data-v="d"><span class="no">D</span>考场动作</button>
+  </div>
+
+  <!-- ================= 首页 ================= -->
+  <section class="screen on" id="v-home">
+    <div class="hero">
+      <h2>49 → 90 的那 41 分，<br>今晚只抓其中的 33 分。</h2>
+      <p class="why">上一次卷子暴露的不是"不会做题"，是<b>基础概念有一半是模糊的</b>，加上<b>大题连第一步都没落笔</b>。
+      这两件事今晚都能动。压轴题（24、25 的后两问）一分不碰——那是投入产出比最差的地方。</p>
+      <div class="note" style="margin-top:12px">
+        <b>今晚的原则：</b>会的题一次就对（不丢冤枉分）· 大题不留空白（写"设…"也有分）· 3 分钟没思路就跳。
+      </div>
+    </div>
+
+    <div class="plan">
+      <button class="pcard" data-go="a">
+        <span class="t">A · 18 分钟</span>
+        <h3>基础快练 32 题</h3>
+        <p>五块分池（方程 / 二次 / 反比例 / 一次 / 变换），一题只考一个辨别点。平均 30 秒一题，卡住就跳过。</p>
+        <span class="go">开始刷 →</span>
+      </button>
+      <button class="pcard" data-go="b">
+        <span class="t">B · 10 分钟</span>
+        <h3>公式速查 8 张卡</h3>
+        <p>先盖住答案自己说一遍，再点开对照。8 条里今晚只需背死 4 条。</p>
+        <span class="go">开始背 →</span>
+      </button>
+      <button class="pcard" data-go="c">
+        <span class="t">C · 25 分钟</span>
+        <h3>只写得分点 6 道</h3>
+        <p>不求解。每题只写前两步，写完对照"这步值几分"。这是涨 13 分的地方。</p>
+        <span class="go">开始写 →</span>
+      </button>
+      <button class="pcard" data-go="d">
+        <span class="t">D · 7 分钟</span>
+        <h3>考场动作 + 明早速览</h3>
+        <p>100 分钟怎么分、哪些动作白送分、明早 8 条红线（可打印）。</p>
+        <span class="go">看一眼 →</span>
+      </button>
+    </div>
+
+    <div class="card" style="margin-top:13px">
+      <div class="row"><span class="tag tag-warn">只剩 30 分钟</span><span class="small muted">时间不够就按这个顺序砍</span></div>
+      <p class="small" style="margin-top:9px;line-height:1.95">
+        <b>10′</b>　B 模块「只背这 4 条」（顶点式、判别式、韦达、平移）——这四条今晚背了明早就能用<br>
+        <b>12′</b>　C 模块只做第 19、20、21 题的前两步（含参方程、销售利润、隧道建模，这三类最容易落笔得分）<br>
+        <b>8′</b>　D 模块八条红线，抄到一张纸上，明早出门前看
+      </p>
+      <p class="tiny muted" style="margin-top:8px">A 模块的 32 题可以不做完，但<b>错题清单一</b>定要看一眼——那里全是明天最可能再错的地方。</p>
+    </div>
+
+    <div class="card" style="margin-top:14px">
+      <h3 style="font-size:15px;margin-bottom:8px">这张表的账，今晚不动最后一列</h3>
+      <table class="tbl">
+        <tr><th>板块</th><th class="n">上次</th><th class="n">目标</th><th class="n">可增量</th><th>今晚做什么</th></tr>
+        <tr><td>选择 + 填空（64）</td><td class="n">32</td><td class="n">52</td><td class="n inc">+20</td><td>A 模块</td></tr>
+        <tr><td>17–20（28）</td><td class="n">15</td><td class="n">23</td><td class="n inc">+8</td><td>C 模块 19、20</td></tr>
+        <tr><td>21–25（58）</td><td class="n">2</td><td class="n">15</td><td class="n inc">+13</td><td>C 模块只写第一问</td></tr>
+        <tr><td><b>合计</b></td><td class="n"><b>49</b></td><td class="n"><b>90</b></td><td class="n inc">+41</td><td>今晚抓 33</td></tr>
+      </table>
+      <p class="tiny muted" style="margin-top:8px">明天不追求 90 分，追求"该拿的分不丢"。这句话比任何计划都重要。</p>
+    </div>
+
+    <div class="card">
+      <div class="row">
+        <span class="tag">顺序</span>
+        <span class="small">建议 <b>B → A → C → D</b>：先花 10 分钟把 4 条公式背死，再刷题，正确率会明显不一样。</span>
+      </div>
+      <div class="note">
+        做不完就砍 A 的题量（32 题不必做完），<b>B 和 C 别砍</b>——它们直接对着客观题和大题第一问。
+        记录只存在这台设备的浏览器里，关掉网页不丢。
+      </div>
+      <div class="row" style="margin-top:12px">
+        <button class="btn btn-mini" id="resetBtn">清空今晚记录，重新开始</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= A 基础快练 ================= -->
+  <section class="screen" id="v-a">
+    <h2 class="sec">A · 基础快练</h2>
+    <p class="sub">32 题，每题 4 个选项。想清楚再点，点了就出解析。目标是<b>一次就对</b>，不是做完；平均 30 秒一题，卡住就跳过。</p>
+
+    <div class="qbar">
+      <button class="tab on" data-f="ALL">全部</button>
+      <button class="tab" data-f="P4">方程</button>
+      <button class="tab" data-f="P3">二次</button>
+      <button class="tab" data-f="P2">反比例</button>
+      <button class="tab" data-f="P1">一次</button>
+      <button class="tab" data-f="P5">变换</button>
+      <button class="tab" data-f="WRONG">只看错题</button>
+    </div>
+
+    <div class="pbar"><i id="pbar"></i></div>
+    <div class="qmeta" id="qmeta"></div>
+
+    <div class="card" id="qcard">
+      <div class="stem" id="qstem"></div>
+      <div class="opts" id="qopts"></div>
+      <div class="fb" id="qfb"></div>
+      <div class="qfoot">
+        <button class="btn btn-primary" id="nextBtn">下一题 →</button>
+        <button class="btn" id="prevBtn">← 上一题</button>
+        <span class="spacer"></span>
+        <span class="tiny muted" id="stat"></span>
+      </div>
+    </div>
+
+    <div class="card" id="wrongCard" style="display:none">
+      <div class="row"><span class="tag tag-warn">错题清单</span><span class="small muted">明天路上看这个</span></div>
+      <ul class="slist" id="wrongList" style="margin-top:10px"></ul>
+    </div>
+  </section>
+
+  <!-- ================= B 公式 ================= -->
+  <section class="screen" id="v-b">
+    <h2 class="sec">B · 公式速查</h2>
+    <p class="sub">先盖住、自己说一遍，再点开。说错的那张，用手指在桌上写三遍。</p>
+    <div class="fcards" id="fcards"></div>
+    <div class="card" style="margin-top:14px">
+      <div class="row"><span class="tag">只背这 4 条</span><span class="small muted">时间不够就只记这四张</span></div>
+      <p class="small" style="margin-top:9px;line-height:1.9">
+        ① 顶点式 <b class="m">y = a(x − h)² + k</b> → 顶点是 <b class="m">(h, k)</b>，别写成 (−h, k)<br>
+        ② 判别式 <b class="m">Δ = b² − 4ac</b>：&gt;0 两不等、=0 两相等、&lt;0 无实根<br>
+        ③ 韦达 <b class="m">x₁ + x₂ = −b/a</b>，<b class="m">x₁x₂ = c/a</b>（和那个负号最容易丢）<br>
+        ④ 平移「左加右减、上加下减」，加减都加在 <b>x</b> 自己身上：<b class="m">y = 2x²</b> 左移 3 → <b class="m">y = 2(x + 3)²</b>
+      </p>
+    </div>
+  </section>
+
+  <!-- ================= C 得分点 ================= -->
+  <section class="screen" id="v-c">
+    <h2 class="sec">C · 只写得分点</h2>
+    <p class="sub">6 道大题。<b>不求解，只写每题的前两步</b>，写完点开对照"这步值几分"。写得出来就打勾。</p>
+    <div id="ccards"></div>
+    <div class="card">
+      <div class="row"><span class="tag tag-warn">写完记住这一句</span></div>
+      <p class="small" style="margin-top:8px;line-height:1.9">
+        昨天那 58 分只拿了 2 分，不是因为不会——是<b>没有落笔</b>。解答题是分步给分的，
+        写"设这条抛物线的解析式为…"本身就值 1–2 分。明天遇到大题，第一件事不是想清楚，是<b>先写"设"和"由题意得"</b>。
+      </p>
+    </div>
+  </section>
+
+  <!-- ================= D 考场 ================= -->
+  <section class="screen" id="v-d">
+    <h2 class="sec">D · 考场动作</h2>
+    <p class="sub">这些不是为了多会几道题，是为了不再丢"本来能拿的分"。</p>
+
+    <div class="card">
+      <h3 style="font-size:15.5px;margin-bottom:6px">100 分钟怎么花（150 分卷）</h3>
+      <table class="tbl">
+        <tr><th>时段</th><th>做什么</th><th>目标</th></tr>
+        <tr><td>0–25′</td><td>选择 1–10、填空 11–16</td><td>能算的算准，不会的先标记跳过</td></tr>
+        <tr><td>25–55′</td><td>17–20</td><td>每道都写全四步，拿下 23 分</td></tr>
+        <tr><td>55–90′</td><td>21–23 第一问、24 第一问</td><td>每题先写 2–3 个得分点</td></tr>
+        <tr><td>90–100′</td><td>25 第一问 + 检查</td><td>检查符号、范围、单位</td></tr>
+      </table>
+      <p class="tiny muted" style="margin-top:8px">剩最后 10 分钟，宁可去检查前面的客观题，也不要死磕压轴最后一问。</p>
+    </div>
+
+    <div class="card">
+      <h3 style="font-size:15.5px;margin-bottom:4px">六条铁律</h3>
+      <div class="rule"><span class="rn">1</span><span><b>一道题 3 分钟没思路就跳。</b>不是放弃，是先把能拿的分装进口袋。</span></div>
+      <div class="rule"><span class="rn">2</span><span><b>解答题绝不留空白。</b>写"设…"、"由题意得…"、"当 x = 0 时…"都比空着强。</span></div>
+      <div class="rule"><span class="rn">3</span><span><b>选择填空不留空。</b>实在不会就选最像的那个，25% 也是分。</span></div>
+      <div class="rule"><span class="rn">4</span><span><b>看到"降价/增长"就写 (1 ± x)²。</b>增长率、降价率都是这个模型。</span></div>
+      <div class="rule"><span class="rn">5</span><span><b>看到函数题先画草图。</b>顶点、与坐标轴交点，标上去，答案常常自己跳出来。</span></div>
+      <div class="rule"><span class="rn">6</span><span><b>检查只看三样：符号、范围（x &gt; 0？）、单位。</b>这三样占了算错的一大半。</span></div>
+    </div>
+
+    <div class="card" id="printCard">
+      <div class="row">
+        <span class="tag">明早 5 分钟</span>
+        <span class="small muted">出门前只看这一张</span>
+        <span class="spacer"></span>
+        <button class="btn btn-mini" onclick="window.print()">打印这张</button>
+      </div>
+      <h3 style="font-size:16px;margin:12px 0 8px">八条红线（每条都踩过一次）</h3>
+      <div class="redline"><span class="x">1</span><span><b class="m">y = a(x − h)² + k</b> 的顶点是 <b class="m">(h, k)</b>。看到 (x + 3)² 就是 h = −3。</span></div>
+      <div class="redline"><span class="x">2</span><span>平移加在 x 上：<b class="m">y = 2x²</b> 向左 3 → <b class="m">y = 2(x + 3)²</b>；向下 1 → 末尾 −1。</span></div>
+      <div class="redline"><span class="x">3</span><span>解 <b class="m">x² = 3x</b> 千万别两边除以 x，会丢 <b class="m">x = 0</b>。先移项再提公因式。</span></div>
+      <div class="redline"><span class="x">4</span><span><b class="m">Δ = b² − 4ac</b>，注意 c 带符号；Δ &gt; 0 是两个不相等实根。</span></div>
+      <div class="redline"><span class="x">5</span><span>韦达：<b class="m">x₁ + x₂ = −b/a</b>，那个负号最容易漏。</span></div>
+      <div class="redline"><span class="x">6</span><span>反比例 <b class="m">y = k/x</b>：k &gt; 0 在一、三象限，且<b>每个象限内</b> y 随 x 增大而减小。比大小先看是否同一象限。</span></div>
+      <div class="redline"><span class="x">7</span><span>关于原点对称 <b class="m">(−x, −y)</b>；关于 x 轴对称 <b class="m">(x, −y)</b>；绕原点顺时针 90° → <b class="m">(y, −x)</b>。</span></div>
+      <div class="redline"><span class="x">8</span><span>一次函数 <b class="m">y = kx + b</b>：k &gt; 0 上升，b 就是与 y 轴交点的纵坐标。</span></div>
+      <div class="note" style="margin-top:12px">
+        最后一句：明天的目标不是 90 分，是<b>会的都对、大题都落笔</b>。做到这两条，分数自己会到。
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<script>
+/* ============ 数据：基础快练 32 题 ============ */
+const POOL = {
+  P1:'一次函数', P2:'反比例函数', P3:'二次函数', P4:'方程与应用', P5:'图形变换'
+};
+
+const QS = [
+  /* ---------- P1 一次函数 ---------- */
+  {id:'a1',p:'P1',ask:'一次函数 y = −2x + 3 的图象经过哪几个象限？',
+   opts:['一、二、四','一、二、三','一、三、四','二、三、四'],ans:0,
+   why:'k = −2 < 0，图象从左上往右下；b = 3 > 0，与 y 轴交于正半轴。所以过一、二、四象限。',
+   tip:'k 看走向，b 看与 y 轴的交点在哪半边。'},
+  {id:'a2',p:'P1',ask:'直线 y = kx + 2 经过点 (1, 5)，则 k 的值是（　）',
+   opts:['3','2','7','−3'],ans:0,
+   why:'把 (1,5) 代入：5 = k·1 + 2，所以 k = 3。',
+   tip:'"点在图象上"就是"坐标满足解析式"，代入是万能第一步。'},
+  {id:'a3',p:'P1',ask:'一次函数 y = 2x − 4 的图象与 x 轴的交点坐标是（　）',
+   opts:['(2, 0)','(0, −4)','(−2, 0)','(0, 2)'],ans:0,
+   why:'与 x 轴相交就是 y = 0：0 = 2x − 4，解得 x = 2，交点是 (2, 0)。',
+   tip:'与 x 轴交点令 y = 0；与 y 轴交点令 x = 0。这两个别搞反。'},
+  {id:'a4',p:'P1',ask:'把直线 y = 2x + 1 向下平移 3 个单位，得到的直线是（　）',
+   opts:['y = 2x − 2','y = 2x + 4','y = 2x − 1','y = 2x − 5'],ans:0,
+   why:'上下平移只改常数项：向下 3 就是 2x + 1 − 3 = 2x − 2。',
+   tip:'上加下减改 b；左加右减改 x。'},
+  {id:'a5',p:'P1',ask:'一次函数 y = −3x + 1 中，y 随 x 的增大而（　）',
+   opts:['减小','增大','不变','先增后减'],ans:0,
+   why:'k = −3 < 0，所以 y 随 x 增大而减小。',
+   tip:'只看 k 的符号，一次函数没有"先增后减"。'},
+  {id:'a6',p:'P1',ask:'直线 y = 2x + 1 与直线 y = kx − 3 平行，则 k 的值是（　）',
+   opts:['2','−3','1','−2'],ans:0,
+   why:'两直线平行则 k 相等，所以 k = 2（b 不同就不重合）。',
+   tip:'平行看 k，垂直看 k₁·k₂ = −1（这题不考，记住前半句就够）。'},
+
+  /* ---------- P2 反比例 ---------- */
+  {id:'b1',p:'P2',ask:'点 (2, 3) 在反比例函数 y = k/x 的图象上，则 k = （　）',
+   opts:['6','5','1.5','−6'],ans:0,
+   why:'代入得 3 = k/2，所以 k = 6。（也就是 k = xy）',
+   tip:'反比例求 k，直接把点的横纵坐标相乘。'},
+  {id:'b2',p:'P2',ask:'反比例函数 y = 6/x 的图象位于（　）',
+   opts:['第一、三象限','第二、四象限','第一、二象限','第三、四象限'],ans:0,
+   why:'k = 6 > 0，图象在一、三象限，且每个象限内 y 随 x 增大而减小。',
+   tip:'k > 0 在一三，k < 0 在二四。记不住的想 y = 1/x 过的点 (1,1)。'},
+  {id:'b3',p:'P2',ask:'对于反比例函数 y = −4/x，在每个象限内，y 随 x 的增大而（　）',
+   opts:['增大','减小','不变','无法确定'],ans:0,
+   why:'k = −4 < 0，图象在二、四象限，在每个象限内 y 随 x 增大而增大。',
+   tip:'"每个象限内"这五个字很关键，跨象限不能比增减。'},
+  {id:'b4',p:'P2',ask:'反比例函数 y = k/x（k ≠ 0）图象上一点，向两条坐标轴作垂线，与坐标轴围成的矩形面积是 5，则 |k| = （　）',
+   opts:['5','10','2.5','25'],ans:0,
+   why:'设点为 (x, y)，则矩形面积 = |x|·|y| = |xy| = |k|，所以 |k| = 5。',
+   tip:'|k| 就是那个矩形的面积，也是三角形面积的 2 倍。'},
+  {id:'b5',p:'P2',ask:'若点 (2, −3) 在反比例函数 y = k/x 的图象上，则下列各点也在图象上的是（　）',
+   opts:['(−2, 3)','(2, 3)','(−2, −3)','(3, 2)'],ans:0,
+   why:'k = 2 × (−3) = −6，图象上每点都满足 xy = −6。只有 (−2)×3 = −6。',
+   tip:'反比例的判据是 xy 恒定，代进去乘一下就完事。'},
+  {id:'b6',p:'P2',ask:'反比例函数 y = k/x 的图象经过点 (−2, 4)，则当 x = 4 时，y 的值是（　）',
+   opts:['−2','2','−8','8'],ans:0,
+   why:'先求 k：k = xy = (−2)×4 = −8，所以 y = −8/x。当 x = 4 时，y = −8/4 = −2。',
+   tip:'两步走：先用一个点定 k，再代另一个 x。顺序反了就会卡住。'},
+
+  /* ---------- P3 二次函数 ---------- */
+  {id:'c1',p:'P3',ask:'抛物线 y = −2(x − 1)² + 3 的顶点坐标是（　）',
+   opts:['(1, 3)','(−1, 3)','(1, −3)','(−2, 3)'],ans:0,
+   why:'顶点式 y = a(x − h)² + k 的顶点是 (h, k)，这里 h = 1，k = 3。',
+   tip:'括号里是 (x − 1)，h 就是 1；如果是 (x + 1)，h 才是 −1。'},
+  {id:'c2',p:'P3',ask:'抛物线 y = x² − 4x + 5 的对称轴是（　）',
+   opts:['x = 2','x = −2','x = 4','x = −4'],ans:0,
+   why:'对称轴 x = −b/(2a) = −(−4)/(2×1) = 2。也可配方：y = (x − 2)² + 1。',
+   tip:'对称轴公式里 b 本身带负号，先看清 b = −4 再套。'},
+  {id:'c3',p:'P3',ask:'把抛物线 y = 2x² 先向左平移 3 个单位，再向下平移 1 个单位，所得抛物线的解析式是（　）',
+   opts:['y = 2(x + 3)² − 1','y = 2(x − 3)² − 1','y = 2(x + 3)² + 1','y = 2(x − 3)² + 1'],ans:0,
+   why:'左移 3 → x 换成 (x + 3)；下移 1 → 整体减 1。得 y = 2(x + 3)² − 1。',
+   tip:'"左加右减"加的是 x 自己，别加在括号外面。'},
+  {id:'c4',p:'P3',ask:'抛物线 y = x² − 2x − 3 与 x 轴的交点个数是（　）',
+   opts:['2 个','1 个','0 个','3 个'],ans:0,
+   why:'Δ = b² − 4ac = (−2)² − 4×1×(−3) = 4 + 12 = 16 > 0，所以有两个交点（(−1,0) 和 (3,0)）。',
+   tip:'交点个数看 Δ，不用真的解方程。'},
+  {id:'c5',p:'P3',ask:'二次函数 y = −x² + 4x 的最大值是（　）',
+   opts:['4','0','2','16'],ans:0,
+   why:'y = −(x² − 4x) = −(x − 2)² + 4，开口向下，x = 2 时取最大值 4。',
+   tip:'求最值先配方成顶点式，开口向下就是"顶点的 y"最大。'},
+  {id:'c6',p:'P3',ask:'对于二次函数 y = (x − 2)² + 1，当 x < 2 时，y 随 x 的增大而（　）',
+   opts:['减小','增大','不变','先增后减'],ans:0,
+   why:'开口向上，对称轴 x = 2。对称轴左边（x < 2）y 随 x 增大而减小。',
+   tip:'开口向上：左减右增；开口向下：左增右减。'},
+  {id:'c7',p:'P3',ask:'若抛物线 y = ax² + bx + c 与 y 轴交于点 (0, 3)，且对称轴是 x = 1，则它一定经过点（　）',
+   opts:['(2, 3)','(−1, 3)','(1, 3)','(3, 0)'],ans:0,
+   why:'点 (0,3) 关于对称轴 x = 1 的对称点是 (2, 3)，抛物线关于对称轴对称，所以必过 (2, 3)。',
+   tip:'看到"对称轴 + 一个点"，第一时间找对称点，常常直接出答案。'},
+
+  /* ---------- P4 方程与应用 ---------- */
+  {id:'d1',p:'P4',ask:'方程 x² − 5x + 6 = 0 的两根是（　）',
+   opts:['x = 2 或 x = 3','x = −2 或 x = −3','x = 1 或 x = 6','x = −1 或 x = −6'],ans:0,
+   why:'因式分解：(x − 2)(x − 3) = 0，所以 x = 2 或 x = 3。（两根之和 5，之积 6，对得上）',
+   tip:'分解不出来就用求根公式，别在因式分解上耗超过 1 分钟。'},
+  {id:'d2',p:'P4',ask:'方程 x² = 3x 的解是（　）',
+   opts:['x = 3','x = 0 或 x = 3','x = 0','x = ±√3'],ans:1,
+   why:'移项：x² − 3x = 0，提公因式：x(x − 3) = 0，所以 x = 0 或 x = 3。',
+   tip:'两边同时除以 x 会丢掉 x = 0 这个根，这是最高频的失分点。'},
+  {id:'d3',p:'P4',ask:'关于 x 的方程 x² − 2x + m = 0 有两个不相等的实数根，则 m 的取值范围是（　）',
+   opts:['m < 1','m ≤ 1','m > 1','m < 0'],ans:0,
+   why:'Δ = (−2)² − 4·1·m = 4 − 4m > 0，解得 m < 1。',
+   tip:'"两个不相等"是 Δ > 0，"两个相等"是 Δ = 0，别混。'},
+  {id:'d4',p:'P4',ask:'若 x₁、x₂ 是方程 x² − 3x − 2 = 0 的两根，则 x₁ + x₂ = （　）',
+   opts:['3','−3','2','−2'],ans:0,
+   why:'由韦达定理 x₁ + x₂ = −b/a = −(−3)/1 = 3。',
+   tip:'和 = −b/a（带负号），积 = c/a（不带负号，但 c 自己可能负）。'},
+  {id:'d5',p:'P4',ask:'用配方法解方程 x² + 4x − 1 = 0，配方后得到（　）',
+   opts:['(x + 2)² = 5','(x + 2)² = 3','(x + 4)² = 17','(x − 2)² = 5'],ans:0,
+   why:'x² + 4x = 1，两边加 4：(x + 2)² = 5。',
+   tip:'配方法就是"加一次项系数一半的平方"，4 的一半是 2，平方是 4。'},
+  {id:'d6',p:'P4',ask:'某商品原价 100 元，连续两次降价，每次降价的百分率都是 x，现价为 81 元，则所列方程是（　）',
+   opts:['100(1 − x)² = 81','100(1 − 2x) = 81','100(1 − x²) = 81','81(1 + x)² = 100'],ans:0,
+   why:'第一次降价后 100(1 − x)，第二次再乘 (1 − x)，得 100(1 − x)² = 81（解得 x = 0.1）。',
+   tip:'"连续两次"就平方，降价用减、增长用加。'},
+
+  /* ---------- P5 图形变换 ---------- */
+  {id:'e1',p:'P5',ask:'点 A(−2, 3) 关于原点对称的点的坐标是（　）',
+   opts:['(2, −3)','(−2, −3)','(2, 3)','(3, −2)'],ans:0,
+   why:'关于原点对称：横纵坐标都变号，(−2,3) → (2,−3)。',
+   tip:'原点对称 = 转 180°，两个坐标都变号。'},
+  {id:'e2',p:'P5',ask:'点 P(3, −1) 关于 x 轴对称的点的坐标是（　）',
+   opts:['(3, 1)','(−3, −1)','(−3, 1)','(−1, 3)'],ans:0,
+   why:'关于 x 轴对称，横坐标不变、纵坐标变号：(3, −1) → (3, 1)。',
+   tip:'关于谁对称，谁就不变——关于 x 轴对称 x 不变。'},
+  {id:'e3',p:'P5',ask:'把点 (2, 5) 绕原点顺时针旋转 90°，得到的点的坐标是（　）',
+   opts:['(5, −2)','(−5, 2)','(−2, 5)','(2, −5)'],ans:0,
+   why:'绕原点顺时针 90°：(x, y) → (y, −x)，所以 (2,5) → (5,−2)。',
+   tip:'记不住就用图：(2,5) 在第一象限，顺时针转 90° 到第四象限，横坐标变大、纵坐标变负。'},
+  {id:'e4',p:'P5',ask:'下列图形中，既是轴对称图形又是中心对称图形的是（　）',
+   opts:['正方形','等边三角形','等腰梯形','平行四边形'],ans:0,
+   why:'正方形两条都满足；等边三角形只有轴对称；等腰梯形只有轴对称；平行四边形只有中心对称。',
+   tip:'平行四边形是"中心对称但一般不轴对称"的典型，考试常拿它做干扰项。'},
+  {id:'e5',p:'P5',ask:'把抛物线 y = x² 沿 x 轴翻折（即关于 x 轴对称），所得抛物线的解析式是（　）',
+   opts:['y = −x²','y = x²','y = (x − 1)²','y = x² + 1'],ans:0,
+   why:'关于 x 轴对称，y 变成 −y：−y = x²，即 y = −x²。',
+   tip:'关于 x 轴翻折 = 开口反向，a 变号。'},
+  {id:'e6',p:'P5',ask:'把一个图形绕某一点旋转 180° 后能与自身重合，这样的图形叫做（　）',
+   opts:['中心对称图形','轴对称图形','平移图形','位似图形'],ans:0,
+   why:'绕某点旋转 180° 后与自身重合，就是中心对称图形（那个点叫对称中心）。',
+   tip:'轴对称是"翻折重合"，中心对称是"转 180° 重合"，两个定义别混。'},
+  {id:'e7',p:'P5',ask:'线段 AB 平移后，点 A(1, 2) 的对应点是 A′(4, 6)，则点 B(0, 5) 的对应点 B′ 的坐标是（　）',
+   opts:['(3, 9)','(3, 1)','(−3, 9)','(4, 11)'],ans:0,
+   why:'平移向量是 (4−1, 6−2) = (3, 4)，所以 B′ = (0+3, 5+4) = (3, 9)。',
+   tip:'平移题先算"每个坐标加了多少"，再套到另一个点上。'}
+];
+
+/* ============ 数据：公式卡 ============ */
+const FC = [
+  {t:'求根公式', q:'ax² + bx + c = 0（a ≠ 0），x = ?',
+   a:'x = (−b ± √(b² − 4ac)) / (2a)\n\n先算 Δ = b² − 4ac，再开根号。开不出来就说明无实根或算错了。'},
+  {t:'判别式 Δ', q:'Δ 有几种情况，各对应什么？',
+   a:'Δ = b² − 4ac\n\nΔ > 0 → 两个不相等的实数根\nΔ = 0 → 两个相等的实数根\nΔ < 0 → 没有实数根\n\n（对抛物线：与 x 轴 2 个 / 1 个 / 0 个交点）'},
+  {t:'韦达定理', q:'两根之和、两根之积分别等于什么？',
+   a:'x₁ + x₂ = −b/a\nx₁ · x₂ = c/a\n\n和的那个负号最容易丢。用 x² − 5x + 6 = 0 验一遍：和 5、积 6，对。'},
+  {t:'顶点与对称轴', q:'y = ax² + bx + c 的顶点坐标、对称轴？',
+   a:'对称轴 x = −b/(2a)\n顶点 (−b/(2a), (4ac − b²)/(4a))\n\n最实用的做法：先配方成顶点式，别硬背顶点纵坐标公式。'},
+  {t:'顶点式', q:'y = a(x − h)² + k 里，顶点和开口怎么读？',
+   a:'顶点 (h, k)，对称轴 x = h\n\na > 0 开口向上，有最小值 k\na < 0 开口向下，有最大值 k\n\n看到 (x + 3)²，h = −3，不是 3。'},
+  {t:'平移口诀', q:'图象左右、上下平移，解析式怎么变？',
+   a:'左加右减（改 x）、上加下减（改常数）\n\ny = 2x² 向左 3 → y = 2(x + 3)²\ny = 2x² 向下 1 → y = 2x² − 1\n\n左右平移是把整个 x 换掉，不是加在括号外。'},
+  {t:'反比例', q:'y = k/x 的象限、增减、|k| 的意义？',
+   a:'k > 0 → 一、三象限，每个象限内 y 随 x 增大而减小\nk < 0 → 二、四象限，每个象限内 y 随 x 增大而增大\n\n|k| = 图象上一点向两坐标轴作垂线围成的矩形面积\n（三角形面积 = |k|/2）'},
+  {t:'对称坐标', q:'关于原点、x 轴、y 轴对称，以及转 90°？',
+   a:'关于原点：(x, y) → (−x, −y)\n关于 x 轴：(x, y) → (x, −y)\n关于 y 轴：(x, y) → (−x, y)\n绕原点顺时针 90°：(x, y) → (y, −x)\n绕原点逆时针 90°：(x, y) → (−y, x)\n\n规律：关于谁对称，谁不变。'}
+];
+
+/* ============ 数据：得分点 ============ */
+const CS = [
+  {
+    id:'c21', no:'21', name:'隧道建模', total:8, goal:'今晚目标 3 分',
+    ask:'某隧道横截面是抛物线形，路面宽 AB = 8 m，拱顶最高点 C 距路面 4 m。以路面中点 O 为原点、路面所在直线为 x 轴建立平面直角坐标系。求这条抛物线的解析式。',
+    steps:[
+      {pt:2, label:'第 1 步 · 建系并设解析式',
+       text:'顶点在 (0, 4)，设 y = a(x − 0)² + 4，即 y = ax² + 4。\n\n这一句写出来就有分：顶点式写对 + 顶点坐标对上，通常值 1–2 分。'},
+      {pt:2, label:'第 2 步 · 代点求 a',
+       text:'图象过 B(4, 0)：0 = a·4² + 4，16a = −4，a = −1/4。\n所以 y = −x²/4 + 4。\n\n（注意：B 的横坐标是 4 不是 8，因为原点是路面中点。）'},
+      {pt:4, label:'第 3 步 · 用解析式解题（今晚不写）',
+       text:'若问"宽 2 m、高 3 m 的货车能否通过"：令 x = ±1，y = 4 − 1/4 = 3.75 > 3，所以能通过。\n\n这类题第二问几乎都是"代一个 x 求 y"或"代一个 y 求 x"，比第一问简单。'}
+    ],
+    note:'0 分最常见的原因不是不会算，是坐标系建错或者没写"以…为原点、…为 x 轴"。这句话本身就是分。'
+  },
+  {
+    id:'c22', no:'22', name:'冷柜分段函数', total:10, goal:'今晚目标 4 分',
+    ask:'某冷柜开机后，箱内温度 y（℃）与时间 x（min）的关系是：前 10 分钟温度从 20℃ 匀速降到 4℃，之后保持 4℃ 不变。求 0 ≤ x ≤ 10 时 y 与 x 的函数关系式。',
+    steps:[
+      {pt:2, label:'第 1 步 · 从图上把分段点抄下来',
+       text:'两个端点：(0, 20) 和 (10, 4)。\n\n分段函数的第一分永远在这里——把关键点写成坐标，写在答题卡上。'},
+      {pt:2, label:'第 2 步 · 设一次函数，求 k 和 b',
+       text:'设 y = kx + b。\n代入 (0, 20)：b = 20。\n代入 (10, 4)：4 = 10k + 20，k = −1.6。\n所以 y = −1.6x + 20（0 ≤ x ≤ 10）。'},
+      {pt:3, label:'第 3 步 · 写清范围',
+       text:'x > 10 时 y = 4。\n\n范围（0 ≤ x ≤ 10）写不写，常常就差 1 分。分段函数一定要"一段一个范围"。'},
+      {pt:3, label:'第 4 步 · 第二问（今晚不写）',
+       text:'常见问法："温度降到 8℃ 时是第几分钟？"令 −1.6x + 20 = 8，得 x = 7.5。\n就是把 y 代进去解 x，比第一问简单。'}
+    ],
+    note:'看到"匀速"两个字就写"设 y = kx + b"，这是无条件的第一步。'
+  },
+  {
+    id:'c23', no:'23', name:'反比例与直线', total:12, goal:'今晚目标 4 分',
+    ask:'直线 y = x + 2 与反比例函数 y = k/x 的图象交于点 A(1, 3)，与另一支交于点 B。\n(1) 求 k 的值；(2) 求点 B 的坐标。',
+    steps:[
+      {pt:2, label:'第 1 步 · 设解析式，代点求 k',
+       text:'设 y = k/x，把 A(1, 3) 代入：3 = k/1，所以 k = 3。\n\n这一步 30 秒能做完，稳拿 2 分。'},
+      {pt:2, label:'第 2 步 · 联立，化成方程',
+       text:'两个图象的交点同时满足两个解析式：\nx + 2 = 3/x\n两边乘 x：x² + 2x = 3，即 x² + 2x − 3 = 0。'},
+      {pt:3, label:'第 3 步 · 解方程得 B',
+       text:'x² + 2x − 3 = 0 → (x + 3)(x − 1) = 0 → x = 1 或 x = −3。\nx = 1 对应 A，所以 B 的横坐标是 −3。\n代回直线：y = −3 + 2 = −1，所以 B(−3, −1)。'},
+      {pt:3, label:'第 4 步 · 验证（顺手检查）',
+       text:'把 B(−3, −1) 代回 y = 3/x：3 ÷ (−3) = −1 ✓\n\n这一步不占分，但能救你——如果代回去不对，说明前面算错了。'}
+    ],
+    note:'联立后得到的一定是一元二次方程，判别式大于 0 才有两个交点。这条可以用来检查答案合不合理。'
+  },
+  {
+    id:'c24', no:'24', name:'二次函数综合', total:14, goal:'今晚目标 3 分',
+    ask:'抛物线 y = x² + bx + c 经过 A(−1, 0)、B(3, 0) 两点。\n(1) 求抛物线的解析式；(2) 求顶点坐标。',
+    steps:[
+      {pt:2, label:'第 1 步 · 用交点式设解析式',
+       text:'与 x 轴交于 x = −1 和 x = 3，所以设 y = (x + 1)(x − 3)。\n\n有交点坐标就用交点式，比"代两点解方程组"快一倍。'},
+      {pt:2, label:'第 2 步 · 展开成一般式',
+       text:'y = x² − 3x + x − 3 = x² − 2x − 3。\n\n到这一步，解析式那问的分就齐了。'},
+      {pt:2, label:'第 3 步 · 求对称轴和顶点',
+       text:'对称轴 x = −b/(2a) = 2/2 = 1。\n代入：y = 1 − 2 − 3 = −4，顶点 (1, −4)。\n\n也可以配方：y = (x − 1)² − 4，一步看出顶点。'},
+      {pt:4, label:'第 4 步 · 后面的问（今晚不写）',
+       text:'常考：与 y 轴交点 (0, −3)、x 轴上方的范围（x < −1 或 x > 3）、面积最值。\n这些都要用到前面的解析式和顶点，所以前两步写对，后面才有分。'}
+    ],
+    note:'"经过两个 x 轴上的点"是送分信号，看到就写交点式 y = a(x − x₁)(x − x₂)。'
+  },
+  {
+    id:'c19', no:'19', name:'含参方程', total:8, goal:'今晚目标 5 分',
+    ask:'已知关于 x 的一元二次方程 x² − (2m + 1)x + m² + m = 0。\n(1) 求证：无论 m 取何值，方程总有两个不相等的实数根；(2) 求方程的根。',
+    steps:[
+      {pt:3, label:'第 1 步 · 算判别式',
+       text:'Δ = [−(2m + 1)]² − 4(m² + m)\n　= 4m² + 4m + 1 − 4m² − 4m\n　= 1\n\n算到这里，这题最值钱的一步已经拿到了。展开时注意 (2m+1)² 是三项，别只写 4m² + 1。'},
+      {pt:2, label:'第 2 步 · 下结论',
+       text:'因为 Δ = 1 > 0，所以无论 m 取何值，方程总有两个不相等的实数根。\n\n"Δ > 0"算完不写结论，会丢 1 分。证题必须有这句话。'},
+      {pt:3, label:'第 3 步 · 求根（因式分解或公式）',
+       text:'因式分解：(x − m)(x − m − 1) = 0，所以 x₁ = m，x₂ = m + 1。\n\n分解不出来就用公式：x = [(2m + 1) ± 1]/2，同样得 m 和 m + 1。\n检验：两根之和 = 2m + 1 = −b/a ✓'}
+    ],
+    note:'含参方程的三板斧：先算 Δ、再下结论、最后求根。上一次这道题只拿 1 分，就是缺了"算 Δ"这个动作。'
+  },
+  {
+    id:'c20', no:'20', name:'销售利润应用', total:8, goal:'今晚目标 5 分',
+    ask:'某商店销售一种商品，每件进价 40 元，售价 60 元时每月可卖 200 件。市场调查发现：售价每降低 1 元，每月可多卖 20 件。设售价降低 x 元。\n(1) 用 x 表示每月的利润 y（元）；(2) 售价定为多少时利润最大？',
+    steps:[
+      {pt:2, label:'第 1 步 · 把"两个量"分别写出来',
+       text:'降价 x 元后：\n每件利润 = 60 − x − 40 = 20 − x（元）\n月销量 = 200 + 20x（件）\n\n应用题的第一分就在这——两个量都写对，式子自然出来。'},
+      {pt:2, label:'第 2 步 · 列式',
+       text:'y = (20 − x)(200 + 20x)\n\n利润 = 单件利润 × 销量，这个模型套上去就行。'},
+      {pt:2, label:'第 3 步 · 化简并配方求最值',
+       text:'y = −20x² + 200x + 4000 = −20(x − 5)² + 4500。\n所以 x = 5 时 y 最大，最大利润 4500 元。'},
+      {pt:2, label:'第 4 步 · 回答"问的那个东西"',
+       text:'题目问"售价定为多少"，所以答：售价定为 55 元时利润最大，最大利润 4500 元。\n\n问售价就答售价，只答 x = 5 会丢分——这是最常见的最后一步失分。'}
+    ],
+    note:'增长率、降价率、销售利润，本质都是"两个量相乘凑二次函数"。看到"每降 1 元多卖…"就套这个模板。'
+  }
+];
+
+/* ============ 状态 ============ */
+const KEY = 'jjb-jiuzhong-shang-v1';
+let st = { ans:{}, steps:{}, filter:'ALL', i:0, timerLeft:60*60, timerRun:false };
+try{
+  const raw = localStorage.getItem(KEY);
+  if(raw){ const o = JSON.parse(raw); st = Object.assign(st, o); st.timerRun = false; }
+}catch(e){}
+function save(){
+  try{ localStorage.setItem(KEY, JSON.stringify({ans:st.ans, steps:st.steps})); }catch(e){}
+}
+
+/* ============ 抢分计数 ============ */
+function totalPts(){
+  let p = 0;
+  QS.forEach(q => { const a = st.ans[q.id]; if(a && a.ok) p += 2; });
+  CS.forEach(c => {
+    const arr = st.steps[c.id] || [];
+    c.steps.forEach((s, idx) => { if(arr[idx]) p += s.pt; });
+  });
+  return p;
+}
+function updPts(){
+  document.getElementById('ptsChip').textContent = '抢分 ' + totalPts();
+}
+
+/* ============ 视图切换 ============ */
+const screens = ['home','a','b','c','d'];
+function show(v){
+  screens.forEach(k => {
+    document.getElementById('v-' + k).classList.toggle('on', k === v);
+  });
+  document.querySelectorAll('#tabs .tab').forEach(t => t.classList.toggle('on', t.dataset.v === v));
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+document.getElementById('tabs').addEventListener('click', e => {
+  const t = e.target.closest('.tab'); if(!t) return; show(t.dataset.v);
+});
+document.querySelectorAll('[data-go]').forEach(b => b.addEventListener('click', () => show(b.dataset.go)));
+
+/* ============ A 模块 ============ */
+let list = [];
+
+function buildList(){
+  if(st.filter === 'WRONG'){
+    list = QS.filter(q => st.ans[q.id] && !st.ans[q.id].ok);
+  }else if(st.filter === 'ALL'){
+    list = QS.slice();
+  }else{
+    list = QS.filter(q => q.p === st.filter);
+  }
+  if(st.i >= list.length) st.i = Math.max(0, list.length - 1);
+}
+
+function renderQ(){
+  buildList();
+  const box = document.getElementById('qcard');
+  const stat = document.getElementById('stat');
+  const doneN = Object.keys(st.ans).length;
+  const okN = Object.values(st.ans).filter(a => a.ok).length;
+
+  if(!list.length){
+    document.getElementById('qmeta').textContent = '';
+    document.getElementById('qstem').textContent = st.filter === 'WRONG'
+      ? '现在没有错题。先去做几题吧。' : '这一块暂时没有题。';
+    document.getElementById('qopts').innerHTML = '';
+    document.getElementById('qfb').className = 'fb';
+    document.getElementById('pbar').style.width = '0%';
+    stat.textContent = '';
+    return;
+  }
+
+  const q = list[st.i];
+  document.getElementById('qmeta').innerHTML =
+    '<span class="tag">' + POOL[q.p] + '</span>' +
+    '<span>第 ' + (st.i + 1) + ' / ' + list.length + ' 题</span>' +
+    '<span class="tag-soft">共做 ' + doneN + ' 题 · 对 ' + okN + '</span>';
+
+  document.getElementById('qstem').textContent = q.ask;
+
+  const opts = document.getElementById('qopts');
+  opts.innerHTML = '';
+  const rec = st.ans[q.id];
+
+  q.opts.forEach((txt, idx) => {
+    const b = document.createElement('button');
+    b.className = 'opt';
+    b.innerHTML = '<span class="k">' + 'ABCD'[idx] + '</span><span>' + txt + '</span>';
+    if(rec){
+      b.disabled = true;
+      if(idx === q.ans) b.classList.add('ok');
+      else if(idx === rec.sel) b.classList.add('no');
+      else b.classList.add('dim');
+    }else{
+      b.addEventListener('click', () => answer(q, idx, opts));
+    }
+    opts.appendChild(b);
+  });
+
+  const fb = document.getElementById('qfb');
+  if(rec){
+    fb.className = 'fb show ' + (rec.ok ? 'good' : 'bad');
+    fb.innerHTML = (rec.ok ? '<b>对。</b>' : '<b>错。正确答案是 ' + 'ABCD'[q.ans] + '。</b>') +
+      q.why + '<span class="tip">易错点：' + q.tip + '</span>';
+  }else{
+    fb.className = 'fb';
+    fb.innerHTML = '';
+  }
+
+  document.getElementById('pbar').style.width =
+    Math.round((st.i + 1) / list.length * 100) + '%';
+  stat.textContent = '已答 ' + doneN + ' / ' + QS.length +
+    (list.every(x => st.ans[x.id]) ? ' · 本组已完成' : '');
+  renderWrongList();
+}
+
+function answer(q, idx, opts){
+  const ok = idx === q.ans;
+  st.ans[q.id] = {sel:idx, ok:ok};
+  save(); updPts();
+  renderQ();
+}
+
+function renderWrongList(){
+  const wrong = QS.filter(q => st.ans[q.id] && !st.ans[q.id].ok);
+  const card = document.getElementById('wrongCard');
+  const ul = document.getElementById('wrongList');
+  if(!wrong.length){ card.style.display = 'none'; return; }
+  card.style.display = 'block';
+  ul.innerHTML = wrong.map((q, i) =>
+    '<li><div class="sh"><span class="sl">' + (i + 1) + '. ' + POOL[q.p] + '</span>' +
+    '<span class="tag-soft">' + 'ABCD'[q.ans] + '</span></div>' +
+    '<div class="small" style="margin-top:5px;line-height:1.75">' + q.ask +
+    '<br><span class="muted">' + q.tip + '</span></div></li>'
+  ).join('');
+}
+
+document.getElementById('nextBtn').addEventListener('click', () => {
+  if(!list.length) return;
+  st.i = (st.i + 1) % list.length;
+  renderQ();
+});
+document.getElementById('prevBtn').addEventListener('click', () => {
+  if(!list.length) return;
+  st.i = (st.i - 1 + list.length) % list.length;
+  renderQ();
+});
+document.querySelectorAll('#v-a .qbar .tab').forEach(t => {
+  t.addEventListener('click', () => {
+    document.querySelectorAll('#v-a .qbar .tab').forEach(x => x.classList.remove('on'));
+    t.classList.add('on');
+    st.filter = t.dataset.f; st.i = 0;
+    renderQ();
+  });
+});
+
+/* ============ B 模块 ============ */
+function renderFC(){
+  const box = document.getElementById('fcards');
+  box.innerHTML = FC.map((f, i) =>
+    '<button class="fcard" data-fi="' + i + '">' +
+      '<div class="ft">' + (i + 1) + '. ' + f.t + '</div>' +
+      '<div class="fq">' + f.q + '</div>' +
+      '<div class="hint">先自己说一遍，再点开 →</div>' +
+      '<div class="fa">' + f.a + '</div>' +
+    '</button>'
+  ).join('');
+  box.querySelectorAll('.fcard').forEach(c => {
+    c.addEventListener('click', () => c.classList.toggle('open'));
+  });
+}
+
+/* ============ C 模块 ============ */
+function renderCS(){
+  const box = document.getElementById('ccards');
+  box.innerHTML = CS.map(c => {
+    const done = st.steps[c.id] || [];
+    return '<div class="ccard" data-cid="' + c.id + '">' +
+      '<div class="chead"><span class="tag">第 ' + c.no + ' 题 · ' + c.name + '</span>' +
+      '<span class="tag-soft">' + c.total + ' 分</span>' +
+      '<span class="tiny muted">' + c.goal + '</span></div>' +
+      '<div class="cask">' + c.ask + '</div>' +
+      '<ul class="slist">' + c.steps.map((s, i) =>
+        '<li data-si="' + i + '" class="' + (done[i] ? 'done' : '') + '">' +
+          '<div class="sh"><span class="sl">' + s.label + '</span>' +
+          '<span class="sp">' + s.pt + ' 分</span>' +
+          '<span class="spacer"></span>' +
+          '<button class="btn-mini sopen">想好了，点开对照</button></div>' +
+          '<div class="sx">' + s.text + '</div>' +
+          '<label class="ck"><input type="checkbox" ' + (done[i] ? 'checked' : '') + '> 我写出来了（+ ' + s.pt + ' 分）</label>' +
+        '</li>'
+      ).join('') + '</ul>' +
+      (c.note ? '<div class="cnote">' + c.note + '</div>' : '') +
+    '</div>';
+  }).join('');
+
+  box.querySelectorAll('.sopen').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const li = btn.closest('li');
+      li.classList.toggle('open');
+      btn.textContent = li.classList.contains('open') ? '收起' : '想好了，点开对照';
+    });
+  });
+
+  box.querySelectorAll('.ck input').forEach(inp => {
+    inp.addEventListener('change', () => {
+      const li = inp.closest('li');
+      const card = inp.closest('.ccard');
+      const cid = card.dataset.cid;
+      const si = Number(li.dataset.si);
+      if(!st.steps[cid]) st.steps[cid] = [];
+      st.steps[cid][si] = inp.checked;
+      li.classList.toggle('done', inp.checked);
+      save(); updPts();
+    });
+  });
+}
+
+/* ============ 计时器 ============ */
+let tickId = null;
+function fmt(s){
+  const m = Math.floor(s / 60), ss = s % 60;
+  return (m < 10 ? '0' : '') + m + ':' + (ss < 10 ? '0' : '') + ss;
+}
+function paintClock(){
+  const el = document.getElementById('tclock');
+  el.textContent = (st.timerRun ? '进行中 ' : '剩余 ') + fmt(st.timerLeft);
+  el.classList.toggle('run', st.timerRun);
+}
+document.getElementById('tclock').addEventListener('click', () => {
+  st.timerRun = !st.timerRun;
+  if(st.timerRun){
+    if(!tickId) tickId = setInterval(() => {
+      st.timerLeft = Math.max(0, st.timerLeft - 1);
+      if(st.timerLeft === 0){ st.timerRun = false; clearInterval(tickId); tickId = null; }
+      paintClock();
+    }, 1000);
+  }else{
+    clearInterval(tickId); tickId = null;
+  }
+  paintClock();
+});
+
+/* ============ 重置 ============ */
+document.getElementById('resetBtn').addEventListener('click', () => {
+  if(!confirm('清空今晚的做题记录和抢分进度？')) return;
+  st = {ans:{}, steps:{}, filter:'ALL', i:0, timerLeft:60*60, timerRun:false};
+  save(); updPts(); paintClock();
+  document.querySelectorAll('#v-a .qbar .tab').forEach(x => x.classList.toggle('on', x.dataset.f === 'ALL'));
+  document.querySelectorAll('.ck input').forEach(i => { i.checked = false; });
+  document.querySelectorAll('.slist li').forEach(li => li.classList.remove('done', 'open'));
+  renderQ();
+});
+
+/* ============ 启动 ============ */
+renderFC();
+renderCS();
+renderQ();
+updPts();
+paintClock();
+</script>
+</body>
+</html>
