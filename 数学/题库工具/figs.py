@@ -285,7 +285,145 @@ def fig_q22():
     return f
 
 
-FIGS = {'m20': fig_q20, 'm21': fig_q21, 'm22': fig_q22}
+def fig_m4():
+    """第 4 题：Rt△ABC（∠C=90°，∠ABC=40°），绕 B 逆时针转 40° 得 △A′BC′，
+    C′ 恰好落在 AB 上，求 ∠CAA′。
+
+    自建坐标：BC 水平 110 px，A 由 tan40° 定；A′ 是 A 绕 B 转 40° 后的位置。
+    """
+    import math
+    W, H = 250, 240
+    B = (58.0, 206.0)
+    C = (168.0, 206.0)
+    a = C[0] - B[0]
+    A = (C[0], C[1] - a * math.tan(math.radians(40)))
+
+    d = math.radians(40)
+    Cc = (B[0] + a * math.cos(d), B[1] - a * math.sin(d))          # C′ 在 BA 上
+    ba = math.hypot(A[0] - B[0], A[1] - B[1])
+    ang = math.atan2(B[1] - A[1], A[0] - B[0]) + d                  # 屏幕上逆时针 = 角度增大
+    Aa = (B[0] + ba * math.cos(ang), B[1] - ba * math.sin(ang))
+
+    f = Fig(W, H)
+    f.poly([B, C, A, B], w=1.6)          # △ABC
+    f.poly([B, Aa, Cc], w=1.6)           # △A′BC′（BC′ 与 BA 重合，不再重画）
+    # 直角记号（C 处）
+    f.poly([(C[0] - 14, C[1]), (C[0] - 14, C[1] - 14), (C[0], C[1] - 14)], w=1.1)
+    f.dot(A[0], A[1], r=2.6)
+    f.dot(B[0], B[1], r=2.6)
+    f.dot(C[0], C[1], r=2.6)
+    f.dot(Aa[0], Aa[1], r=2.6)
+    f.dot(Cc[0], Cc[1], r=2.6)
+    f.text(A[0] + 10, A[1] + 5, 'A')
+    f.text(B[0] - 12, B[1] + 6, 'B')
+    f.text(C[0] - 3, C[1] + 19, 'C')
+    f.text(Aa[0] - 3, Aa[1] - 9, [('A', True), ('′', False)])
+    f.text(Cc[0] + 4, Cc[1] - 7, [('C', True), ('′', False)])
+    return f
+
+
+def fig_m13():
+    """第 13 题：方格纸中线段 AB 绕某点旋转得到 CD，找旋转中心。
+
+    自建格点（旋转中心取 H，转 90°）：
+        H(4,4)，A(6,5) → C(3,6)，B(7,7) → D(1,7)
+    三条候选点 E、F、G 另置；图上不标答案。
+    """
+    W, Hh = 300, 262
+    u = 25.0
+    ox, oy = 28.0, 20.0
+
+    def P(i, j):
+        return (ox + i * u, oy + j * u)
+
+    f = Fig(W, Hh)
+    for i in range(9):
+        f.line(P(i, 0)[0], P(i, 0)[1], P(i, 8)[0], P(i, 8)[1], w=0.9, color='#c9c3b6')
+        f.line(P(0, i)[0], P(0, i)[1], P(8, i)[0], P(8, i)[1], w=0.9, color='#c9c3b6')
+
+    A, B = P(6, 5), P(7, 7)
+    C, D = P(3, 6), P(1, 7)
+    f.line(A[0], A[1], B[0], B[1], w=2.0)
+    f.line(C[0], C[1], D[0], D[1], w=2.0)
+    f.dot(A[0], A[1], r=2.8); f.dot(B[0], B[1], r=2.8)
+    f.dot(C[0], C[1], r=2.8); f.dot(D[0], D[1], r=2.8)
+    f.text(A[0] + 9, A[1] - 4, 'A')
+    f.text(B[0] + 9, B[1] + 2, 'B')
+    f.text(C[0] - 10, C[1] - 4, 'C')
+    f.text(D[0] - 10, D[1] + 2, 'D')
+
+    for name, (i, j) in [('E', (1, 1)), ('F', (7, 1)), ('G', (2, 3)), ('H', (4, 4))]:
+        x, y = P(i, j)
+        f.dot(x, y, r=2.4)
+        f.text(x + 8, y + 4, name)
+
+    return f
+
+
+def fig_a11():
+    """第 11 题：边长 2 的正方形 ABCD 内接正方形 EFGH，AE = x（图上取 x = 0.7，不是答案）。"""
+    W, H = 260, 240
+    u = 90.0
+    ox, oy = 40.0, 25.0
+    x = 0.7
+
+    def P(a, b):
+        return (ox + a * u, oy + b * u)
+
+    A, B, C, D = P(0, 0), P(2, 0), P(2, 2), P(0, 2)
+    E, F, G, Hh = P(x, 0), P(2, x), P(2 - x, 2), P(0, 2 - x)
+
+    f = Fig(W, H)
+    f.poly([A, B, C, D, A], w=1.8)          # 外正方形
+    f.poly([E, F, G, Hh, E], w=1.8)         # 内正方形
+    for p in (A, B, C, D, E, F, G, Hh):
+        f.dot(p[0], p[1], r=2.6)
+    f.text(A[0] - 11, A[1] + 3, 'A')
+    f.text(B[0] + 10, B[1] + 3, 'B')
+    f.text(C[0] + 10, C[1] + 6, 'C')
+    f.text(D[0] - 11, D[1] + 6, 'D')
+    f.text(E[0], E[1] - 8, 'E')
+    f.text(F[0] + 12, F[1] + 4, 'F')
+    f.text(G[0], G[1] + 18, 'G')
+    f.text(Hh[0] - 12, Hh[1] + 4, 'H')
+    f.text((A[0] + E[0]) / 2, A[1] - 8, [('x', True)], size=15)
+    return f
+
+
+def fig_a14():
+    """第 14 题：一面靠墙（墙长 8 m）的矩形场地，另三边用篱笆（共 20 m），AD 垂直于墙。
+
+    图上按"宽 6、高 3"画一个非最值的情形，墙比矩形长出一截。
+    """
+    W, H = 236, 138
+    u = 21.0
+    ox, oy = 40.0, 34.0
+
+    def P(a, b):
+        return (ox + a * u, oy + b * u)
+
+    A, B = P(0, 0), P(6, 0)
+    C, D = P(6, 3), P(0, 3)
+
+    f = Fig(W, H)
+    # 墙：比矩形左右各长一截，阴影线在上方
+    f.line(ox - 16, oy, B[0] + 40, oy, w=2.0)
+    f.hatch(ox - 16, oy, B[0] + 40, oy, 'top', step=10, ln=7)
+    f.line(A[0], A[1], D[0], D[1], w=1.5)     # AD（篱笆）
+    f.line(D[0], D[1], C[0], C[1], w=1.5)     # DC（篱笆）
+    f.line(C[0], C[1], B[0], B[1], w=1.5)     # CB（篱笆）
+    for p in (A, B, C, D):
+        f.dot(p[0], p[1], r=2.6)
+    f.text(A[0] - 10, A[1] + 17, 'A')
+    f.text(B[0] + 9, B[1] + 17, 'B')
+    f.text(C[0] + 9, C[1] + 16, 'C')
+    f.text(D[0] - 11, D[1] + 16, 'D')
+    f.text(A[0] - 15, (A[1] + D[1]) / 2 + 6, [('x', True)], size=15)
+    return f
+
+
+FIGS = {'m20': fig_q20, 'm21': fig_q21, 'm22': fig_q22,
+        'm4': fig_m4, 'm13': fig_m13, 'a11': fig_a11, 'a14': fig_a14}
 
 
 def build_figs():
