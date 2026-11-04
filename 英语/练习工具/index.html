@@ -224,6 +224,30 @@
     .prow{flex-wrap:wrap}
     .prow .pick{flex:1 1 100%;order:3}
   }
+  /* 桌面端（≥960px）：解析与考点放大一档，英文正文换成更清晰的衬线栈 */
+  @media (min-width:960px){
+    body{font-size:16.5px}
+    .stem{font-size:19px; line-height:1.72; letter-spacing:.1px;
+      font-family:Georgia,"Times New Roman","Songti SC","Noto Serif SC",serif}
+    .stem .cn{font-size:15px}
+    .opt{font-size:16.5px; min-height:52px}
+    .opt .k{width:28px;height:28px;font-size:13.5px}
+    .field{font-size:16.5px; padding:10px 12px}
+    .verify{font-size:16px; line-height:1.92; grid-template-columns:62px 1fr; padding:15px 17px}
+    .verify .vlab{font-size:13.5px; letter-spacing:1.5px}
+    .verify .vtxt{color:#332e27}
+    .verify .vans{font-size:16px}
+    .verify .vtrap{font-size:15px; padding:5px 10px}
+    .verdict{font-size:16px}
+    .mcard .mstem{font-size:16.5px; line-height:1.8}
+    .mcard .verify{font-size:15.5px; line-height:1.9}
+    .mcard .meta,.qcard .meta{font-size:12.5px}
+    .prow{font-size:14px; padding:11px 13px}
+    .prow .ref{font-size:13px}
+    .qhead .ref{font-size:13px}
+    .qtools{font-size:13px}
+  }
+
   @media print{
     .topbar,.bottombar,.qtools,footer,#cardsheet,.settle-acts,.mcard .mlink,.rtabs,.bar{display:none!important}
     body{background:#fff}
