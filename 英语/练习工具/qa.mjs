@@ -56,6 +56,15 @@ const $ = async (expr) => {
   const r = await evaluate(expr);
   return r.__error ? undefined : r.value;
 };
+/* 渲染是同步的，但 reload/切视图后要等一帧：用轮询代替猜 sleep */
+async function waitForExpr(expr, tries = 40, gap = 100) {
+  for (let i = 0; i < tries; i++) {
+    const v = await $(expr);
+    if (v) return v;
+    await sleep(gap);
+  }
+  return null;
+}
 async function key(k, code, vk) {
   for (const type of ["rawKeyDown", "keyUp"]) {
     await send("Input.dispatchKeyEvent", { type, key: k, code, windowsVirtualKeyCode: vk, nativeVirtualKeyCode: vk });
@@ -155,10 +164,11 @@ ok("判分后正确项标绿", (await $(`document.querySelector('#view-practice 
 /* ── 4b. 刷新后记录还在 ─────────────────────── */
 group("刷新后记录还在");
 await send("Page.reload", { ignoreCache: false });
-await sleep(1300);
+await sleep(400);
+await waitForExpr(`!!document.querySelector('[data-act="cards"]')`, 80, 100);
 await $(`document.querySelector('[data-act="cards"]').click()`);
-await sleep(250);
-ok("刷新后答题卡仍显示已判", ["right", "wrong"].includes(await $(`document.querySelector('#cardsheet .cell[data-id="U1-5"]').dataset.state`)));
+await waitForExpr(`document.querySelector('#cardsheet').classList.contains('is-open')`, 40, 100);
+ok("刷新后答题卡仍显示已判", ["right", "wrong"].includes(await $(`document.querySelector('#cardsheet .cell[data-id="U1-5"]')?.dataset.state`)));
 await $(`document.querySelector('#cardsheet [data-act="close-cards"]').click()`);
 await sleep(150);
 
