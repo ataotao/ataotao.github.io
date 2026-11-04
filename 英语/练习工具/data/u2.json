@@ -22,7 +22,6 @@
     "hows"
    ],
    "note": "横线前已有印刷字母 s，学生手写补 hows，合成 shows（应为 seems）。",
-   "paperNo": 1,
    "fields": 1
   },
   {
@@ -36,7 +35,6 @@
    "marked": null,
    "handwriting": null,
    "note": "横线空白，未作答。",
-   "paperNo": 2,
    "fields": 1
   },
   {
@@ -52,7 +50,6 @@
     "[看不清]"
    ],
    "note": "横线前印刷字母为 in（放大可辨 i+n）；横线处手写被重涂、笔画重叠，无法辨认（起笔似 mag…）。 印刷前缀被手写覆盖，in（→in ignorance of?）与 ig（→ignorance）均有可能，故不给答案。",
-   "paperNo": 3,
    "fields": 1
   },
   {
@@ -68,7 +65,6 @@
     "[看不清]"
    ],
    "note": "手写压在横线上并向右下与下一行印刷 by 重叠，形似 disappearing/disappeared，无法确认。",
-   "paperNo": 4,
    "fields": 1
   },
   {
@@ -98,8 +94,7 @@
    ],
    "marked": "B",
    "handwriting": null,
-   "note": "题号左侧页边手写大写 B。",
-   "paperNo": 5
+   "note": "题号左侧页边手写大写 B。"
   },
   {
    "id": "m6",
@@ -128,8 +123,7 @@
    ],
    "marked": "C",
    "handwriting": null,
-   "note": "6 题号左侧页边为 C；其下方（第 6 题选项行左端）另有一处 B 形笔迹，归属不确定。",
-   "paperNo": 6
+   "note": "6 题号左侧页边为 C；其下方（第 6 题选项行左端）另有一处 B 形笔迹，归属不确定。"
   },
   {
    "id": "m7",
@@ -158,8 +152,7 @@
    ],
    "marked": "B",
    "handwriting": null,
-   "note": "该题号附近页边有三处笔迹：上方一处 B；7 题号左侧一个 C 被长斜线划掉；其下一行（选项行）左端又有一个 C。综合判为改答，取 B，存疑。",
-   "paperNo": 7
+   "note": "该题号附近页边有三处笔迹：上方一处 B；7 题号左侧一个 C 被长斜线划掉；其下一行（选项行）左端又有一个 C。综合判为改答，取 B，存疑。"
   },
   {
    "id": "m8",
@@ -188,8 +181,7 @@
    ],
    "marked": "B",
    "handwriting": null,
-   "note": "8 题号左侧页边为 B（笔迹夸张带斜划）；其上一行（第 7 题选项行）左端另有一个 C，归属不确定。",
-   "paperNo": 8
+   "note": "8 题号左侧页边为 B（笔迹夸张带斜划）；其上一行（第 7 题选项行）左端另有一个 C，归属不确定。"
   },
   {
    "id": "m9",
@@ -218,8 +210,7 @@
    ],
    "marked": "B",
    "handwriting": null,
-   "note": "题号左侧页边手写大写 B。",
-   "paperNo": 9
+   "note": "题号左侧页边手写大写 B。"
   },
   {
    "id": "m10",
@@ -248,8 +239,7 @@
    ],
    "marked": "C",
    "handwriting": null,
-   "note": "题号左侧页边手写大写 C。",
-   "paperNo": 10
+   "note": "题号左侧页边手写大写 C。"
   },
   {
    "id": "m11",
@@ -265,7 +255,6 @@
     "satisfied with"
    ],
    "note": "第二空手写为 satisfied，with 写在横线末端外。",
-   "paperNo": 11,
    "fields": 2
   },
   {
@@ -281,7 +270,6 @@
     "How amazing"
    ],
    "note": "该题只有一处长横线，手写两个词 How amazing。",
-   "paperNo": 12,
    "fields": 1
   },
   {
@@ -298,7 +286,6 @@
     "straight to"
    ],
    "note": "第二空手写 straight to 两词。",
-   "paperNo": 13,
    "fields": 2
   },
   {
@@ -328,8 +315,7 @@
    ],
    "marked": "A",
    "handwriting": null,
-   "note": "「语法」小节卷面重新从 1 编号；题号左侧手写 A，另有一条长勾从 A 行斜划下去（勾不作答案，以页边字母为准）。",
-   "paperNo": 1
+   "note": "「语法」小节卷面重新从 1 编号；题号左侧手写 A，另有一条长勾从 A 行斜划下去（勾不作答案，以页边字母为准）。"
   },
   {
    "id": "g2",
@@ -358,8 +344,7 @@
    ],
    "marked": "C",
    "handwriting": null,
-   "note": "题号左侧页边手写大写 C。",
-   "paperNo": 2
+   "note": "题号左侧页边手写大写 C。"
   },
   {
    "id": "g3",
@@ -388,8 +373,7 @@
    ],
    "marked": "C",
    "handwriting": null,
-   "note": "题号左侧页边手写 C；另有一条长勾从 A. Yes, I do. 斜划到选项区，勾不作答案。",
-   "paperNo": 3
+   "note": "题号左侧页边手写 C；另有一条长勾从 A. Yes, I do. 斜划到选项区，勾不作答案。"
   },
   {
    "id": "g4",
@@ -418,8 +402,7 @@
    ],
    "marked": "B",
    "handwriting": null,
-   "note": "题号左侧页边手写 B；B 选项前另有手写勾，二者不冲突。",
-   "paperNo": 4
+   "note": "题号左侧页边手写 B；B 选项前另有手写勾，二者不冲突。"
   },
   {
    "id": "g5",
@@ -435,7 +418,6 @@
     "satisfied"
    ],
    "note": "两空手写 Are / satisfied。",
-   "paperNo": 5,
    "fields": 2
   },
   {
@@ -452,7 +434,6 @@
     "boil over"
    ],
    "note": "两空各手写两个词。",
-   "paperNo": 6,
    "fields": 2
   },
   {
@@ -471,7 +452,6 @@
     "been to"
    ],
    "note": "四个空依次为 Have / been / have / been to。",
-   "paperNo": 7,
    "fields": 4
   },
   {
@@ -487,7 +467,6 @@
     "pick up"
    ],
    "note": "一空手写两个词 pick up。",
-   "paperNo": 8,
    "fields": 1
   },
   {
@@ -504,7 +483,6 @@
     "[看不清]"
    ],
    "note": "第一空手写 what；第二空手写被反复涂画成一团黑，无法辨认。",
-   "paperNo": 9,
    "fields": 2
   },
   {
@@ -521,7 +499,6 @@
     "heard"
    ],
    "note": "两空手写 Have / heard。",
-   "paperNo": 10,
    "fields": 2
   },
   {

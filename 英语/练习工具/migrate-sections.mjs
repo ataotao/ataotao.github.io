@@ -1,5 +1,6 @@
 // 一次性数据迁移：把「按题型拍平」的 u1–u4 改成「按原卷大题分区 + 大题内题号」的新结构。
 // 依据：docs/plans/英语过关练习改版方案.md §三
+// ⚠️ 一次性脚本：已在 2026-11-04 跑过一次，源数据已被改写，重跑会报错；保留只为审计「当时怎么搬的」。
 // 运行：node 英语/练习工具/migrate-sections.mjs
 // 产出：覆写 data/u*.json、u*.key.json、u*.explain.json，另写 data/id-migration.json
 import { readFileSync, writeFileSync } from "node:fs";
@@ -83,7 +84,7 @@ const log = [];
   for (const it of u.items) {
     if (it.id.startsWith("m")) it.section = null; // 卷面这一段没有大题标题，不编造
     else if (it.id.startsWith("g")) it.section = "语法";
-    it.paperNo = it.no; // 卷面题号（大题内重数）
+
   }
 
   // 语法填空 6 空：错记在 u3 的第 18–23 条
@@ -159,7 +160,7 @@ const log = [];
     migration[`U3-${oldId}`] = `U3-${id}`;
     const clone2 = clone(it);
     delete clone2.id;
-    Object.assign(clone2, { id, no: paperNo, paperNo, section: sec });
+    Object.assign(clone2, { id, no: paperNo, section: sec });
     const key = k.items[oldId] || k.items[String(it.no)] || {};
     const parts = String(key.answer || "").split(/\s*\/\s*/).filter(Boolean);
     const blanks = (it.stem.match(/_+/g) || []).length;
@@ -195,7 +196,7 @@ const log = [];
     migration[`U4-${oldId}`] = `U4-${id}`;
     const clone2 = clone(it);
     delete clone2.id;
-    Object.assign(clone2, { id, no: paperNo, paperNo, section: sec });
+    Object.assign(clone2, { id, no: paperNo, section: sec });
     if (noLabel) clone2.noLabel = noLabel;
     const key = k.items[oldId] || k.items[String(it.no)] || {};
     const parts = String(key.answer || "").split(/\s*\/\s*/).filter(Boolean);

@@ -20,7 +20,6 @@
    ],
    "note": "阅读部分第1题（卷面 1）；题干已印首字母 m，横线手写 atches，即 matches",
    "id": "r1",
-   "paperNo": 1,
    "section": "阅读",
    "fields": 1
   },
@@ -36,7 +35,6 @@
    ],
    "note": "卷面 2；题干已印首字母 s，手写形似 hame（a/o 难辨），应为 shame",
    "id": "r2",
-   "paperNo": 2,
    "section": "阅读",
    "fields": 1
   },
@@ -52,7 +50,6 @@
    ],
    "note": "卷面 3；题干已印首字母 r，横线手写 emoved，即 removed",
    "id": "r3",
-   "paperNo": 3,
    "section": "阅读",
    "fields": 1
   },
@@ -68,7 +65,6 @@
    ],
    "note": "卷面 4；题干已印首字母 c，横线手写 heated，即 cheated",
    "id": "r4",
-   "paperNo": 4,
    "section": "阅读",
    "fields": 1
   },
@@ -84,7 +80,6 @@
    ],
    "note": "卷面 5；题干已印首字母 p，横线手写 ractice，即 practice",
    "id": "r5",
-   "paperNo": 5,
    "section": "阅读",
    "fields": 1
   },
@@ -100,7 +95,6 @@
    ],
    "note": "卷面 6；题干已印首字母 a，横线手写 dmiration，即 admiration",
    "id": "r6",
-   "paperNo": 6,
    "section": "阅读",
    "fields": 1
   },
@@ -131,7 +125,6 @@
    "handwriting": null,
    "note": "卷面 7；左侧页边手写大写 D（学生作答）；选项本身无勾画",
    "id": "r7",
-   "paperNo": 7,
    "section": "阅读"
   },
   {
@@ -161,7 +154,6 @@
    "handwriting": null,
    "note": "卷面 8；左侧页边手写大写 B（学生作答）",
    "id": "r8",
-   "paperNo": 8,
    "section": "阅读"
   },
   {
@@ -191,7 +183,6 @@
    "handwriting": null,
    "note": "卷面 9；左侧页边手写大写 C（学生作答）",
    "id": "r9",
-   "paperNo": 9,
    "section": "阅读"
   },
   {
@@ -221,7 +212,6 @@
    "handwriting": null,
    "note": "卷面 10；左侧页边手写大写 A（学生作答）；选项按 AB/CD 两行排布，已理顺",
    "id": "r10",
-   "paperNo": 10,
    "section": "阅读"
   },
   {
@@ -251,7 +241,6 @@
    "handwriting": null,
    "note": "卷面 11；左侧页边手写大写 D（学生作答）",
    "id": "r11",
-   "paperNo": 11,
    "section": "阅读"
   },
   {
@@ -281,7 +270,6 @@
    "handwriting": null,
    "note": "卷面 12；左侧页边手写大写 C（学生作答）",
    "id": "r12",
-   "paperNo": 12,
    "section": "阅读"
   },
   {
@@ -311,7 +299,6 @@
    "handwriting": null,
    "note": "卷面 13；左侧页边手写大写 C（学生作答）；题干为两行对话，已合并",
    "id": "r13",
-   "paperNo": 13,
    "section": "阅读"
   },
   {
@@ -341,7 +328,6 @@
    "handwriting": null,
    "note": "语法部分第1题（卷面 1，连续编号为 14）；左侧页边手写大写 B（学生作答），字母纵跨该行与上一行之间，按行高判定属本题",
    "id": "g1",
-   "paperNo": 1,
    "section": "语法"
   },
   {
@@ -371,7 +357,6 @@
    "handwriting": null,
    "note": "语法部分第2题（卷面 2，连续编号为 15）；左侧页边手写大写 C（学生作答）",
    "id": "g2",
-   "paperNo": 2,
    "section": "语法"
   },
   {
@@ -387,7 +372,6 @@
    ],
    "note": "语法部分第3题（卷面 3，连续编号为 16）；卷面为两个空，依次手写 still、friends（缺系动词 are）；中文句下「我们仍是朋友」被铅笔圈画",
    "id": "g3",
-   "paperNo": 3,
    "section": "语法",
    "fields": 2
   },
@@ -403,7 +387,6 @@
    ],
    "note": "语法部分第4题（卷面 4，连续编号为 17）；手写译文照抄",
    "id": "g4",
-   "paperNo": 4,
    "section": "语法",
    "fields": 1
   }
