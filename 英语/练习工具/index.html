@@ -506,7 +506,9 @@
   <footer class="page-foot">
     <span>原卷：<b>英语/题库/九上 U1–U4.jpg</b> · 页边字母为学生原作答，已逐题批改</span>
     <span>答案与解析为整理稿，标「存疑」的题请与老师核对</span>
-    <button class="footlink" id="btn-reset-all">清空全部作答记录</button>
+    <button class="footlink" id="btn-export-json" data-rec-export>导出记录（JSON）</button>
+    <button class="footlink" id="btn-import-json" data-rec-import style="margin-left:0">导入记录（JSON）</button>
+    <button class="footlink" id="btn-reset-all" style="margin-left:0">清空全部作答记录</button>
   </footer>
 </main>
 
@@ -577,19 +579,49 @@
 
   /* ══ 本地存储 ═══════════════════════════════════════ */
   var STORE_KEY = "eng9a-practice-v1";
+  var AT_KEEP = 10; /* atList 每题只保留最近 N 次作答时间 */
   var store = loadStore();
 
+  /* 统一存档形状：at / atList 是后加的字段，旧存档没有也照常加载（缺省补空对象） */
+  function normalizeStore(s){
+    s = (s && typeof s === "object" && !Array.isArray(s)) ? s : {};
+    function objOf(v){ return (v && typeof v === "object" && !Array.isArray(v)) ? v : {}; }
+    return {
+      picks: objOf(s.picks), fills: objOf(s.fills), stat: objOf(s.stat), cleared: objOf(s.cleared),
+      at: objOf(s.at), atList: objOf(s.atList),
+      unit: s.unit || (UNITS[0] ? UNITS[0].unit : "U1")
+    };
+  }
   function loadStore(){
-    try{
-      var s = JSON.parse(localStorage.getItem(STORE_KEY) || "{}");
-      return { picks: s.picks || {}, fills: s.fills || {}, stat: s.stat || {}, cleared: s.cleared || {},
-        unit: s.unit || (UNITS[0] ? UNITS[0].unit : "U1") };
-    }catch(e){
-      return { picks: {}, fills: {}, stat: {}, cleared: {}, unit: UNITS[0] ? UNITS[0].unit : "U1" };
-    }
+    try{ return normalizeStore(JSON.parse(localStorage.getItem(STORE_KEY) || "{}")); }
+    catch(e){ return normalizeStore({}); }
   }
   function saveStore(){
     try{ localStorage.setItem(STORE_KEY, JSON.stringify(store)); }catch(e){}
+  }
+
+  /* 作答时间戳：at = 该题最近一次作答（ISO 字符串），atList = 最近 AT_KEEP 次（新的在前） */
+  function stampAnswer(id){
+    var iso = new Date().toISOString();
+    store.at[id] = iso;
+    var list = Array.isArray(store.atList[id]) ? store.atList[id] : [];
+    list.unshift(iso);
+    store.atList[id] = list.slice(0, AT_KEEP);
+    return iso;
+  }
+  function lastAt(id){ var v = store.at[id]; return typeof v === "string" ? v : ""; }
+  function atListOf(id){ var v = store.atList[id]; return Array.isArray(v) ? v : []; }
+  function fmtAt(iso){
+    if (!iso) return "";
+    var d = new Date(iso);
+    if (isNaN(d.getTime())) return "";
+    var pad = function(n){ return n < 10 ? "0" + n : String(n); };
+    return d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate()) + " " + pad(d.getHours()) + ":" + pad(d.getMinutes());
+  }
+  /* 作答条数（导出提示 / 导入前确认用） */
+  function recordCount(s){
+    s = s || store;
+    return Object.keys(s.picks || {}).length + Object.keys(s.fills || {}).length;
   }
 
   /* ══ 工具函数 ═══════════════════════════════════════ */
@@ -867,6 +899,7 @@
         if (!it) return;
         if (store.picks[id]) return; // 已答不可改，用“重做本题”
         store.picks[id] = btn.dataset.k;
+        stampAnswer(id); /* 记录本次作答时间（at / atList） */
         /* 累计作答次数：改对了也不清零，错题本靠它显示「累计错 N 次」 */
         var stt = store.stat[id] || (store.stat[id] = { att: 0, wrong: 0, ok: 0 });
         stt.att++;
@@ -949,7 +982,10 @@
     });
     html += "</div>";
     html += '<div class="q-tools">';
-    html += '<span class="q-ref">卷面 ' + esc(it.paperRef) + "</span>";
+    var atQ = fmtAt(lastAt(it.id));
+    var nQ = atListOf(it.id).length;
+    html += '<span class="q-ref">卷面 ' + esc(it.paperRef) +
+      (atQ ? " · 最近作答 " + esc(atQ) + (nQ > 1 ? "（共 " + nQ + " 次）" : "") : "") + "</span>";
     if (answered) html += '<button data-act="again" type="button">重做本题</button>';
     html += '<button data-act="reveal" type="button">看解析</button>';
     html += "</div>";
@@ -999,6 +1035,11 @@
     });
     var v = document.getElementById("verify-" + it.id);
     if (v) v.style.display = "flex";
+    /* 时间戳当场回写到「卷面 … · 最近作答 …」，不用等下次重渲染 */
+    var ref = node.querySelector(".q-ref");
+    var at = fmtAt(lastAt(it.id));
+    var n = atListOf(it.id).length;
+    if (ref && at) ref.textContent = "卷面 " + it.paperRef + " · 最近作答 " + at + (n > 1 ? "（共 " + n + " 次）" : "");
   }
   function applyUnanswered(it){
     var node = document.getElementById("q-" + it.id);
@@ -1157,6 +1198,8 @@
     html += "</div>";
     html += '<span class="spacer"></span>';
     html += '<button class="tool" id="btn-export-md">导出 Markdown</button>';
+    html += '<button class="tool" data-rec-export>导出记录（JSON）</button>';
+    html += '<button class="tool" data-rec-import>导入记录（JSON）</button>';
     html += '<button class="tool" id="btn-print">打印错题</button>';
     html += '<button class="tool" id="btn-clear-fills" style="display:none"></button>';
     html += "</div>";
@@ -1215,6 +1258,7 @@
 
   function mistakeCard(w){
     var it = w.it;
+    var atM = fmtAt(lastAt(it.id));
     if (it.kind === "fill") return fillMistakeCard(w);
     var pick = w.practicePick || w.paperPick || "";
     var src = [];
@@ -1226,7 +1270,7 @@
     html += '<span class="no">' + (it.section ? esc(it.section) + " · " : "") + "第 " + esc(it.no) + " 题</span>";
     if (it.topic) html += '<span class="topic">' + esc(it.topic) + "</span>";
     if (w.wrongN) html += '<span class="topic" style="color:var(--red);border-color:rgba(192,57,47,.3);background:var(--red-wash)">累计错 ' + w.wrongN + " 次</span>";
-    html += '<span class="src">' + esc(src.join(" · ") || "已重做对") + "</span>";
+    html += '<span class="src">' + esc(src.join(" · ") || "已重做对") + (atM ? " · 最近作答 " + esc(atM) : "") + "</span>";
     html += "</div>";
     html += '<p class="stem" lang="en">' + stemHTML(it) + "</p>";
     html += '<div class="opts">';
@@ -1260,13 +1304,14 @@
 
   function fillMistakeCard(w){
     var it = w.it;
+    var atF = fmtAt(lastAt(it.id));
     var html = '<article class="mcard">';
     html += '<div class="mcard-head">';
     html += '<span class="unit">' + esc(it.unit) + "</span>";
     html += '<span class="no">' + (it.section ? esc(it.section) + " · " : "") + "第 " + esc(it.no) + " 题</span>";
     html += '<span class="topic" style="color:var(--blue);border-color:rgba(47,77,124,.3);background:var(--blue-wash)">填空题</span>';
     if (it.topic) html += '<span class="topic">' + esc(it.topic) + "</span>";
-    html += '<span class="src">原卷写 ' + esc(hwFull(it) || "（空）") + "</span>";
+    html += '<span class="src">原卷写 ' + esc(hwFull(it) || "（空）") + (atF ? " · 最近作答 " + esc(atF) : "") + "</span>";
     html += "</div>";
     html += '<p class="stem" lang="en">' + stemHTML(it) + "</p>";
     html += '<div class="m-explain">';
@@ -1322,14 +1367,7 @@
     md += "\n---\n*由「九上英语过关练习」生成*\n";
 
     // 下载 + 复制
-    try{
-      var blob = new Blob([md], { type: "text/markdown;charset=utf-8" });
-      var a = document.createElement("a");
-      a.href = URL.createObjectURL(blob);
-      a.download = "九上英语错题整理.md";
-      document.body.appendChild(a); a.click();
-      setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); }, 1000);
-    }catch(e){}
+    downloadText("九上英语错题整理.md", md, "text/markdown");
     if (navigator.clipboard && navigator.clipboard.writeText){
       navigator.clipboard.writeText(md).then(function(){ toast("已导出 Markdown，并复制到剪贴板"); }, function(){ toast("已导出 Markdown 文件"); });
     } else {
@@ -1354,6 +1392,15 @@
   /* ══ 填空自测 ═══════════════════════════════════════ */
   var fillsEl = document.getElementById("view-fills");
 
+  /* 写填空答案：值真的变了才记一次作答时间（重复 blur / 反复判分不刷时间） */
+  function setFill(id, val){
+    var had = Object.prototype.hasOwnProperty.call(store.fills, id);
+    var old = had ? store.fills[id] : "";
+    store.fills[id] = val;
+    if ((!had || old !== val) && String(val || "").trim()) stampAnswer(id);
+    saveStore();
+  }
+
   function renderFills(){
     var html = "";
     var total = 0;
@@ -1372,10 +1419,12 @@
     }
     u.fills.forEach(function(it){
       var saved = store.fills[it.id] || "";
+      var atI = fmtAt(lastAt(it.id)), nI = atListOf(it.id).length;
       html += '<div class="fill-item" id="f-' + esc(it.id) + '">';
       var pg = fillPaperGrade(it);
       var pgCls = pg === "right" ? " ok" : (pg === "wrong" ? " bad" : (pg === "close" || pg === "manual" ? " warn" : ""));
-      html += '<div class="fill-head"><span class="fill-no">' + esc(it.label) + '</span><span class="fill-ref">卷面 ' + esc(it.paperRef) + "</span>" +
+      html += '<div class="fill-head"><span class="fill-no">' + esc(it.label) + '</span><span class="fill-ref">卷面 ' + esc(it.paperRef) +
+        (atI ? " · 最近作答 " + esc(atI) + (nI > 1 ? "（共 " + nI + " 次）" : "") : "") + "</span>" +
         '<span class="fill-flag' + pgCls + '">原卷 ' + fillGradeText(pg) + "</span>" +
         (it.doubt ? '<span class="fill-flag">存疑</span>' : "") +
         (it.answerRaw ? "" : '<span class="fill-flag">参考答案缺失</span>') + "</div>";
@@ -1400,8 +1449,8 @@
       b.addEventListener("click", function(){ curUnit = unitOf(b.dataset.funit); store.unit = curUnit.unit; saveStore(); renderFills(); });
     });
     Array.prototype.forEach.call(fillsEl.querySelectorAll(".fill-input"), function(inp){
-      inp.addEventListener("keydown", function(e){ if (e.key === "Enter"){ store.fills[inp.dataset.id] = inp.value; saveStore(); checkFill(inp.dataset.id); } });
-      inp.addEventListener("blur", function(){ store.fills[inp.dataset.id] = inp.value; saveStore(); });
+      inp.addEventListener("keydown", function(e){ if (e.key === "Enter"){ setFill(inp.dataset.id, inp.value); checkFill(inp.dataset.id); } });
+      inp.addEventListener("blur", function(){ setFill(inp.dataset.id, inp.value); });
     });
     Array.prototype.forEach.call(fillsEl.querySelectorAll("[data-check]"), function(b){
       b.addEventListener("click", function(){ checkFill(b.dataset.check); });
@@ -1425,7 +1474,11 @@
     var inp = fillsEl.querySelector('.fill-input[data-id="' + id + '"]');
     if (!inp) return;
     var val = inp.value;
-    store.fills[id] = val; saveStore();
+    setFill(id, val);
+    /* 时间戳当场回写到题头「卷面 … · 最近作答 …」 */
+    var refEl = inp.closest(".fill-item") && inp.closest(".fill-item").querySelector(".fill-ref");
+    var atNow = fmtAt(lastAt(id)), nNow = atListOf(id).length;
+    if (refEl && atNow) refEl.textContent = "卷面 " + it.paperRef + " · 最近作答 " + atNow + (nNow > 1 ? "（共 " + nNow + " 次）" : "");
     var res = document.getElementById("res-" + id);
     if (!it.answerRaw){
       if (res){ res.textContent = "该题参考答案缺失（原卷遮挡/涂改），请对照原卷人工核对"; res.style.color = "var(--ink-3)"; }
@@ -1442,6 +1495,87 @@
     inp.style.boxShadow = ok ? "0 0 0 3px rgba(43,107,82,.08)" : "";
   }
 
+  /* ══ 练习记录导出 / 导入（JSON） ════════════════════ */
+  var RECORD_SCHEMA = "lt.practice-records/1";
+  var RECORD_TOOL = "九上英语过关练习";
+
+  function dateStamp(){
+    var d = new Date(), pad = function(n){ return n < 10 ? "0" + n : String(n); };
+    return d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate());
+  }
+  function buildRecordExport(){
+    return {
+      schema: RECORD_SCHEMA,
+      subject: "英语",
+      tool: RECORD_TOOL,
+      exportedAt: new Date().toISOString(),
+      data: store
+    };
+  }
+  function downloadText(filename, text, mime){
+    try{
+      var blob = new Blob([text], { type: (mime || "text/plain") + ";charset=utf-8" });
+      var a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = filename;
+      document.body.appendChild(a); a.click();
+      setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+      return true;
+    }catch(e){ return false; }
+  }
+  function exportRecords(){
+    var payload = buildRecordExport();
+    var ok = downloadText("英语-练习记录-" + dateStamp() + ".json", JSON.stringify(payload, null, 2), "application/json");
+    toast(ok ? "已导出练习记录 JSON（" + recordCount() + " 条作答）" : "导出失败：浏览器拦截了下载");
+  }
+  /* 导入：校验 data 是对象 → 整份覆盖 store → 刷新各视图 */
+  function applyImportedStore(data){
+    store = normalizeStore(data);
+    saveStore();
+    curUnit = unitOf(store.unit);
+    switchView(currentView);
+    updateTabCounts();
+    return recordCount();
+  }
+  function importRecords(){
+    var inp = document.getElementById("rec-file");
+    if (!inp){
+      inp = document.createElement("input");
+      inp.type = "file"; inp.id = "rec-file"; inp.accept = ".json,application/json";
+      inp.style.display = "none";
+      inp.addEventListener("change", function(){ readImportFile(inp); });
+      document.body.appendChild(inp);
+    }
+    inp.value = "";
+    inp.click();
+  }
+  function readImportFile(inp){
+    var f = inp.files && inp.files[0];
+    if (!f) return;
+    var rd = new FileReader();
+    rd.onerror = function(){ toast("导入失败：这个文件读不出来"); inp.value = ""; };
+    rd.onload = function(){
+      var parsed;
+      try{ parsed = JSON.parse(String(rd.result || "").replace(/^\uFEFF/, "")); }
+      catch(e){ toast("导入失败：不是合法的 JSON 文件"); inp.value = ""; return; }
+      var data = (parsed && typeof parsed === "object" && !Array.isArray(parsed)) ? parsed.data : null;
+      if (!data || typeof data !== "object" || Array.isArray(data)){
+        toast("导入失败：文件里没有 data 对象（请用本工具「导出记录（JSON）」导出的文件）");
+        inp.value = "";
+        return;
+      }
+      var incoming = recordCount(normalizeStore(data));
+      if (!confirm("导入会整份覆盖当前练习记录：现有 " + recordCount() + " 条作答 → 导入 " + incoming + " 条。确定吗？")){
+        inp.value = "";
+        return;
+      }
+      applyImportedStore(data);
+      toast("已导入并覆盖练习记录（" + recordCount() + " 条作答）");
+      inp.value = "";
+    };
+    rd.readAsText(f);
+  }
+
   /* ══ 启动 ═══════════════════════════════════════════ */
   window.addEventListener("error", function(e){
     var bar = document.getElementById("errbar");
@@ -1453,10 +1587,17 @@
   } else {
     renderPractice();
     updateTabCounts();
+    /* 「导出记录（JSON）」「导入记录（JSON）」：错题本工具栏与页脚各有一组，统一用事件委托 */
+    document.addEventListener("click", function(e){
+      var t = e.target && e.target.closest ? e.target.closest("[data-rec-export],[data-rec-import]") : null;
+      if (!t) return;
+      if (t.hasAttribute("data-rec-export")) exportRecords(); else importRecords();
+    });
     var resetAll = document.getElementById("btn-reset-all");
     if (resetAll) resetAll.addEventListener("click", function(){
       if (!confirm("清空全部作答记录（选择题作答 + 填空输入）？原卷批改记录不受影响。")) return;
-      store.picks = {}; store.fills = {}; saveStore();
+      store.picks = {}; store.fills = {}; store.at = {}; store.atList = {};
+      saveStore();
       switchView(currentView);
       updateTabCounts();
       toast("已清空全部作答记录");

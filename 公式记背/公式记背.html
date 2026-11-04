@@ -428,6 +428,8 @@ function loadProg(){
 function saveProg(){ try{localStorage.setItem(SK,JSON.stringify(P));}catch(e){} }
 function rec(id,ok,mode){
   const p=P.cards[id]||(P.cards[id]={seen:0,ok:0,wrong:0,streak:0,last:0,mode:''});
+  /* 第一次作答（seen 0→1）时记下这一次有没有答对：面板算「首次正确率」用，已有值不覆盖 */
+  if(!p.seen&&p.firstOk==null)p.firstOk=ok?1:0;
   p.seen++;p.last=Date.now();p.mode=mode||p.mode;
   if(ok){p.ok++;p.streak=Math.min(9,p.streak+1);}else{p.wrong++;p.streak=0;}
   const d=todayKey(),t=P.days[d]||(P.days[d]={n:0,ok:0});
@@ -682,7 +684,7 @@ function renderRecite(st,c){
       const v=b.dataset.v;
       if(v==='1')rec(c.id,true,'recite');
       else if(v==='0')rec(c.id,false,'recite');
-      else{const q2=getP(c.id);if(q2){q2.seen++;q2.streak=0;q2.last=Date.now();saveProg();}else{rec(c.id,false,'recite');}}
+      else{const q2=getP(c.id);if(q2){if(!q2.seen&&q2.firstOk==null)q2.firstOk=0;q2.seen++;q2.streak=0;q2.last=Date.now();saveProg();}else{rec(c.id,false,'recite');}}
       nextCard();
     });
   }

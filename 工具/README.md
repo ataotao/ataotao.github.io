@@ -11,8 +11,8 @@
   parse-paper.py          <科目>/images/xxx.docx（带答案的试卷）→ <科目>/试卷数据.json（⑥ 套卷）
   compress-pages.js       <科目>/images/*.jpg → 1600px 宽 WebP（摆正 EXIF 方向、删原图）
   test.mjs                文字版自检：静态检查 + 用 jsdom 跑六个模式
-  test-formula.mjs        公式版自检：抠出排版器渲染全部公式（993 项断言）
-  test-ui-formula.mjs     公式版界面自检：用本机 Chrome 真点五个模式（31 项断言）
+  test-formula.mjs        公式版自检：抠出排版器渲染全部公式（1018 项断言）
+  test-ui-formula.mjs     公式版界面自检：用本机 Chrome 真点五个模式（48 项断言）
   shots.mjs               生成 <科目>/预览截图/*.png（有套卷的多截 3–5 张）
   shots-formula.mjs       生成 公式记背/预览截图/*.png
   _transcribe/            逐页转录的原始 JSON（每 3–4 页一个文件）
@@ -31,7 +31,7 @@
 
 ## 加页子 / 改内容（文字版）
 
-> ⚠️ 现在先别跑不带参数的 `node 工具/build.mjs`：`公式记背/公式记背.html` 里的例题分步渲染（`stepsHTML`、分组编号、打印分页）比 `公式数据.json` + `formula-template.html` 新，重建会把这部分退回去。只重建某一科：`node 工具/build.mjs 历史`。
+> ✅ 公式版的例题分步渲染（`stepsHTML`、分组编号、打印分页）和 `cf-11` 的 12 步富文本例题，已经搬回 `工具/formula-template.html` 与 `公式记背/公式数据.json`。模板、数据、产物三者现在一致，**不带参数的 `node 工具/build.mjs` 也可以安全跑全量重建**；只想重建某一科仍可用 `node 工具/build.mjs 历史`。
 
 1. 新页子放进 `<科目>/images/`，接着编号命名（如 `政治_11.jpg`），然后 `bun 工具/compress-pages.js 道德与法治` 压成 WebP。
    手机拍的照片 EXIF 里带方向标记，脚本会 `rotate()` 把方向烤进像素——**不这么做，去掉 EXIF 的 WebP 在浏览器里会横过来**。

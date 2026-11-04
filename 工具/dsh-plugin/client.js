@@ -8,6 +8,7 @@ window.__ModuleLoader__.load({
     const NS = 'learning-training.workbench'
     const PANEL_ID = 'learning-training.workbench'
     const ROUTE = 'api/learning-training.workbench.status'
+    const AUDIT_ROUTE = 'api/learning-training.workbench.audit'
     // apply() 里换成 ctx.locale.bind(NS)；组件在渲染时才读取，先给中文兜底。
     let t = (key) => zh[key] || key
 
@@ -49,12 +50,19 @@ window.__ModuleLoader__.load({
       recordsFiles: '文件',
       recordsParsed: '已解析',
       recordsUsed: '采用',
+      audit: '跑校验',
+      auditing: '校验中…',
+      auditPass: '通过',
+      auditFail: '未通过',
+      auditEmpty: '（没有输出）',
+      exitCode: '退出码',
       recordsEmpty: '目录里有文件，但没有能识别的记录格式。',
       recordsSummary: '汇总',
       recordsSubjects: '分科',
       recordsRecent: '最近练习',
       attempts: '次作答',
       accuracy: '正确率',
+      firstTry: '首次就答对',
       weak: '薄弱知识点',
       noWeak: '暂无',
       viewLess: '收起',
@@ -117,12 +125,19 @@ window.__ModuleLoader__.load({
       recordsFiles: 'files',
       recordsParsed: 'parsed',
       recordsUsed: 'used',
+      audit: 'Run checks',
+      auditing: 'Running…',
+      auditPass: 'pass',
+      auditFail: 'fail',
+      auditEmpty: '(no output)',
+      exitCode: 'exit',
       recordsEmpty: 'Files are present but none matched a known record format.',
       recordsSummary: 'Summary',
       recordsSubjects: 'By subject',
       recordsRecent: 'Recent practice',
       attempts: 'answers',
       accuracy: 'accuracy',
+      firstTry: 'first-try',
       weak: 'Weak points',
       noWeak: 'none',
       viewLess: 'Collapse',
@@ -185,6 +200,12 @@ window.__ModuleLoader__.load({
 .ltw-tag{display:inline-flex;align-items:center;height:18px;padding:0 7px;border-radius:5px;font-size:10.5px;border:1px solid var(--dsw-alias-border-l1);color:var(--dsw-alias-label-secondary)}
 .ltw-tag.warn{color:var(--dsw-alias-state-warn-primary);border-color:var(--dsw-alias-state-warn-primary)}
 .ltw-tag.error{color:var(--dsw-alias-state-error-primary);border-color:var(--dsw-alias-state-error-primary)}
+.ltw-tag.ok{color:var(--dsw-alias-state-success-primary);border-color:var(--dsw-alias-state-success-primary)}
+.ltw-audit{margin-top:10px;border-top:1px solid var(--dsw-alias-border-l1);padding-top:10px}
+.ltw-audit-bar{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.ltw-audit-item{margin-top:8px}
+.ltw-audit-head{font-size:10.5px;color:var(--dsw-alias-label-secondary);margin-bottom:4px}
+.ltw-pre{margin:0;padding:8px 10px;max-height:190px;overflow:auto;border-radius:6px;background:var(--dsw-alias-bg-base);border:1px solid var(--dsw-alias-border-l1);font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:10.5px;line-height:1.55;white-space:pre-wrap;word-break:break-word;color:var(--dsw-alias-label-secondary)}
 .ltw-list{border:1px solid var(--dsw-alias-border-l1);border-radius:10px;overflow:hidden;background:var(--dsw-alias-bg-layer-1);margin-bottom:28px}
 .ltw-row{display:flex;align-items:flex-start;gap:10px;padding:10px 14px;border-top:1px solid var(--dsw-alias-border-l1);font-size:12px}
 .ltw-row:first-child{border-top:0}
@@ -266,9 +287,11 @@ window.__ModuleLoader__.load({
       )
     }
 
-    function SubjectCard({ subject }) {
+    function SubjectCard({ subject, audit, onAudit }) {
       const tone = subject.error || !subject.present ? 'error' : subject.todos.length ? 'warn' : ''
       const status = subject.error || !subject.present ? t('error') : subject.todos.length ? t('warn') : t('ok')
+      const running = audit && audit.status === 'running'
+      const hasAudits = Array.isArray(subject.audits) && subject.audits.length > 0
       return h(
         'div',
         { className: 'ltw-card' },
@@ -298,6 +321,45 @@ window.__ModuleLoader__.load({
             ? h('span', { className: 'ltw-tag' }, `${t('notes')} ${subject.notes.length}`)
             : null,
         ),
+        hasAudits
+          ? h(
+              'div',
+              { className: 'ltw-audit' },
+              h(
+                'div',
+                { className: 'ltw-audit-bar' },
+                h(
+                  'button',
+                  { className: 'ltw-btn', disabled: running, onClick: () => onAudit(subject.key) },
+                  running ? t('auditing') : t('audit'),
+                ),
+                audit && audit.data
+                  ? h(
+                      'span',
+                      { className: `ltw-tag ${audit.data.ok ? 'ok' : 'error'}` },
+                      audit.data.ok ? t('auditPass') : t('auditFail'),
+                    )
+                  : null,
+                audit && audit.error ? h('span', { className: 'ltw-tag error' }, audit.error) : null,
+              ),
+              audit && audit.data
+                ? audit.data.results.map((result, i) =>
+                    h(
+                      'div',
+                      { className: 'ltw-audit-item', key: i },
+                      h(
+                        'div',
+                        { className: 'ltw-audit-head' },
+                        `${result.label} · ${t('exitCode')} ${result.code} · ${result.durationMs}ms`,
+                      ),
+                      result.out
+                        ? h('pre', { className: 'ltw-pre' }, result.out)
+                        : h('div', { className: 'ltw-foot' }, t('auditEmpty')),
+                    ),
+                  )
+                : null,
+            )
+          : null,
       )
     }
 
@@ -455,6 +517,9 @@ window.__ModuleLoader__.load({
                 'div',
                 { className: 'ltw-meta', style: { marginTop: 6 } },
                 h('span', null, `${t('accuracy')} ${item.accuracy}%`),
+                item.firstTry
+                  ? h('span', null, `${t('firstTry')} ${item.firstTry.rate}%（${item.firstTry.ok}/${item.firstTry.total}）`)
+                  : null,
                 h('span', null, item.last ? fmtDate(item.last) : '—'),
               ),
               (item.weak || []).length
@@ -496,6 +561,7 @@ window.__ModuleLoader__.load({
       const [state, setState] = useState({ status: 'loading', report: null, error: '' })
       const [expanded, setExpanded] = useState(false)
       const [notesOpen, setNotesOpen] = useState(false)
+      const [audits, setAudits] = useState({})
       const [tick, setTick] = useState(0)
 
       const load = useCallback(() => {
@@ -513,6 +579,33 @@ window.__ModuleLoader__.load({
       useEffect(() => {
         load()
       }, [load, tick])
+
+      const runAudit = useCallback((subjectKey) => {
+        setAudits((prev) => ({ ...prev, [subjectKey]: { status: 'running' } }))
+        const url = new URL(AUDIT_ROUTE, document.baseURI)
+        fetch(url, {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ subject: subjectKey }),
+          credentials: 'same-origin',
+          cache: 'no-store',
+        })
+          .then((response) =>
+            response.json().then((body) => {
+              if (!response.ok || !body || !Array.isArray(body.results)) {
+                throw new Error((body && body.error) || `HTTP ${response.status}`)
+              }
+              return body
+            }),
+          )
+          .then((data) => setAudits((prev) => ({ ...prev, [subjectKey]: { status: 'done', data } })))
+          .catch((error) =>
+            setAudits((prev) => ({
+              ...prev,
+              [subjectKey]: { status: 'done', error: String(error && error.message ? error.message : error) },
+            })),
+          )
+      }, [])
 
       const report = state.report
       const busy = state.status === 'loading' || state.status === 'refreshing'
@@ -566,7 +659,14 @@ window.__ModuleLoader__.load({
           h(
             'div',
             { className: 'ltw-grid' },
-            report.subjects.map((subject) => h(SubjectCard, { subject, key: subject.key })),
+            report.subjects.map((subject) =>
+              h(SubjectCard, {
+                subject,
+                audit: audits[subject.key],
+                onAudit: runAudit,
+                key: subject.key,
+              }),
+            ),
           ),
           h(
             'div',

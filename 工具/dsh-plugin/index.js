@@ -8,11 +8,13 @@
  */
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs'
 import { dirname, join, resolve, sep } from 'node:path'
-import { execFileSync } from 'node:child_process'
+import { fileURLToPath } from 'node:url'
+import { execFile, execFileSync } from 'node:child_process'
 import { scanRecords } from './records.js'
 
 export const NS = 'learning-training.workbench'
 const ROUTE = '/api/learning-training.workbench.status'
+const AUDIT_ROUTE = '/api/learning-training.workbench.audit'
 const CACHE_MS = 1500
 
 /** 六科的定义：加一科只要在这里加一行，并在对应 scan* 里支持新 kind。 */
@@ -627,9 +629,20 @@ function resolveRoot(ctx, config) {
   if (fromConfig) return { ...fromConfig, tried }
   const fromEnv = consider(process.env.LEARNING_TRAINING_ROOT, 'env')
   if (fromEnv) return { ...fromEnv, tried }
+  // 插件是以链接方式装进 profile 的，模块真实路径就在仓库里（工具/dsh-plugin），
+  // 所以从自身位置往上找比依赖 workspace 默认目录可靠。
+  const here = dirname(fileURLToPath(import.meta.url))
+  let cursor = here
+  for (let i = 0; i < 4; i += 1) {
+    const found = consider(cursor, 'plugin')
+    if (found) return { ...found, tried }
+    const up = dirname(cursor)
+    if (up === cursor) break
+    cursor = up
+  }
   const fromWorkspace = consider(ctx.get('workingDirectory')?.defaultDirectory, 'workspace')
   if (fromWorkspace) return { ...fromWorkspace, tried }
-  let cursor = process.cwd()
+  cursor = process.cwd()
   for (let i = 0; i < 6; i += 1) {
     const found = consider(cursor, 'cwd')
     if (found) return { ...found, tried }
@@ -638,6 +651,60 @@ function resolveRoot(ctx, config) {
     cursor = up
   }
   return { root: null, source: 'none', tried }
+}
+
+// ---------------------------------------------------------------- 只读校验
+
+/**
+ * 「跑校验」按钮的执行表：**只允许这几种命令，全部只读**（不构建、不写仓库）。
+ * 面板不接受任意命令，subject 只能是下面的 key。
+ */
+export const AUDITS = {
+  math: [{ id: 'verify', label: 'qb.py verify', runner: 'python', args: ['题库工具/qb.py', 'verify'], cwd: '数学' }],
+  physics: [
+    { id: 'answers', label: '答案体检', runner: 'python', args: ['物理/工具/check_answers.py'], cwd: '' },
+    { id: 'audit', label: '完整性审计', runner: 'python', args: ['物理/工具/audit_packs.py'], cwd: '' },
+  ],
+  english: [{ id: 'grading', label: '判分清单', runner: 'node', args: ['英语/练习工具/check-grading.mjs'], cwd: '' }],
+}
+
+const AUDIT_TIMEOUT_MS = 90_000
+const AUDIT_OUTPUT_LIMIT = 20_000
+
+function auditsFor(key) {
+  return (AUDITS[key] || []).map((entry) => ({ id: entry.id, label: entry.label }))
+}
+
+export function runAudit(root, entry) {
+  const cwd = entry.cwd ? join(root, entry.cwd.split('/').join(sep)) : root
+  const command = entry.runner === 'python' ? process.env.LEARNING_TRAINING_PYTHON || 'python' : process.env.LEARNING_TRAINING_NODE || 'node'
+  return new Promise((resolve) => {
+    const started = Date.now()
+    execFile(
+      command,
+      entry.args,
+      {
+        cwd,
+        timeout: AUDIT_TIMEOUT_MS,
+        maxBuffer: 8 * 1024 * 1024,
+        windowsHide: true,
+        encoding: 'utf8',
+        env: { ...process.env, PYTHONIOENCODING: 'utf-8', PYTHONUTF8: '1' },
+      },
+      (error, stdout, stderr) => {
+        const text = `${stdout || ''}${stderr || ''}`.trim()
+        resolve({
+          id: entry.id,
+          label: entry.label,
+          command: `${command} ${entry.args.join(' ')}`,
+          code: error === null ? 0 : typeof error.code === 'number' ? error.code : 1,
+          out: text.slice(0, AUDIT_OUTPUT_LIMIT),
+          truncated: text.length > AUDIT_OUTPUT_LIMIT,
+          durationMs: Date.now() - started,
+        })
+      },
+    )
+  })
 }
 
 // ---------------------------------------------------------------- 报告
@@ -671,6 +738,8 @@ export function buildReport(ctx, config) {
       subjects.push(failed(root, subject, root, message))
     }
   }
+
+  for (const subject of subjects) subject.audits = auditsFor(subject.key)
 
   const todos = []
   const notes = []
@@ -726,6 +795,41 @@ export function apply(ctx, config = {}) {
         return Response.json(cache.body, {
           headers: { 'cache-control': 'no-store' },
         })
+      },
+    })
+
+    // 只读校验：POST {subject}，按固定执行表跑该科的审计脚本，把输出原样带回面板。
+    sub.connection.fetch.register({
+      path: AUDIT_ROUTE,
+      methods: ['POST'],
+      requestBody: 'buffered',
+      fetch: async (request) => {
+        let body
+        try {
+          body = await request.json()
+        } catch {
+          return Response.json({ ok: false, error: '请求体必须是 JSON' }, { status: 400 })
+        }
+        const subject = typeof body?.subject === 'string' ? body.subject : ''
+        const resolved = resolveRoot(ctx, config)
+        if (!resolved.root) {
+          return Response.json({ ok: false, error: '没有找到仓库根目录', tried: resolved.tried }, { status: 500 })
+        }
+        const entries = AUDITS[subject]
+        if (!entries) {
+          return Response.json({ ok: false, error: `该科目没有配置只读校验命令：${subject || '(空)'}` }, { status: 400 })
+        }
+        const results = []
+        for (const entry of entries) results.push(await runAudit(resolved.root, entry))
+        return Response.json(
+          {
+            ok: results.every((result) => result.code === 0),
+            subject,
+            ranAt: new Date().toISOString(),
+            results,
+          },
+          { headers: { 'cache-control': 'no-store' } },
+        )
       },
     })
   })
