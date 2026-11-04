@@ -251,6 +251,59 @@ try {
   rmSync(fixture, { recursive: true, force: true })
 }
 
+// ---------------------------------------------------------------- 备份包
+// 「开始.html」下载的备份是「一个文件装多科」，要能拆开、复用各科解析器。
+const backupDir = mkdtempSync(join(tmpdir(), 'ltw-backup-'))
+try {
+  mkdirSync(join(backupDir, '学习记录'), { recursive: true })
+  writeFileSync(
+    join(backupDir, '学习记录', '全部记录-2026-11-06.json'),
+    JSON.stringify({
+      schema: 'lt.practice-records/1',
+      kind: 'backup',
+      exportedAt: '2026-11-06T00:00:00.000Z',
+      apps: {
+        'kss_v1_历史': {
+          cards: { 'ls-p1-01': { seen: 2, ok: 2, wrong: 0, last: 1762300000000, firstOk: 1 } },
+          days: { '2026-11-06': { n: 2, ok: 2 } },
+          paper: {},
+        },
+        'physScaffold.v2': {
+          version: 2,
+          guided: {},
+          exam: { 'pk-w1': { w1q01: { tries: 2, okN: 1, wrongN: 1, at: '2026-11-06T00:00:00.000Z' } } },
+          concept: {},
+          wrong: {},
+          days: { '2026-11-06': { exam: 2 } },
+        },
+        'eng9a-practice-v1': {
+          stat: { 'U1-5': { att: 2, ok: 2, wrong: 0 } },
+          at: { 'U1-5': '2026-11-06T00:00:00.000Z' },
+          atList: {},
+          picks: {},
+        },
+        'unknown-app-key': { foo: 1 },
+      },
+    }),
+    'utf8',
+  )
+
+  const scanned = scanRecords(backupDir)
+  eq(scanned.files.length, 1, '备份包应只算 1 个文件')
+  eq(scanned.files[0].subject, '历史、物理、英语', '备份包应列出里面的科目')
+  eq(scanned.files[0].note, '备份包 · 3 科', '未识别的 app 键应被跳过')
+  eq(scanned.subjects.length, 3, `备份包应拆出 3 科，实际 ${scanned.subjects.length}`)
+  const backupHistory = scanned.subjects.find((item) => item.subject === '历史')
+  eq(backupHistory.attempts, 2, '备份包里的历史作答次数')
+  eq(backupHistory.firstTry && backupHistory.firstTry.rate, 100, '备份包里的首次正确率')
+  const backupPhysics = scanned.subjects.find((item) => item.subject === '物理')
+  eq(backupPhysics.attempts, 2, '备份包里的物理作答次数')
+  const backupEnglish = scanned.subjects.find((item) => item.subject === '英语')
+  eq(backupEnglish.accuracy, 100, '备份包里的英语正确率')
+} finally {
+  rmSync(backupDir, { recursive: true, force: true })
+}
+
 // ---------------------------------------------------------------- 真实仓库
 const real = scanRecords(repoRoot)
 ok(real && typeof real.exists === 'boolean', '真实记录的 exists 字段不对')

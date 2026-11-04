@@ -181,6 +181,16 @@
   .part-head .range{font-size:11.5px;color:var(--ink-3);letter-spacing:.06em}
   .part-head .rule{flex:1;height:1px;background:var(--rule);margin-left:4px}
 
+  /* ── 逐题模式 ───────────────────────── */
+  .oneq-bar{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin:8px 0 12px}
+  .oneq-bar .progress{
+    font-family:var(--serif);font-size:13px;color:var(--ink-2);letter-spacing:.04em;
+    font-variant-numeric:tabular-nums;
+  }
+  .oneq-bar .hint{font-size:11.5px;color:var(--ink-3)}
+  .oneq-bar .tool{min-width:96px;text-align:center}
+  .oneq-bar .grow{flex:1}
+
   .questions{list-style:none;margin:0;padding:0}
   .q{position:relative;display:grid;grid-template-columns:38px 1fr;gap:2px 8px;padding:15px 0 17px;border-bottom:1px dashed rgba(219,208,184,.85)}
   .q:last-child{border-bottom:0}
@@ -458,7 +468,7 @@
   .errbar.show{display:block}
 
   @media print{
-    body::before,.topbar,.unitbar,.q-tools,.tool,.stamp{display:none!important}
+    body::before,.topbar,.unitbar,.q-tools,.tool,.stamp,.oneq-bar{display:none!important}
     body{background:#fff}
     main{padding:0;max-width:none}
     .sheet,.mcard,.tablewrap{box-shadow:none;border-color:#bbb;break-inside:avoid}
@@ -515,7 +525,7 @@
 <div class="errbar" id="errbar"></div>
 
 <script>window.QUIZ_DATA = {
- "generatedAt": "2026-11-04T07:04:38.011Z",
+ "generatedAt": "2026-11-04T07:53:08.685Z",
  "units": [
   {
    "unit": "U1",
@@ -3825,8 +3835,99 @@
     if (el) el.textContent = wrongList().length || "";
   }
 
+  /* ══ 深链 ═══════════════════════════════════════════
+     支持 #view=practice|report|mistakes|fills，以及 #unit=U1..U4（大小写不敏感，
+     也认 unit=1 这种写法）。只读 location.hash，不回写；没有 hash 时行为与原来完全一致。 */
+  function parseHashParams(){
+    var out = {};
+    var raw = String(location.hash || "").replace(/^#/, "");
+    if (!raw) return out;
+    raw.split("&").forEach(function(kv){
+      if (!kv) return;
+      var i = kv.indexOf("=");
+      var k = i < 0 ? kv : kv.slice(0, i);
+      var v = i < 0 ? "" : kv.slice(i + 1);
+      try { k = decodeURIComponent(k); v = decodeURIComponent(v); } catch(e){}
+      out[k.trim().toLowerCase()] = v.trim();
+    });
+    return out;
+  }
+  function unitByCode(code){
+    var c = String(code || "").trim().toUpperCase().replace(/^UNIT/, "U");
+    if (!c) return null;
+    if (/^\d+$/.test(c)) c = "U" + c;
+    for (var i = 0; i < UNITS.length; i++) if (UNITS[i].unit.toUpperCase() === c) return UNITS[i];
+    return null;
+  }
+  /* 返回 true = 已按深链跳转；false = 没有可识别的深链参数 */
+  function applyDeepLink(){
+    var h = parseHashParams();
+    var view = String(h.view || "").toLowerCase();
+    var u = unitByCode(h.unit || h.u || "");
+    if (u){
+      curUnit = u;
+      store.unit = u.unit; saveStore();
+      oneIdx = 0;
+      if (view === "mistakes") mFilterUnit = u.unit;   /* #view=mistakes&unit=U2：直接筛到该单元 */
+    }
+    var views = ["practice", "report", "mistakes", "fills"];
+    if (views.indexOf(view) >= 0){
+      if (view === "practice"){
+        onlyWrong = false;
+        /* #layout=one：入口页的「5 分钟逐题」任务直接进逐题模式，不用先手动切 */
+        if (String(h.layout || "").toLowerCase() === "one") setPracticeMode("one");
+        var first = u ? (u.mc[0] || u.items[0]) : null;
+        switchView("practice", first ? { focus: "q-" + first.id } : null);
+      } else if (view === "fills" && u && u.fills.length){
+        switchView("fills", { focus: "f-" + u.fills[0].id });
+      } else {
+        switchView(view);
+      }
+      return true;
+    }
+    if (u){   /* 只给 #unit：切到练习，并定位到该单元第一题 */
+      onlyWrong = false;
+      var q0 = u.mc[0] || u.items[0];
+      switchView("practice", q0 ? { focus: "q-" + q0.id } : null);
+      return true;
+    }
+    return false;
+  }
+
   /* ══ 练习视图 ═══════════════════════════════════════ */
   var practiceEl = document.getElementById("view-practice");
+
+  /* 显示方式偏好（整卷 / 逐题）单独存一个键，不写进作答记录 store，
+     旧存档（没有这个键）默认整卷，行为与以前完全一致。 */
+  var VIEW_KEY = "eng9a-view-v1";
+  var practiceMode = loadViewPref();   /* "paper" 整卷（默认）| "one" 逐题 */
+  var oneIdx = 0;                      /* 逐题模式当前是列表里的第几题（0 起） */
+  function loadViewPref(){
+    try{
+      var raw = localStorage.getItem(VIEW_KEY);
+      var o = raw ? JSON.parse(raw) : null;
+      return (o && o.mode === "one") ? "one" : "paper";
+    }catch(e){ return "paper"; }
+  }
+  function saveViewPref(){
+    try{ localStorage.setItem(VIEW_KEY, JSON.stringify({ mode: practiceMode })); }catch(e){}
+  }
+  function setPracticeMode(m){
+    practiceMode = (m === "one") ? "one" : "paper";
+    if (practiceMode === "paper") oneIdx = 0;
+    saveViewPref();
+    renderPractice();
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+  /* 当前单元要显示的题（整卷 / 逐题共用同一份列表：筛「只看错题」时也一致） */
+  function practiceList(){
+    var u = curUnit;
+    if (!onlyWrong) return u.mc;
+    return u.mc.filter(function(it){
+      var p = pickOf(it);
+      return !p || p !== it.answer || (it.marked && it.marked !== it.answer);
+    });
+  }
 
   function renderPractice(){
     var u = curUnit;
@@ -3843,6 +3944,9 @@
     html += '<span class="hint">共 ' + s.total + " 道选择题 · 已做 " + s.done + " · 答对 " + s.right + "</span>";
     html += '<span class="spacer"></span>';
     html += '<button class="tool" id="btn-only-wrong" aria-pressed="' + (onlyWrong ? "true" : "false") + '">只看错题 / 未做</button>';
+    html += '<span class="unitseg" role="group" aria-label="显示方式">' +
+      '<button data-pmode="paper" aria-pressed="' + (practiceMode === "paper" ? "true" : "false") + '">整卷</button>' +
+      '<button data-pmode="one" aria-pressed="' + (practiceMode === "one" ? "true" : "false") + '">逐题</button></span>';
     html += '<button class="tool" id="btn-reset-unit">重做本单元</button>';
     html += "</div>";
 
@@ -3863,18 +3967,22 @@
     html += '<div class="stamp' + (s.done ? " show" : "") + '"><b>' + (s.done ? rate + "%" : "待批") + "</b><span>" + (s.done ? "本轮正确率" : "待作答") + "</span></div>";
     html += "</div>";
 
-    var list = onlyWrong
-      ? u.mc.filter(function(it){ var p = pickOf(it); return !p || p !== it.answer || (it.marked && it.marked !== it.answer); })
-      : u.mc;
+    var list = practiceList();
 
     html += '<section class="part">';
-    html += '<div class="part-head"><h3>选择题</h3><span class="range">共 ' + u.mc.length + " 题 · 点字母选项作答" + (onlyWrong ? " · 筛出 " + list.length : "") + '</span><span class="rule"></span></div>';
-    html += '<ol class="questions">';
-    list.forEach(function(it){ html += questionHTML(it); });
-    if (!list.length){
-      html += '<li class="q"><div class="q-no"></div><div class="q-body"><p class="stem" style="color:var(--ok)">这一部分全部做对了 —— 换个单元，或关掉筛选继续。</p></div></li>';
+    if (practiceMode === "one") {
+      /* 逐题模式：一次只渲染一道题；判分 / 解析 / 重做 / 时间戳全部复用 questionHTML */
+      html += oneModeHTML(u, list);
+    } else {
+      html += '<div class="part-head"><h3>选择题</h3><span class="range">共 ' + u.mc.length + " 题 · 点字母选项作答" + (onlyWrong ? " · 筛出 " + list.length : "") + '</span><span class="rule"></span></div>';
+      html += '<ol class="questions">';
+      list.forEach(function(it){ html += questionHTML(it); });
+      if (!list.length){
+        html += '<li class="q"><div class="q-no"></div><div class="q-body"><p class="stem" style="color:var(--ok)">这一部分全部做对了 —— 换个单元，或关掉筛选继续。</p></div></li>';
+      }
+      html += "</ol>";
     }
-    html += "</ol></section>";
+    html += "</section>";
 
     if (u.fills.length){
       html += '<div class="sidenote"><b>另附</b><span lang="zh">本页还有 ' + u.fills.length + ' 道填空 / 汉译英题，原卷手写已录入，去「填空自测」对照或跟写。</span></div>';
@@ -3887,15 +3995,33 @@
     practiceEl.innerHTML = html;
 
     // events
-    Array.prototype.forEach.call(practiceEl.querySelectorAll(".unitseg button"), function(b){
+    Array.prototype.forEach.call(practiceEl.querySelectorAll(".unitseg button[data-unit]"), function(b){
       b.addEventListener("click", function(){
         curUnit = unitOf(b.dataset.unit);
+        oneIdx = 0;
         store.unit = curUnit.unit; saveStore();
         renderPractice();
       });
     });
     var ow = document.getElementById("btn-only-wrong");
     if (ow) ow.addEventListener("click", function(){ onlyWrong = !onlyWrong; renderPractice(); });
+    /* 整卷 / 逐题 切换（偏好单独存 localStorage，不动作答记录） */
+    Array.prototype.forEach.call(practiceEl.querySelectorAll("[data-pmode]"), function(b){
+      b.addEventListener("click", function(){
+        if (practiceMode !== b.dataset.pmode) setPracticeMode(b.dataset.pmode);
+      });
+    });
+    /* 逐题模式：上一题 / 下一题（只改下标，判分仍走同一套 applyAnswered / questionHTML） */
+    Array.prototype.forEach.call(practiceEl.querySelectorAll("[data-one]"), function(b){
+      b.addEventListener("click", function(){
+        var n = practiceList().length;
+        if (!n) return;
+        if (b.dataset.one === "prev") oneIdx = Math.max(0, oneIdx - 1);
+        else oneIdx = Math.min(n - 1, oneIdx + 1);
+        renderPractice();
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      });
+    });
     var rs = document.getElementById("btn-reset-unit");
     if (rs) rs.addEventListener("click", function(){
       if (!confirm("清空 " + curUnit.unit + " 的选择题作答记录？（原卷手写批改记录不受影响）")) return;
@@ -3945,6 +4071,39 @@
       if (pickOf(it)) { applyAnswered(it); ensureRedoBtn(it); }
     });
     updateSheetStats();
+  }
+
+  /* 逐题模式：一屏只放一道题。题干 / 选项 / 解析 / 重做按钮全部由 questionHTML 生成，
+     判分逻辑与整卷模式是同一条代码路径（store.picks + applyAnswered）。 */
+  function oneModeHTML(u, list){
+    var n = list.length;
+    if (!n){
+      return '<div class="part-head"><h3>选择题 · 逐题</h3><span class="range">共 0 题</span><span class="rule"></span></div>' +
+        '<div class="empty"><div class="big">✓</div><p>这一部分全部做对了 —— 换个单元，或关掉筛选继续。</p></div>';
+    }
+    if (oneIdx < 0) oneIdx = 0;
+    if (oneIdx > n - 1) oneIdx = n - 1;
+    var it = list[oneIdx];
+    var html = '<div class="part-head"><h3>选择题 · 逐题</h3>' +
+      '<span class="range">第 ' + (oneIdx + 1) + " / " + n + " 题 · 一次只显示一道</span>" +
+      '<span class="rule"></span></div>';
+    html += oneNavHTML(list);
+    html += '<ol class="questions">' + questionHTML(it) + "</ol>";
+    html += oneNavHTML(list);
+    return html;
+  }
+  function oneNavHTML(list){
+    var n = list.length;
+    return '<div class="oneq-bar">' +
+      '<button class="tool" type="button" data-one="prev"' + (oneIdx <= 0 ? " disabled" : "") + '>← 上一题</button>' +
+      '<span class="progress">进度 ' + (oneIdx + 1) + " / " + n + "</span>" +
+      '<button class="tool" type="button" data-one="next"' + (oneIdx >= n - 1 ? " disabled" : "") + '>下一题 →</button>' +
+      '<span class="grow"></span>' +
+      oneHintHTML() +
+      "</div>";
+  }
+  function oneHintHTML(){
+    return '<span class="hint">答题规则与整卷一样：点字母即判分，答完自动展开解析</span>';
   }
 
   var onlyWrong = false;
@@ -4613,6 +4772,8 @@
       updateTabCounts();
       toast("已清空全部作答记录");
     });
+    /* 深链：只在启动时读一次 hash（契约见 docs/plans/开始页与深链契约.md），运行中切视图不回写 hash */
+    applyDeepLink();
   }
 })();
 </script>

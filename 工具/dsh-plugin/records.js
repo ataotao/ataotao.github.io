@@ -79,6 +79,20 @@ export function scanRecords(root) {
       result.files.push(info)
       continue
     }
+    // 备份文件（开始.html 下载的「全部记录-*.json」）里装了六科的原始 store，
+    // 一个文件要展开成多条记录再进聚合。
+    const backup = expandBackup(value, meta)
+    if (backup.length) {
+      for (const record of backup) {
+        result.parsed.push({ ...record, file: info.rel, at: record.at || info.at })
+      }
+      info.subject = backup.map((record) => record.subject).join('、')
+      info.attempts = backup.reduce((sum, record) => sum + (record.attempts || 0), 0)
+      info.note = `备份包 · ${backup.length} 科`
+      result.files.push(info)
+      continue
+    }
+
     const record = parseRecord(value, entry.name, meta)
     if (record) {
       info.subject = record.subject
@@ -168,7 +182,53 @@ function readJsonSafe(path) {
   }
 }
 
-// ------------------------------------------------------------ 解析分派
+// ------------------------------------------------------------ 备份包
+
+/**
+ * 「开始.html」的「备份全部记录」会下载一个 `{kind:'backup', apps:{存储键: 原始store}}`。
+ * 一个备份文件里装着多科，这里按存储键拆回各科的记录，再走同一套解析与去重。
+ */
+const BACKUP_APPS = {
+  'kss_v1_历史': { subject: '历史', tool: '核心考点', kind: 'cards' },
+  'kss_v1_道德与法治': { subject: '道德与法治', tool: '核心考点', kind: 'cards' },
+  'gs_v1_数学': { subject: '公式记背', tool: '公式模板', kind: 'cards' },
+  'physScaffold.v2': { subject: '物理', tool: '物理思维脚手架', kind: 'physics' },
+  'fn_scaffold_v1': { subject: '数学', tool: '函数思维脚手架', kind: 'fn' },
+  'jjb-jiuzhong-shang-v1': { subject: '数学', tool: '今晚急救包', kind: 'jiji' },
+  'eng9a-practice-v1': { subject: '英语', tool: '九上英语过关练习', kind: 'english' },
+}
+
+function expandBackup(value, meta) {
+  if (!value || value.kind !== 'backup' || !value.apps || typeof value.apps !== 'object') return []
+  const at = typeof value.exportedAt === 'string' ? value.exportedAt : null
+  const records = []
+  for (const [key, store] of Object.entries(value.apps)) {
+    const spec = BACKUP_APPS[key]
+    if (!spec || !store || typeof store !== 'object') continue
+    let record = null
+    if (spec.kind === 'cards') {
+      record = parseCoreCards(
+        { subject: spec.subject, exported: at, data: store },
+        spec.tool,
+        spec.subject,
+        meta,
+        spec.kind === 'cards' && spec.subject === '公式记背' ? '公式记背' : null,
+        null,
+      )
+    } else if (spec.kind === 'physics') {
+      record = parsePhysics(store, meta)
+    } else if (spec.kind === 'fn') {
+      record = parseFnScaffold(store, { subject: spec.subject, tool: spec.tool, at })
+    } else if (spec.kind === 'jiji') {
+      record = parseJiji(store)
+    } else if (spec.kind === 'english') {
+      record = parseEnglish({ subject: spec.subject, tool: spec.tool, data: store })
+    }
+    if (record) records.push({ ...record, at: record.at || at })
+  }
+  return records
+}
+
 
 function parseRecord(value, fileName, meta) {
   if (!value || typeof value !== 'object' || Array.isArray(value)) return null

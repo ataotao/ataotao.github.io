@@ -6971,17 +6971,9 @@ function viewHome(){
   Object.keys(st).forEach(function(k){ total += st[k].n; ok += st[k].ok; });
   var weak = weakestDim(st);
   var h = [];
-  h.push('<section class="hero">');
-  h.push('<h2>听课能懂，做题拉跨——断的不是脑子，是那条“从条件到答案”的流程。</h2>');
-  h.push('<p class="why">听课是跟着老师走一遍；做题得自己完成 <b>读条件 → 画图像 → 选模型 → 定步骤 → 检验</b> 这条链。' +
-         '链子断在哪一环，光靠多刷题补不上。这个工具把每道题拆成五问：答错立刻告诉你断在第几步，答对再往下走，最后才让你落笔。</p>');
-  h.push('<div class="flow">');
-  DIMS.forEach(function(d, i){
-    h.push('<div><b>第 ' + (i + 1) + ' 步</b><span>' + d.short + '</span><i>' + d.tip + '</i></div>');
-  });
-  h.push('</div></section>');
 
-  /* 今日任务卡：把 5 个入口收成 3 件事，按顺序做 */
+  /* 首屏顺序：先「本次任务」卡，五步说明挪到卡片后面。
+     手机上打开（甚至不用下滚）就能看见三个「开始」，不用先划过一整段解释。 */
   var tinfo = taskInfo();
   h.push('<div class="card"><div class="qhead"><span class="tag">本次任务 · 约 25 分钟</span>' +
          '<span class="tiny muted">按顺序做，不用挑</span></div><div class="tasklist">');
@@ -7005,6 +6997,17 @@ function viewHome(){
          '<button class="btn-mini" data-act="report">训练报告</button>' +
          '<button class="btn-mini" data-act="manage">题库管理</button></div>');
   h.push('</div>');
+
+  /* 五步说明：放在任务卡之后，先能用、再看原理 */
+  h.push('<section class="hero">');
+  h.push('<h2>听课能懂，做题拉跨——断的不是脑子，是那条“从条件到答案”的流程。</h2>');
+  h.push('<p class="why">听课是跟着老师走一遍；做题得自己完成 <b>读条件 → 画图像 → 选模型 → 定步骤 → 检验</b> 这条链。' +
+         '链子断在哪一环，光靠多刷题补不上。这个工具把每道题拆成五问：答错立刻告诉你断在第几步，答对再往下走，最后才让你落笔。</p>');
+  h.push('<div class="flow">');
+  DIMS.forEach(function(d, i){
+    h.push('<div><b>第 ' + (i + 1) + ' 步</b><span>' + d.short + '</span><i>' + d.tip + '</i></div>');
+  });
+  h.push('</div></section>');
 
   h.push('<div class="rec-box">');
   if(total === 0){
@@ -9397,11 +9400,41 @@ function handleAct(el){
   }
 }
 
+/* ---------- 深链：#view=task|drill|paper|report|library ---------- */
+/* 只读 location.hash、不回写，双击打开时带 hash 也能直接落到对应屏；
+   #view=task 等于点了首页「本次任务」的第 1 项（基础快练 · 闪练）。 */
+function hashViewName(){
+  var m = /(?:^#|&)view=([a-z]+)/i.exec(location.hash || '');
+  return m ? m[1].toLowerCase() : '';
+}
+function startDrillRound(){
+  if(!(DRILLS && DRILLS.length)) return false;
+  S.mode = 'drill';
+  S.dOrder = buildRound(DRILL_ROUND);
+  S.di = 0; S.dSel = null; S.dOk = null; S.dRight = 0; S.dWrong = [];
+  S.dSwap = 0; S.dSkipIds = {};
+  S.screen = 'drill';
+  return true;
+}
+function applyViewHash(){
+  var v = hashViewName();
+  if(!v) return false;
+  if(v === 'task' || v === 'drill'){
+    if(!startDrillRound()) return false;
+  }else if(v === 'paper'){ S.screen = 'paper'; }
+  else if(v === 'report'){ S.screen = 'report'; }
+  else if(v === 'library'){ S.screen = 'library'; }
+  else return false;
+  render();
+  return true;
+}
+
 /* ---------- 启动 ---------- */
 loadDB();
 normalizeDrills();
 mergePackMeta();
-render();
+/* 深链只在启动时读一次；运行中切屏不回写 hash（契约见 docs/plans/开始页与深链契约.md） */
+if(!applyViewHash()) render();
 /* 调试/自检钩子（不影响使用） */
 window.__APP__ = {BANK:BANK, DRILLS:DRILLS, PACKS:PACKS, DIMS:DIMS, DIMNAME:DIMNAME, RX:RX,
                   S:S, DB:DB, stats:stats, plotSVG:plotSVG, render:render, weakestDim:weakestDim,
@@ -9411,7 +9444,8 @@ window.__APP__ = {BANK:BANK, DRILLS:DRILLS, PACKS:PACKS, DIMS:DIMS, DIMNAME:DIMN
                   handleAct:handleAct, submitStep:submitStep, loadQuestion:loadQuestion,
                   ideaHTML:ideaHTML, finalize:finalize, viewReport:viewReport,
                   exportRecordsJSON:exportRecordsJSON, importRecordsJSON:importRecordsJSON,
-                  parseRecordsFile:parseRecordsFile, RECORD_SCHEMA:RECORD_SCHEMA};
+                  parseRecordsFile:parseRecordsFile, RECORD_SCHEMA:RECORD_SCHEMA,
+                  applyViewHash:applyViewHash, startDrillRound:startDrillRound, hashViewName:hashViewName};
 </script>
 </body>
 </html>
