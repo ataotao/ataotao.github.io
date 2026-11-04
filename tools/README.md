@@ -4,9 +4,9 @@
 
 | 站点里的东西 | 来自哪里 | 怎么产生 |
 |---|---|---|
-| 根目录 `index.html`、`favicon.png`、`assets/` | `C:\陶宸欣\learn-english\word_table\vocab-app` | Vite 构建出的 `dist\` |
-| `1\` 下五个训练器 + 图片 | `C:\陶宸欣\做题思维训练` | 各训练器自己的构建流程 |
-| `1\index.html` 索引页、`*.txt` 验证文件 | `C:\陶宸欣\ataotao.github.io`（本仓库） | 手写，不需要同步 |
+| 根目录 `index.html`、`favicon.png`、`assets/` | `C:\learn\learn-english\word_table\vocab-app` | Vite 构建出的 `dist\` |
+| `1\` 下六个训练器 + 图片 + 开始页 | `C:\work\my-work\learning-training` | 各训练器自己的构建流程；`开始.html` 是手写静态页 |
+| `1\index.html`（= 训练仓库根的 `开始.html`）、`*.txt` 验证文件 | 开始页来自训练仓库；`*.txt` 是本仓库自己的 | 脚本把 `开始.html` 改名发布成 `1\index.html` |
 
 > 站点根目录的 `index.html` 和 `favicon.png` 与 `vocab-app\dist\` 里的哈希完全一致，这条链路是核对过的。
 
@@ -15,7 +15,7 @@
 | 仓库 | 性质 | 是否公开 |
 |---|---|---|
 | `ataotao/learn-english` | 英语内容 + `vocab-app` 前端工程 | 公开 |
-| `ataotao/learning-training` | 做题思维训练内容生产（含 docx、`_recon`、构建脚本） | 公开 |
+| `ataotao/learning-training` | 做题思维训练内容生产（含 docx、`_recon`、构建脚本、`开始.html` 入口页） | 公开 |
 | `ataotao/ataotao.github.io` | 发布站，Pages 从 `master` 分支发布 | 公开 |
 
 生产仓库里的大文件（20MB+ docx、`_recon` 中间产物、node_modules、工具链）不进站点，所以没有合并仓库，而是用脚本单向发布。
@@ -43,9 +43,9 @@
 
 | 改了什么 | 发布前要先做 |
 |---|---|
-| `vocab-app` 的源码 | `cd C:\陶宸欣\learn-english\word_table\vocab-app` → `npm run build` |
-| 做题思维训练的内容 | 用各自的构建流程生成新的 HTML |
-| 只是本站手写文件 | 不用跑脚本，直接提交 |
+| `vocab-app` 的源码 | `cd C:\learn\learn-english\word_table\vocab-app` → `npm run build` |
+| 做题思维训练的内容 | 用各自的构建流程生成新的 HTML（先跑各科自检） |
+| `开始.html`（入口页） | 改完直接发布，`-Only training` 即可；它会成为 `1\index.html` |
 
 脚本按**文件名 + SHA256** 比对，只复制真正变了的文件，重复运行幂等（第二次必然「新增 0 · 更新 0」）。源目录或清单项不存在时会列出来并以退出码 1 结束。
 
@@ -73,10 +73,11 @@
 | `数学/函数思维脚手架.html` | 单文件，数据内嵌 |
 | `物理/物理思维脚手架.html` | 单文件，数据内嵌 |
 | `物理/图片/*.png` | 按周次分目录的题目原图 166 张 |
+| **`开始.html`**（源在训练仓库根） | **改名发布成 `1\index.html`**：一个入口页，六科 + 英语单词 + 记录备份说明；本地 `file://` 打开时还会读本机练习记录算「今天做什么」 |
 
 两条安全边界：
 
-- `1\index.html`（索引页）不在任何清单里，同步永远不会覆盖它。
+- `1\index.html` 由训练仓库根的 `开始.html` 生成，脚本会覆盖它；旧手写索引已被取代（git 历史里还能找回）。
 - `-Prune` 只在清单涉及的子目录内删除，站点根目录的验证 `*.txt` 不会被误删。
 
 ### 英语侧的额外规则：只发 `index.html` 可达的产物

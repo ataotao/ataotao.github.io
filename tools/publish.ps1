@@ -55,7 +55,13 @@ param(
     [ValidateSet('all', 'vocab', 'training')]
     [string]$Only = 'all',
 
-    [string]$SourceRoot = 'C:\陶宸欣',
+    # 三个源分别用两个参数指定（原来的 -SourceRoot 已失效：那台机器的目录结构变了）。
+    [string]$VocabRoot = 'C:\learn\learn-english\word_table\vocab-app\dist',
+
+    [string]$TrainingRoot = 'C:\work\my-work\learning-training',
+
+    # 兼容旧用法：给 -SourceRoot 时按老结构推导（<root>\learn-english\...、<root>\做题思维训练）
+    [string]$SourceRoot,
 
     [switch]$DryRun,
     [switch]$Prune,
@@ -69,21 +75,36 @@ $ErrorActionPreference = 'Stop'
 
 $repoRoot = Split-Path -Parent $PSScriptRoot
 
-if (-not (Test-Path -LiteralPath $SourceRoot -PathType Container)) {
-    throw "找不到源根目录：$SourceRoot`n三个源文件夹应该都在它下面，用 -SourceRoot 指定。"
+if ($SourceRoot) {
+    if (-not (Test-Path -LiteralPath $SourceRoot -PathType Container)) {
+        throw "找不到源根目录：$SourceRoot"
+    }
+    $SourceRoot  = (Resolve-Path -LiteralPath $SourceRoot).ProviderPath
+    $VocabRoot   = Join-Path $SourceRoot 'learn-english\word_table\vocab-app\dist'
+    $TrainingRoot = Join-Path $SourceRoot '做题思维训练'
 }
-$SourceRoot = (Resolve-Path -LiteralPath $SourceRoot).ProviderPath
+
+$roots = [ordered]@{
+    '英语单词记背（vocab-app\dist）' = $VocabRoot
+    '做题思维训练'                   = $TrainingRoot
+}
+foreach ($k in $roots.Keys) {
+    if (-not (Test-Path -LiteralPath $roots[$k] -PathType Container)) {
+        Write-Host "源目录不存在：$($roots[$k])  （$k）" -ForegroundColor Red
+    }
+}
 
 # ---------------------------------------------------------------- 发布清单
 #
-# Items 里写源相对路径：字符串 = 单个文件，哈希表 = 目录（可带 Filter）。
+# Items 里写源相对路径：字符串 = 单个文件，哈希表 = 目录（可带 Filter），
+# 哈希表带 As = 复制到目标时改名（用于把仓库根的 开始.html 发成 1/index.html）。
 # 目录会保留子目录结构；Prune 只在目录项范围内生效。
 
 $Jobs = @(
     @{
         Key       = 'vocab'
         Name      = '英语单词记背（vocab-app 构建产物）'
-        Root      = Join-Path $SourceRoot 'learn-english\word_table\vocab-app\dist'
+        Root      = $VocabRoot
         Target    = $repoRoot
         Items     = @(
             'index.html'
@@ -96,21 +117,25 @@ $Jobs = @(
     }
     @{
         Key       = 'training'
-        Name      = '做题思维训练（五个训练器）'
-        Root      = Join-Path $SourceRoot '做题思维训练'
+        Name      = '做题思维训练（五个训练器 + 开始页）'
+        Root      = $TrainingRoot
         Target    = Join-Path $repoRoot '1'
         Items     = @(
+            # 入口页：仓库根 开始.html → 站点 1/index.html（覆盖旧的手写索引）
+            @{ Path = '开始.html'; As = 'index.html' }
             '道德与法治/核心考点训练.html'
             @{ Path = '道德与法治/images'; Filter = '*.webp' }
             '公式记背/公式记背.html'
             '历史/核心考点训练.html'
             @{ Path = '历史/images/试卷';   Filter = '*.webp' }
             '数学/函数思维脚手架.html'
+            '数学/今晚急救包.html'
             '物理/物理思维脚手架.html'
             @{ Path = '物理/图片';          Filter = '*.png' }
+            '英语/九上英语过关练习.html'
         )
         GitPaths  = @('1')
-        BuildHint = '在各自训练器目录里重新构建出 HTML'
+        BuildHint = '在各自训练器目录里重新构建出 HTML；开始.html 是手写的静态页'
     }
 )
 
@@ -123,9 +148,9 @@ if ($Only -ne 'all') {
 function Get-Spec {
     param($Item)
     if ($Item -is [string]) {
-        return [pscustomobject]@{ Rel = $Item; Filter = $null }
+        return [pscustomobject]@{ Rel = $Item; Filter = $null; As = $null }
     }
-    return [pscustomobject]@{ Rel = $Item.Path; Filter = $Item.Filter }
+    return [pscustomobject]@{ Rel = $Item.Path; Filter = $Item.Filter; As = $Item.As }
 }
 
 # 从入口 HTML 出发，找出 assets/ 下真正被引用到的文件（含 JS 之间的相互引用）。
@@ -179,10 +204,11 @@ function Get-Plan {
         }
 
         if (Test-Path -LiteralPath $srcPath -PathType Leaf) {
+            $dstRel = if ($spec.As) { $spec.As } else { $spec.Rel }
             $plan.Add([pscustomobject]@{
                 Src = $srcPath
-                Dst = Join-Path $Job.Target $spec.Rel
-                Rel = $spec.Rel
+                Dst = Join-Path $Job.Target $dstRel
+                Rel = $dstRel
             })
             continue
         }

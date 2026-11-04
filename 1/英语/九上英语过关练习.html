@@ -1,0 +1,4781 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>九上英语过关练习 · U1–U4</title>
+<style>
+  :root{
+    --paper:#fdfaf2;
+    --paper-deep:#f4eddd;
+    --paper-edge:#e6dcc6;
+    --ink:#221e18;
+    --ink-2:#5d5648;
+    --ink-3:#8b8272;
+    --rule:#dbd0b8;
+    --red:#c0392f;
+    --red-ink:#a92d24;
+    --red-wash:rgba(192,57,47,.07);
+    --blue:#2f4d7c;
+    --blue-wash:rgba(47,77,124,.07);
+    --ok:#2b6b52;
+    --serif:"Times New Roman","Songti SC","SimSun","宋体",serif;
+    --sans:system-ui,-apple-system,"PingFang SC","Microsoft YaHei","Noto Sans SC",sans-serif;
+    --pen:"Kaiti SC","KaiTi","楷体","STKaiti","ShuTi",cursive;
+    --shadow:0 1px 1px rgba(60,48,28,.05),0 18px 40px -22px rgba(60,48,28,.35);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:
+      radial-gradient(1200px 600px at 12% -10%, #fbf6e9 0%, transparent 60%),
+      radial-gradient(900px 500px at 100% 0%, #f5efe0 0%, transparent 55%),
+      #efe8d8;
+    color:var(--ink);
+    font-family:var(--sans);
+    -webkit-font-smoothing:antialiased;
+    min-height:100vh;
+  }
+  /* 纸纹：极细噪点 + 米色 */
+  body::before{
+    content:"";position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.5;
+    background-image:
+      repeating-linear-gradient(0deg, rgba(120,100,70,.028) 0 1px, transparent 1px 3px),
+      repeating-linear-gradient(90deg, rgba(120,100,70,.02) 0 1px, transparent 1px 4px);
+  }
+
+  /* ── 顶栏 ───────────────────────────── */
+  .topbar{
+    position:sticky;top:0;z-index:30;
+    display:flex;align-items:center;gap:22px;flex-wrap:wrap;
+    padding:14px clamp(16px,4vw,44px);
+    background:rgba(253,250,242,.88);
+    backdrop-filter:blur(10px) saturate(1.1);
+    border-bottom:1px solid var(--paper-edge);
+    box-shadow:0 1px 0 rgba(255,255,255,.7) inset;
+  }
+  .brand{display:flex;align-items:center;gap:13px;min-width:0}
+  .brand-mark{
+    flex:none;display:grid;place-items:center;
+    width:40px;height:46px;border-radius:3px;
+    background:var(--ink);color:#fdfaf2;
+    font-family:var(--serif);font-weight:700;font-size:15px;letter-spacing:.06em;
+    writing-mode:vertical-rl;line-height:1.1;
+    box-shadow:0 6px 14px -8px rgba(34,30,24,.8);
+  }
+  .brand h1{
+    margin:0;font-family:var(--serif);font-size:21px;font-weight:700;letter-spacing:.01em;
+    line-height:1.15;
+  }
+  .brand p{margin:2px 0 0;font-size:12px;color:var(--ink-3);letter-spacing:.08em}
+
+  .tabs{display:flex;gap:2px;margin-left:auto;flex-wrap:wrap}
+  .tab{
+    appearance:none;border:1px solid transparent;background:transparent;
+    font:inherit;font-size:14px;color:var(--ink-2);
+    padding:8px 15px 9px;border-radius:6px 6px 0 0;cursor:pointer;
+    position:relative;transition:color .16s, background .16s;
+  }
+  .tab:hover{color:var(--ink);background:rgba(34,30,24,.04)}
+  .tab[aria-selected="true"]{
+    color:var(--ink);background:var(--paper);
+    border-color:var(--paper-edge);border-bottom-color:var(--paper);
+    font-weight:600;
+  }
+  .tab[aria-selected="true"]::after{
+    content:"";position:absolute;left:12px;right:12px;bottom:-1px;height:2px;background:var(--red);border-radius:2px;
+  }
+  .tab .count{
+    display:inline-block;min-width:18px;margin-left:6px;padding:0 5px;
+    font-size:11px;line-height:17px;text-align:center;border-radius:9px;
+    background:var(--red);color:#fff;font-weight:600;font-family:var(--sans);
+  }
+  .tab .count:empty{display:none}
+
+  /* ── 布局 ───────────────────────────── */
+  main{position:relative;z-index:1;padding:clamp(18px,3vw,34px) clamp(12px,4vw,44px) 72px;max-width:1180px;margin:0 auto}
+  .view{display:none}
+  .view.is-active{display:block;animation:viewIn .32s cubic-bezier(.22,.9,.28,1) both}
+  @keyframes viewIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+  /* ── 单元切换 ───────────────────────── */
+  .unitbar{display:flex;align-items:center;gap:18px;flex-wrap:wrap;margin-bottom:16px}
+  .unitseg{display:inline-flex;background:rgba(34,30,24,.055);padding:3px;border-radius:8px;gap:2px}
+  .unitseg button{
+    appearance:none;border:0;background:transparent;font:inherit;font-size:14px;
+    color:var(--ink-2);padding:7px 16px;border-radius:6px;cursor:pointer;letter-spacing:.03em;
+    transition:background .16s,color .16s;
+  }
+  .unitseg button:hover{color:var(--ink)}
+  .unitseg button[aria-pressed="true"]{background:var(--paper);color:var(--ink);font-weight:600;box-shadow:0 1px 2px rgba(60,48,28,.16)}
+  .unitseg .count{
+    display:inline-block;min-width:16px;margin-left:6px;padding:0 4px;border-radius:8px;
+    font-family:var(--sans);font-size:10.5px;line-height:15px;font-weight:600;text-align:center;
+    background:rgba(192,57,47,.12);color:var(--red-ink);
+  }
+  .unitseg button[aria-pressed="true"] .count{background:var(--red);color:#fff}
+  .unitbar .hint{font-size:12.5px;color:var(--ink-3)}
+  .unitbar .spacer{margin-left:auto}
+  .tool{
+    appearance:none;border:1px solid var(--paper-edge);background:var(--paper);
+    font:inherit;font-size:13px;color:var(--ink-2);padding:7px 13px;border-radius:6px;
+    cursor:pointer;transition:all .15s;white-space:nowrap;
+  }
+  .tool:hover{border-color:var(--ink-3);color:var(--ink)}
+  .tool[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--paper)}
+  .tool:disabled{opacity:.45;cursor:default}
+
+  /* ── 试卷纸 ─────────────────────────── */
+  .sheet{
+    position:relative;
+    background:var(--paper);
+    border:1px solid var(--paper-edge);
+    border-radius:2px;
+    box-shadow:var(--shadow);
+    padding:clamp(26px,4vw,46px) clamp(18px,4vw,48px) clamp(30px,4vw,52px) clamp(30px,5vw,60px);
+    min-height:520px;
+  }
+  /* 左侧红色装订线 */
+  .sheet::before{
+    content:"";position:absolute;top:0;bottom:0;left:clamp(22px,3.4vw,44px);
+    width:1px;background:linear-gradient(180deg,transparent 0,rgba(192,57,47,.42) 8%,rgba(192,57,47,.42) 92%,transparent 100%);
+  }
+  .sheet-head{position:relative;padding-bottom:18px;border-bottom:1px solid var(--rule);margin-bottom:8px}
+  .sheet-meta{
+    display:flex;gap:18px;flex-wrap:wrap;font-size:12px;color:var(--ink-3);
+    font-family:var(--pen);letter-spacing:.02em;
+  }
+  .sheet-meta b{font-weight:400;color:var(--ink-2);border-bottom:1px solid var(--rule);padding:0 10px 1px}
+  .sheet-title{display:flex;align-items:baseline;gap:14px;margin:12px 0 4px;flex-wrap:wrap}
+  .sheet-title .unit-eyebrow{
+    font-family:var(--sans);font-size:11px;letter-spacing:.28em;color:var(--ink-3);text-transform:uppercase;
+  }
+  .sheet-title h2{margin:0;font-family:var(--serif);font-size:clamp(22px,3vw,29px);font-weight:700;letter-spacing:.02em;line-height:1.2}
+  .sheet-title .sub{font-size:13px;color:var(--ink-3)}
+
+  /* 批改章 */
+  .stamp{
+    position:absolute;right:-6px;top:-16px;
+    width:132px;height:132px;display:grid;place-items:center;
+    border-radius:50%;
+    border:2px solid rgba(192,57,47,.55);
+    box-shadow:0 0 0 1px rgba(192,57,47,.22) inset,0 0 0 6px transparent;
+    color:rgba(192,57,47,.78);
+    font-family:var(--pen);text-align:center;line-height:1.15;
+    transform:rotate(-9deg);opacity:0;pointer-events:none;
+    mix-blend-mode:multiply;
+    transition:opacity .5s ease;
+  }
+  .stamp.show{opacity:.92;animation:stampIn .42s cubic-bezier(.2,1.5,.4,1) both}
+  .stamp::before{content:"";position:absolute;inset:6px;border:1px dashed rgba(192,57,47,.4);border-radius:50%}
+  .stamp b{display:block;font-size:26px;letter-spacing:.18em;font-family:var(--serif);font-weight:700}
+  .stamp span{display:block;font-size:11.5px;letter-spacing:.12em;margin-top:4px}
+  @keyframes stampIn{from{opacity:0;transform:rotate(-9deg) scale(1.5)}to{opacity:.92;transform:rotate(-9deg) scale(1)}}
+
+  /* ── 题目 ───────────────────────────── */
+  .part{margin-top:26px}
+  .part-head{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+  .part-head h3{
+    margin:0;font-family:var(--serif);font-size:15px;font-weight:700;letter-spacing:.14em;color:var(--ink);
+  }
+  .part-head .range{font-size:11.5px;color:var(--ink-3);letter-spacing:.06em}
+  .part-head .rule{flex:1;height:1px;background:var(--rule);margin-left:4px}
+
+  /* ── 逐题模式 ───────────────────────── */
+  .oneq-bar{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin:8px 0 12px}
+  .oneq-bar .progress{
+    font-family:var(--serif);font-size:13px;color:var(--ink-2);letter-spacing:.04em;
+    font-variant-numeric:tabular-nums;
+  }
+  .oneq-bar .hint{font-size:11.5px;color:var(--ink-3)}
+  .oneq-bar .tool{min-width:96px;text-align:center}
+  .oneq-bar .grow{flex:1}
+
+  .questions{list-style:none;margin:0;padding:0}
+  .q{position:relative;display:grid;grid-template-columns:38px 1fr;gap:2px 8px;padding:15px 0 17px;border-bottom:1px dashed rgba(219,208,184,.85)}
+  .q:last-child{border-bottom:0}
+  .q-no{
+    font-family:var(--serif);font-size:14px;color:var(--ink-3);padding-top:2px;text-align:right;
+    display:flex;flex-direction:column;align-items:flex-end;gap:3px;
+  }
+  .q-no .pen-letter{
+    font-family:var(--pen);font-size:15px;color:var(--blue);opacity:.75;letter-spacing:0;
+    text-decoration:underline;text-decoration-style:wavy;text-decoration-color:rgba(47,77,124,.35);
+    text-underline-offset:3px;
+  }
+  .q-body{min-width:0}
+  .stem{
+    font-family:var(--serif);font-size:16.5px;line-height:1.72;margin:0 0 4px;
+    color:var(--ink);text-wrap:pretty;
+  }
+  .q-section{
+    display:inline-block;margin:0 0 5px;padding:1px 7px;border-radius:3px;
+    font-family:var(--sans);font-size:11px;letter-spacing:.08em;color:var(--ink-2);
+    background:rgba(34,30,24,.055);
+  }
+  .stem .cn{display:block;font-family:var(--sans);font-size:13.5px;line-height:1.8;color:var(--ink-2);margin-bottom:2px}
+  .blank{
+    display:inline-block;min-width:74px;border-bottom:1.4px solid var(--ink-2);
+    height:1.05em;vertical-align:-.16em;margin:0 3px;
+  }
+  .options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px 22px;margin-top:10px}
+  .opt{
+    appearance:none;display:grid;grid-template-columns:22px 1fr;gap:9px;align-items:baseline;
+    text-align:left;font-family:var(--serif);font-size:15.5px;line-height:1.55;color:var(--ink);
+    background:transparent;border:1px solid transparent;border-radius:5px;padding:7px 10px 7px 6px;cursor:pointer;
+    transition:background .14s,border-color .14s,transform .14s;position:relative;
+  }
+  .opt .k{
+    font-family:var(--sans);font-size:12px;font-weight:600;letter-spacing:.04em;color:var(--ink-3);
+    width:22px;height:22px;display:grid;place-items:center;border-radius:50%;
+    border:1px solid var(--rule);background:rgba(255,255,255,.5);transform:translateY(-1px);
+  }
+  .opt:hover{background:rgba(34,30,24,.035);border-color:rgba(219,208,184,.9)}
+  .opt:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+  .opt[data-state="picked"]{background:var(--blue-wash);border-color:rgba(47,77,124,.28)}
+  .opt[data-state="picked"] .k{background:var(--blue);border-color:var(--blue);color:#fff}
+  .opt[data-state="right"]{background:rgba(43,107,82,.09);border-color:rgba(43,107,82,.32)}
+  .opt[data-state="right"] .k{background:var(--ok);border-color:var(--ok);color:#fff}
+  .opt[data-state="wrong"]{background:var(--red-wash);border-color:rgba(192,57,47,.3)}
+  .opt[data-state="wrong"] .k{background:var(--red);border-color:var(--red);color:#fff}
+  .opt[disabled]{cursor:default}
+  .opt[disabled]:hover{background:transparent}
+
+  /* 红笔批注 */
+  .mark{
+    position:absolute;left:-6px;top:44%;translate:0 -50%;
+    font-family:var(--pen);font-size:34px;line-height:1;color:var(--red);pointer-events:none;
+    opacity:0;text-shadow:0 1px 0 rgba(255,255,255,.5);
+  }
+  .q[data-result="right"] > .q-no .mark{opacity:.85;animation:markIn .3s ease-out both}
+  .q[data-result="wrong"] > .q-no .mark{opacity:.9;animation:markIn .3s ease-out both}
+  @keyframes markIn{from{opacity:0;transform:scale(1.7) rotate(-12deg)}to{opacity:.9;transform:scale(1) rotate(-6deg)}}
+
+  .verify{
+    display:flex;align-items:flex-start;gap:10px;margin:12px 0 0;
+    padding:12px 14px 12px 12px;border-left:2px solid var(--red);background:var(--red-wash);
+    border-radius:0 5px 5px 0;
+  }
+  .verify .tag{
+    flex:none;font-family:var(--sans);font-size:11px;letter-spacing:.08em;color:#fff;background:var(--red);
+    padding:2px 6px;border-radius:3px;margin-top:1px;
+  }
+  .vbody{flex:1;min-width:0;display:grid;gap:6px}
+  .vrow{
+    display:grid;grid-template-columns:58px 1fr;gap:9px;align-items:baseline;
+    margin:0;font-family:var(--sans);font-size:14px;line-height:1.82;color:var(--ink-2);
+  }
+  .vrow .vk{
+    font-size:11px;letter-spacing:.06em;color:var(--red);white-space:nowrap;
+    padding-top:2px;font-weight:600;
+  }
+  .vrow .vt{color:var(--ink);text-wrap:pretty}
+  .vrow .vtopic{
+    font-family:var(--pen);font-size:15.5px;color:var(--red-ink);
+    border-bottom:1px solid rgba(192,57,47,.35);padding:0 2px 1px;justify-self:start;
+  }
+  .vrow.v-trap{
+    background:rgba(192,57,47,.075);border-left:2px solid rgba(192,57,47,.55);
+    padding:7px 10px 7px 9px;border-radius:0 4px 4px 0;margin:1px 0;
+  }
+  .vrow.v-trap .vt{color:var(--ink)}
+  .vrow.v-ans .vt{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .vrow .ans{
+    font-family:var(--serif);font-size:17px;font-weight:700;color:var(--red);letter-spacing:.02em;
+    border-bottom:2px solid rgba(192,57,47,.35);padding:0 3px;
+  }
+  .vrow .doubt-chip{
+    font-size:11px;color:var(--ink-2);background:rgba(34,30,24,.05);border-radius:3px;padding:1px 6px;
+  }
+  @media (max-width:560px){
+    .vrow{grid-template-columns:1fr;gap:2px}
+    .vrow .vk{padding-top:0}
+  }
+
+  .q-tools{display:flex;gap:14px;margin-top:9px;flex-wrap:wrap;align-items:baseline}
+  .q-ref{font-size:11.5px;color:var(--ink-3);letter-spacing:.03em}
+  .q-tools button{
+    appearance:none;border:0;background:transparent;font:inherit;font-size:12px;color:var(--ink-3);
+    padding:2px 0;cursor:pointer;border-bottom:1px dotted var(--rule);transition:color .15s;
+  }
+  .q-tools button:hover{color:var(--red)}
+
+  .q.is-target{background:linear-gradient(90deg,rgba(192,57,47,.09),transparent 70%);animation:flash 1.1s ease-out}
+  @keyframes flash{0%{box-shadow:inset 3px 0 0 var(--red)}100%{box-shadow:inset 3px 0 0 transparent}}
+
+  .sidenote{
+    margin-top:22px;padding-top:14px;border-top:1px solid var(--rule);
+    font-size:12.5px;color:var(--ink-3);display:flex;gap:8px;align-items:baseline;flex-wrap:wrap;
+  }
+  .sidenote b{font-weight:600;color:var(--ink-2);font-family:var(--pen);font-size:13.5px}
+
+  /* ── 统计条 ─────────────────────────── */
+  .statrow{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:2px;background:var(--paper-edge);border:1px solid var(--paper-edge);border-radius:6px;overflow:hidden;margin-bottom:20px}
+  .stat{background:var(--paper);padding:14px 18px}
+  .stat .k{font-size:11px;letter-spacing:.14em;color:var(--ink-3);text-transform:uppercase}
+  .stat .v{font-family:var(--serif);font-size:26px;line-height:1.25;margin-top:3px;letter-spacing:.01em}
+  .stat .v small{font-size:13px;color:var(--ink-3);font-family:var(--sans);letter-spacing:0}
+  .stat .bar{height:3px;background:rgba(34,30,24,.08);border-radius:3px;margin-top:9px;overflow:hidden}
+  .stat .bar i{display:block;height:100%;background:var(--red);border-radius:3px;transition:width .5s cubic-bezier(.22,.9,.28,1)}
+
+  /* ── 批改报告 ───────────────────────── */
+  .report-head{display:flex;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:18px}
+  .report-head h2{margin:0;font-family:var(--serif);font-size:clamp(20px,3vw,26px);letter-spacing:.02em}
+  .report-head p{margin:0;font-size:13px;color:var(--ink-3)}
+  .tablewrap{background:var(--paper);border:1px solid var(--paper-edge);border-radius:4px;box-shadow:var(--shadow);overflow:hidden}
+  .report-sheet{padding:26px 30px 30px}
+  .tablewrap + .tablewrap{margin-top:20px}
+  table.grade{width:100%;border-collapse:collapse;font-size:14px}
+  table.grade caption{
+    text-align:left;font-family:var(--serif);font-size:16px;font-weight:700;padding:0 0 12px;letter-spacing:.06em;
+  }
+  table.grade caption .q-count{font-family:var(--sans);font-size:12px;color:var(--ink-3);font-weight:400;letter-spacing:0;margin-left:8px}
+  table.grade th{
+    font-size:11px;letter-spacing:.12em;color:var(--ink-3);font-weight:600;text-align:left;
+    padding:8px 10px;border-bottom:1px solid var(--rule);text-transform:uppercase;
+  }
+  table.grade td{padding:9px 10px;border-bottom:1px solid rgba(219,208,184,.6);font-family:var(--serif);font-size:14.5px}
+  table.grade tr:last-child td{border-bottom:0}
+  table.grade tr.is-wrong td{background:rgba(192,57,47,.045)}
+  table.grade td.no{color:var(--ink-3);width:44px;text-align:right;font-family:var(--sans);font-size:12.5px}
+  table.grade td.pick{font-family:var(--pen);font-size:16px;width:80px;color:var(--blue)}
+  table.grade td.key{width:80px}
+  table.grade td.verdict{width:96px;font-family:var(--sans);font-size:12.5px}
+  .v-right{color:var(--ok)}
+  .v-wrong{color:var(--red);font-weight:600}
+  .v-empty{color:var(--ink-3)}
+  .verdict .pen-mark{font-family:var(--pen);font-size:19px;margin-right:4px}
+  table.grade td.stemcell{font-family:var(--serif);color:var(--ink-2);font-size:13.5px;line-height:1.55}
+  table.grade td.stemcell .topic{font-family:var(--sans);font-size:11.5px;color:var(--red-ink);border:1px solid rgba(192,57,47,.28);border-radius:3px;padding:0 5px;margin-left:6px;white-space:nowrap}
+  tbody tr[data-goto]{cursor:pointer}
+  tbody tr[data-goto]:hover td{background:rgba(34,30,24,.035)}
+
+  /* ── 错题本 ─────────────────────────── */
+  .mistake-summary{
+    display:flex;align-items:center;gap:8px;flex-wrap:wrap;
+    padding:12px 16px;margin-bottom:14px;background:rgba(253,250,242,.75);
+    border:1px solid var(--paper-edge);border-radius:6px;
+  }
+  .mm-label{font-size:11.5px;letter-spacing:.12em;color:var(--ink-3)}
+  .mm-chip{
+    font-size:12.5px;color:var(--ink);background:var(--paper);border:1px solid var(--paper-edge);
+    border-radius:20px;padding:3px 10px;
+  }
+  .mm-chip i{font-style:normal;color:var(--red);font-size:11px;margin-left:4px}
+  .mm-hint{margin-left:auto;font-size:12px;color:var(--ink-3)}
+  .mistakes{display:grid;gap:14px}
+  .mcard{
+    background:var(--paper);border:1px solid var(--paper-edge);border-radius:4px;
+    box-shadow:0 10px 28px -22px rgba(60,48,28,.6);
+    padding:20px 24px 18px;position:relative;overflow:hidden;
+  }
+  .mcard::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--red);opacity:.7}
+  .mcard-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px}
+  .mcard-head .unit{font-size:11px;letter-spacing:.16em;color:var(--ink-3)}
+  .mcard-head .no{font-family:var(--serif);font-size:15px;font-weight:700}
+  .mcard-head .topic{
+    font-family:var(--sans);font-size:11.5px;color:var(--red-ink);background:var(--red-wash);
+    border:1px solid rgba(192,57,47,.22);border-radius:3px;padding:1px 7px;
+  }
+  .mcard-head .src{margin-left:auto;font-size:11.5px;color:var(--ink-3)}
+  .mcard .stem{margin:6px 0 10px;font-size:15.5px}
+  .mcard .opts{display:grid;gap:4px;margin:0 0 10px;font-family:var(--serif);font-size:14.5px;color:var(--ink-2)}
+  .mcard .opts .row{display:grid;grid-template-columns:24px 1fr;gap:6px;padding:2px 0}
+  .mcard .opts .row.is-key{color:var(--ok);font-weight:600}
+  .mcard .opts .row.is-pick{color:var(--red)}
+  .mcard .opts .row .k{color:var(--ink-3);font-family:var(--sans);font-size:12px}
+  .mcard .opts .row.is-key .k{color:var(--ok)}
+  .mcard .opts .row.is-pick .k{color:var(--red)}
+  .mcard .why{
+    font-family:var(--pen);font-size:14px;line-height:1.85;color:var(--ink);
+    border-left:2px solid rgba(192,57,47,.5);padding:2px 0 2px 12px;margin:0;
+  }
+  .mcard .m-explain{
+    display:grid;gap:6px;margin:10px 0 0;padding:2px 0 2px 12px;
+    border-left:2px solid rgba(192,57,47,.5);
+  }
+  .mcard .m-line{margin:0;font-family:var(--pen);font-size:14.5px;line-height:1.95;color:var(--ink);text-wrap:pretty}
+  .mcard .m-k{
+    font-family:var(--sans);font-size:11.5px;font-weight:600;letter-spacing:.1em;color:var(--red);
+    margin-right:8px;white-space:nowrap;
+  }
+  .mcard .m-trap{background:rgba(192,57,47,.07);border-radius:0 4px 4px 0;padding:6px 10px 6px 8px;margin-left:-2px}
+  .mcard .why b{font-family:var(--sans);font-size:11.5px;letter-spacing:.1em;color:var(--red);font-weight:600;margin-right:6px}
+  .mcard .answer-summary{display:flex;gap:16px;flex-wrap:wrap;font-size:12.5px;color:var(--ink-2);margin-top:10px;font-family:var(--sans)}
+  .mcard .answer-summary b{font-family:var(--pen);font-size:15px;font-weight:400}
+  .mcard .answer-summary .w{color:var(--red)}
+  .mcard .answer-summary .r{color:var(--ok)}
+  .empty{
+    text-align:center;padding:64px 20px;color:var(--ink-3);
+    border:1px dashed var(--paper-edge);border-radius:6px;background:rgba(253,250,242,.6);
+  }
+  .empty .big{font-family:var(--pen);font-size:34px;color:var(--ok);opacity:.65;margin-bottom:10px}
+  .empty p{margin:4px 0;font-size:14px}
+
+  /* ── 填空自测 ───────────────────────── */
+  .fill-item{background:var(--paper);border:1px solid var(--paper-edge);border-radius:4px;padding:18px 22px;margin-bottom:12px;box-shadow:0 10px 26px -24px rgba(60,48,28,.7)}
+  .fill-item .cn{font-size:13.5px;color:var(--ink-2);line-height:1.8;margin:0 0 6px}
+  .fill-head{display:flex;align-items:baseline;gap:12px;margin-bottom:6px}
+  .fill-no{font-family:var(--serif);font-size:13px;color:var(--ink-2);letter-spacing:.04em}
+  .fill-ref{font-size:11.5px;color:var(--ink-3)}
+  .fill-flag{
+    font-size:10.5px;letter-spacing:.06em;color:var(--red-ink);
+    border:1px solid rgba(192,57,47,.3);border-radius:3px;padding:0 5px;background:var(--red-wash);
+  }
+  .fill-flag.ok{color:var(--ok);border-color:rgba(43,107,82,.35);background:rgba(43,107,82,.08)}
+  .fill-flag.bad{color:var(--red);border-color:rgba(192,57,47,.4);background:var(--red-wash)}
+  .fill-flag.warn{color:var(--ink-2);border-color:var(--paper-edge);background:rgba(34,30,24,.04)}
+  .fill-item .stem{margin:0 0 10px}
+  .fill-input{
+    width:100%;font-family:var(--serif);font-size:15.5px;color:var(--ink);background:rgba(255,255,255,.7);
+    border:1px solid var(--rule);border-radius:5px;padding:9px 12px;outline:none;transition:border-color .15s,box-shadow .15s;
+  }
+  .fill-input:focus{border-color:var(--ink-3);box-shadow:0 0 0 3px rgba(34,30,24,.05)}
+  .fill-actions{display:flex;gap:10px;align-items:center;margin-top:10px;flex-wrap:wrap}
+  .fill-actions .res{font-size:12.5px;font-family:var(--sans)}
+  .fill-reveal{margin-top:12px;padding-top:10px;border-top:1px dashed var(--rule);font-size:13px;line-height:1.9;color:var(--ink-2);display:none}
+  .fill-reveal.show{display:block;animation:viewIn .25s ease-out both}
+  .fill-reveal .pen{font-family:var(--pen);font-size:15px;color:var(--blue)}
+  .fill-reveal .keyref{font-family:var(--serif);font-size:14.5px;color:var(--ok)}
+  .fill-reveal .fr-line{margin-top:6px;color:var(--ink-2);line-height:1.9;text-wrap:pretty}
+  .fill-reveal .fr-k{
+    font-family:var(--sans);font-size:11.5px;font-weight:600;letter-spacing:.1em;color:var(--red);
+    margin-right:8px;
+  }
+  .fill-reveal .fr-trap{background:rgba(192,57,47,.06);border-left:2px solid rgba(192,57,47,.5);padding:5px 9px;border-radius:0 4px 4px 0}
+
+  /* ── 顶部小徽标 / 打印 ───────────────── */
+  .page-foot{
+    display:flex;align-items:center;gap:18px;flex-wrap:wrap;
+    margin:36px auto 0;padding-top:16px;border-top:1px solid var(--paper-edge);
+    font-size:11.5px;color:var(--ink-3);max-width:880px;
+  }
+  .page-foot b{font-weight:600;color:var(--ink-2);font-family:var(--pen);font-size:12.5px}
+  .footlink{
+    appearance:none;border:0;background:transparent;font:inherit;font-size:11.5px;color:var(--ink-3);
+    cursor:pointer;border-bottom:1px dotted var(--rule);padding:0 0 1px;margin-left:auto;
+  }
+  .footlink:hover{color:var(--red)}
+  .topnote{
+    display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:12.5px;color:var(--ink-3);
+    margin:0 0 16px;
+  }
+  .topnote .dot{width:5px;height:5px;border-radius:50%;background:var(--red)}
+  .errbar{
+    position:fixed;left:0;right:0;bottom:0;z-index:99;background:#7a1d16;color:#fff;
+    font:12px/1.6 ui-monospace,Consolas,monospace;padding:10px 16px;display:none;white-space:pre-wrap;max-height:38vh;overflow:auto;
+  }
+  .errbar.show{display:block}
+
+  @media print{
+    body::before,.topbar,.unitbar,.q-tools,.tool,.stamp,.oneq-bar{display:none!important}
+    body{background:#fff}
+    main{padding:0;max-width:none}
+    .sheet,.mcard,.tablewrap{box-shadow:none;border-color:#bbb;break-inside:avoid}
+    .view{display:none!important}
+    .view.is-active{display:block!important}
+    .mcard{margin-bottom:10px}
+  }
+  @media (max-width:720px){
+    .topbar{gap:12px;padding:12px 16px}
+    .brand h1{font-size:18px}
+    .tabs{width:100%;order:3;margin-left:0}
+    .tab{flex:1;text-align:center;padding:8px 6px}
+    .sheet{padding:22px 16px 26px 22px}
+    .sheet::before{left:12px}
+    .q{grid-template-columns:30px 1fr}
+    .stamp{display:none}
+    .options{grid-template-columns:1fr}
+    .optsummary{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div class="brand">
+    <span class="brand-mark">九上</span>
+    <div>
+      <h1>英语过关练习</h1>
+      <p>U1–U4 · 原卷批改 · 错题本</p>
+    </div>
+  </div>
+  <nav class="tabs" role="tablist" aria-label="视图">
+    <button class="tab" role="tab" data-view="practice" aria-selected="true">练习</button>
+    <button class="tab" role="tab" data-view="report" aria-selected="false">批改报告</button>
+    <button class="tab" role="tab" data-view="mistakes" aria-selected="false">错题本<span class="count" id="tab-mistake-count"></span></button>
+    <button class="tab" role="tab" data-view="fills" aria-selected="false">填空自测</button>
+  </nav>
+</div>
+
+<main>
+  <section class="view is-active" id="view-practice" data-screen-label="practice"></section>
+  <section class="view" id="view-report" data-screen-label="report"></section>
+  <section class="view" id="view-mistakes" data-screen-label="mistakes"></section>
+  <section class="view" id="view-fills" data-screen-label="fills"></section>
+
+  <footer class="page-foot">
+    <span>原卷：<b>英语/题库/九上 U1–U4.jpg</b> · 页边字母为学生原作答，已逐题批改</span>
+    <span>答案与解析为整理稿，标「存疑」的题请与老师核对</span>
+    <button class="footlink" id="btn-export-json" data-rec-export>导出记录（JSON）</button>
+    <button class="footlink" id="btn-import-json" data-rec-import style="margin-left:0">导入记录（JSON）</button>
+    <button class="footlink" id="btn-reset-all" style="margin-left:0">清空全部作答记录</button>
+  </footer>
+</main>
+
+<div class="errbar" id="errbar"></div>
+
+<script>window.QUIZ_DATA = {
+ "generatedAt": "2026-11-04T07:53:08.685Z",
+ "units": [
+  {
+   "unit": "U1",
+   "title": "九上 U1 过关",
+   "header": {
+    "class": "柯三9",
+    "name": "陶宸欣",
+    "id": "0909"
+   },
+   "note": "",
+   "items": [
+    {
+     "no": 1,
+     "kind": "fill",
+     "stem": "It is ______ that Wang Zhenyi is remembered for her great work.",
+     "cn": null,
+     "options": null,
+     "marked": null,
+     "handwriting": [
+      "fact"
+     ],
+     "note": "横线手写词辨为 fact（卷面横线前未印冠词，按字面转写）"
+    },
+    {
+     "no": 2,
+     "kind": "fill",
+     "stem": "Some people think writing letters is ______ but I like it very much.",
+     "cn": null,
+     "options": null,
+     "marked": null,
+     "handwriting": [
+      "outstanding"
+     ],
+     "note": "手写词辨为 outstanding（语境疑应为 outdated，按字面转写）"
+    },
+    {
+     "no": 3,
+     "kind": "fill",
+     "stem": "Though he passed away at a young age, his spirit lives ______ his short lifetime.",
+     "cn": null,
+     "options": null,
+     "marked": null,
+     "handwriting": [
+      "beyond"
+     ],
+     "note": "手写单词潦草，辨为 beyond（首字母 b 清晰，后半辨读）"
+    },
+    {
+     "no": 4,
+     "kind": "fill",
+     "stem": "Mary is ______ that she can achieve her goal as long as she keeps making efforts.",
+     "cn": null,
+     "options": null,
+     "marked": null,
+     "handwriting": [
+      "confident"
+     ],
+     "note": "手写词辨为 confident"
+    },
+    {
+     "no": 5,
+     "kind": "mc",
+     "stem": "______ is fitting that hard work finally leads to good results.",
+     "cn": null,
+     "options": [
+      {
+       "k": "A",
+       "t": "There"
+      },
+      {
+       "k": "B",
+       "t": "It"
+      },
+      {
+       "k": "C",
+       "t": "This"
+      },
+      {
+       "k": "D",
+       "t": "That"
+      }
+     ],
+     "marked": "B",
+     "handwriting": null,
+     "note": "题号左侧页边手写 B；选项 B. It 处有手画圈，与页边一致"
+    },
+    {
+     "no": 6,
+     "kind": "mc",
+     "stem": "Scientists are convinced ______ the importance of protecting the environment.",
+     "cn": null,
+     "options": [
+      {
+       "k": "A",
+       "t": "of"
+      },
+      {
+       "k": "B",
+       "t": "about"
+      },
+      {
+       "k": "C",
+       "t": "in"
+      },
+      {
+       "k": "D",
+       "t": "with"
+      }
+     ],
+     "marked": "A",
+     "handwriting": null,
+     "note": "题号左侧页边手写 A（其横画长长延伸，压到选项行）"
+    },
+    {
+     "no": 7,
+     "kind": "mc",
+     "stem": "______ his achievements in science, he is an excellent artist.",
+     "cn": null,
+     "options": [
+      {
+       "k": "A",
+       "t": "In addition"
+      },
+      {
+       "k": "B",
+       "t": "In addition to"
+      },
+      {
+       "k": "C",
+       "t": "Except for"
+      },
+      {
+       "k": "D",
+       "t": "Instead of"
+      }
+     ],
+     "marked": "B",
+     "handwriting": null,
+     "note": "题号左侧页边手写 B（草写形似 ß/ℬ）"
+    },
+    {
+     "no": 8,
+     "kind": "mc",
+     "stem": "The young girl ______ acting, and she practises it day and night.",
+     "cn": null,
+     "options": [
+      {
+       "k": "A",
+       "t": "has a talent in"
+      },
+      {
+       "k": "B",
+       "t": "is talented in"
+      },
+      {
+       "k": "C",
+       "t": "has talent for"
+      },
+      {
+       "k": "D",
+       "t": "is talented for"
+      }
+     ],
+     "marked": "B",
+     "handwriting": null,
+     "note": "题号左侧页边手写 B（卷面为英式拼写 practises）"
+    },
+    {
+     "no": 9,
+     "kind": "mc",
+     "stem": "People were made ______ that eclipses were a sign of anger from heaven in the past.",
+     "cn": null,
+     "options": [
+      {
+       "k": "A",
+       "t": "Believe"
+      },
+      {
+       "k": "B",
+       "t": "believing"
+      },
+      {
+       "k": "C",
+       "t": "to believe"
+      },
+      {
+       "k": "D",
+       "t": "to believing"
+      }
+     ],
+     "marked": "C",
+     "handwriting": null,
+     "note": "题号左侧页边手写 C；选项 C 被手画圈，与页边一致"
+    },
+    {
+     "no": 10,
+     "kind": "mc",
+     "stem": "The computer needs ______. I think I need ______ to ask Mr Zhang for help.",
+     "cn": null,
+     "options": [
+      {
+       "k": "A",
+       "t": "fixing; going"
+      },
+      {
+       "k": "B",
+       "t": "to fix; going"
+      },
+      {
+       "k": "C",
+       "t": "fixing; to go"
+      },
+      {
+       "k": "D",
+       "t": "to fix; to go"
+      }
+     ],
+     "marked": "C",
+     "handwriting": null,
+     "note": "题号左侧页边手写 C（形近圆弧）；选项 C 被圈，A、B 有划线"
+    },
+    {
+     "no": 11,
+     "kind": "mc",
+     "stem": "Wang Zhenyi was ______ male scientists of her time.",
+     "cn": null,
+     "options": [
+      {
+       "k": "A",
+       "t": "so important as"
+      },
+      {
+       "k": "B",
+       "t": "not as important as"
+      },
+      {
+       "k": "C",
+       "t": "less important than"
+      },
+      {
+       "k": "D",
+       "t": "no less important than"
+      }
+     ],
+     "marked": "B",
+     "handwriting": null,
+     "note": "题号左侧页边手写 B"
+    },
+    {
+     "no": 12,
+     "kind": "mc",
+     "stem": "This salad ______ fresh vegetables and fruits, and the juice ______ grapes.",
+     "cn": null,
+     "options": [
+      {
+       "k": "A",
+       "t": "is made by; is made of"
+      },
+      {
+       "k": "B",
+       "t": "is made up of; is made of"
+      },
+      {
+       "k": "C",
+       "t": "is made by; is made from"
+      },
+      {
+       "k": "D",
+       "t": "is made up of; is made from"
+      }
+     ],
+     "marked": "D",
+     "handwriting": null,
+     "note": "题号左侧页边手写字形辨为 B（与 7/8/11 题同一草写体）；但选项区 A、B 前有划线、D 前有类似勾选记号，疑学生最终改选 D，页边字母与选项标记不一致 页边原写 B，选项区 A/B 被划掉、D 前有勾，按最终作答记 D（用户确认）。"
+    },
+    {
+     "no": 13,
+     "kind": "fill",
+     "stem": "Practice is ______ talent.",
+     "cn": "练习和天赋一样必要。",
+     "options": null,
+     "marked": null,
+     "handwriting": [
+      "as necessary as"
+     ],
+     "note": null
+    },
+    {
+     "no": 14,
+     "kind": "fill",
+     "stem": "These vegetables in the garden ______ every day, or they will die.",
+     "cn": "花园里的这些蔬菜每天都需要浇水，否则它们会死的。",
+     "options": null,
+     "marked": null,
+     "handwriting": [
+      "need to be watered"
+     ],
+     "note": null
+    },
+    {
+     "no": 15,
+     "kind": "fill",
+     "stem": "______ English movies, I also listen to English songs to learn English.",
+     "cn": "除了看英文电影，我还听英文歌曲来学习英语。",
+     "options": null,
+     "marked": null,
+     "handwriting": [
+      "In addition to watching"
+     ],
+     "note": null
+    },
+    {
+     "no": 16,
+     "kind": "fill",
+     "stem": "Nancy was famous for ______ for playing the piano when she was a child.",
+     "cn": "南希从小就因弹钢琴有天赋而出名。",
+     "options": null,
+     "marked": null,
+     "handwriting": [
+      "having a talent"
+     ],
+     "note": "横线上先写 being talented 并划掉，上方改写为 having a talent（空后 for 为印刷体） 横线上先写 being talented 被划掉，改写 having a talent；此处只保留最终作答。"
+    },
+    {
+     "no": 17,
+     "kind": "fill",
+     "stem": "______ we learn from great people and ______ their spirits ______.",
+     "cn": "我们向伟人学习，并牢记他们的精神，这是理所应当的。",
+     "options": null,
+     "marked": null,
+     "handwriting": [
+      "It is fitting",
+      "that"
+     ],
+     "note": "句首两处横线上手写 It is fitting；and 后横线写 that；their spirits 之后的横线未填写"
+    },
+    {
+     "no": 18,
+     "kind": "fill",
+     "stem": "The model of lunar eclipse ______ several simple things, and she made it ______.",
+     "cn": "这个月食模型由几样简单物品组成，并且是她独自完成的。",
+     "options": null,
+     "marked": null,
+     "handwriting": [
+      "is made up of",
+      "on her own"
+     ],
+     "note": "第二个空移至下一行行首，学生写 on her own"
+    },
+    {
+     "no": 19,
+     "kind": "mc",
+     "stem": "I'm sorry ______ I broke your glass just now.",
+     "cn": null,
+     "options": [
+      {
+       "k": "A",
+       "t": "/"
+      },
+      {
+       "k": "B",
+       "t": "what"
+      },
+      {
+       "k": "C",
+       "t": "which"
+      },
+      {
+       "k": "D",
+       "t": "whose"
+      }
+     ],
+     "marked": "A",
+     "handwriting": null,
+     "note": "题号左侧页边手写 A；选项 A 印刷为斜杠 /（即不填）"
+    },
+    {
+     "no": 20,
+     "kind": "mc",
+     "stem": "I am not certain ______ the new student will join our English Club or not.",
+     "cn": null,
+     "options": [
+      {
+       "k": "A",
+       "t": "that"
+      },
+      {
+       "k": "B",
+       "t": "whether"
+      },
+      {
+       "k": "C",
+       "t": "what"
+      },
+      {
+       "k": "D",
+       "t": "how"
+      }
+     ],
+     "marked": "C",
+     "handwriting": null,
+     "note": "题号左侧页边手写 C"
+    },
+    {
+     "no": 21,
+     "kind": "mc",
+     "stem": "My grandma is worried that it ______ rainy tomorrow.",
+     "cn": null,
+     "options": [
+      {
+       "k": "A",
+       "t": "is"
+      },
+      {
+       "k": "B",
+       "t": "was"
+      },
+      {
+       "k": "C",
+       "t": "has been"
+      },
+      {
+       "k": "D",
+       "t": "will be"
+      }
+     ],
+     "marked": "B",
+     "handwriting": null,
+     "note": "题号左侧页边手写 B"
+    },
+    {
+     "no": 22,
+     "kind": "mc",
+     "stem": "I'm curious ______ the Northern Lights usually appear in the polar regions.",
+     "cn": null,
+     "options": [
+      {
+       "k": "A",
+       "t": "where"
+      },
+      {
+       "k": "B",
+       "t": "why"
+      },
+      {
+       "k": "C",
+       "t": "which"
+      },
+      {
+       "k": "D",
+       "t": "what"
+      }
+     ],
+     "marked": "B",
+     "handwriting": null,
+     "note": "题号左侧页边手写 B"
+    },
+    {
+     "no": 23,
+     "kind": "mc",
+     "stem": "It was truly surprising ______ a small team of only five people completed such a huge project.",
+     "cn": null,
+     "options": [
+      {
+       "k": "A",
+       "t": "what"
+      },
+      {
+       "k": "B",
+       "t": "whether"
+      },
+      {
+       "k": "C",
+       "t": "that"
+      },
+      {
+       "k": "D",
+       "t": "when"
+      }
+     ],
+     "marked": "C",
+     "handwriting": null,
+     "note": "题号左侧页边手写 C"
+    },
+    {
+     "no": 24,
+     "kind": "mc",
+     "stem": "—I'm not sure if he ______ tomorrow. —Don't worry. I think if he ______, he will give you a call.",
+     "cn": null,
+     "options": [
+      {
+       "k": "A",
+       "t": "will come; will come"
+      },
+      {
+       "k": "B",
+       "t": "will come; comes"
+      },
+      {
+       "k": "C",
+       "t": "comes; will come"
+      },
+      {
+       "k": "D",
+       "t": "comes; comes"
+      }
+     ],
+     "marked": "B",
+     "handwriting": null,
+     "note": "题号左侧页边手写 B"
+    },
+    {
+     "no": 25,
+     "kind": "mc",
+     "stem": "We're certain ______ something is wrong with him, but we are unsure ______ he will die of the disease.",
+     "cn": null,
+     "options": null,
+     "marked": "A",
+     "handwriting": null,
+     "note": "本页正文到 disease. 结束，第 25 题选项未印在本页（疑在下一页或照片未拍到），故 options 为 null；题号左侧页边有手写 A"
+    }
+   ],
+   "key": {
+    "unit": "U1",
+    "items": {
+     "1": {
+      "answer": "true",
+      "alt": [
+       "a fact",
+       "fact"
+      ],
+      "topic": "It is true that 句型",
+      "why": "It is true that… 为常用句型；若按名词补 a fact 亦可，空内若只填一词则应为 true，故标为待核对。",
+      "doubt": true,
+      "manual": true
+     },
+     "2": {
+      "answer": "outdated",
+      "alt": [
+       "out of date",
+       "old-fashioned"
+      ],
+      "topic": "词义辨析",
+      "why": "but I like it very much 表转折，前半应是「写信过时」，故填 outdated（过时的）。",
+      "doubt": true,
+      "manual": true
+     },
+     "3": {
+      "answer": "beyond",
+      "topic": "介词辨析",
+      "why": "beyond his short lifetime 指精神长存、超越他短暂的一生，beyond 表「超出、在……之外」。",
+      "doubt": false
+     },
+     "4": {
+      "answer": "confident",
+      "alt": [
+       "sure",
+       "certain"
+      ],
+      "topic": "形容词 confident",
+      "why": "be confident that… 表「确信会……」，与后半 can achieve her goal 呼应。",
+      "doubt": false
+     },
+     "5": {
+      "answer": "B",
+      "topic": "it 作形式主语",
+      "why": "It is fitting that… 中 it 作形式主语，真正主语是后面的 that 从句，故选 It。",
+      "doubt": false
+     },
+     "6": {
+      "answer": "A",
+      "topic": "be convinced of",
+      "why": "be convinced of sth 是固定搭配；about、in、with 不能与 convinced 连用。",
+      "doubt": false
+     },
+     "7": {
+      "answer": "B",
+      "topic": "in addition to",
+      "why": "in addition to 为介词短语，后可直接接宾语；in addition 是副词，不能接宾语。",
+      "doubt": false
+     },
+     "8": {
+      "answer": "B",
+      "topic": "be talented in",
+      "why": "be talented in 表「在……方面有天赋」，此处作谓语需 is；has a talent in 搭配不当。",
+      "doubt": false
+     },
+     "9": {
+      "answer": "C",
+      "topic": "make 被动式带 to",
+      "why": "make sb do 变被动时不定式要带 to，即 be made to do sth，故用 to believe。",
+      "doubt": false
+     },
+     "10": {
+      "answer": "C",
+      "topic": "need doing / to do",
+      "why": "物作主语用 need doing 表被动，人作主语用 need to do 表主动，故选 fixing; to go。",
+      "doubt": false
+     },
+     "11": {
+      "answer": "D",
+      "topic": "no less … than",
+      "why": "句意赞颂王贞仪「不亚于同时代男科学家」，用 no less important than；B 语义相反，不符语境。",
+      "doubt": true
+     },
+     "12": {
+      "answer": "D",
+      "topic": "be made up of/from",
+      "why": "沙拉由多种蔬果「组成」用 is made up of；果汁由葡萄「制成」（看不出原料）用 is made from。",
+      "doubt": false
+     },
+     "13": {
+      "answer": "as necessary as",
+      "alt": [
+       "as necessary as"
+      ],
+      "topic": "as … as 比较",
+      "why": "「和……一样必要」用 as + 形容词原级 + as，即 as necessary as talent。",
+      "doubt": false
+     },
+     "14": {
+      "answer": "need to be watered",
+      "alt": [
+       "need watering",
+       "need to be watered",
+       "need watering every day"
+      ],
+      "topic": "need to be done",
+      "why": "主语 these vegetables 是浇水的对象，用 need to be done 表「需要被浇水」。",
+      "doubt": false
+     },
+     "15": {
+      "answer": "In addition to watching",
+      "alt": [
+       "In addition to watching",
+       "Besides watching"
+      ],
+      "topic": "in addition to doing",
+      "why": "in addition to 中 to 是介词，后接动名词 watching，表「除了看电影，还……」。",
+      "doubt": false
+     },
+     "16": {
+      "answer": "her talent",
+      "alt": [
+       "having a talent",
+       "being talented"
+      ],
+      "topic": "a talent for",
+      "why": "空后已印 for playing，用 her talent for doing；having a talent 亦可。",
+      "doubt": true
+     },
+     "17": {
+      "answer": "It is fitting that / keep / in mind",
+      "alt": [
+       "It's fitting that / keep / in mind",
+       "It is fitting that / bear / in mind"
+      ],
+      "topic": "keep sth in mind",
+      "why": "「理所应当」用 It is fitting that…；「牢记」用 keep sth in mind，按三个空顺序填。",
+      "doubt": false
+     },
+     "18": {
+      "answer": "is made up of / on her own",
+      "alt": [
+       "is made up of / by herself",
+       "is made up of / on her own"
+      ],
+      "topic": "be made up of",
+      "why": "be made up of 表「由……组成」；on one's own 表「独自、靠自己」，与她的性别对应用 her。",
+      "doubt": false
+     },
+     "19": {
+      "answer": "A",
+      "topic": "宾语从句 that 省略",
+      "why": "be sorry 后的 that 从句可省略 that，故不填；what/which/whose 在从句中无成分。",
+      "doubt": false
+     },
+     "20": {
+      "answer": "B",
+      "topic": "whether … or not",
+      "why": "与 or not 连用引导宾语从句只能用 whether；that 不表「是否」，what/how 语义不符。",
+      "doubt": false
+     },
+     "21": {
+      "answer": "D",
+      "topic": "宾语从句时态",
+      "why": "tomorrow 表将来，从句描述明天天气应用 will be；was、has been 与时间状语矛盾。",
+      "doubt": false
+     },
+     "22": {
+      "answer": "B",
+      "topic": "宾语从句连接词",
+      "why": "句末已说 in the polar regions，问的是「为何」在那里出现，故用 why 引导。",
+      "doubt": false
+     },
+     "23": {
+      "answer": "C",
+      "topic": "主语从句 that",
+      "why": "It 作形式主语，真正主语是 that 引导的主语从句；that 不作成分，只起连接作用。",
+      "doubt": false
+     },
+     "24": {
+      "answer": "B",
+      "topic": "if 从句时态",
+      "why": "第一空 if 引导宾语从句表「是否」，用 will come；第二空 if 引导条件状语从句，主将从现用 comes。",
+      "doubt": false
+     },
+     "25": {
+      "answer": null,
+      "topic": "that / whether 从句",
+      "why": "按句意应为 certain that…, unsure whether…，但本页未印选项，无法确定字母答案，故存疑。",
+      "doubt": true
+     }
+    }
+   },
+   "explain": {
+    "1": {
+     "topic": "形式主语 it",
+     "point": "It is + adj. + that 从句：it 是形式主语，真正主语是 that 从句；表语用形容词，也可用 a fact。",
+     "why": "空在系动词 is 后作表语，用形容词 true；若填名词 fact 就必须带冠词写成 a fact。it 只是形式主语，that 从句才是真正主语，不能用 There/This 顶替。",
+     "trap": "单词空写 fact 会缺冠词；见 that 从句先找形式主语，别选 There。"
+    },
+    "2": {
+     "topic": "but 转折选词",
+     "point": "but 表转折，前后评价必须相反：前半被否定，后半才是「我很喜欢」，空内需消极评价的词。",
+     "why": "前半 Some people think… 与后半 I like it very much 由 but 连接，说明别人认为写信「过时」，填 outdated。outstanding 是褒义「杰出的」，与转折关系矛盾。",
+     "trap": "别被 outstanding 的字面「出」误导：它表优秀；先定前半褒贬再选词。"
+    },
+    "3": {
+     "topic": "介词 beyond",
+     "point": "beyond 表「超出（范围、限度）」，beyond his lifetime = 超出他短暂的一生，即精神长存。",
+     "why": "Though 让步句说他英年早逝，主句 his spirit lives 与 beyond his short lifetime 搭配，表示精神延续到生命之外；in/after 只表时间位置，表达不出「超越」。",
+     "trap": "别按中文「在他一生之后」直译成 after；beyond 后接名词表范围。"
+    },
+    "4": {
+     "topic": "be confident that",
+     "point": "be confident that + 从句 =「确信会……」；confident 是形容词作表语，也可接 of/about + 名词。",
+     "why": "that she can achieve her goal 是从句，前面需要形容词 confident 作表语，句意「玛丽确信努力就能实现目标」。sure、certain 同义可替换；confidence 是名词，不能作表语。",
+     "trap": "别填名词 confidence；confident 后的 that 不能换成 what。"
+    },
+    "5": {
+     "topic": "it 作形式主语",
+     "point": "It is + adj. + that 从句：it 作形式主语，that 从句是真正主语；此处不能用 this/that/there。",
+     "why": "空格后是 is fitting that…，真正主语是后面的 that 从句，句首必须是形式主语 It，故选 B。There 表存在，This/That 是指示代词，都不能占据形式主语的位置。",
+     "trap": "中文「这是合适的」易误选 This；判断依据是有没有 that 从句。"
+    },
+    "6": {
+     "topic": "convinced of",
+     "point": "be convinced of + 名词 =「确信、信服某事」；接从句时用 be convinced that…，不跟 about/in/with。",
+     "why": "the importance of protecting the environment 是名词短语，前面用介词 of，构成 be convinced of sth。about、in、with 都不能与 convinced 搭配，故排除 B、C、D。",
+     "trap": "受 be interested in、believe in 影响易误选 in；convinced 只跟 of 或 that。"
+    },
+    "7": {
+     "topic": "in addition to",
+     "point": "in addition to 是介词短语，后接名词/代词/动名词；in addition 是副词，不能直接带宾语。",
+     "why": "空后 his achievements 是名词宾语，必须有介词 to，故选 B。A 缺 to 不能带宾语；Except for 表「除……之外（排除）」、Instead of 表「而不是」，与「他还是优秀艺术家」的递进不符。",
+     "trap": "最容易漏掉 to 选 A；空后直接跟名词就用 in addition to。"
+    },
+    "8": {
+     "topic": "talented in",
+     "point": "be talented in + 领域 =「在……方面有天赋」；名词形式是 have a talent for + 领域/动名词。",
+     "why": "句子缺谓语，主语单数，用 is talented in acting。A has a talent in 介词错（应为 for）；C has talent for 缺冠词 a；D is talented for 介词错，均排除。",
+     "trap": "talented 后接 in，talent 后接 for，两个介词别对调。"
+    },
+    "9": {
+     "topic": "made to do",
+     "point": "主动 make sb do sth 不带 to；变被动必须还原 to：sb be made to do sth。",
+     "why": "People were made… 是被动语态，主语 people 是被使得相信的人，故用 to believe。A 缺 to；B believing 不能作主语补足语；D to believing 后应跟动词原形，故排除。",
+     "trap": "别照搬主动式省略 to；被动后一定把 to 加回来，to 后接原形。"
+    },
+    "10": {
+     "topic": "need doing",
+     "point": "主语是物、表「需要被做」用 need doing（主动形式表被动）或 need to be done；主语是人用 need to do。",
+     "why": "第一空主语 The computer 是修理对象，用 fixing；第二空主语 I 是主动去求助的人，用 to go，故选 C。A、B 第二空 going 无此搭配；D 第一空 to fix 表主动，与 computer 矛盾。",
+     "trap": "两个 need 主语不同，别都填 to do；先看主语是人还是物。"
+    },
+    "11": {
+     "topic": "no less than",
+     "point": "no less + 形容词 + than =「不亚于」，是加强语气的肯定比较；not as…as 与 less…than 都表「不如」。",
+     "why": "句意赞颂王贞仪「不亚于同时代男科学家」，用 no less important than，故选 D。B、C 都表「不如」，与赞颂语气相反；A 的 so…as 只用于否定句。",
+     "trap": "no less 是双重否定表肯定，别读成「不重要」；先判断褒贬再选比较级。"
+    },
+    "12": {
+     "topic": "made up of",
+     "point": "be made up of 表「由……组成」；be made of 看得出原料，be made from 看不出原料，be made by 后接制作者。",
+     "why": "沙拉由多种蔬果「组成」，用 is made up of；果汁由葡萄榨成、看不出葡萄原形，用 is made from。A、B 第二空 made of 与果汁不符；C 第一空 made by 后应接人，故排除。",
+     "trap": "of/from 的界线是能否看出原料；up of 强调整体由部分构成。"
+    },
+    "13": {
+     "topic": "as…as 比较",
+     "point": "同级比较用 as + 形容词/副词原级 + as；比较级不能放进 as…as 中间，so…as 只用于否定句。",
+     "why": "中文「和天赋一样必要」是同级比较，形容词用原级 necessary，前后各一个 as，故填 as necessary as。more necessary 是比较级，不能放在 as…as 中。",
+     "trap": "别写成 as more necessary as；第一个 as 不能省，否则结构不完整。"
+    },
+    "14": {
+     "topic": "need 被动",
+     "point": "need to be done = need doing，表「需要被做」；主语是动作承受者时不能用 need to do。",
+     "why": "主语 these vegetables 是被浇水的对象，且 every day 提示一般现在时、主语复数，故用 need to be watered。or they will die 用将来时，说明这是客观需要。",
+     "trap": "别写 need to water（蔬菜不会自己浇水）；复数主语 need 不加 s。"
+    },
+    "15": {
+     "topic": "介词后接动名词",
+     "point": "in addition to 的 to 是介词，后接名词或动名词（相当于 besides doing），不能接动词原形。",
+     "why": "「除了看电影」中的「看」是动作，作介词宾语要用动名词 watching，故填 In addition to watching。若写 to watch，to 会被误当不定式符号；In addition 是副词，不能直接带宾语。",
+     "trap": "两个坑：漏 -ing 写成 to watch；漏 to 写成 In addition watching。"
+    },
+    "16": {
+     "topic": "talent for",
+     "point": "be famous for + 名词/动名词，表「因……出名」；talent 后接 for doing，表「做某事的天赋」。",
+     "why": "空在 for 后，后面又已印 for playing the piano，需名词短语 her talent 作宾语：be famous for her talent for playing the piano；being talented 也可接受。",
+     "trap": "空后已印 for，别重复介词；分清 be famous for（因……）与 as（作为……）。"
+    },
+    "17": {
+     "topic": "keep in mind",
+     "point": "It is fitting that + 从句：it 是形式主语，that 从句是真正主语；keep sth in mind 是固定搭配，宾语放 in mind 前。",
+     "why": "「这是理所应当的」用 It is fitting that；and 连接 learn 和 keep 两个并列谓语，形式用原形；their spirits 是 keep 的宾语，故依次填 It is fitting that / keep / in mind。",
+     "trap": "顺序最易错：别写成 keep in mind their spirits；and 后动词与 learn 并列。"
+    },
+    "18": {
+     "topic": "made up of",
+     "point": "be made up of 表「由……组成」；on one's own =「独自、靠自己」，one's 随主语变化。",
+     "why": "主语 The model 是单数，用 is made up of several simple things；第二空「她独自完成」与 she 对应，用 on her own（= by herself），作方式状语。",
+     "trap": "别写 by her own（应为 by herself）；主语单数别漏 is。"
+    },
+    "19": {
+     "topic": "that 从句省略",
+     "point": "be sorry 后的宾语从句用 that 引导，口语常省略；从句成分完整时不能填 what/which/whose。",
+     "why": "I'm sorry 后接 I broke your glass，主谓宾齐全，that 可省略，故选 A（不填）。what 需在从句中作主语或宾语，而 broke 已有宾语 your glass；which、whose 需有先行词。",
+     "trap": "先划从句成分：主语 I、谓语 broke、宾语 your glass 都有了，就不缺连接代词。"
+    },
+    "20": {
+     "topic": "whether 从句",
+     "point": "whether 可与 or not 直接连用，表「是否」引导宾语从句；if 一般不直接跟 or not，that 不表疑问。",
+     "why": "be not certain 后需要「是否」的宾语从句，句末 or not 是 whether…or not 的固定结构，故选 B。that 不表「是否」；what、how 要在从句中作成分，而从句主谓宾齐全。",
+     "trap": "见 or not 优先 whether；别因从句完整就选 that。"
+    },
+    "21": {
+     "topic": "宾语从句时态",
+     "point": "宾语从句的时态看从句自己的时间状语：tomorrow 等将来时间用 will do，主句现在时不改变它。",
+     "why": "从句 it ______ rainy tomorrow 有将来时间状语 tomorrow，描述明天的天气，用 will be，故选 D。was 是过去时、has been 是现在完成时，都与 tomorrow 矛盾；is 缺将来意义。",
+     "trap": "「主将从现」只管 if/when 引导的条件、时间状语从句，别套到宾语从句。"
+    },
+    "22": {
+     "topic": "宾语从句连接词",
+     "point": "宾语从句连接词看从句缺什么：成分完整、问原因用 why；问地点才用 where。",
+     "why": "句意「我好奇北极光为什么常在极地出现」。appear 是不及物动词，in the polar regions 已是地点状语，从句不缺地点，故用 why。where 会与已给地点重复；which、what 需在从句中作主语或宾语。",
+     "trap": "见 polar regions 就选 where 是典型错法；先划成分，再看缺原因还是地点。"
+    },
+    "23": {
+     "topic": "主语从句 that",
+     "point": "It 作形式主语时，若 that 从句结构完整、不缺成分，就用 that；that 只起连接作用，不作句子成分。",
+     "why": "从句主谓宾齐全（a small team…completed the project），用 that，选 C。what 必须在从句中作主语或宾语；whether 表「是否」，与「确实令人惊讶」不符；when 无时间信息。",
+     "trap": "中文「真是令人惊讶」易误选 what；判断只看从句缺不缺主语或宾语。"
+    },
+    "24": {
+     "topic": "if 双用法",
+     "point": "if 引导宾语从句时意为「是否」，按句意可用将来时；if 引导条件状语从句时遵循「主将从现」。",
+     "why": "第一空 I'm not sure if… 是「不确定他明天是否会来」，if=是否，从句用 will come；第二空 if he… 是条件状语从句，主句 he will give you a call 为将来时，从句用 comes，故选 B。",
+     "trap": "同一 if 两种身份：表「是否」用将来时，表「如果」的从句用现在时。"
+    },
+    "25": {
+     "topic": "certain 从句",
+     "point": "be certain that… 从句成分完整用 that（口语可省略）；be unsure 后表「是否」用 whether 引导宾语从句。",
+     "why": "第一空 something is wrong with him 主谓完整，用 that；第二空「不确定他是否会死于这种病」表「是否」，用 whether。本题选项未印在本页，只能按句意判断第一空 that、第二空 whether。",
+     "trap": "unsure 后不能用 that（不表「是否」）；也别把 that 与 if 混搭，书面语用 whether。"
+    }
+   }
+  },
+  {
+   "unit": "U2",
+   "title": "九上 U2 过关",
+   "header": {
+    "class": null,
+    "name": null,
+    "id": null,
+    "note": "本页未见班级/姓名/学号栏；页眉只有大标题「九上 U2 过关卷」"
+   },
+   "note": "no 一律照抄卷面序号；因「语法」小节从 1 重新编号，另加 id 作唯一键（p=页顶残留, m=主体, g=语法, gf=语法填空），与 u2.key.json 的键一一对应。",
+   "items": [
+    {
+     "id": "m1",
+     "no": 1,
+     "kind": "fill",
+     "section": "主体",
+     "stem": "Her smile s______ to suggest that she knew the secret.",
+     "cn": null,
+     "options": null,
+     "marked": null,
+     "handwriting": [
+      "hows"
+     ],
+     "note": "横线前已有印刷字母 s，学生手写补 hows，合成 shows（应为 seems）。"
+    },
+    {
+     "id": "m2",
+     "no": 2,
+     "kind": "fill",
+     "section": "主体",
+     "stem": "My brother was so hungry that he ate a large b______ of rice just now.",
+     "cn": null,
+     "options": null,
+     "marked": null,
+     "handwriting": null,
+     "note": "横线空白，未作答。"
+    },
+    {
+     "id": "m3",
+     "no": 3,
+     "kind": "fill",
+     "section": "主体",
+     "stem": "Many people make serious mistakes because of their in______ of basic scientific knowledge.",
+     "cn": null,
+     "options": null,
+     "marked": null,
+     "handwriting": [
+      "[看不清]"
+     ],
+     "note": "横线前印刷字母为 in（放大可辨 i+n）；横线处手写被重涂、笔画重叠，无法辨认（起笔似 mag…）。 印刷前缀被手写覆盖，in（→in ignorance of?）与 ig（→ignorance）均有可能，故不给答案。"
+    },
+    {
+     "id": "m4",
+     "no": 4,
+     "kind": "fill",
+     "section": "主体",
+     "stem": "These traditional teaching practices are gradually d______ by the new methods.",
+     "cn": null,
+     "options": null,
+     "marked": null,
+     "handwriting": [
+      "[看不清]"
+     ],
+     "note": "手写压在横线上并向右下与下一行印刷 by 重叠，形似 disappearing/disappeared，无法确认。"
+    },
+    {
+     "id": "m5",
+     "no": 5,
+     "kind": "mc",
+     "section": "主体",
+     "stem": "The model plane is made ______ used wood and glass, and the paper is made ______ wood.",
+     "cn": null,
+     "options": [
+      {
+       "k": "A",
+       "t": "of; of"
+      },
+      {
+       "k": "B",
+       "t": "of; from"
+      },
+      {
+       "k": "C",
+       "t": "from; from"
+      },
+      {
+       "k": "D",
+       "t": "from; of"
+      }
+     ],
+     "marked": "B",
+     "handwriting": null,
+     "note": "题号左侧页边手写大写 B。"
+    },
+    {
+     "id": "m6",
+     "no": 6,
+     "kind": "mc",
+     "section": "主体",
+     "stem": "We are all busy and seem ______ less time to get together than before.",
+     "cn": null,
+     "options": [
+      {
+       "k": "A",
+       "t": "have"
+      },
+      {
+       "k": "B",
+       "t": "to have"
+      },
+      {
+       "k": "C",
+       "t": "having"
+      },
+      {
+       "k": "D",
+       "t": "had"
+      }
+     ],
+     "marked": "C",
+     "handwriting": null,
+     "note": "6 题号左侧页边为 C；其下方（第 6 题选项行左端）另有一处 B 形笔迹，归属不确定。"
+    },
+    {
+     "id": "m7",
+     "no": 7,
+     "kind": "mc",
+     "section": "主体",
+     "stem": "The owner often asks the customers ______ their suggestions.",
+     "cn": null,
+     "options": [
+      {
+       "k": "A",
+       "t": "with"
+      },
+      {
+       "k": "B",
+       "t": "for"
+      },
+      {
+       "k": "C",
+       "t": "to"
+      },
+      {
+       "k": "D",
+       "t": "in"
+      }
+     ],
+     "marked": "B",
+     "handwriting": null,
+     "note": "该题号附近页边有三处笔迹：上方一处 B；7 题号左侧一个 C 被长斜线划掉；其下一行（选项行）左端又有一个 C。综合判为改答，取 B，存疑。"
+    },
+    {
+     "id": "m8",
+     "no": 8,
+     "kind": "mc",
+     "section": "主体",
+     "stem": "Life is ______ challenges and chances, and it is ______ something different.",
+     "cn": null,
+     "options": [
+      {
+       "k": "A",
+       "t": "full of; fill with"
+      },
+      {
+       "k": "B",
+       "t": "filled with; full into"
+      },
+      {
+       "k": "C",
+       "t": "full of; filled with"
+      },
+      {
+       "k": "D",
+       "t": "fill with; full of"
+      }
+     ],
+     "marked": "B",
+     "handwriting": null,
+     "note": "8 题号左侧页边为 B（笔迹夸张带斜划）；其上一行（第 7 题选项行）左端另有一个 C，归属不确定。"
+    },
+    {
+     "id": "m9",
+     "no": 9,
+     "kind": "mc",
+     "section": "主体",
+     "stem": "—______ wonderful movie it is! —I couldn't agree more.",
+     "cn": null,
+     "options": [
+      {
+       "k": "A",
+       "t": "What an"
+      },
+      {
+       "k": "B",
+       "t": "What a"
+      },
+      {
+       "k": "C",
+       "t": "What"
+      },
+      {
+       "k": "D",
+       "t": "How"
+      }
+     ],
+     "marked": "B",
+     "handwriting": null,
+     "note": "题号左侧页边手写大写 B。"
+    },
+    {
+     "id": "m10",
+     "no": 10,
+     "kind": "mc",
+     "section": "主体",
+     "stem": "The man who ______ Ms Yang ______ giving him all her savings was finally caught.",
+     "cn": null,
+     "options": [
+      {
+       "k": "A",
+       "t": "fooled; /"
+      },
+      {
+       "k": "B",
+       "t": "foolish; into"
+      },
+      {
+       "k": "C",
+       "t": "fooled; into"
+      },
+      {
+       "k": "D",
+       "t": "foolish; /"
+      }
+     ],
+     "marked": "C",
+     "handwriting": null,
+     "note": "题号左侧页边手写大写 C。"
+    },
+    {
+     "id": "m11",
+     "no": 11,
+     "kind": "fill",
+     "section": "主体",
+     "stem": "The group members are ______ ______ the unfair decision.",
+     "cn": "小组成员们不满意这个不公平的决定。",
+     "options": null,
+     "marked": null,
+     "handwriting": [
+      "not",
+      "satisfied with"
+     ],
+     "note": "第二空手写为 satisfied，with 写在横线末端外。"
+    },
+    {
+     "id": "m12",
+     "no": 12,
+     "kind": "fill",
+     "section": "主体",
+     "stem": "______ it is to see these creative achievements!",
+     "cn": "看到这些创意成果多么令人惊讶啊！",
+     "options": null,
+     "marked": null,
+     "handwriting": [
+      "How amazing"
+     ],
+     "note": "该题只有一处长横线，手写两个词 How amazing。"
+    },
+    {
+     "id": "m13",
+     "no": 13,
+     "kind": "fill",
+     "section": "主体",
+     "stem": "After the meeting, he ______ ______ the coffee shop to relax.",
+     "cn": "会议结束后，他直接去了咖啡店放松。",
+     "options": null,
+     "marked": null,
+     "handwriting": [
+      "went",
+      "straight to"
+     ],
+     "note": "第二空手写 straight to 两词。"
+    },
+    {
+     "id": "g1",
+     "no": 1,
+     "kind": "mc",
+     "section": "语法",
+     "stem": "He ______ in the library until the rain stopped.",
+     "cn": null,
+     "options": [
+      {
+       "k": "A",
+       "t": "stayed"
+      },
+      {
+       "k": "B",
+       "t": "didn't stay"
+      },
+      {
+       "k": "C",
+       "t": "stays"
+      },
+      {
+       "k": "D",
+       "t": "hasn't stayed"
+      }
+     ],
+     "marked": "A",
+     "handwriting": null,
+     "note": "「语法」小节卷面重新从 1 编号；题号左侧手写 A，另有一条长勾从 A 行斜划下去（勾不作答案，以页边字母为准）。"
+    },
+    {
+     "id": "g2",
+     "no": 2,
+     "kind": "mc",
+     "section": "语法",
+     "stem": "______ will you reach the supermarket? —I'm not sure, probably in another ten minutes.",
+     "cn": null,
+     "options": [
+      {
+       "k": "A",
+       "t": "How far"
+      },
+      {
+       "k": "B",
+       "t": "How often"
+      },
+      {
+       "k": "C",
+       "t": "How soon"
+      },
+      {
+       "k": "D",
+       "t": "How long"
+      }
+     ],
+     "marked": "C",
+     "handwriting": null,
+     "note": "题号左侧页边手写大写 C。"
+    },
+    {
+     "id": "g3",
+     "no": 3,
+     "kind": "mc",
+     "section": "语法",
+     "stem": "—Alice, do you go to school by bus or on foot every day? —______ It's only 5 minutes' walk.",
+     "cn": null,
+     "options": [
+      {
+       "k": "A",
+       "t": "Yes, I do."
+      },
+      {
+       "k": "B",
+       "t": "No, I don't."
+      },
+      {
+       "k": "C",
+       "t": "On foot."
+      },
+      {
+       "k": "D",
+       "t": "By bus."
+      }
+     ],
+     "marked": "C",
+     "handwriting": null,
+     "note": "题号左侧页边手写 C；另有一条长勾从 A. Yes, I do. 斜划到选项区，勾不作答案。"
+    },
+    {
+     "id": "g4",
+     "no": 4,
+     "kind": "mc",
+     "section": "语法",
+     "stem": "______ you've offered! I understand this plan better now.",
+     "cn": null,
+     "options": [
+      {
+       "k": "A",
+       "t": "How useful information"
+      },
+      {
+       "k": "B",
+       "t": "What useful information"
+      },
+      {
+       "k": "C",
+       "t": "How a useful information"
+      },
+      {
+       "k": "D",
+       "t": "What a useful information"
+      }
+     ],
+     "marked": "B",
+     "handwriting": null,
+     "note": "题号左侧页边手写 B；B 选项前另有手写勾，二者不冲突。"
+    },
+    {
+     "id": "g5",
+     "no": 5,
+     "kind": "fill",
+     "section": "语法",
+     "stem": "______ you ______ with the new BRT system?",
+     "cn": "你对新的快速公交系统感到满意吗？",
+     "options": null,
+     "marked": null,
+     "handwriting": [
+      "Are",
+      "satisfied"
+     ],
+     "note": "两空手写 Are / satisfied。"
+    },
+    {
+     "id": "g6",
+     "no": 6,
+     "kind": "fill",
+     "section": "语法",
+     "stem": "______ the heat, or the milk will ______.",
+     "cn": "把火调小，不然牛奶会溢出来。",
+     "options": null,
+     "marked": null,
+     "handwriting": [
+      "Turn down",
+      "boil over"
+     ],
+     "note": "两空各手写两个词。"
+    },
+    {
+     "id": "g7",
+     "no": 7,
+     "kind": "fill",
+     "section": "语法",
+     "stem": "—______ you ______ to Disneyland? —Yes, I ______ ______ twice before.",
+     "cn": "——你去过迪士尼乐园吗？——是的，之前我去过那两次了。",
+     "options": null,
+     "marked": null,
+     "handwriting": [
+      "Have",
+      "been",
+      "have",
+      "been to"
+     ],
+     "note": "四个空依次为 Have / been / have / been to。"
+    },
+    {
+     "id": "g8",
+     "no": 8,
+     "kind": "fill",
+     "section": "语法",
+     "stem": "Please ______ the box and put it on the table.",
+     "cn": "请把箱子抬起来，放到桌子上。",
+     "options": null,
+     "marked": null,
+     "handwriting": [
+      "pick up"
+     ],
+     "note": "一空手写两个词 pick up。"
+    },
+    {
+     "id": "g9",
+     "no": 9,
+     "kind": "fill",
+     "section": "语法",
+     "stem": "______ a ______ experience it is!",
+     "cn": "（2024 广州）这是一次多么有意义的经历啊！",
+     "options": null,
+     "marked": null,
+     "handwriting": [
+      "what",
+      "[看不清]"
+     ],
+     "note": "第一空手写 what；第二空手写被反复涂画成一团黑，无法辨认。"
+    },
+    {
+     "id": "g10",
+     "no": 10,
+     "kind": "fill",
+     "section": "语法",
+     "stem": "______ you ever ______ about a maths project done by some students in Guangzhou?",
+     "cn": "（2023 广州）你听说过一群广州学生做的数学项目吗？",
+     "options": null,
+     "marked": null,
+     "handwriting": [
+      "Have",
+      "heard"
+     ],
+     "note": "两空手写 Have / heard。"
+    }
+   ],
+   "key": {
+    "unit": "U2",
+    "note": "items 的键 = u2.json 里每题的 id（p=页顶残留, m=主体, g=语法, gf=语法填空），因为「主体 1-13」与「语法 1-10」在卷面上各从 1 编号，单用 no 会重号。",
+    "items": {
+     "p26": {
+      "answer": "not aware / that",
+      "alt": [
+       "unaware / that",
+       "not aware that"
+      ],
+      "topic": "be aware that 从句",
+      "why": "「没有意识到」用 be not aware that…；第二个空填引导宾语从句的 that。",
+      "doubt": false
+     },
+     "p27": {
+      "answer": "I'm afraid / that",
+      "alt": [
+       "I am afraid / that",
+       "I'm afraid that"
+      ],
+      "topic": "I'm afraid that 从句",
+      "why": "「恐怕」用 I'm afraid (that)…，that 引导宾语从句，口语中可省略。",
+      "doubt": false
+     },
+     "m1": {
+      "answer": "seems",
+      "alt": [
+       "seems"
+      ],
+      "topic": "seem to do",
+      "why": "「笑容似乎表明」用 seem to suggest，横线前已给 s，答案补 eems；shows 不接 to do。",
+      "doubt": false
+     },
+     "m2": {
+      "answer": "bowl",
+      "alt": [
+       "bowl"
+      ],
+      "topic": "a bowl of 量词",
+      "why": "「一大碗米饭」用 a large bowl of rice，横线前已给 b。",
+      "doubt": false
+     },
+     "m3": {
+      "answer": null,
+      "alt": null,
+      "topic": "名词辨析",
+      "why": "横线前印刷前缀为 in，学生手写被重涂看不清；以 in 开头又合「对基础科学知识无知」语境的词无法确定，暂不给答案。",
+      "doubt": true,
+      "manual": true
+     },
+     "m4": {
+      "answer": "displaced",
+      "alt": [
+       "disappeared",
+       "disappearing"
+      ],
+      "topic": "被动语态词形",
+      "why": "「被新方法取代」用 displaced by；学生手写疑似 disappearing，参考答案存疑。",
+      "doubt": true,
+      "manual": true
+     },
+     "m5": {
+      "answer": "B",
+      "alt": null,
+      "topic": "be made of/from",
+      "why": "模型飞机的木头玻璃看得出原材料，用 be made of；纸由木材加工而来，用 be made from。",
+      "doubt": false
+     },
+     "m6": {
+      "answer": "B",
+      "alt": null,
+      "topic": "seem to do",
+      "why": "seem 后接不定式，seem to have less time 意为「似乎时间更少」，故不用 having。",
+      "doubt": false
+     },
+     "m7": {
+      "answer": "B",
+      "alt": null,
+      "topic": "ask sb for sth",
+      "why": "ask sb for sth「向某人要某物」，此处 customers 后须接 for。",
+      "doubt": false
+     },
+     "m8": {
+      "answer": "C",
+      "alt": null,
+      "topic": "full of/filled with",
+      "why": "be full of＝be filled with「充满」；第二空在 is 后须用过去分词 filled，故选 C。",
+      "doubt": false
+     },
+     "m9": {
+      "answer": "B",
+      "alt": null,
+      "topic": "感叹句 what a",
+      "why": "wonderful movie 是可数名词单数，感叹句用 What a + 形容词 + 单数名词。",
+      "doubt": false
+     },
+     "m10": {
+      "answer": "C",
+      "alt": null,
+      "topic": "fool sb into doing",
+      "why": "fool sb into doing sth「骗某人做某事」；the man 后作谓语用过去式 fooled。",
+      "doubt": false
+     },
+     "m11": {
+      "answer": "not / satisfied with",
+      "alt": [
+       "not / satisfied with"
+      ],
+      "topic": "be satisfied with",
+      "why": "「对……不满意」be not satisfied with，否定词 not 放 be 后，with 接宾语。",
+      "doubt": false
+     },
+     "m12": {
+      "answer": "How amazing",
+      "alt": [
+       "How amazing"
+      ],
+      "topic": "感叹句 how",
+      "why": "中心词是形容词 amazing，感叹句用 How + 形容词 + 主语 + 系动词。",
+      "doubt": false
+     },
+     "m13": {
+      "answer": "went / straight to",
+      "alt": [
+       "went / straight to"
+      ],
+      "topic": "go straight to",
+      "why": "「直接去了」用 went straight to＋地点，会议已结束故用一般过去时。",
+      "doubt": false
+     },
+     "g1": {
+      "answer": "A",
+      "alt": null,
+      "topic": "一般过去时",
+      "why": "until the rain stopped 表过去，主句用一般过去时 stayed；B 项与「待到雨停」相反。",
+      "doubt": false
+     },
+     "g2": {
+      "answer": "C",
+      "alt": null,
+      "topic": "How soon 提问",
+      "why": "答语 in another ten minutes 表示「再过十分钟后」，对将来多久提问用 How soon。",
+      "doubt": false
+     },
+     "g3": {
+      "answer": "C",
+      "alt": null,
+      "topic": "选择疑问句回答",
+      "why": "or 连接的选择疑问句不用 Yes/No 回答；5 minutes' walk 提示步行，选 On foot。",
+      "doubt": false
+     },
+     "g4": {
+      "answer": "B",
+      "alt": null,
+      "topic": "感叹句 what+不可数",
+      "why": "information 是不可数名词，感叹句用 What + 形容词 + 不可数名词，不能加 a/an。",
+      "doubt": false
+     },
+     "g5": {
+      "answer": "Are / satisfied",
+      "alt": [
+       "Are / satisfied"
+      ],
+      "topic": "be satisfied with",
+      "why": "「对……满意」是 be satisfied with，一般疑问句把 Are 提到主语 you 前。",
+      "doubt": false
+     },
+     "g6": {
+      "answer": "Turn down / boil over",
+      "alt": [
+       "Turn down / boil over"
+      ],
+      "topic": "turn down/boil over",
+      "why": "「把火调小」turn down；「溢出来」boil over，or 后面的分句用将来时 will。",
+      "doubt": false
+     },
+     "g7": {
+      "answer": "Have / been / have / been",
+      "alt": [
+       "Have / been / have / been"
+      ],
+      "topic": "have been to",
+      "why": "「去过某地」用 have been to；答语 Yes, I have been twice before 不加 to。",
+      "doubt": false
+     },
+     "g8": {
+      "answer": "pick up",
+      "alt": [
+       "pick up"
+      ],
+      "topic": "pick up 短语",
+      "why": "「抬起、拿起」用 pick up，动副短语，名词宾语可放 up 之后。",
+      "doubt": false
+     },
+     "g9": {
+      "answer": "What / meaningful",
+      "alt": [
+       "What / meaningful",
+       "What / wonderful"
+      ],
+      "topic": "感叹句 what a",
+      "why": "experience 此处是可数名词单数，用 What a + 形容词 + 名词；「有意义的」是 meaningful。",
+      "doubt": false
+     },
+     "g10": {
+      "answer": "Have / heard",
+      "alt": [
+       "Have / heard",
+       "Have / heard of"
+      ],
+      "topic": "hear about",
+      "why": "「听说过」用 hear about/of，现在完成时疑问句为 Have you ever heard about…。",
+      "doubt": false
+     },
+     "gf11": {
+      "answer": null,
+      "alt": null,
+      "topic": "语法填空短文",
+      "why": "只拍到短文开头两句，空格与题号被照片下边缘截断，无法作答。",
+      "doubt": true
+     }
+    }
+   },
+   "explain": {
+    "m1": {
+     "topic": "seem to do",
+     "point": "「似乎做某事」用 seem to do sth.；seem 后接不定式，主语第三人称单数时用 seems，to suggest 表「表明」。",
+     "why": "句中缺谓语，横线前 s 是词首，应补 seems，后接 to suggest 构成 seem to do。学生写 shows，但 show 后不能接 to do（接宾语或 that 从句），故排除。",
+     "trap": "别被 s 后的 hows 带偏写成 shows；牢记 seem 三用法：seem to do、seem + adj.、it seems that。"
+    },
+    "m2": {
+     "topic": "a bowl of",
+     "point": "「一大碗米饭」用 a large bowl of rice；bowl 可数，a large 修饰 bowl，of 后接不可数名词 rice。",
+     "why": "so...that 表结果，ate 的宾语是 a bowl of rice。横线前 b 提示 bowl；rice 不可数，不能直接加 a，须借量词表达「一碗」。",
+     "trap": "别写 bowls（a large 后接单数）；不可数名词前不能直接加 a，要用「冠词/数词 + 量词 + of + 不可数名词」。"
+    },
+    "m3": {
+     "topic": "名词辨析（存疑）",
+     "point": "空格在 because of 后、of basic scientific knowledge 前，需一个表「缺乏/无知」的名词；但卷面已印前缀 in，手写又被重涂，无法确定唯一词。",
+     "why": "语境是「因不懂基础科学知识而犯大错」，常见表达为 their ignorance of...，但 ignorance 以 ig 开头，与印出的 in- 不符；以 in- 开头又合语境的词也难以锁定，故不给答案。",
+     "trap": "别凭语感硬填：先看固定搭配（of + 名词），再核对卷面已给字母；字母与候选词冲突时必须存疑、不猜。"
+    },
+    "m4": {
+     "topic": "被动语态词形",
+     "point": "are gradually ___ by the new methods 是被动语态，需填及物动词的过去分词，构成 be + done + by「被……取代/淘汰」。",
+     "why": "参考答案 displaced：be displaced by 意为「被……取代」，与 gradually、by the new methods 契合。disappear 不及物、无被动语态，不能填 disappearing/disappeared。",
+     "trap": "照片上手写与下一行 by 重叠、字形难辨，本题只能存疑；先判语态再选词，凡不及物动词（disappear 等）一律排除。"
+    },
+    "m5": {
+     "topic": "made of/from",
+     "point": "be made of 指物理变化、成品仍看得出原材料；be made from 指经化学或加工变化、成品看不出原材料。",
+     "why": "模型飞机由 wood and glass 做成仍能看出材质，用 of；纸由木材加工而成、看不出木，用 from，故 B。A、C、D 或把模型填 from，或把纸填 of，均错。",
+     "trap": "别死背「看得出」三个字，判断的是成品能否辨认原材料；纸、酒、酱油类由原料加工而来，习惯用 from。"
+    },
+    "m6": {
+     "topic": "seem to do",
+     "point": "seem 后接不定式 to do，seem to have less time 意为「似乎时间更少」；seem 不能接 doing，也不能直接接动词原形。",
+     "why": "句子已有谓语 are，seem 与 are 并列共用主语 we，其后须跟 to have；having（C）不能跟在 seem 后，have（A）、had（D）同样不成立，故选 B。",
+     "trap": "受前面 busy 影响易误选 having；记牢 seem 的搭配只有 to do、+ adj.、it seems that 三类。"
+    },
+    "m7": {
+     "topic": "ask sb for",
+     "point": "ask sb for sth「向某人要/征求某物」，for 是固定介词；ask sb to do sth 才是「请某人做某事」。",
+     "why": "空格后 their suggestions 是名词，只能搭配 ask the customers for；选 to 则后面须是动词原形，with、in 也不构成 ask sb 的搭配，故 B。",
+     "trap": "先看空格后接名词还是动词：名词用 for，动词才用 to do；suggestions 是名词，别误接 to。"
+    },
+    "m8": {
+     "topic": "be full of",
+     "point": "be full of = be filled with「充满」：full 是形容词，后接 of + 名词；filled 是过去分词，后接 with + 名词。",
+     "why": "第一空前有 is、后接 challenges，用 full of；第二空 it is ___ something different 需被动 filled with，故 C。A 项 fill with 缺 be，B 项 full into 搭配错，D 项错位。",
+     "trap": "同一意思两种形式别混：full 后跟 of，filled 后跟 with；is 后必须是分词才构成被动。"
+    },
+    "m9": {
+     "topic": "感叹句 What a",
+     "point": "感叹句 What a/an + 形容词 + 可数名词单数 + 主语 + 谓语！a/an 由后接形容词的首音素决定。",
+     "why": "movie 是可数名词单数，wonderful 以辅音音素 /w/ 开头用 a，故 What a wonderful movie it is，选 B。C 缺冠词，A 的 an 与读音不符，D 的 How 后应直接接形容词。",
+     "trap": "别见 What 就选 What a：先确认名词可数单数，再看 a/an 由读音（元音音素）决定，不看拼写字母。"
+    },
+    "m10": {
+     "topic": "fool sb into",
+     "point": "fool sb into doing sth「骗某人做某事」，into 后接动名词；fool 作动词，过去式为 fooled。",
+     "why": "who 引导定语从句修饰 the man，从句缺谓语须用 fooled（foolish 是形容词）；主句 ___ giving 需 into 构成 fool sb into doing，故 C。A 缺 into，B 从句用形容词，D 两处都错。",
+     "trap": "两处分别判断：从句缺谓语用 fooled，主句介词用 into；foolish 只能作形容词，不能作谓语。"
+    },
+    "m11": {
+     "topic": "be satisfied",
+     "point": "be satisfied with sth「对……满意」；否定在 be 后加 not，即 be not satisfied with，with 后接宾语。",
+     "why": "中文是「不满意这个不公平的决定」，are 后先填 not，再填 satisfied with；satisfied 由过去分词形容词化，表示人「感到满意」，介词固定用 with。",
+     "trap": "别漏 with，也别把 not 提到 are 前；satisfied（人感到满意）≠ satisfying（令人满意的）。"
+    },
+    "m12": {
+     "topic": "感叹句 How",
+     "point": "感叹句 How + 形容词/副词 + 主语 + 谓语！中心词是形容词时用 How，且 How 后不加 a/an。",
+     "why": "it is to see... 中 it 是形式主语、真正主语是 to see these creative achievements；被感叹的是形容词 amazing，故用 How amazing it is to see...，不能套 What a。",
+     "trap": "看到 it is 就套 What a 是典型错误：先找被感叹的中心词，形容词用 How，名词才用 What。"
+    },
+    "m13": {
+     "topic": "straight to",
+     "point": "straight 作副词「直接地」修饰 go，go straight to + 地点；after the meeting 表过去，谓语用一般过去时 went。",
+     "why": "中文「直接去了咖啡店」：go + straight + to + 地点，straight 在动词后、介词前，to 不能省；after the meeting 是过去时间，故填 went / straight to。",
+     "trap": "别写成 went to straight（语序错）或 went straight the coffee shop（漏 to）；时态不要用现在完成时。"
+    },
+    "g1": {
+     "topic": "until 时间状语",
+     "point": "until 引导时间状语从句，主句谓语用延续性动词；从句 the rain stopped 是过去，主句用一般过去时 stayed。",
+     "why": "「他一直在图书馆待到雨停」：stay 是延续性动词，用肯定式 stayed；didn't stay 意思相反，stays 时态不符，hasn't stayed 与过去时间矛盾，故 A。",
+     "trap": "区分 stay until（待到……）与 not...until（直到……才）；until 从句不用将来时，主句时态与从句一致。"
+    },
+    "g2": {
+     "topic": "How soon 提问",
+     "point": "How soon 对「in + 一段时间」提问，意为「多久以后」，答语常用 in another ten minutes。",
+     "why": "答语 in another ten minutes 表示「再过十分钟后」，是将来时间，故用 How soon。How far 问距离，How often 问频率，How long 问时长，都无法与 in... 对应。",
+     "trap": "in + 时间 → How soon；for + 时间 → How long；次数/频率 → How often；距离 → How far，别混。"
+    },
+    "g3": {
+     "topic": "选择疑问句",
+     "point": "or 连接的选择疑问句不能用 Yes/No 回答，必须从给出的选项中选择；答语还要符合事实线索。",
+     "why": "问句 by bus or on foot 是二选一，答语 It's only 5 minutes' walk 说明走路，故选 On foot。A、B 是 Yes/No 回答，D 与「步行 5 分钟」矛盾。",
+     "trap": "看到 or 就答 yes/no 是高频错；先锁定两个选项，再用答语中的事实线索（步行 5 分钟）排除。"
+    },
+    "g4": {
+     "topic": "感叹句不可数名词",
+     "point": "information 不可数，感叹句用 What + 形容词 + 不可数名词 + 主语 + 谓语，不能加 a/an；How 后不直接接名词。",
+     "why": "被感叹的中心是 information（不可数），排除含 a 的 C、D；How 后只能接形容词/副词，不能直接接名词短语，A 错，故 B。",
+     "trap": "information、news、advice、homework 都不可数，前不加 a/an；感叹不可数名词只能用 What。"
+    },
+    "g5": {
+     "topic": "satisfied 问句",
+     "point": "be satisfied with「对……满意」；一般疑问句把 be 动词提前到主语前：Are you satisfied with...? satisfied 是形容词。",
+     "why": "中文是「你对……感到满意吗」，主语 you 前用 Are 构成一般疑问句；表语用 satisfied（人感到满意），不是 satisfying（令人满意）。",
+     "trap": "别写 Do you satisfy：satisfy 是及物动词「使满意」，人作主语要用 be satisfied；with 不能漏。"
+    },
+    "g6": {
+     "topic": "turn down 短语",
+     "point": "turn down「调小（火/音量）」，动副短语；boil over「（液体）沸腾溢出」，不及物；祈使句 + or + 一般将来时。",
+     "why": "「把火调小」用 Turn down the heat，句首大写；or 表「否则」，后接 will boil over。boil over 是固定搭配，over 不能换成 out/off，故填 Turn down / boil over。",
+     "trap": "or 前用祈使句、后接 will + 动词原形；turn down 是动副短语，代词宾语才放中间，名词可放后面。"
+    },
+    "g7": {
+     "topic": "have been to",
+     "point": "have been to + 地点「去过某地（人已回来）」；疑问句把 Have 提前，答语 Yes, I have；twice 前不再加 to。",
+     "why": "第一空助动词 Have 提前，第二空用过去分词 been；答语 Yes, I have been twice before 中 twice 是次数副词，后面不再接 to，故四空为 Have / been / have / been。",
+     "trap": "have been to（去过已回）≠ have gone to（去了未回）；答语中 twice、ever 前不加 to。"
+    },
+    "g8": {
+     "topic": "pick up",
+     "point": "pick up「捡起、拿起」，动词 + 副词；代词宾语须放中间（pick it up），名词宾语可放 up 前后。",
+     "why": "「把箱子抬起来」用 pick up the box，up 是副词；Please 后接动词原形，故填 pick up，不能连写成 pickup（那是名词）。",
+     "trap": "别把动词短语连写成 pickup；代词 it/them 必须放 pick 与 up 之间，名词则两种位置都可。"
+    },
+    "g9": {
+     "topic": "感叹句 What a",
+     "point": "experience 作「一次经历」是可数名词单数，感叹句用 What a + 形容词 + 名词 + 主语 + 谓语。",
+     "why": "题干已给 a，句式 ______ a ______ experience it is!：第一空填 What，第二空填修饰 experience 的形容词「有意义的」meaningful，wonderful 等合理形容词也可。",
+     "trap": "experience 作「经验」不可数、作「经历」可数；a 已给出，别再填 What an 或 How；meaningful 别漏词尾 -ful。"
+    },
+    "g10": {
+     "topic": "hear about",
+     "point": "hear about/of「听说……」，现在完成时疑问句为 Have you ever heard about...?；ever 常与完成时连用。",
+     "why": "中文「你听说过……吗」问的是至今的经历，用现在完成时：助动词 Have 提前，heard 是 hear 的过去分词；about 已在题干，故填 Have / heard。",
+     "trap": "别用一般过去时 Did you hear；hear 的过去分词是 heard（不是 heared）；about/of 后接名词或动名词。"
+    }
+   }
+  },
+  {
+   "unit": "U3",
+   "title": "九上 U3 过关",
+   "header": {
+    "class": null,
+    "name": null,
+    "id": null
+   },
+   "note": "",
+   "items": [
+    {
+     "no": 1,
+     "kind": "fill",
+     "stem": "In the past, people often used m______ to light candles.",
+     "cn": null,
+     "options": null,
+     "marked": null,
+     "handwriting": [
+      "atches"
+     ],
+     "note": "阅读部分第1题（卷面 1）；题干已印首字母 m，横线手写 atches，即 matches"
+    },
+    {
+     "no": 2,
+     "kind": "fill",
+     "stem": "I stand in front of my father in s______ because I told a lie just now.",
+     "cn": null,
+     "options": null,
+     "marked": null,
+     "handwriting": [
+      "hame"
+     ],
+     "note": "卷面 2；题干已印首字母 s，手写形似 hame（a/o 难辨），应为 shame"
+    },
+    {
+     "no": 3,
+     "kind": "fill",
+     "stem": "I r______ the chair from my bedroom yesterday as it was useless.",
+     "cn": null,
+     "options": null,
+     "marked": null,
+     "handwriting": [
+      "emoved"
+     ],
+     "note": "卷面 3；题干已印首字母 r，横线手写 emoved，即 removed"
+    },
+    {
+     "no": 4,
+     "kind": "fill",
+     "stem": "Be really careful when making friends with others online, or you will be c______.",
+     "cn": null,
+     "options": null,
+     "marked": null,
+     "handwriting": [
+      "heated"
+     ],
+     "note": "卷面 4；题干已印首字母 c，横线手写 heated，即 cheated"
+    },
+    {
+     "no": 5,
+     "kind": "fill",
+     "stem": "The new rule sounds great, but it may cause a lot of trouble when we put it into p______.",
+     "cn": null,
+     "options": null,
+     "marked": null,
+     "handwriting": [
+      "ractice"
+     ],
+     "note": "卷面 5；题干已印首字母 p，横线手写 ractice，即 practice"
+    },
+    {
+     "no": 6,
+     "kind": "fill",
+     "stem": "She looked at the painting with a______ and couldn't move her eyes away from it.",
+     "cn": null,
+     "options": null,
+     "marked": null,
+     "handwriting": [
+      "dmiration"
+     ],
+     "note": "卷面 6；题干已印首字母 a，横线手写 dmiration，即 admiration"
+    },
+    {
+     "no": 7,
+     "kind": "mc",
+     "stem": "Finally, he decided not to keep the fish ______ to set it free.",
+     "cn": null,
+     "options": [
+      {
+       "k": "A",
+       "t": "and"
+      },
+      {
+       "k": "B",
+       "t": "so"
+      },
+      {
+       "k": "C",
+       "t": "or"
+      },
+      {
+       "k": "D",
+       "t": "but"
+      }
+     ],
+     "marked": "D",
+     "handwriting": null,
+     "note": "卷面 7；左侧页边手写大写 D（学生作答）；选项本身无勾画"
+    },
+    {
+     "no": 8,
+     "kind": "mc",
+     "stem": "The boy felt very ______ because he did something wrong.",
+     "cn": null,
+     "options": [
+      {
+       "k": "A",
+       "t": "shame"
+      },
+      {
+       "k": "B",
+       "t": "ashamed"
+      },
+      {
+       "k": "C",
+       "t": "shameful"
+      },
+      {
+       "k": "D",
+       "t": "shamefully"
+      }
+     ],
+     "marked": "B",
+     "handwriting": null,
+     "note": "卷面 8；左侧页边手写大写 B（学生作答）"
+    },
+    {
+     "no": 9,
+     "kind": "mc",
+     "stem": "Riding bicycles is a great way to go around and ______ our bodies.",
+     "cn": null,
+     "options": [
+      {
+       "k": "A",
+       "t": "strong"
+      },
+      {
+       "k": "B",
+       "t": "strength"
+      },
+      {
+       "k": "C",
+       "t": "strengthen"
+      },
+      {
+       "k": "D",
+       "t": "strongly"
+      }
+     ],
+     "marked": "C",
+     "handwriting": null,
+     "note": "卷面 9；左侧页边手写大写 C（学生作答）"
+    },
+    {
+     "no": 10,
+     "kind": "mc",
+     "stem": "I have ______ to tell you. Let's keep it as a secret between us.",
+     "cn": null,
+     "options": [
+      {
+       "k": "A",
+       "t": "something special"
+      },
+      {
+       "k": "B",
+       "t": "special something"
+      },
+      {
+       "k": "C",
+       "t": "something specially"
+      },
+      {
+       "k": "D",
+       "t": "specially anything"
+      }
+     ],
+     "marked": "A",
+     "handwriting": null,
+     "note": "卷面 10；左侧页边手写大写 A（学生作答）；选项按 AB/CD 两行排布，已理顺"
+    },
+    {
+     "no": 11,
+     "kind": "mc",
+     "stem": "Every time ______ I see China's national flag rising, I have a sense of pride from the bottom of my heart.",
+     "cn": null,
+     "options": [
+      {
+       "k": "A",
+       "t": "while"
+      },
+      {
+       "k": "B",
+       "t": "that"
+      },
+      {
+       "k": "C",
+       "t": "when"
+      },
+      {
+       "k": "D",
+       "t": "/"
+      }
+     ],
+     "marked": "D",
+     "handwriting": null,
+     "note": "卷面 11；左侧页边手写大写 D（学生作答）"
+    },
+    {
+     "no": 12,
+     "kind": "mc",
+     "stem": "The young pianist played the difficult piece as ______ as an experienced musician.",
+     "cn": null,
+     "options": [
+      {
+       "k": "A",
+       "t": "skill"
+      },
+      {
+       "k": "B",
+       "t": "skillful"
+      },
+      {
+       "k": "C",
+       "t": "skilfully"
+      },
+      {
+       "k": "D",
+       "t": "more skilfully"
+      }
+     ],
+     "marked": "C",
+     "handwriting": null,
+     "note": "卷面 12；左侧页边手写大写 C（学生作答）"
+    },
+    {
+     "no": 13,
+     "kind": "mc",
+     "stem": "—Tony wasn't chosen for the team. That was a bad ______. —You're right. We can't win the game without him.",
+     "cn": null,
+     "options": [
+      {
+       "k": "A",
+       "t": "accident"
+      },
+      {
+       "k": "B",
+       "t": "promise"
+      },
+      {
+       "k": "C",
+       "t": "decision"
+      },
+      {
+       "k": "D",
+       "t": "challenge"
+      }
+     ],
+     "marked": "C",
+     "handwriting": null,
+     "note": "卷面 13；左侧页边手写大写 C（学生作答）；题干为两行对话，已合并"
+    },
+    {
+     "no": 14,
+     "kind": "mc",
+     "stem": "—How about playing computer games? —That sounds ______. Let's play basketball.",
+     "cn": null,
+     "options": [
+      {
+       "k": "A",
+       "t": "bored"
+      },
+      {
+       "k": "B",
+       "t": "boring"
+      },
+      {
+       "k": "C",
+       "t": "interested"
+      },
+      {
+       "k": "D",
+       "t": "interesting"
+      }
+     ],
+     "marked": "B",
+     "handwriting": null,
+     "note": "语法部分第1题（卷面 1，连续编号为 14）；左侧页边手写大写 B（学生作答），字母纵跨该行与上一行之间，按行高判定属本题"
+    },
+    {
+     "no": 15,
+     "kind": "mc",
+     "stem": "The new bed ______ very hard.  I couldn't sleep well last night.",
+     "cn": null,
+     "options": [
+      {
+       "k": "A",
+       "t": "feels"
+      },
+      {
+       "k": "B",
+       "t": "is felt"
+      },
+      {
+       "k": "C",
+       "t": "is feeling"
+      },
+      {
+       "k": "D",
+       "t": "felt"
+      }
+     ],
+     "marked": "C",
+     "handwriting": null,
+     "note": "语法部分第2题（卷面 2，连续编号为 15）；左侧页边手写大写 C（学生作答）"
+    },
+    {
+     "no": 16,
+     "kind": "fill",
+     "stem": "Though we sometimes argue with each other, we ______ ______.",
+     "cn": "尽管我们有时互相争吵，但我们仍是朋友。",
+     "options": null,
+     "marked": null,
+     "handwriting": [
+      "still",
+      "friends"
+     ],
+     "note": "语法部分第3题（卷面 3，连续编号为 16）；卷面为两个空，依次手写 still、friends（缺系动词 are）；中文句下「我们仍是朋友」被铅笔圈画"
+    },
+    {
+     "no": 17,
+     "kind": "fill",
+     "stem": "你穿这条裙子看上去很漂亮。",
+     "cn": "翻译",
+     "options": null,
+     "marked": null,
+     "handwriting": [
+      "You look beautiful in this dress."
+     ],
+     "note": "语法部分第4题（卷面 4，连续编号为 17）；手写译文照抄"
+    },
+    {
+     "no": 18,
+     "kind": "fill",
+     "stem": "People were ______(doubt) whether this was a safe or accurate way.",
+     "cn": null,
+     "options": null,
+     "marked": null,
+     "handwriting": [
+      "doubtful"
+     ],
+     "note": "页顶为短文语法填空（属本卷上一页末段，原文前半未拍到），此为其第1空；手写 doubtful。本页该部分题号与「阅读」1-6 重复，故连续编号为 18"
+    },
+    {
+     "no": 19,
+     "kind": "fill",
+     "stem": "Doctors needed a tool ______(check) fevers, and scientists needed one to study heat.",
+     "cn": null,
+     "options": null,
+     "marked": null,
+     "handwriting": [
+      "to check"
+     ],
+     "note": "同上一题短文第2空；手写潦草，疑为 to check"
+    },
+    {
+     "no": 20,
+     "kind": "fill",
+     "stem": "A better way to measure temperature ______(need).",
+     "cn": null,
+     "options": null,
+     "marked": null,
+     "handwriting": [
+      "[看不清]"
+     ],
+     "note": "短文第3空；手写字迹潦草（形似 in need / is needed），无法确认"
+    },
+    {
+     "no": 21,
+     "kind": "fill",
+     "stem": "The thermometer helps us ______ many ways.",
+     "cn": null,
+     "options": null,
+     "marked": null,
+     "handwriting": null,
+     "note": "短文第4空；该空（含可能的括号提示）被白色涂改带整块遮挡，仅见左右两侧 helps us 与 many ways，故题干只保留空格"
+    },
+    {
+     "no": 22,
+     "kind": "fill",
+     "stem": "Cooks use it for baking, ______. Factories use it to keep machines safe.",
+     "cn": null,
+     "options": null,
+     "marked": null,
+     "handwriting": [
+      "[看不清]"
+     ],
+     "note": "短文第5空；空及提示被白色涂改带遮挡（涂改带上有手写字迹，形似 Mony），无法确认；右侧 Factories 的 Fa 亦被覆盖"
+    },
+    {
+     "no": 23,
+     "kind": "fill",
+     "stem": "It ______(apply) to many aspects of our daily lives, bringing great convenience.",
+     "cn": null,
+     "options": null,
+     "marked": null,
+     "handwriting": null,
+     "note": "短文第6空；该空未见手写作答"
+    }
+   ],
+   "key": {
+    "unit": "U3",
+    "items": {
+     "1": {
+      "answer": "matches",
+      "alt": [
+       "matches"
+      ],
+      "topic": "名词复数 matches",
+      "why": "use sth to light candles，火柴要用复数 matches。",
+      "doubt": false
+     },
+     "2": {
+      "answer": "shame",
+      "alt": [
+       "shame"
+      ],
+      "topic": "in shame 搭配",
+      "why": "已印首字母 s，in shame 意为「羞愧地」，因为撒了谎。",
+      "doubt": false
+     },
+     "3": {
+      "answer": "removed",
+      "alt": [
+       "removed"
+      ],
+      "topic": "一般过去时",
+      "why": "yesterday 表明动作在过去，remove 直接加 -d 变 removed。",
+      "doubt": false
+     },
+     "4": {
+      "answer": "cheated",
+      "alt": [
+       "cheated"
+      ],
+      "topic": "被动语态",
+      "why": "will be done 为被动结构，cheat 的过去分词是 cheated。",
+      "doubt": false
+     },
+     "5": {
+      "answer": "practice",
+      "alt": [
+       "practice"
+      ],
+      "topic": "put into practice",
+      "why": "put sth into practice「付诸实践」，介词 into 后接名词 practice。",
+      "doubt": false
+     },
+     "6": {
+      "answer": "admiration",
+      "alt": [
+       "admiration"
+      ],
+      "topic": "with admiration",
+      "why": "介词 with 后接名词，with admiration「钦佩地」，故填 admiration。",
+      "doubt": false
+     },
+     "7": {
+      "answer": "D",
+      "topic": "not...but... 并列",
+      "why": "「不是留鱼而是放生」用 not...but... 并列两个不定式，故填 but。",
+      "doubt": false
+     },
+     "8": {
+      "answer": "B",
+      "topic": "ashamed 形容词",
+      "why": "feel 后接形容词作表语，ashamed 表人「羞愧」；shame 是名词，shameful 指事物可耻。",
+      "doubt": false
+     },
+     "9": {
+      "answer": "C",
+      "topic": "and 并列谓语",
+      "why": "and 连接 go around 与 strengthen 两个动词原形，其余选项是名词或形容词。",
+      "doubt": false
+     },
+     "10": {
+      "answer": "A",
+      "topic": "形容词后置",
+      "why": "修饰 something 的形容词须后置：something special；specially 是副词不能作定语。",
+      "doubt": false
+     },
+     "11": {
+      "answer": "D",
+      "topic": "every time 引导状语",
+      "why": "every time 本身即可引导时间状语从句，后面不能再加 when 或 that，故选「/」。",
+      "doubt": false
+     },
+     "12": {
+      "answer": "C",
+      "topic": "as...as 副词原级",
+      "why": "as...as 中间用副词原级修饰 played，skilfully 正确；D 是比较级不能用于 as...as。",
+      "doubt": false
+     },
+     "13": {
+      "answer": "C",
+      "topic": "名词词义辨析",
+      "why": "「没被选进队」是糟糕的决定，用名词 decision；其余三项词义（事故/承诺/挑战）不符。",
+      "doubt": false
+     },
+     "14": {
+      "answer": "B",
+      "topic": "-ing/-ed 形容词",
+      "why": "主语 That 指打电脑游戏这件事，用 boring「令人厌烦的」；bored 修饰人。",
+      "doubt": false
+     },
+     "15": {
+      "answer": "A",
+      "topic": "feel 作系动词",
+      "why": "床「摸起来」很硬，feel 是系动词，无被动也不用进行时，故用 feels。",
+      "doubt": false
+     },
+     "16": {
+      "answer": "are / still friends",
+      "alt": [
+       "are still / friends",
+       "are still friends"
+      ],
+      "topic": "though 让步状语",
+      "why": "Though 引导让步从句，主句应是 we are still friends；卷面手写漏了系动词 are。",
+      "doubt": false
+     },
+     "17": {
+      "answer": "You look beautiful in this dress.",
+      "alt": [
+       "You look beautiful in this dress",
+       "You look beautiful in this dress!",
+       "You look nice in this dress."
+      ],
+      "topic": "汉译英 look 系动词",
+      "why": "「看上去」用系动词 look 接形容词 beautiful，in this dress 表示穿着这条裙子。",
+      "doubt": false
+     },
+     "18": {
+      "answer": "doubtful",
+      "alt": [
+       "doubtful"
+      ],
+      "topic": "doubt 变形容词",
+      "why": "were 后需要形容词作表语，doubt 的形容词是 doubtful「怀疑的」。",
+      "doubt": false
+     },
+     "19": {
+      "answer": "to check",
+      "alt": [
+       "to check"
+      ],
+      "topic": "不定式表目的",
+      "why": "need a tool to do sth，用不定式表目的：a tool to check fevers。",
+      "doubt": false
+     },
+     "20": {
+      "answer": "was needed",
+      "alt": [
+       "is needed",
+       "was needed"
+      ],
+      "topic": "need 被动语态",
+      "why": "way 与 need 是被动关系；上文为过去时故用 was needed，但下句转现在时，存疑。",
+      "doubt": true
+     },
+     "21": {
+      "answer": "in",
+      "alt": [
+       "in"
+      ],
+      "topic": "介词 in many ways",
+      "why": "该空被涂改带遮挡，按 helps us in many ways 推断填 in，答案存疑。",
+      "doubt": true
+     },
+     "22": {
+      "answer": null,
+      "topic": "短文第5空",
+      "why": "该空及括号提示被白色涂改带整块遮挡，无法判断所填词，故不猜。",
+      "doubt": true,
+      "manual": true
+     },
+     "23": {
+      "answer": "applies",
+      "alt": [
+       "applies"
+      ],
+      "topic": "apply 三单形式",
+      "why": "主语 It 是第三人称单数，一般现在时 apply 变为 applies（apply to 适用于）。",
+      "doubt": false
+     }
+    }
+   },
+   "explain": {
+    "1": {
+     "topic": "名词复数 matches",
+     "point": "used 后需名词作宾语；match「火柴」是可数名词，泛指一类东西要用复数，以 ch 结尾加 -es → matches。",
+     "why": "句意：过去人们常用火柴点蜡烛。空格在 used 之后作宾语，且指一类东西而非某一根，必须用复数 matches；首字母 m 只是提示，不能只写 match。",
+     "trap": "只写 match 漏掉复数，或误填 lights（点灯用的是火柴，不是灯）。泛指可数名词时先问：要不要加 -s/-es？"
+    },
+    "2": {
+     "topic": "in shame 搭配",
+     "point": "in + 抽象名词常表状态或方式：in shame 羞愧地、in surprise 惊讶地；介词 in 后必须是名词。",
+     "why": "句意：我羞愧地站在父亲面前，因为刚才撒了谎。空格前有介词 in、后无冠词，需不可数名词 shame；ashamed 是形容词（be ashamed of），shameful 修饰事物，都不能直接跟在 in 后。",
+     "trap": "把「羞愧」一律写成 ashamed。先看空格前的 in：介词后只能接名词，形容词要变名词才能填。"
+    },
+    "3": {
+     "topic": "一般过去时 + 拼写",
+     "point": "yesterday 是明确的过去时间状语，谓语用一般过去式；remove 以不发音的 e 结尾，直接加 -d → removed。",
+     "why": "句意：昨天我把那把没用的椅子从卧室搬走了。主语 I 后缺谓语，yesterday 把时态锁在过去，故用 removed；不能填现在时 remove，也不能填名词 removal。",
+     "trap": "记混去 e/双写规则，写成 removd 或 remuved。规则：以不发音 e 结尾的动词，过去式只加 -d。"
+    },
+    "4": {
+     "topic": "被动语态 be done",
+     "point": "will be + 过去分词构成一般将来时的被动语态；主语是动作承受者时用被动，cheat 的过去分词是 cheated。",
+     "why": "句意：在网上和人交朋友要格外小心，否则你会上当受骗。you 与 cheat 是被动关系（你被骗），or 后接将来结果，故用 will be cheated；若用主动 will cheat，句意变成「你去骗别人」，方向反了。",
+     "trap": "见动词就填主动形式。判断法：主语能不能自己做出这个动作？不能就用 be + 过去分词。"
+    },
+    "5": {
+     "topic": "practice 搭配",
+     "point": "put sth into practice 意为「把……付诸实践」，into 是介词，后面必须接名词 practice，不能接动词 practise。",
+     "why": "句意：新规定听起来不错，但真正落实时可能带来很多麻烦。空格前是介词 into，只能填名词 practice；practise 是英式动词拼写，此处词性不符。",
+     "trap": "英式 practise（动词）/ practice（名词）混用。记搭配：in practice 实际上、put into practice 付诸实践。"
+    },
+    "6": {
+     "topic": "with + 抽象名词",
+     "point": "with + 抽象名词作方式状语：with admiration 钦佩地。介词后要用名词，动词 admire 需变名词 admiration。",
+     "why": "句意：她钦佩地看着那幅画，目光久久无法移开。空格前是介词 with，需名词 admiration；admiring 是分词/形容词，admire 是动词，都不能直接跟在介词后作状语。",
+     "trap": "把「钦佩」直接写成 admire 或 admiring。介词后的空先定词性：这里要名词。"
+    },
+    "7": {
+     "topic": "not...but...",
+     "point": "not A but B 表「不是 A 而是 B」，A、B 必须同形并列；此句并列两个不定式 not to keep... but to set...。",
+     "why": "句意：最后他决定不养这条鱼，而是把它放生。前面是否定不定式 not to keep the fish，后面 to set it free 正好与之对应，只能用 but 连接；and 只表并列不表转折，so/or 逻辑不通。",
+     "trap": "看到 not 就用 and/or。记公式：not to do A but to do B，but 前后结构要一致。"
+    },
+    "8": {
+     "topic": "ashamed 表人",
+     "point": "feel 是系动词，后接形容词作表语；-ed 形容词表人「感到……」，ashamed 指人羞愧，shameful 指事物可耻。",
+     "why": "句意：那个男孩因为做错了事感到很羞愧。主语 The boy 是人，feel 后需形容词，故选 ashamed；A 项 shame 是名词不能作表语，D 项 shamefully 是副词，都不能填。",
+     "trap": "只看词根 shame 就选 A。记搭配：sb be ashamed of sth；sth be shameful。"
+    },
+    "9": {
+     "topic": "and 并列谓语",
+     "point": "and 连接两个并列成分，前面是 to go around（动词原形），后面也必须是动词原形 strengthen。",
+     "why": "句意：骑自行车是到处走走、强健身体的好方式。空格与 go around 并列作 way to do 的内容，需动词 strengthen；strong（形容词）、strength（名词）、strongly（副词）都无法与 go 并列。",
+     "trap": "看见 bodies 就填形容词 strong。判断依据是 and 前面的 go，而不是后面的名词。"
+    },
+    "10": {
+     "topic": "形容词修饰不定代词后置",
+     "point": "修饰 something/anything/nothing 等不定代词的形容词必须后置；肯定句用 something，否定和疑问句用 anything。",
+     "why": "句意：我有件特别的事要告诉你，就当是我们之间的秘密吧。本句为肯定句用 something，形容词 special 后置成 something special；specially 是副词不能修饰名词，D 项 anything 用于肯定句不当。",
+     "trap": "按汉语语序写成 special something，或用副词 specially。口诀：不定代词 + 形容词，形容词永远在后。"
+    },
+    "11": {
+     "topic": "时间状语引导词",
+     "point": "every time、each time、the moment 等名词短语可直接引导时间状语从句，起连词作用，后面不再加 when 或 that。",
+     "why": "句意：每次看到中国国旗升起，我内心都充满自豪。空格前已有 every time 引导从句，不能再叠 when/that；while 表「当……时」强调持续动作，此处是每次的瞬间动作，不合。故选「/」。",
+     "trap": "习惯性补连词写成 every time when，这是典型错句。every time 后直接跟主语即可。"
+    },
+    "12": {
+     "topic": "as...as 原级",
+     "point": "as + 形容词/副词原级 + as 表同级比较；空格修饰动词 played，需副词原级 skilfully。",
+     "why": "句意：这位年轻钢琴家把这首难曲子弹得和有经验的音乐家一样娴熟。修饰 played 要用副词，as...as 之间必须用原级，故 skilfully；D 项 more skilfully 是比较级，不能用于 as...as 结构。",
+     "trap": "一看到比较就加 -er/more。先判断修饰谁（动词→副词），再定原级。"
+    },
+    "13": {
+     "topic": "decision 词义",
+     "point": "a bad + 可数名词单数；结合对话内容「没被选进队」可知这是某人做出的决定，选 decision。",
+     "why": "句意：——Tony 没被选进队，那是个糟糕的决定。——你说得对，没有他我们赢不了。decision 与「做出选择」吻合；accident 意外、promise 承诺、challenge 挑战都不能指「选人」这个决定。",
+     "trap": "把「糟糕的事」一律理解成 accident。辨析题要回到对话逻辑：被评价的是一个选择。"
+    },
+    "14": {
+     "topic": "-ing/-ed 形容词",
+     "point": "sound 是系动词，后接形容词；-ing 形容词表「令人……的」，修饰引起感受的事物；-ed 表「感到……的」，修饰人。",
+     "why": "句意：——打电脑游戏怎么样？——那听起来很无聊，我们去打篮球吧。主语 That 指「打游戏」这件事，令人厌烦，用 boring；bored 指人感到无聊，interested/interesting 意为「有趣的」，与后文「去打篮球」矛盾。",
+     "trap": "按「谁无聊」去选 bored。判断标准：事物让人产生感受→-ing；人自己感到→-ed。"
+    },
+    "15": {
+     "topic": "feel 系动词无被动",
+     "point": "feel 表「摸起来」时是系动词，后接形容词，用主动形式表被动意义，不用被动语态，也不用进行时。",
+     "why": "句意：这张新床摸起来很硬，我昨晚没睡好。床与 feel 不是被动关系，is felt 错；系动词不用进行时，is feeling 错；felt 是过去式，与后句现在语境不符。主语 The new bed 为三单，故选 feels。",
+     "trap": "见「床被摸」就选被动 is felt，或按「正在」选 is feeling。smell/taste/sound/feel 作系动词一律主动、一般现在时。"
+    },
+    "16": {
+     "topic": "though 让步",
+     "point": "Though 引导让步状语从句，主句不再加 but；主句必须是完整的主系表结构：we are still friends。",
+     "why": "句意：尽管我们有时互相争吵，但我们仍是朋友。中文「仍是」含系动词「是」，英文必须有 are；still 放在 be 之后、名词之前。卷面只写 still/friends，缺 are 属句子结构不完整，判为错。",
+     "trap": "受汉语影响漏掉 be 动词，或把语序写成 we still are friends。检查法：主句单独读一遍，主谓是否齐全。"
+    },
+    "17": {
+     "topic": "汉译英 look",
+     "point": "「看上去……」用系动词 look + 形容词作表语；「穿着某件衣服」用 in + 衣服，不能再用一个动词 wear 作谓语。",
+     "why": "句意：你穿这条裙子看上去很漂亮。look 是系动词，后接形容词 beautiful；「穿这条裙子」用 in this dress 作状语。写成 You wear this dress look beautiful 会出现两个谓语，结构错误。",
+     "trap": "按汉语顺序写成 You wear this dress very beautiful。记句型：sb looks + adj. + in + 衣服。"
+    },
+    "18": {
+     "topic": "doubt 变形容词",
+     "point": "be 动词后需要形容词作表语；doubt（动词/名词「怀疑」）的形容词是 doubtful「怀疑的」。",
+     "why": "句意：人们怀疑这是否是一种安全或准确的方法。were 后缺表语，主语 People 表人「感到怀疑」，用形容词 doubtful；填名词 doubt 或动词形式都缺系动词后的表语成分，故错。",
+     "trap": "在 be 动词后直接填原形 doubt。词形题先定词性，再由 doubt → doubtful 变形。"
+    },
+    "19": {
+     "topic": "不定式表用途",
+     "point": "need a tool to do sth：不定式作后置定语或目的状语，说明工具的用途，结构为 to + 动词原形。",
+     "why": "句意：医生需要一种工具来检查发烧，科学家也需要一种来研究热量。tool 与 check 之间是「用来做」的关系，用 to check；填 checking 缺少介词，填 checked 表被动完成，都与「用途」不符。",
+     "trap": "受 need 影响把后面也写 needs/needed，或写成 for check。看到「工具/方法 + 用来做」就填 to do。"
+    },
+    "20": {
+     "topic": "need 的被动语态",
+     "point": "主语 a better way 是动作的承受者，需用被动 be + 过去分词；时态随上文，前文 were doubtful、needed 都是过去时。",
+     "why": "句意：需要一种更好的测量温度的方法。方法不能自己「需要」，只能「被需要」，故用 was needed；若填 needed 就变成主动，逻辑不通。全篇若按现在时叙述，也可作 is needed，故本题参考两个答案。",
+     "trap": "直接填 needed 漏掉被动。判断法：主语能否发出该动作？不能就用 be done；另注意 need doing 表被动含义的用法。"
+    },
+    "21": {
+     "topic": "in many ways",
+     "point": "in many ways 意为「在许多方面」，是固定介词短语；不给提示的空优先考虑介词、连词等虚词。",
+     "why": "句意：温度计在许多方面帮助了我们。helps us 后需表示「在……方面」的介词，many ways 前用 in。注意：本题空格被白色涂改带遮挡，in 是按搭配推断的参考值，实际以原卷为准。",
+     "trap": "按汉语「用许多方式」写成 by/with many ways。记搭配：in many ways 在许多方面、in this way 用这种方式。"
+    },
+    "22": {
+     "topic": "信息缺失题的处理",
+     "point": "空格和提示词都被白色涂改带盖住，只剩「Cooks use it for baking, ______. Factories use it...」可见，无法判断填什么。",
+     "why": "句意只看出：厨师用它烘焙，工厂用它保护机器安全。空格处应是与前句并列的成分，但提示词被涂掉，任何具体答案都只是猜测，所以本题只标存疑、留待与老师核对。",
+     "trap": "遇到信息缺失硬按语感填一个词。正确做法：标记存疑、课后核对；考场上选与上下文结构最接近的形式。"
+    },
+    "23": {
+     "topic": "apply 三单形式",
+     "point": "主语 It 为第三人称单数，一般现在时谓语加 -s；apply 是「辅音字母 + y」结尾，变 y 为 i 再加 -es → applies。",
+     "why": "句意：它适用于我们日常生活的许多方面，带来极大便利。全句陈述普遍事实用一般现在时，主语 It 是三单，故用 applies；填原形 apply 或过去式 applied 都与时态、主谓一致不符。",
+     "trap": "直接写 applys（忘了 y 变 i）。规则：辅音 + y 结尾，三单变 -ies，如 study→studies、apply→applies。"
+    }
+   }
+  },
+  {
+   "unit": "U4",
+   "title": "九上 U4 过关卷",
+   "header": {
+    "class": null,
+    "name": null,
+    "id": null
+   },
+   "note": "",
+   "items": [
+    {
+     "no": 1,
+     "kind": "fill",
+     "stem": "This lecture shows teenagers the harm of being a ______ to the Internet.",
+     "cn": null,
+     "options": null,
+     "marked": null,
+     "handwriting": null,
+     "note": "大题「一、单词拼写」第1题；横线空白，未见作答；卷面无班级/姓名/学号栏"
+    },
+    {
+     "no": 2,
+     "kind": "fill",
+     "stem": "If you are under too much p______, you can listen to music to relax yourself.",
+     "cn": null,
+     "options": null,
+     "marked": null,
+     "handwriting": [
+      "ressure"
+     ],
+     "note": "大题「一、单词拼写」第2题；卷面已印首字母 p，横线上手写 ressu(re)，完整单词为 pressure"
+    },
+    {
+     "no": 3,
+     "kind": "mc",
+     "stem": "If you don't know how to ______ the problem, you can turn to you teacher.",
+     "cn": null,
+     "options": [
+      {
+       "k": "A",
+       "t": "think about"
+      },
+      {
+       "k": "B",
+       "t": "deal with"
+      },
+      {
+       "k": "C",
+       "t": "pay attention to"
+      },
+      {
+       "k": "D",
+       "t": "come up with"
+      }
+     ],
+     "marked": "B",
+     "handwriting": null,
+     "note": "大题「二、单项选择」第1题；左侧页边手写字母 B；卷面印作 you teacher（疑漏印 your 的 r）"
+    },
+    {
+     "no": 4,
+     "kind": "mc",
+     "stem": "Though the girl had trouble in hearing, she managed ______ a college degree.",
+     "cn": null,
+     "options": [
+      {
+       "k": "A",
+       "t": "to get"
+      },
+      {
+       "k": "B",
+       "t": "getting"
+      },
+      {
+       "k": "C",
+       "t": "to getting"
+      },
+      {
+       "k": "D",
+       "t": "got"
+      }
+     ],
+     "marked": "A",
+     "handwriting": null,
+     "note": "大题「二、单项选择」第2题；左侧页边手写字母 A"
+    },
+    {
+     "no": 5,
+     "kind": "mc",
+     "stem": "It is kind ______ him ______ to me and give me so much advice to solve the problems.",
+     "cn": null,
+     "options": [
+      {
+       "k": "A",
+       "t": "for; listening"
+      },
+      {
+       "k": "B",
+       "t": "of; listening"
+      },
+      {
+       "k": "C",
+       "t": "for; to listen"
+      },
+      {
+       "k": "D",
+       "t": "of; to listen"
+      }
+     ],
+     "marked": "C",
+     "handwriting": null,
+     "note": "大题「二、单项选择」第3题；左侧页边手写字母 C"
+    },
+    {
+     "no": 6,
+     "kind": "mc",
+     "stem": "With my parents' help, I can focus more ______ my schoolwork.",
+     "cn": null,
+     "options": [
+      {
+       "k": "A",
+       "t": "at"
+      },
+      {
+       "k": "B",
+       "t": "in"
+      },
+      {
+       "k": "C",
+       "t": "for"
+      },
+      {
+       "k": "D",
+       "t": "on"
+      }
+     ],
+     "marked": "D",
+     "handwriting": null,
+     "note": "大题「二、单项选择」第4题；左侧页边手写字母 D"
+    },
+    {
+     "no": 7,
+     "kind": "mc",
+     "stem": "Too much ______ is bad for health. We should learn to relax ourselves in daily life.",
+     "cn": null,
+     "options": [
+      {
+       "k": "A",
+       "t": "noise"
+      },
+      {
+       "k": "B",
+       "t": "danger"
+      },
+      {
+       "k": "C",
+       "t": "pressure"
+      },
+      {
+       "k": "D",
+       "t": "attention"
+      }
+     ],
+     "marked": "C",
+     "handwriting": null,
+     "note": "大题「二、单项选择」第5题；左侧页边手写字母 C"
+    },
+    {
+     "no": 8,
+     "kind": "mc",
+     "stem": "Lots of young people get addicted ______ short videos, which takes up most of their spare time.",
+     "cn": null,
+     "options": [
+      {
+       "k": "A",
+       "t": "watch"
+      },
+      {
+       "k": "B",
+       "t": "watching"
+      },
+      {
+       "k": "C",
+       "t": "to watch"
+      },
+      {
+       "k": "D",
+       "t": "to watching"
+      }
+     ],
+     "marked": "D",
+     "handwriting": null,
+     "note": "大题「二、单项选择」第6题；左侧页边手写字母 D"
+    },
+    {
+     "no": 9,
+     "kind": "fill",
+     "stem": "Don't touch my books, or you will ______ ______ ______.",
+     "cn": "别碰我的书，不然你会把它们弄乱。",
+     "options": null,
+     "marked": null,
+     "handwriting": [
+      "mess",
+      "them",
+      "up"
+     ],
+     "note": "大题「三、完成句子」第1题；三条横线依次手写 mess / them / up"
+    },
+    {
+     "no": 10,
+     "kind": "fill",
+     "stem": "Lily ______ ______ ______ ______ ______ going to bed early.",
+     "cn": "莉莉有早睡的好习惯。",
+     "options": null,
+     "marked": null,
+     "handwriting": [
+      "has",
+      "a",
+      "good",
+      "habit",
+      "of"
+     ],
+     "note": "大题「三、完成句子」第2题；手写依次 has / a / good / habit of，habit 连笔形似 hodif，按语义读作 habit 卷面为 5 段横线，学生手写 has/a/good/habit/of 分置五空。"
+    },
+    {
+     "no": 11,
+     "kind": "fill",
+     "stem": "It's not wise to just go ______ ______ ______ to lose weight.",
+     "cn": "仅仅依靠节食来减肥是不明智的。",
+     "options": null,
+     "marked": null,
+     "handwriting": [
+      "on",
+      "a",
+      "diet"
+     ],
+     "note": "大题「三、完成句子」第3题；三条横线依次手写 on / a / diet"
+    },
+    {
+     "no": 12,
+     "kind": "fill",
+     "stem": "I am writing an email to my teacher to ______ him ______ ______.",
+     "cn": "我正在给我的老师写邮件，向他寻求建议。",
+     "options": null,
+     "marked": null,
+     "handwriting": [
+      "ask",
+      "advice",
+      "from"
+     ],
+     "note": "大题「三、完成句子」第4题；第二条横线手写 advice from（语序/介词有误，正确应为 for advice） 卷面为 3 段横线，学生手写 ask/advice/from 分置三空（语序、介词均有误）。"
+    },
+    {
+     "no": 13,
+     "kind": "fill",
+     "stem": "She is ______ ______ ______ ______ the School Food Festival.",
+     "cn": "她负责组织本次校园美食节。",
+     "options": null,
+     "marked": null,
+     "handwriting": [
+      "in",
+      "charge",
+      "of",
+      "t."
+     ],
+     "note": "卷面为 4 段横线；学生手写 in/charge/of，第 4 空写「t.」（疑为 to organize 未写完）。"
+    },
+    {
+     "no": 14,
+     "kind": "fill",
+     "stem": "他经常在敬老院帮忙。（S+A+V+A）",
+     "cn": "句型翻译：按括号内要求的句型结构翻译句子",
+     "options": null,
+     "marked": null,
+     "handwriting": [
+      "He often helps in the old people's home."
+     ],
+     "note": "大题「6. 句型翻译」第(1)题；手写作 He often helps in the old people's home."
+    },
+    {
+     "no": 15,
+     "kind": "fill",
+     "stem": "简的演讲让我激动。（S+V+O+C）",
+     "cn": "句型翻译：按括号内要求的句型结构翻译句子",
+     "options": null,
+     "marked": null,
+     "handwriting": [
+      "Jane's speech makes me excited."
+     ],
+     "note": "大题「6. 句型翻译」第(2)题；手写作 Jane's speech makes me excited."
+    },
+    {
+     "no": 16,
+     "kind": "fill",
+     "stem": "上周末，我给我爸爸买了一些茶叶。（S+V+IO+DO+A）",
+     "cn": "句型翻译：按括号内要求的句型结构翻译句子",
+     "options": null,
+     "marked": null,
+     "handwriting": [
+      "I bought my father some tea last weekend."
+     ],
+     "note": "大题「6. 句型翻译」第(3)题；手写作 I bought my father some tea last weekend."
+    }
+   ],
+   "key": {
+    "unit": "U4",
+    "items": {
+     "1": {
+      "answer": "addict",
+      "alt": [
+       "an addict",
+       "addicted"
+      ],
+      "topic": "addict 名词",
+      "why": "填名词 addict（网瘾者）；卷面作 a addict，冠词疑误应为 an，故存疑。",
+      "doubt": true
+     },
+     "2": {
+      "answer": "pressure",
+      "alt": [
+       "pressure"
+      ],
+      "topic": "pressure 拼写",
+      "why": "much 修饰不可数名词，too much pressure 意为「压力太大」，由首字母 p 提示。",
+      "doubt": false
+     },
+     "3": {
+      "answer": "B",
+      "topic": "deal with 辨析",
+      "why": "deal with 意为「处理问题」；think about 只表考虑，come up with 后接办法。",
+      "doubt": false
+     },
+     "4": {
+      "answer": "A",
+      "topic": "manage to do",
+      "why": "manage to do sth 表示「设法做成某事」，强调结果成功，故填 to get。",
+      "doubt": false
+     },
+     "5": {
+      "answer": "D",
+      "topic": "it is kind of sb to do",
+      "why": "kind、nice 等描述人的品质时用 of sb；后一空用不定式 to listen 与 give 并列。",
+      "doubt": false
+     },
+     "6": {
+      "answer": "D",
+      "topic": "focus on",
+      "why": "focus on sth 意为「专注于某事」，focus more on my schoolwork。",
+      "doubt": false
+     },
+     "7": {
+      "answer": "C",
+      "topic": "pressure 词义",
+      "why": "下文 relax ourselves「放松自己」提示是压力，too much pressure 压力过大对健康不利。",
+      "doubt": false
+     },
+     "8": {
+      "answer": "D",
+      "topic": "be addicted to doing",
+      "why": "be/get addicted to 中 to 是介词，后接动名词，故用 to watching。",
+      "doubt": false
+     },
+     "9": {
+      "answer": "mess / them / up",
+      "alt": [
+       "mess / them / up"
+      ],
+      "topic": "mess up 短语",
+      "why": "mess up 意为「弄乱」；代词 them 要放在动词与副词之间，即 mess them up。",
+      "doubt": false
+     },
+     "10": {
+      "answer": "has / a / good / habit / of",
+      "alt": [
+       "has / a / good / habit of"
+      ],
+      "topic": "have a good habit of",
+      "why": "「有……的好习惯」= have a good habit of doing sth；Lily 第三人称单数用 has，五空依次 has / a / good / habit / of。",
+      "doubt": false
+     },
+     "11": {
+      "answer": "on / a / diet",
+      "alt": [
+       "on / a / diet"
+      ],
+      "topic": "go on a diet",
+      "why": "go on a diet 意为「节食」，just go on a diet to lose weight 结构完整。",
+      "doubt": false
+     },
+     "12": {
+      "answer": "ask / for / advice",
+      "alt": [
+       "ask / for advice"
+      ],
+      "topic": "ask sb for advice",
+      "why": "「向某人征求建议」= ask sb for advice；advice 不可数，不加 s；三空依次 ask / for / advice。",
+      "doubt": false
+     },
+     "13": {
+      "answer": "in / charge / of / organizing",
+      "alt": [
+       "in / charge of / organizing"
+      ],
+      "topic": "be in charge of doing",
+      "why": "「负责组织」= be in charge of organizing；organizing 作介词 of 的宾语，须用动名词；四空依次 in / charge / of / organizing。",
+      "doubt": true
+     },
+     "14": {
+      "answer": "He often helps in the old people's home.",
+      "alt": [
+       "He often helps in the nursing home.",
+       "He often helps at the old people's home."
+      ],
+      "topic": "S+A+V+A 句型",
+      "why": "按 S+A+V+A 排：He often helps in the old people's home。",
+      "doubt": false
+     },
+     "15": {
+      "answer": "Jane's speech makes me excited.",
+      "alt": [
+       "Jane's speech made me excited.",
+       "Jane's speech makes me feel excited."
+      ],
+      "topic": "make sb + adj",
+      "why": "按 S+V+O+C 用 make sb + 形容词作宾补：Jane's speech makes me excited。",
+      "doubt": false
+     },
+     "16": {
+      "answer": "I bought my father some tea last weekend.",
+      "alt": [
+       "I bought some tea for my father last weekend.",
+       "Last weekend I bought my father some tea."
+      ],
+      "topic": "S+V+IO+DO 双宾",
+      "why": "双宾 buy sb sth：I bought my father some tea，last weekend 作状语。",
+      "doubt": false
+     }
+    }
+   },
+   "explain": {
+    "1": {
+     "topic": "addict 名词拼写",
+     "point": "冠词 a 之后、介词 to 之前须填名词；be an addict to sth 意为「对……上瘾的人」，addict 是名词「成瘾者」。",
+     "why": "句意：这场讲座让青少年看清成为网络成瘾者的危害。空格前有 a、后接 to the Internet，只能填名词 addict；卷面印成 a addict，冠词疑为排版疏漏，实应为 an addict。",
+     "trap": "易写成形容词 addicted 或自造词。见 a … to 结构先判断词性：此处要名词 addict，addicted 只用于 be addicted to。"
+    },
+    "2": {
+     "topic": "pressure 拼写",
+     "point": "much 只修饰不可数名词；pressure 不可数，too much pressure 表示「压力过大」，不加 s、不加 a。",
+     "why": "句意：若你压力太大，可以听音乐放松自己。too much 后接不可数名词，结合语境与首字母 p 拼作 pressure；不可数名词 pressure 直接用原形，不写复数和冠词。",
+     "trap": "易少写一个 s 变成 presure，或误写成复数 pressures。记 pres-sure 双 s，且被 much 修饰的只能是不可数形式。"
+    },
+    "3": {
+     "topic": "deal with 处理问题",
+     "point": "deal with sth = 处理、应付（问题/困难）；how to 后接动词原形，宾语 the problem 是被处理的对象。",
+     "why": "句意：不知怎么处理这个问题就向老师求助。the problem 是被处理的对象，deal with 表「处理」，选 B；think about 只表考虑，come up with 后接办法，pay attention to 表注意。",
+     "trap": "中文「解决」易误选 come up with（D）。它后面接 idea、plan 等想出的东西，the problem 要用 deal with 或 solve。"
+    },
+    "4": {
+     "topic": "manage to do sth",
+     "point": "manage to do sth = 设法做成某事（强调结果成功）；manage 后只接不定式，不接动名词。",
+     "why": "句意：虽然这个女孩听力有困难，她还是设法拿到了大学学位。manage 后只接不定式，故用 managed to get；Though 表让步，与「有困难」对照，正合「还是成功」。B getting、D got 不符合 manage 的后接形式，C to getting 中 to 后不能接 doing。",
+     "trap": "易被 had trouble doing 带偏误选 getting。trouble 后用 doing，manage 后用 to do，两个搭配分开记。"
+    },
+    "5": {
+     "topic": "It is kind of sb to do",
+     "point": "It is + 评价人的形容词（kind/nice/clever/foolish）+ of sb + to do sth；评价事情本身则用 for sb。",
+     "why": "句意：他真好，愿意听我说，还给我那么多建议。kind 评价 him 的品质，第一空用 of；第二空与 give 并列作真正主语，须用不定式 to listen。B「of; listening」的 listening 不能与 give 并列，A、C 的 for 不用于评价人的品质。",
+     "trap": "易误选 C。判断 of/for：能说「He is kind.」就用 of；It is hard for him to do 这类评价事情才用 for。"
+    },
+    "6": {
+     "topic": "focus on 搭配",
+     "point": "focus on sth = 把注意力集中于某事；focus 后的介词固定用 on，more 是副词，修饰 focus。",
+     "why": "句意：在父母的帮助下，我能更专注于学业了。focus on my schoolwork 意为「专注于功课」，介词只能用 on，故选 D；at、in、for 都不能与 focus 搭配表示专注。",
+     "trap": "受中文「在……上」影响易选 at 或 in。focus 后固定用 on，同类有 depend on、insist on、concentrate on。"
+    },
+    "7": {
+     "topic": "pressure 词义辨析",
+     "point": "too much 后接不可数名词；由后文 relax ourselves 反推前文说的是「压力」，pressure 不可数。",
+     "why": "句意：压力太大会损害健康，我们应学会在日常生活中放松。后句 relax ourselves 说明要缓解的是压力，too much pressure 指压力过大，故选 C。noise、danger、attention 都不需「放松自己」来缓解。",
+     "trap": "易凭「注意力」的常见搭配误选 D attention。抓 relax ourselves 这个提示：只有压力大才需要放松。"
+    },
+    "8": {
+     "topic": "be addicted to doing",
+     "point": "be/get addicted to sth 中 to 是介词，后接名词或动名词；addicted 是形容词，不能直接带宾语。",
+     "why": "句意：许多年轻人沉迷短视频，占用了大部分空闲时间。get addicted to 中 to 是介词，后接动名词 watching，故选 D。A watch、B watching 都缺介词 to，C to watch 把 to 当成了不定式符号。",
+     "trap": "易误选 C to watch。凡是 be addicted to、be used to、look forward to 里的 to 都是介词，后接 doing。"
+    },
+    "9": {
+     "topic": "mess up 代词位置",
+     "point": "mess up = 弄乱、搞糟；宾语是代词时必须放在动词与副词之间：mess it/them up，名词宾语则可前可后。",
+     "why": "句意：别碰我的书，否则你会把它们弄乱。指代 my books 用代词 them，mess up 属「动词+副词」短语，代词宾语要放中间，故填 mess them up；写成 mess up them 不合语序。",
+     "trap": "易写成 mess up them。牢记 turn it on、take them off、mess them up：代词一律夹在动词和副词中间。"
+    },
+    "10": {
+     "topic": "have a habit of doing",
+     "point": "have a good habit of doing sth = 有做某事的好习惯；of 是介词，后接动名词；主语三单时 have 变 has。",
+     "why": "句意：莉莉有早睡的好习惯。主语 Lily 是第三人称单数，have 要变 has；of 后接动名词 going to bed early，故填 has a good habit of，与后面 going 连成 of going。",
+     "trap": "易写成 have 或 habit to go。两处失分点：主语三单用 has，of 后用 doing 而非不定式。"
+    },
+    "11": {
+     "topic": "go on a diet",
+     "point": "go on a diet = 节食（为减肥而控制饮食）；diet 前必须用冠词 a，on 表示「处于……状态」。",
+     "why": "句意：仅仅靠节食来减肥是不明智的。go on a diet 意为「节食」，与后文 to lose weight 语义呼应，故填 on a diet；diet 前冠词 a 不可省。",
+     "trap": "易漏冠词写成 go on diet，或误用复数 diets。固定搭配就是 go on a diet。"
+    },
+    "12": {
+     "topic": "ask sb for advice",
+     "point": "ask sb for sth = 向某人要/征求某物；advice 是不可数名词，不加 s、不加 a。",
+     "why": "句意：我正在给我的老师写邮件，向他寻求建议。ask sb for advice 意为「向某人征求建议」，him 之后接 for advice；advice 不可数，只能用 some 或 much 修饰。",
+     "trap": "易漏 for 写成 ask him advice，或写成 advices。记 ask sb for advice 与 give sb advice，advice 不加 s。"
+    },
+    "13": {
+     "topic": "be in charge of doing",
+     "point": "be in charge of doing sth = 负责做某事，主语是负责人；of 是介词，后接名词或动名词；in the charge of sb 才是「由某人负责」。",
+     "why": "句意：她负责组织本次校园美食节。主语 She 是负责人，用 be in charge of organizing the School Food Festival，故填 in charge of / organizing；organizing 作介词 of 的宾语，必须用动名词，不能用 organize 或 to organize。",
+     "trap": "两大易错：漏写 organizing（只写 in charge of 就丢了「组织」）；或把 of 后写成 organize/to organize。见 of 就接 doing。"
+    },
+    "14": {
+     "topic": "S+A+V+A 句型",
+     "point": "S+A+V+A = 主语+状语+谓语+状语；频度副词 often 放在实义动词之前，地点状语放句末。",
+     "why": "正确句：He often helps in the old people's home. He 是主语(S)，often 是频度状语(A)，helps 是谓语(V)，in the old people's home 是地点状语(A)，语序合 S+A+V+A。",
+     "trap": "易写成 He helps often… 或把地点状语提到动词前。频度副词要放实义动词前，地点状语放句末。"
+    },
+    "15": {
+     "topic": "S+V+O+C 宾补",
+     "point": "S+V+O+C = 主语+谓语+宾语+宾补；make sb + 形容词，形容词作宾补说明宾语的状态。",
+     "why": "正确句：Jane's speech makes me excited. Jane's speech 是主语(S)，makes 是谓语(V)，me 是宾语(O)，excited 是形容词作宾补(C)。excited 修饰人，表示「感到激动」。",
+     "trap": "易写成 me exciting（exciting 修饰物、令人激动的）或 makes me to be excited。make 后宾补用形容词，不加 to。"
+    },
+    "16": {
+     "topic": "S+V+IO+DO 双宾",
+     "point": "S+V+IO+DO+A = 主语+谓语+间接宾语(人)+直接宾语(物)+状语；buy sb sth = buy sth for sb。",
+     "why": "正确句：I bought my father some tea last weekend. I 是主语，bought 是谓语，my father 是间接宾语，some tea 是直接宾语，last weekend 是状语，合 S+V+IO+DO+A。",
+     "trap": "易错两处：上周末须用过去式 bought，不能写 buy；some tea 不可数，别写成 some teas。"
+    }
+   }
+  }
+ ]
+};</script>
+<script>
+(function(){
+  "use strict";
+
+  /* ══ 数据准备 ═══════════════════════════════════════ */
+  var RAW = (window.QUIZ_DATA && window.QUIZ_DATA.units) || [];
+  var UNITS = RAW.map(function(u){
+    var key = (u.key && u.key.items) || {};
+    var exp = u.explain || {};
+    var items = (u.items || []).map(function(it){
+      var rawId = (it.id != null && it.id !== "") ? String(it.id) : String(it.no);
+      var k = key[rawId] || key[String(it.no)] || {};
+      var e = exp[rawId] || exp[String(it.no)] || {};
+      return {
+        id: u.unit + "-" + rawId,
+        rawId: rawId,
+        section: it.section || "",
+        label: (it.section ? it.section + " · " : "") + "第 " + it.no + " 题",
+        unit: u.unit,
+        no: it.no,
+        kind: it.kind || (it.options && it.options.length ? "mc" : "fill"),
+        stem: it.stem || "",
+        cn: it.cn || "",
+        options: it.options || [],
+        marked: (it.marked || "").toUpperCase() || null,
+        handwriting: it.handwriting || [],
+        note: it.note || "",
+        answer: (k.answer || "").toUpperCase(),
+        answerRaw: k.answer || "",
+        alt: k.alt || [],
+        topic: e.topic || k.topic || "",
+        point: e.point || "",
+        why: e.why || k.why || "",
+        trap: e.trap || "",
+        explainShort: k.why || "",
+        doubt: !!k.doubt,
+        manual: !!k.manual,
+        handwritingText: (it.handwriting || []).join(" ").trim()
+      };
+    });
+    return {
+      unit: u.unit,
+      title: u.title || ("九上 " + u.unit),
+      header: u.header || {},
+      items: items,
+      mc: items.filter(function(i){ return i.kind === "mc" && i.options.length; }),
+      fills: items.filter(function(i){ return i.kind === "fill"; })
+    };
+  });
+
+  UNITS.forEach(function(u){
+    u.mc.forEach(function(it, i){ it.seq = i + 1; });
+    u.fills.forEach(function(it, i){ it.seq = i + 1; });
+    u.items.forEach(function(it){
+      it.paperRef = (it.section ? it.section + " · " : "") + "第 " + it.no + " 题";
+      it.label = "第 " + it.seq + " 题";
+    });
+  });
+
+  var BY_ID = {};
+  UNITS.forEach(function(u){ u.items.forEach(function(i){ BY_ID[i.id] = i; }); });
+
+  /* ══ 本地存储 ═══════════════════════════════════════ */
+  var STORE_KEY = "eng9a-practice-v1";
+  var AT_KEEP = 10; /* atList 每题只保留最近 N 次作答时间 */
+  var store = loadStore();
+
+  /* 统一存档形状：at / atList 是后加的字段，旧存档没有也照常加载（缺省补空对象） */
+  function normalizeStore(s){
+    s = (s && typeof s === "object" && !Array.isArray(s)) ? s : {};
+    function objOf(v){ return (v && typeof v === "object" && !Array.isArray(v)) ? v : {}; }
+    return {
+      picks: objOf(s.picks), fills: objOf(s.fills), stat: objOf(s.stat), cleared: objOf(s.cleared),
+      at: objOf(s.at), atList: objOf(s.atList),
+      unit: s.unit || (UNITS[0] ? UNITS[0].unit : "U1")
+    };
+  }
+  function loadStore(){
+    try{ return normalizeStore(JSON.parse(localStorage.getItem(STORE_KEY) || "{}")); }
+    catch(e){ return normalizeStore({}); }
+  }
+  function saveStore(){
+    try{ localStorage.setItem(STORE_KEY, JSON.stringify(store)); }catch(e){}
+  }
+
+  /* 作答时间戳：at = 该题最近一次作答（ISO 字符串），atList = 最近 AT_KEEP 次（新的在前） */
+  function stampAnswer(id){
+    var iso = new Date().toISOString();
+    store.at[id] = iso;
+    var list = Array.isArray(store.atList[id]) ? store.atList[id] : [];
+    list.unshift(iso);
+    store.atList[id] = list.slice(0, AT_KEEP);
+    return iso;
+  }
+  function lastAt(id){ var v = store.at[id]; return typeof v === "string" ? v : ""; }
+  function atListOf(id){ var v = store.atList[id]; return Array.isArray(v) ? v : []; }
+  function fmtAt(iso){
+    if (!iso) return "";
+    var d = new Date(iso);
+    if (isNaN(d.getTime())) return "";
+    var pad = function(n){ return n < 10 ? "0" + n : String(n); };
+    return d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate()) + " " + pad(d.getHours()) + ":" + pad(d.getMinutes());
+  }
+  /* 作答条数（导出提示 / 导入前确认用） */
+  function recordCount(s){
+    s = s || store;
+    return Object.keys(s.picks || {}).length + Object.keys(s.fills || {}).length;
+  }
+
+  /* ══ 工具函数 ═══════════════════════════════════════ */
+  function esc(s){
+    return String(s == null ? "" : s)
+      .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+  }
+  function stemHTML(it){
+    var out = "";
+    if (it.cn) out += '<span class="cn" lang="zh">' + esc(it.cn) + "</span>";
+    out += esc(it.stem).replace(/_{3,}/g, '<span class="blank"></span>');
+    return out;
+  }
+  function norm(s){
+    return String(s || "")
+      .toLowerCase()
+      .replace(/[’‘´`]/g, "'")
+      .replace(/[“”]/g, '"')
+      .replace(/\//g, " ")
+      .replace(/'/g, "")
+      .replace(/[.,;:!?"()\[\]]/g, " ")
+      .replace(/\s+/g, " ")
+      .trim();
+  }
+  function accepted(it){
+    var list = [it.answerRaw].concat(it.alt || []);
+    if (it.answer && it.answer.length === 1) list.push(it.answer);
+    return list.map(norm).filter(Boolean);
+  }
+  function isFillRight(it, val){
+    var v = norm(val);
+    if (!v) return false;
+    return accepted(it).some(function(a){ return a === v; });
+  }
+  function pickOf(it){ return store.picks[it.id] || null; }
+  function isRight(it, pick){ return !!pick && pick === it.answer; }
+
+  /* 填空题「原卷手写」的批改：
+     right = 与参考答案/等价写法一致；wrong = 词/短语题写错；
+     close = 整句翻译与参考答案不同（可能只是换说法，需人工核对）；
+     manual = 该题有多种合理答案，需人工判断；
+     missing = 参考答案本身缺失；empty = 未作答 / 字迹无法辨认 */
+  function isSentenceAnswer(it){
+    // 只有整句翻译题（参考答案以句号结尾）才在「与参考答案不同」时判为待核对，
+    // 避免把「换了一种说法」的正确答案误判为错。
+    return /\.\s*$/.test(String(it.answerRaw || ""));
+  }
+  /* 卷面「首字母已给」的填空：手写部分不含印刷字母，补全后再比对/展示 */
+  function hwFull(it){
+    var hw = String(it.handwritingText || "");
+    if (!hw) return "";
+    if (hw.indexOf("看不清") >= 0) return hw;
+    var m = /([A-Za-z]+)_{3,}/.exec(it.stem || "");
+    if (!m || !m[1]) return hw;
+    var pre = m[1];
+    if (hw.toLowerCase().indexOf(pre.toLowerCase()) === 0) return hw;
+    return pre + hw;
+  }
+  function fillPaperGrade(it){
+    if (it.kind !== "fill") return "";
+    if (it.manual) return "manual";
+    if (!it.answerRaw) return "missing";
+    var hw = hwFull(it);
+    if (!hw || hw.indexOf("看不清") >= 0) return "empty";
+    if (isFillRight(it, hw)) return "right";
+    return isSentenceAnswer(it) ? "close" : "wrong";
+  }
+  function fillGradeText(g){
+    if (g === "right") return "正确";
+    if (g === "wrong") return "错误";
+    if (g === "close" || g === "manual") return "待核对";
+    if (g === "missing") return "无答案";
+    if (g === "empty") return "未作答";
+    return "";
+  }
+
+  function unitOf(code){
+    for (var i = 0; i < UNITS.length; i++) if (UNITS[i].unit === code) return UNITS[i];
+    return UNITS[0];
+  }
+
+  /* ══ 统计 ═══════════════════════════════════════════ */
+  function unitStats(u){
+    var total = u.mc.length, done = 0, right = 0, wrong = 0;
+    u.mc.forEach(function(it){
+      var p = pickOf(it);
+      if (p){
+        done++;
+        if (p === it.answer) right++; else wrong++;
+      }
+    });
+    var paperRight = 0, paperWrong = 0, paperNone = 0;
+    u.mc.forEach(function(it){
+      if (!it.marked) paperNone++;
+      else if (it.marked === it.answer) paperRight++;
+      else paperWrong++;
+    });
+    var fillTotal = u.fills.length, fillRight = 0, fillWrong = 0, fillClose = 0, fillManual = 0, fillEmpty = 0, fillMissing = 0;
+    u.fills.forEach(function(it){
+      var g = fillPaperGrade(it);
+      if (g === "right") fillRight++;
+      else if (g === "wrong") fillWrong++;
+      else if (g === "close") fillClose++;
+      else if (g === "manual") fillManual++;
+      else if (g === "missing") fillMissing++;
+      else fillEmpty++;
+    });
+    return {
+      total: total, done: done, right: right, wrong: wrong,
+      paperRight: paperRight, paperWrong: paperWrong, paperNone: paperNone,
+      fillTotal: fillTotal, fillRight: fillRight, fillWrong: fillWrong,
+      fillClose: fillClose, fillManual: fillManual, fillEmpty: fillEmpty, fillMissing: fillMissing,
+      fillPending: fillClose + fillManual, fillUnknown: fillEmpty + fillMissing
+    };
+  }
+  function globalStats(){
+    var t = { total: 0, done: 0, right: 0, wrong: 0 };
+    UNITS.forEach(function(u){
+      var s = unitStats(u);
+      t.total += s.total; t.done += s.done; t.right += s.right; t.wrong += s.wrong;
+    });
+    return t;
+  }
+  function wrongList(){
+    var out = [];
+    UNITS.forEach(function(u){
+      u.mc.forEach(function(it){
+        if (store.cleared[it.id]) return;
+        var p = pickOf(it);
+        var paperWrong = it.marked && it.marked !== it.answer;
+        var practiceWrong = p && p !== it.answer;
+        var stt = store.stat[it.id] || null;
+        var wrongN = stt && stt.wrong ? stt.wrong : (paperWrong ? 1 : 0);
+        /* 做对了也不自动出库：错过就留着（记着累计错几次），确认真会了点「我会了」才清 */
+        if (paperWrong || practiceWrong || wrongN > 0){
+          out.push({ it: it, unit: u, paperPick: it.marked, practicePick: p, type: "mc", wrongN: wrongN });
+        }
+      });
+      u.fills.forEach(function(it){
+        if (store.cleared[it.id]) return;
+        if (fillPaperGrade(it) === "wrong"){
+          out.push({ it: it, unit: u, paperPick: hwFull(it), practicePick: null, type: "fill", wrongN: 1 });
+        }
+      });
+    });
+    return out;
+  }
+  function wrongCountFor(code){
+    if (!code) return wrongList().length;
+    return wrongList().filter(function(w){ return w.it.unit === code; }).length;
+  }
+
+  /* ══ 视图切换 ═══════════════════════════════════════ */
+  var currentView = "practice";
+  var curUnit = unitOf(store.unit);
+
+  var tabs = Array.prototype.slice.call(document.querySelectorAll(".tab"));
+  tabs.forEach(function(t){
+    t.addEventListener("click", function(){ switchView(t.dataset.view); });
+  });
+  function switchView(name, opts){
+    currentView = name;
+    tabs.forEach(function(t){ t.setAttribute("aria-selected", String(t.dataset.view === name)); });
+    var views = { practice: "view-practice", report: "view-report", mistakes: "view-mistakes", fills: "view-fills" };
+    Object.keys(views).forEach(function(k){
+      var el = document.getElementById(views[k]);
+      if (el) el.classList.toggle("is-active", k === name);
+    });
+    if (name === "practice") renderPractice();
+    if (name === "report") renderReport();
+    if (name === "mistakes") renderMistakes();
+    if (name === "fills") renderFills();
+    updateTabCounts();
+    if (opts && opts.focus) {
+      requestAnimationFrame(function(){
+        var node = document.getElementById(opts.focus);
+        if (node){
+          node.scrollIntoView({ behavior: "smooth", block: "center" });
+          node.classList.add("is-target");
+          setTimeout(function(){ node.classList.remove("is-target"); }, 1400);
+        }
+      });
+    } else {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  }
+  function updateTabCounts(){
+    var el = document.getElementById("tab-mistake-count");
+    if (el) el.textContent = wrongList().length || "";
+  }
+
+  /* ══ 深链 ═══════════════════════════════════════════
+     支持 #view=practice|report|mistakes|fills，以及 #unit=U1..U4（大小写不敏感，
+     也认 unit=1 这种写法）。只读 location.hash，不回写；没有 hash 时行为与原来完全一致。 */
+  function parseHashParams(){
+    var out = {};
+    var raw = String(location.hash || "").replace(/^#/, "");
+    if (!raw) return out;
+    raw.split("&").forEach(function(kv){
+      if (!kv) return;
+      var i = kv.indexOf("=");
+      var k = i < 0 ? kv : kv.slice(0, i);
+      var v = i < 0 ? "" : kv.slice(i + 1);
+      try { k = decodeURIComponent(k); v = decodeURIComponent(v); } catch(e){}
+      out[k.trim().toLowerCase()] = v.trim();
+    });
+    return out;
+  }
+  function unitByCode(code){
+    var c = String(code || "").trim().toUpperCase().replace(/^UNIT/, "U");
+    if (!c) return null;
+    if (/^\d+$/.test(c)) c = "U" + c;
+    for (var i = 0; i < UNITS.length; i++) if (UNITS[i].unit.toUpperCase() === c) return UNITS[i];
+    return null;
+  }
+  /* 返回 true = 已按深链跳转；false = 没有可识别的深链参数 */
+  function applyDeepLink(){
+    var h = parseHashParams();
+    var view = String(h.view || "").toLowerCase();
+    var u = unitByCode(h.unit || h.u || "");
+    if (u){
+      curUnit = u;
+      store.unit = u.unit; saveStore();
+      oneIdx = 0;
+      if (view === "mistakes") mFilterUnit = u.unit;   /* #view=mistakes&unit=U2：直接筛到该单元 */
+    }
+    var views = ["practice", "report", "mistakes", "fills"];
+    if (views.indexOf(view) >= 0){
+      if (view === "practice"){
+        onlyWrong = false;
+        /* #layout=one：入口页的「5 分钟逐题」任务直接进逐题模式，不用先手动切 */
+        if (String(h.layout || "").toLowerCase() === "one") setPracticeMode("one");
+        var first = u ? (u.mc[0] || u.items[0]) : null;
+        switchView("practice", first ? { focus: "q-" + first.id } : null);
+      } else if (view === "fills" && u && u.fills.length){
+        switchView("fills", { focus: "f-" + u.fills[0].id });
+      } else {
+        switchView(view);
+      }
+      return true;
+    }
+    if (u){   /* 只给 #unit：切到练习，并定位到该单元第一题 */
+      onlyWrong = false;
+      var q0 = u.mc[0] || u.items[0];
+      switchView("practice", q0 ? { focus: "q-" + q0.id } : null);
+      return true;
+    }
+    return false;
+  }
+
+  /* ══ 练习视图 ═══════════════════════════════════════ */
+  var practiceEl = document.getElementById("view-practice");
+
+  /* 显示方式偏好（整卷 / 逐题）单独存一个键，不写进作答记录 store，
+     旧存档（没有这个键）默认整卷，行为与以前完全一致。 */
+  var VIEW_KEY = "eng9a-view-v1";
+  var practiceMode = loadViewPref();   /* "paper" 整卷（默认）| "one" 逐题 */
+  var oneIdx = 0;                      /* 逐题模式当前是列表里的第几题（0 起） */
+  function loadViewPref(){
+    try{
+      var raw = localStorage.getItem(VIEW_KEY);
+      var o = raw ? JSON.parse(raw) : null;
+      return (o && o.mode === "one") ? "one" : "paper";
+    }catch(e){ return "paper"; }
+  }
+  function saveViewPref(){
+    try{ localStorage.setItem(VIEW_KEY, JSON.stringify({ mode: practiceMode })); }catch(e){}
+  }
+  function setPracticeMode(m){
+    practiceMode = (m === "one") ? "one" : "paper";
+    if (practiceMode === "paper") oneIdx = 0;
+    saveViewPref();
+    renderPractice();
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+  /* 当前单元要显示的题（整卷 / 逐题共用同一份列表：筛「只看错题」时也一致） */
+  function practiceList(){
+    var u = curUnit;
+    if (!onlyWrong) return u.mc;
+    return u.mc.filter(function(it){
+      var p = pickOf(it);
+      return !p || p !== it.answer || (it.marked && it.marked !== it.answer);
+    });
+  }
+
+  function renderPractice(){
+    var u = curUnit;
+    var s = unitStats(u);
+    var rate = s.done ? Math.round(s.right / s.done * 100) : 0;
+    var html = "";
+    html += '<div class="unitbar">';
+    html += '<div class="unitseg" role="group" aria-label="选择单元">';
+    UNITS.forEach(function(x){
+      html += '<button data-unit="' + esc(x.unit) + '" aria-pressed="' + (x.unit === u.unit ? "true" : "false") + '">' +
+        esc(x.unit) + (wrongCountFor(x.unit) ? '<span class="count">' + wrongCountFor(x.unit) + "</span>" : "") + "</button>";
+    });
+    html += "</div>";
+    html += '<span class="hint">共 ' + s.total + " 道选择题 · 已做 " + s.done + " · 答对 " + s.right + "</span>";
+    html += '<span class="spacer"></span>';
+    html += '<button class="tool" id="btn-only-wrong" aria-pressed="' + (onlyWrong ? "true" : "false") + '">只看错题 / 未做</button>';
+    html += '<span class="unitseg" role="group" aria-label="显示方式">' +
+      '<button data-pmode="paper" aria-pressed="' + (practiceMode === "paper" ? "true" : "false") + '">整卷</button>' +
+      '<button data-pmode="one" aria-pressed="' + (practiceMode === "one" ? "true" : "false") + '">逐题</button></span>';
+    html += '<button class="tool" id="btn-reset-unit">重做本单元</button>';
+    html += "</div>";
+
+    html += '<article class="sheet" data-screen-label="' + esc(u.unit) + ' 试卷">';
+    html += '<div class="sheet-head">';
+    var h = u.header || {};
+    var metaBits = [];
+    if (h.class) metaBits.push("<span>班级 <b>" + esc(h.class) + "</b></span>");
+    if (h.name) metaBits.push("<span>姓名 <b>" + esc(h.name) + "</b></span>");
+    if (h.id) metaBits.push("<span>学号 <b>" + esc(h.id) + "</b></span>");
+    metaBits.push("<span>选择题 <b data-meta=\"mc\">" + s.paperRight + " / " + (s.paperRight + s.paperWrong + s.paperNone) + "</b></span>");
+    metaBits.push("<span>填空题 <b data-meta=\"fill\">" + s.fillRight + " / " + s.fillTotal + "</b></span>");
+    html += '<div class="sheet-meta">' + metaBits.join("") + "</div>";
+    html += '<div class="sheet-title">';
+    html += '<span class="unit-eyebrow">Unit ' + esc((u.unit.replace(/^U/, ""))) + "</span>";
+    html += "<h2>" + esc(u.title) + "</h2>";
+    html += "</div>";
+    html += '<div class="stamp' + (s.done ? " show" : "") + '"><b>' + (s.done ? rate + "%" : "待批") + "</b><span>" + (s.done ? "本轮正确率" : "待作答") + "</span></div>";
+    html += "</div>";
+
+    var list = practiceList();
+
+    html += '<section class="part">';
+    if (practiceMode === "one") {
+      /* 逐题模式：一次只渲染一道题；判分 / 解析 / 重做 / 时间戳全部复用 questionHTML */
+      html += oneModeHTML(u, list);
+    } else {
+      html += '<div class="part-head"><h3>选择题</h3><span class="range">共 ' + u.mc.length + " 题 · 点字母选项作答" + (onlyWrong ? " · 筛出 " + list.length : "") + '</span><span class="rule"></span></div>';
+      html += '<ol class="questions">';
+      list.forEach(function(it){ html += questionHTML(it); });
+      if (!list.length){
+        html += '<li class="q"><div class="q-no"></div><div class="q-body"><p class="stem" style="color:var(--ok)">这一部分全部做对了 —— 换个单元，或关掉筛选继续。</p></div></li>';
+      }
+      html += "</ol>";
+    }
+    html += "</section>";
+
+    if (u.fills.length){
+      html += '<div class="sidenote"><b>另附</b><span lang="zh">本页还有 ' + u.fills.length + ' 道填空 / 汉译英题，原卷手写已录入，去「填空自测」对照或跟写。</span></div>';
+    }
+    var noOpt = u.items.filter(function(it){ return it.kind === "mc" && (!it.options || !it.options.length); });
+    if (noOpt.length){
+      html += '<div class="sidenote"><b>缺题</b><span lang="zh">卷面第 ' + noOpt.map(function(it){ return it.no; }).join("、") + ' 题的选项没有印在照片范围内，暂不计入练习。</span></div>';
+    }
+    html += "</article>";
+    practiceEl.innerHTML = html;
+
+    // events
+    Array.prototype.forEach.call(practiceEl.querySelectorAll(".unitseg button[data-unit]"), function(b){
+      b.addEventListener("click", function(){
+        curUnit = unitOf(b.dataset.unit);
+        oneIdx = 0;
+        store.unit = curUnit.unit; saveStore();
+        renderPractice();
+      });
+    });
+    var ow = document.getElementById("btn-only-wrong");
+    if (ow) ow.addEventListener("click", function(){ onlyWrong = !onlyWrong; renderPractice(); });
+    /* 整卷 / 逐题 切换（偏好单独存 localStorage，不动作答记录） */
+    Array.prototype.forEach.call(practiceEl.querySelectorAll("[data-pmode]"), function(b){
+      b.addEventListener("click", function(){
+        if (practiceMode !== b.dataset.pmode) setPracticeMode(b.dataset.pmode);
+      });
+    });
+    /* 逐题模式：上一题 / 下一题（只改下标，判分仍走同一套 applyAnswered / questionHTML） */
+    Array.prototype.forEach.call(practiceEl.querySelectorAll("[data-one]"), function(b){
+      b.addEventListener("click", function(){
+        var n = practiceList().length;
+        if (!n) return;
+        if (b.dataset.one === "prev") oneIdx = Math.max(0, oneIdx - 1);
+        else oneIdx = Math.min(n - 1, oneIdx + 1);
+        renderPractice();
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      });
+    });
+    var rs = document.getElementById("btn-reset-unit");
+    if (rs) rs.addEventListener("click", function(){
+      if (!confirm("清空 " + curUnit.unit + " 的选择题作答记录？（原卷手写批改记录不受影响）")) return;
+      curUnit.mc.forEach(function(it){ delete store.picks[it.id]; });
+      saveStore(); renderPractice(); updateTabCounts();
+    });
+
+    Array.prototype.forEach.call(practiceEl.querySelectorAll(".opt"), function(btn){
+      btn.addEventListener("click", function(){
+        var id = btn.closest(".q").dataset.id;
+        var it = BY_ID[id];
+        if (!it) return;
+        if (store.picks[id]) return; // 已答不可改，用“重做本题”
+        store.picks[id] = btn.dataset.k;
+        stampAnswer(id); /* 记录本次作答时间（at / atList） */
+        /* 累计作答次数：改对了也不清零，错题本靠它显示「累计错 N 次」 */
+        var stt = store.stat[id] || (store.stat[id] = { att: 0, wrong: 0, ok: 0 });
+        stt.att++;
+        if (btn.dataset.k === it.answer) stt.ok = (stt.ok || 0) + 1;
+        else { stt.wrong = (stt.wrong || 0) + 1; delete store.cleared[id]; }
+        saveStore();
+        applyAnswered(it);
+        ensureRedoBtn(it);
+        updateSheetStats();
+        updateTabCounts();
+      });
+    });
+    Array.prototype.forEach.call(practiceEl.querySelectorAll(".q-tools button"), function(btn){
+      btn.addEventListener("click", function(){
+        var id = btn.closest(".q").dataset.id;
+        var it = BY_ID[id];
+        if (!it) return;
+        if (btn.dataset.act === "again"){
+          delete store.picks[id]; saveStore();
+          applyUnanswered(it);
+          updateSheetStats(); updateTabCounts();
+        }
+        if (btn.dataset.act === "reveal"){
+          var v = document.getElementById("verify-" + it.id);
+          if (v) v.style.display = v.style.display === "none" ? "flex" : "none";
+        }
+      });
+    });
+
+    // 恢复已答状态（旧页面结构里可能没有重做按钮，补上）
+    list.forEach(function(it){
+      if (pickOf(it)) { applyAnswered(it); ensureRedoBtn(it); }
+    });
+    updateSheetStats();
+  }
+
+  /* 逐题模式：一屏只放一道题。题干 / 选项 / 解析 / 重做按钮全部由 questionHTML 生成，
+     判分逻辑与整卷模式是同一条代码路径（store.picks + applyAnswered）。 */
+  function oneModeHTML(u, list){
+    var n = list.length;
+    if (!n){
+      return '<div class="part-head"><h3>选择题 · 逐题</h3><span class="range">共 0 题</span><span class="rule"></span></div>' +
+        '<div class="empty"><div class="big">✓</div><p>这一部分全部做对了 —— 换个单元，或关掉筛选继续。</p></div>';
+    }
+    if (oneIdx < 0) oneIdx = 0;
+    if (oneIdx > n - 1) oneIdx = n - 1;
+    var it = list[oneIdx];
+    var html = '<div class="part-head"><h3>选择题 · 逐题</h3>' +
+      '<span class="range">第 ' + (oneIdx + 1) + " / " + n + " 题 · 一次只显示一道</span>" +
+      '<span class="rule"></span></div>';
+    html += oneNavHTML(list);
+    html += '<ol class="questions">' + questionHTML(it) + "</ol>";
+    html += oneNavHTML(list);
+    return html;
+  }
+  function oneNavHTML(list){
+    var n = list.length;
+    return '<div class="oneq-bar">' +
+      '<button class="tool" type="button" data-one="prev"' + (oneIdx <= 0 ? " disabled" : "") + '>← 上一题</button>' +
+      '<span class="progress">进度 ' + (oneIdx + 1) + " / " + n + "</span>" +
+      '<button class="tool" type="button" data-one="next"' + (oneIdx >= n - 1 ? " disabled" : "") + '>下一题 →</button>' +
+      '<span class="grow"></span>' +
+      oneHintHTML() +
+      "</div>";
+  }
+  function oneHintHTML(){
+    return '<span class="hint">答题规则与整卷一样：点字母即判分，答完自动展开解析</span>';
+  }
+
+  var onlyWrong = false;
+
+  /* 答完当场就补一个「重做本题」（以前要切视图触发重渲染才出现） */
+  function ensureRedoBtn(it){
+    var node = document.getElementById("q-" + it.id);
+    if (!node) return;
+    var tools = node.querySelector(".q-tools");
+    if (!tools || tools.querySelector('[data-act="again"]')) return;
+    var b = document.createElement("button");
+    b.type = "button"; b.dataset.act = "again"; b.textContent = "重做本题";
+    b.addEventListener("click", function(){
+      delete store.picks[it.id]; saveStore();
+      applyUnanswered(it);
+      updateSheetStats(); updateTabCounts();
+    });
+    var reveal = tools.querySelector('[data-act="reveal"]');
+    if (reveal) tools.insertBefore(b, reveal); else tools.appendChild(b);
+  }
+
+  function statOf(it){ return store.stat[it.id] || null; }
+
+  function questionHTML(it){
+    var pick = pickOf(it);
+    var answered = !!pick;
+    var right = answered && pick === it.answer;
+    var resultAttr = answered ? (right ? "right" : "wrong") : "";
+    var html = '<li class="q" id="q-' + esc(it.id) + '" data-id="' + esc(it.id) + '" data-result="' + resultAttr + '">';
+    html += '<div class="q-no"><span class="mark" aria-hidden="true">' + (answered ? (right ? "✓" : "✗") : "") + "</span>" + esc(it.seq);
+    if (it.marked) html += '<span class="pen-letter" title="原卷手写作答，已批改">原 ' + esc(it.marked) + "</span>";
+    var st0 = statOf(it);
+    if (st0 && st0.wrong > 0) html += '<span class="pen-letter stat-wrong" title="这题累计做错次数（改对了也不清零）">错 ' + st0.wrong + " 次</span>";
+    html += "</div>";
+    html += '<div class="q-body">';
+    html += '<p class="stem" lang="en">' + stemHTML(it) + "</p>";
+    html += '<div class="options" role="group" aria-label="第 ' + esc(it.no) + ' 题选项">';
+    it.options.forEach(function(o){
+      var st = "";
+      if (answered){
+        if (o.k === it.answer) st = "right";
+        else if (o.k === pick) st = "wrong";
+      }
+      html += '<button class="opt" data-k="' + esc(o.k) + '" data-state="' + st + '"' + (answered ? " disabled" : "") + ">" +
+        '<span class="k">' + esc(o.k) + '</span><span class="t">' + esc(o.t) + "</span></button>";
+    });
+    html += "</div>";
+    html += '<div class="q-tools">';
+    var atQ = fmtAt(lastAt(it.id));
+    var nQ = atListOf(it.id).length;
+    html += '<span class="q-ref">卷面 ' + esc(it.paperRef) +
+      (atQ ? " · 最近作答 " + esc(atQ) + (nQ > 1 ? "（共 " + nQ + " 次）" : "") : "") + "</span>";
+    if (answered) html += '<button data-act="again" type="button">重做本题</button>';
+    html += '<button data-act="reveal" type="button">看解析</button>';
+    html += "</div>";
+    html += '<div class="verify" id="verify-' + esc(it.id) + '" style="display:' + (answered ? "flex" : "none") + '">';
+    html += '<span class="tag">解析</span><div class="vbody">';
+    html += '<p class="vrow"><span class="vk">考点</span><span class="vt vtopic">' + esc(it.topic || "—") + "</span></p>";
+    if (it.point) html += '<p class="vrow"><span class="vk">规则</span><span class="vt">' + esc(it.point) + "</span></p>";
+    html += '<p class="vrow"><span class="vk">解析</span><span class="vt">' + esc(it.why || "（暂无解析）") + "</span></p>";
+    if (it.trap) html += '<p class="vrow v-trap"><span class="vk">易错点</span><span class="vt">' + esc(it.trap) + "</span></p>";
+    html += '<p class="vrow v-ans"><span class="vk">正确答案</span><span class="vt"><span class="ans">' + esc(it.answer || "?") + "</span>" +
+      (it.doubt ? '<span class="doubt-chip">该题存疑，已标记复核</span>' : "") + "</span></p>";
+    html += "</div></div>";
+    html += "</div></li>";
+    return html;
+  }
+
+  function applyAnswered(it){
+    var node = document.getElementById("q-" + it.id);
+    if (!node) return;
+    var pick = store.picks[it.id];
+    /* 题号旁的「错 N 次」要当场更新（不能等下次重渲染） */
+    (function(){
+      var qno = node.querySelector(".q-no");
+      var stt = store.stat[it.id] || null;
+      var badge = node.querySelector(".stat-wrong");
+      if (stt && stt.wrong > 0 && qno){
+        if (!badge){
+          badge = document.createElement("span");
+          badge.className = "pen-letter stat-wrong";
+          badge.title = "这题累计做错次数（改对了也不清零）";
+          qno.appendChild(badge);
+        }
+        badge.textContent = "错 " + stt.wrong + " 次";
+      } else if (badge) badge.remove();
+    })();
+    var right = pick === it.answer;
+    node.dataset.result = right ? "right" : "wrong";
+    var mark = node.querySelector(".mark");
+    if (mark) mark.textContent = right ? "✓" : "✗";
+    Array.prototype.forEach.call(node.querySelectorAll(".opt"), function(btn){
+      var k = btn.dataset.k;
+      btn.disabled = true;
+      var st = "";
+      if (k === it.answer) st = "right";
+      else if (k === pick) st = "wrong";
+      btn.dataset.state = st;
+    });
+    var v = document.getElementById("verify-" + it.id);
+    if (v) v.style.display = "flex";
+    /* 时间戳当场回写到「卷面 … · 最近作答 …」，不用等下次重渲染 */
+    var ref = node.querySelector(".q-ref");
+    var at = fmtAt(lastAt(it.id));
+    var n = atListOf(it.id).length;
+    if (ref && at) ref.textContent = "卷面 " + it.paperRef + " · 最近作答 " + at + (n > 1 ? "（共 " + n + " 次）" : "");
+  }
+  function applyUnanswered(it){
+    var node = document.getElementById("q-" + it.id);
+    if (!node) return;
+    node.dataset.result = "";
+    var mark = node.querySelector(".mark");
+    if (mark) mark.textContent = "";
+    Array.prototype.forEach.call(node.querySelectorAll(".opt"), function(btn){
+      btn.disabled = false; btn.dataset.state = "";
+    });
+    var v = document.getElementById("verify-" + it.id);
+    if (v) v.style.display = "none";
+    /* 回到"未作答"：重做按钮没用了，去掉（答完时 ensureRedoBtn 会补回来） */
+    var ag = node.querySelector('[data-act="again"]');
+    if (ag) ag.remove();
+  }
+  function updateSheetStats(){
+    var u = curUnit, s = unitStats(u);
+    var stamp = practiceEl.querySelector(".stamp");
+    if (stamp){
+      var rate = s.done ? Math.round(s.right / s.done * 100) : 0;
+      stamp.classList.toggle("show", s.done > 0);
+      stamp.innerHTML = "<b>" + (s.done ? rate + "%" : "待批") + "</b><span>" + (s.done ? "本轮正确率" : "待作答") + "</span>";
+    }
+    var hint = practiceEl.querySelector(".unitbar .hint");
+    if (hint) hint.textContent = "共 " + s.total + " 道选择题 · 已做 " + s.done + " · 答对 " + s.right;
+    var meta = practiceEl.querySelectorAll(".sheet-meta b");
+    var mcB = practiceEl.querySelector('.sheet-meta b[data-meta="mc"]');
+    if (mcB) mcB.textContent = s.paperRight + " / " + (s.paperRight + s.paperWrong + s.paperNone);
+    var fillB = practiceEl.querySelector('.sheet-meta b[data-meta="fill"]');
+    if (fillB) fillB.textContent = s.fillRight + " / " + s.fillTotal;
+  }
+
+  /* ══ 批改报告 ═══════════════════════════════════════ */
+  var reportEl = document.getElementById("view-report");
+
+  function renderReport(){
+    var g = globalStats();
+    var paperRight = 0, paperWrong = 0, paperNone = 0;
+    var fillRight = 0, fillWrong = 0, fillPending = 0, fillUnknown = 0, fillTotal = 0;
+    UNITS.forEach(function(u){
+      var s = unitStats(u);
+      paperRight += s.paperRight; paperWrong += s.paperWrong; paperNone += s.paperNone;
+      fillRight += s.fillRight; fillWrong += s.fillWrong;
+      fillPending += s.fillPending; fillUnknown += s.fillUnknown; fillTotal += s.fillTotal;
+    });
+    var mcTotal = paperRight + paperWrong + paperNone;
+    var html = "";
+    html += '<div class="report-head"><h2>批改报告</h2><p lang="zh">选择题按页边手写字母批改，填空题按横线手写与参考答案比对（含等价写法 · 开放题标待核对）· 点任意一行可跳到该题重做</p></div>';
+    html += '<div class="statrow">';
+    html += statCell("选择题 对 / 总", paperRight + " / " + mcTotal,
+      mcTotal ? "正确率 " + Math.round(paperRight / mcTotal * 100) + "%" : "—", paperRight, mcTotal);
+    html += statCell("填空题 对 / 总", fillRight + " / " + fillTotal,
+      "错 " + fillWrong + (fillPending ? " · 待核对 " + fillPending : "") + (fillUnknown ? " · 未判 " + fillUnknown : ""),
+      fillRight, fillTotal);
+    html += statCell("需要复习", paperWrong + fillWrong, "已自动收进错题本", paperWrong + fillWrong, mcTotal + fillTotal, true);
+    html += statCell("工具内已重做", g.done, "答对 " + g.right + " 题", g.right, g.total);
+    html += "</div>";
+
+    UNITS.forEach(function(u){
+      var s = unitStats(u);
+      html += '<div class="tablewrap"><div class="report-sheet">';
+      html += '<table class="grade"><caption>' + esc(u.title) + ' <span class="q-count">选择题 ' + s.total + " 题 · 原卷对 " + s.paperRight + " · 错 " + s.paperWrong + (s.paperNone ? " · 未选 " + s.paperNone : "") + "</span></caption>";
+      html += "<thead><tr><th>题号</th><th>原卷作答</th><th>正确答案</th><th>判定</th><th>考点 / 题干</th></tr></thead><tbody>";
+      u.mc.forEach(function(it){
+        var mk = it.marked;
+        var verdict, cls;
+        if (!mk){ verdict = '<span class="v-empty">未作答</span>'; cls = ""; }
+        else if (mk === it.answer){ verdict = '<span class="v-right"><span class="pen-mark">✓</span>正确</span>'; cls = ""; }
+        else { verdict = '<span class="v-wrong"><span class="pen-mark">✗</span>错误</span>'; cls = "is-wrong"; }
+        html += '<tr class="' + cls + '" data-goto="' + esc(it.id) + '">';
+        html += '<td class="no">' + esc(it.no) + "</td>";
+        html += '<td class="pick">' + (mk ? esc(mk) : "—") + "</td>";
+        html += '<td class="key">' + esc(it.answer || "?") + "</td>";
+        html += '<td class="verdict">' + verdict + "</td>";
+        html += '<td class="stemcell">' + (it.section ? '<span style="color:var(--ink-3);font-size:11.5px;margin-right:6px">' + esc(it.section) + "</span>" : "") + (it.topic ? '<span class="topic">' + esc(it.topic) + "</span> " : "") + esc(shorten(it.stem, 78)) + "</td>";
+        html += "</tr>";
+      });
+      html += "</tbody></table>";
+
+      if (u.fills.length){
+        html += '<table class="grade" style="margin-top:26px"><caption>填空题 <span class="q-count">共 ' + s.fillTotal + " 题 · 对 " + s.fillRight + " · 错 " + s.fillWrong +
+          (s.fillPending ? " · 待核对 " + s.fillPending : "") + (s.fillUnknown ? " · 未判 " + s.fillUnknown : "") + "</span></caption>";
+        html += "<thead><tr><th>题号</th><th>原卷手写</th><th>参考答案</th><th>判定</th><th>考点 / 题干</th></tr></thead><tbody>";
+        u.fills.forEach(function(it){
+          var gr = fillPaperGrade(it);
+          var verdict, cls = "";
+          if (gr === "right") verdict = '<span class="v-right"><span class="pen-mark">✓</span>正确</span>';
+          else if (gr === "wrong"){ verdict = '<span class="v-wrong"><span class="pen-mark">✗</span>错误</span>'; cls = "is-wrong"; }
+          else if (gr === "close") verdict = '<span class="v-empty">待核对<span style="font-size:11px"> · 译句可能另有说法</span></span>';
+          else if (gr === "manual") verdict = '<span class="v-empty">待核对<span style="font-size:11px"> · 开放题</span></span>';
+          else if (gr === "missing") verdict = '<span class="v-empty">参考答案缺失</span>';
+          else verdict = '<span class="v-empty">未作答 / 字迹不清</span>';
+          html += '<tr class="' + cls + '" data-goto-fill="' + esc(it.id) + '">';
+          html += '<td class="no">' + esc(it.no) + "</td>";
+          html += '<td class="pick" style="width:150px;font-size:14px">' + esc(hwFull(it) || "—") + "</td>";
+          html += '<td class="key" style="width:170px;font-family:var(--serif);font-size:13.5px">' + esc(it.answerRaw || "?") + "</td>";
+          html += '<td class="verdict">' + verdict + "</td>";
+          html += '<td class="stemcell">' + (it.section ? '<span style="color:var(--ink-3);font-size:11.5px;margin-right:6px">' + esc(it.section) + "</span>" : "") + (it.topic ? '<span class="topic">' + esc(it.topic) + "</span> " : "") + esc(shorten(it.stem, 66)) + "</td>";
+          html += "</tr>";
+        });
+        html += "</tbody></table>";
+      }
+      html += "</div></div>";
+    });
+    reportEl.innerHTML = html;
+
+    Array.prototype.forEach.call(reportEl.querySelectorAll("tr[data-goto]"), function(tr){
+      tr.addEventListener("click", function(){
+        var id = tr.dataset.goto;
+        var it = BY_ID[id];
+        if (!it) return;
+        curUnit = unitOf(it.unit);
+        store.unit = curUnit.unit; saveStore();
+        onlyWrong = false;
+        switchView("practice", { focus: "q-" + id });
+      });
+    });
+    Array.prototype.forEach.call(reportEl.querySelectorAll("tr[data-goto-fill]"), function(tr){
+      tr.addEventListener("click", function(){
+        var id = tr.dataset.gotoFill;
+        var it = BY_ID[id];
+        if (!it) return;
+        curUnit = unitOf(it.unit);
+        store.unit = curUnit.unit; saveStore();
+        switchView("fills", { focus: "f-" + id });
+      });
+    });
+  }
+
+  function statCell(k, v, sub, num, den, danger){
+    var pct = (den ? Math.max(0, Math.min(100, Math.round((num || 0) / den * 100))) : 0);
+    var color = danger ? "var(--red)" : "var(--ink)";
+    return '<div class="stat"><div class="k">' + esc(k) + '</div><div class="v" style="color:' + color + '">' + esc(v) +
+      (sub ? " <small>" + esc(sub) + "</small>" : "") + '</div><div class="bar"><i style="width:' + pct + '%;background:' + (danger ? "var(--red)" : "var(--ok)") + '"></i></div></div>';
+  }
+  function shorten(s, n){
+    s = String(s || "").replace(/\s+/g, " ").trim();
+    return s.length > n ? s.slice(0, n) + "…" : s;
+  }
+
+  /* ══ 错题本 ═══════════════════════════════════════ */
+  var mistakesEl = document.getElementById("view-mistakes");
+  var mFilterUnit = "all";
+
+  function renderMistakes(){
+    var all = wrongList();
+    var list = mFilterUnit === "all" ? all : all.filter(function(w){ return w.it.unit === mFilterUnit; });
+    var html = "";
+    html += '<div class="unitbar">';
+    html += '<div class="unitseg" role="group" aria-label="按单元筛选">';
+    html += '<button data-mfilter="all" aria-pressed="' + (mFilterUnit === "all" ? "true" : "false") + '">全部 ' + all.length + "</button>";
+    UNITS.forEach(function(u){
+      html += '<button data-mfilter="' + esc(u.unit) + '" aria-pressed="' + (mFilterUnit === u.unit ? "true" : "false") + '">' + esc(u.unit) + " " + wrongCountFor(u.unit) + "</button>";
+    });
+    html += "</div>";
+    html += '<span class="spacer"></span>';
+    html += '<button class="tool" id="btn-export-md">导出 Markdown</button>';
+    html += '<button class="tool" data-rec-export>导出记录（JSON）</button>';
+    html += '<button class="tool" data-rec-import>导入记录（JSON）</button>';
+    html += '<button class="tool" id="btn-print">打印错题</button>';
+    html += '<button class="tool" id="btn-clear-fills" style="display:none"></button>';
+    html += "</div>";
+
+    if (!list.length){
+      html += '<div class="empty"><div class="big">✓</div><p>暂无错题。</p><p style="font-size:13px">原卷里答错的题、以及你在工具里做错的题，会自动收进这里。</p></div>';
+    } else {
+      var tc = {};
+      list.forEach(function(w){ var t = w.it.topic || "未分类"; tc[t] = (tc[t] || 0) + 1; });
+      var chips = Object.keys(tc)
+        .sort(function(a, b){ return tc[b] - tc[a]; })
+        .slice(0, 5)
+        .map(function(t){ return '<span class="mm-chip">' + esc(t) + "<i>×" + tc[t] + "</i></span>"; })
+        .join("");
+      html += '<div class="mistake-summary"><span class="mm-label">错题考点</span>' + chips +
+        '<span class="mm-hint">共 ' + list.length + " 题 · 建议按考点逐个攻破</span></div>";
+      html += '<div class="mistakes">';
+      list.forEach(function(w){ html += mistakeCard(w); });
+      html += "</div>";
+    }
+    mistakesEl.innerHTML = html;
+
+    Array.prototype.forEach.call(mistakesEl.querySelectorAll("[data-mfilter]"), function(b){
+      b.addEventListener("click", function(){ mFilterUnit = b.dataset.mfilter; renderMistakes(); });
+    });
+    var ex = document.getElementById("btn-export-md");
+    if (ex) ex.addEventListener("click", function(){ exportMarkdown(list); });
+    var pr = document.getElementById("btn-print");
+    if (pr) pr.addEventListener("click", function(){ window.print(); });
+    Array.prototype.forEach.call(mistakesEl.querySelectorAll("[data-jump]"), function(b){
+      b.addEventListener("click", function(){
+        var id = b.dataset.jump, it = BY_ID[id];
+        if (!it) return;
+        curUnit = unitOf(it.unit); store.unit = curUnit.unit; saveStore();
+        onlyWrong = false;
+        switchView("practice", { focus: "q-" + id });
+      });
+    });
+    Array.prototype.forEach.call(mistakesEl.querySelectorAll("[data-clear]"), function(b){
+      b.addEventListener("click", function(){
+        var id = b.dataset.clear;
+        store.cleared[id] = true;
+        saveStore();
+        renderMistakes(); updateTabCounts(); updateSheetStats();
+      });
+    });
+    Array.prototype.forEach.call(mistakesEl.querySelectorAll("[data-jump-fill]"), function(b){
+      b.addEventListener("click", function(){
+        var id = b.dataset.jumpFill, it = BY_ID[id];
+        if (!it) return;
+        curUnit = unitOf(it.unit); store.unit = curUnit.unit; saveStore();
+        switchView("fills", { focus: "f-" + id });
+      });
+    });
+  }
+
+  function mistakeCard(w){
+    var it = w.it;
+    var atM = fmtAt(lastAt(it.id));
+    if (it.kind === "fill") return fillMistakeCard(w);
+    var pick = w.practicePick || w.paperPick || "";
+    var src = [];
+    if (w.paperPick && w.paperPick !== it.answer) src.push("原卷选 " + w.paperPick);
+    if (w.practicePick && w.practicePick !== it.answer) src.push("练习选 " + w.practicePick);
+    var html = '<article class="mcard">';
+    html += '<div class="mcard-head">';
+    html += '<span class="unit">' + esc(it.unit) + "</span>";
+    html += '<span class="no">' + (it.section ? esc(it.section) + " · " : "") + "第 " + esc(it.no) + " 题</span>";
+    if (it.topic) html += '<span class="topic">' + esc(it.topic) + "</span>";
+    if (w.wrongN) html += '<span class="topic" style="color:var(--red);border-color:rgba(192,57,47,.3);background:var(--red-wash)">累计错 ' + w.wrongN + " 次</span>";
+    html += '<span class="src">' + esc(src.join(" · ") || "已重做对") + (atM ? " · 最近作答 " + esc(atM) : "") + "</span>";
+    html += "</div>";
+    html += '<p class="stem" lang="en">' + stemHTML(it) + "</p>";
+    html += '<div class="opts">';
+    it.options.forEach(function(o){
+      var cls = "row";
+      if (o.k === it.answer) cls += " is-key";
+      else if (o.k === pick) cls += " is-pick";
+      html += '<div class="' + cls + '"><span class="k">' + esc(o.k) + "</span><span>" + esc(o.t) + "</span></div>";
+    });
+    html += "</div>";
+    html += '<div class="m-explain">';
+    if (it.point) html += '<p class="m-line"><span class="m-k">考点规则</span>' + esc(it.point) + "</p>";
+    html += '<p class="m-line"><span class="m-k">解析</span>' + esc(it.why || "（暂无解析）") + "</p>";
+    if (it.trap) html += '<p class="m-line m-trap"><span class="m-k">易错点</span>' + esc(it.trap) + "</p>";
+    html += "</div>";
+    var bits = [];
+    bits.push('<span class="' + (w.paperPick && w.paperPick !== it.answer ? "w" : "r") + '">原卷作答 <b>' + (w.paperPick || "未选") + "</b>" +
+      (w.paperPick ? (w.paperPick === it.answer ? " ✓" : " ✗") : "") + "</span>");
+    if (w.practicePick) {
+      bits.push('<span class="' + (w.practicePick === it.answer ? "r" : "w") + '">练习作答 <b>' + esc(w.practicePick) + "</b>" +
+        (w.practicePick === it.answer ? " ✓" : " ✗") + "</span>");
+    }
+    bits.push('<span class="r">正确答案 <b>' + esc(it.answer || "?") + "</b></span>");
+    html += '<div class="answer-summary">' + bits.join("") +
+      '<button class="tool" data-jump="' + esc(it.id) + '" style="margin-left:auto;padding:4px 10px;font-size:12px">去重做</button>' +
+      '<button class="tool" data-clear="' + esc(it.id) + '" style="padding:4px 10px;font-size:12px">我会了，清掉</button>' +
+      "</div>";
+    html += "</article>";
+    return html;
+  }
+
+  function fillMistakeCard(w){
+    var it = w.it;
+    var atF = fmtAt(lastAt(it.id));
+    var html = '<article class="mcard">';
+    html += '<div class="mcard-head">';
+    html += '<span class="unit">' + esc(it.unit) + "</span>";
+    html += '<span class="no">' + (it.section ? esc(it.section) + " · " : "") + "第 " + esc(it.no) + " 题</span>";
+    html += '<span class="topic" style="color:var(--blue);border-color:rgba(47,77,124,.3);background:var(--blue-wash)">填空题</span>';
+    if (it.topic) html += '<span class="topic">' + esc(it.topic) + "</span>";
+    html += '<span class="src">原卷写 ' + esc(hwFull(it) || "（空）") + (atF ? " · 最近作答 " + esc(atF) : "") + "</span>";
+    html += "</div>";
+    html += '<p class="stem" lang="en">' + stemHTML(it) + "</p>";
+    html += '<div class="m-explain">';
+    if (it.point) html += '<p class="m-line"><span class="m-k">考点规则</span>' + esc(it.point) + "</p>";
+    html += '<p class="m-line"><span class="m-k">解析</span>' + esc(it.why || "（暂无解析）") + "</p>";
+    if (it.trap) html += '<p class="m-line m-trap"><span class="m-k">易错点</span>' + esc(it.trap) + "</p>";
+    html += "</div>";
+    html += '<div class="answer-summary">' +
+      '<span class="w">原卷手写 <b style="font-family:var(--pen)">' + esc(hwFull(it) || "（空）") + "</b> ✗</span>" +
+      '<span class="r">参考答案 <b style="font-family:var(--serif)">' + esc(it.answerRaw || "?") + "</b></span>" +
+      (it.alt && it.alt.length ? '<span style="color:var(--ink-3)">也可：' + esc(it.alt.join(" / ")) + "</span>" : "") +
+      '<button class="tool" data-jump-fill="' + esc(it.id) + '" style="margin-left:auto;padding:4px 10px;font-size:12px">去重做</button>' +
+      '<button class="tool" data-clear="' + esc(it.id) + '" style="padding:4px 10px;font-size:12px">我会了，清掉</button>' +
+      "</div>";
+    html += "</article>";
+    return html;
+  }
+
+  function exportMarkdown(list){
+    var now = new Date();
+    var pad = function(n){ return n < 10 ? "0" + n : String(n); };
+    var stamp = now.getFullYear() + "-" + pad(now.getMonth() + 1) + "-" + pad(now.getDate()) + " " + pad(now.getHours()) + ":" + pad(now.getMinutes());
+    var md = "# 九上英语错题整理（U1–U4）\n\n> 生成时间：" + stamp + " · 共 " + list.length + " 题\n\n";
+    var byUnit = {};
+    list.forEach(function(w){ (byUnit[w.it.unit] = byUnit[w.it.unit] || []).push(w); });
+    Object.keys(byUnit).sort().forEach(function(unit){
+      md += "\n## " + unit + "\n\n";
+      byUnit[unit].forEach(function(w){
+        var it = w.it;
+        md += "### 第 " + it.no + " 题" + (it.topic ? " · " + it.topic : "") + "\n\n";
+        md += "- 题干：" + (it.cn ? it.cn + " / " : "") + String(it.stem || "").replace(/\s+/g, " ") + "\n";
+        if (it.kind === "fill"){
+          md += "- 原卷手写：" + (hwFull(it) || "（空）") + "（错误）\n";
+          md += "- 参考答案：" + (it.answerRaw || "?") + (it.alt && it.alt.length ? "（也可：" + it.alt.join(" / ") + "）" : "") + "\n";
+          if (it.point) md += "- 考点规则：" + it.point + "\n";
+          if (it.why) md += "- 解析：" + it.why + "\n";
+          if (it.trap) md += "- 易错点：" + it.trap + "\n";
+          md += "\n";
+          return;
+        }
+        if (it.options && it.options.length){
+          md += "- 选项：" + it.options.map(function(o){ return o.k + ". " + o.t; }).join("　") + "\n";
+        }
+        if (w.paperPick) md += "- 原卷作答：" + w.paperPick + (w.paperPick === it.answer ? "（正确）" : "（错误）") + "\n";
+        if (w.practicePick) md += "- 练习作答：" + w.practicePick + (w.practicePick === it.answer ? "（正确）" : "（错误）") + "\n";
+        md += "- 正确答案：" + (it.answer || "?") + "\n";
+        if (it.point) md += "- 考点规则：" + it.point + "\n";
+        if (it.why) md += "- 解析：" + it.why + "\n";
+        if (it.trap) md += "- 易错点：" + it.trap + "\n";
+        md += "\n";
+      });
+    });
+    md += "\n---\n*由「九上英语过关练习」生成*\n";
+
+    // 下载 + 复制
+    downloadText("九上英语错题整理.md", md, "text/markdown");
+    if (navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(md).then(function(){ toast("已导出 Markdown，并复制到剪贴板"); }, function(){ toast("已导出 Markdown 文件"); });
+    } else {
+      toast("已导出 Markdown 文件");
+    }
+  }
+  var toastTimer = null;
+  function toast(msg){
+    var el = document.getElementById("toast");
+    if (!el){
+      el = document.createElement("div");
+      el.id = "toast";
+      el.style.cssText = "position:fixed;left:50%;bottom:26px;transform:translateX(-50%);background:#221e18;color:#fdfaf2;font:13px/1.4 system-ui;padding:10px 18px;border-radius:6px;box-shadow:0 10px 30px -10px rgba(0,0,0,.5);z-index:80;opacity:0;transition:opacity .25s";
+      document.body.appendChild(el);
+    }
+    el.textContent = msg;
+    requestAnimationFrame(function(){ el.style.opacity = "1"; });
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function(){ el.style.opacity = "0"; }, 2200);
+  }
+
+  /* ══ 填空自测 ═══════════════════════════════════════ */
+  var fillsEl = document.getElementById("view-fills");
+
+  /* 写填空答案：值真的变了才记一次作答时间（重复 blur / 反复判分不刷时间） */
+  function setFill(id, val){
+    var had = Object.prototype.hasOwnProperty.call(store.fills, id);
+    var old = had ? store.fills[id] : "";
+    store.fills[id] = val;
+    if ((!had || old !== val) && String(val || "").trim()) stampAnswer(id);
+    saveStore();
+  }
+
+  function renderFills(){
+    var html = "";
+    var total = 0;
+    UNITS.forEach(function(u){ total += u.fills.length; });
+    html += '<div class="unitbar"><div class="unitseg">';
+    UNITS.forEach(function(u, idx){
+      html += '<button data-funit="' + esc(u.unit) + '" aria-pressed="' + (u.unit === curUnit.unit ? "true" : "false") + '">' + esc(u.unit) + " " + u.fills.length + "</button>";
+    });
+    html += "</div>";
+    html += '<span class="hint">填空 / 汉译英 · 共 ' + total + ' 题 · 输入后按 Enter 判分，答对即记绿</span>';
+    html += '<span class="spacer"></span><button class="tool" id="btn-reveal-all">显示全部答案</button></div>';
+
+    var u = curUnit;
+    if (!u.fills.length){
+      html += '<div class="empty"><p>该页没有填空题。</p></div>';
+    }
+    u.fills.forEach(function(it){
+      var saved = store.fills[it.id] || "";
+      var atI = fmtAt(lastAt(it.id)), nI = atListOf(it.id).length;
+      html += '<div class="fill-item" id="f-' + esc(it.id) + '">';
+      var pg = fillPaperGrade(it);
+      var pgCls = pg === "right" ? " ok" : (pg === "wrong" ? " bad" : (pg === "close" || pg === "manual" ? " warn" : ""));
+      html += '<div class="fill-head"><span class="fill-no">' + esc(it.label) + '</span><span class="fill-ref">卷面 ' + esc(it.paperRef) +
+        (atI ? " · 最近作答 " + esc(atI) + (nI > 1 ? "（共 " + nI + " 次）" : "") : "") + "</span>" +
+        '<span class="fill-flag' + pgCls + '">原卷 ' + fillGradeText(pg) + "</span>" +
+        (it.doubt ? '<span class="fill-flag">存疑</span>' : "") +
+        (it.answerRaw ? "" : '<span class="fill-flag">参考答案缺失</span>') + "</div>";
+      if (it.cn) html += '<p class="cn" lang="zh">' + esc(it.cn) + "</p>";
+      html += '<p class="stem" lang="en">' + esc(it.stem).replace(/_{3,}/g, '<span class="blank"></span>') + "</p>";
+      html += '<input class="fill-input" data-id="' + esc(it.id) + '" value="' + esc(saved) + '" placeholder="在这里写出答案，回车判分…" autocomplete="off" spellcheck="false" />';
+      html += '<div class="fill-actions"><button class="tool" data-check="' + esc(it.id) + '">判定</button>';
+      html += '<button class="tool" data-reveal="' + esc(it.id) + '">对照答案</button>';
+      html += '<span class="res" id="res-' + esc(it.id) + '"></span></div>';
+      html += '<div class="fill-reveal" id="rv-' + esc(it.id) + '">';
+      html += '<div>参考答案：<span class="keyref">' + esc(it.answerRaw || "?") + "</span>" + (it.alt && it.alt.length ? "（也可写作：" + esc(it.alt.join(" / ")) + "）" : "") + "</div>";
+      if (it.handwriting && it.handwriting.length) html += '<div>原卷手写：<span class="pen">' + esc(hwFull(it)) + "</span>（批改：" + fillGradeText(pg) + "）</div>";
+      if (it.point) html += '<div class="fr-line"><b class="fr-k">考点规则</b>' + esc(it.point) + "</div>";
+      if (it.why) html += '<div class="fr-line"><b class="fr-k">解析</b><span style="font-family:var(--pen);font-size:14.5px">' + esc(it.why) + "</span></div>";
+      if (it.trap) html += '<div class="fr-line fr-trap"><b class="fr-k">易错点</b>' + esc(it.trap) + "</div>";
+      html += "</div>";
+      html += "</div>";
+    });
+    fillsEl.innerHTML = html;
+
+    Array.prototype.forEach.call(fillsEl.querySelectorAll("[data-funit]"), function(b){
+      b.addEventListener("click", function(){ curUnit = unitOf(b.dataset.funit); store.unit = curUnit.unit; saveStore(); renderFills(); });
+    });
+    Array.prototype.forEach.call(fillsEl.querySelectorAll(".fill-input"), function(inp){
+      inp.addEventListener("keydown", function(e){ if (e.key === "Enter"){ setFill(inp.dataset.id, inp.value); checkFill(inp.dataset.id); } });
+      inp.addEventListener("blur", function(){ setFill(inp.dataset.id, inp.value); });
+    });
+    Array.prototype.forEach.call(fillsEl.querySelectorAll("[data-check]"), function(b){
+      b.addEventListener("click", function(){ checkFill(b.dataset.check); });
+    });
+    Array.prototype.forEach.call(fillsEl.querySelectorAll("[data-reveal]"), function(b){
+      b.addEventListener("click", function(){
+        var el = document.getElementById("rv-" + b.dataset.reveal);
+        if (el) el.classList.toggle("show");
+      });
+    });
+    var ra = document.getElementById("btn-reveal-all");
+    if (ra) ra.addEventListener("click", function(){
+      Array.prototype.forEach.call(fillsEl.querySelectorAll(".fill-reveal"), function(el){ el.classList.add("show"); });
+    });
+    u.fills.forEach(function(it){ if (store.fills[it.id]) checkFill(it.id); });
+  }
+
+  function checkFill(id){
+    var it = BY_ID[id];
+    if (!it) return;
+    var inp = fillsEl.querySelector('.fill-input[data-id="' + id + '"]');
+    if (!inp) return;
+    var val = inp.value;
+    setFill(id, val);
+    /* 时间戳当场回写到题头「卷面 … · 最近作答 …」 */
+    var refEl = inp.closest(".fill-item") && inp.closest(".fill-item").querySelector(".fill-ref");
+    var atNow = fmtAt(lastAt(id)), nNow = atListOf(id).length;
+    if (refEl && atNow) refEl.textContent = "卷面 " + it.paperRef + " · 最近作答 " + atNow + (nNow > 1 ? "（共 " + nNow + " 次）" : "");
+    var res = document.getElementById("res-" + id);
+    if (!it.answerRaw){
+      if (res){ res.textContent = "该题参考答案缺失（原卷遮挡/涂改），请对照原卷人工核对"; res.style.color = "var(--ink-3)"; }
+      inp.style.borderColor = ""; inp.style.boxShadow = "";
+      return;
+    }
+    var ok = isFillRight(it, val);
+    if (res){
+      if (!norm(val)){ res.textContent = ""; res.style.color = ""; }
+      else if (ok){ res.textContent = "✓ 正确"; res.style.color = "var(--ok)"; }
+      else { res.textContent = "✗ 再想想 —— 对照答案看看差异"; res.style.color = "var(--red)"; }
+    }
+    inp.style.borderColor = ok ? "rgba(43,107,82,.55)" : (norm(val) ? "rgba(192,57,47,.45)" : "");
+    inp.style.boxShadow = ok ? "0 0 0 3px rgba(43,107,82,.08)" : "";
+  }
+
+  /* ══ 练习记录导出 / 导入（JSON） ════════════════════ */
+  var RECORD_SCHEMA = "lt.practice-records/1";
+  var RECORD_TOOL = "九上英语过关练习";
+
+  function dateStamp(){
+    var d = new Date(), pad = function(n){ return n < 10 ? "0" + n : String(n); };
+    return d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate());
+  }
+  function buildRecordExport(){
+    return {
+      schema: RECORD_SCHEMA,
+      subject: "英语",
+      tool: RECORD_TOOL,
+      exportedAt: new Date().toISOString(),
+      data: store
+    };
+  }
+  function downloadText(filename, text, mime){
+    try{
+      var blob = new Blob([text], { type: (mime || "text/plain") + ";charset=utf-8" });
+      var a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = filename;
+      document.body.appendChild(a); a.click();
+      setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+      return true;
+    }catch(e){ return false; }
+  }
+  function exportRecords(){
+    var payload = buildRecordExport();
+    var ok = downloadText("英语-练习记录-" + dateStamp() + ".json", JSON.stringify(payload, null, 2), "application/json");
+    toast(ok ? "已导出练习记录 JSON（" + recordCount() + " 条作答）" : "导出失败：浏览器拦截了下载");
+  }
+  /* 导入：校验 data 是对象 → 整份覆盖 store → 刷新各视图 */
+  function applyImportedStore(data){
+    store = normalizeStore(data);
+    saveStore();
+    curUnit = unitOf(store.unit);
+    switchView(currentView);
+    updateTabCounts();
+    return recordCount();
+  }
+  function importRecords(){
+    var inp = document.getElementById("rec-file");
+    if (!inp){
+      inp = document.createElement("input");
+      inp.type = "file"; inp.id = "rec-file"; inp.accept = ".json,application/json";
+      inp.style.display = "none";
+      inp.addEventListener("change", function(){ readImportFile(inp); });
+      document.body.appendChild(inp);
+    }
+    inp.value = "";
+    inp.click();
+  }
+  function readImportFile(inp){
+    var f = inp.files && inp.files[0];
+    if (!f) return;
+    var rd = new FileReader();
+    rd.onerror = function(){ toast("导入失败：这个文件读不出来"); inp.value = ""; };
+    rd.onload = function(){
+      var parsed;
+      try{ parsed = JSON.parse(String(rd.result || "").replace(/^\uFEFF/, "")); }
+      catch(e){ toast("导入失败：不是合法的 JSON 文件"); inp.value = ""; return; }
+      var data = (parsed && typeof parsed === "object" && !Array.isArray(parsed)) ? parsed.data : null;
+      if (!data || typeof data !== "object" || Array.isArray(data)){
+        toast("导入失败：文件里没有 data 对象（请用本工具「导出记录（JSON）」导出的文件）");
+        inp.value = "";
+        return;
+      }
+      var incoming = recordCount(normalizeStore(data));
+      if (!confirm("导入会整份覆盖当前练习记录：现有 " + recordCount() + " 条作答 → 导入 " + incoming + " 条。确定吗？")){
+        inp.value = "";
+        return;
+      }
+      applyImportedStore(data);
+      toast("已导入并覆盖练习记录（" + recordCount() + " 条作答）");
+      inp.value = "";
+    };
+    rd.readAsText(f);
+  }
+
+  /* ══ 启动 ═══════════════════════════════════════════ */
+  window.addEventListener("error", function(e){
+    var bar = document.getElementById("errbar");
+    if (bar){ bar.classList.add("show"); bar.textContent += "JS ERROR: " + (e.message || e.error) + "\n"; }
+  });
+  if (!UNITS.length){
+    document.getElementById("view-practice").innerHTML =
+      '<div class="empty"><div class="big">!</div><p>没有读到题库数据（data/bundle.js）。</p><p style="font-size:13px">请确认 data/bundle.js 与本页面在同一目录，或使用打包好的单文件版本。</p></div>';
+  } else {
+    renderPractice();
+    updateTabCounts();
+    /* 「导出记录（JSON）」「导入记录（JSON）」：错题本工具栏与页脚各有一组，统一用事件委托 */
+    document.addEventListener("click", function(e){
+      var t = e.target && e.target.closest ? e.target.closest("[data-rec-export],[data-rec-import]") : null;
+      if (!t) return;
+      if (t.hasAttribute("data-rec-export")) exportRecords(); else importRecords();
+    });
+    var resetAll = document.getElementById("btn-reset-all");
+    if (resetAll) resetAll.addEventListener("click", function(){
+      if (!confirm("清空全部作答记录（选择题作答 + 填空输入）？原卷批改记录不受影响。")) return;
+      store.picks = {}; store.fills = {}; store.at = {}; store.atList = {};
+      saveStore();
+      switchView(currentView);
+      updateTabCounts();
+      toast("已清空全部作答记录");
+    });
+    /* 深链：只在启动时读一次 hash（契约见 docs/plans/开始页与深链契约.md），运行中切视图不回写 hash */
+    applyDeepLink();
+  }
+})();
+</script>
+</body>
+</html>

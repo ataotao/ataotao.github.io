@@ -17,6 +17,8 @@ body{background:var(--bg);color:var(--ink);
   font:16px/1.75 "Noto Sans SC","PingFang SC","Microsoft YaHei",system-ui,sans-serif;
   -webkit-text-size-adjust:100%}
 button,select,input{font-family:inherit}
+/* hidden 属性统一用 display:none 收口（避免被 .resume/.prog 之类带 display 的类覆盖） */
+[hidden]{display:none!important}
 .wrap{max-width:820px;margin:0 auto;padding:0 14px 90px}
 
 /* ---------- 顶栏 ---------- */
@@ -197,15 +199,56 @@ details.k .bd{padding:0 14px 14px}
 .maskhint{background:#fff8e8;border:1px dashed #e6cf9d;border-radius:9px;padding:8px 12px;font-size:13px;color:#8a5a10;line-height:1.7;margin:10px 0 0}
 
 @media (max-width:520px){
-  .q{font-size:17.5px}
-  .card{padding:15px 13px 13px}
-  .brand b{font-size:15px}
-  .pill{padding:2px 9px}
+  /* 手机端整体小一档：正文 16→15px、卡片标题 19→16.5px、公式 17→16px 起，
+     顶栏/统计条/卡片一起收紧，一屏大约能多显示 15%–20% 的内容 */
+  body{font-size:15px;line-height:1.68}
+  .wrap{padding:0 12px 72px}
+  .hd{padding:8px 12px 0}
+  .brand b{font-size:14.5px}
+  .brand span{font-size:11.5px}
+  .tabs{flex-wrap:wrap;overflow:visible;gap:4px;padding:6px 0 7px}
+  .tabs button{font-size:12px;padding:5px 8px}
+  .bar{font-size:12px;gap:6px;margin:9px 0 2px}
+  .bar .row{gap:5px}
+  .pill{padding:2px 8px}
+  .pill b{font-size:13px}
+  .bar select{font-size:12.5px;padding:3px 7px;max-width:96px}
+  .bar select#fs{max-width:96px}
+  .linkbtn{font-size:12px;padding:3px 2px}
+  .prog{margin:6px 0 0}
+  .card{padding:13px 12px 12px;margin-top:10px}
+  .meta{font-size:11.5px;margin-bottom:8px}
+  .q{font-size:16.5px;line-height:1.5}
+  .lead{font-size:12.5px;margin-bottom:9px}
+  .ans{margin-top:11px;padding-top:10px}
+  .fx{padding:11px 7px;font-size:clamp(16px,4.2vw,24px);line-height:1.95}
+  .fx.sm{font-size:clamp(15.5px,3.4vw,20px);line-height:1.85;padding:8px 7px}
+  .fixlist{font-size:12.5px;line-height:2}
+  .tipbox{font-size:13px;line-height:1.65;padding:7px 10px}
+  .trapbox{font-size:12.8px;line-height:1.65;padding:7px 10px}
+  .whybox summary{font-size:12.5px}
+  .whybox .bd{font-size:12.8px;line-height:1.7}
+  .steps .grp{font-size:12px;margin:11px 0 5px}
+  .st .nt{font-size:12px;line-height:1.6}
+  .opts{gap:7px;margin-top:11px}
+  .opts button{font-size:14.5px;padding:9px 12px;line-height:1.6}
+  .acts{gap:7px;margin-top:12px}
+  .btn{padding:8px 15px;font-size:14px}
+  .btn.sm{padding:5px 10px;font-size:12.5px}
+  .verdict{font-size:14px;padding:9px 12px}
+  .nav{font-size:12px;margin-top:11px}
+  .todaybox{padding:11px 12px 8px}
+  .todaybox h3{font-size:14px}
+  .tlh .nm{font-size:13.5px}
+  .tl .fx{font-size:clamp(14.5px,3.6vw,18px)}
+  .tl .steps .fx{font-size:clamp(13.5px,3.3vw,17px)}
+  .unitbox>h3{font-size:14px}
+  details.k>summary{font-size:14px;padding:9px 12px}
+  .searchbox{font-size:14px;padding:8px 12px}
   .ubar .nm{flex-basis:120px}
-  .opts button{font-size:15px}
-  .tabs{flex-wrap:wrap;overflow:visible}
-  .tabs button{font-size:13px;padding:6px 11px}
-  .fx{padding:12px 8px}
+  .report ul{font-size:13px}
+  .hint{font-size:11.5px}
+  .empty{font-size:14px;padding:36px 10px}
 }
 @media print{
   header,.tabs,.bar,.acts,.nav,.searchbox,.tabs+.prog{display:none!important}
@@ -387,6 +430,8 @@ function loadProg(){
 function saveProg(){ try{localStorage.setItem(SK,JSON.stringify(P));}catch(e){} }
 function rec(id,ok,mode){
   const p=P.cards[id]||(P.cards[id]={seen:0,ok:0,wrong:0,streak:0,last:0,mode:''});
+  /* 第一次作答（seen 0→1）时记下这一次有没有答对：面板算「首次正确率」用，已有值不覆盖 */
+  if(!p.seen&&p.firstOk==null)p.firstOk=ok?1:0;
   p.seen++;p.last=Date.now();p.mode=mode||p.mode;
   if(ok){p.ok++;p.streak=Math.min(9,p.streak+1);}else{p.wrong++;p.streak=0;}
   const d=todayKey(),t=P.days[d]||(P.days[d]={n:0,ok:0});
@@ -641,7 +686,7 @@ function renderRecite(st,c){
       const v=b.dataset.v;
       if(v==='1')rec(c.id,true,'recite');
       else if(v==='0')rec(c.id,false,'recite');
-      else{const q2=getP(c.id);if(q2){q2.seen++;q2.streak=0;q2.last=Date.now();saveProg();}else{rec(c.id,false,'recite');}}
+      else{const q2=getP(c.id);if(q2){if(!q2.seen&&q2.firstOk==null)q2.firstOk=0;q2.seen++;q2.streak=0;q2.last=Date.now();saveProg();}else{rec(c.id,false,'recite');}}
       nextCard();
     });
   }
@@ -938,6 +983,41 @@ function renderList(st,keepOpen){
 }
 
 /* ================================================================
+   深链（给「开始.html」的任务卡直达用）
+   契约：#mode=recite|fill|name|wrong|table  #fs=all|star|weak|unseen|today
+        可组合，如 #mode=fill&fs=star；table = ⑤ 公式表（内部模式名是 list）。
+        非法值静默忽略，回到默认；只在启动时读一次，运行中不回写 hash。
+   ================================================================ */
+const DEEP_MODES=['recite','fill','name','wrong','list'];   /* list = 契约里的 table */
+const DEEP_SCOPES=['all','star','weak','unseen','today'];
+function readDeepLink(){
+  let raw='';
+  try{raw=String(location.hash||'').replace(/^#/,'');}catch(e){return null;}
+  if(!raw)return null;
+  const q={};
+  raw.split('&').forEach(seg=>{
+    const i=seg.indexOf('=');
+    if(i<0)return;
+    let k='',v='';
+    try{k=decodeURIComponent(seg.slice(0,i)).trim().toLowerCase();v=decodeURIComponent(seg.slice(i+1)).trim().toLowerCase();}catch(e){return;}
+    if(k==='mode'||k==='fs')q[k]=v;
+  });
+  let mode=q.mode||'';
+  if(mode==='table')mode='list';                            /* 契约名 → 内部名 */
+  if(DEEP_MODES.indexOf(mode)<0)mode='';
+  const scope=DEEP_SCOPES.indexOf(q.fs)>=0?q.fs:'';
+  if(!mode&&!scope)return null;
+  return {mode:mode,scope:scope};
+}
+function applyDeepLink(d){
+  if(d.mode)S.mode=d.mode;
+  if(d.scope)S.scope=d.scope;
+  /* 停在第一题：队列随后由 buildQueue() 按新 mode/scope 重建 */
+  S.qi=0;resetCardState();
+  return d;
+}
+
+/* ================================================================
    启动
    ================================================================ */
 function boot(){
@@ -953,6 +1033,9 @@ function boot(){
     if(b.dataset.mode===S.mode)return;
     S.mode=b.dataset.mode;S.qi=0;resetCardState();buildQueue();render();scrollTop();
   });
+  /* 深链（任务卡直达）：启动时按 hash 切一次模式/范围，之后运行中不再回写 */
+  const deep=readDeepLink();
+  if(deep)applyDeepLink(deep);
   buildQueue();render();
   document.addEventListener('keydown',e=>{
     const t=e.target;

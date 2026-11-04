@@ -20,6 +20,9 @@ body{
   -webkit-text-size-adjust:100%;
 }
 button,select,input{font-family:inherit}
+/* hidden 属性统一用 display:none 收口：下面 .resume{display:flex} 会把 [hidden] 覆盖掉，
+   历史首页因此一直挂着一条空白「继续上次」横条 */
+[hidden]{display:none!important}
 .wrap{max-width:860px;margin:0 auto;padding:0 14px 90px}
 
 /* ---------- 顶栏 ---------- */
@@ -50,12 +53,49 @@ header{position:sticky;top:0;z-index:20;background:rgba(246,244,239,.94);backdro
 .prog{height:4px;background:var(--line);border-radius:9px;overflow:hidden;margin:8px 0 0}
 .prog>i{display:block;height:100%;background:var(--acc);width:0;transition:width .25s}
 
+/* ---------- 续练提示（退出/刷新后回到上次位置） ---------- */
+.resume{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:12px 0 0;padding:8px 12px;
+  border:1px solid var(--line);border-left:3px solid var(--acc);border-radius:0 10px 10px 0;
+  background:var(--acc-soft);font-size:13px;line-height:1.6;color:#1c4a5c}
+.resume b{color:var(--acc);font-weight:700}
+.resume .sp{flex:1}
+.resume .muted{color:var(--sub);font-size:12px}
+.resume .rbtns{display:flex;gap:6px;flex-wrap:wrap}
+.resume button{border:1px solid var(--line);background:#fff;border-radius:7px;padding:4px 11px;font-size:12.5px;color:var(--acc);cursor:pointer}
+.resume button:hover{border-color:var(--acc)}
+.resume button.p{background:var(--acc);border-color:var(--acc);color:#fff;font-weight:600}
+/* 套卷：重做提示条 + 错题本 */
+.pnote{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:10px 0 0;padding:8px 12px;
+  border-left:3px solid var(--acc);background:var(--acc-soft);border-radius:0 9px 9px 0;font-size:13px;color:#6b4a1c}
+.pnote b{color:#5a3c12}
+.pnote button{flex:0 0 auto}
+.wbrow{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:9px 0;border-bottom:1px dashed var(--line)}
+.wbrow:last-child{border-bottom:0}
+.wbm{min-width:0;flex:1 1 240px}
+.wbline{display:flex;gap:6px;align-items:center;flex-wrap:wrap;font-size:13.5px}
+.wbbtns{display:flex;gap:6px;flex-wrap:wrap}
+
 /* ---------- 卡片 ---------- */
 .card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--sh);padding:18px 18px 16px;margin-top:14px}
 .meta{display:flex;align-items:baseline;gap:10px;font-size:12px;color:var(--sub);line-height:1.6;margin-bottom:10px;word-break:break-word}
 .meta .mt{flex:1 1 auto;min-width:0}
 .meta .mr{flex:0 0 auto;display:flex;align-items:center;gap:8px;white-space:nowrap}
 .meta .u{color:var(--acc);font-weight:600}
+/* 这张卡累计对/错次数（答对不清零，方便看"同一处反复错"） */
+.meta .statx{display:inline-block;margin-left:8px;padding:0 7px;border:1px solid var(--line);
+  border-radius:99px;font-size:11px;color:var(--sub);background:#fff;white-space:nowrap}
+.meta .statx b{font-weight:700;color:var(--ink)}
+.meta .statx b.ok{color:var(--ok)}
+.meta .statx b.bad{color:var(--bad)}
+/* ④ 错题强化里附带的「试卷错题」清单 */
+.pwrong{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:8px 0;border-bottom:1px dashed var(--line);font-size:13.5px}
+.pwrong:last-of-type{border-bottom:0}
+.pwrong .wq{font-weight:700}
+.pwrong .wunit{font-size:11px;color:var(--sub);border:1px solid var(--line);border-radius:99px;padding:1px 8px}
+.pwrong .wcnt{color:var(--bad);font-size:12px;font-weight:600}
+.pwrong .sp{flex:1}
+details.k>summary .cnt{flex:0 0 auto;font-size:11px;color:var(--sub);white-space:nowrap;padding-top:2px}
+details.k>summary .cnt b{font-weight:700;color:var(--bad)}
 .meta .pg a{color:var(--sub);text-decoration:none;border-bottom:1px dotted var(--line)}
 .stars{color:var(--warn);letter-spacing:1px;font-size:12px;vertical-align:2px}
 .q{font-size:19px;line-height:1.65;font-weight:600;margin:0 0 4px}
@@ -182,17 +222,60 @@ details.k .bd{padding:0 14px 14px}
 .scoreline b{font-size:22px;color:var(--acc);margin:0 3px}
 
 @media (max-width:520px){
-  .q{font-size:17.5px}
-  .card{padding:15px 13px 13px}
-  .brand b{font-size:15px}
-  .pill{padding:2px 9px}
-  .ubar .nm{flex-basis:150px}
+  /* 手机端整体小一档：正文 16→15px、题干 19→16.5px、行高 1.75→1.68，
+     顶栏/统计条/卡片一起收紧，一屏大约能多显示 15%–20% 的内容 */
+  body{font-size:15px;line-height:1.68}
+  .wrap{padding:0 12px 72px}
+  .hd{padding:8px 12px 0}
+  .brand b{font-size:14.5px}
+  .brand span{font-size:11.5px}
+  .tabs{gap:5px;padding:6px 0 7px}
   /* 六个标签尽量一屏放下，手机上不用横向滚才发现 ⑥ */
-  .tabs button{padding:6px 9px;font-size:13px}
-  .tabs{gap:5px}
-  .pstem{font-size:16px}
-  .ptbl{font-size:13px}
-  .ptbl td{padding:6px 8px}
+  .tabs button{padding:5px 9px;font-size:12.5px}
+  .bar{font-size:12px;gap:6px;margin:9px 0 2px}
+  .bar .row{gap:5px}
+  .pill{padding:2px 8px}
+  .pill b{font-size:13px}
+  .bar select{font-size:12.5px;padding:3px 7px;max-width:108px}
+  .bar select#fs{max-width:84px}
+  .linkbtn{font-size:12px;padding:3px 2px}
+  .prog{margin:6px 0 0}
+  .resume{margin-top:9px;padding:7px 10px;font-size:12.5px;gap:6px;border-radius:0 9px 9px 0}
+  .resume .sp{display:none}
+  .resume .rtext{flex:1 1 100%}
+  .resume .muted{font-size:11.5px}
+  .resume button{font-size:12px;padding:3px 8px}
+  .card{padding:13px 12px 12px;margin-top:10px}
+  .meta{font-size:11.5px;margin-bottom:8px}
+  .q{font-size:16.5px;line-height:1.55}
+  .q .tag{font-size:11px}
+  .ans{margin-top:11px;padding-top:10px}
+  .ans .ln{line-height:1.8}
+  .ans .lead{font-size:11.5px}
+  .warn{font-size:12.5px;line-height:1.6;padding:6px 10px}
+  table.tb{font-size:12.5px}
+  table.tb th{font-size:12px}
+  .bi{font-size:14px}
+  .opts{gap:7px;margin-top:11px}
+  .opts button{padding:9px 12px;font-size:14.5px}
+  .acts{gap:7px;margin-top:12px}
+  .btn{padding:8px 15px;font-size:14px}
+  .btn.sm{padding:5px 10px;font-size:12.5px}
+  .verdict{font-size:14px;padding:9px 12px}
+  .nav{font-size:12px;margin-top:11px}
+  .pstem{font-size:15px;line-height:1.7}
+  .ptbl{font-size:12.5px}
+  .ptbl td{padding:5px 7px}
+  .optrow{font-size:14px;padding:8px 11px}
+  .whyrow{font-size:13.2px;line-height:1.75}
+  .whysol{font-size:13.2px;line-height:1.8}
+  .scoreline{font-size:14px}
+  .scoreline b{font-size:20px}
+  .unitbox>h3{font-size:14px}
+  details.k>summary{font-size:14px;padding:9px 12px}
+  .searchbox{font-size:14px;padding:8px 12px}
+  .ubar .nm{flex-basis:140px}
+  .report ul{font-size:13px}
 }
 @media print{
   header,.tabs,.bar,.acts,.nav,.searchbox,.no-print{display:none!important}
@@ -220,6 +303,7 @@ details.k .bd{padding:0 14px 14px}
 <div class="wrap">
   <div class="bar" id="bar"></div>
   <div class="prog" id="prog" hidden><i></i></div>
+  <div class="resume" id="resume" hidden></div>
   <main id="stage"></main>
 </div>
 
@@ -253,6 +337,11 @@ const loose=s=>norm(s).replace(/[的地得了着和与及其之]/g,'');
    持久化
    ================================================================ */
 const SK='kss_v1_'+(DATA&&DATA.subject||'x');
+/* 续练会话单独存一个 key：不属于练习记录，系统「清空/导入记录」时一并重置 */
+const SSK='kss_sess_v1_'+(DATA&&DATA.subject||'x');
+const SCOPES=['all','star','weak','unseen'];
+const SESS_MODES=['recite','cloze','choice','wrong','list','paper'];
+const MODE_TXT={recite:'① 翻卡背',cloze:'② 填空闯',choice:'③ 四选一',wrong:'④ 错题强化',list:'⑤ 清单',paper:'⑥ 套卷'};
 let P=loadProg();
 function loadProg(){
   let d={cards:{},days:{},paper:{}};
@@ -262,14 +351,30 @@ function loadProg(){
   return d;
 }
 function saveProg(){ try{localStorage.setItem(SK,JSON.stringify(P));}catch(e){console.warn('保存失败',e);} }
+/* ---- 续练会话：记住"练到哪一张/哪一轮"，退出或刷新后能接着练 ---- */
+function saveSess(){
+  if(!DATA)return;
+  /* ⑤ 清单只是查看，不算"练到哪"：不覆盖上一次的练习位置 */
+  if(S.mode==='list')return;
+  const o={v:1,mode:S.mode,unit:S.unit,scope:S.scope,qi:S.qi,queue:S.queue.slice(),revealed:!!S.revealed,ts:Date.now()};
+  if(PAPER)o.paper={unit:S.paper.unit,range:S.paper.range,qi:S.paper.qi,queue:S.paper.queue.slice(),log:S.paper.log};
+  try{localStorage.setItem(SSK,JSON.stringify(o));}catch(e){/* 隐私模式等存不了就算了 */}
+}
+function loadSess(){
+  try{const raw=localStorage.getItem(SSK);if(!raw)return null;const o=JSON.parse(raw);return o&&o.v===1?o:null;}catch(e){return null;}
+}
+function clearSess(){try{localStorage.removeItem(SSK);}catch(e){}const el=$('#resume');if(el){el.hidden=true;el.innerHTML='';}}
 function rec(cardId,ok,mode,opts){
   const p=P.cards[cardId]||(P.cards[cardId]={seen:0,ok:0,wrong:0,streak:0,last:0,mode:''});
+  /* 第一次作答（seen 0→1）时记下这一次有没有答对：面板算「首次正确率」用，已有值不覆盖 */
+  if(!p.seen&&p.firstOk==null)p.firstOk=ok?1:0;
   p.seen++;p.last=Date.now();p.mode=mode||p.mode;
   if(ok){p.ok++;p.streak=Math.min(9,p.streak+1);}else{p.wrong++;p.streak=0;}
   if(opts&&opts.skim)p.skim=(p.skim||0)+1;
   const d=todayKey(),t=P.days[d]||(P.days[d]={n:0,ok:0});
   t.n++;if(ok)t.ok++;
   saveProg();
+  refreshStatx(cardId);   /* 答完当场更新题头的「对 X · 错 Y」 */
 }
 const getP=id=>P.cards[id]||null;
 /* 安全取值：还没练过的卡也要能排序、能比大小 */
@@ -351,13 +456,30 @@ function pageLink(c){
   const base=(DATA.imgBase||'images/'),pre=DATA.imgPrefix||'',ext=DATA.imgExt||'jpg';
   return ` <a href="${esc(base+pre+c.page+'.'+ext)}" target="_blank" rel="noopener">对照原页 p${c.page}</a>`;
 }
+/* 累计对/错次数标签：同一张卡反复错会一直累加，答对也不清零 */
+function statxHTML(id){
+  const p=getP(id);
+  if(!p||!p.seen)return '';
+  return `<span class="statx" title="这张卡累计答对 / 答错次数（答对不清零，方便看同一处反复错）">`+
+    `<b class="ok">对 ${p.ok}</b> · <b class="${p.wrong>0?'bad':''}">错 ${p.wrong}</b> · 做过 ${p.seen}</span>`;
+}
+/* 刚答完就要更新题头，不能等下一题重渲染 */
+function refreshStatx(id){
+  const box=document.querySelector('#stage .card .meta .mt');
+  if(!box)return;
+  const html=statxHTML(id);
+  if(!html)return;
+  const el=box.querySelector('.statx');
+  if(el)el.outerHTML=html; else box.insertAdjacentHTML('beforeend',html);
+}
 function metaHTML(c){
   const bits=[];
   if(c.unit)bits.push(`<span class="u">${esc(c.unit)}</span>`);
   if(c.lesson)bits.push(esc(c.lesson));
   if(c.node)bits.push(esc(c.node));
   const lv=level(c.id);
-  return `<div class="meta"><span class="mt">${bits.join(' ／ ')}</span>`+
+  const statx=statxHTML(c.id);
+  return `<div class="meta"><span class="mt">${bits.join(' ／ ')}${statx}</span>`+
     `<span class="mr">${pageLink(c)}<span class="stars">${STAR(c.star)}</span>`+
     `<span class="lv lv${lv}">${lv===4?'待强化':LVTXT[lv]}</span></span></div>`;
 }
@@ -367,7 +489,7 @@ function metaHTML(c){
    ================================================================ */
 const UNITS=[...new Set((DATA?DATA.cards:[]).map(c=>c.unit||'未分单元'))];
 const S={mode:'recite',unit:'全部',scope:'all',queue:[],qi:0,revealed:false,scored:false,cur:null,curPlan:null,choice:null,optDone:false,
-  paper:{unit:'全部',range:'seq',queue:[],qi:0,log:{},pick:null}};
+  paper:{unit:'全部',range:'seq',queue:[],qi:0,log:{},pick:null,echo:null}};
 const hasBlanks=c=>PLAN[c.id].count>0;
 const CARD_BY=id=>DATA.cards.find(c=>c.id===id);
 
@@ -378,8 +500,9 @@ function renderBar(){
   if(S.mode==='paper'&&PAPER){paperBar();return;}
   const cards=DATA.cards;
   const n=cards.length;
-  let ok=0,weak=0,done=0;
+  let ok=0,weak=0,done=0,tok=0,twrong=0;
   cards.forEach(c=>{const p=getP(c.id);if(!p||!p.seen)return;done++;
+    tok+=p.ok||0;twrong+=p.wrong||0;
     const lv=level(c.id);if(lv===3)ok++;if(lv===4)weak++;});
   const d=P.days[todayKey()]||{n:0,ok:0};
   const rate=d.n?Math.round(d.ok/d.n*100):0;
@@ -387,6 +510,7 @@ function renderBar(){
     `<div class="row"><span class="pill">考点 <b>${n}</b></span>`+
     `<span class="pill ok">已熟练 <b>${ok}</b></span>`+
     `<span class="pill bad">待强化 <b>${weak}</b></span>`+
+    `<span class="pill" title="全部考点卡的累计答对 / 答错次数（同一张卡反复错也会累加）">累计 对 <b style="color:var(--ok)">${tok}</b> / 错 <b style="color:var(--bad)">${twrong}</b></span>`+
     `<span class="pill">今天 <b>${d.n}</b> 题 · <b>${rate}%</b></span></div>`+
     `<div class="row">`+
     `<select id="fu" title="按单元（做题和 ⑤ 清单 都按它筛）">${['全部',...UNITS].map(u=>`<option${u===S.unit?' selected':''}>${esc(u)}</option>`).join('')}</select>`+
@@ -407,6 +531,7 @@ function renderBar(){
   $('#rst').onclick=()=>{
     if(!confirm('清空全部练习记录？（不可恢复，建议先「导出记录」）'))return;
     P={cards:{},days:{},paper:{}};saveProg();
+    clearSess();
     if(S.mode==='paper')buildPaper();
     S.qi=0;buildQueue();render();
   };
@@ -430,6 +555,7 @@ function importProg(){
         if(!d.cards)throw new Error('文件里没有 cards');
         if(!confirm(`导入后会用文件里的记录覆盖本机记录（文件里 ${Object.keys(d.cards).length} 张卡的记录）。继续？`))return;
         P={cards:d.cards||{},days:d.days||{},paper:d.paper||{}};saveProg();
+        clearSess();
         if(S.mode==='paper')buildPaper();
         S.qi=0;buildQueue();render();
       }catch(e){alert('导入失败：'+e.message);}
@@ -480,20 +606,28 @@ function render(){
   $$('#tabs button').forEach(b=>b.setAttribute('aria-selected',b.dataset.mode===S.mode));
   renderBar();setProg();
   const st=$('#stage');
-  if(S.mode==='list'){renderList(st);return;}
-  if(S.mode==='paper'){renderPaper(st);return;}
-  if(!S.queue.length){st.innerHTML=emptyHTML();renderNav(st);return;}
-  const c=CARD_BY(S.queue[S.qi]);
-  if(!c){st.innerHTML=emptyHTML();return;}
-  if(S.mode==='choice')renderChoice(st,c);
-  else if(S.mode==='cloze')renderCloze(st,c);
-  else renderRecite(st,c);
-  renderNav(st);
+  if(S.mode==='list')renderList(st);
+  else if(S.mode==='paper')renderPaper(st);
+  else if(!S.queue.length){st.innerHTML=emptyHTML();renderNav(st);}
+  else{
+    const c=CARD_BY(S.queue[S.qi]);
+    if(!c)st.innerHTML=emptyHTML();
+    else{
+      if(S.mode==='choice')renderChoice(st,c);
+      else if(S.mode==='cloze')renderCloze(st,c);
+      else renderRecite(st,c);
+      renderNav(st);
+    }
+  }
+  /* ④ 错题强化：套卷错题不在卡片队列里，单独列一块，免得以为"错题没进错题栏" */
+  if(S.mode==='wrong')appendPaperWrong(st);
+  /* 每次状态变化都顺手记下位置：手机切走/刷新/被杀掉后能回到这里 */
+  saveSess();
 }
 function emptyHTML(){
   if(S.mode==='paper'){
     const tips={
-      weak:'做错的题会自动进来；在「只做错题」里连续答对 2 次才出库。',
+      weak:'错过的题会自动进来；做对了也留着，确认真会了在「错题本」里勾「我会了」才清掉。',
       unseen:'这个范围里的题都做过了，换成「整卷顺序」或「只做错题」。',
       seq:'换一个单元，或把范围改成「整卷顺序」。',
       round:'这一份卷子没有匹配的题。'
@@ -502,15 +636,55 @@ function emptyHTML(){
       S.paper.range==='weak'?'当前范围没有待强化的错题。':'当前范围没有可做的题。'}
       <div class="hint">${tips[S.paper.range]||''}</div></div>`;
   }
+  const pwN=PAPER?wrongBookList().length:0;
   const tips={
     recite:'把「练习范围」改成"全部范围"，或点上面的单元重新选。',
     cloze:'这一类里没有可挖空的考点，换「翻卡背」练。',
     choice:'这一类里没有可挖空的考点，换「翻卡背」练。',
-    wrong:'太棒了，错题已经清空。做错的题会自动进来；连续答对 2 次才出库。'
+    wrong:pwN?'下面列的就是套卷错题，点「回炉这题」直接做。':'太棒了，错题已经清空。错过的题会自动进来；做对了也留着，勾「我会了」才清掉。'
   };
+  const wrongEmpty=pwN?('考点卡这边清空了，下面还有 '+pwN+' 道<b>试卷错题</b>。'):'当前范围没有待强化的错题。';
   return `<div class="card empty"><span class="big">${S.mode==='wrong'?'🎉':'🗂'}</span>${
-    S.mode==='wrong'?'当前范围没有待强化的错题。':(S.scope==='unseen'?'这个范围里的考点都练过了。':'当前范围没有匹配的考点。')}
+    S.mode==='wrong'?wrongEmpty:(S.scope==='unseen'?'这个范围里的考点都练过了。':'当前范围没有匹配的考点。')}
     <div class="hint">${tips[S.mode]||''}</div></div>`;
+}
+/* ④ 里的「试卷错题」区块：只列套卷错题（卡片错题已经在上面排队了） */
+function paperWrongSection(){
+  if(!PAPER)return '';
+  const all=wrongBookList();
+  if(!all.length)return '';
+  const list=all.slice(0,10);
+  const rows=list.map(({q,p})=>`<div class="pwrong">
+      <span class="wq">第 ${esc(q.no)} 题</span>
+      <span class="wunit">${esc(q.unit||'未分单元')}</span>
+      <span class="wcnt">累计错 ${p.wrong} 次</span>
+      <span class="sp"></span>
+      <button class="btn sm" data-pwredo="${esc(q.id)}">回炉这题</button>
+    </div>`).join('');
+  return `<div class="card"><div class="row" style="display:flex;align-items:center;gap:8px">
+      <h3 style="margin:0;font-size:15px">试卷错题（${all.length} 道）</h3>
+      <button class="linkbtn" data-pwall="1" style="margin-left:auto">打开套卷错题本 →</button>
+    </div>
+    <div class="hint" style="margin-top:6px">这是 ⑥ 套卷里错过的题，不在上面的考点卡队列里。做对了也留着（记着累计错次），真会了去错题本勾「我会了」清掉。</div>
+    ${rows}
+    ${all.length>list.length?`<div class="hint">还有 ${all.length-list.length} 道，去套卷错题本里看全。</div>`:''}</div>`;
+}
+function appendPaperWrong(st){
+  const html=paperWrongSection();
+  if(!html)return;
+  st.insertAdjacentHTML('beforeend',html);
+  const box=st.lastElementChild;
+  const go=id=>{
+    S.mode='paper'; S.paper.range='weak';
+    buildPaper();
+    let i=S.paper.queue.indexOf(id);
+    if(i<0){ S.paper.queue.push(id); i=S.paper.queue.length-1; }
+    S.paper.qi=i; S.paper.echo=null;
+    render(); scrollTop();
+  };
+  $$('[data-pwredo]',box).forEach(b=>b.onclick=()=>go(b.dataset.pwredo));
+  const all=$('[data-pwall]',box);
+  if(all)all.onclick=()=>renderWrongBook();
 }
 function renderNav(st){
   const nav=document.createElement('div');
@@ -522,7 +696,7 @@ function renderNav(st){
        <button class="btn sm" id="nx">下一题 →</button>`;
     st.appendChild(nav);
     const pv=$('#pv',nav),nx=$('#nx',nav);
-    if(pv&&!pv.disabled)pv.onclick=()=>{S.paper.qi--;render();scrollTop();};
+    if(pv&&!pv.disabled)pv.onclick=()=>{S.paper.qi--;S.paper.echo=null;render();scrollTop();};
     if(nx)nx.onclick=()=>paperNext();
     return;
   }
@@ -568,7 +742,7 @@ function renderRecite(st,c){
       const v=b.dataset.v;
       if(v==='1'){rec(c.id,true,'recite');}
       else if(v==='0'){rec(c.id,false,'recite');}
-      else{const q=getP(c.id);if(q){q.seen++;q.streak=0;q.last=Date.now();saveProg();}else{rec(c.id,false,'recite');}}
+      else{const q=getP(c.id);if(q){if(!q.seen&&q.firstOk==null)q.firstOk=0;q.seen++;q.streak=0;q.last=Date.now();saveProg();}else{rec(c.id,false,'recite');}}
       nextCard();
     });
   }
@@ -628,7 +802,7 @@ function renderCloze(st,c){
   };
   inputs.forEach((inp,i)=>{
     inp.onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();if(S.scored)nextCard();else submit();}};
-    if(i===0)inp.focus({preventScroll:true});
+    if(i===0&&!BOOTING)inp.focus({preventScroll:true});
   });
 }
 
@@ -798,6 +972,7 @@ function renderList(st){
           const lv=level(c.id);
           return `<details class="k" data-id="${c.id}">
             <summary><span style="flex:1">${esc(c.q)}</span>
+              ${(()=>{const p=getP(c.id);return (p&&p.seen)?`<span class="cnt">对 ${p.ok} · ${p.wrong>0?`<b>错 ${p.wrong}</b>`:`错 0`}</span>`:'';})()}
               <span class="lv lv${lv}">${lv===4?'待强化':LVTXT[lv]}</span></summary>
             <div class="bd${LISTHIDE?' hidekw':''}">
               <div class="meta"><span class="mt">${esc(c.lesson||'')}${c.node?' ／ '+esc(c.node):''}</span><span class="mr">${pageLink(c)}<span class="stars">${STAR(c.star)}</span></span></div>
@@ -832,14 +1007,16 @@ function pState(id){return (P.paper||{})[id]||null;}
 function pTally(){
   let seen=0,att=0,right=0,weak=0;
   PQ.forEach(q=>{const p=pState(q.id);if(!p||!p.seen)return;
-    seen++;att+=p.seen;right+=p.ok;if(p.wrong>0&&p.streak<2)weak++;});
+    seen++;att+=p.seen;right+=p.ok;if(p.wrong>0&&!p.cleared)weak++;});
   return {n:PQ.length,seen,att,right,weak,rate:att?Math.round(right/att*100):0};
 }
 function recPaper(q,ok,pick){
   if(!P.paper)P.paper={};
   const p=P.paper[q.id]||(P.paper[q.id]={seen:0,ok:0,wrong:0,streak:0,last:0,pick:-1});
   p.seen++;p.last=Date.now();p.pick=pick;
-  if(ok){p.ok++;p.streak=Math.min(9,p.streak+1);}else{p.wrong++;p.streak=0;}
+  /* 错题不自动出库：做对了也留着（累计错次不清零），只有手动「我会了」才清；
+     清掉之后再做错，会自动回来。 */
+  if(ok){p.ok++;p.streak=Math.min(9,p.streak+1);}else{p.wrong++;p.streak=0;p.cleared=false;}
   const d=todayKey(),t=P.days[d]||(P.days[d]={n:0,ok:0});
   t.n++;if(ok)t.ok++;
   saveProg();
@@ -849,14 +1026,14 @@ function buildPaper(){
   const st=S.paper;
   let a=PQ.slice();
   if(st.unit!=='全部')a=a.filter(q=>(q.unit||'未分单元')===st.unit);
-  if(st.range==='weak')a=a.filter(q=>{const p=pState(q.id);return p&&p.wrong>0&&p.streak<2;});
+  if(st.range==='weak')a=a.filter(q=>{const p=pState(q.id);return p&&p.wrong>0&&!p.cleared;});
   if(st.range==='unseen')a=a.filter(q=>!pState(q.id)||!pState(q.id).seen);
   if(st.range==='weak')a.sort((x,y)=>pState(y.id).wrong-pState(x.id).wrong);
   else if(st.range!=='seq')a=shuffle(a.slice());
   if(st.range==='round')a=a.slice(0,20);
   if(st.range==='seq')a.sort((x,y)=>x.no-y.no);
   st.queue=a.map(q=>q.id);
-  st.qi=0;st.log={};st.pick=null;
+  st.qi=0;st.log={};st.pick=null;st.echo=null;
 }
 function paperBar(){
   const t=pTally();
@@ -875,6 +1052,7 @@ function paperBar(){
       <option value="unseen"${S.paper.range==='unseen'?' selected':''}>只做没做过</option>
     </select>`+
     `<span class="sp"></span>`+
+    `<button class="linkbtn" id="pwb" title="错过的题都在这（做对了也留着）：可以重做，或勾「我会了」清掉">错题本（${wrongBookList().length}）</button>`+
     `<button class="linkbtn" id="exp" title="把练习记录导出成文件（备份/换设备）">导出记录</button>`+
     `<button class="linkbtn" id="imp" title="从文件导入练习记录">导入记录</button>`+
     `<button class="linkbtn" id="prt2" title="打印整份试卷（题干+答案+解析）">打印整卷</button></div>`;
@@ -883,7 +1061,56 @@ function paperBar(){
   $('#exp').onclick=exportProg;
   $('#imp').onclick=importProg;
   $('#prt2').onclick=()=>paperPrint();
+  $('#pwb').onclick=()=>renderWrongBook();
 }
+/* 套卷错题本：错过就留着（记着累计错几次），做对了也不自动走，由本人勾「我会了」 */
+function wrongBookList(){
+  return PQ.map(q=>({q,p:pState(q.id)})).filter(x=>x.p&&x.p.wrong>0&&!x.p.cleared)
+    .sort((a,b)=>(b.p.last||0)-(a.p.last||0));
+}
+function renderWrongBook(){
+  const st=$('#stage');
+  const list=wrongBookList();
+  const rows=list.map(({q,p})=>{
+    const pick=p.pick;
+    const pickTxt=(pick===undefined||pick===null||pick<0)?'上次没选'
+      :('上次选 '+'ABCD'[pick]+(pick===q.ans?'（对）':'（错）'));
+    return `<div class="wbrow">
+      <div class="wbm">
+        <div class="wbline"><b>第 ${q.no} 题</b>
+          <span class="pill">${esc(q.unit||'未分单元')}</span>
+          <span class="pill bad">累计错 ${p.wrong} 次</span>
+          <span class="pill">做过 ${p.seen} 次 · 对 ${p.ok} 次</span></div>
+        <div class="hint">${pickTxt} · 正确答案 ${'ABCD'[q.ans]}</div>
+      </div>
+      <div class="wbbtns">
+        <button class="btn sm" data-redo="${esc(q.id)}">重做这题</button>
+        <button class="btn sm g" data-clear="${esc(q.id)}">我会了，清掉</button>
+      </div>
+    </div>`;
+  }).join('');
+  st.innerHTML=`<div class="card">
+    <div class="meta"><span class="mt">套卷错题本</span><span class="mr">${list.length} 题</span></div>
+    <div class="hint" style="margin-top:6px">做对了不会自动消失——留着过几天再回炉一遍。真会了再点「我会了」清掉；清掉以后再做错，会自动回来。</div>
+    ${list.length?rows:'<div class="verdict ok" style="margin-top:12px"><b>错题本是空的 ✓</b> 最近做的都没错。</div>'}
+    <div class="acts"><button class="btn" id="wbback">← 返回做题</button></div>
+  </div>`;
+  $('#wbback').onclick=()=>render();
+  $$('[data-redo]',st).forEach(b=>b.onclick=()=>{
+    const id=b.dataset.redo;
+    let i=S.paper.queue.indexOf(id);
+    if(i<0){S.paper.queue.push(id);i=S.paper.queue.length-1;}
+    S.paper.qi=i;S.paper.echo=null;
+    S.mode='paper';render();scrollTop();
+  });
+  $$('[data-clear]',st).forEach(b=>b.onclick=()=>{
+    const pp=pState(b.dataset.clear);
+    if(pp){pp.cleared=true;saveProg();}
+    renderWrongBook();
+  });
+  scrollTop();
+}
+
 /* 整卷打印视图：题干 + 选项（正确项标绿）+ 解析，一份可打印的解析版 */
 function paperPrint(){
   const st=$('#stage');
@@ -936,66 +1163,95 @@ function whyHTML(q){
   }
   return `<div class="whybox"><div class="lead">解析</div><div class="whysol">${esc(q.sol||'')}</div></div>`;
 }
+/* 这题的历史：累计错几次、做过几次 */
+function pBadges(id){
+  const p=pState(id);
+  if(!p||!p.seen)return '';
+  return (p.wrong>0?`<span class="pill bad" style="margin-left:8px">累计错 ${p.wrong} 次</span>`:'')+
+    `<span class="pill" style="margin-left:8px">做过 ${p.seen} 次 · 对 ${p.ok} 次</span>`;
+}
+function pickTxt(q,pick){
+  if(pick===undefined||pick===null||pick<0)return '上次没选';
+  return '上次选 '+ 'ABCD'[pick] + (pick===q.ans?'（那是正确答案）':'（不对）');
+}
 function renderPaper(st){
   const id=S.paper.queue[S.paper.qi];
   if(!id){st.innerHTML=emptyHTML();return;}
   const q=PQ_BY(id),t=pTally();
   const logged=S.paper.log[id];
-  const done=logged!==undefined;
+  /* 只有刚提交完（echo===id）才显示判分与解析；上一题/下一题回来一律空白重做 */
+  const done=logged!==undefined&&S.paper.echo===id;
   const pick=done?logged:null;
+  const note=(logged!==undefined&&!done)
+    ? `<div class="pnote"><span>这题本轮已作答（${pickTxt(q,logged)}）。这次请<b>不看上次的痕迹重做一遍</b>，选完点「提交本题」。</span>
+        <span style="flex:1"></span><button class="btn sm" id="ppeek">看上次的答案与解析</button></div>`
+    : '';
   st.innerHTML=`<div class="card">
-    <div class="meta"><span class="mt"><b>第 ${q.no} 题</b> ／ 共 ${t.n} 题 ／ ${esc(q.unit||'未分单元')}</span>
+    <div class="meta"><span class="mt"><b>第 ${q.no} 题</b> ／ 共 ${t.n} 题 ／ ${esc(q.unit||'未分单元')}${pBadges(id)}</span>
       <span class="mr"><span class="pno">${S.paper.qi+1} / ${S.paper.queue.length}</span></span></div>
     <div class="pstem">${paperBody(q)}</div>
+    ${note}
     <div class="opts" id="opts">${q.opts.map((o,i)=>
       `<button data-i="${i}"${done?' disabled':''} class="${done?(i===q.ans?'c':(i===pick?'w':'')):''}"><span class="kk">${'ABCD'[i]}</span>${esc(o)}</button>`).join('')}</div>
     <div id="fb">${done?paperVerdict(q,pick):''}</div>
     ${done?whyHTML(q):''}
-    <div class="acts" id="acts">${done?paperActs(q,pick):`<span class="hint">点选项或按 1–4；答完立刻给解析，错题自动进「只做错题」。</span>`}</div>
+    <div class="acts" id="acts">${done?paperActs(q,pick):`<span class="hint">点选项或按 1–4；答完立刻给解析，错题进「错题本」，做对了也留着，等你自己勾「我会了」。</span>`}</div>
   </div>`;
   const btns=$$('#opts button',st);
   if(!done)btns.forEach(b=>b.onclick=()=>answerPaper(+b.dataset.i));
   else bindPaperActs(st,q);
+  const peek=$('#ppeek',st);
+  if(peek)peek.onclick=()=>{S.paper.echo=id;render();};
   renderNav(st);
 }
 function paperVerdict(q,pick){
   const L='ABCD';
-  if(pick===q.ans)return `<div class="verdict ok"><b>答对了 ✓</b> 正确答案 ${L[q.ans]}。</div>`;
-  return `<div class="verdict bad"><b>答错了</b> 你选的是 ${L[pick]}，正确答案是 <b>${L[q.ans]}</b>。看完下面的解析再往下走。</div>`;
+  const p=pState(q.id);
+  const left=(p&&p.wrong>0&&!p.cleared)
+    ? `<div class="hint" style="margin-top:6px">这题累计错过 ${p.wrong} 次，<b>仍然留在错题本</b>：过几天再回炉一遍；确认真会了再去「错题本」点「我会了」清掉。</div>`
+    : '';
+  if(pick===q.ans)return `<div class="verdict ok"><b>答对了 ✓</b> 正确答案 ${L[q.ans]}。${left}</div>`;
+  return `<div class="verdict bad"><b>答错了</b> 你选的是 ${L[pick]}，正确答案是 <b>${L[q.ans]}</b>。看完下面的解析再往下走。${left}</div>`;
 }
 function paperActs(q,pick){
   const more=S.paper.qi<S.paper.queue.length-1;
   return `<button class="btn p" id="pnx">${more?'下一题（回车）':'本轮完成（回车）'}</button>`+
+    `<button class="btn" id="pagain2" title="清空本题的作答，再独立做一遍（记录只累加，不覆盖累计错次）">重做本题</button>`+
     (pick===q.ans?'':`<button class="btn sm" id="pgo" title="去⑤清单看这一单元的考点卡">看本单元考点</button>`)+
     `<span class="hint">${S.paper.qi+1} / ${S.paper.queue.length}</span>`;
 }
 function bindPaperActs(st,q){
   const nx=$('#pnx',st);
   if(nx)nx.onclick=()=>paperNext();
+  const ag=$('#pagain2',st);
+  if(ag)ag.onclick=()=>{S.paper.echo=null;render();scrollTop();};
   const go=$('#pgo',st);
   if(go)go.onclick=()=>{S.mode='list';LISTQ=q.unit||'';buildQueue();render();scrollTop();};
 }
 function answerPaper(i){
   const id=S.paper.queue[S.paper.qi];
-  if(S.paper.log[id]!==undefined)return;
+  if(S.paper.echo===id)return;          /* 正在显示这一题的判分，别重复记 */
   const q=PQ_BY(id);
   S.paper.log[id]=i;
+  S.paper.echo=id;                      /* 提交后这一次才回显判分与解析 */
   recPaper(q,i===q.ans,i);
   render();
 }
 function paperNext(){
   const st=$('#stage');
   if(S.paper.qi<S.paper.queue.length-1){
-    S.paper.qi++;render();scrollTop();return;
+    S.paper.qi++;S.paper.echo=null;render();scrollTop();return;
   }
+  S.paper.echo=null;
   st.innerHTML=paperSummary();
   $$('[data-jump]',st).forEach(b=>b.onclick=()=>{
     const id=b.dataset.jump;
     S.paper.qi=S.paper.queue.indexOf(id);
+    S.paper.echo=null;
     render();scrollTop();
   });
   const again=$('#pagain',st);
-  if(again)again.onclick=()=>{S.paper.log={};S.paper.qi=0;render();scrollTop();};
+  if(again)again.onclick=()=>{S.paper.log={};S.paper.echo=null;S.paper.qi=0;render();scrollTop();};
   const next=$('#pnext',st);
   if(next)next.onclick=()=>{S.paper.range='round';buildPaper();render();scrollTop();};
   const weak=$('#pweak',st);
@@ -1019,12 +1275,126 @@ function paperSummary(){
       <button class="btn" id="pnext">换一批（随机 20 题）</button>
       <button class="btn" id="pweak"${t.weak?'':' disabled'}>只做错题（${t.weak}）</button>
     </div>
-    <div class="hint">全卷进度：已做 ${t.seen}/${t.n} 题，累计正确率 ${t.rate}%。错题在「只做错题」里连对 2 次才算过关。</div>
+    <div class="hint">全卷进度：已做 ${t.seen}/${t.n} 题，累计正确率 ${t.rate}%。错题做对了也不会自动消失，确认真会了再去「错题本」勾「我会了」。</div>
   </div>`;
 }
 function pickOf(id){
   const l=S.paper.log;
   return l[id];
+}
+
+/* ================================================================
+   深链（给「开始.html」的任务卡直达用）
+   契约：#mode=recite|cloze|choice|wrong|list|paper  #fs=all|star|weak|unseen
+        可组合，如 #mode=choice&fs=star；非法值静默忽略，回到默认。
+   只在启动时读一次；运行中切模式不回写 hash（免得一条条写进浏览器历史）。
+   ================================================================ */
+function readDeepLink(){
+  let raw='';
+  try{raw=String(location.hash||'').replace(/^#/,'');}catch(e){return null;}
+  if(!raw)return null;
+  const q={};
+  raw.split('&').forEach(seg=>{
+    const i=seg.indexOf('=');
+    if(i<0)return;
+    let k='',v='';
+    try{k=decodeURIComponent(seg.slice(0,i)).trim().toLowerCase();v=decodeURIComponent(seg.slice(i+1)).trim().toLowerCase();}catch(e){return;}
+    if(k==='mode'||k==='fs')q[k]=v;
+  });
+  let mode=SESS_MODES.indexOf(q.mode)>=0?q.mode:'';
+  /* ⑥ 套卷没有卷子数据就别切过去（道法、公式版都没有） */
+  if(mode==='paper'&&(!PAPER||!PQ.length))mode='';
+  const scope=SCOPES.indexOf(q.fs)>=0?q.fs:'';
+  if(!mode&&!scope)return null;
+  return {mode:mode,scope:scope};
+}
+function applyDeepLink(d){
+  if(d.mode)S.mode=d.mode;
+  if(d.scope)S.scope=d.scope;
+  /* 停在第一题：队列随后由 buildQueue() 按新 mode/scope 重建 */
+  S.qi=0;S.revealed=false;S.scored=false;S.cur=null;S.curPlan=null;S.choice=null;S.optDone=false;
+  if(S.mode==='paper')buildPaper();
+  return d;
+}
+
+/* ================================================================
+   续练：启动时恢复上次位置 + 顶部提示条
+   ================================================================ */
+let RESUME=null;
+let BOOTING=false;
+const clampQi=(q,n)=>Math.max(0,Math.min(n-1,Number.isFinite(+q)?+q:0));
+function applySess(o){
+  if(!o||o.v!==1||SESS_MODES.indexOf(o.mode)<0)return false;
+  const mode=o.mode;
+  const unit=(o.unit==='全部'||UNITS.indexOf(o.unit)>=0)?o.unit:'全部';
+  const scope=SCOPES.indexOf(o.scope)>=0?o.scope:'all';
+  /* ⑥ 套卷：队列+本轮作答记录都恢复，做了一半的卷子接着做 */
+  if(mode==='paper'){
+    if(!PAPER||!o.paper)return false;
+    const ids=(o.paper.queue||[]).filter(id=>PQ_BY(id));
+    if(!ids.length)return false;
+    S.mode='paper';
+    S.paper.unit=(o.paper.unit==='全部'||PUNITS.indexOf(o.paper.unit)>=0)?o.paper.unit:'全部';
+    S.paper.range=['seq','round','weak','unseen'].indexOf(o.paper.range)>=0?o.paper.range:'seq';
+    S.paper.queue=ids;
+    S.paper.qi=clampQi(o.paper.qi,ids.length);
+    S.paper.log=(o.paper.log&&typeof o.paper.log==='object')?o.paper.log:{};
+    S.paper.echo=null;   /* 回访一律空白，要重做就重新选 */
+    RESUME={mode,pos:S.paper.qi+1,total:ids.length,ts:+o.ts||0,unit:S.paper.unit,scope:''};
+    return true;
+  }
+  /* ⑤ 清单没有"第几题"，只恢复筛选，不弹续练条 */
+  if(mode==='list'){
+    S.mode='list';S.unit=unit;S.scope=scope;
+    return true;
+  }
+  let ids=(o.queue||[]).filter(id=>CARD_BY(id));
+  if(mode==='cloze'||mode==='choice')ids=ids.filter(id=>hasBlanks(CARD_BY(id)));
+  if(!ids.length)return false;
+  S.mode=mode;S.unit=unit;S.scope=scope;
+  S.queue=ids;S.qi=clampQi(o.qi,ids.length);
+  S.revealed=(mode==='recite')?!!o.revealed:false;
+  S.scored=false;S.choice=null;S.cur=null;
+  /* 只有确实"练到一半"才提示；刚打开、默认第 1 题不打扰 */
+  if(S.qi>0||mode!=='recite'||unit!=='全部'||scope!=='all'){
+    RESUME={mode,pos:S.qi+1,total:ids.length,ts:+o.ts||0,unit,scope};
+  }
+  return true;
+}
+function fmtWhen(ts){
+  if(!ts)return '';
+  const d=new Date(ts),now=new Date();
+  const hm=String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
+  const day0=x=>new Date(x.getFullYear(),x.getMonth(),x.getDate()).getTime();
+  if(day0(d)===day0(now))return '今天 '+hm;
+  if(day0(now)-day0(d)===86400000)return '昨天 '+hm;
+  return (d.getMonth()+1)+'月'+d.getDate()+'日 '+hm;
+}
+function hideResume(){
+  RESUME=null;
+  const el=$('#resume');
+  if(el){el.hidden=true;el.innerHTML='';}
+}
+function showResumeBar(){
+  const el=$('#resume');
+  if(!el||!RESUME)return;
+  const r=RESUME;
+  const what=r.mode==='paper'
+    ? `⑥ 套卷${r.unit&&r.unit!=='全部'?' · '+esc(r.unit):''}`
+    : `${MODE_TXT[r.mode]||r.mode}${r.scope&&r.scope!=='all'?' · '+esc(SCOPE_TXT[r.scope]||''):''}${r.unit&&r.unit!=='全部'?' · '+esc(r.unit):''}`;
+  el.innerHTML=`<span class="rtext">上次练到：<b>${what}</b> · 第 <b>${r.pos}/${r.total}</b> 题`+
+    `${r.ts?` <span class="muted">（${esc(fmtWhen(r.ts))}）</span>`:''}</span>`+
+    `<span class="sp"></span>`+
+    `<span class="rbtns"><button id="rgo" class="p" title="留在上次的位置">接着练</button>`+
+    `<button id="rnew" title="从这一轮第 1 题重新开始">从头开始</button></span>`;
+  el.hidden=false;
+  $('#rgo',el).onclick=hideResume;
+  $('#rnew',el).onclick=()=>{
+    hideResume();
+    if(S.mode==='paper'){S.paper.qi=0;S.paper.log={};}
+    else{S.qi=0;S.revealed=false;S.scored=false;S.choice=null;}
+    render();scrollTop();
+  };
 }
 
 /* ================================================================
@@ -1047,11 +1417,22 @@ function boot(){
   }
   $$('#tabs button').forEach(b=>b.onclick=()=>{
     if(b.dataset.mode===S.mode)return;
+    hideResume();
     S.mode=b.dataset.mode;S.qi=0;S.revealed=false;S.scored=false;S.cur=null;S.choice=null;
     if(S.mode==='paper')buildPaper();
     buildQueue();render();scrollTop();
   });
-  buildQueue();render();
+  /* 上次练到一半就接着上次；否则正常开新一轮
+     带深链过来（任务卡直达）时不恢复上次位置，直接按 hash 指定的模式/范围开 */
+  const deep=readDeepLink();
+  BOOTING=true;
+  const restored=deep?false:applySess(loadSess());
+  if(deep)applyDeepLink(deep);
+  if(!restored)buildQueue();
+  render();
+  BOOTING=false;
+  if(RESUME)showResumeBar();
+  window.addEventListener('pagehide',saveSess);
   document.addEventListener('keydown',e=>{
     if(e.target.matches('input,select,textarea'))return;
     if(S.mode==='paper'){
