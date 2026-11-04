@@ -1,0 +1,15 @@
+{
+  "_comment": "样例：复制为 tools/publish.local.json 使用（已 gitignore）。路径按本机实际位置改；也可以直接跑 .\\tools\\publish.ps1 -WriteConfig 自动生成。",
+  "machines": {
+    "HOME-PC": {
+      "training": "C:/work/my-work/learning-training",
+      "vocab": "C:/learn/learn-english/word_table/vocab-app/dist"
+    },
+    "COMPANY-PC": {
+      "training": "D:/repos/learning-training",
+      "vocab": "D:/repos/learn-english/word_table/vocab-app/dist"
+    }
+  },
+  "training": "C:/work/my-work/learning-training",
+  "vocab": "C:/learn/learn-english/word_table/vocab-app/dist"
+}

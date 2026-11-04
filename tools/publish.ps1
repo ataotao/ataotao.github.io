@@ -55,12 +55,19 @@ param(
     [ValidateSet('all', 'vocab', 'training')]
     [string]$Only = 'all',
 
-    # 三个源分别用两个参数指定（原来的 -SourceRoot 已失效：那台机器的目录结构变了）。
-    [string]$VocabRoot = 'C:\learn\learn-english\word_table\vocab-app\dist',
+    # 源路径：不传时按「配置文件 → 环境变量 → 自动探测」解析。
+    # 同一个脚本要在家里/公司两台机器上用，绝对路径不能写死在脚本里。
+    [string]$VocabRoot,
 
-    [string]$TrainingRoot = 'C:\work\my-work\learning-training',
+    [string]$TrainingRoot,
 
-    # 兼容旧用法：给 -SourceRoot 时按老结构推导（<root>\learn-english\...、<root>\做题思维训练）
+    # 本机配置（不入库）：默认 tools\publish.local.json
+    [string]$ConfigPath = (Join-Path $PSScriptRoot 'publish.local.json'),
+
+    # 把当前解析到的路径写进本机配置，下次直接跑就不用带参数
+    [switch]$WriteConfig,
+
+    # 兼容很旧的用法：给 -SourceRoot 时按老结构推导
     [string]$SourceRoot,
 
     [switch]$DryRun,
@@ -71,27 +78,213 @@ param(
 
 $ErrorActionPreference = 'Stop'
 
-# ---------------------------------------------------------------- 路径
+# ---------------------------------------------------------------- 路径解析
+#
+# 优先级：命令行参数 > 配置文件（按 COMPUTERNAME 分机器）> 环境变量 > 自动探测
+# 自动探测只在常见位置往下找两层，不会扫全盘。
 
 $repoRoot = Split-Path -Parent $PSScriptRoot
+$machine  = $env:COMPUTERNAME
+$tried    = [System.Collections.Generic.List[string]]::new()
+
+function Read-LocalConfig {
+    param([string]$Path)
+    if (-not (Test-Path -LiteralPath $Path -PathType Leaf)) { return $null }
+    try {
+        return Get-Content -LiteralPath $Path -Raw | ConvertFrom-Json
+    } catch {
+        throw "配置文件不是合法 JSON：$Path`n$($_.Exception.Message)"
+    }
+}
+
+function Test-TrainingRepo {
+    param([string]$Dir)
+    if (-not $Dir) { return $false }
+    if (-not (Test-Path -LiteralPath $Dir -PathType Container)) { return $false }
+    return ((Test-Path -LiteralPath (Join-Path $Dir 'AGENTS.md')) -and
+            (Test-Path -LiteralPath (Join-Path $Dir '工具')) -and
+            (Test-Path -LiteralPath (Join-Path $Dir '物理')))
+}
+
+function Test-VocabDist {
+    param([string]$Dir)
+    if (-not $Dir) { return $false }
+    return (Test-Path -LiteralPath (Join-Path $Dir 'index.html') -PathType Leaf)
+}
+
+function Get-ProbeBases {
+    $bases = @(
+        (Split-Path $repoRoot -Parent)
+        $repoRoot
+        $env:USERPROFILE
+        (Join-Path $env:USERPROFILE 'Documents')
+        (Join-Path $env:USERPROFILE 'Desktop')
+        'C:\learn', 'C:\work', 'C:\code', 'C:\src'
+        'D:\learn', 'D:\work', 'D:\code'
+        'E:\learn', 'E:\work'
+    ) | Where-Object { $_ -and (Test-Path -LiteralPath $_ -PathType Container) } | Select-Object -Unique
+    return $bases
+}
+
+function Find-TrainingRoot {
+    $names = @('learning-training', '做题思维训练', 'learning_training')
+    foreach ($base in Get-ProbeBases) {
+        foreach ($name in $names) {
+            $candidate = Join-Path $base $name
+            $tried.Add($candidate)
+            if (Test-TrainingRepo $candidate) { return $candidate }
+        }
+        # 再往下一层（如 C:\work\my-work\learning-training）
+        $children = try { Get-ChildItem -LiteralPath $base -Directory -ErrorAction SilentlyContinue } catch { @() }
+        foreach ($child in $children) {
+            if (Test-TrainingRepo $child.FullName) { return $child.FullName }
+            foreach ($name in $names) {
+                $candidate = Join-Path $child.FullName $name
+                $tried.Add($candidate)
+                if (Test-TrainingRepo $candidate) { return $candidate }
+            }
+        }
+    }
+    return $null
+}
+
+function Find-VocabDist {
+    $relatives = @(
+        'learn-english\word_table\vocab-app\dist'
+        'word_table\vocab-app\dist'
+        'learn-english\vocab-app\dist'
+        'vocab-app\dist'
+    )
+    foreach ($base in Get-ProbeBases) {
+        foreach ($rel in $relatives) {
+            $candidate = Join-Path $base $rel
+            $tried.Add($candidate)
+            if (Test-VocabDist $candidate) { return $candidate }
+        }
+        $children = try { Get-ChildItem -LiteralPath $base -Directory -ErrorAction SilentlyContinue } catch { @() }
+        foreach ($child in $children) {
+            foreach ($rel in @('word_table\vocab-app\dist', 'vocab-app\dist')) {
+                $candidate = Join-Path $child.FullName $rel
+                $tried.Add($candidate)
+                if (Test-VocabDist $candidate) { return $candidate }
+            }
+        }
+    }
+    return $null
+}
+
+$config = Read-LocalConfig $ConfigPath
+
+function Resolve-One {
+    param(
+        [string]$Label,
+        [string]$CliValue,
+        [string]$ConfigKey,
+        [string[]]$EnvNames,
+        [scriptblock]$Detect
+    )
+    if ($CliValue) { return [pscustomobject]@{ Path = $CliValue; Source = '命令行参数' } }
+
+    # 旧 -SourceRoot 也是命令行参数，优先级高于配置文件
+    if ($SourceRoot) {
+        if ($ConfigKey -eq 'training') {
+            return [pscustomobject]@{ Path = (Join-Path $SourceRoot '做题思维训练'); Source = '旧 -SourceRoot' }
+        }
+        return [pscustomobject]@{ Path = (Join-Path $SourceRoot 'learn-english\word_table\vocab-app\dist'); Source = '旧 -SourceRoot' }
+    }
+
+    if ($config) {
+        $byMachine = $null
+        if ($config.machines -and $machine) {
+            $prop = $config.machines.PSObject.Properties[$machine]
+            if ($prop) { $byMachine = $prop.Value }
+        }
+        if ($byMachine) {
+            $entry = $byMachine.PSObject.Properties[$ConfigKey]
+            if ($entry -and $entry.Value) {
+                return [pscustomobject]@{ Path = $entry.Value; Source = "配置文件（$machine）" }
+            }
+        }
+        $flat = $config.PSObject.Properties[$ConfigKey]
+        if ($flat -and $flat.Value) {
+            return [pscustomobject]@{ Path = $flat.Value; Source = '配置文件' }
+        }
+    }
+
+    foreach ($name in $EnvNames) {
+        $value = [Environment]::GetEnvironmentVariable($name)
+        if ($value) { return [pscustomobject]@{ Path = $value; Source = "环境变量 $name" } }
+    }
+
+    $found = & $Detect
+    if ($found) { return [pscustomobject]@{ Path = $found; Source = '自动探测' } }
+    return [pscustomobject]@{ Path = $null; Source = '未找到' }
+}
 
 if ($SourceRoot) {
     if (-not (Test-Path -LiteralPath $SourceRoot -PathType Container)) {
         throw "找不到源根目录：$SourceRoot"
     }
-    $SourceRoot  = (Resolve-Path -LiteralPath $SourceRoot).ProviderPath
-    $VocabRoot   = Join-Path $SourceRoot 'learn-english\word_table\vocab-app\dist'
-    $TrainingRoot = Join-Path $SourceRoot '做题思维训练'
+    $SourceRoot = (Resolve-Path -LiteralPath $SourceRoot).ProviderPath
 }
 
-$roots = [ordered]@{
-    '英语单词记背（vocab-app\dist）' = $VocabRoot
-    '做题思维训练'                   = $TrainingRoot
-}
-foreach ($k in $roots.Keys) {
-    if (-not (Test-Path -LiteralPath $roots[$k] -PathType Container)) {
-        Write-Host "源目录不存在：$($roots[$k])  （$k）" -ForegroundColor Red
+$training = Resolve-One -Label 'training' -CliValue $TrainingRoot -ConfigKey 'training' `
+    -EnvNames @('LEARNING_TRAINING_ROOT') -Detect { Find-TrainingRoot }
+$vocab = Resolve-One -Label 'vocab' -CliValue $VocabRoot -ConfigKey 'vocab' `
+    -EnvNames @('LEARN_ENGLISH_DIST', 'VOCAB_DIST') -Detect { Find-VocabDist }
+
+$VocabRoot = $vocab.Path
+$TrainingRoot = $training.Path
+
+Write-Host ''
+Write-Host "本机：$machine" -ForegroundColor DarkGray
+Write-Host ("  做题思维训练 : {0}  [{1}]" -f $(if ($TrainingRoot) { $TrainingRoot } else { '(未找到)' }), $training.Source) -ForegroundColor DarkGray
+Write-Host ("  英语单词 dist: {0}  [{1}]" -f $(if ($VocabRoot) { $VocabRoot } else { '(未找到)' }), $vocab.Source) -ForegroundColor DarkGray
+
+if ($WriteConfig) {
+    if (-not $TrainingRoot -or -not $VocabRoot) {
+        Write-Host '有源目录没找到，先补齐或传参再写配置。' -ForegroundColor Red
+        exit 1
     }
+    $payload = [ordered]@{
+        _comment = '本机专用路径配置（不入库）。换机器时用 -WriteConfig 重新生成，或用 machines 给每台机器各写一份。'
+        machine  = $machine
+        machines = [ordered]@{
+            $machine = [ordered]@{ training = $TrainingRoot; vocab = $VocabRoot }
+        }
+    } | ConvertTo-Json -Depth 5
+    Set-Content -LiteralPath $ConfigPath -Value $payload -Encoding UTF8
+    Write-Host ''
+    Write-Host "已写入本机配置：$ConfigPath" -ForegroundColor Green
+    if (-not ($DryRun -or $Prune -or $Commit -or $Push)) { exit 0 }
+}
+
+$needed = @()
+if ($Only -ne 'vocab')    { $needed += [pscustomobject]@{ Name = '做题思维训练'; Path = $TrainingRoot; Key = 'training'; Source = $training.Source } }
+if ($Only -ne 'training') { $needed += [pscustomobject]@{ Name = '英语单词 dist'; Path = $VocabRoot; Key = 'vocab'; Source = $vocab.Source } }
+
+$bad = @($needed | Where-Object { -not $_.Path -or -not (Test-Path -LiteralPath $_.Path -PathType Container) })
+if ($bad.Count -gt 0) {
+    Write-Host ''
+    Write-Host '找不到源目录（本机路径与别的机器不一样时，用下面任一方式指定）：' -ForegroundColor Red
+    foreach ($item in $bad) {
+        Write-Host ("  {0,-14} -> {1}" -f $item.Name, $(if ($item.Path) { $item.Path } else { '(未找到)' })) -ForegroundColor Red
+        Write-Host ("                    {0}" -f $item.Source) -ForegroundColor DarkGray
+    }
+    Write-Host ''
+    Write-Host '  1) 生成本机配置（推荐，只需一次）：' -ForegroundColor Yellow
+    Write-Host '       .\tools\publish.ps1 -TrainingRoot <训练仓库> -VocabRoot <vocab-app\dist> -WriteConfig'
+    Write-Host '     之后直接 .\tools\publish.ps1 -DryRun -Prune 即可。' -ForegroundColor Yellow
+    Write-Host '  2) 临时指定：.\tools\publish.ps1 -TrainingRoot <路径> -VocabRoot <路径>'
+    Write-Host '  3) 环境变量：$env:LEARNING_TRAINING_ROOT / $env:LEARN_ENGLISH_DIST'
+    Write-Host ''
+    Write-Host "  配置文件：$ConfigPath（不存在就算了，已 gitignore）" -ForegroundColor DarkGray
+    if ($tried.Count -gt 0) {
+        Write-Host ''
+        Write-Host '  自动探测尝试过：' -ForegroundColor DarkGray
+        $tried | Select-Object -First 12 | ForEach-Object { Write-Host "    $_" -ForegroundColor DarkGray }
+    }
+    exit 1
 }
 
 # ---------------------------------------------------------------- 发布清单

@@ -1,0 +1,6 @@
+# 本机专用，不入库
+tools/publish.local.json
+
+# 临时文件
+*.tmp
+*.bak-*

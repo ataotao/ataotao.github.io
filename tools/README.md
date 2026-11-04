@@ -49,6 +49,54 @@
 
 脚本按**文件名 + SHA256** 比对，只复制真正变了的文件，重复运行幂等（第二次必然「新增 0 · 更新 0」）。源目录或清单项不存在时会列出来并以退出码 1 结束。
 
+## 多台电脑（家里 / 公司）：路径不写死
+
+三个仓库在两台机器上的位置不一样，所以脚本里**没有任何绝对路径默认值**。源路径按这个顺序解析：
+
+1. **命令行参数**：`-TrainingRoot <路径>` / `-VocabRoot <路径>`（临时用）
+2. **本机配置**：`tools\publish.local.json`（**不入库**，`.gitignore` 已忽略）
+3. **环境变量**：`LEARNING_TRAINING_ROOT` / `LEARN_ENGLISH_DIST`
+4. **自动探测**：在仓库父目录、用户目录、`C:\learn`、`C:\work`、`D:\...` 等常见位置往下两层找——训练仓库认 `AGENTS.md`+`工具/`+`物理/`，vocab 认 `dist\index.html`。
+
+脚本启动时会打印本机名和每个来源的解析结果（带来源标签），例如：
+
+```
+本机：NUCBOX_K9
+  做题思维训练 : C:\work\my-work\learning-training  [配置文件（NUCBOX_K9）]
+  英语单词 dist: C:\learn\learn-english\word_table\vocab-app\dist  [配置文件（NUCBOX_K9）]
+```
+
+### 每台机器一次性设置（推荐）
+
+在**每台机器**上跑一次，把本机路径写死到自己的 `publish.local.json`：
+
+```powershell
+# 在公司电脑上（示例：把 <...> 换成那台机器上的实际路径）
+.\tools\publish.ps1 -TrainingRoot 'D:\repos\learning-training' `
+                    -VocabRoot    'D:\repos\learn-english\word_table\vocab-app\dist' `
+                    -WriteConfig
+```
+
+之后直接 `.\tools\publish.ps1 -DryRun -Prune` 即可，不用再带参数。换机器、搬目录后重跑一次 `-WriteConfig` 覆盖即可。
+
+### 一个配置文件管两台机器（可选）
+
+如果 `publish.local.json` 通过网盘/手动拷到两台机器，可以用 `machines` 按 `COMPUTERNAME` 分机器；没有匹配项时退回扁平配置：
+
+```json
+{
+  "machines": {
+    "NUCBOX_K9": { "training": "C:/work/my-work/learning-training", "vocab": "C:/learn/learn-english/word_table/vocab-app/dist" },
+    "COMPANY-PC": { "training": "D:/repos/learning-training", "vocab": "D:/repos/learn-english/word_table/vocab-app/dist" }
+  },
+  "training": "C:/work/my-work/learning-training",
+  "vocab": "C:/learn/learn-english/word_table/vocab-app/dist"
+}
+```
+
+样例见 `tools\publish.example.json`。找不到任何来源时，脚本会列出**已尝试的探测位置**和三种修法，并以退出码 1 结束（不会在错路径上“静默成功”）。
+
+
 ## 发布范围
 
 写在脚本顶部的 `$Jobs` 里，改清单即可增删。
@@ -91,7 +139,11 @@ Vite 8 实测不会清空 `dist`，历史构建产物会一直堆在里面；如
 | 参数 | 作用 |
 |---|---|
 | `-Only all\|vocab\|training` | 发布哪个来源，默认 `all` |
-| `-SourceRoot <path>` | 三个源文件夹的父目录，默认 `C:\陶宸欣` |
+| `-TrainingRoot <path>` | 训练仓库位置（临时覆盖，优先于配置） |
+| `-VocabRoot <path>` | vocab-app 的 `dist` 位置（临时覆盖，优先于配置） |
+| `-ConfigPath <path>` | 本机配置文件，默认 `tools\publish.local.json` |
+| `-WriteConfig` | 把当前解析到的路径写入本机配置（每台机器一次） |
+| `-SourceRoot <path>` | 旧用法：父目录按老结构推导（`<root>\learn-english\...`、`<root>\做题思维训练`） |
 | `-DryRun` | 只报告，不写文件、不提交 |
 | `-Prune` | 删除目标里源已删除的文件（英语侧按可达性裁剪） |
 | `-Commit` | 发布后在站点仓库提交（仅本次涉及的路径） |
