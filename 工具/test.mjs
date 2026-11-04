@@ -188,12 +188,13 @@ const CASES = {
       ok('解析里正确项高亮', $$('.whyrow.right').length===1);
       ok('判错记录进 P.paper', P.paper[q0.id] && P.paper[q0.id].wrong===1, JSON.stringify(P.paper[q0.id]));
       ok('答错后选项禁用', $$('#opts button').every(b=>b.disabled));
-      // 下一题 → 再上一题，已答状态要保留
+      // 下一题 → 再上一题：2026-11-03 起回看一律空白重做，要点「看上次的答案与解析」才给判分/解析
       document.querySelector('#pnx').click();
       ok('下一题换到第 2 题', S.paper.qi===1, 'qi='+S.paper.qi);
       document.querySelector('#pv').click();
-      ok('回到上一题仍显示解析', $$('.whyrow').length===4);
-      ok('回到上一题仍标记答案', !!document.querySelector('#opts button.c'));
+      ok('回到上一题先空白重做，并给「看上次的答案与解析」', $$('.whyrow').length===0 && !!document.querySelector('#ppeek'), 'whyrow='+$$('.whyrow').length);
+      document.querySelector('#ppeek').click();
+      ok('点开「看上次的答案与解析」后解析与正确项都在', $$('.whyrow').length===4 && !!document.querySelector('#opts button.c'), 'whyrow='+$$('.whyrow').length);
       // 答对
       document.querySelector('#pnx').click();
       const q1=PQ_BY(S.paper.queue[1]);
@@ -307,7 +308,9 @@ const CASES = {
       render();
       ok('恢复后停在原题', !!document.querySelector('.pstem') && S.paper.qi===1);
       document.querySelector('#pv').click();
-      ok('恢复后已答题仍有解析', $$('.whyrow').length===4, $$('.whyrow').length+' 条');
+      const blankN=$$('.whyrow').length, peekBtn=document.querySelector('#ppeek');
+      const peekN=peekBtn?(peekBtn.click(),$$('.whyrow').length):-1;
+      ok('恢复后已答题先空白重做，点「看上次的答案与解析」后解析还在', blankN===0 && peekN===4, '空白 '+blankN+' 条 / 点开后 '+peekN+' 条');
     }
   `,
 };

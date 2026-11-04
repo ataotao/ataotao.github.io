@@ -153,6 +153,14 @@ header{position:sticky;top:0;z-index:20;background:rgba(245,243,238,.95);backdro
 .tlh .x{flex:0 0 auto;background:none;border:0;color:var(--sub);font-size:12px;cursor:pointer;text-decoration:underline dotted;padding:2px 4px}
 .tlh .x:hover{color:var(--bad)}
 .tl .fx{margin:4px 0 0;padding:6px 6px;background:#fff;border-color:#f0e6d2;font-size:clamp(15px,3.8vw,20px);line-height:1.8}
+/* 例题条目在清单里直接给完整过程，别只放一行答案 */
+.tl .steps{margin-top:2px}
+.tl .steps .grp{font-size:12.5px;margin:10px 0 4px}
+.tl .steps .grp:first-child{margin-top:2px}
+.tl .steps .st{margin-bottom:6px}
+.tl .steps .fx{margin:2px 0 0;padding:5px 8px;background:#fff;border-color:#f0e6d2;
+  border-left:3px solid var(--acc-soft);text-align:left;font-size:clamp(14px,3.5vw,18px);line-height:1.75}
+.tl .steps .nt{font-size:12px;margin-top:3px}
 .tempty{font-size:13.5px;color:var(--sub);line-height:1.8;margin:8px 0 4px}
 
 /* ---------- 公式表 ---------- */
@@ -185,6 +193,7 @@ details.k .bd{padding:0 14px 14px}
 /* 遮住公式：整块糊住，点一下这张卡才揭开（不做 hover——鼠标一过就露等于没遮） */
 .maskcur .fx{filter:blur(10px);cursor:pointer;user-select:none;transition:filter .12s}
 .maskcur .tipbox,.maskcur .trapbox{filter:blur(7px);cursor:pointer;user-select:none;transition:filter .12s}
+.maskcur .steps .nt{filter:blur(6px);user-select:none;transition:filter .12s}
 .maskhint{background:#fff8e8;border:1px dashed #e6cf9d;border-radius:9px;padding:8px 12px;font-size:13px;color:#8a5a10;line-height:1.7;margin:10px 0 0}
 
 @media (max-width:520px){
@@ -252,8 +261,11 @@ details.k .bd{padding:0 14px 14px}
   body.print-today .todaybox{border:0;box-shadow:none;background:#fff;padding:0}
   body.print-today .todaybox h3{font-size:17px;color:#000}
   body.print-today .tl>li{break-inside:avoid;page-break-inside:avoid}
+  /* 例题条目带完整过程，可能比一页长：允许在步骤之间分页，单步不拆开 */
+  body.print-today .tl>li:has(.steps){break-inside:auto;page-break-inside:auto}
+  body.print-today .tl .st{break-inside:avoid;page-break-inside:avoid}
   /* 打印时不要糊的 */
-  .maskcur .fx,.maskcur .tipbox,.maskcur .trapbox{filter:none!important}
+  .maskcur .fx,.maskcur .tipbox,.maskcur .trapbox,.maskcur .steps .nt{filter:none!important}
   .maskhint{display:none!important}
 }
 </style>
@@ -416,6 +428,8 @@ function loadProg(){
 function saveProg(){ try{localStorage.setItem(SK,JSON.stringify(P));}catch(e){} }
 function rec(id,ok,mode){
   const p=P.cards[id]||(P.cards[id]={seen:0,ok:0,wrong:0,streak:0,last:0,mode:''});
+  /* 第一次作答（seen 0→1）时记下这一次有没有答对：面板算「首次正确率」用，已有值不覆盖 */
+  if(!p.seen&&p.firstOk==null)p.firstOk=ok?1:0;
   p.seen++;p.last=Date.now();p.mode=mode||p.mode;
   if(ok){p.ok++;p.streak=Math.min(9,p.streak+1);}else{p.wrong++;p.streak=0;}
   const d=todayKey(),t=P.days[d]||(P.days[d]={n:0,ok:0});
@@ -608,17 +622,23 @@ function nextCard(){
 }
 
 /* ---------------- 公式 + 口诀 + 易错（可复用） ---------------- */
+/* 例题的解题过程：背公式、今日必背清单共用，保证「答案」是完整过程而不是一行结论 */
+/* 分组（法一／法二）各自从 1 编号，两种解法是两道并列的完整过程，不是一条被切开的流水账 */
+function stepsHTML(c){
+  if(!c.steps||!c.steps.length)return '';
+  let n=0;
+  return '<div class="steps">'+c.steps.map(s=>{
+    if(s.h)n=0;
+    n++;
+    return (s.h?`<div class="grp">${esc(s.h)}</div>`:'')+
+      `<div class="st"><span class="n">${n}</span><span class="sb">${fxHTML(s.t,'sm')}${
+        s.note?`<div class="nt">${esc(s.note)}</div>`:''}</span></div>`;
+  }).join('')+'</div>';
+}
 function answerHTML(c,opts){
   const o=opts||{};
   let h='';
-  if(c.steps&&c.steps.length){
-    h+='<div class="steps">';
-    c.steps.forEach((s,idx)=>{
-      if(s.h)h+=`<div class="grp">${esc(s.h)}</div>`;
-      h+=`<div class="st"><span class="n">${idx+1}</span><span class="sb">${fxHTML(s.t,'sm')}${s.note?`<div class="nt">${esc(s.note)}</div>`:''}</span></div>`;
-    });
-    h+='</div>';
-  }
+  if(c.steps&&c.steps.length)h+=stepsHTML(c);
   if(c.table){
     h+=`<table class="tb" style="width:100%;border-collapse:collapse;margin:10px 0;font-size:13.5px">
       <thead><tr>${(c.table.head||[]).map(x=>`<th style="border:1px solid var(--line);background:var(--acc-soft);color:var(--acc);padding:6px 8px;text-align:left">${esc(x)}</th>`).join('')}</tr></thead>
@@ -664,7 +684,7 @@ function renderRecite(st,c){
       const v=b.dataset.v;
       if(v==='1')rec(c.id,true,'recite');
       else if(v==='0')rec(c.id,false,'recite');
-      else{const q2=getP(c.id);if(q2){q2.seen++;q2.streak=0;q2.last=Date.now();saveProg();}else{rec(c.id,false,'recite');}}
+      else{const q2=getP(c.id);if(q2){if(!q2.seen&&q2.firstOk==null)q2.firstOk=0;q2.seen++;q2.streak=0;q2.last=Date.now();saveProg();}else{rec(c.id,false,'recite');}}
       nextCard();
     });
   }
@@ -828,13 +848,13 @@ function todayBoxHTML(){
         <button id="tclear">全部取消</button>`
       :`<button id="tall">把 ★★核心 的标上来</button>`}</div></div>`;
   const body=arr.length?`<ol class="tl">${arr.map((c,i)=>{
-    const lv=level(c.id),f=fullTex(c);
+    const lv=level(c.id),f=fullTex(c),hasSteps=!!(c.steps&&c.steps.length);
     return `<li class="${MASKCUR?'maskcur':''}">
       <div class="tlh"><span class="no">${i+1}</span><span class="nm">${esc(c.name)}</span>
         <span class="lv lv${lv}">${lv===4?'待强化':LVTXT[lv]}</span>
         <button class="x" data-un="${c.id}" title="从今日必背里去掉">取消</button></div>
-      ${f?fxHTML(f):'<div class="hint">这条是表格，展开下面看。</div>'}
-      ${(c.steps&&c.steps.length)?`<div class="hint">这道题要写过程：两种方法的完整步骤在 ① 背公式 里点开看。</div>`:''}
+      ${hasSteps?stepsHTML(c):(f?fxHTML(f):'<div class="hint">这条是表格，展开下面看。</div>')}
+      ${hasSteps?`<div class="hint">法一、法二是同一道题的两种解法，最后都要落到同一个顶点坐标——答案必须一样。</div>`:''}
     </li>`;
   }).join('')}</ol>`:`<div class="tempty">还没有标。展开下面任意一条，点底部的「标为今日必背」加进来。</div>`;
   return `<div class="todaybox" id="todaybox">${head}${body}

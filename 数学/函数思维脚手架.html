@@ -6625,7 +6625,7 @@ function saveDB(){
 var S = {
   screen:'home', mode:'', queue:[], qi:0, qs:null, qSwitch:false,
   di:0, dSel:null, dOk:null, dRight:0, dWrong:[],
-  packId:null, pq:null, importMsg:'',
+  packId:null, pq:null, importMsg:'', recMsg:'',
   libI:0, libOpen:{}, libList:false, vs:null,
   sess:{n:0, ok:0, dims:{}}
 };
@@ -7903,6 +7903,19 @@ function scoreReportHTML(){
   return h.join('');
 }
 
+/* 记录出入口卡片：TXT 旧导出、JSON 导出/导入、清空。
+   空报告页也要显示（什么都没有时才最需要「导入记录」把数据恢复回来）。 */
+function recordsCardHTML(){
+  return '<div class="card"><div class="row">' +
+         '<button class="btn-mini" data-act="export">导出记录（TXT）</button>' +
+         '<button class="btn-mini" data-act="exportjson">导出记录（JSON）</button>' +
+         '<label class="btn-mini" style="cursor:pointer">导入记录（JSON）' +
+         '<input type="file" id="recfile" accept=".json,application/json" style="display:none"></label>' +
+         '<button class="btn-mini" data-act="reset">清空记录</button><span class="spacer"></span>' +
+         '<span class="tiny muted">记录只存在这台电脑的浏览器里，换电脑/清缓存前先导出 JSON</span></div>' +
+         '<div id="recmsg">' + (S.recMsg || '') + '</div></div>';
+}
+
 function viewReport(){
   var st = stats(), total = 0, ok = 0;
   Object.keys(st).forEach(function(k){ total += st[k].n; ok += st[k].ok; });
@@ -7911,6 +7924,7 @@ function viewReport(){
   if(total === 0 && !hasPaper){
     h.push('<div class="card"><div class="empty-state">还没有数据。<br>先做 1～2 题引导训练，或到「试卷练习」录一次得分，报告才有东西可看。</div>' +
            '<div class="row" style="justify-content:center"><button class="btn btn-primary" data-act="start" data-mode="guide">去引导训练</button></div></div>');
+    h.push(recordsCardHTML());
     return h.join('');
   }
   if(total > 0){
@@ -8030,9 +8044,7 @@ function viewReport(){
     h.push('</div>');
   }
 
-  h.push('<div class="card"><div class="row"><button class="btn-mini" data-act="export">导出记录</button>' +
-         '<button class="btn-mini" data-act="reset">清空记录</button><span class="spacer"></span>' +
-         '<span class="tiny muted">记录只存在这台电脑的浏览器里</span></div></div>');
+  h.push(recordsCardHTML());
   return h.join('');
 }
 
@@ -8710,6 +8722,87 @@ function downloadText(name, text, mime){
   document.body.appendChild(a); a.click();
   setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); }, 500);
 }
+/* ---------- 整份记录：JSON 导出 / 导入（备份、换电脑用） ----------
+   导出格式固定为 { schema, subject, tool, exportedAt, data: DB }，
+   data 就是 localStorage 键 fn_scaffold_v1 的原对象，整份带走、不裁剪。
+   导入是「整份覆盖」：校验全部通过才写入，任何一条不合格都不碰现有记录。 */
+var RECORD_SCHEMA = 'lt.practice-records/1';
+function todayStr(){
+  var d = new Date(), p = function(n){ return (n < 10 ? '0' : '') + n; };
+  return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate());
+}
+function exportRecordsJSON(){
+  var payload = {
+    schema: RECORD_SCHEMA,
+    subject: '数学',
+    tool: '函数思维脚手架',
+    exportedAt: new Date().toISOString(),
+    data: DB                                      /* 原对象整份导出：log/recs/drill/paper/packs/lib/vrec/skipped */
+  };
+  downloadText('数学-函数脚手架-记录-' + todayStr() + '.json',
+               JSON.stringify(payload, null, 2), 'application/json');
+  flash('已导出 JSON：作答日志 ' + DB.log.length + ' 条，做题记录 ' + DB.recs.length + ' 条。');
+}
+function parseRecordsFile(obj){
+  var errors = [];
+  if(!obj || typeof obj !== 'object' || Array.isArray(obj))
+    return {errors:['文件内容不是 JSON 对象（应为本页「导出记录（JSON）」得到的文件）']};
+  if(obj.schema != null && obj.schema !== RECORD_SCHEMA)
+    errors.push('schema 不对：应为 ' + RECORD_SCHEMA + '，实际是 ' + String(obj.schema));
+  if(obj.subject != null && obj.subject !== '数学')
+    errors.push('这是「' + String(obj.subject) + '」的记录文件，不能导入到数学练习');
+  var data = obj.data;
+  /* 兼容老文件：没有 data 包装、直接就是 DB 本体 */
+  if(data === undefined && Array.isArray(obj.log) && Array.isArray(obj.recs)) data = obj;
+  if(!data || typeof data !== 'object' || Array.isArray(data)){
+    errors.push('缺少 data 对象（记录本体）');
+    return {errors:errors};
+  }
+  if(!Array.isArray(data.log)) errors.push('data.log 必须是数组');
+  if(!Array.isArray(data.recs)) errors.push('data.recs 必须是数组');
+  ['drill', 'paper', 'packs', 'vrec', 'skipped'].forEach(function(k){
+    if(data[k] != null && !Array.isArray(data[k])) errors.push('data.' + k + ' 必须是数组');
+  });
+  if(data.lib != null && (typeof data.lib !== 'object' || Array.isArray(data.lib)))
+    errors.push('data.lib 必须是对象（{题id: 变式状态}）');
+  if(errors.length) return {errors:errors};
+  return {errors:[], data:data};
+}
+function recMsgHTML(ok, title, lines){
+  return '<div class="fb ' + (ok ? 'ok' : 'no') + '" style="margin-top:10px"><h4>' + title + '</h4>' +
+         (lines && lines.length ? '<ul>' + lines.map(function(x){ return '<li>' + esc(x) + '</li>'; }).join('') + '</ul>' : '') +
+         '</div>';
+}
+function importRecordsJSON(raw){
+  var obj;
+  try{
+    obj = JSON.parse(raw);
+  }catch(e){
+    S.recMsg = recMsgHTML(false, '✗ 导入失败：不是合法的 JSON', ['解析错误：' + e.message, '现有记录没有改动。']);
+    render();
+    return S.recMsg;
+  }
+  var r = parseRecordsFile(obj);
+  if(r.errors.length){
+    S.recMsg = recMsgHTML(false, '✗ 记录文件不符合格式，没有导入',
+                          r.errors.slice(0, 20).concat(['现有记录没有改动。']));
+    render();
+    return S.recMsg;
+  }
+  /* 整份覆盖：以空 DB 为底，只盖文件里出现的字段（与物理脚手架 replaceAll 同语义） */
+  var blank = {log:[], recs:[], drill:[], paper:[], packs:[], lib:{}, vrec:[], skipped:[]};
+  for(var k in blank) if(r.data[k] != null) blank[k] = r.data[k];
+  DB = blank;
+  saveDB();
+  if(window.__APP__) window.__APP__.DB = DB;     /* 调试钩子跟着指向新对象 */
+  S.qs = null; S.pq = null; S.vs = null;          /* 旧的内存进度作废，避免指向已覆盖的数据 */
+  S.recMsg = recMsgHTML(true, '✓ 导入成功（整份覆盖）',
+    ['作答日志 ' + DB.log.length + ' 条，做题记录 ' + DB.recs.length + ' 条，闪练 ' + DB.drill.length +
+     ' 轮，试卷作答 ' + DB.paper.length + ' 条，导入题包 ' + DB.packs.length + ' 个。']);
+  render();
+  return S.recMsg;
+}
+
 function doImport(raw){
   var r = importPacksText(raw);
   if(r.ok){
@@ -8975,6 +9068,18 @@ document.addEventListener('change', function(e){
       flash('文件已读入（' + f.name + '），点「校验并导入」。');
     };
     r.readAsText(f, 'utf-8');
+  }
+  if(el && el.id === 'recfile'){
+    var rf = el.files && el.files[0];
+    if(!rf) return;
+    var rr = new FileReader();
+    rr.onload = function(){ importRecordsJSON(String(rr.result)); };
+    rr.onerror = function(){
+      S.recMsg = recMsgHTML(false, '✗ 导入失败：文件读不出来', ['请重新选择文件，现有记录没有改动。']);
+      render();
+    };
+    rr.readAsText(rf, 'utf-8');
+    el.value = '';                       /* 允许再次选同一个文件 */
   }
 });
 
@@ -9264,6 +9369,7 @@ function handleAct(el){
     }
     return;
   }
+  if(act === 'exportjson'){ exportRecordsJSON(); return; }
   if(act === 'export'){
     var lines = ['函数思维脚手架 · 训练记录', '导出时间：' + new Date().toLocaleString()];
     lines.push('', '== 各环节一次答对率 ==');
@@ -9303,7 +9409,9 @@ window.__APP__ = {BANK:BANK, DRILLS:DRILLS, PACKS:PACKS, DIMS:DIMS, DIMNAME:DIMN
                   importPacksText:importPacksText, packStat:packStat,
                   orderCheck:orderCheck, orderFlex:orderFlex, guideJump:guideJump, viewTrain:viewTrain,
                   handleAct:handleAct, submitStep:submitStep, loadQuestion:loadQuestion,
-                  ideaHTML:ideaHTML, finalize:finalize, viewReport:viewReport};
+                  ideaHTML:ideaHTML, finalize:finalize, viewReport:viewReport,
+                  exportRecordsJSON:exportRecordsJSON, importRecordsJSON:importRecordsJSON,
+                  parseRecordsFile:parseRecordsFile, RECORD_SCHEMA:RECORD_SCHEMA};
 </script>
 </body>
 </html>

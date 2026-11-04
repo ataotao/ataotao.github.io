@@ -177,6 +177,7 @@ function parseRecord(value, fileName, meta) {
   if (isFormula(value)) return parseCoreCards(value, '公式模板', '数学', meta, '公式记背')
   if (isCoreCards(value)) return parseCoreCards(value, '核心考点', null, meta, null, fileName)
   if (isFnScaffold(value)) return parseFnScaffold(value)
+  if (isEnglishStore(value)) return parseEnglish(value)
   if (isJiji(value)) return parseJiji(value)
   return null
 }
@@ -201,14 +202,36 @@ function isFnScaffold(value) {
   return Array.isArray(value.log) && Array.isArray(value.recs) && (value.paper || value.drill)
 }
 
+/** 函数脚手架的新导出：统一格式外壳 + `data` 里是原始 DB。 */
+function isWrappedFnScaffold(value) {
+  const data = value.data
+  return !!data && Array.isArray(data.log) && Array.isArray(data.recs)
+}
+
 function isJiji(value) {
   return !!value.firstOk
+}
+
+/** 英语过关练习：store 里是 picks/fills/stat/at/atList，按题 id（`U1-5`）索引。 */
+function isEnglishStore(value) {
+  const data = value.data || value
+  if (!data || typeof data !== 'object') return false
+  return !data.cards && (!!data.stat || !!data.picks || !!data.fills)
 }
 
 // ------------------------------------------------------------ 各格式
 
 /** 统一中间格式（今后各科直接导出这个，插件优先吃它）。 */
 function parseNormalized(value) {
+  // 有的训练器数据层很细（函数脚手架 / 英语），只套一层统一外壳、`data` 里仍是原始 store。
+  if (isWrappedFnScaffold(value)) {
+    return parseFnScaffold(value.data, {
+      subject: value.subject,
+      tool: value.tool,
+      at: value.exportedAt || null,
+    })
+  }
+  if (isEnglishStore(value)) return parseEnglish(value)
   const items = Array.isArray(value.items) ? value.items : []
   let attempts = 0
   let correct = 0
@@ -319,12 +342,17 @@ function parseCoreCards(value, tool, fallbackSubject, meta, forcedSubject, fileN
   let correct = 0
   let last = null
   const weak = new Map()
+  const firstTry = { ok: 0, total: 0 }
 
   for (const [cardId, record] of Object.entries(cards)) {
     const seen = number(record?.seen)
     const ok = number(record?.ok)
     attempts += seen
     correct += ok
+    if (record && (record.firstOk === 0 || record.firstOk === 1)) {
+      firstTry.total += 1
+      if (record.firstOk === 1) firstTry.ok += 1
+    }
     const wrong = number(record?.wrong)
     if (wrong > 0) {
       const unit = meta.cardUnits.get(cardId)?.unit || cardId
@@ -336,6 +364,10 @@ function parseCoreCards(value, tool, fallbackSubject, meta, forcedSubject, fileN
     for (const [questionId, record] of Object.entries(data.paper)) {
       attempts += number(record?.seen)
       correct += number(record?.ok)
+      if (record && (record.firstOk === 0 || record.firstOk === 1)) {
+        firstTry.total += 1
+        if (record.firstOk === 1) firstTry.ok += 1
+      }
       const wrong = number(record?.wrong)
       if (wrong > 0) weak.set('套卷·选择题', (weak.get('套卷·选择题') || 0) + wrong)
       if (record?.last) last = later(last, new Date(number(record.last)).toISOString())
@@ -351,18 +383,37 @@ function parseCoreCards(value, tool, fallbackSubject, meta, forcedSubject, fileN
     weak: topWeak(weak),
     days: data.days || null,
     last,
+    firstTry,
   })
 }
 
-/** 函数思维脚手架（当前无 JSON 导出；若将来导出 DB，这段直接能用）。 */
-function parseFnScaffold(value) {
+/** 函数思维脚手架：逐次事件最细（log/recs/paper 都有毫秒时间戳），按天计数从事件里现算。 */
+function parseFnScaffold(value, options = {}) {
   const log = Array.isArray(value.log) ? value.log : []
   const recs = Array.isArray(value.recs) ? value.recs : []
+  const paper = Array.isArray(value.paper) ? value.paper : []
   let attempts = log.length
   let correct = log.filter((item) => item?.ok === true).length
   let last = null
-  for (const item of log) if (item?.ts) last = later(last, new Date(number(item.ts)).toISOString())
-  for (const item of recs) if (item?.ts) last = later(last, new Date(number(item.ts)).toISOString())
+  const stamps = []
+  for (const item of log) {
+    if (item?.ts) {
+      stamps.push(number(item.ts))
+      last = later(last, new Date(number(item.ts)).toISOString())
+    }
+  }
+  for (const item of recs) {
+    if (item?.ts) {
+      stamps.push(number(item.ts))
+      last = later(last, new Date(number(item.ts)).toISOString())
+    }
+  }
+  for (const item of paper) {
+    if (item?.ts) {
+      stamps.push(number(item.ts))
+      last = later(last, new Date(number(item.ts)).toISOString())
+    }
+  }
   const weak = new Map()
   for (const item of recs) {
     for (const dim of Array.isArray(item?.failed) ? item.failed : []) {
@@ -374,19 +425,95 @@ function parseFnScaffold(value) {
     correct += number(round?.right)
   }
   return finish({
-    subject: '数学',
-    tool: '函数思维脚手架',
-    at: null,
+    subject: options.subject || '数学',
+    tool: options.tool || '函数思维脚手架',
+    at: options.at || null,
     attempts,
     correct,
     weak: topWeak(weak),
-    days: value.days || null,
+    days: value.days || daysFrom(stamps),
     last,
   })
 }
 
-/** 数学·今晚急救包：st.log 是逐题次数，firstOk 是「第一次就答对」。 */
-function parseJiji(value) {
+/** 毫秒时间戳 → 本地日期计数（只用于没有 days 字段的训练器）。 */
+function daysFrom(stamps) {
+  const days = {}
+  for (const stamp of stamps) {
+    if (!stamp) continue
+    const date = new Date(stamp)
+    if (Number.isNaN(date.getTime())) continue
+    const key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`
+    const current = days[key] || { n: 0, ok: 0 }
+    current.n += 1
+    days[key] = current
+  }
+  return Object.keys(days).length ? days : null
+}
+
+/**
+ * 英语过关练习：`stat` 是逐题 `att/ok/wrong`，`at`/`atList` 是本题作答时间。
+ * 填空判分不落盘，所以正确率口径是「工具里判过的作答」，与原卷批改无关。
+ */
+function parseEnglish(value) {
+  const data = value.data || value
+  const stat = data.stat && typeof data.stat === 'object' ? data.stat : {}
+  let attempts = 0
+  let correct = 0
+  const weak = new Map()
+  for (const [id, record] of Object.entries(stat)) {
+    attempts += number(record?.att)
+    correct += number(record?.ok)
+    const wrong = number(record?.wrong)
+    if (wrong > 0) {
+      const unit = englishUnitOf(id)
+      weak.set(unit, (weak.get(unit) || 0) + wrong)
+    }
+  }
+
+  const stamps = new Set()
+  for (const list of Object.values(data.atList || {})) {
+    if (!Array.isArray(list)) continue
+    for (const stamp of list) if (typeof stamp === 'string') stamps.add(stamp)
+  }
+  for (const stamp of Object.values(data.at || {})) {
+    if (typeof stamp === 'string') stamps.add(stamp)
+  }
+  const sorted = [...stamps].sort()
+
+  return finish({
+    subject: value.subject || '英语',
+    tool: value.tool || '九上英语过关练习',
+    at: value.exportedAt || null,
+    attempts,
+    correct,
+    weak: topWeak(weak),
+    days: daysFromIso(sorted),
+    last: sorted.length ? sorted[sorted.length - 1] : null,
+  })
+}
+
+/** 英语题 id 形如 `U1-5`，取前段当单元。 */
+function englishUnitOf(id) {
+  const match = /^(U\d+)/i.exec(String(id))
+  return match ? match[1].toUpperCase() : '其他'
+}
+
+/** ISO 时间戳 → 本地日期计数。 */
+function daysFromIso(stamps) {
+  const days = {}
+  for (const stamp of stamps) {
+    const date = new Date(stamp)
+    if (Number.isNaN(date.getTime())) continue
+    const key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`
+    const current = days[key] || { n: 0 }
+    current.n += 1
+    days[key] = current
+  }
+  return Object.keys(days).length ? days : null
+}
+
+/** 数学·今晚急救包：st.log 是逐题次数，firstOk 是「第一次就答对」。 */function parseJiji(value) {
   let attempts = 0
   let correct = 0
   let last = null
@@ -416,6 +543,13 @@ function parseJiji(value) {
 function finish(record) {
   const attempts = number(record.attempts)
   const correct = Math.min(number(record.correct), attempts)
+  const firstTry = record.firstTry && record.firstTry.total > 0
+    ? {
+        ok: number(record.firstTry.ok),
+        total: number(record.firstTry.total),
+        rate: Math.round((number(record.firstTry.ok) / number(record.firstTry.total)) * 100),
+      }
+    : null
   return {
     subject: record.subject,
     tool: record.tool,
@@ -423,6 +557,7 @@ function finish(record) {
     attempts,
     correct,
     accuracy: attempts ? Math.round((correct / attempts) * 100) : 0,
+    firstTry,
     weak: record.weak || [],
     days: record.days || null,
     last: record.last || record.at || null,
@@ -447,9 +582,15 @@ function aggregate(parsed) {
       last: null,
       tools: new Set(),
       weak: new Map(),
+      firstTryOk: 0,
+      firstTryTotal: 0,
     }
     current.attempts += record.attempts || 0
     current.correct += record.correct || 0
+    if (record.firstTry) {
+      current.firstTryOk += record.firstTry.ok
+      current.firstTryTotal += record.firstTry.total
+    }
     if (record.tool) current.tools.add(record.tool)
     if (!current.last || (record.at && record.at > current.last)) current.last = record.at || current.last
     for (const item of record.weak || []) {
@@ -462,6 +603,13 @@ function aggregate(parsed) {
     attempts: item.attempts,
     correct: item.correct,
     accuracy: item.attempts ? Math.round((item.correct / item.attempts) * 100) : 0,
+    firstTry: item.firstTryTotal
+      ? {
+          ok: item.firstTryOk,
+          total: item.firstTryTotal,
+          rate: Math.round((item.firstTryOk / item.firstTryTotal) * 100),
+        }
+      : null,
     last: item.last,
     tools: [...item.tools],
     weak: [...item.weak.entries()]

@@ -363,6 +363,8 @@ function loadSess(){
 function clearSess(){try{localStorage.removeItem(SSK);}catch(e){}const el=$('#resume');if(el){el.hidden=true;el.innerHTML='';}}
 function rec(cardId,ok,mode,opts){
   const p=P.cards[cardId]||(P.cards[cardId]={seen:0,ok:0,wrong:0,streak:0,last:0,mode:''});
+  /* 第一次作答（seen 0→1）时记下这一次有没有答对：面板算「首次正确率」用，已有值不覆盖 */
+  if(!p.seen&&p.firstOk==null)p.firstOk=ok?1:0;
   p.seen++;p.last=Date.now();p.mode=mode||p.mode;
   if(ok){p.ok++;p.streak=Math.min(9,p.streak+1);}else{p.wrong++;p.streak=0;}
   if(opts&&opts.skim)p.skim=(p.skim||0)+1;
@@ -737,7 +739,7 @@ function renderRecite(st,c){
       const v=b.dataset.v;
       if(v==='1'){rec(c.id,true,'recite');}
       else if(v==='0'){rec(c.id,false,'recite');}
-      else{const q=getP(c.id);if(q){q.seen++;q.streak=0;q.last=Date.now();saveProg();}else{rec(c.id,false,'recite');}}
+      else{const q=getP(c.id);if(q){if(!q.seen&&q.firstOk==null)q.firstOk=0;q.seen++;q.streak=0;q.last=Date.now();saveProg();}else{rec(c.id,false,'recite');}}
       nextCard();
     });
   }
