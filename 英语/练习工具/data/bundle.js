@@ -1,5 +1,47 @@
+window.__ID_MIGRATION = {
+ "U3-1": "U3-r1",
+ "U3-2": "U3-r2",
+ "U3-3": "U3-r3",
+ "U3-4": "U3-r4",
+ "U3-5": "U3-r5",
+ "U3-6": "U3-r6",
+ "U3-7": "U3-r7",
+ "U3-8": "U3-r8",
+ "U3-9": "U3-r9",
+ "U3-10": "U3-r10",
+ "U3-11": "U3-r11",
+ "U3-12": "U3-r12",
+ "U3-13": "U3-r13",
+ "U3-14": "U3-g1",
+ "U3-15": "U3-g2",
+ "U3-16": "U3-g3",
+ "U3-17": "U3-g4",
+ "U4-1": "U4-m1",
+ "U4-2": "U4-m2",
+ "U4-3": "U4-c1",
+ "U4-4": "U4-c2",
+ "U4-5": "U4-c3",
+ "U4-6": "U4-c4",
+ "U4-7": "U4-c5",
+ "U4-8": "U4-c6",
+ "U4-9": "U4-s1",
+ "U4-10": "U4-s2",
+ "U4-11": "U4-s3",
+ "U4-12": "U4-s4",
+ "U4-13": "U4-s5",
+ "U4-14": "U4-t1",
+ "U4-15": "U4-t2",
+ "U4-16": "U4-t3",
+ "U3-18": "U2-gf1",
+ "U3-19": "U2-gf2",
+ "U3-20": "U2-gf3",
+ "U3-21": "U2-gf4",
+ "U3-22": "U2-gf5",
+ "U3-23": "U2-gf6",
+ "U2-p26": "U1-26",
+ "U2-p27": "U1-27"
+};
 window.QUIZ_DATA = {
- "generatedAt": "2026-11-04T09:22:33.344Z",
  "units": [
   {
    "unit": "U1",
@@ -23,7 +65,8 @@ window.QUIZ_DATA = {
       "fact"
      ],
      "note": "横线手写词辨为 fact（卷面横线前未印冠词，按字面转写）",
-     "fields": 1
+     "fields": 1,
+     "section": null
     },
     {
      "no": 2,
@@ -36,7 +79,8 @@ window.QUIZ_DATA = {
       "outstanding"
      ],
      "note": "手写词辨为 outstanding（语境疑应为 outdated，按字面转写）",
-     "fields": 1
+     "fields": 1,
+     "section": null
     },
     {
      "no": 3,
@@ -49,7 +93,8 @@ window.QUIZ_DATA = {
       "beyond"
      ],
      "note": "手写单词潦草，辨为 beyond（首字母 b 清晰，后半辨读）",
-     "fields": 1
+     "fields": 1,
+     "section": null
     },
     {
      "no": 4,
@@ -62,7 +107,8 @@ window.QUIZ_DATA = {
       "confident"
      ],
      "note": "手写词辨为 confident",
-     "fields": 1
+     "fields": 1,
+     "section": null
     },
     {
      "no": 5,
@@ -89,7 +135,8 @@ window.QUIZ_DATA = {
      ],
      "marked": "B",
      "handwriting": null,
-     "note": "题号左侧页边手写 B；选项 B. It 处有手画圈，与页边一致"
+     "note": "题号左侧页边手写 B；选项 B. It 处有手画圈，与页边一致",
+     "section": null
     },
     {
      "no": 6,
@@ -116,7 +163,8 @@ window.QUIZ_DATA = {
      ],
      "marked": "A",
      "handwriting": null,
-     "note": "题号左侧页边手写 A（其横画长长延伸，压到选项行）"
+     "note": "题号左侧页边手写 A（其横画长长延伸，压到选项行）",
+     "section": null
     },
     {
      "no": 7,
@@ -143,7 +191,8 @@ window.QUIZ_DATA = {
      ],
      "marked": "B",
      "handwriting": null,
-     "note": "题号左侧页边手写 B（草写形似 ß/ℬ）"
+     "note": "题号左侧页边手写 B（草写形似 ß/ℬ）",
+     "section": null
     },
     {
      "no": 8,
@@ -170,7 +219,8 @@ window.QUIZ_DATA = {
      ],
      "marked": "B",
      "handwriting": null,
-     "note": "题号左侧页边手写 B（卷面为英式拼写 practises）"
+     "note": "题号左侧页边手写 B（卷面为英式拼写 practises）",
+     "section": null
     },
     {
      "no": 9,
@@ -197,7 +247,8 @@ window.QUIZ_DATA = {
      ],
      "marked": "C",
      "handwriting": null,
-     "note": "题号左侧页边手写 C；选项 C 被手画圈，与页边一致"
+     "note": "题号左侧页边手写 C；选项 C 被手画圈，与页边一致",
+     "section": null
     },
     {
      "no": 10,
@@ -224,7 +275,8 @@ window.QUIZ_DATA = {
      ],
      "marked": "C",
      "handwriting": null,
-     "note": "题号左侧页边手写 C（形近圆弧）；选项 C 被圈，A、B 有划线"
+     "note": "题号左侧页边手写 C（形近圆弧）；选项 C 被圈，A、B 有划线",
+     "section": null
     },
     {
      "no": 11,
@@ -251,7 +303,8 @@ window.QUIZ_DATA = {
      ],
      "marked": "B",
      "handwriting": null,
-     "note": "题号左侧页边手写 B"
+     "note": "题号左侧页边手写 B",
+     "section": null
     },
     {
      "no": 12,
@@ -278,7 +331,8 @@ window.QUIZ_DATA = {
      ],
      "marked": "D",
      "handwriting": null,
-     "note": "题号左侧页边手写字形辨为 B（与 7/8/11 题同一草写体）；但选项区 A、B 前有划线、D 前有类似勾选记号，疑学生最终改选 D，页边字母与选项标记不一致 页边原写 B，选项区 A/B 被划掉、D 前有勾，按最终作答记 D（用户确认）。"
+     "note": "题号左侧页边手写字形辨为 B（与 7/8/11 题同一草写体）；但选项区 A、B 前有划线、D 前有类似勾选记号，疑学生最终改选 D，页边字母与选项标记不一致 页边原写 B，选项区 A/B 被划掉、D 前有勾，按最终作答记 D（用户确认）。",
+     "section": null
     },
     {
      "no": 13,
@@ -291,7 +345,8 @@ window.QUIZ_DATA = {
       "as necessary as"
      ],
      "note": null,
-     "fields": 1
+     "fields": 1,
+     "section": null
     },
     {
      "no": 14,
@@ -304,7 +359,8 @@ window.QUIZ_DATA = {
       "need to be watered"
      ],
      "note": null,
-     "fields": 1
+     "fields": 1,
+     "section": null
     },
     {
      "no": 15,
@@ -317,7 +373,8 @@ window.QUIZ_DATA = {
       "In addition to watching"
      ],
      "note": null,
-     "fields": 1
+     "fields": 1,
+     "section": null
     },
     {
      "no": 16,
@@ -330,7 +387,8 @@ window.QUIZ_DATA = {
       "having a talent"
      ],
      "note": "横线上先写 being talented 并划掉，上方改写为 having a talent（空后 for 为印刷体） 横线上先写 being talented 被划掉，改写 having a talent；此处只保留最终作答。",
-     "fields": 1
+     "fields": 1,
+     "section": null
     },
     {
      "no": 17,
@@ -344,7 +402,8 @@ window.QUIZ_DATA = {
       "that"
      ],
      "note": "句首两处横线上手写 It is fitting；and 后横线写 that；their spirits 之后的横线未填写",
-     "fields": 3
+     "fields": 3,
+     "section": null
     },
     {
      "no": 18,
@@ -358,7 +417,8 @@ window.QUIZ_DATA = {
       "on her own"
      ],
      "note": "第二个空移至下一行行首，学生写 on her own",
-     "fields": 2
+     "fields": 2,
+     "section": null
     },
     {
      "no": 19,
@@ -385,7 +445,8 @@ window.QUIZ_DATA = {
      ],
      "marked": "A",
      "handwriting": null,
-     "note": "题号左侧页边手写 A；选项 A 印刷为斜杠 /（即不填）"
+     "note": "题号左侧页边手写 A；选项 A 印刷为斜杠 /（即不填）",
+     "section": null
     },
     {
      "no": 20,
@@ -412,7 +473,8 @@ window.QUIZ_DATA = {
      ],
      "marked": "C",
      "handwriting": null,
-     "note": "题号左侧页边手写 C"
+     "note": "题号左侧页边手写 C",
+     "section": null
     },
     {
      "no": 21,
@@ -439,7 +501,8 @@ window.QUIZ_DATA = {
      ],
      "marked": "B",
      "handwriting": null,
-     "note": "题号左侧页边手写 B"
+     "note": "题号左侧页边手写 B",
+     "section": null
     },
     {
      "no": 22,
@@ -466,7 +529,8 @@ window.QUIZ_DATA = {
      ],
      "marked": "B",
      "handwriting": null,
-     "note": "题号左侧页边手写 B"
+     "note": "题号左侧页边手写 B",
+     "section": null
     },
     {
      "no": 23,
@@ -493,7 +557,8 @@ window.QUIZ_DATA = {
      ],
      "marked": "C",
      "handwriting": null,
-     "note": "题号左侧页边手写 C"
+     "note": "题号左侧页边手写 C",
+     "section": null
     },
     {
      "no": 24,
@@ -520,7 +585,8 @@ window.QUIZ_DATA = {
      ],
      "marked": "B",
      "handwriting": null,
-     "note": "题号左侧页边手写 B"
+     "note": "题号左侧页边手写 B",
+     "section": null
     },
     {
      "no": 25,
@@ -547,7 +613,8 @@ window.QUIZ_DATA = {
      ],
      "marked": "A",
      "handwriting": null,
-     "note": "选项印在下一页首行（页2 顶部）；题干 certain ___ … unsure ___ → that; whether，作 D"
+     "note": "选项印在下一页首行（页2 顶部）；题干 certain ___ … unsure ___ → that; whether，作 D",
+     "section": null
     },
     {
      "no": 26,
@@ -558,7 +625,8 @@ window.QUIZ_DATA = {
      "marked": null,
      "handwriting": null,
      "note": "本页属 U1（跨页题）：题干在页1 末、题号在页2 顶部",
-     "fields": 2
+     "fields": 2,
+     "section": null
     },
     {
      "no": 27,
@@ -569,7 +637,8 @@ window.QUIZ_DATA = {
      "marked": null,
      "handwriting": null,
      "note": "本页属 U1（跨页题）：题干在页1 末、题号在页2 顶部",
-     "fields": 2
+     "fields": 2,
+     "section": null
     }
    ],
    "key": {
@@ -977,7 +1046,6 @@ window.QUIZ_DATA = {
       "hows"
      ],
      "note": "横线前已有印刷字母 s，学生手写补 hows，合成 shows（应为 seems）。",
-     "paperNo": 1,
      "fields": 1
     },
     {
@@ -991,7 +1059,6 @@ window.QUIZ_DATA = {
      "marked": null,
      "handwriting": null,
      "note": "横线空白，未作答。",
-     "paperNo": 2,
      "fields": 1
     },
     {
@@ -1007,7 +1074,6 @@ window.QUIZ_DATA = {
       "[看不清]"
      ],
      "note": "横线前印刷字母为 in（放大可辨 i+n）；横线处手写被重涂、笔画重叠，无法辨认（起笔似 mag…）。 印刷前缀被手写覆盖，in（→in ignorance of?）与 ig（→ignorance）均有可能，故不给答案。",
-     "paperNo": 3,
      "fields": 1
     },
     {
@@ -1023,7 +1089,6 @@ window.QUIZ_DATA = {
       "[看不清]"
      ],
      "note": "手写压在横线上并向右下与下一行印刷 by 重叠，形似 disappearing/disappeared，无法确认。",
-     "paperNo": 4,
      "fields": 1
     },
     {
@@ -1053,8 +1118,7 @@ window.QUIZ_DATA = {
      ],
      "marked": "B",
      "handwriting": null,
-     "note": "题号左侧页边手写大写 B。",
-     "paperNo": 5
+     "note": "题号左侧页边手写大写 B。"
     },
     {
      "id": "m6",
@@ -1083,8 +1147,7 @@ window.QUIZ_DATA = {
      ],
      "marked": "C",
      "handwriting": null,
-     "note": "6 题号左侧页边为 C；其下方（第 6 题选项行左端）另有一处 B 形笔迹，归属不确定。",
-     "paperNo": 6
+     "note": "6 题号左侧页边为 C；其下方（第 6 题选项行左端）另有一处 B 形笔迹，归属不确定。"
     },
     {
      "id": "m7",
@@ -1113,8 +1176,7 @@ window.QUIZ_DATA = {
      ],
      "marked": "B",
      "handwriting": null,
-     "note": "该题号附近页边有三处笔迹：上方一处 B；7 题号左侧一个 C 被长斜线划掉；其下一行（选项行）左端又有一个 C。综合判为改答，取 B，存疑。",
-     "paperNo": 7
+     "note": "该题号附近页边有三处笔迹：上方一处 B；7 题号左侧一个 C 被长斜线划掉；其下一行（选项行）左端又有一个 C。综合判为改答，取 B，存疑。"
     },
     {
      "id": "m8",
@@ -1143,8 +1205,7 @@ window.QUIZ_DATA = {
      ],
      "marked": "B",
      "handwriting": null,
-     "note": "8 题号左侧页边为 B（笔迹夸张带斜划）；其上一行（第 7 题选项行）左端另有一个 C，归属不确定。",
-     "paperNo": 8
+     "note": "8 题号左侧页边为 B（笔迹夸张带斜划）；其上一行（第 7 题选项行）左端另有一个 C，归属不确定。"
     },
     {
      "id": "m9",
@@ -1173,8 +1234,7 @@ window.QUIZ_DATA = {
      ],
      "marked": "B",
      "handwriting": null,
-     "note": "题号左侧页边手写大写 B。",
-     "paperNo": 9
+     "note": "题号左侧页边手写大写 B。"
     },
     {
      "id": "m10",
@@ -1203,8 +1263,7 @@ window.QUIZ_DATA = {
      ],
      "marked": "C",
      "handwriting": null,
-     "note": "题号左侧页边手写大写 C。",
-     "paperNo": 10
+     "note": "题号左侧页边手写大写 C。"
     },
     {
      "id": "m11",
@@ -1220,7 +1279,6 @@ window.QUIZ_DATA = {
       "satisfied with"
      ],
      "note": "第二空手写为 satisfied，with 写在横线末端外。",
-     "paperNo": 11,
      "fields": 2
     },
     {
@@ -1236,7 +1294,6 @@ window.QUIZ_DATA = {
       "How amazing"
      ],
      "note": "该题只有一处长横线，手写两个词 How amazing。",
-     "paperNo": 12,
      "fields": 1
     },
     {
@@ -1253,7 +1310,6 @@ window.QUIZ_DATA = {
       "straight to"
      ],
      "note": "第二空手写 straight to 两词。",
-     "paperNo": 13,
      "fields": 2
     },
     {
@@ -1283,8 +1339,7 @@ window.QUIZ_DATA = {
      ],
      "marked": "A",
      "handwriting": null,
-     "note": "「语法」小节卷面重新从 1 编号；题号左侧手写 A，另有一条长勾从 A 行斜划下去（勾不作答案，以页边字母为准）。",
-     "paperNo": 1
+     "note": "「语法」小节卷面重新从 1 编号；题号左侧手写 A，另有一条长勾从 A 行斜划下去（勾不作答案，以页边字母为准）。"
     },
     {
      "id": "g2",
@@ -1313,8 +1368,7 @@ window.QUIZ_DATA = {
      ],
      "marked": "C",
      "handwriting": null,
-     "note": "题号左侧页边手写大写 C。",
-     "paperNo": 2
+     "note": "题号左侧页边手写大写 C。"
     },
     {
      "id": "g3",
@@ -1343,8 +1397,7 @@ window.QUIZ_DATA = {
      ],
      "marked": "C",
      "handwriting": null,
-     "note": "题号左侧页边手写 C；另有一条长勾从 A. Yes, I do. 斜划到选项区，勾不作答案。",
-     "paperNo": 3
+     "note": "题号左侧页边手写 C；另有一条长勾从 A. Yes, I do. 斜划到选项区，勾不作答案。"
     },
     {
      "id": "g4",
@@ -1373,8 +1426,7 @@ window.QUIZ_DATA = {
      ],
      "marked": "B",
      "handwriting": null,
-     "note": "题号左侧页边手写 B；B 选项前另有手写勾，二者不冲突。",
-     "paperNo": 4
+     "note": "题号左侧页边手写 B；B 选项前另有手写勾，二者不冲突。"
     },
     {
      "id": "g5",
@@ -1390,7 +1442,6 @@ window.QUIZ_DATA = {
       "satisfied"
      ],
      "note": "两空手写 Are / satisfied。",
-     "paperNo": 5,
      "fields": 2
     },
     {
@@ -1407,7 +1458,6 @@ window.QUIZ_DATA = {
       "boil over"
      ],
      "note": "两空各手写两个词。",
-     "paperNo": 6,
      "fields": 2
     },
     {
@@ -1426,7 +1476,6 @@ window.QUIZ_DATA = {
       "been to"
      ],
      "note": "四个空依次为 Have / been / have / been to。",
-     "paperNo": 7,
      "fields": 4
     },
     {
@@ -1442,7 +1491,6 @@ window.QUIZ_DATA = {
       "pick up"
      ],
      "note": "一空手写两个词 pick up。",
-     "paperNo": 8,
      "fields": 1
     },
     {
@@ -1459,7 +1507,6 @@ window.QUIZ_DATA = {
       "[看不清]"
      ],
      "note": "第一空手写 what；第二空手写被反复涂画成一团黑，无法辨认。",
-     "paperNo": 9,
      "fields": 2
     },
     {
@@ -1476,7 +1523,6 @@ window.QUIZ_DATA = {
       "heard"
      ],
      "note": "两空手写 Have / heard。",
-     "paperNo": 10,
      "fields": 2
     },
     {
@@ -2015,7 +2061,6 @@ window.QUIZ_DATA = {
      ],
      "note": "阅读部分第1题（卷面 1）；题干已印首字母 m，横线手写 atches，即 matches",
      "id": "r1",
-     "paperNo": 1,
      "section": "阅读",
      "fields": 1
     },
@@ -2031,7 +2076,6 @@ window.QUIZ_DATA = {
      ],
      "note": "卷面 2；题干已印首字母 s，手写形似 hame（a/o 难辨），应为 shame",
      "id": "r2",
-     "paperNo": 2,
      "section": "阅读",
      "fields": 1
     },
@@ -2047,7 +2091,6 @@ window.QUIZ_DATA = {
      ],
      "note": "卷面 3；题干已印首字母 r，横线手写 emoved，即 removed",
      "id": "r3",
-     "paperNo": 3,
      "section": "阅读",
      "fields": 1
     },
@@ -2063,7 +2106,6 @@ window.QUIZ_DATA = {
      ],
      "note": "卷面 4；题干已印首字母 c，横线手写 heated，即 cheated",
      "id": "r4",
-     "paperNo": 4,
      "section": "阅读",
      "fields": 1
     },
@@ -2079,7 +2121,6 @@ window.QUIZ_DATA = {
      ],
      "note": "卷面 5；题干已印首字母 p，横线手写 ractice，即 practice",
      "id": "r5",
-     "paperNo": 5,
      "section": "阅读",
      "fields": 1
     },
@@ -2095,7 +2136,6 @@ window.QUIZ_DATA = {
      ],
      "note": "卷面 6；题干已印首字母 a，横线手写 dmiration，即 admiration",
      "id": "r6",
-     "paperNo": 6,
      "section": "阅读",
      "fields": 1
     },
@@ -2126,7 +2166,6 @@ window.QUIZ_DATA = {
      "handwriting": null,
      "note": "卷面 7；左侧页边手写大写 D（学生作答）；选项本身无勾画",
      "id": "r7",
-     "paperNo": 7,
      "section": "阅读"
     },
     {
@@ -2156,7 +2195,6 @@ window.QUIZ_DATA = {
      "handwriting": null,
      "note": "卷面 8；左侧页边手写大写 B（学生作答）",
      "id": "r8",
-     "paperNo": 8,
      "section": "阅读"
     },
     {
@@ -2186,7 +2224,6 @@ window.QUIZ_DATA = {
      "handwriting": null,
      "note": "卷面 9；左侧页边手写大写 C（学生作答）",
      "id": "r9",
-     "paperNo": 9,
      "section": "阅读"
     },
     {
@@ -2216,7 +2253,6 @@ window.QUIZ_DATA = {
      "handwriting": null,
      "note": "卷面 10；左侧页边手写大写 A（学生作答）；选项按 AB/CD 两行排布，已理顺",
      "id": "r10",
-     "paperNo": 10,
      "section": "阅读"
     },
     {
@@ -2246,7 +2282,6 @@ window.QUIZ_DATA = {
      "handwriting": null,
      "note": "卷面 11；左侧页边手写大写 D（学生作答）",
      "id": "r11",
-     "paperNo": 11,
      "section": "阅读"
     },
     {
@@ -2276,7 +2311,6 @@ window.QUIZ_DATA = {
      "handwriting": null,
      "note": "卷面 12；左侧页边手写大写 C（学生作答）",
      "id": "r12",
-     "paperNo": 12,
      "section": "阅读"
     },
     {
@@ -2306,7 +2340,6 @@ window.QUIZ_DATA = {
      "handwriting": null,
      "note": "卷面 13；左侧页边手写大写 C（学生作答）；题干为两行对话，已合并",
      "id": "r13",
-     "paperNo": 13,
      "section": "阅读"
     },
     {
@@ -2336,7 +2369,6 @@ window.QUIZ_DATA = {
      "handwriting": null,
      "note": "语法部分第1题（卷面 1，连续编号为 14）；左侧页边手写大写 B（学生作答），字母纵跨该行与上一行之间，按行高判定属本题",
      "id": "g1",
-     "paperNo": 1,
      "section": "语法"
     },
     {
@@ -2366,7 +2398,6 @@ window.QUIZ_DATA = {
      "handwriting": null,
      "note": "语法部分第2题（卷面 2，连续编号为 15）；左侧页边手写大写 C（学生作答）",
      "id": "g2",
-     "paperNo": 2,
      "section": "语法"
     },
     {
@@ -2382,7 +2413,6 @@ window.QUIZ_DATA = {
      ],
      "note": "语法部分第3题（卷面 3，连续编号为 16）；卷面为两个空，依次手写 still、friends（缺系动词 are）；中文句下「我们仍是朋友」被铅笔圈画",
      "id": "g3",
-     "paperNo": 3,
      "section": "语法",
      "fields": 2
     },
@@ -2398,7 +2428,6 @@ window.QUIZ_DATA = {
      ],
      "note": "语法部分第4题（卷面 4，连续编号为 17）；手写译文照抄",
      "id": "g4",
-     "paperNo": 4,
      "section": "语法",
      "fields": 1
     }
@@ -2663,7 +2692,6 @@ window.QUIZ_DATA = {
      "handwriting": null,
      "note": "大题「一、单词拼写」第1题；横线空白，未见作答；卷面无班级/姓名/学号栏",
      "id": "m1",
-     "paperNo": 1,
      "section": "单词拼写",
      "fields": 1
     },
@@ -2679,7 +2707,6 @@ window.QUIZ_DATA = {
      ],
      "note": "大题「一、单词拼写」第2题；卷面已印首字母 p，横线上手写 ressu(re)，完整单词为 pressure",
      "id": "m2",
-     "paperNo": 2,
      "section": "单词拼写",
      "fields": 1
     },
@@ -2710,7 +2737,6 @@ window.QUIZ_DATA = {
      "handwriting": null,
      "note": "大题「二、单项选择」第1题；左侧页边手写字母 B；卷面印作 you teacher（疑漏印 your 的 r）",
      "id": "c1",
-     "paperNo": 1,
      "section": "单项选择"
     },
     {
@@ -2740,7 +2766,6 @@ window.QUIZ_DATA = {
      "handwriting": null,
      "note": "大题「二、单项选择」第2题；左侧页边手写字母 A",
      "id": "c2",
-     "paperNo": 2,
      "section": "单项选择"
     },
     {
@@ -2770,7 +2795,6 @@ window.QUIZ_DATA = {
      "handwriting": null,
      "note": "大题「二、单项选择」第3题；左侧页边手写字母 C",
      "id": "c3",
-     "paperNo": 3,
      "section": "单项选择"
     },
     {
@@ -2800,7 +2824,6 @@ window.QUIZ_DATA = {
      "handwriting": null,
      "note": "大题「二、单项选择」第4题；左侧页边手写字母 D",
      "id": "c4",
-     "paperNo": 4,
      "section": "单项选择"
     },
     {
@@ -2830,7 +2853,6 @@ window.QUIZ_DATA = {
      "handwriting": null,
      "note": "大题「二、单项选择」第5题；左侧页边手写字母 C",
      "id": "c5",
-     "paperNo": 5,
      "section": "单项选择"
     },
     {
@@ -2860,7 +2882,6 @@ window.QUIZ_DATA = {
      "handwriting": null,
      "note": "大题「二、单项选择」第6题；左侧页边手写字母 D",
      "id": "c6",
-     "paperNo": 6,
      "section": "单项选择"
     },
     {
@@ -2877,7 +2898,6 @@ window.QUIZ_DATA = {
      ],
      "note": "大题「三、完成句子」第1题；三条横线依次手写 mess / them / up",
      "id": "s1",
-     "paperNo": 1,
      "section": "完成句子",
      "fields": 3
     },
@@ -2897,7 +2917,6 @@ window.QUIZ_DATA = {
      ],
      "note": "大题「三、完成句子」第2题；手写依次 has / a / good / habit of，habit 连笔形似 hodif，按语义读作 habit 卷面为 5 段横线，学生手写 has/a/good/habit/of 分置五空。",
      "id": "s2",
-     "paperNo": 2,
      "section": "完成句子",
      "fields": 5
     },
@@ -2915,7 +2934,6 @@ window.QUIZ_DATA = {
      ],
      "note": "大题「三、完成句子」第3题；三条横线依次手写 on / a / diet",
      "id": "s3",
-     "paperNo": 3,
      "section": "完成句子",
      "fields": 3
     },
@@ -2933,7 +2951,6 @@ window.QUIZ_DATA = {
      ],
      "note": "大题「三、完成句子」第4题；第二条横线手写 advice from（语序/介词有误，正确应为 for advice） 卷面为 3 段横线，学生手写 ask/advice/from 分置三空（语序、介词均有误）。",
      "id": "s4",
-     "paperNo": 4,
      "section": "完成句子",
      "fields": 3
     },
@@ -2952,7 +2969,6 @@ window.QUIZ_DATA = {
      ],
      "note": "卷面为 4 段横线；学生手写 in/charge/of，第 4 空写「t.」（疑为 to organize 未写完）。",
      "id": "s5",
-     "paperNo": 5,
      "section": "完成句子",
      "fields": 4
     },
@@ -2968,7 +2984,6 @@ window.QUIZ_DATA = {
      ],
      "note": "大题「6. 句型翻译」第(1)题；手写作 He often helps in the old people's home.",
      "id": "t1",
-     "paperNo": 1,
      "section": "句型翻译",
      "noLabel": "(1)",
      "fields": 1
@@ -2985,7 +3000,6 @@ window.QUIZ_DATA = {
      ],
      "note": "大题「6. 句型翻译」第(2)题；手写作 Jane's speech makes me excited.",
      "id": "t2",
-     "paperNo": 2,
      "section": "句型翻译",
      "noLabel": "(2)",
      "fields": 1
@@ -3002,7 +3016,6 @@ window.QUIZ_DATA = {
      ],
      "note": "大题「6. 句型翻译」第(3)题；手写作 I bought my father some tea last weekend.",
      "id": "t3",
-     "paperNo": 3,
      "section": "句型翻译",
      "noLabel": "(3)",
      "fields": 1

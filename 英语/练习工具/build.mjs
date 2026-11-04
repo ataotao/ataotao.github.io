@@ -71,11 +71,19 @@ for (const n of [1, 2, 3, 4]) {
   });
 }
 
-const bundle = { generatedAt: new Date().toISOString(), units };
+// 不带 generatedAt：ADR-0003 要求同一份源重建两次产物 SHA 必须相同
+const bundle = { units };
 const json = JSON.stringify(bundle, null, 1);
-writeFileSync(join(dataDir, "bundle.js"), `window.QUIZ_DATA = ${json};\n`, "utf8");
 
-// 单文件版：把数据包内联进 index.html
+// 旧题号 → 新题号的迁移表（数据改为按原卷大题分区时生成），随数据一起下发
+const migPath = join(dataDir, "id-migration.json");
+const migration = existsSync(migPath) ? readJson(migPath).map || {} : {};
+const migJson = JSON.stringify(migration, null, 1);
+const dataScript =
+  `window.__ID_MIGRATION = ${migJson};\n` + `window.QUIZ_DATA = ${json};\n`;
+writeFileSync(join(dataDir, "bundle.js"), dataScript, "utf8");
+
+// 单文件版：把数据包内联进 index.html（顺带把原卷图的相对路径改到「英语/」这一层）
 const htmlPath = join(here, "index.html");
 const html = readFileSync(htmlPath, "utf8");
 const marker = '<script src="data/bundle.js"></script>';
@@ -83,8 +91,11 @@ if (!html.includes(marker)) {
   console.error("! index.html 中没有找到数据包占位脚本，未生成单文件版");
   process.exitCode = 1;
 } else {
-  const inline = `<script>window.QUIZ_DATA = ${json};</script>`;
-  writeFileSync(join(here, "..", "九上英语过关练习.html"), html.replace(marker, inline), "utf8");
+  const inline = `<script>${dataScript}</script>`;
+  const standalone = html
+    .replace(marker, inline)
+    .replace('data-scan-base="../题库"', 'data-scan-base="题库"');
+  writeFileSync(join(here, "..", "九上英语过关练习.html"), standalone, "utf8");
 }
 
 // 汇总
@@ -125,7 +136,7 @@ if (problems.length) {
   console.log("✓ 数据校验通过（id 唯一 / 选择题 4 选项且答案在选项内 / 填空题有答案或标存疑）");
 }
 console.log(
-  `✓ ${units.length} 个单元 · ${total} 题 · 选择 ${mcTotal} · 填空 ${fillTotal}（按空 ${fieldTotal}）· 原卷有作答 ${marked} · 存疑 ${doubt} · 无参考答案 ${manual} · 三段式解析 ${explained}/${total}`
+  `✓ ${units.length} 个单元 · ${total} 题 · 选择 ${mcTotal} · 填空 ${fillTotal}（按空 ${fieldTotal}）· 原卷有作答 ${marked} · 存疑 ${doubt} · 无参考答案 ${manual} · 四段式解析 ${explained}/${total}`
 );
 console.log(perUnit.join("\n"));
 console.log("→ data/bundle.js");

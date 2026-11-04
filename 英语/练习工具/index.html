@@ -1,663 +1,420 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>九上英语过关练习 · U1–U4</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#f7f5f0" />
+<title>英语过关练习 · U1–U4</title>
 <style>
   :root{
-    --paper:#fdfaf2;
-    --paper-deep:#f4eddd;
-    --paper-edge:#e6dcc6;
-    --ink:#221e18;
-    --ink-2:#5d5648;
-    --ink-3:#8b8272;
-    --rule:#dbd0b8;
-    --red:#c0392f;
-    --red-ink:#a92d24;
-    --red-wash:rgba(192,57,47,.07);
-    --blue:#2f4d7c;
-    --blue-wash:rgba(47,77,124,.07);
-    --ok:#2b6b52;
-    --serif:"Times New Roman","Songti SC","SimSun","宋体",serif;
-    --sans:system-ui,-apple-system,"PingFang SC","Microsoft YaHei","Noto Sans SC",sans-serif;
-    --pen:"Kaiti SC","KaiTi","楷体","STKaiti","ShuTi",cursive;
-    --shadow:0 1px 1px rgba(60,48,28,.05),0 18px 40px -22px rgba(60,48,28,.35);
+    --bg:#f7f5f0; --card:#fffdf9; --ink:#26221c; --ink-2:#5a534a; --ink-3:#8a8175;
+    --line:#e2dccf; --line-2:#efe9dd; --brand:#8c2f2a; --brand-2:#a8453e;
+    --ok:#2f6b46; --ok-bg:#e9f3ec; --bad:#a3282a; --bad-bg:#fbeceb;
+    --warn:#87671c; --warn-bg:#fdf4e0; --pick:#1f5f8b; --pick-bg:#e9f1f7;
+    --pen:#b3261e; --radius:12px; --shadow:0 1px 2px rgba(38,34,28,.06),0 8px 24px -12px rgba(38,34,28,.18);
   }
   *{box-sizing:border-box}
   html,body{margin:0;padding:0}
   body{
-    background:
-      radial-gradient(1200px 600px at 12% -10%, #fbf6e9 0%, transparent 60%),
-      radial-gradient(900px 500px at 100% 0%, #f5efe0 0%, transparent 55%),
-      #efe8d8;
-    color:var(--ink);
-    font-family:var(--sans);
-    -webkit-font-smoothing:antialiased;
-    min-height:100vh;
+    background:var(--bg) radial-gradient(circle at 20% 0%,#fffdf8 0%,transparent 60%) no-repeat;
+    color:var(--ink); font-family:"Songti SC","Noto Serif SC",Georgia,"PingFang SC","Microsoft YaHei",serif;
+    font-size:16px; line-height:1.6; -webkit-text-size-adjust:100%;
   }
-  /* 纸纹：极细噪点 + 米色 */
-  body::before{
-    content:"";position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.5;
-    background-image:
-      repeating-linear-gradient(0deg, rgba(120,100,70,.028) 0 1px, transparent 1px 3px),
-      repeating-linear-gradient(90deg, rgba(120,100,70,.02) 0 1px, transparent 1px 4px);
-  }
+  button{font:inherit;color:inherit;background:none;border:none;padding:0;cursor:pointer}
+  a{color:var(--pick)}
+  [hidden]{display:none!important}
 
-  /* ── 顶栏 ───────────────────────────── */
-  .topbar{
-    position:sticky;top:0;z-index:30;
-    display:flex;align-items:center;gap:22px;flex-wrap:wrap;
-    padding:14px clamp(16px,4vw,44px);
-    background:rgba(253,250,242,.88);
-    backdrop-filter:blur(10px) saturate(1.1);
-    border-bottom:1px solid var(--paper-edge);
-    box-shadow:0 1px 0 rgba(255,255,255,.7) inset;
-  }
-  .brand{display:flex;align-items:center;gap:13px;min-width:0}
-  .brand-mark{
-    flex:none;display:grid;place-items:center;
-    width:40px;height:46px;border-radius:3px;
-    background:var(--ink);color:#fdfaf2;
-    font-family:var(--serif);font-weight:700;font-size:15px;letter-spacing:.06em;
-    writing-mode:vertical-rl;line-height:1.1;
-    box-shadow:0 6px 14px -8px rgba(34,30,24,.8);
-  }
-  .brand h1{
-    margin:0;font-family:var(--serif);font-size:21px;font-weight:700;letter-spacing:.01em;
-    line-height:1.15;
-  }
-  .brand p{margin:2px 0 0;font-size:12px;color:var(--ink-3);letter-spacing:.08em}
+  .topbar{position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:14px;
+    padding:10px 16px; background:rgba(247,245,240,.94); backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--line)}
+  .brand{display:flex;align-items:center;gap:10px;flex:0 0 auto}
+  .brand .seal{width:38px;height:38px;background:var(--ink);color:#f7f5f0;border-radius:8px;
+    display:grid;place-items:center;font-size:16px;letter-spacing:-1px;font-weight:600}
+  .brand h1{margin:0;font-size:17px;font-weight:600;letter-spacing:.5px}
+  .brand p{margin:0;font-size:11.5px;color:var(--ink-3);letter-spacing:.5px}
+  .tabs{display:flex;gap:4px;margin-left:auto}
+  .tab{position:relative;padding:8px 14px;border-radius:9px;font-size:14px;color:var(--ink-2)}
+  .tab[aria-selected="true"]{background:#fff;color:var(--brand);box-shadow:var(--shadow);font-weight:600}
+  .tab .badge{display:inline-block;min-width:18px;margin-left:6px;padding:0 5px;border-radius:9px;
+    background:var(--brand);color:#fff;font-size:11px;line-height:17px;text-align:center}
+  .tab .badge:empty{display:none}
 
-  .tabs{display:flex;gap:2px;margin-left:auto;flex-wrap:wrap}
-  .tab{
-    appearance:none;border:1px solid transparent;background:transparent;
-    font:inherit;font-size:14px;color:var(--ink-2);
-    padding:8px 15px 9px;border-radius:6px 6px 0 0;cursor:pointer;
-    position:relative;transition:color .16s, background .16s;
-  }
-  .tab:hover{color:var(--ink);background:rgba(34,30,24,.04)}
-  .tab[aria-selected="true"]{
-    color:var(--ink);background:var(--paper);
-    border-color:var(--paper-edge);border-bottom-color:var(--paper);
-    font-weight:600;
-  }
-  .tab[aria-selected="true"]::after{
-    content:"";position:absolute;left:12px;right:12px;bottom:-1px;height:2px;background:var(--red);border-radius:2px;
-  }
-  .tab .count{
-    display:inline-block;min-width:18px;margin-left:6px;padding:0 5px;
-    font-size:11px;line-height:17px;text-align:center;border-radius:9px;
-    background:var(--red);color:#fff;font-weight:600;font-family:var(--sans);
-  }
-  .tab .count:empty{display:none}
+  .app{max-width:900px;margin:0 auto;padding:16px 14px 116px}
 
-  /* ── 布局 ───────────────────────────── */
-  main{position:relative;z-index:1;padding:clamp(18px,3vw,34px) clamp(12px,4vw,44px) 72px;max-width:1180px;margin:0 auto}
-  .view{display:none}
-  .view.is-active{display:block;animation:viewIn .32s cubic-bezier(.22,.9,.28,1) both}
-  @keyframes viewIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  .bar{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:12px}
+  .seg{display:inline-flex;background:#efeade;border-radius:10px;padding:3px}
+  .seg button{padding:7px 13px;border-radius:8px;font-size:14px;color:var(--ink-2);min-height:38px}
+  .seg button[aria-pressed="true"]{background:#fff;color:var(--ink);box-shadow:var(--shadow);font-weight:600}
+  .seg button .n{font-size:11px;color:var(--ink-3);margin-left:4px}
+  .bar .spacer{flex:1}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:38px;
+    padding:8px 14px;border-radius:9px;border:1px solid var(--line);background:#fff;font-size:14px;
+    color:var(--ink-2);-webkit-tap-highlight-color:transparent}
+  .btn:hover{border-color:#cfc6b4}
+  .btn.primary{background:var(--brand);border-color:var(--brand);color:#fff;font-weight:600}
+  .btn.primary:hover{background:var(--brand-2);border-color:var(--brand-2)}
+  .btn.ghost{background:transparent}
+  .btn.sm{min-height:32px;padding:5px 10px;font-size:13px}
+  .btn[disabled]{opacity:.45;cursor:not-allowed}
+  .hint{font-size:12.5px;color:var(--ink-3)}
 
-  /* ── 单元切换 ───────────────────────── */
-  .unitbar{display:flex;align-items:center;gap:18px;flex-wrap:wrap;margin-bottom:16px}
-  .unitseg{display:inline-flex;background:rgba(34,30,24,.055);padding:3px;border-radius:8px;gap:2px}
-  .unitseg button{
-    appearance:none;border:0;background:transparent;font:inherit;font-size:14px;
-    color:var(--ink-2);padding:7px 16px;border-radius:6px;cursor:pointer;letter-spacing:.03em;
-    transition:background .16s,color .16s;
+  .qcard{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    box-shadow:var(--shadow);padding:18px 20px 16px;position:relative}
+  .pmain{display:grid;grid-template-columns:minmax(0,1fr);gap:18px;align-items:start}
+  .sidecards{display:none}
+  @media (min-width:1100px){
+    .pmain{grid-template-columns:minmax(0,1fr) 236px}
+    .sidecards{display:block;position:sticky;top:78px;background:var(--card);border:1px solid var(--line);
+      border-radius:var(--radius);box-shadow:var(--shadow);padding:12px;max-height:calc(100vh - 190px);overflow:auto}
+    .sidecards h4{margin:0 0 8px;font-size:12px;color:var(--ink-2);letter-spacing:1px;display:flex;justify-content:space-between}
+    .sidecards .sheet-group{margin:10px 0 0}
+    .sidecards .grid{grid-template-columns:repeat(5,1fr);gap:5px}
+    .sidecards .cell{min-height:34px;font-size:12px;border-radius:7px}
+    .sidecards .cell .dot{top:2px;right:3px;width:4px;height:4px}
   }
-  .unitseg button:hover{color:var(--ink)}
-  .unitseg button[aria-pressed="true"]{background:var(--paper);color:var(--ink);font-weight:600;box-shadow:0 1px 2px rgba(60,48,28,.16)}
-  .unitseg .count{
-    display:inline-block;min-width:16px;margin-left:6px;padding:0 4px;border-radius:8px;
-    font-family:var(--sans);font-size:10.5px;line-height:15px;font-weight:600;text-align:center;
-    background:rgba(192,57,47,.12);color:var(--red-ink);
-  }
-  .unitseg button[aria-pressed="true"] .count{background:var(--red);color:#fff}
-  .unitbar .hint{font-size:12.5px;color:var(--ink-3)}
-  .unitbar .spacer{margin-left:auto}
-  .tool{
-    appearance:none;border:1px solid var(--paper-edge);background:var(--paper);
-    font:inherit;font-size:13px;color:var(--ink-2);padding:7px 13px;border-radius:6px;
-    cursor:pointer;transition:all .15s;white-space:nowrap;
-  }
-  .tool:hover{border-color:var(--ink-3);color:var(--ink)}
-  .tool[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--paper)}
-  .tool:disabled{opacity:.45;cursor:default}
+  .qhead{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:12px;
+    padding-bottom:10px;border-bottom:1px dashed var(--line-2)}
+  .qhead .ref{font-size:12.5px;color:var(--brand);letter-spacing:.5px}
+  .qhead .unit{font-size:12px;color:var(--ink-3);margin-left:auto}
+  .qhead .type{font-size:11.5px;padding:1px 7px;border-radius:999px;background:#f2ede2;color:var(--ink-2)}
+  .stem{font-size:17.5px;line-height:1.75;margin:2px 0 14px;word-break:break-word}
+  .stem .cn{display:block;font-size:14px;color:var(--ink-3);margin-bottom:4px}
+  .blank{display:inline-block;min-width:64px;border-bottom:1.6px solid var(--ink-3);margin:0 3px;
+    vertical-align:baseline;height:1.1em}
+  .passage{margin:0 0 12px;font-size:14.5px;color:var(--ink-2);background:#f8f4ea;border:1px solid var(--line-2);
+    border-radius:9px;padding:10px 12px}
+  .passage summary{cursor:pointer;font-size:12.5px;color:var(--ink-3);list-style:none}
+  .passage summary::-webkit-details-marker{display:none}
+  .passage p{margin:8px 0 0;line-height:1.85}
+  .passage .pb{color:var(--brand);font-weight:700}
 
-  /* ── 试卷纸 ─────────────────────────── */
-  .sheet{
-    position:relative;
-    background:var(--paper);
-    border:1px solid var(--paper-edge);
-    border-radius:2px;
-    box-shadow:var(--shadow);
-    padding:clamp(26px,4vw,46px) clamp(18px,4vw,48px) clamp(30px,4vw,52px) clamp(30px,5vw,60px);
-    min-height:520px;
-  }
-  /* 左侧红色装订线 */
-  .sheet::before{
-    content:"";position:absolute;top:0;bottom:0;left:clamp(22px,3.4vw,44px);
-    width:1px;background:linear-gradient(180deg,transparent 0,rgba(192,57,47,.42) 8%,rgba(192,57,47,.42) 92%,transparent 100%);
-  }
-  .sheet-head{position:relative;padding-bottom:18px;border-bottom:1px solid var(--rule);margin-bottom:8px}
-  .sheet-meta{
-    display:flex;gap:18px;flex-wrap:wrap;font-size:12px;color:var(--ink-3);
-    font-family:var(--pen);letter-spacing:.02em;
-  }
-  .sheet-meta b{font-weight:400;color:var(--ink-2);border-bottom:1px solid var(--rule);padding:0 10px 1px}
-  .sheet-title{display:flex;align-items:baseline;gap:14px;margin:12px 0 4px;flex-wrap:wrap}
-  .sheet-title .unit-eyebrow{
-    font-family:var(--sans);font-size:11px;letter-spacing:.28em;color:var(--ink-3);text-transform:uppercase;
-  }
-  .sheet-title h2{margin:0;font-family:var(--serif);font-size:clamp(22px,3vw,29px);font-weight:700;letter-spacing:.02em;line-height:1.2}
-  .sheet-title .sub{font-size:13px;color:var(--ink-3)}
-
-  /* 批改章 */
-  .stamp{
-    position:absolute;right:-6px;top:-16px;
-    width:132px;height:132px;display:grid;place-items:center;
-    border-radius:50%;
-    border:2px solid rgba(192,57,47,.55);
-    box-shadow:0 0 0 1px rgba(192,57,47,.22) inset,0 0 0 6px transparent;
-    color:rgba(192,57,47,.78);
-    font-family:var(--pen);text-align:center;line-height:1.15;
-    transform:rotate(-9deg);opacity:0;pointer-events:none;
-    mix-blend-mode:multiply;
-    transition:opacity .5s ease;
-  }
-  .stamp.show{opacity:.92;animation:stampIn .42s cubic-bezier(.2,1.5,.4,1) both}
-  .stamp::before{content:"";position:absolute;inset:6px;border:1px dashed rgba(192,57,47,.4);border-radius:50%}
-  .stamp b{display:block;font-size:26px;letter-spacing:.18em;font-family:var(--serif);font-weight:700}
-  .stamp span{display:block;font-size:11.5px;letter-spacing:.12em;margin-top:4px}
-  @keyframes stampIn{from{opacity:0;transform:rotate(-9deg) scale(1.5)}to{opacity:.92;transform:rotate(-9deg) scale(1)}}
-
-  /* ── 题目 ───────────────────────────── */
-  .part{margin-top:26px}
-  .part-head{display:flex;align-items:center;gap:10px;margin-bottom:6px}
-  .part-head h3{
-    margin:0;font-family:var(--serif);font-size:15px;font-weight:700;letter-spacing:.14em;color:var(--ink);
-  }
-  .part-head .range{font-size:11.5px;color:var(--ink-3);letter-spacing:.06em}
-  .part-head .rule{flex:1;height:1px;background:var(--rule);margin-left:4px}
-
-  /* ── 逐题模式 ───────────────────────── */
-  .oneq-bar{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin:8px 0 12px}
-  .oneq-bar .progress{
-    font-family:var(--serif);font-size:13px;color:var(--ink-2);letter-spacing:.04em;
-    font-variant-numeric:tabular-nums;
-  }
-  .oneq-bar .hint{font-size:11.5px;color:var(--ink-3)}
-  .oneq-bar .tool{min-width:96px;text-align:center}
-  .oneq-bar .grow{flex:1}
-
-  .questions{list-style:none;margin:0;padding:0}
-  .q{position:relative;display:grid;grid-template-columns:38px 1fr;gap:2px 8px;padding:15px 0 17px;border-bottom:1px dashed rgba(219,208,184,.85)}
-  .q:last-child{border-bottom:0}
-  .q-no{
-    font-family:var(--serif);font-size:14px;color:var(--ink-3);padding-top:2px;text-align:right;
-    display:flex;flex-direction:column;align-items:flex-end;gap:3px;
-  }
-  .q-no .pen-letter{
-    font-family:var(--pen);font-size:15px;color:var(--blue);opacity:.75;letter-spacing:0;
-    text-decoration:underline;text-decoration-style:wavy;text-decoration-color:rgba(47,77,124,.35);
-    text-underline-offset:3px;
-  }
-  .q-body{min-width:0}
-  .stem{
-    font-family:var(--serif);font-size:16.5px;line-height:1.72;margin:0 0 4px;
-    color:var(--ink);text-wrap:pretty;
-  }
-  .q-section{
-    display:inline-block;margin:0 0 5px;padding:1px 7px;border-radius:3px;
-    font-family:var(--sans);font-size:11px;letter-spacing:.08em;color:var(--ink-2);
-    background:rgba(34,30,24,.055);
-  }
-  .stem .cn{display:block;font-family:var(--sans);font-size:13.5px;line-height:1.8;color:var(--ink-2);margin-bottom:2px}
-  .blank{
-    display:inline-block;min-width:74px;border-bottom:1.4px solid var(--ink-2);
-    height:1.05em;vertical-align:-.16em;margin:0 3px;
-  }
-  .options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px 22px;margin-top:10px}
-  .opt{
-    appearance:none;display:grid;grid-template-columns:22px 1fr;gap:9px;align-items:baseline;
-    text-align:left;font-family:var(--serif);font-size:15.5px;line-height:1.55;color:var(--ink);
-    background:transparent;border:1px solid transparent;border-radius:5px;padding:7px 10px 7px 6px;cursor:pointer;
-    transition:background .14s,border-color .14s,transform .14s;position:relative;
-  }
-  .opt .k{
-    font-family:var(--sans);font-size:12px;font-weight:600;letter-spacing:.04em;color:var(--ink-3);
-    width:22px;height:22px;display:grid;place-items:center;border-radius:50%;
-    border:1px solid var(--rule);background:rgba(255,255,255,.5);transform:translateY(-1px);
-  }
-  .opt:hover{background:rgba(34,30,24,.035);border-color:rgba(219,208,184,.9)}
-  .opt:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
-  .opt[data-state="picked"]{background:var(--blue-wash);border-color:rgba(47,77,124,.28)}
-  .opt[data-state="picked"] .k{background:var(--blue);border-color:var(--blue);color:#fff}
-  .opt[data-state="right"]{background:rgba(43,107,82,.09);border-color:rgba(43,107,82,.32)}
+  .opts{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+  .opt{display:flex;align-items:center;gap:10px;min-height:48px;padding:9px 12px;text-align:left;
+    background:#fff;border:1.4px solid var(--line);border-radius:10px;font-size:15.5px;line-height:1.45}
+  .opt .k{flex:0 0 auto;width:26px;height:26px;border-radius:50%;border:1.4px solid var(--line);
+    display:grid;place-items:center;font-size:12.5px;color:var(--ink-3);font-family:system-ui,sans-serif}
+  .opt[data-state="picked"]{border-color:var(--pick);background:var(--pick-bg)}
+  .opt[data-state="picked"] .k{background:var(--pick);border-color:var(--pick);color:#fff}
+  .opt[data-state="right"]{border-color:var(--ok);background:var(--ok-bg)}
   .opt[data-state="right"] .k{background:var(--ok);border-color:var(--ok);color:#fff}
-  .opt[data-state="wrong"]{background:var(--red-wash);border-color:rgba(192,57,47,.3)}
-  .opt[data-state="wrong"] .k{background:var(--red);border-color:var(--red);color:#fff}
+  .opt[data-state="wrong"]{border-color:var(--bad);background:var(--bad-bg)}
+  .opt[data-state="wrong"] .k{background:var(--bad);border-color:var(--bad);color:#fff}
   .opt[disabled]{cursor:default}
-  .opt[disabled]:hover{background:transparent}
 
-  /* 红笔批注 */
-  .mark{
-    position:absolute;left:-6px;top:44%;translate:0 -50%;
-    font-family:var(--pen);font-size:34px;line-height:1;color:var(--red);pointer-events:none;
-    opacity:0;text-shadow:0 1px 0 rgba(255,255,255,.5);
-  }
-  .q[data-result="right"] > .q-no .mark{opacity:.85;animation:markIn .3s ease-out both}
-  .q[data-result="wrong"] > .q-no .mark{opacity:.9;animation:markIn .3s ease-out both}
-  @keyframes markIn{from{opacity:0;transform:scale(1.7) rotate(-12deg)}to{opacity:.9;transform:scale(1) rotate(-6deg)}}
+  .fields{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:4px 0 2px}
+  .fieldwrap{display:flex;align-items:center;gap:6px}
+  .fieldwrap .idx{font-size:11px;color:var(--ink-3);font-family:system-ui,sans-serif}
+  .field{min-width:96px;width:auto;padding:9px 11px;font:inherit;font-size:15.5px;
+    border:1.4px solid var(--line);border-radius:9px;background:#fff;color:var(--ink)}
+  .field:focus{outline:none;border-color:var(--pick);box-shadow:0 0 0 3px var(--pick-bg)}
+  .field[data-state="right"]{border-color:var(--ok);background:var(--ok-bg)}
+  .field[data-state="wrong"]{border-color:var(--bad);background:var(--bad-bg)}
+  .fields .sentence{width:100%}
+  .fields .sentence .field{width:100%}
 
-  .verify{
-    display:flex;align-items:flex-start;gap:10px;margin:12px 0 0;
-    padding:12px 14px 12px 12px;border-left:2px solid var(--red);background:var(--red-wash);
-    border-radius:0 5px 5px 0;
-  }
-  .verify .tag{
-    flex:none;font-family:var(--sans);font-size:11px;letter-spacing:.08em;color:#fff;background:var(--red);
-    padding:2px 6px;border-radius:3px;margin-top:1px;
-  }
-  .vbody{flex:1;min-width:0;display:grid;gap:6px}
-  .vrow{
-    display:grid;grid-template-columns:58px 1fr;gap:9px;align-items:baseline;
-    margin:0;font-family:var(--sans);font-size:14px;line-height:1.82;color:var(--ink-2);
-  }
-  .vrow .vk{
-    font-size:11px;letter-spacing:.06em;color:var(--red);white-space:nowrap;
-    padding-top:2px;font-weight:600;
-  }
-  .vrow .vt{color:var(--ink);text-wrap:pretty}
-  .vrow .vtopic{
-    font-family:var(--pen);font-size:15.5px;color:var(--red-ink);
-    border-bottom:1px solid rgba(192,57,47,.35);padding:0 2px 1px;justify-self:start;
-  }
-  .vrow.v-trap{
-    background:rgba(192,57,47,.075);border-left:2px solid rgba(192,57,47,.55);
-    padding:7px 10px 7px 9px;border-radius:0 4px 4px 0;margin:1px 0;
-  }
-  .vrow.v-trap .vt{color:var(--ink)}
-  .vrow.v-ans .vt{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-  .vrow .ans{
-    font-family:var(--serif);font-size:17px;font-weight:700;color:var(--red);letter-spacing:.02em;
-    border-bottom:2px solid rgba(192,57,47,.35);padding:0 3px;
-  }
-  .vrow .doubt-chip{
-    font-size:11px;color:var(--ink-2);background:rgba(34,30,24,.05);border-radius:3px;padding:1px 6px;
-  }
-  @media (max-width:560px){
-    .vrow{grid-template-columns:1fr;gap:2px}
-    .vrow .vk{padding-top:0}
-  }
+  .qtools{display:flex;flex-wrap:wrap;gap:14px;align-items:center;margin-top:14px;font-size:12.5px}
+  .qtools a,.qtools button{color:var(--ink-3);border-bottom:1px dotted var(--line);padding-bottom:1px;min-height:32px}
+  .qtools a:hover,.qtools button:hover{color:var(--brand)}
+  .meta{margin-top:12px;font-size:12px;color:var(--ink-3);line-height:1.9}
+  .orig{color:var(--pen)}
+  .mark-badge{display:inline-block;margin-left:6px;padding:0 6px;border-radius:6px;background:var(--warn-bg);
+    color:var(--warn);font-size:11px}
 
-  .q-tools{display:flex;gap:14px;margin-top:9px;flex-wrap:wrap;align-items:baseline}
-  .q-ref{font-size:11.5px;color:var(--ink-3);letter-spacing:.03em}
-  .q-tools button{
-    appearance:none;border:0;background:transparent;font:inherit;font-size:12px;color:var(--ink-3);
-    padding:2px 0;cursor:pointer;border-bottom:1px dotted var(--rule);transition:color .15s;
-  }
-  .q-tools button:hover{color:var(--red)}
+  .verdict{display:flex;align-items:center;gap:10px;margin:14px 0 0;font-size:15px;font-weight:600}
+  .verdict .mark{font-family:"KaiTi","Kaiti SC",serif;font-size:26px;line-height:1}
+  .verdict[data-ok="1"]{color:var(--ok)} .verdict[data-ok="0"]{color:var(--bad)}
+  .verify{margin-top:10px;border-left:3px solid var(--brand);background:#fdf6f2;border-radius:0 10px 10px 0;
+    padding:12px 14px;display:grid;grid-template-columns:52px 1fr;gap:6px 10px;font-size:14px;line-height:1.75}
+  .verify .vlab{color:var(--brand);font-size:12px;letter-spacing:1px;padding-top:2px}
+  .verify .vtxt{color:var(--ink-2);word-break:break-word}
+  .verify .vans{color:var(--bad);font-weight:700;letter-spacing:.5px}
+  .verify .vtrap{background:#fbeceb;border-radius:6px;padding:4px 8px;color:#6d2a26}
+  .verify .vdoubt{color:var(--warn)}
 
-  .q.is-target{background:linear-gradient(90deg,rgba(192,57,47,.09),transparent 70%);animation:flash 1.1s ease-out}
-  @keyframes flash{0%{box-shadow:inset 3px 0 0 var(--red)}100%{box-shadow:inset 3px 0 0 transparent}}
+  .bottombar{position:fixed;left:0;right:0;bottom:0;z-index:45;
+    background:rgba(255,253,249,.96);backdrop-filter:blur(8px);border-top:1px solid var(--line);
+    padding:8px 12px calc(8px + env(safe-area-inset-bottom))}
+  .bottombar .line{max-width:900px;margin:0 auto;display:flex;align-items:center;gap:8px}
+  .bottombar .line.top{font-size:11.5px;color:var(--ink-3);margin-bottom:6px;gap:10px}
+  .bottombar .progress{font-family:system-ui,sans-serif;letter-spacing:.5px;color:var(--ink-2)}
+  .bottombar .btn{min-height:46px}
+  .bottombar .btn.grow{flex:1;min-height:46px;font-size:15.5px}
+  .bottombar .icon{min-width:46px;padding:0 12px;font-size:17px}
 
-  .sidenote{
-    margin-top:22px;padding-top:14px;border-top:1px solid var(--rule);
-    font-size:12.5px;color:var(--ink-3);display:flex;gap:8px;align-items:baseline;flex-wrap:wrap;
-  }
-  .sidenote b{font-weight:600;color:var(--ink-2);font-family:var(--pen);font-size:13.5px}
+  .cardsheet{position:fixed;inset:0;z-index:80;display:none}
+  .cardsheet.is-open{display:block}
+  .cardsheet .mask{position:absolute;inset:0;background:rgba(38,34,28,.42)}
+  .cardsheet .panel{position:absolute;left:0;right:0;bottom:0;max-height:82vh;overflow:auto;
+    background:var(--card);border-radius:16px 16px 0 0;padding:16px 16px calc(20px + env(safe-area-inset-bottom));
+    box-shadow:0 -12px 40px -20px rgba(0,0,0,.4)}
+  .cardsheet h3{margin:0 0 4px;font-size:16px}
+  .cardsheet .sub{font-size:12px;color:var(--ink-3);margin-bottom:12px}
+  .sheet-group{margin:16px 0 0}
+  .sheet-group h4{margin:0 0 8px;font-size:12.5px;color:var(--ink-2);letter-spacing:1px;font-weight:600}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(46px,1fr));gap:7px}
+  .cell{min-height:46px;border-radius:9px;border:1.4px solid var(--line);background:#fff;
+    font-family:system-ui,sans-serif;font-size:13.5px;color:var(--ink-2);position:relative}
+  .cell[data-state="answered"]{border-color:var(--pick);background:var(--pick-bg);color:var(--pick)}
+  .cell[data-state="right"]{border-color:var(--ok);background:var(--ok-bg);color:var(--ok)}
+  .cell[data-state="wrong"]{border-color:var(--bad);background:var(--bad-bg);color:var(--bad)}
+  .cell[data-here="1"]{outline:2px solid var(--brand);outline-offset:1px}
+  .cell .dot{position:absolute;top:3px;right:4px;width:5px;height:5px;border-radius:50%;background:var(--warn)}
 
-  /* ── 统计条 ─────────────────────────── */
-  .statrow{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:2px;background:var(--paper-edge);border:1px solid var(--paper-edge);border-radius:6px;overflow:hidden;margin-bottom:20px}
-  .stat{background:var(--paper);padding:14px 18px}
-  .stat .k{font-size:11px;letter-spacing:.14em;color:var(--ink-3);text-transform:uppercase}
-  .stat .v{font-family:var(--serif);font-size:26px;line-height:1.25;margin-top:3px;letter-spacing:.01em}
-  .stat .v small{font-size:13px;color:var(--ink-3);font-family:var(--sans);letter-spacing:0}
-  .stat .bar{height:3px;background:rgba(34,30,24,.08);border-radius:3px;margin-top:9px;overflow:hidden}
-  .stat .bar i{display:block;height:100%;background:var(--red);border-radius:3px;transition:width .5s cubic-bezier(.22,.9,.28,1)}
+  .settle{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    box-shadow:var(--shadow);padding:26px 22px;text-align:center}
+  .settle h2{margin:0 0 6px;font-size:15px;color:var(--ink-3);font-weight:500;letter-spacing:2px}
+  .settle-score{font-size:46px;font-weight:700;letter-spacing:1px;color:var(--ink);font-family:Georgia,serif}
+  .settle-score small{font-size:16px;color:var(--ink-3);font-weight:400}
+  .settle-time{margin-top:6px;font-size:13px;color:var(--ink-2)}
+  .settle-wrong{margin:18px 0 6px;display:flex;flex-wrap:wrap;gap:7px;justify-content:center}
+  .settle-wrong .chip{padding:5px 11px;border-radius:999px;background:var(--bad-bg);color:var(--bad);
+    border:1px solid #f0cfcd;font-size:13px}
+  .settle-acts{display:flex;gap:10px;justify-content:center;margin-top:20px;flex-wrap:wrap}
+  .settle .none{color:var(--ok);font-size:14px}
 
-  /* ── 批改报告 ───────────────────────── */
-  .report-head{display:flex;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:18px}
-  .report-head h2{margin:0;font-family:var(--serif);font-size:clamp(20px,3vw,26px);letter-spacing:.02em}
-  .report-head p{margin:0;font-size:13px;color:var(--ink-3)}
-  .tablewrap{background:var(--paper);border:1px solid var(--paper-edge);border-radius:4px;box-shadow:var(--shadow);overflow:hidden}
-  .report-sheet{padding:26px 30px 30px}
-  .tablewrap + .tablewrap{margin-top:20px}
-  table.grade{width:100%;border-collapse:collapse;font-size:14px}
-  table.grade caption{
-    text-align:left;font-family:var(--serif);font-size:16px;font-weight:700;padding:0 0 12px;letter-spacing:.06em;
-  }
-  table.grade caption .q-count{font-family:var(--sans);font-size:12px;color:var(--ink-3);font-weight:400;letter-spacing:0;margin-left:8px}
-  table.grade th{
-    font-size:11px;letter-spacing:.12em;color:var(--ink-3);font-weight:600;text-align:left;
-    padding:8px 10px;border-bottom:1px solid var(--rule);text-transform:uppercase;
-  }
-  table.grade td{padding:9px 10px;border-bottom:1px solid rgba(219,208,184,.6);font-family:var(--serif);font-size:14.5px}
-  table.grade tr:last-child td{border-bottom:0}
-  table.grade tr.is-wrong td{background:rgba(192,57,47,.045)}
-  table.grade td.no{color:var(--ink-3);width:44px;text-align:right;font-family:var(--sans);font-size:12.5px}
-  table.grade td.pick{font-family:var(--pen);font-size:16px;width:80px;color:var(--blue)}
-  table.grade td.key{width:80px}
-  table.grade td.verdict{width:96px;font-family:var(--sans);font-size:12.5px}
-  .v-right{color:var(--ok)}
-  .v-wrong{color:var(--red);font-weight:600}
-  .v-empty{color:var(--ink-3)}
-  .verdict .pen-mark{font-family:var(--pen);font-size:19px;margin-right:4px}
-  table.grade td.stemcell{font-family:var(--serif);color:var(--ink-2);font-size:13.5px;line-height:1.55}
-  table.grade td.stemcell .topic{font-family:var(--sans);font-size:11.5px;color:var(--red-ink);border:1px solid rgba(192,57,47,.28);border-radius:3px;padding:0 5px;margin-left:6px;white-space:nowrap}
-  tbody tr[data-goto]{cursor:pointer}
-  tbody tr[data-goto]:hover td{background:rgba(34,30,24,.035)}
+  .rtabs{display:flex;gap:4px;background:#efeade;border-radius:10px;padding:3px;margin-bottom:12px}
+  .rtabs button{padding:8px 14px;border-radius:8px;font-size:14px;color:var(--ink-2);min-height:38px}
+  .rtabs button[aria-selected="true"]{background:#fff;color:var(--ink);font-weight:600;box-shadow:var(--shadow)}
+  .mcard{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    box-shadow:var(--shadow);padding:16px 18px;margin-bottom:12px}
+  .mcard .mhead{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:8px}
+  .mcard .mhead .ref{font-size:12.5px;color:var(--brand)}
+  .mcard .mhead .cnt{margin-left:auto;font-size:11.5px;color:var(--ink-3)}
+  .mcard .mstem{font-size:15.5px;line-height:1.7;margin:0 0 8px;word-break:break-word}
+  .mcard .mstem .cn{display:block;font-size:13px;color:var(--ink-3)}
+  .mcard .mlink{display:flex;flex-wrap:wrap;gap:14px;font-size:12.5px;margin-top:10px}
+  .mcard .mlink a,.mcard .mlink button{color:var(--ink-3);border-bottom:1px dotted var(--line);padding-bottom:1px;min-height:32px}
+  .mcard .mlink a:hover,.mcard .mlink button:hover{color:var(--brand)}
+  .prow{display:flex;align-items:center;gap:10px;padding:10px 12px;border-bottom:1px solid var(--line-2);
+    font-size:13.5px;background:var(--card);cursor:pointer}
+  .prow:hover{background:#fdfaf3}
+  .prow .ref{flex:0 0 auto;width:150px;color:var(--ink-2);font-size:12.5px}
+  .prow .ans{flex:0 0 auto;min-width:96px;color:var(--ink-3);word-break:break-word}
+  .prow .pick{flex:1;color:var(--ink-3);word-break:break-word}
+  .prow .verdict{flex:0 0 auto;margin:0;font-size:12px;padding:2px 8px;border-radius:999px;
+    background:#f2ede2;color:var(--ink-2);font-weight:500}
+  .prow .verdict[data-v="right"]{background:var(--ok-bg);color:var(--ok)}
+  .prow .verdict[data-v="wrong"]{background:var(--bad-bg);color:var(--bad)}
+  .prow .verdict[data-v="close"]{background:var(--warn-bg);color:var(--warn)}
+  .rows{border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;background:var(--card)}
+  .rows .unitrow{padding:8px 12px;background:#f6f1e5;font-size:12.5px;color:var(--ink-2);letter-spacing:1px;border-bottom:1px solid var(--line-2)}
+  .empty{padding:26px;text-align:center;color:var(--ink-3);font-size:14px}
 
-  /* ── 错题本 ─────────────────────────── */
-  .mistake-summary{
-    display:flex;align-items:center;gap:8px;flex-wrap:wrap;
-    padding:12px 16px;margin-bottom:14px;background:rgba(253,250,242,.75);
-    border:1px solid var(--paper-edge);border-radius:6px;
-  }
-  .mm-label{font-size:11.5px;letter-spacing:.12em;color:var(--ink-3)}
-  .mm-chip{
-    font-size:12.5px;color:var(--ink);background:var(--paper);border:1px solid var(--paper-edge);
-    border-radius:20px;padding:3px 10px;
-  }
-  .mm-chip i{font-style:normal;color:var(--red);font-size:11px;margin-left:4px}
-  .mm-hint{margin-left:auto;font-size:12px;color:var(--ink-3)}
-  .mistakes{display:grid;gap:14px}
-  .mcard{
-    background:var(--paper);border:1px solid var(--paper-edge);border-radius:4px;
-    box-shadow:0 10px 28px -22px rgba(60,48,28,.6);
-    padding:20px 24px 18px;position:relative;overflow:hidden;
-  }
-  .mcard::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--red);opacity:.7}
-  .mcard-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px}
-  .mcard-head .unit{font-size:11px;letter-spacing:.16em;color:var(--ink-3)}
-  .mcard-head .no{font-family:var(--serif);font-size:15px;font-weight:700}
-  .mcard-head .topic{
-    font-family:var(--sans);font-size:11.5px;color:var(--red-ink);background:var(--red-wash);
-    border:1px solid rgba(192,57,47,.22);border-radius:3px;padding:1px 7px;
-  }
-  .mcard-head .src{margin-left:auto;font-size:11.5px;color:var(--ink-3)}
-  .mcard .stem{margin:6px 0 10px;font-size:15.5px}
-  .mcard .opts{display:grid;gap:4px;margin:0 0 10px;font-family:var(--serif);font-size:14.5px;color:var(--ink-2)}
-  .mcard .opts .row{display:grid;grid-template-columns:24px 1fr;gap:6px;padding:2px 0}
-  .mcard .opts .row.is-key{color:var(--ok);font-weight:600}
-  .mcard .opts .row.is-pick{color:var(--red)}
-  .mcard .opts .row .k{color:var(--ink-3);font-family:var(--sans);font-size:12px}
-  .mcard .opts .row.is-key .k{color:var(--ok)}
-  .mcard .opts .row.is-pick .k{color:var(--red)}
-  .mcard .why{
-    font-family:var(--pen);font-size:14px;line-height:1.85;color:var(--ink);
-    border-left:2px solid rgba(192,57,47,.5);padding:2px 0 2px 12px;margin:0;
-  }
-  .mcard .m-explain{
-    display:grid;gap:6px;margin:10px 0 0;padding:2px 0 2px 12px;
-    border-left:2px solid rgba(192,57,47,.5);
-  }
-  .mcard .m-line{margin:0;font-family:var(--pen);font-size:14.5px;line-height:1.95;color:var(--ink);text-wrap:pretty}
-  .mcard .m-k{
-    font-family:var(--sans);font-size:11.5px;font-weight:600;letter-spacing:.1em;color:var(--red);
-    margin-right:8px;white-space:nowrap;
-  }
-  .mcard .m-trap{background:rgba(192,57,47,.07);border-radius:0 4px 4px 0;padding:6px 10px 6px 8px;margin-left:-2px}
-  .mcard .why b{font-family:var(--sans);font-size:11.5px;letter-spacing:.1em;color:var(--red);font-weight:600;margin-right:6px}
-  .mcard .answer-summary{display:flex;gap:16px;flex-wrap:wrap;font-size:12.5px;color:var(--ink-2);margin-top:10px;font-family:var(--sans)}
-  .mcard .answer-summary b{font-family:var(--pen);font-size:15px;font-weight:400}
-  .mcard .answer-summary .w{color:var(--red)}
-  .mcard .answer-summary .r{color:var(--ok)}
-  .empty{
-    text-align:center;padding:64px 20px;color:var(--ink-3);
-    border:1px dashed var(--paper-edge);border-radius:6px;background:rgba(253,250,242,.6);
-  }
-  .empty .big{font-family:var(--pen);font-size:34px;color:var(--ok);opacity:.65;margin-bottom:10px}
-  .empty p{margin:4px 0;font-size:14px}
+  footer{max-width:900px;margin:0 auto;padding:10px 14px 30px;font-size:11.5px;color:var(--ink-3);
+    display:flex;flex-wrap:wrap;gap:14px;align-items:center}
+  footer button,footer a{border-bottom:1px dotted var(--line);padding-bottom:1px;min-height:32px}
+  #errbar{position:fixed;left:0;right:0;top:0;z-index:200;background:var(--bad);color:#fff;font-size:13px;
+    padding:10px 14px;display:none}
+  #errbar.show{display:block}
+  #toast{position:fixed;left:50%;bottom:96px;transform:translateX(-50%) translateY(10px);z-index:120;
+    background:rgba(38,34,28,.92);color:#f7f5f0;font-size:13.5px;padding:9px 16px;border-radius:999px;
+    opacity:0;pointer-events:none;transition:.22s;max-width:88vw;text-align:center}
+  #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
-  /* ── 填空自测 ───────────────────────── */
-  .fill-item{background:var(--paper);border:1px solid var(--paper-edge);border-radius:4px;padding:18px 22px;margin-bottom:12px;box-shadow:0 10px 26px -24px rgba(60,48,28,.7)}
-  .fill-item .cn{font-size:13.5px;color:var(--ink-2);line-height:1.8;margin:0 0 6px}
-  .fill-head{display:flex;align-items:baseline;gap:12px;margin-bottom:6px}
-  .fill-no{font-family:var(--serif);font-size:13px;color:var(--ink-2);letter-spacing:.04em}
-  .fill-ref{font-size:11.5px;color:var(--ink-3)}
-  .fill-flag{
-    font-size:10.5px;letter-spacing:.06em;color:var(--red-ink);
-    border:1px solid rgba(192,57,47,.3);border-radius:3px;padding:0 5px;background:var(--red-wash);
+  @media (max-width:719px){
+    .topbar{padding:8px 12px;gap:8px}
+    .brand .seal{width:32px;height:32px;font-size:14px}
+    .brand h1{font-size:15px} .brand p{display:none}
+    .tab{padding:7px 10px;font-size:13.5px}
+    .app{padding:12px 10px 112px}
+    .qcard{padding:14px 14px 12px}
+    .stem{font-size:16.5px}
+    .opts{grid-template-columns:1fr}
+    .prow .ref{width:auto;flex:0 0 auto}
+    .prow{flex-wrap:wrap}
+    .prow .pick{flex:1 1 100%;order:3}
   }
-  .fill-flag.ok{color:var(--ok);border-color:rgba(43,107,82,.35);background:rgba(43,107,82,.08)}
-  .fill-flag.bad{color:var(--red);border-color:rgba(192,57,47,.4);background:var(--red-wash)}
-  .fill-flag.warn{color:var(--ink-2);border-color:var(--paper-edge);background:rgba(34,30,24,.04)}
-  .fill-item .stem{margin:0 0 10px}
-  .fill-input{
-    width:100%;font-family:var(--serif);font-size:15.5px;color:var(--ink);background:rgba(255,255,255,.7);
-    border:1px solid var(--rule);border-radius:5px;padding:9px 12px;outline:none;transition:border-color .15s,box-shadow .15s;
-  }
-  .fill-input:focus{border-color:var(--ink-3);box-shadow:0 0 0 3px rgba(34,30,24,.05)}
-  .fill-actions{display:flex;gap:10px;align-items:center;margin-top:10px;flex-wrap:wrap}
-  .fill-actions .res{font-size:12.5px;font-family:var(--sans)}
-  .fill-reveal{margin-top:12px;padding-top:10px;border-top:1px dashed var(--rule);font-size:13px;line-height:1.9;color:var(--ink-2);display:none}
-  .fill-reveal.show{display:block;animation:viewIn .25s ease-out both}
-  .fill-reveal .pen{font-family:var(--pen);font-size:15px;color:var(--blue)}
-  .fill-reveal .keyref{font-family:var(--serif);font-size:14.5px;color:var(--ok)}
-  .fill-reveal .fr-line{margin-top:6px;color:var(--ink-2);line-height:1.9;text-wrap:pretty}
-  .fill-reveal .fr-k{
-    font-family:var(--sans);font-size:11.5px;font-weight:600;letter-spacing:.1em;color:var(--red);
-    margin-right:8px;
-  }
-  .fill-reveal .fr-trap{background:rgba(192,57,47,.06);border-left:2px solid rgba(192,57,47,.5);padding:5px 9px;border-radius:0 4px 4px 0}
-
-  /* ── 顶部小徽标 / 打印 ───────────────── */
-  .page-foot{
-    display:flex;align-items:center;gap:18px;flex-wrap:wrap;
-    margin:36px auto 0;padding-top:16px;border-top:1px solid var(--paper-edge);
-    font-size:11.5px;color:var(--ink-3);max-width:880px;
-  }
-  .page-foot b{font-weight:600;color:var(--ink-2);font-family:var(--pen);font-size:12.5px}
-  .footlink{
-    appearance:none;border:0;background:transparent;font:inherit;font-size:11.5px;color:var(--ink-3);
-    cursor:pointer;border-bottom:1px dotted var(--rule);padding:0 0 1px;margin-left:auto;
-  }
-  .footlink:hover{color:var(--red)}
-  .topnote{
-    display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:12.5px;color:var(--ink-3);
-    margin:0 0 16px;
-  }
-  .topnote .dot{width:5px;height:5px;border-radius:50%;background:var(--red)}
-  .errbar{
-    position:fixed;left:0;right:0;bottom:0;z-index:99;background:#7a1d16;color:#fff;
-    font:12px/1.6 ui-monospace,Consolas,monospace;padding:10px 16px;display:none;white-space:pre-wrap;max-height:38vh;overflow:auto;
-  }
-  .errbar.show{display:block}
-
   @media print{
-    body::before,.topbar,.unitbar,.q-tools,.tool,.stamp,.oneq-bar{display:none!important}
+    .topbar,.bottombar,.qtools,footer,#cardsheet,.settle-acts,.mcard .mlink,.rtabs,.bar{display:none!important}
     body{background:#fff}
-    main{padding:0;max-width:none}
-    .sheet,.mcard,.tablewrap{box-shadow:none;border-color:#bbb;break-inside:avoid}
-    .view{display:none!important}
-    .view.is-active{display:block!important}
-    .mcard{margin-bottom:10px}
-  }
-  @media (max-width:720px){
-    .topbar{gap:12px;padding:12px 16px}
-    .brand h1{font-size:18px}
-    .tabs{width:100%;order:3;margin-left:0}
-    .tab{flex:1;text-align:center;padding:8px 6px}
-    .sheet{padding:22px 16px 26px 22px}
-    .sheet::before{left:12px}
-    .q{grid-template-columns:30px 1fr}
-    .stamp{display:none}
-    .options{grid-template-columns:1fr}
-    .optsummary{grid-template-columns:1fr}
+    .app{max-width:none;padding:0}
+    .mcard,.qcard,.rows{box-shadow:none;break-inside:avoid}
   }
 </style>
 </head>
-<body>
-<div class="topbar">
+<body data-scan-base="../题库">
+<div id="errbar"></div>
+
+<header class="topbar">
   <div class="brand">
-    <span class="brand-mark">九上</span>
-    <div>
-      <h1>英语过关练习</h1>
-      <p>U1–U4 · 原卷批改 · 错题本</p>
-    </div>
+    <div class="seal">九上</div>
+    <div><h1>英语过关练习</h1><p id="brand-sub">U1–U4 · 按原卷分区</p></div>
   </div>
   <nav class="tabs" role="tablist" aria-label="视图">
-    <button class="tab" role="tab" data-view="practice" aria-selected="true">练习</button>
-    <button class="tab" role="tab" data-view="report" aria-selected="false">批改报告</button>
-    <button class="tab" role="tab" data-view="mistakes" aria-selected="false">错题本<span class="count" id="tab-mistake-count"></span></button>
-    <button class="tab" role="tab" data-view="fills" aria-selected="false">填空自测</button>
+    <button class="tab" role="tab" data-view="practice" aria-selected="true">做题</button>
+    <button class="tab" role="tab" data-view="review" aria-selected="false">复盘<span class="badge" id="tab-badge"></span></button>
   </nav>
-</div>
+</header>
 
-<main>
-  <section class="view is-active" id="view-practice" data-screen-label="practice"></section>
-  <section class="view" id="view-report" data-screen-label="report"></section>
-  <section class="view" id="view-mistakes" data-screen-label="mistakes"></section>
-  <section class="view" id="view-fills" data-screen-label="fills"></section>
-
-  <footer class="page-foot">
-    <span>原卷：<b>英语/题库/九上 U1–U4.jpg</b> · 页边字母为学生原作答，已逐题批改</span>
-    <span>答案与解析为整理稿，标「存疑」的题请与老师核对</span>
-    <button class="footlink" id="btn-export-json" data-rec-export>导出记录（JSON）</button>
-    <button class="footlink" id="btn-import-json" data-rec-import style="margin-left:0">导入记录（JSON）</button>
-    <button class="footlink" id="btn-reset-all" style="margin-left:0">清空全部作答记录</button>
-  </footer>
+<main class="app">
+  <section class="view" id="view-practice" data-screen-label="practice"></section>
+  <section class="view" id="view-review" data-screen-label="review" hidden></section>
 </main>
 
-<div class="errbar" id="errbar"></div>
+<footer>
+  <button data-act="export-json">导出记录（JSON）</button>
+  <button data-act="import">导入记录（JSON）</button>
+  <button data-act="clear">清空全部作答记录</button>
+  <span class="spacer"></span>
+  <span id="foot-note">记录存在本机浏览器；换设备前记得导出。</span>
+</footer>
+
+<div class="cardsheet" id="cardsheet" role="dialog" aria-modal="true" aria-label="答题卡">
+  <div class="mask" data-act="close-cards"></div>
+  <div class="panel" id="cardsheet-panel"></div>
+</div>
+
+<div id="toast"></div>
 
 <script src="data/bundle.js"></script>
 <script>
-(function(){
+(function () {
   "use strict";
 
-  /* ══ 数据准备 ═══════════════════════════════════════ */
-  var RAW = (window.QUIZ_DATA && window.QUIZ_DATA.units) || [];
-  var UNITS = RAW.map(function(u){
-    var key = (u.key && u.key.items) || {};
-    var exp = u.explain || {};
-    var items = (u.items || []).map(function(it){
-      var rawId = (it.id != null && it.id !== "") ? String(it.id) : String(it.no);
-      var k = key[rawId] || key[String(it.no)] || {};
-      var e = exp[rawId] || exp[String(it.no)] || {};
+  /* ══ 数据 ══════════════════════════════════════════ */
+  var DATA = window.QUIZ_DATA || { units: [] };
+  var STORE_KEY = "eng9a-practice-v1";
+  var VIEW_KEY = "eng9a-view-v1";
+  var AT_KEEP = 10;
+  var HIST_KEEP = 5;
+  var ID_MIGRATION = window.__ID_MIGRATION || {};
+  var SCAN_BASE = document.body.dataset.scanBase || "../题库";
+  var ONLINE = location.protocol === "http:" || location.protocol === "https:";
+
+  function objOf(v) { return v && typeof v === "object" && !Array.isArray(v) ? v : {}; }
+  function norm(s) {
+    return String(s || "")
+      .toLowerCase()
+      .replace(/[\u2019\u2018\u00b4`]/g, "'")
+      .replace(/[\u201c\u201d]/g, '"')
+      .replace(/\//g, " ")
+      .replace(/'/g, "")
+      .replace(/[.,;:!?"()[\]]/g, " ")
+      .replace(/\s+/g, " ")
+      .trim();
+  }
+  function esc(s) {
+    return String(s == null ? "" : s)
+      .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+  }
+  function pad(n) { return n < 10 ? "0" + n : String(n); }
+  function fmtAt(iso) {
+    if (!iso) return "";
+    var d = new Date(iso);
+    if (isNaN(d.getTime())) return "";
+    return d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate()) + " " + pad(d.getHours()) + ":" + pad(d.getMinutes());
+  }
+
+  /* ══ 数据整形 ══════════════════════════════════════ */
+  var UNITS = (DATA.units || []).map(function (u) {
+    var keyItems = (u.key && u.key.items) || {};
+    var explain = u.explain || {};
+    var items = (u.items || []).map(function (it) {
+      var rawId = it.id != null && it.id !== "" ? String(it.id) : String(it.no);
+      var k = keyItems[rawId] || keyItems[String(it.no)] || {};
+      var e = explain[rawId] || explain[String(it.no)] || {};
       return {
-        id: u.unit + "-" + rawId,
-        rawId: rawId,
-        section: it.section || "",
-        label: (it.section ? it.section + " · " : "") + "第 " + it.no + " 题",
-        unit: u.unit,
-        no: it.no,
+        id: u.unit + "-" + rawId, rawId: rawId, unit: u.unit,
+        section: it.section || "", no: it.no, noLabel: it.noLabel || "",
         kind: it.kind || (it.options && it.options.length ? "mc" : "fill"),
-        stem: it.stem || "",
-        cn: it.cn || "",
-        options: it.options || [],
-        marked: (it.marked || "").toUpperCase() || null,
-        handwriting: it.handwriting || [],
-        note: it.note || "",
-        answer: (k.answer || "").toUpperCase(),
-        answerRaw: k.answer || "",
-        alt: k.alt || [],
-        topic: e.topic || k.topic || "",
-        point: e.point || "",
-        why: e.why || k.why || "",
-        trap: e.trap || "",
-        explainShort: k.why || "",
-        doubt: !!k.doubt,
-        manual: !!k.manual,
-        handwritingText: (it.handwriting || []).join(" ").trim()
+        fields: Math.max(it.fields || 1, 1),
+        stem: it.stem || "", cn: it.cn || "",
+        options: it.options || [], marked: (it.marked || "").toUpperCase() || null,
+        handwriting: it.handwriting || [], note: it.note || "",
+        answer: (k.answer || "").toUpperCase(), answerRaw: k.answer || "", alt: k.alt || [],
+        topic: e.topic || k.topic || "", point: e.point || "",
+        why: e.why || k.why || "", trap: e.trap || "",
+        doubt: !!k.doubt, manual: !!k.manual
       };
     });
+    var sections = [];
+    items.forEach(function (it) {
+      var last = sections[sections.length - 1];
+      if (!last || last.name !== it.section) sections.push({ name: it.section, items: [] });
+      sections[sections.length - 1].items.push(it);
+    });
     return {
-      unit: u.unit,
-      title: u.title || ("九上 " + u.unit),
-      header: u.header || {},
-      items: items,
-      mc: items.filter(function(i){ return i.kind === "mc" && i.options.length; }),
-      fills: items.filter(function(i){ return i.kind === "fill"; })
+      unit: u.unit, title: u.title || "九上 " + u.unit, header: u.header || {},
+      note: u.note || "", passages: u.passages || {}, items: items, sections: sections,
+      mc: items.filter(function (i) { return i.kind === "mc"; }),
+      fills: items.filter(function (i) { return i.kind === "fill"; })
     };
   });
-
-  UNITS.forEach(function(u){
-    u.mc.forEach(function(it, i){ it.seq = i + 1; });
-    u.fills.forEach(function(it, i){ it.seq = i + 1; });
-    u.items.forEach(function(it){
-      it.paperRef = (it.section ? it.section + " · " : "") + "第 " + it.no + " 题";
-      it.label = "第 " + it.seq + " 题";
-    });
-  });
-
   var BY_ID = {};
-  UNITS.forEach(function(u){ u.items.forEach(function(i){ BY_ID[i.id] = i; }); });
+  UNITS.forEach(function (u) { u.items.forEach(function (i) { BY_ID[i.id] = i; }); });
+  var UNIT_BY = {};
+  UNITS.forEach(function (u) { UNIT_BY[u.unit] = u; });
 
-  /* ══ 本地存储 ═══════════════════════════════════════ */
-  /* 题目 id 迁移（2026-11-04：数据改为「按原卷大题分区 + 大题内题号」）
-     只做一次：旧 id → 新 id；迁移后旧键消失，重复加载不会二次迁移。 */
-  var ID_MIGRATION = {
-    "U3-1": "U3-r1",
-    "U3-2": "U3-r2",
-    "U3-3": "U3-r3",
-    "U3-4": "U3-r4",
-    "U3-5": "U3-r5",
-    "U3-6": "U3-r6",
-    "U3-7": "U3-r7",
-    "U3-8": "U3-r8",
-    "U3-9": "U3-r9",
-    "U3-10": "U3-r10",
-    "U3-11": "U3-r11",
-    "U3-12": "U3-r12",
-    "U3-13": "U3-r13",
-    "U3-14": "U3-g1",
-    "U3-15": "U3-g2",
-    "U3-16": "U3-g3",
-    "U3-17": "U3-g4",
-    "U4-1": "U4-m1",
-    "U4-2": "U4-m2",
-    "U4-3": "U4-c1",
-    "U4-4": "U4-c2",
-    "U4-5": "U4-c3",
-    "U4-6": "U4-c4",
-    "U4-7": "U4-c5",
-    "U4-8": "U4-c6",
-    "U4-9": "U4-s1",
-    "U4-10": "U4-s2",
-    "U4-11": "U4-s3",
-    "U4-12": "U4-s4",
-    "U4-13": "U4-s5",
-    "U4-14": "U4-t1",
-    "U4-15": "U4-t2",
-    "U4-16": "U4-t3"
-  };
-  function remapRecord(o){
+  function itemRef(it) {
+    if (it.section && it.noLabel) return it.section + " " + it.noLabel;
+    if (it.section) return it.section + " · 第 " + it.no + " 题";
+    return "卷面 第 " + it.no + " 题";
+  }
+  function shortRef(it) {
+    if (it.section && it.noLabel) return it.section + it.noLabel;
+    if (it.section) return it.section + " " + it.no;
+    return String(it.no);
+  }
+  function answerParts(it) {
+    return String(it.answerRaw || "").split(/\s*\/\s*/).filter(Boolean);
+  }
+  function acceptedList(it) {
+    return [it.answerRaw].concat(it.alt || []).map(norm).filter(Boolean);
+  }
+  function scanHref(it) { return SCAN_BASE + "/九上_" + it.unit + ".jpg"; }
+
+  /* ══ 记录 ══════════════════════════════════════════ */
+  function remapRecord(o) {
     var out = {}, changed = false;
-    Object.keys(o).forEach(function(k){
+    Object.keys(o).forEach(function (k) {
       var nk = ID_MIGRATION[k];
-      if (nk && !Object.prototype.hasOwnProperty.call(o, nk)) { out[nk] = o[k]; changed = true; }
-      else out[k] = o[k];
+      if (!nk) { out[k] = o[k]; return; }
+      changed = true;
+      /* 新 id 已存在就以新 id 为准，旧键丢弃，避免新旧双写残留 */
+      if (!Object.prototype.hasOwnProperty.call(o, nk)) out[nk] = o[k];
     });
     return changed ? out : o;
   }
-  var STORE_KEY = "eng9a-practice-v1";
-  var AT_KEEP = 10; /* atList 每题只保留最近 N 次作答时间 */
-  var store = loadStore();
-
-  /* 统一存档形状：at / atList 是后加的字段，旧存档没有也照常加载（缺省补空对象） */
-  function normalizeStore(s){
-    s = (s && typeof s === "object" && !Array.isArray(s)) ? s : {};
-    function objOf(v){ return (v && typeof v === "object" && !Array.isArray(v)) ? v : {}; }
+  function normalizeStore(s) {
+    s = objOf(s);
     return {
-      picks: remapRecord(objOf(s.picks)), fills: remapRecord(objOf(s.fills)), stat: remapRecord(objOf(s.stat)),
-      cleared: remapRecord(objOf(s.cleared)), at: remapRecord(objOf(s.at)), atList: remapRecord(objOf(s.atList)),
+      picks: remapRecord(objOf(s.picks)), fills: remapRecord(objOf(s.fills)),
+      stat: remapRecord(objOf(s.stat)), cleared: remapRecord(objOf(s.cleared)),
+      at: remapRecord(objOf(s.at)), atList: remapRecord(objOf(s.atList)),
+      hist: remapRecord(objOf(s.hist)),
+      rounds: Array.isArray(s.rounds) ? s.rounds.slice(-20) : [],
       unit: s.unit || (UNITS[0] ? UNITS[0].unit : "U1")
     };
   }
-  function loadStore(){
-    try{ return normalizeStore(JSON.parse(localStorage.getItem(STORE_KEY) || "{}")); }
-    catch(e){ return normalizeStore({}); }
+  function loadStore() {
+    try { return normalizeStore(JSON.parse(localStorage.getItem(STORE_KEY) || "{}")); }
+    catch (e) { return normalizeStore({}); }
   }
-  function saveStore(){
-    try{ localStorage.setItem(STORE_KEY, JSON.stringify(store)); }catch(e){}
+  var store = loadStore();
+  function saveStore() {
+    try { localStorage.setItem(STORE_KEY, JSON.stringify(store)); } catch (e) {}
   }
-
-  /* 作答时间戳：at = 该题最近一次作答（ISO 字符串），atList = 最近 AT_KEEP 次（新的在前） */
-  function stampAnswer(id){
+  function pickOf(it) { return store.picks[it.id] || null; }
+  function fillOf(it) {
+    var v = store.fills[it.id];
+    return Array.isArray(v) ? v : typeof v === "string" ? [v] : null;
+  }
+  function isAnswered(it) { return it.kind === "mc" ? !!pickOf(it) : !!fillOf(it); }
+  function statOf(it) { return store.stat[it.id] || null; }
+  function isRight(it) { return judge(it, it.kind === "mc" ? pickOf(it) : fillOf(it)); }
+  /* 判分只有这一处：选择题比字母，填空题整串归一化后比（等价写法按 alt） */
+  function judge(it, sel) {
+    if (it.kind === "mc") return sel === it.answer;
+    var v = Array.isArray(sel) ? sel.join(" / ") : String(sel == null ? "" : sel);
+    return acceptedList(it).indexOf(norm(v)) >= 0;
+  }
+  function answerText(it) {
+    if (it.kind === "mc") return pickOf(it) || "";
+    var v = fillOf(it);
+    return v ? v.join(" / ") : "";
+  }
+  function stampNow(id) {
     var iso = new Date().toISOString();
     store.at[id] = iso;
     var list = Array.isArray(store.atList[id]) ? store.atList[id] : [];
@@ -665,1150 +422,845 @@
     store.atList[id] = list.slice(0, AT_KEEP);
     return iso;
   }
-  function lastAt(id){ var v = store.at[id]; return typeof v === "string" ? v : ""; }
-  function atListOf(id){ var v = store.atList[id]; return Array.isArray(v) ? v : []; }
-  function fmtAt(iso){
-    if (!iso) return "";
-    var d = new Date(iso);
-    if (isNaN(d.getTime())) return "";
-    var pad = function(n){ return n < 10 ? "0" + n : String(n); };
-    return d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate()) + " " + pad(d.getHours()) + ":" + pad(d.getMinutes());
+  function recordAnswer(it, shown, ok) {
+    var iso = stampNow(it.id);
+    if (it.kind === "mc") store.picks[it.id] = shown;
+    else store.fills[it.id] = Array.isArray(shown) ? shown.map(function (x) { return String(x || "").trim(); }) : [String(shown || "").trim()];
+    var st = store.stat[it.id] || (store.stat[it.id] = { att: 0, ok: 0, wrong: 0 });
+    st.att++;
+    if (ok) { st.ok = (st.ok || 0) + 1; } else { st.wrong = (st.wrong || 0) + 1; delete store.cleared[it.id]; }
+    var h = Array.isArray(store.hist[it.id]) ? store.hist[it.id] : [];
+    h.unshift({ a: it.kind === "mc" ? shown : Array.isArray(shown) ? shown.join(" / ") : String(shown || ""), ok: !!ok, at: iso });
+    store.hist[it.id] = h.slice(0, HIST_KEEP);
+    saveStore();
   }
-  /* 作答条数（导出提示 / 导入前确认用） */
-  function recordCount(s){
+  function paperWrong(it) {
+    if (it.kind === "mc") return !!(it.marked && it.answer && it.marked !== it.answer);
+    return paperVerdict(it) === "wrong";
+  }
+  function wrongList() {
+    var out = [];
+    UNITS.forEach(function (u) {
+      u.items.forEach(function (it) {
+        if (store.cleared[it.id]) return;
+        var st = statOf(it);
+        if (paperWrong(it) || (st && st.wrong > 0)) out.push(it);
+      });
+    });
+    return out;
+  }
+  function recordCount(s) {
     s = s || store;
     return Object.keys(s.picks || {}).length + Object.keys(s.fills || {}).length;
   }
 
-  /* ══ 工具函数 ═══════════════════════════════════════ */
-  function esc(s){
-    return String(s == null ? "" : s)
-      .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
-      .replace(/"/g, "&quot;").replace(/'/g, "&#39;");
-  }
-  function stemHTML(it){
-    var out = "";
-    if (it.cn) out += '<span class="cn" lang="zh">' + esc(it.cn) + "</span>";
-    out += esc(it.stem).replace(/_{3,}/g, '<span class="blank"></span>');
-    return out;
-  }
-  function norm(s){
-    return String(s || "")
-      .toLowerCase()
-      .replace(/[’‘´`]/g, "'")
-      .replace(/[“”]/g, '"')
-      .replace(/\//g, " ")
-      .replace(/'/g, "")
-      .replace(/[.,;:!?"()\[\]]/g, " ")
-      .replace(/\s+/g, " ")
-      .trim();
-  }
-  function accepted(it){
-    var list = [it.answerRaw].concat(it.alt || []);
-    if (it.answer && it.answer.length === 1) list.push(it.answer);
-    return list.map(norm).filter(Boolean);
-  }
-  function isFillRight(it, val){
-    var v = norm(val);
-    if (!v) return false;
-    return accepted(it).some(function(a){ return a === v; });
-  }
-  function pickOf(it){ return store.picks[it.id] || null; }
-  function isRight(it, pick){ return !!pick && pick === it.answer; }
+  /* ══ 会话状态 ══════════════════════════════════════ */
+  var S = {
+    view: "practice",
+    unit: store.unit && UNIT_BY[store.unit] ? store.unit : UNITS[0] ? UNITS[0].unit : "U1",
+    mode: "drill",
+    idx: 0,
+    picked: {},
+    reveals: {},
+    marks: {},
+    exam: null,
+    settle: false,
+    onlyFills: false,
+    reviewTab: "wrong",
+    reviewUnit: "all"
+  };
+  try {
+    var vp = JSON.parse(localStorage.getItem(VIEW_KEY) || "{}");
+    if (vp && vp.mode === "exam") S.mode = "exam";
+  } catch (e) {}
 
-  /* 填空题「原卷手写」的批改：
-     right = 与参考答案/等价写法一致；wrong = 词/短语题写错；
-     close = 整句翻译与参考答案不同（可能只是换说法，需人工核对）；
-     manual = 该题有多种合理答案，需人工判断；
-     missing = 参考答案本身缺失；empty = 未作答 / 字迹无法辨认 */
-  function isSentenceAnswer(it){
-    // 只有整句翻译题（参考答案以句号结尾）才在「与参考答案不同」时判为待核对，
-    // 避免把「换了一种说法」的正确答案误判为错。
-    return /\.\s*$/.test(String(it.answerRaw || ""));
+  function unit() { return UNIT_BY[S.unit] || UNITS[0]; }
+  function items() {
+    var u = unit();
+    return S.onlyFills ? u.fills : u.items;
   }
-  /* 卷面「首字母已给」的填空：手写部分不含印刷字母，补全后再比对/展示 */
-  function hwFull(it){
-    var hw = String(it.handwritingText || "");
-    if (!hw) return "";
-    if (hw.indexOf("看不清") >= 0) return hw;
-    var m = /([A-Za-z]+)_{3,}/.exec(it.stem || "");
-    if (!m || !m[1]) return hw;
-    var pre = m[1];
-    if (hw.toLowerCase().indexOf(pre.toLowerCase()) === 0) return hw;
-    return pre + hw;
+  function current() { return items()[Math.min(S.idx, items().length - 1)]; }
+  function isExam() { return S.mode === "exam"; }
+  function examAnswers() { return S.exam ? S.exam.answers : {}; }
+  function currentSelection(it) {
+    if (isExam()) return examAnswers()[it.id];
+    return S.picked[it.id];
   }
-  function fillPaperGrade(it){
-    if (it.kind !== "fill") return "";
-    if (it.manual) return "manual";
-    if (!it.answerRaw) return "missing";
-    var hw = hwFull(it);
-    if (!hw || hw.indexOf("看不清") >= 0) return "empty";
-    if (isFillRight(it, hw)) return "right";
-    return isSentenceAnswer(it) ? "close" : "wrong";
-  }
-  function fillGradeText(g){
-    if (g === "right") return "正确";
-    if (g === "wrong") return "错误";
-    if (g === "close" || g === "manual") return "待核对";
-    if (g === "missing") return "无答案";
-    if (g === "empty") return "未作答";
-    return "";
-  }
+  function shownState(it) { return !!S.reveals[it.id]; }
+  function progressText() { return (S.idx + 1) + " / " + items().length; }
 
-  function unitOf(code){
-    for (var i = 0; i < UNITS.length; i++) if (UNITS[i].unit === code) return UNITS[i];
-    return UNITS[0];
-  }
-
-  /* ══ 统计 ═══════════════════════════════════════════ */
-  function unitStats(u){
-    var total = u.mc.length, done = 0, right = 0, wrong = 0;
-    u.mc.forEach(function(it){
-      var p = pickOf(it);
-      if (p){
-        done++;
-        if (p === it.answer) right++; else wrong++;
-      }
-    });
-    var paperRight = 0, paperWrong = 0, paperNone = 0;
-    u.mc.forEach(function(it){
-      if (!it.marked) paperNone++;
-      else if (it.marked === it.answer) paperRight++;
-      else paperWrong++;
-    });
-    var fillTotal = u.fills.length, fillRight = 0, fillWrong = 0, fillClose = 0, fillManual = 0, fillEmpty = 0, fillMissing = 0;
-    u.fills.forEach(function(it){
-      var g = fillPaperGrade(it);
-      if (g === "right") fillRight++;
-      else if (g === "wrong") fillWrong++;
-      else if (g === "close") fillClose++;
-      else if (g === "manual") fillManual++;
-      else if (g === "missing") fillMissing++;
-      else fillEmpty++;
-    });
-    return {
-      total: total, done: done, right: right, wrong: wrong,
-      paperRight: paperRight, paperWrong: paperWrong, paperNone: paperNone,
-      fillTotal: fillTotal, fillRight: fillRight, fillWrong: fillWrong,
-      fillClose: fillClose, fillManual: fillManual, fillEmpty: fillEmpty, fillMissing: fillMissing,
-      fillPending: fillClose + fillManual, fillUnknown: fillEmpty + fillMissing
-    };
-  }
-  function globalStats(){
-    var t = { total: 0, done: 0, right: 0, wrong: 0 };
-    UNITS.forEach(function(u){
-      var s = unitStats(u);
-      t.total += s.total; t.done += s.done; t.right += s.right; t.wrong += s.wrong;
-    });
-    return t;
-  }
-  function wrongList(){
-    var out = [];
-    UNITS.forEach(function(u){
-      u.mc.forEach(function(it){
-        if (store.cleared[it.id]) return;
-        var p = pickOf(it);
-        var paperWrong = it.marked && it.marked !== it.answer;
-        var practiceWrong = p && p !== it.answer;
-        var stt = store.stat[it.id] || null;
-        var wrongN = stt && stt.wrong ? stt.wrong : (paperWrong ? 1 : 0);
-        /* 做对了也不自动出库：错过就留着（记着累计错几次），确认真会了点「我会了」才清 */
-        if (paperWrong || practiceWrong || wrongN > 0){
-          out.push({ it: it, unit: u, paperPick: it.marked, practicePick: p, type: "mc", wrongN: wrongN });
-        }
-      });
-      u.fills.forEach(function(it){
-        if (store.cleared[it.id]) return;
-        if (fillPaperGrade(it) === "wrong"){
-          out.push({ it: it, unit: u, paperPick: hwFull(it), practicePick: null, type: "fill", wrongN: 1 });
-        }
-      });
-    });
-    return out;
-  }
-  function wrongCountFor(code){
-    if (!code) return wrongList().length;
-    return wrongList().filter(function(w){ return w.it.unit === code; }).length;
-  }
-
-  /* ══ 视图切换 ═══════════════════════════════════════ */
-  var currentView = "practice";
-  var curUnit = unitOf(store.unit);
-
-  var tabs = Array.prototype.slice.call(document.querySelectorAll(".tab"));
-  tabs.forEach(function(t){
-    t.addEventListener("click", function(){ switchView(t.dataset.view); });
-  });
-  function switchView(name, opts){
-    currentView = name;
-    tabs.forEach(function(t){ t.setAttribute("aria-selected", String(t.dataset.view === name)); });
-    var views = { practice: "view-practice", report: "view-report", mistakes: "view-mistakes", fills: "view-fills" };
-    Object.keys(views).forEach(function(k){
-      var el = document.getElementById(views[k]);
-      if (el) el.classList.toggle("is-active", k === name);
-    });
-    if (name === "practice") renderPractice();
-    if (name === "report") renderReport();
-    if (name === "mistakes") renderMistakes();
-    if (name === "fills") renderFills();
-    updateTabCounts();
-    if (opts && opts.focus) {
-      requestAnimationFrame(function(){
-        var node = document.getElementById(opts.focus);
-        if (node){
-          node.scrollIntoView({ behavior: "smooth", block: "center" });
-          node.classList.add("is-target");
-          setTimeout(function(){ node.classList.remove("is-target"); }, 1400);
-        }
-      });
-    } else {
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    }
-  }
-  function updateTabCounts(){
-    var el = document.getElementById("tab-mistake-count");
-    if (el) el.textContent = wrongList().length || "";
-  }
-
-  /* ══ 深链 ═══════════════════════════════════════════
-     支持 #view=practice|report|mistakes|fills，以及 #unit=U1..U4（大小写不敏感，
-     也认 unit=1 这种写法）。只读 location.hash，不回写；没有 hash 时行为与原来完全一致。 */
-  function parseHashParams(){
-    var out = {};
-    var raw = String(location.hash || "").replace(/^#/, "");
-    if (!raw) return out;
-    raw.split("&").forEach(function(kv){
-      if (!kv) return;
-      var i = kv.indexOf("=");
-      var k = i < 0 ? kv : kv.slice(0, i);
-      var v = i < 0 ? "" : kv.slice(i + 1);
-      try { k = decodeURIComponent(k); v = decodeURIComponent(v); } catch(e){}
-      out[k.trim().toLowerCase()] = v.trim();
-    });
-    return out;
-  }
-  function unitByCode(code){
-    var c = String(code || "").trim().toUpperCase().replace(/^UNIT/, "U");
-    if (!c) return null;
-    if (/^\d+$/.test(c)) c = "U" + c;
-    for (var i = 0; i < UNITS.length; i++) if (UNITS[i].unit.toUpperCase() === c) return UNITS[i];
-    return null;
-  }
-  /* 返回 true = 已按深链跳转；false = 没有可识别的深链参数 */
-  function applyDeepLink(){
-    var h = parseHashParams();
-    var view = String(h.view || "").toLowerCase();
-    var u = unitByCode(h.unit || h.u || "");
-    if (u){
-      curUnit = u;
-      store.unit = u.unit; saveStore();
-      oneIdx = 0;
-      if (view === "mistakes") mFilterUnit = u.unit;   /* #view=mistakes&unit=U2：直接筛到该单元 */
-    }
-    var views = ["practice", "report", "mistakes", "fills"];
-    if (views.indexOf(view) >= 0){
-      if (view === "practice"){
-        onlyWrong = false;
-        /* #layout=one：入口页的「5 分钟逐题」任务直接进逐题模式，不用先手动切 */
-        if (String(h.layout || "").toLowerCase() === "one") setPracticeMode("one");
-        var first = u ? (u.mc[0] || u.items[0]) : null;
-        switchView("practice", first ? { focus: "q-" + first.id } : null);
-      } else if (view === "fills" && u && u.fills.length){
-        switchView("fills", { focus: "f-" + u.fills[0].id });
-      } else {
-        switchView(view);
-      }
-      return true;
-    }
-    if (u){   /* 只给 #unit：切到练习，并定位到该单元第一题 */
-      onlyWrong = false;
-      var q0 = u.mc[0] || u.items[0];
-      switchView("practice", q0 ? { focus: "q-" + q0.id } : null);
-      return true;
-    }
-    return false;
-  }
-
-  /* ══ 练习视图 ═══════════════════════════════════════ */
-  var practiceEl = document.getElementById("view-practice");
-
-  /* 显示方式偏好（整卷 / 逐题）单独存一个键，不写进作答记录 store，
-     旧存档（没有这个键）默认整卷，行为与以前完全一致。 */
-  var VIEW_KEY = "eng9a-view-v1";
-  var practiceMode = loadViewPref();   /* "paper" 整卷（默认）| "one" 逐题 */
-  var oneIdx = 0;                      /* 逐题模式当前是列表里的第几题（0 起） */
-  function loadViewPref(){
-    try{
-      var raw = localStorage.getItem(VIEW_KEY);
-      var o = raw ? JSON.parse(raw) : null;
-      return (o && o.mode === "one") ? "one" : "paper";
-    }catch(e){ return "paper"; }
-  }
-  function saveViewPref(){
-    try{ localStorage.setItem(VIEW_KEY, JSON.stringify({ mode: practiceMode })); }catch(e){}
-  }
-  function setPracticeMode(m){
-    practiceMode = (m === "one") ? "one" : "paper";
-    if (practiceMode === "paper") oneIdx = 0;
-    saveViewPref();
-    renderPractice();
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  }
-  /* 当前单元要显示的题（整卷 / 逐题共用同一份列表：筛「只看错题」时也一致） */
-  function practiceList(){
-    var u = curUnit;
-    if (!onlyWrong) return u.mc;
-    return u.mc.filter(function(it){
-      var p = pickOf(it);
-      return !p || p !== it.answer || (it.marked && it.marked !== it.answer);
-    });
-  }
-
-  function renderPractice(){
-    var u = curUnit;
-    var s = unitStats(u);
-    var rate = s.done ? Math.round(s.right / s.done * 100) : 0;
-    var html = "";
-    html += '<div class="unitbar">';
-    html += '<div class="unitseg" role="group" aria-label="选择单元">';
-    UNITS.forEach(function(x){
-      html += '<button data-unit="' + esc(x.unit) + '" aria-pressed="' + (x.unit === u.unit ? "true" : "false") + '">' +
-        esc(x.unit) + (wrongCountFor(x.unit) ? '<span class="count">' + wrongCountFor(x.unit) + "</span>" : "") + "</button>";
-    });
-    html += "</div>";
-    html += '<span class="hint">共 ' + s.total + " 道选择题 · 已做 " + s.done + " · 答对 " + s.right + "</span>";
-    html += '<span class="spacer"></span>';
-    html += '<button class="tool" id="btn-only-wrong" aria-pressed="' + (onlyWrong ? "true" : "false") + '">只看错题 / 未做</button>';
-    html += '<span class="unitseg" role="group" aria-label="显示方式">' +
-      '<button data-pmode="paper" aria-pressed="' + (practiceMode === "paper" ? "true" : "false") + '">整卷</button>' +
-      '<button data-pmode="one" aria-pressed="' + (practiceMode === "one" ? "true" : "false") + '">逐题</button></span>';
-    html += '<button class="tool" id="btn-reset-unit">重做本单元</button>';
-    html += "</div>";
-
-    html += '<article class="sheet" data-screen-label="' + esc(u.unit) + ' 试卷">';
-    html += '<div class="sheet-head">';
-    var h = u.header || {};
-    var metaBits = [];
-    if (h.class) metaBits.push("<span>班级 <b>" + esc(h.class) + "</b></span>");
-    if (h.name) metaBits.push("<span>姓名 <b>" + esc(h.name) + "</b></span>");
-    if (h.id) metaBits.push("<span>学号 <b>" + esc(h.id) + "</b></span>");
-    metaBits.push("<span>选择题 <b data-meta=\"mc\">" + s.paperRight + " / " + (s.paperRight + s.paperWrong + s.paperNone) + "</b></span>");
-    metaBits.push("<span>填空题 <b data-meta=\"fill\">" + s.fillRight + " / " + s.fillTotal + "</b></span>");
-    html += '<div class="sheet-meta">' + metaBits.join("") + "</div>";
-    html += '<div class="sheet-title">';
-    html += '<span class="unit-eyebrow">Unit ' + esc((u.unit.replace(/^U/, ""))) + "</span>";
-    html += "<h2>" + esc(u.title) + "</h2>";
-    html += "</div>";
-    html += '<div class="stamp' + (s.done ? " show" : "") + '"><b>' + (s.done ? rate + "%" : "待批") + "</b><span>" + (s.done ? "本轮正确率" : "待作答") + "</span></div>";
-    html += "</div>";
-
-    var list = practiceList();
-
-    html += '<section class="part">';
-    if (practiceMode === "one") {
-      /* 逐题模式：一次只渲染一道题；判分 / 解析 / 重做 / 时间戳全部复用 questionHTML */
-      html += oneModeHTML(u, list);
-    } else {
-      html += '<div class="part-head"><h3>选择题</h3><span class="range">共 ' + u.mc.length + " 题 · 点字母选项作答" + (onlyWrong ? " · 筛出 " + list.length : "") + '</span><span class="rule"></span></div>';
-      html += '<ol class="questions">';
-      list.forEach(function(it){ html += questionHTML(it); });
-      if (!list.length){
-        html += '<li class="q"><div class="q-no"></div><div class="q-body"><p class="stem" style="color:var(--ok)">这一部分全部做对了 —— 换个单元，或关掉筛选继续。</p></div></li>';
-      }
-      html += "</ol>";
-    }
-    html += "</section>";
-
-    if (u.fills.length){
-      html += '<div class="sidenote"><b>另附</b><span lang="zh">本页还有 ' + u.fills.length + ' 道填空 / 汉译英题，原卷手写已录入，去「填空自测」对照或跟写。</span></div>';
-    }
-    var noOpt = u.items.filter(function(it){ return it.kind === "mc" && (!it.options || !it.options.length); });
-    if (noOpt.length){
-      html += '<div class="sidenote"><b>缺题</b><span lang="zh">卷面第 ' + noOpt.map(function(it){ return it.no; }).join("、") + ' 题的选项没有印在照片范围内，暂不计入练习。</span></div>';
-    }
-    html += "</article>";
-    practiceEl.innerHTML = html;
-
-    // events
-    Array.prototype.forEach.call(practiceEl.querySelectorAll(".unitseg button[data-unit]"), function(b){
-      b.addEventListener("click", function(){
-        curUnit = unitOf(b.dataset.unit);
-        oneIdx = 0;
-        store.unit = curUnit.unit; saveStore();
-        renderPractice();
-      });
-    });
-    var ow = document.getElementById("btn-only-wrong");
-    if (ow) ow.addEventListener("click", function(){ onlyWrong = !onlyWrong; renderPractice(); });
-    /* 整卷 / 逐题 切换（偏好单独存 localStorage，不动作答记录） */
-    Array.prototype.forEach.call(practiceEl.querySelectorAll("[data-pmode]"), function(b){
-      b.addEventListener("click", function(){
-        if (practiceMode !== b.dataset.pmode) setPracticeMode(b.dataset.pmode);
-      });
-    });
-    /* 逐题模式：上一题 / 下一题（只改下标，判分仍走同一套 applyAnswered / questionHTML） */
-    Array.prototype.forEach.call(practiceEl.querySelectorAll("[data-one]"), function(b){
-      b.addEventListener("click", function(){
-        var n = practiceList().length;
-        if (!n) return;
-        if (b.dataset.one === "prev") oneIdx = Math.max(0, oneIdx - 1);
-        else oneIdx = Math.min(n - 1, oneIdx + 1);
-        renderPractice();
-        window.scrollTo({ top: 0, behavior: "smooth" });
-      });
-    });
-    var rs = document.getElementById("btn-reset-unit");
-    if (rs) rs.addEventListener("click", function(){
-      if (!confirm("清空 " + curUnit.unit + " 的选择题作答记录？（原卷手写批改记录不受影响）")) return;
-      curUnit.mc.forEach(function(it){ delete store.picks[it.id]; });
-      saveStore(); renderPractice(); updateTabCounts();
-    });
-
-    Array.prototype.forEach.call(practiceEl.querySelectorAll(".opt"), function(btn){
-      btn.addEventListener("click", function(){
-        var id = btn.closest(".q").dataset.id;
-        var it = BY_ID[id];
-        if (!it) return;
-        if (store.picks[id]) return; // 已答不可改，用“重做本题”
-        store.picks[id] = btn.dataset.k;
-        stampAnswer(id); /* 记录本次作答时间（at / atList） */
-        /* 累计作答次数：改对了也不清零，错题本靠它显示「累计错 N 次」 */
-        var stt = store.stat[id] || (store.stat[id] = { att: 0, wrong: 0, ok: 0 });
-        stt.att++;
-        if (btn.dataset.k === it.answer) stt.ok = (stt.ok || 0) + 1;
-        else { stt.wrong = (stt.wrong || 0) + 1; delete store.cleared[id]; }
-        saveStore();
-        applyAnswered(it);
-        ensureRedoBtn(it);
-        updateSheetStats();
-        updateTabCounts();
-      });
-    });
-    Array.prototype.forEach.call(practiceEl.querySelectorAll(".q-tools button"), function(btn){
-      btn.addEventListener("click", function(){
-        var id = btn.closest(".q").dataset.id;
-        var it = BY_ID[id];
-        if (!it) return;
-        if (btn.dataset.act === "again"){
-          delete store.picks[id]; saveStore();
-          applyUnanswered(it);
-          updateSheetStats(); updateTabCounts();
-        }
-        if (btn.dataset.act === "reveal"){
-          var v = document.getElementById("verify-" + it.id);
-          if (v) v.style.display = v.style.display === "none" ? "flex" : "none";
-        }
-      });
-    });
-
-    // 恢复已答状态（旧页面结构里可能没有重做按钮，补上）
-    list.forEach(function(it){
-      if (pickOf(it)) { applyAnswered(it); ensureRedoBtn(it); }
-    });
-    updateSheetStats();
-  }
-
-  /* 逐题模式：一屏只放一道题。题干 / 选项 / 解析 / 重做按钮全部由 questionHTML 生成，
-     判分逻辑与整卷模式是同一条代码路径（store.picks + applyAnswered）。 */
-  function oneModeHTML(u, list){
-    var n = list.length;
-    if (!n){
-      return '<div class="part-head"><h3>选择题 · 逐题</h3><span class="range">共 0 题</span><span class="rule"></span></div>' +
-        '<div class="empty"><div class="big">✓</div><p>这一部分全部做对了 —— 换个单元，或关掉筛选继续。</p></div>';
-    }
-    if (oneIdx < 0) oneIdx = 0;
-    if (oneIdx > n - 1) oneIdx = n - 1;
-    var it = list[oneIdx];
-    var html = '<div class="part-head"><h3>选择题 · 逐题</h3>' +
-      '<span class="range">第 ' + (oneIdx + 1) + " / " + n + " 题 · 一次只显示一道</span>" +
-      '<span class="rule"></span></div>';
-    html += oneNavHTML(list);
-    html += '<ol class="questions">' + questionHTML(it) + "</ol>";
-    html += oneNavHTML(list);
-    return html;
-  }
-  function oneNavHTML(list){
-    var n = list.length;
-    return '<div class="oneq-bar">' +
-      '<button class="tool" type="button" data-one="prev"' + (oneIdx <= 0 ? " disabled" : "") + '>← 上一题</button>' +
-      '<span class="progress">进度 ' + (oneIdx + 1) + " / " + n + "</span>" +
-      '<button class="tool" type="button" data-one="next"' + (oneIdx >= n - 1 ? " disabled" : "") + '>下一题 →</button>' +
-      '<span class="grow"></span>' +
-      oneHintHTML() +
-      "</div>";
-  }
-  function oneHintHTML(){
-    return '<span class="hint">答题规则与整卷一样：点字母即判分，答完自动展开解析</span>';
-  }
-
-  var onlyWrong = false;
-
-  /* 答完当场就补一个「重做本题」（以前要切视图触发重渲染才出现） */
-  function ensureRedoBtn(it){
-    var node = document.getElementById("q-" + it.id);
-    if (!node) return;
-    var tools = node.querySelector(".q-tools");
-    if (!tools || tools.querySelector('[data-act="again"]')) return;
-    var b = document.createElement("button");
-    b.type = "button"; b.dataset.act = "again"; b.textContent = "重做本题";
-    b.addEventListener("click", function(){
-      delete store.picks[it.id]; saveStore();
-      applyUnanswered(it);
-      updateSheetStats(); updateTabCounts();
-    });
-    var reveal = tools.querySelector('[data-act="reveal"]');
-    if (reveal) tools.insertBefore(b, reveal); else tools.appendChild(b);
-  }
-
-  function statOf(it){ return store.stat[it.id] || null; }
-
-  function questionHTML(it){
-    var pick = pickOf(it);
-    var answered = !!pick;
-    var right = answered && pick === it.answer;
-    var resultAttr = answered ? (right ? "right" : "wrong") : "";
-    var html = '<li class="q" id="q-' + esc(it.id) + '" data-id="' + esc(it.id) + '" data-result="' + resultAttr + '">';
-    html += '<div class="q-no"><span class="mark" aria-hidden="true">' + (answered ? (right ? "✓" : "✗") : "") + "</span>" + esc(it.seq);
-    if (it.marked) html += '<span class="pen-letter" title="原卷手写作答，已批改">原 ' + esc(it.marked) + "</span>";
-    var st0 = statOf(it);
-    if (st0 && st0.wrong > 0) html += '<span class="pen-letter stat-wrong" title="这题累计做错次数（改对了也不清零）">错 ' + st0.wrong + " 次</span>";
-    html += "</div>";
-    html += '<div class="q-body">';
-    html += '<p class="stem" lang="en">' + stemHTML(it) + "</p>";
-    html += '<div class="options" role="group" aria-label="第 ' + esc(it.no) + ' 题选项">';
-    it.options.forEach(function(o){
-      var st = "";
-      if (answered){
-        if (o.k === it.answer) st = "right";
-        else if (o.k === pick) st = "wrong";
-      }
-      html += '<button class="opt" data-k="' + esc(o.k) + '" data-state="' + st + '"' + (answered ? " disabled" : "") + ">" +
-        '<span class="k">' + esc(o.k) + '</span><span class="t">' + esc(o.t) + "</span></button>";
-    });
-    html += "</div>";
-    html += '<div class="q-tools">';
-    var atQ = fmtAt(lastAt(it.id));
-    var nQ = atListOf(it.id).length;
-    html += '<span class="q-ref">卷面 ' + esc(it.paperRef) +
-      (atQ ? " · 最近作答 " + esc(atQ) + (nQ > 1 ? "（共 " + nQ + " 次）" : "") : "") + "</span>";
-    if (answered) html += '<button data-act="again" type="button">重做本题</button>';
-    html += '<button data-act="reveal" type="button">看解析</button>';
-    html += "</div>";
-    html += '<div class="verify" id="verify-' + esc(it.id) + '" style="display:' + (answered ? "flex" : "none") + '">';
-    html += '<span class="tag">解析</span><div class="vbody">';
-    html += '<p class="vrow"><span class="vk">考点</span><span class="vt vtopic">' + esc(it.topic || "—") + "</span></p>";
-    if (it.point) html += '<p class="vrow"><span class="vk">规则</span><span class="vt">' + esc(it.point) + "</span></p>";
-    html += '<p class="vrow"><span class="vk">解析</span><span class="vt">' + esc(it.why || "（暂无解析）") + "</span></p>";
-    if (it.trap) html += '<p class="vrow v-trap"><span class="vk">易错点</span><span class="vt">' + esc(it.trap) + "</span></p>";
-    html += '<p class="vrow v-ans"><span class="vk">正确答案</span><span class="vt"><span class="ans">' + esc(it.answer || "?") + "</span>" +
-      (it.doubt ? '<span class="doubt-chip">该题存疑，已标记复核</span>' : "") + "</span></p>";
-    html += "</div></div>";
-    html += "</div></li>";
-    return html;
-  }
-
-  function applyAnswered(it){
-    var node = document.getElementById("q-" + it.id);
-    if (!node) return;
-    var pick = store.picks[it.id];
-    /* 题号旁的「错 N 次」要当场更新（不能等下次重渲染） */
-    (function(){
-      var qno = node.querySelector(".q-no");
-      var stt = store.stat[it.id] || null;
-      var badge = node.querySelector(".stat-wrong");
-      if (stt && stt.wrong > 0 && qno){
-        if (!badge){
-          badge = document.createElement("span");
-          badge.className = "pen-letter stat-wrong";
-          badge.title = "这题累计做错次数（改对了也不清零）";
-          qno.appendChild(badge);
-        }
-        badge.textContent = "错 " + stt.wrong + " 次";
-      } else if (badge) badge.remove();
-    })();
-    var right = pick === it.answer;
-    node.dataset.result = right ? "right" : "wrong";
-    var mark = node.querySelector(".mark");
-    if (mark) mark.textContent = right ? "✓" : "✗";
-    Array.prototype.forEach.call(node.querySelectorAll(".opt"), function(btn){
-      var k = btn.dataset.k;
-      btn.disabled = true;
-      var st = "";
-      if (k === it.answer) st = "right";
-      else if (k === pick) st = "wrong";
-      btn.dataset.state = st;
-    });
-    var v = document.getElementById("verify-" + it.id);
-    if (v) v.style.display = "flex";
-    /* 时间戳当场回写到「卷面 … · 最近作答 …」，不用等下次重渲染 */
-    var ref = node.querySelector(".q-ref");
-    var at = fmtAt(lastAt(it.id));
-    var n = atListOf(it.id).length;
-    if (ref && at) ref.textContent = "卷面 " + it.paperRef + " · 最近作答 " + at + (n > 1 ? "（共 " + n + " 次）" : "");
-  }
-  function applyUnanswered(it){
-    var node = document.getElementById("q-" + it.id);
-    if (!node) return;
-    node.dataset.result = "";
-    var mark = node.querySelector(".mark");
-    if (mark) mark.textContent = "";
-    Array.prototype.forEach.call(node.querySelectorAll(".opt"), function(btn){
-      btn.disabled = false; btn.dataset.state = "";
-    });
-    var v = document.getElementById("verify-" + it.id);
-    if (v) v.style.display = "none";
-    /* 回到"未作答"：重做按钮没用了，去掉（答完时 ensureRedoBtn 会补回来） */
-    var ag = node.querySelector('[data-act="again"]');
-    if (ag) ag.remove();
-  }
-  function updateSheetStats(){
-    var u = curUnit, s = unitStats(u);
-    var stamp = practiceEl.querySelector(".stamp");
-    if (stamp){
-      var rate = s.done ? Math.round(s.right / s.done * 100) : 0;
-      stamp.classList.toggle("show", s.done > 0);
-      stamp.innerHTML = "<b>" + (s.done ? rate + "%" : "待批") + "</b><span>" + (s.done ? "本轮正确率" : "待作答") + "</span>";
-    }
-    var hint = practiceEl.querySelector(".unitbar .hint");
-    if (hint) hint.textContent = "共 " + s.total + " 道选择题 · 已做 " + s.done + " · 答对 " + s.right;
-    var meta = practiceEl.querySelectorAll(".sheet-meta b");
-    var mcB = practiceEl.querySelector('.sheet-meta b[data-meta="mc"]');
-    if (mcB) mcB.textContent = s.paperRight + " / " + (s.paperRight + s.paperWrong + s.paperNone);
-    var fillB = practiceEl.querySelector('.sheet-meta b[data-meta="fill"]');
-    if (fillB) fillB.textContent = s.fillRight + " / " + s.fillTotal;
-  }
-
-  /* ══ 批改报告 ═══════════════════════════════════════ */
-  var reportEl = document.getElementById("view-report");
-
-  function renderReport(){
-    var g = globalStats();
-    var paperRight = 0, paperWrong = 0, paperNone = 0;
-    var fillRight = 0, fillWrong = 0, fillPending = 0, fillUnknown = 0, fillTotal = 0;
-    UNITS.forEach(function(u){
-      var s = unitStats(u);
-      paperRight += s.paperRight; paperWrong += s.paperWrong; paperNone += s.paperNone;
-      fillRight += s.fillRight; fillWrong += s.fillWrong;
-      fillPending += s.fillPending; fillUnknown += s.fillUnknown; fillTotal += s.fillTotal;
-    });
-    var mcTotal = paperRight + paperWrong + paperNone;
-    var html = "";
-    html += '<div class="report-head"><h2>批改报告</h2><p lang="zh">选择题按页边手写字母批改，填空题按横线手写与参考答案比对（含等价写法 · 开放题标待核对）· 点任意一行可跳到该题重做</p></div>';
-    html += '<div class="statrow">';
-    html += statCell("选择题 对 / 总", paperRight + " / " + mcTotal,
-      mcTotal ? "正确率 " + Math.round(paperRight / mcTotal * 100) + "%" : "—", paperRight, mcTotal);
-    html += statCell("填空题 对 / 总", fillRight + " / " + fillTotal,
-      "错 " + fillWrong + (fillPending ? " · 待核对 " + fillPending : "") + (fillUnknown ? " · 未判 " + fillUnknown : ""),
-      fillRight, fillTotal);
-    html += statCell("需要复习", paperWrong + fillWrong, "已自动收进错题本", paperWrong + fillWrong, mcTotal + fillTotal, true);
-    html += statCell("工具内已重做", g.done, "答对 " + g.right + " 题", g.right, g.total);
-    html += "</div>";
-
-    UNITS.forEach(function(u){
-      var s = unitStats(u);
-      html += '<div class="tablewrap"><div class="report-sheet">';
-      html += '<table class="grade"><caption>' + esc(u.title) + ' <span class="q-count">选择题 ' + s.total + " 题 · 原卷对 " + s.paperRight + " · 错 " + s.paperWrong + (s.paperNone ? " · 未选 " + s.paperNone : "") + "</span></caption>";
-      html += "<thead><tr><th>题号</th><th>原卷作答</th><th>正确答案</th><th>判定</th><th>考点 / 题干</th></tr></thead><tbody>";
-      u.mc.forEach(function(it){
-        var mk = it.marked;
-        var verdict, cls;
-        if (!mk){ verdict = '<span class="v-empty">未作答</span>'; cls = ""; }
-        else if (mk === it.answer){ verdict = '<span class="v-right"><span class="pen-mark">✓</span>正确</span>'; cls = ""; }
-        else { verdict = '<span class="v-wrong"><span class="pen-mark">✗</span>错误</span>'; cls = "is-wrong"; }
-        html += '<tr class="' + cls + '" data-goto="' + esc(it.id) + '">';
-        html += '<td class="no">' + esc(it.no) + "</td>";
-        html += '<td class="pick">' + (mk ? esc(mk) : "—") + "</td>";
-        html += '<td class="key">' + esc(it.answer || "?") + "</td>";
-        html += '<td class="verdict">' + verdict + "</td>";
-        html += '<td class="stemcell">' + (it.section ? '<span style="color:var(--ink-3);font-size:11.5px;margin-right:6px">' + esc(it.section) + "</span>" : "") + (it.topic ? '<span class="topic">' + esc(it.topic) + "</span> " : "") + esc(shorten(it.stem, 78)) + "</td>";
-        html += "</tr>";
-      });
-      html += "</tbody></table>";
-
-      if (u.fills.length){
-        html += '<table class="grade" style="margin-top:26px"><caption>填空题 <span class="q-count">共 ' + s.fillTotal + " 题 · 对 " + s.fillRight + " · 错 " + s.fillWrong +
-          (s.fillPending ? " · 待核对 " + s.fillPending : "") + (s.fillUnknown ? " · 未判 " + s.fillUnknown : "") + "</span></caption>";
-        html += "<thead><tr><th>题号</th><th>原卷手写</th><th>参考答案</th><th>判定</th><th>考点 / 题干</th></tr></thead><tbody>";
-        u.fills.forEach(function(it){
-          var gr = fillPaperGrade(it);
-          var verdict, cls = "";
-          if (gr === "right") verdict = '<span class="v-right"><span class="pen-mark">✓</span>正确</span>';
-          else if (gr === "wrong"){ verdict = '<span class="v-wrong"><span class="pen-mark">✗</span>错误</span>'; cls = "is-wrong"; }
-          else if (gr === "close") verdict = '<span class="v-empty">待核对<span style="font-size:11px"> · 译句可能另有说法</span></span>';
-          else if (gr === "manual") verdict = '<span class="v-empty">待核对<span style="font-size:11px"> · 开放题</span></span>';
-          else if (gr === "missing") verdict = '<span class="v-empty">参考答案缺失</span>';
-          else verdict = '<span class="v-empty">未作答 / 字迹不清</span>';
-          html += '<tr class="' + cls + '" data-goto-fill="' + esc(it.id) + '">';
-          html += '<td class="no">' + esc(it.no) + "</td>";
-          html += '<td class="pick" style="width:150px;font-size:14px">' + esc(hwFull(it) || "—") + "</td>";
-          html += '<td class="key" style="width:170px;font-family:var(--serif);font-size:13.5px">' + esc(it.answerRaw || "?") + "</td>";
-          html += '<td class="verdict">' + verdict + "</td>";
-          html += '<td class="stemcell">' + (it.section ? '<span style="color:var(--ink-3);font-size:11.5px;margin-right:6px">' + esc(it.section) + "</span>" : "") + (it.topic ? '<span class="topic">' + esc(it.topic) + "</span> " : "") + esc(shorten(it.stem, 66)) + "</td>";
-          html += "</tr>";
-        });
-        html += "</tbody></table>";
-      }
-      html += "</div></div>";
-    });
-    reportEl.innerHTML = html;
-
-    Array.prototype.forEach.call(reportEl.querySelectorAll("tr[data-goto]"), function(tr){
-      tr.addEventListener("click", function(){
-        var id = tr.dataset.goto;
-        var it = BY_ID[id];
-        if (!it) return;
-        curUnit = unitOf(it.unit);
-        store.unit = curUnit.unit; saveStore();
-        onlyWrong = false;
-        switchView("practice", { focus: "q-" + id });
-      });
-    });
-    Array.prototype.forEach.call(reportEl.querySelectorAll("tr[data-goto-fill]"), function(tr){
-      tr.addEventListener("click", function(){
-        var id = tr.dataset.gotoFill;
-        var it = BY_ID[id];
-        if (!it) return;
-        curUnit = unitOf(it.unit);
-        store.unit = curUnit.unit; saveStore();
-        switchView("fills", { focus: "f-" + id });
-      });
-    });
-  }
-
-  function statCell(k, v, sub, num, den, danger){
-    var pct = (den ? Math.max(0, Math.min(100, Math.round((num || 0) / den * 100))) : 0);
-    var color = danger ? "var(--red)" : "var(--ink)";
-    return '<div class="stat"><div class="k">' + esc(k) + '</div><div class="v" style="color:' + color + '">' + esc(v) +
-      (sub ? " <small>" + esc(sub) + "</small>" : "") + '</div><div class="bar"><i style="width:' + pct + '%;background:' + (danger ? "var(--red)" : "var(--ok)") + '"></i></div></div>';
-  }
-  function shorten(s, n){
-    s = String(s || "").replace(/\s+/g, " ").trim();
-    return s.length > n ? s.slice(0, n) + "…" : s;
-  }
-
-  /* ══ 错题本 ═══════════════════════════════════════ */
-  var mistakesEl = document.getElementById("view-mistakes");
-  var mFilterUnit = "all";
-
-  function renderMistakes(){
-    var all = wrongList();
-    var list = mFilterUnit === "all" ? all : all.filter(function(w){ return w.it.unit === mFilterUnit; });
-    var html = "";
-    html += '<div class="unitbar">';
-    html += '<div class="unitseg" role="group" aria-label="按单元筛选">';
-    html += '<button data-mfilter="all" aria-pressed="' + (mFilterUnit === "all" ? "true" : "false") + '">全部 ' + all.length + "</button>";
-    UNITS.forEach(function(u){
-      html += '<button data-mfilter="' + esc(u.unit) + '" aria-pressed="' + (mFilterUnit === u.unit ? "true" : "false") + '">' + esc(u.unit) + " " + wrongCountFor(u.unit) + "</button>";
-    });
-    html += "</div>";
-    html += '<span class="spacer"></span>';
-    html += '<button class="tool" id="btn-export-md">导出 Markdown</button>';
-    html += '<button class="tool" data-rec-export>导出记录（JSON）</button>';
-    html += '<button class="tool" data-rec-import>导入记录（JSON）</button>';
-    html += '<button class="tool" id="btn-print">打印错题</button>';
-    html += '<button class="tool" id="btn-clear-fills" style="display:none"></button>';
-    html += "</div>";
-
-    if (!list.length){
-      html += '<div class="empty"><div class="big">✓</div><p>暂无错题。</p><p style="font-size:13px">原卷里答错的题、以及你在工具里做错的题，会自动收进这里。</p></div>';
-    } else {
-      var tc = {};
-      list.forEach(function(w){ var t = w.it.topic || "未分类"; tc[t] = (tc[t] || 0) + 1; });
-      var chips = Object.keys(tc)
-        .sort(function(a, b){ return tc[b] - tc[a]; })
-        .slice(0, 5)
-        .map(function(t){ return '<span class="mm-chip">' + esc(t) + "<i>×" + tc[t] + "</i></span>"; })
-        .join("");
-      html += '<div class="mistake-summary"><span class="mm-label">错题考点</span>' + chips +
-        '<span class="mm-hint">共 ' + list.length + " 题 · 建议按考点逐个攻破</span></div>";
-      html += '<div class="mistakes">';
-      list.forEach(function(w){ html += mistakeCard(w); });
-      html += "</div>";
-    }
-    mistakesEl.innerHTML = html;
-
-    Array.prototype.forEach.call(mistakesEl.querySelectorAll("[data-mfilter]"), function(b){
-      b.addEventListener("click", function(){ mFilterUnit = b.dataset.mfilter; renderMistakes(); });
-    });
-    var ex = document.getElementById("btn-export-md");
-    if (ex) ex.addEventListener("click", function(){ exportMarkdown(list); });
-    var pr = document.getElementById("btn-print");
-    if (pr) pr.addEventListener("click", function(){ window.print(); });
-    Array.prototype.forEach.call(mistakesEl.querySelectorAll("[data-jump]"), function(b){
-      b.addEventListener("click", function(){
-        var id = b.dataset.jump, it = BY_ID[id];
-        if (!it) return;
-        curUnit = unitOf(it.unit); store.unit = curUnit.unit; saveStore();
-        onlyWrong = false;
-        switchView("practice", { focus: "q-" + id });
-      });
-    });
-    Array.prototype.forEach.call(mistakesEl.querySelectorAll("[data-clear]"), function(b){
-      b.addEventListener("click", function(){
-        var id = b.dataset.clear;
-        store.cleared[id] = true;
-        saveStore();
-        renderMistakes(); updateTabCounts(); updateSheetStats();
-      });
-    });
-    Array.prototype.forEach.call(mistakesEl.querySelectorAll("[data-jump-fill]"), function(b){
-      b.addEventListener("click", function(){
-        var id = b.dataset.jumpFill, it = BY_ID[id];
-        if (!it) return;
-        curUnit = unitOf(it.unit); store.unit = curUnit.unit; saveStore();
-        switchView("fills", { focus: "f-" + id });
-      });
-    });
-  }
-
-  function mistakeCard(w){
-    var it = w.it;
-    var atM = fmtAt(lastAt(it.id));
-    if (it.kind === "fill") return fillMistakeCard(w);
-    var pick = w.practicePick || w.paperPick || "";
-    var src = [];
-    if (w.paperPick && w.paperPick !== it.answer) src.push("原卷选 " + w.paperPick);
-    if (w.practicePick && w.practicePick !== it.answer) src.push("练习选 " + w.practicePick);
-    var html = '<article class="mcard">';
-    html += '<div class="mcard-head">';
-    html += '<span class="unit">' + esc(it.unit) + "</span>";
-    html += '<span class="no">' + (it.section ? esc(it.section) + " · " : "") + "第 " + esc(it.no) + " 题</span>";
-    if (it.topic) html += '<span class="topic">' + esc(it.topic) + "</span>";
-    if (w.wrongN) html += '<span class="topic" style="color:var(--red);border-color:rgba(192,57,47,.3);background:var(--red-wash)">累计错 ' + w.wrongN + " 次</span>";
-    html += '<span class="src">' + esc(src.join(" · ") || "已重做对") + (atM ? " · 最近作答 " + esc(atM) : "") + "</span>";
-    html += "</div>";
-    html += '<p class="stem" lang="en">' + stemHTML(it) + "</p>";
-    html += '<div class="opts">';
-    it.options.forEach(function(o){
-      var cls = "row";
-      if (o.k === it.answer) cls += " is-key";
-      else if (o.k === pick) cls += " is-pick";
-      html += '<div class="' + cls + '"><span class="k">' + esc(o.k) + "</span><span>" + esc(o.t) + "</span></div>";
-    });
-    html += "</div>";
-    html += '<div class="m-explain">';
-    if (it.point) html += '<p class="m-line"><span class="m-k">考点规则</span>' + esc(it.point) + "</p>";
-    html += '<p class="m-line"><span class="m-k">解析</span>' + esc(it.why || "（暂无解析）") + "</p>";
-    if (it.trap) html += '<p class="m-line m-trap"><span class="m-k">易错点</span>' + esc(it.trap) + "</p>";
-    html += "</div>";
-    var bits = [];
-    bits.push('<span class="' + (w.paperPick && w.paperPick !== it.answer ? "w" : "r") + '">原卷作答 <b>' + (w.paperPick || "未选") + "</b>" +
-      (w.paperPick ? (w.paperPick === it.answer ? " ✓" : " ✗") : "") + "</span>");
-    if (w.practicePick) {
-      bits.push('<span class="' + (w.practicePick === it.answer ? "r" : "w") + '">练习作答 <b>' + esc(w.practicePick) + "</b>" +
-        (w.practicePick === it.answer ? " ✓" : " ✗") + "</span>");
-    }
-    bits.push('<span class="r">正确答案 <b>' + esc(it.answer || "?") + "</b></span>");
-    html += '<div class="answer-summary">' + bits.join("") +
-      '<button class="tool" data-jump="' + esc(it.id) + '" style="margin-left:auto;padding:4px 10px;font-size:12px">去重做</button>' +
-      '<button class="tool" data-clear="' + esc(it.id) + '" style="padding:4px 10px;font-size:12px">我会了，清掉</button>' +
-      "</div>";
-    html += "</article>";
-    return html;
-  }
-
-  function fillMistakeCard(w){
-    var it = w.it;
-    var atF = fmtAt(lastAt(it.id));
-    var html = '<article class="mcard">';
-    html += '<div class="mcard-head">';
-    html += '<span class="unit">' + esc(it.unit) + "</span>";
-    html += '<span class="no">' + (it.section ? esc(it.section) + " · " : "") + "第 " + esc(it.no) + " 题</span>";
-    html += '<span class="topic" style="color:var(--blue);border-color:rgba(47,77,124,.3);background:var(--blue-wash)">填空题</span>';
-    if (it.topic) html += '<span class="topic">' + esc(it.topic) + "</span>";
-    html += '<span class="src">原卷写 ' + esc(hwFull(it) || "（空）") + (atF ? " · 最近作答 " + esc(atF) : "") + "</span>";
-    html += "</div>";
-    html += '<p class="stem" lang="en">' + stemHTML(it) + "</p>";
-    html += '<div class="m-explain">';
-    if (it.point) html += '<p class="m-line"><span class="m-k">考点规则</span>' + esc(it.point) + "</p>";
-    html += '<p class="m-line"><span class="m-k">解析</span>' + esc(it.why || "（暂无解析）") + "</p>";
-    if (it.trap) html += '<p class="m-line m-trap"><span class="m-k">易错点</span>' + esc(it.trap) + "</p>";
-    html += "</div>";
-    html += '<div class="answer-summary">' +
-      '<span class="w">原卷手写 <b style="font-family:var(--pen)">' + esc(hwFull(it) || "（空）") + "</b> ✗</span>" +
-      '<span class="r">参考答案 <b style="font-family:var(--serif)">' + esc(it.answerRaw || "?") + "</b></span>" +
-      (it.alt && it.alt.length ? '<span style="color:var(--ink-3)">也可：' + esc(it.alt.join(" / ")) + "</span>" : "") +
-      '<button class="tool" data-jump-fill="' + esc(it.id) + '" style="margin-left:auto;padding:4px 10px;font-size:12px">去重做</button>' +
-      '<button class="tool" data-clear="' + esc(it.id) + '" style="padding:4px 10px;font-size:12px">我会了，清掉</button>' +
-      "</div>";
-    html += "</article>";
-    return html;
-  }
-
-  function exportMarkdown(list){
-    var now = new Date();
-    var pad = function(n){ return n < 10 ? "0" + n : String(n); };
-    var stamp = now.getFullYear() + "-" + pad(now.getMonth() + 1) + "-" + pad(now.getDate()) + " " + pad(now.getHours()) + ":" + pad(now.getMinutes());
-    var md = "# 九上英语错题整理（U1–U4）\n\n> 生成时间：" + stamp + " · 共 " + list.length + " 题\n\n";
-    var byUnit = {};
-    list.forEach(function(w){ (byUnit[w.it.unit] = byUnit[w.it.unit] || []).push(w); });
-    Object.keys(byUnit).sort().forEach(function(unit){
-      md += "\n## " + unit + "\n\n";
-      byUnit[unit].forEach(function(w){
-        var it = w.it;
-        md += "### 第 " + it.no + " 题" + (it.topic ? " · " + it.topic : "") + "\n\n";
-        md += "- 题干：" + (it.cn ? it.cn + " / " : "") + String(it.stem || "").replace(/\s+/g, " ") + "\n";
-        if (it.kind === "fill"){
-          md += "- 原卷手写：" + (hwFull(it) || "（空）") + "（错误）\n";
-          md += "- 参考答案：" + (it.answerRaw || "?") + (it.alt && it.alt.length ? "（也可：" + it.alt.join(" / ") + "）" : "") + "\n";
-          if (it.point) md += "- 考点规则：" + it.point + "\n";
-          if (it.why) md += "- 解析：" + it.why + "\n";
-          if (it.trap) md += "- 易错点：" + it.trap + "\n";
-          md += "\n";
-          return;
-        }
-        if (it.options && it.options.length){
-          md += "- 选项：" + it.options.map(function(o){ return o.k + ". " + o.t; }).join("　") + "\n";
-        }
-        if (w.paperPick) md += "- 原卷作答：" + w.paperPick + (w.paperPick === it.answer ? "（正确）" : "（错误）") + "\n";
-        if (w.practicePick) md += "- 练习作答：" + w.practicePick + (w.practicePick === it.answer ? "（正确）" : "（错误）") + "\n";
-        md += "- 正确答案：" + (it.answer || "?") + "\n";
-        if (it.point) md += "- 考点规则：" + it.point + "\n";
-        if (it.why) md += "- 解析：" + it.why + "\n";
-        if (it.trap) md += "- 易错点：" + it.trap + "\n";
-        md += "\n";
-      });
-    });
-    md += "\n---\n*由「九上英语过关练习」生成*\n";
-
-    // 下载 + 复制
-    downloadText("九上英语错题整理.md", md, "text/markdown");
-    if (navigator.clipboard && navigator.clipboard.writeText){
-      navigator.clipboard.writeText(md).then(function(){ toast("已导出 Markdown，并复制到剪贴板"); }, function(){ toast("已导出 Markdown 文件"); });
-    } else {
-      toast("已导出 Markdown 文件");
-    }
-  }
+  /* ══ toast / 错误条 ════════════════════════════════ */
+  var toastEl = document.getElementById("toast");
   var toastTimer = null;
-  function toast(msg){
-    var el = document.getElementById("toast");
-    if (!el){
-      el = document.createElement("div");
-      el.id = "toast";
-      el.style.cssText = "position:fixed;left:50%;bottom:26px;transform:translateX(-50%);background:#221e18;color:#fdfaf2;font:13px/1.4 system-ui;padding:10px 18px;border-radius:6px;box-shadow:0 10px 30px -10px rgba(0,0,0,.5);z-index:80;opacity:0;transition:opacity .25s";
-      document.body.appendChild(el);
-    }
-    el.textContent = msg;
-    requestAnimationFrame(function(){ el.style.opacity = "1"; });
+  function toast(msg) {
+    toastEl.textContent = msg;
+    toastEl.classList.add("show");
     clearTimeout(toastTimer);
-    toastTimer = setTimeout(function(){ el.style.opacity = "0"; }, 2200);
+    toastTimer = setTimeout(function () { toastEl.classList.remove("show"); }, 2200);
+  }
+  var errbar = document.getElementById("errbar");
+  window.onerror = function (msg, src, line) {
+    errbar.textContent = "脚本出错：" + msg + "（第 " + line + " 行）";
+    errbar.classList.add("show");
+  };
+
+  /* ══ 视图切换 ══════════════════════════════════════ */
+  function switchView(name, opts) {
+    S.view = name;
+    document.querySelectorAll(".tab").forEach(function (t) {
+      t.setAttribute("aria-selected", t.dataset.view === name ? "true" : "false");
+    });
+    document.getElementById("view-practice").hidden = name !== "practice";
+    document.getElementById("view-review").hidden = name !== "review";
+    document.getElementById("view-practice").classList.toggle("is-active", name === "practice");
+    document.getElementById("view-review").classList.toggle("is-active", name === "review");
+    if (name === "practice") renderPractice();
+    else renderReview();
+    if (!opts || !opts.keepScroll) window.scrollTo(0, 0);
+    updateBadge();
+  }
+  function updateBadge() {
+    var n = wrongList().length;
+    document.getElementById("tab-badge").textContent = n ? String(n) : "";
   }
 
-  /* ══ 填空自测 ═══════════════════════════════════════ */
-  var fillsEl = document.getElementById("view-fills");
-
-  /* 写填空答案：值真的变了才记一次作答时间（重复 blur / 反复判分不刷时间） */
-  function setFill(id, val){
-    var had = Object.prototype.hasOwnProperty.call(store.fills, id);
-    var old = had ? store.fills[id] : "";
-    store.fills[id] = val;
-    if ((!had || old !== val) && String(val || "").trim()) stampAnswer(id);
-    saveStore();
+  /* ══ 做题 ══════════════════════════════════════════ */
+  function unitCounts(u) {
+    var done = 0, wrong = 0;
+    u.items.forEach(function (it) {
+      if (isAnswered(it)) done++;
+      if (statOf(it) && statOf(it).wrong > 0) wrong++;
+    });
+    return { done: done, wrong: wrong };
   }
 
-  function renderFills(){
+  function renderPractice() {
+    var u = unit();
+    var it = current();
     var html = "";
-    var total = 0;
-    UNITS.forEach(function(u){ total += u.fills.length; });
-    html += '<div class="unitbar"><div class="unitseg">';
-    UNITS.forEach(function(u, idx){
-      html += '<button data-funit="' + esc(u.unit) + '" aria-pressed="' + (u.unit === curUnit.unit ? "true" : "false") + '">' + esc(u.unit) + " " + u.fills.length + "</button>";
+
+    html += '<div class="bar">';
+    html += '<div class="seg" role="group" aria-label="选择单元">';
+    UNITS.forEach(function (x) {
+      var c = unitCounts(x);
+      html += '<button data-unit="' + esc(x.unit) + '" aria-pressed="' + (x.unit === S.unit ? "true" : "false") +
+        '" title="' + esc(x.title) + '">' + esc(x.unit) + (c.wrong ? '<span class="n">' + c.wrong + "</span>" : "") + "</button>";
     });
     html += "</div>";
-    html += '<span class="hint">填空 / 汉译英 · 共 ' + total + ' 题 · 输入后按 Enter 判分，答对即记绿</span>';
-    html += '<span class="spacer"></span><button class="tool" id="btn-reveal-all">显示全部答案</button></div>';
+    html += '<div class="seg" role="group" aria-label="模式">';
+    html += '<button data-mode="drill" aria-pressed="' + (!isExam() ? "true" : "false") + '" title="做一题判一题，立刻看解析">过关</button>';
+    html += '<button data-mode="exam" aria-pressed="' + (isExam() ? "true" : "false") + '" title="先做完，交卷后统一讲评">模拟考</button>';
+    html += "</div>";
+    html += '<button class="btn sm" data-act="cards">答题卡</button>';
+    html += '<button class="btn sm ghost" data-act="only-fills" aria-pressed="' + (S.onlyFills ? "true" : "false") + '">只看填空</button>';
+    if (!ONLINE) html += '<a class="btn sm ghost" href="' + esc(scanHref(it)) + '" target="_blank" rel="noopener">原卷</a>';
+    html += '<span class="spacer"></span>';
+    html += '<span class="hint">' + esc(u.unit) + " · " + esc(u.title) + "</span>";
+    html += "</div>";
 
-    var u = curUnit;
-    if (!u.fills.length){
-      html += '<div class="empty"><p>该页没有填空题。</p></div>';
-    }
-    u.fills.forEach(function(it){
-      var saved = store.fills[it.id] || "";
-      var atI = fmtAt(lastAt(it.id)), nI = atListOf(it.id).length;
-      html += '<div class="fill-item" id="f-' + esc(it.id) + '">';
-      var pg = fillPaperGrade(it);
-      var pgCls = pg === "right" ? " ok" : (pg === "wrong" ? " bad" : (pg === "close" || pg === "manual" ? " warn" : ""));
-      html += '<div class="fill-head"><span class="fill-no">' + esc(it.label) + '</span><span class="fill-ref">卷面 ' + esc(it.paperRef) +
-        (atI ? " · 最近作答 " + esc(atI) + (nI > 1 ? "（共 " + nI + " 次）" : "") : "") + "</span>" +
-        '<span class="fill-flag' + pgCls + '">原卷 ' + fillGradeText(pg) + "</span>" +
-        (it.doubt ? '<span class="fill-flag">存疑</span>' : "") +
-        (it.answerRaw ? "" : '<span class="fill-flag">参考答案缺失</span>') + "</div>";
-      if (it.cn) html += '<p class="cn" lang="zh">' + esc(it.cn) + "</p>";
-      html += '<p class="stem" lang="en">' + esc(it.stem).replace(/_{3,}/g, '<span class="blank"></span>') + "</p>";
-      html += '<input class="fill-input" data-id="' + esc(it.id) + '" value="' + esc(saved) + '" placeholder="在这里写出答案，回车判分…" autocomplete="off" spellcheck="false" />';
-      html += '<div class="fill-actions"><button class="tool" data-check="' + esc(it.id) + '">判定</button>';
-      html += '<button class="tool" data-reveal="' + esc(it.id) + '">对照答案</button>';
-      html += '<span class="res" id="res-' + esc(it.id) + '"></span></div>';
-      html += '<div class="fill-reveal" id="rv-' + esc(it.id) + '">';
-      html += '<div>参考答案：<span class="keyref">' + esc(it.answerRaw || "?") + "</span>" + (it.alt && it.alt.length ? "（也可写作：" + esc(it.alt.join(" / ")) + "）" : "") + "</div>";
-      if (it.handwriting && it.handwriting.length) html += '<div>原卷手写：<span class="pen">' + esc(hwFull(it)) + "</span>（批改：" + fillGradeText(pg) + "）</div>";
-      if (it.point) html += '<div class="fr-line"><b class="fr-k">考点规则</b>' + esc(it.point) + "</div>";
-      if (it.why) html += '<div class="fr-line"><b class="fr-k">解析</b><span style="font-family:var(--pen);font-size:14.5px">' + esc(it.why) + "</span></div>";
-      if (it.trap) html += '<div class="fr-line fr-trap"><b class="fr-k">易错点</b>' + esc(it.trap) + "</div>";
-      html += "</div>";
-      html += "</div>";
-    });
-    fillsEl.innerHTML = html;
-
-    Array.prototype.forEach.call(fillsEl.querySelectorAll("[data-funit]"), function(b){
-      b.addEventListener("click", function(){ curUnit = unitOf(b.dataset.funit); store.unit = curUnit.unit; saveStore(); renderFills(); });
-    });
-    Array.prototype.forEach.call(fillsEl.querySelectorAll(".fill-input"), function(inp){
-      inp.addEventListener("keydown", function(e){ if (e.key === "Enter"){ setFill(inp.dataset.id, inp.value); checkFill(inp.dataset.id); } });
-      inp.addEventListener("blur", function(){ setFill(inp.dataset.id, inp.value); });
-    });
-    Array.prototype.forEach.call(fillsEl.querySelectorAll("[data-check]"), function(b){
-      b.addEventListener("click", function(){ checkFill(b.dataset.check); });
-    });
-    Array.prototype.forEach.call(fillsEl.querySelectorAll("[data-reveal]"), function(b){
-      b.addEventListener("click", function(){
-        var el = document.getElementById("rv-" + b.dataset.reveal);
-        if (el) el.classList.toggle("show");
-      });
-    });
-    var ra = document.getElementById("btn-reveal-all");
-    if (ra) ra.addEventListener("click", function(){
-      Array.prototype.forEach.call(fillsEl.querySelectorAll(".fill-reveal"), function(el){ el.classList.add("show"); });
-    });
-    u.fills.forEach(function(it){ if (store.fills[it.id]) checkFill(it.id); });
-  }
-
-  function checkFill(id){
-    var it = BY_ID[id];
-    if (!it) return;
-    var inp = fillsEl.querySelector('.fill-input[data-id="' + id + '"]');
-    if (!inp) return;
-    var val = inp.value;
-    setFill(id, val);
-    /* 时间戳当场回写到题头「卷面 … · 最近作答 …」 */
-    var refEl = inp.closest(".fill-item") && inp.closest(".fill-item").querySelector(".fill-ref");
-    var atNow = fmtAt(lastAt(id)), nNow = atListOf(id).length;
-    if (refEl && atNow) refEl.textContent = "卷面 " + it.paperRef + " · 最近作答 " + atNow + (nNow > 1 ? "（共 " + nNow + " 次）" : "");
-    var res = document.getElementById("res-" + id);
-    if (!it.answerRaw){
-      if (res){ res.textContent = "该题参考答案缺失（原卷遮挡/涂改），请对照原卷人工核对"; res.style.color = "var(--ink-3)"; }
-      inp.style.borderColor = ""; inp.style.boxShadow = "";
+    if (S.settle && isExam() && S.exam && S.exam.done) {
+      document.getElementById("view-practice").innerHTML = html + settleHTML();
+      bindPractice();
       return;
     }
-    var ok = isFillRight(it, val);
-    if (res){
-      if (!norm(val)){ res.textContent = ""; res.style.color = ""; }
-      else if (ok){ res.textContent = "✓ 正确"; res.style.color = "var(--ok)"; }
-      else { res.textContent = "✗ 再想想 —— 对照答案看看差异"; res.style.color = "var(--red)"; }
+
+    html += '<div class="pmain">';
+    html += '<article class="qcard" data-id="' + esc(it.id) + '" data-state="' + cardState(it) + '"' +
+      (S.marks[it.id] ? ' data-marked="1"' : "") + ">";
+    html += '<div class="qhead">';
+    html += '<span class="ref">' + esc(itemRef(it)) + "</span>";
+    html += '<span class="type">' + (it.kind === "mc" ? "选择" : "填空") + "</span>";
+    if (S.marks[it.id]) html += '<span class="mark-badge">已标记</span>';
+    html += '<span class="unit">' + esc(u.title) + " · " + (isExam() ? "模拟考" : "过关") + "</span>";
+    html += "</div>";
+
+    var passage = u.passages[it.section];
+    if (passage) {
+      var ptext = String(passage).split(/\{\{(\d+)\}\}/).map(function (seg, i) {
+        return i % 2 === 1 ? '<span class="pb">(' + seg + ")</span>" : esc(seg);
+      }).join("");
+      html += '<details class="passage"><summary>短文（点击展开）</summary><p>' + ptext + "</p></details>";
     }
-    inp.style.borderColor = ok ? "rgba(43,107,82,.55)" : (norm(val) ? "rgba(192,57,47,.45)" : "");
-    inp.style.boxShadow = ok ? "0 0 0 3px rgba(43,107,82,.08)" : "";
+
+    html += '<div class="stem">' + (it.cn ? '<span class="cn" lang="zh">' + esc(it.cn) + "</span>" : "") +
+      esc(it.stem).replace(/_{3,}/g, '<span class="blank"></span>') + "</div>";
+
+    if (it.kind === "mc") html += optionsHTML(it);
+    else html += fieldsHTML(it);
+
+    if (shownState(it)) html += verdictHTML(it);
+
+    html += '<div class="qtools">';
+    if (isExam()) {
+      html += '<button data-act="mark">' + (S.marks[it.id] ? "取消标记" : "标记不确定") + "</button>";
+    } else if (S.reveals[it.id]) {
+      html += '<button data-act="redo">重做本题</button>';
+    }
+    if (!ONLINE) html += '<a href="' + esc(scanHref(it)) + '" target="_blank" rel="noopener">看原卷</a>';
+    html += '<span class="hint">本大题共 ' + sectionCount(it.section) + " 题</span>";
+    html += "</div>";
+
+    html += '<div class="meta">';
+    var st = statOf(it);
+    if (st) {
+      html += "<span>累计作答 " + st.att + " 次 · 对 " + (st.ok || 0) + " / 错 " + (st.wrong || 0);
+      var last = store.at[it.id];
+      if (last) html += " · 最近 " + fmtAt(last);
+      html += "</span><br>";
+    }
+    var hist = store.hist[it.id];
+    if (Array.isArray(hist) && hist.length) {
+      var h0 = hist[0] || {};
+      html += '<span>最近一次作答：' + esc(h0.a || "—") + "（" + (h0.ok ? "对" : "错") + "）" +
+        (h0.at ? " · " + fmtAt(h0.at) : "") + (hist.length > 1 ? " · 共 " + hist.length + " 次留档" : "") + "</span><br>";
+    }
+    if (S.reveals[it.id] || (isExam() && S.exam && S.exam.done)) {
+      html += '<span class="orig">原卷作答：' + esc(paperAnswer(it)) + "</span>";
+    } else if (it.note && !isExam()) {
+      /* 模拟考交卷前不显示转写备注：备注里可能带原卷手写/答案线索 */
+      html += '<span class="hint">' + esc(it.note) + "</span>";
+    }
+    html += "</div>";
+    html += "</article>";
+    html += '<aside class="sidecards" aria-label="答题卡"><h4><span>答题卡</span><span class="hint">共 ' +
+      u.items.length + " 题</span></h4>" + sheetGroupsHTML() + "</aside>";
+    html += "</div>";
+
+    document.getElementById("view-practice").innerHTML = html + bottombarHTML();
+    bindPractice();
   }
 
-  /* ══ 练习记录导出 / 导入（JSON） ════════════════════ */
-  var RECORD_SCHEMA = "lt.practice-records/1";
-  var RECORD_TOOL = "九上英语过关练习";
+  function sectionCount(sec) {
+    var n = 0;
+    unit().items.forEach(function (i) { if (i.section === sec) n++; });
+    return n;
+  }
+  function cardState(it) {
+    if (S.reveals[it.id]) return isRight(it) ? "right" : "wrong";
+    var sel = currentSelection(it);
+    if (sel !== undefined && sel !== null && !(Array.isArray(sel) && !sel.some(function (x) { return String(x || "").trim(); }))) return "picked";
+    return "unanswered";
+  }
+  function optionsHTML(it) {
+    var sel = shownState(it) ? pickOf(it) || currentSelection(it) : currentSelection(it);
+    var html = '<div class="opts">';
+    it.options.forEach(function (o) {
+      var st = "";
+      if (S.reveals[it.id]) {
+        if (o.k === it.answer) st = "right";
+        else if (sel === o.k) st = "wrong";
+      } else if (sel === o.k) st = "picked";
+      html += '<button class="opt" data-k="' + esc(o.k) + '" data-state="' + st + '"' +
+        (S.reveals[it.id] ? " disabled" : "") + ' aria-pressed="' + (sel === o.k ? "true" : "false") + '">' +
+        '<span class="k">' + esc(o.k) + "</span><span>" + esc(o.t) + "</span></button>";
+    });
+    html += "</div>";
+    return html;
+  }
+  function fieldsHTML(it) {
+    var vals = shownState(it) ? fillOf(it) || [] : currentSelection(it);
+    if (!Array.isArray(vals)) vals = new Array(it.fields).fill("");
+    var parts = answerParts(it);
+    var judged = S.reveals[it.id];
+    var isLong = it.fields === 1;
+    var html = '<div class="fields">';
+    for (var i = 0; i < it.fields; i++) {
+      var st = "";
+      if (judged && parts.length === it.fields) st = norm(vals[i]) === norm(parts[i]) ? "right" : "wrong";
+      html += '<span class="fieldwrap' + (isLong ? " sentence" : "") + '">' +
+        (it.fields > 1 ? '<span class="idx">' + (i + 1) + "</span>" : "") +
+        '<input class="field" data-i="' + i + '" type="text" autocomplete="off" spellcheck="false" ' +
+        'enterkeyhint="' + (i === it.fields - 1 ? "done" : "next") + '" value="' + esc(vals[i] || "") + '"' +
+        (judged ? " readonly" : "") + ' data-state="' + st + '" placeholder="' +
+        (it.fields > 1 ? "第 " + (i + 1) + " 空" : isExam() ? "写答案，回车去下一题" : "在这里写答案，回车提交") + '">' +
+        "</span>";
+    }
+    html += "</div>";
+    if (judged && parts.length === it.fields && it.fields > 1) {
+      var rightN = 0;
+      for (var j = 0; j < it.fields; j++) if (norm(vals[j]) === norm(parts[j])) rightN++;
+      html += '<div class="hint" style="margin-top:8px">' + it.fields + " 空里对 " + rightN + " 空（整题全对才算对）</div>";
+    }
+    return html;
+  }
+  function verdictHTML(it) {
+    var ok = isRight(it);
+    var html = '<div class="verdict" data-ok="' + (ok ? "1" : "0") + '"><span class="mark">' + (ok ? "✓" : "✗") + "</span>" +
+      (ok ? "答对了" : "答错了") + "</div>";
+    if (!it.answer && !it.manual) {
+      html += '<div class="verify"><div class="vlab">提示</div><div class="vtxt">这道题没有参考答案（原卷涂改/遮挡），请对照原卷核对。</div></div>';
+      return html;
+    }
+    html += '<div class="verify">';
+    html += '<div class="vlab">考点</div><div class="vtxt">' + esc(it.topic || "—") + "</div>";
+    if (it.point) html += '<div class="vlab">规则</div><div class="vtxt">' + esc(it.point) + "</div>";
+    html += '<div class="vlab">解析</div><div class="vtxt">' + esc(it.why || "（暂无解析）");
+    if (it.doubt) html += ' <span class="vdoubt">· 该题存疑，建议与老师核对</span>';
+    html += "</div>";
+    if (it.trap) html += '<div class="vlab">易错点</div><div class="vtxt"><span class="vtrap">' + esc(it.trap) + "</span></div>";
+    html += '<div class="vlab">正确答案</div><div class="vtxt"><span class="vans">' + esc(it.kind === "mc" ? it.answer : it.answerRaw || "—") + "</span></div>";
+    if (it.manual) html += '<div class="vlab">判分</div><div class="vtxt">该题有多种合理答案，按原卷人工核对。</div>';
+    html += "</div>";
+    return html;
+  }
+  function paperAnswer(it) {
+    if (it.kind === "mc") return it.marked ? it.marked : "（未作答/看不清）";
+    var hw = (it.handwriting || []).filter(Boolean);
+    return hw.length ? hw.join(" / ") : "（未作答/看不清）";
+  }
 
-  function dateStamp(){
-    var d = new Date(), pad = function(n){ return n < 10 ? "0" + n : String(n); };
+  function bottombarHTML() {
+    var it = current();
+    var judged = shownState(it);
+    var html = '<div class="bottombar"><div class="line top">';
+    html += '<span class="progress">' + progressText() + "</span>";
+    html += "<span>" + esc(itemRef(it)) + "</span>";
+    html += "<span>已答 " + answeredCount() + " / " + items().length + "</span>";
+    html += '<span style="margin-left:auto">' + (isExam() ? "模拟考 · 交卷后可看解析" : "过关 · 提交即判分") + "</span>";
+    html += '</div><div class="line">';
+    html += '<button class="btn ghost icon" data-act="prev" aria-label="上一题"' + (S.idx <= 0 ? " disabled" : "") + ">←</button>";
+    if (isExam()) {
+      html += '<button class="btn primary grow" data-act="next">下一题 →</button>';
+      html += '<button class="btn ghost" data-act="cards">答题卡</button>';
+      html += '<button class="btn" data-act="finish">交卷</button>';
+    } else {
+      if (judged) html += '<button class="btn primary grow" data-act="next">下一题 →</button>';
+      else html += '<button class="btn primary grow" data-act="submit">提交</button>';
+      html += '<button class="btn ghost" data-act="cards">答题卡</button>';
+    }
+    html += "</div></div>";
+    return html;
+  }
+
+  function settleHTML() {
+    var total = (S.exam && S.exam.result && S.exam.result.total) || unit().items.length;
+    var r = (S.exam && S.exam.result) || { right: 0, answered: 0, wrongIds: [] };
+    var cost = S.exam && S.exam.endAt ? S.exam.endAt - S.exam.startAt : 0;
+    var mm = Math.floor(cost / 60000), ss = Math.round((cost % 60000) / 1000);
+    var html = '<div class="settle">';
+    html += "<h2>本轮结算</h2>";
+    html += '<div class="settle-score">' + r.right + " / " + total + " <small>答对</small></div>";
+    html += '<div class="settle-time">用时 ' + mm + " 分 " + pad(ss) + " 秒 · 已答 " + r.answered + " / " + total + "</div>";
+    html += '<div class="settle-wrong">';
+    if (r.wrongIds.length) {
+      r.wrongIds.forEach(function (id) {
+        var it = BY_ID[id];
+        if (!it) return;
+        html += '<button class="chip" data-jump="' + esc(id) + '">' + esc(shortRef(it)) + "</button>";
+      });
+    } else {
+      html += '<span class="none">全对，这一单元可以过了。</span>';
+    }
+    html += "</div>";
+    html += '<div class="settle-acts">';
+    html += '<button class="btn primary" data-act="review-run">逐题讲评</button>';
+    html += '<button class="btn" data-act="again">再来一轮</button>';
+    html += '<button class="btn ghost" data-act="goto-review">去复盘</button>';
+    html += "</div></div>";
+    return html;
+  }
+
+  function bindPractice() {
+    var root = document.getElementById("view-practice");
+    root.querySelectorAll("[data-unit]").forEach(function (b) {
+      b.addEventListener("click", function () {
+        S.unit = b.dataset.unit; store.unit = S.unit; saveStore();
+        S.idx = 0; S.settle = false; S.exam = null; S.picked = {}; S.reveals = {}; S.marks = {};
+        S.exam = isExam() ? { startAt: Date.now(), answers: {}, done: false } : null;
+        renderPractice();
+      });
+    });
+    root.querySelectorAll("[data-mode]").forEach(function (b) {
+      b.addEventListener("click", function () {
+        if (b.dataset.mode === S.mode) return;
+        S.mode = b.dataset.mode;
+        try { localStorage.setItem(VIEW_KEY, JSON.stringify({ mode: S.mode })); } catch (e) {}
+        S.exam = S.mode === "exam" ? { startAt: Date.now(), answers: {}, done: false } : null;
+        S.settle = false; S.picked = {}; S.reveals = {}; S.marks = {}; S.idx = 0;
+        renderPractice();
+      });
+    });
+    root.querySelectorAll(".opt").forEach(function (b) {
+      b.addEventListener("click", function () {
+        var it = current();
+        if (shownState(it)) return;
+        var k = b.dataset.k;
+        if (isExam()) S.exam.answers[it.id] = k;
+        else S.picked[it.id] = k;
+        renderPractice();
+      });
+    });
+    root.querySelectorAll(".field").forEach(function (inp) {
+      inp.addEventListener("input", function () {
+        var it = current();
+        var cur = currentSelection(it);
+        var arr = Array.isArray(cur) ? cur.slice() : new Array(it.fields).fill("");
+        arr[+inp.dataset.i] = inp.value;
+        if (isExam()) S.exam.answers[it.id] = arr;
+        else S.picked[it.id] = arr;
+      });
+      inp.addEventListener("keydown", function (e) {
+        if (e.key !== "Enter") return;
+        e.preventDefault();
+        var all = root.querySelectorAll(".field");
+        var i = +inp.dataset.i;
+        if (i < all.length - 1) { all[i + 1].focus(); return; }
+        doSubmit();
+      });
+    });
+    var acts = {
+      prev: function () { go(-1); },
+      next: function () { if (isExam() || shownState(current())) go(1); else doSubmit(); },
+      submit: function () { doSubmit(); },
+      redo: function () { delete S.picked[current().id]; delete S.reveals[current().id]; renderPractice(); },
+      mark: function () {
+        var it = current();
+        if (S.marks[it.id]) delete S.marks[it.id]; else S.marks[it.id] = true;
+        renderPractice();
+      },
+      cards: function () { openCards(); },
+      "only-fills": function () {
+        S.onlyFills = !S.onlyFills;
+        S.idx = 0; S.settle = false;
+        renderPractice();
+      },
+      finish: function () { finishExam(); },
+      "review-run": function () { S.settle = false; S.idx = 0; renderPractice(); },
+      again: function () {
+        S.exam = { startAt: Date.now(), answers: {}, done: false };
+        S.settle = false; S.picked = {}; S.reveals = {}; S.marks = {}; S.idx = 0;
+        renderPractice();
+      },
+      "goto-review": function () { switchView("review"); }
+    };
+    root.querySelectorAll("[data-act]").forEach(function (b) {
+      var fn = acts[b.dataset.act];
+      if (fn) b.addEventListener("click", fn);
+    });
+    root.querySelectorAll("[data-jump]").forEach(function (b) {
+      b.addEventListener("click", function () {
+        S.settle = false;
+        var idx = items().indexOf(BY_ID[b.dataset.jump]);
+        if (idx >= 0) S.idx = idx;
+        renderPractice();
+      });
+    });
+    root.querySelectorAll(".sidecards [data-id]").forEach(function (b) {
+      b.addEventListener("click", function () {
+        var idx = items().indexOf(BY_ID[b.dataset.id]);
+        if (idx >= 0) S.idx = idx;
+        renderPractice();
+        window.scrollTo(0, 0);
+      });
+    });
+  }
+
+  function go(delta) {
+    var n = items().length;
+    S.idx = Math.max(0, Math.min(n - 1, S.idx + delta));
+    renderPractice();
+    window.scrollTo(0, 0);
+  }
+
+  function doSubmit() {
+    if (isExam()) { go(1); return; }
+    var it = current();
+    if (shownState(it)) { go(1); return; }
+    var sel = S.picked[it.id];
+    if (it.kind === "mc") {
+      if (!sel) { toast("先选一个选项"); return; }
+    } else {
+      if (!Array.isArray(sel) || !sel.some(function (x) { return String(x || "").trim(); })) { toast("先写出答案"); return; }
+    }
+    var ok = it.kind === "mc" ? sel === it.answer : acceptedList(it).indexOf(norm(sel.join(" / "))) >= 0;
+    recordAnswer(it, sel, ok);
+    S.reveals[it.id] = true;
+    delete S.picked[it.id];
+    updateBadge();
+    renderPractice();
+    if (!ok) toast("错了，看下面的解析");
+  }
+
+  function finishExam() {
+    var u = unit();
+    var answered = 0, right = 0;
+    var wrongIds = [];
+    var startedAt = S.exam && S.exam.startAt ? S.exam.startAt : Date.now();
+    var startIso = new Date(startedAt).toISOString();
+    u.items.forEach(function (it) {
+      var sel = S.exam.answers[it.id];
+      if (sel === undefined || sel === null) return;
+      if (it.kind === "mc" && !sel) return;
+      if (it.kind === "fill" && (!Array.isArray(sel) || !sel.some(function (x) { return String(x || "").trim(); }))) return;
+      answered++;
+      var ok = judge(it, sel);
+      if (ok) right++; else wrongIds.push(it.id);
+      recordAnswer(it, sel, ok);
+      S.reveals[it.id] = true;
+    });
+    if (!answered && !confirm("还没答任何题，仍然交卷？")) return;
+    /* 本轮没做的题也算没拿到分，一并进错题号，讲评时能直接点过去 */
+    u.items.forEach(function (it) {
+      if (wrongIds.indexOf(it.id) < 0 && !S.exam.answers.hasOwnProperty(it.id)) wrongIds.push(it.id);
+    });
+    var endAt = Date.now();
+    store.rounds = (Array.isArray(store.rounds) ? store.rounds : []).concat([{
+      mode: "exam", startAt: startIso, endAt: new Date(endAt).toISOString(),
+      costMs: endAt - startedAt, ok: right, answered: answered, total: u.items.length
+    }]).slice(-20);
+    saveStore();
+    S.exam.done = true;
+    S.exam.endAt = endAt;
+    S.exam.result = { right: right, answered: answered, total: u.items.length, wrongIds: wrongIds };
+    S.settle = true;
+    updateBadge();
+    renderPractice();
+  }
+
+  /* ══ 答题卡 ══════════════════════════════════════ */
+  function cellState(it) {
+    var s = cardState(it);
+    /* 本次会话没判过、但记录里有作答：答题卡按记录显示对/错，免得刷新后像「没做过」 */
+    if (s === "unanswered" && isAnswered(it)) return isRight(it) ? "right" : "wrong";
+    return s === "picked" ? "answered" : s;
+  }
+  function answeredCount() {
+    var n = 0;
+    items().forEach(function (it) { if (cellState(it) !== "unanswered") n++; });
+    return n;
+  }
+  function sheetGroupsHTML() {
+    var u = unit();
+    var html = "";
+    u.sections.forEach(function (sec) {
+      var done = 0;
+      sec.items.forEach(function (it) { if (cellState(it) !== "unanswered") done++; });
+      html += '<div class="sheet-group"><h4>' + esc(sec.name || "（卷面开头，无大题标题）") + "</h4><div class=\"grid\">";
+      sec.items.forEach(function (it) {
+        var here = it.id === current().id;
+        html += '<button class="cell" data-id="' + esc(it.id) + '" data-state="' + cellState(it) + '"' +
+          (here ? ' data-here="1"' : "") + ">" + esc(shortRef(it)) +
+          (S.marks[it.id] ? '<span class="dot"></span>' : "") + "</button>";
+      });
+      html += "</div></div>";
+    });
+    return html;
+  }
+  function openCards() {
+    var u = unit();
+    var html = "<h3>" + esc(u.unit) + " 答题卡</h3>";
+    var done = 0;
+    u.items.forEach(function (it) { if (cellState(it) !== "unanswered") done++; });
+    html += '<div class="sub">共 ' + u.items.length + " 题 · 已答 " + done + " · 未答 " + (u.items.length - done) +
+      (isExam() ? " · 交卷后统一讲评" : "") + "</div>";
+    html += sheetGroupsHTML();
+    html += '<div style="margin-top:18px;display:flex;gap:8px"><button class="btn" data-act="close-cards" style="flex:1;min-height:46px">关掉</button></div>';
+    var panel = document.getElementById("cardsheet-panel");
+    panel.innerHTML = html;
+    document.getElementById("cardsheet").classList.add("is-open");
+    panel.querySelectorAll("[data-id]").forEach(function (b) {
+      b.addEventListener("click", function () {
+        var idx = items().indexOf(BY_ID[b.dataset.id]);
+        if (idx >= 0) S.idx = idx;
+        closeCards();
+        renderPractice();
+        window.scrollTo(0, 0);
+      });
+    });
+    panel.querySelectorAll('[data-act="close-cards"]').forEach(function (b) {
+      b.addEventListener("click", closeCards);
+    });
+  }
+  function closeCards() { document.getElementById("cardsheet").classList.remove("is-open"); }
+
+  /* ══ 复盘 ══════════════════════════════════════════ */
+  function renderReview() {
+    var html = "";
+    html += '<div class="rtabs" role="tablist">' +
+      '<button data-rtab="wrong" role="tab" aria-selected="' + (S.reviewTab === "wrong" ? "true" : "false") + '">错题</button>' +
+      '<button data-rtab="paper" role="tab" aria-selected="' + (S.reviewTab === "paper" ? "true" : "false") + '">原卷批改</button>' +
+      "</div>";
+    html += '<div class="bar"><div class="seg" role="group" aria-label="单元筛选">';
+    html += '<button data-runit="all" aria-pressed="' + (S.reviewUnit === "all" ? "true" : "false") + '">全部</button>';
+    UNITS.forEach(function (u) {
+      html += '<button data-runit="' + esc(u.unit) + '" aria-pressed="' + (S.reviewUnit === u.unit ? "true" : "false") + '">' + esc(u.unit) + "</button>";
+    });
+    html += '</div><span class="spacer"></span>';
+    html += '<button class="btn sm" data-act="export-md">导出 Markdown</button>';
+    html += '<button class="btn sm" data-act="print">打印</button>';
+    html += "</div>";
+
+    var units = UNITS.filter(function (u) { return S.reviewUnit === "all" || u.unit === S.reviewUnit; });
+    if (S.reviewTab === "wrong") {
+      var list = wrongList().filter(function (it) { return units.some(function (u) { return u.unit === it.unit; }); });
+      if (!list.length) html += '<div class="empty">这个范围里没有错题。换个单元，或者去「做题」再来一轮。</div>';
+      list.forEach(function (it) { html += mistakeCardHTML(it); });
+    } else {
+      units.forEach(function (u) {
+        html += '<div class="rows"><div class="unitrow">' + esc(u.title) + "</div>";
+        u.items.forEach(function (it) { html += paperRowHTML(it); });
+        html += "</div>";
+      });
+    }
+    var root = document.getElementById("view-review");
+    root.innerHTML = html;
+    root.querySelectorAll("[data-rtab]").forEach(function (b) {
+      b.addEventListener("click", function () { S.reviewTab = b.dataset.rtab; renderReview(); });
+    });
+    root.querySelectorAll("[data-runit]").forEach(function (b) {
+      b.addEventListener("click", function () { S.reviewUnit = b.dataset.runit; renderReview(); });
+    });
+    root.querySelectorAll("[data-goto]").forEach(function (b) {
+      b.addEventListener("click", function () {
+        var it = BY_ID[b.dataset.goto];
+        if (!it) return;
+        S.unit = it.unit; store.unit = S.unit; saveStore();
+        S.idx = items().indexOf(it);
+        if (S.mode === "exam") { S.mode = "drill"; S.exam = null; }
+        switchView("practice");
+      });
+    });
+    root.querySelectorAll("[data-clear-item]").forEach(function (b) {
+      b.addEventListener("click", function () {
+        store.cleared[b.dataset.clearItem] = true;
+        saveStore(); updateBadge(); renderReview();
+      });
+    });
+    root.querySelectorAll('[data-act="print"]').forEach(function (b) {
+      b.addEventListener("click", function () { window.print(); });
+    });
+    root.querySelectorAll('[data-act="export-md"]').forEach(function (b) {
+      b.addEventListener("click", function () { exportMarkdown(); });
+    });
+  }
+
+  function mistakeCardHTML(it) {
+    var st = statOf(it);
+    var html = '<article class="mcard">';
+    html += '<div class="mhead"><span class="ref">' + esc(it.unit + " · " + itemRef(it)) + '</span><span class="topic">' + esc(it.topic) + "</span>";
+    html += '<span class="cnt">累计错 ' + ((st && st.wrong) || 0) + " 次</span></div>";
+    html += '<p class="mstem">' + (it.cn ? '<span class="cn">' + esc(it.cn) + "</span>" : "") +
+      esc(it.stem).replace(/_{3,}/g, "____") + "</p>";
+    html += '<div class="meta" style="margin:0 0 8px">';
+    html += "<span>你的作答：<b>" + esc(answerText(it) || "（未作答）") + "</b></span> · ";
+    html += '<span class="orig">原卷：' + esc(paperAnswer(it)) + "</span> · ";
+    html += "<span>正确答案：<b>" + esc(it.kind === "mc" ? it.answer : it.answerRaw || "—") + "</b></span>";
+    html += "</div>";
+    html += '<div class="verify" style="margin-top:0">';
+    if (it.point) html += '<div class="vlab">规则</div><div class="vtxt">' + esc(it.point) + "</div>";
+    html += '<div class="vlab">解析</div><div class="vtxt">' + esc(it.why || "（暂无解析）") + "</div>";
+    if (it.trap) html += '<div class="vlab">易错点</div><div class="vtxt"><span class="vtrap">' + esc(it.trap) + "</span></div>";
+    html += "</div>";
+    html += '<div class="mlink"><button data-goto="' + esc(it.id) + '">去重做</button>' +
+      '<button data-clear-item="' + esc(it.id) + '">我会了，清掉</button></div>';
+    html += "</article>";
+    return html;
+  }
+
+  function paperVerdict(it) {
+    if (it.kind === "mc") {
+      if (!it.marked || !it.answer) return "unknown";
+      return it.marked === it.answer ? "right" : "wrong";
+    }
+    var hw = paperAnswer(it);
+    if (!it.answer && !it.manual) return "close";
+    if (!hw || hw.indexOf("未作答") >= 0 || hw.indexOf("看不清") >= 0) return "unknown";
+    var acc = acceptedList(it);
+    if (acc.indexOf(norm(hw.replace(/\s*\/\s*/g, " / "))) >= 0) return "right";
+    return /\.\s*$/.test(String(it.answerRaw || "")) ? "close" : "wrong";
+  }
+  function paperRowHTML(it) {
+    var v = paperVerdict(it);
+    var vt = v === "right" ? "对" : v === "wrong" ? "错" : v === "close" ? "待核对" : "未判";
+    var html = '<div class="prow" data-goto="' + esc(it.id) + '">';
+    html += '<span class="ref">' + esc(itemRef(it)) + "</span>";
+    html += '<span class="ans">答案 ' + esc(it.kind === "mc" ? it.answer : it.answerRaw || "—") + "</span>";
+    html += '<span class="pick">原卷 ' + esc(paperAnswer(it)) + "</span>";
+    html += '<span class="verdict" data-v="' + v + '">' + vt + "</span>";
+    html += "</div>";
+    return html;
+  }
+
+  /* ══ 导出 / 导入 / 清空 ════════════════════════ */
+  function download(name, text, type) {
+    var blob = new Blob([text], { type: type || "application/json;charset=utf-8" });
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = name;
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 0);
+  }
+  function today() {
+    var d = new Date();
     return d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate());
   }
-  function buildRecordExport(){
-    return {
-      schema: RECORD_SCHEMA,
-      subject: "英语",
-      tool: RECORD_TOOL,
-      exportedAt: new Date().toISOString(),
-      data: store
+  function exportJSON() {
+    var payload = {
+      schema: "lt.practice-records/1", subject: "英语", tool: "九上英语过关练习",
+      exportedAt: new Date().toISOString(), data: store
     };
+    download("英语-练习记录-" + today() + ".json", JSON.stringify(payload, null, 1));
+    toast("已导出 " + recordCount() + " 条作答记录");
   }
-  function downloadText(filename, text, mime){
-    try{
-      var blob = new Blob([text], { type: (mime || "text/plain") + ";charset=utf-8" });
-      var a = document.createElement("a");
-      a.href = URL.createObjectURL(blob);
-      a.download = filename;
-      document.body.appendChild(a); a.click();
-      setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); }, 1000);
-      return true;
-    }catch(e){ return false; }
+  function importJSON() {
+    var input = document.createElement("input");
+    input.type = "file";
+    input.accept = ".json,application/json";
+    input.addEventListener("change", function () {
+      var f = input.files && input.files[0];
+      if (!f) return;
+      var reader = new FileReader();
+      reader.onload = function () {
+        try {
+          var parsed = JSON.parse(String(reader.result || ""));
+          if (!parsed || typeof parsed.data !== "object" || parsed.data === null) throw new Error("no data");
+          var next = normalizeStore(parsed.data);
+          if (!confirm("导入会整份覆盖现在的记录（现在 " + recordCount() + " 条 → 导入 " + recordCount(next) + " 条）。继续？")) return;
+          store = next;
+          if (!UNIT_BY[store.unit]) store.unit = S.unit;
+          S.unit = store.unit;
+          saveStore(); updateBadge(); switchView(S.view);
+          toast("已导入 " + recordCount() + " 条作答记录");
+        } catch (e) {
+          alert("导入失败：文件不是合法的练习记录 JSON。");
+        }
+      };
+      reader.readAsText(f);
+    });
+    input.click();
   }
-  function exportRecords(){
-    var payload = buildRecordExport();
-    var ok = downloadText("英语-练习记录-" + dateStamp() + ".json", JSON.stringify(payload, null, 2), "application/json");
-    toast(ok ? "已导出练习记录 JSON（" + recordCount() + " 条作答）" : "导出失败：浏览器拦截了下载");
-  }
-  /* 导入：校验 data 是对象 → 整份覆盖 store → 刷新各视图 */
-  function applyImportedStore(data){
-    store = normalizeStore(data);
+  function clearAll() {
+    if (!confirm("清空全部作答记录（含累计错误次数与「我会了」标记）？此操作不可撤销。")) return;
+    store = normalizeStore({ unit: S.unit });
     saveStore();
-    curUnit = unitOf(store.unit);
-    switchView(currentView);
-    updateTabCounts();
-    return recordCount();
+    S.picked = {}; S.reveals = {}; S.marks = {}; S.exam = null; S.settle = false;
+    updateBadge(); switchView(S.view);
+    toast("已清空全部作答记录");
   }
-  function importRecords(){
-    var inp = document.getElementById("rec-file");
-    if (!inp){
-      inp = document.createElement("input");
-      inp.type = "file"; inp.id = "rec-file"; inp.accept = ".json,application/json";
-      inp.style.display = "none";
-      inp.addEventListener("change", function(){ readImportFile(inp); });
-      document.body.appendChild(inp);
-    }
-    inp.value = "";
-    inp.click();
-  }
-  function readImportFile(inp){
-    var f = inp.files && inp.files[0];
-    if (!f) return;
-    var rd = new FileReader();
-    rd.onerror = function(){ toast("导入失败：这个文件读不出来"); inp.value = ""; };
-    rd.onload = function(){
-      var parsed;
-      try{ parsed = JSON.parse(String(rd.result || "").replace(/^\uFEFF/, "")); }
-      catch(e){ toast("导入失败：不是合法的 JSON 文件"); inp.value = ""; return; }
-      var data = (parsed && typeof parsed === "object" && !Array.isArray(parsed)) ? parsed.data : null;
-      if (!data || typeof data !== "object" || Array.isArray(data)){
-        toast("导入失败：文件里没有 data 对象（请用本工具「导出记录（JSON）」导出的文件）");
-        inp.value = "";
-        return;
-      }
-      var incoming = recordCount(normalizeStore(data));
-      if (!confirm("导入会整份覆盖当前练习记录：现有 " + recordCount() + " 条作答 → 导入 " + incoming + " 条。确定吗？")){
-        inp.value = "";
-        return;
-      }
-      applyImportedStore(data);
-      toast("已导入并覆盖练习记录（" + recordCount() + " 条作答）");
-      inp.value = "";
-    };
-    rd.readAsText(f);
+  function exportMarkdown() {
+    var list = wrongList();
+    var lines = ["# 九上英语错题整理", "", "导出于 " + today() + " · 共 " + list.length + " 题", ""];
+    var curUnit = "";
+    list.forEach(function (it) {
+      if (it.unit !== curUnit) { curUnit = it.unit; lines.push("## " + curUnit + " " + ((UNIT_BY[it.unit] || {}).title || "")); lines.push(""); }
+      lines.push("### " + itemRef(it) + " · " + (it.topic || ""));
+      lines.push("");
+      if (it.cn) lines.push("> " + it.cn);
+      lines.push("**题目**：" + it.stem);
+      lines.push("");
+      lines.push("- 你的作答：" + (answerText(it) || "（未作答）"));
+      lines.push("- 原卷作答：" + paperAnswer(it));
+      lines.push("- 正确答案：" + (it.kind === "mc" ? it.answer : it.answerRaw));
+      if (it.trap) lines.push("- 易错点：" + it.trap);
+      lines.push("");
+      lines.push(it.why || "");
+      lines.push("");
+    });
+    download("九上英语错题整理.md", lines.join("\n"), "text/markdown;charset=utf-8");
+    try { navigator.clipboard.writeText(lines.join("\n")); } catch (e) {}
+    toast("已导出错题 " + list.length + " 题");
   }
 
-  /* ══ 启动 ═══════════════════════════════════════════ */
-  window.addEventListener("error", function(e){
-    var bar = document.getElementById("errbar");
-    if (bar){ bar.classList.add("show"); bar.textContent += "JS ERROR: " + (e.message || e.error) + "\n"; }
+  /* ══ 键盘 ══════════════════════════════════════ */
+  document.addEventListener("keydown", function (e) {
+    var tag = (e.target && e.target.tagName) || "";
+    if (document.getElementById("cardsheet").classList.contains("is-open")) {
+      if (e.key === "Escape") closeCards();
+      return;
+    }
+    if (S.view === "practice" && S.settle) {
+      if (e.key === "Escape") { S.settle = false; S.idx = 0; renderPractice(); }
+      return;
+    }
+    if (S.view !== "practice") return;
+    var it = current();
+    if (tag === "INPUT" || tag === "TEXTAREA") return;
+    if (e.key === "Enter") {
+      e.preventDefault();
+      if (isExam() || shownState(it)) go(1); else doSubmit();
+      return;
+    }
+    if (e.key === "ArrowLeft") { e.preventDefault(); go(-1); return; }
+    if (e.key === "ArrowRight") { e.preventDefault(); go(1); return; }
+    var map = { "1": 0, "2": 1, "3": 2, "4": 3, a: 0, b: 1, c: 2, d: 3, A: 0, B: 1, C: 2, D: 3 };
+    if (Object.prototype.hasOwnProperty.call(map, e.key) && !shownState(it) && it.kind === "mc") {
+      var opt = it.options[map[e.key]];
+      if (!opt) return;
+      e.preventDefault();
+      if (isExam()) S.exam.answers[it.id] = opt.k; else S.picked[it.id] = opt.k;
+      renderPractice();
+    }
   });
-  if (!UNITS.length){
+
+  /* ══ 深链 ══════════════════════════════════════ */
+  function parseHash() {
+    var h = String(location.hash || "").replace(/^#/, "");
+    var out = {};
+    h.split("&").forEach(function (kv) {
+      if (!kv) return;
+      var i = kv.indexOf("=");
+      var k = (i < 0 ? kv : kv.slice(0, i)).toLowerCase();
+      var v = i < 0 ? "" : kv.slice(i + 1);
+      try { v = decodeURIComponent(v); } catch (e) {}
+      out[k] = v;
+    });
+    return out;
+  }
+  function unitByCode(code) {
+    if (!code) return null;
+    var t = String(code).toUpperCase().replace(/^UNIT/, "U");
+    if (UNIT_BY[t]) return t;
+    var n = String(code).replace(/\D/g, "");
+    if (n && UNIT_BY["U" + n]) return "U" + n;
+    return null;
+  }
+  function applyHash() {
+    var h = parseHash();
+    var view = (h.view || h.v || "").toLowerCase();
+    if (view === "review" || view === "mistakes" || view === "wrong" || view === "report") {
+      S.view = "review";
+      S.reviewTab = view === "report" ? "paper" : "wrong";
+    } else if (view === "practice" || view === "fills") {
+      S.view = "practice";
+    }
+    if (h.mode === "exam") S.mode = "exam";
+    else if (h.mode === "drill") S.mode = "drill";
+    else if (Object.keys(h).length) S.mode = "drill"; /* 契约：带深链进来默认「过关」；不带 hash 才沿用上次偏好 */
+    if (h.tab === "paper" || h.tab === "wrong") S.reviewTab = h.tab;
+    S.onlyFills = h.filter === "fills" || view === "fills"; /* #view=fills 是「只看填空」的别名 */
+    if (S.onlyFills && S.view === "practice") S.view = "practice";
+    var u = unitByCode(h.unit || h.u || "");
+    if (u) { S.unit = u; store.unit = u; saveStore(); }
+    S.exam = S.mode === "exam" ? { startAt: Date.now(), answers: {}, done: false } : null;
+    S.settle = false; S.idx = 0; S.picked = {}; S.reveals = {}; S.marks = {};
+  }
+
+  /* ══ 全局事件 ══════════════════════════════════ */
+  document.querySelectorAll(".tab").forEach(function (t) {
+    t.addEventListener("click", function () {
+      if (t.dataset.view === S.view) { switchView(S.view, { keepScroll: true }); return; }
+      switchView(t.dataset.view);
+    });
+  });
+  document.addEventListener("click", function (e) {
+    var t = e.target.closest ? e.target.closest("[data-act]") : null;
+    if (!t) return;
+    var act = t.dataset.act;
+    if (act === "export-json") { exportJSON(); return; }
+    if (act === "import") { importJSON(); return; }
+    if (act === "clear") { clearAll(); return; }
+    if (act === "close-cards") { closeCards(); return; }
+  });
+
+  /* ══ 启动 ══════════════════════════════════════ */
+  if (!UNITS.length) {
     document.getElementById("view-practice").innerHTML =
-      '<div class="empty"><div class="big">!</div><p>没有读到题库数据（data/bundle.js）。</p><p style="font-size:13px">请确认 data/bundle.js 与本页面在同一目录，或使用打包好的单文件版本。</p></div>';
+      '<div class="empty">没找到题库数据：请确认 data/bundle.js 由 build.mjs 生成。</div>';
   } else {
-    renderPractice();
-    updateTabCounts();
-    /* 「导出记录（JSON）」「导入记录（JSON）」：错题本工具栏与页脚各有一组，统一用事件委托 */
-    document.addEventListener("click", function(e){
-      var t = e.target && e.target.closest ? e.target.closest("[data-rec-export],[data-rec-import]") : null;
-      if (!t) return;
-      if (t.hasAttribute("data-rec-export")) exportRecords(); else importRecords();
-    });
-    var resetAll = document.getElementById("btn-reset-all");
-    if (resetAll) resetAll.addEventListener("click", function(){
-      if (!confirm("清空全部作答记录（选择题作答 + 填空输入）？原卷批改记录不受影响。")) return;
-      store.picks = {}; store.fills = {}; store.at = {}; store.atList = {};
-      saveStore();
-      switchView(currentView);
-      updateTabCounts();
-      toast("已清空全部作答记录");
-    });
-    /* 深链：只在启动时读一次 hash（契约见 docs/plans/开始页与深链契约.md），运行中切视图不回写 hash */
-    applyDeepLink();
+    applyHash();
+    switchView(S.view);
+    updateBadge();
   }
 })();
 </script>
