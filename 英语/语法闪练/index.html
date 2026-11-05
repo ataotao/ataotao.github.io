@@ -119,18 +119,26 @@ html.drilling body{overflow:hidden}
 .opt.is-right{border-color:var(--ok);box-shadow:inset 0 0 0 1px var(--ok)}
 .opt.is-right .badge{border-color:var(--ok);color:var(--ok)}
 .opt[disabled]{cursor:default}
-.verdict{display:none;font-size:12.8px;line-height:1.5;color:var(--ok);background:var(--ok-soft);
-  border-radius:8px;padding:7px 10px}
-.verdict.show{display:block}
-.verdict .srcline,.explain .srcline{margin:0;font-size:11.5px;line-height:1.45;color:#9a9aa5}
-.explain{display:none;flex-direction:column;gap:5px;background:#fff8f7;border-left:3px solid var(--bad);
-  border-radius:8px;padding:8px 10px}
-.explain.show{display:flex}
-.explain .rule{margin:0;font-size:13px;line-height:1.5;font-weight:600;color:#4a2a27}
-.explain .trap{margin:0;font-size:12.6px;line-height:1.5;color:#8a4a42}
+/* 判分反馈：对/错都显示「考点」，错的再展开「易错点」 */
+.fb{display:none;flex-direction:column;gap:6px;border-radius:10px;padding:9px 11px;border-left:3px solid transparent}
+.fb.show{display:flex}
+.fb-ok{background:var(--ok-soft);border-left-color:var(--ok)}
+.fb-bad{background:#fff8f7;border-left-color:var(--bad)}
+.fb-head{margin:0;font-size:13.5px;font-weight:800;line-height:1.4}
+.fb-ok .fb-head{color:var(--ok)}
+.fb-bad .fb-head{color:var(--bad)}
+.fb-line{margin:0;font-size:12.8px;line-height:1.5;color:#3f3f4a}
+.fb-line b{font-weight:700;color:#2d2d38}
+.fb-bad .fb-line b{color:#7c2f26}
+.fb-src{margin:0;font-size:11.5px;line-height:1.45;color:#9a9aa5}
+.fb .ack{margin-top:2px}
 .ack{min-height:46px;font-size:15px;font-weight:700;background:var(--accent);border-color:var(--accent);color:#fff}
 .ack:active{background:#6b4cc4}
 .quitline{flex:0 0 auto;font-size:11.5px;color:#a0a0ad;text-align:center;padding-top:2px}
+/* 顶栏「自动跳题」开关：极小，不抢地方 */
+.auto{flex:0 0 auto;min-height:30px;padding:3px 8px;font-size:11.5px;line-height:1;border-radius:8px;
+  border:1.5px solid var(--line);background:#fff;color:var(--muted);cursor:pointer;white-space:nowrap}
+.auto.on{border-color:var(--accent-line);background:var(--accent-soft);color:var(--accent);font-weight:700}
 
 /* ── 结算屏 ───────────────────────────── */
 .rt-hero{text-align:center;padding:26px 0 6px}
@@ -154,11 +162,50 @@ table.rt-table tr.weak td{color:var(--bad);background:#fff9f8}
 table.rt-table tr.weak td.tp{font-weight:600}
 table.rt-table .rate{font-weight:700}
 .rt-actions{display:flex;flex-direction:column;gap:9px;margin-top:20px}
-.rt-back{margin-top:10px}
+.rt-back{margin-top:10px;display:flex;gap:9px}
+.rt-back .btn{flex:1 1 0;min-width:0}
 @media(min-width:620px){
   .rt-actions{flex-direction:row;flex-wrap:wrap}
   .rt-actions .btn{flex:1 1 0}
 }
+
+/* 开始屏「考前看」文档入口 */
+.docsrow{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin:16px 0 0;padding:10px 12px;
+  background:#fff;border:1.5px solid var(--line);border-radius:12px}
+.docsrow .t{font-size:12px;color:var(--muted);margin-right:auto;white-space:nowrap}
+.doclink{flex:0 0 auto;min-height:32px;padding:4px 10px;font-size:12.5px;font-weight:600;border-radius:8px;
+  border:1.5px solid var(--accent-line);background:var(--accent-soft);color:var(--accent);cursor:pointer}
+.doclink:active{transform:scale(.97)}
+
+/* ── 文档阅读层 ───────────────────────── */
+#scr-doc{padding-bottom:40px}
+.docbar{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:10px;
+  background:rgba(246,246,248,.97);padding:10px 0 8px;border-bottom:1px solid var(--line)}
+.docbar h2{flex:1 1 auto;margin:0;font-size:16px;line-height:1.3;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.docbody{background:#fff;border-radius:14px;padding:16px 14px;margin:12px 0 0;font-size:14px;line-height:1.72;
+  color:var(--ink-2);box-shadow:0 1px 2px rgba(20,20,40,.05);overflow-wrap:break-word}
+.docbody h1{font-size:20px;line-height:1.35;margin:4px 0 10px;color:var(--ink)}
+.docbody h2{font-size:17px;line-height:1.4;margin:20px 0 8px;color:var(--ink);padding-bottom:5px;border-bottom:1px solid #f0f0f5}
+.docbody h3{font-size:15px;line-height:1.4;margin:16px 0 6px;color:var(--ink)}
+.docbody h4{font-size:14px;line-height:1.4;margin:14px 0 6px;color:var(--ink)}
+.docbody p{margin:8px 0}
+.docbody ul,.docbody ol{margin:8px 0;padding-left:22px}
+.docbody li{margin:4px 0}
+.docbody strong{color:var(--ink);font-weight:700}
+.docbody code{background:#f3f2f8;border-radius:4px;padding:1px 5px;font-size:12.5px;color:#5b4a9a;
+  font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+.docbody pre{background:#f7f7fa;border:1px solid var(--line);border-radius:10px;padding:10px 12px;
+  overflow-x:auto;margin:10px 0}
+.docbody pre code{background:none;padding:0;color:var(--ink-2);font-size:12.5px;white-space:pre}
+.docbody blockquote{margin:10px 0;padding:8px 12px;background:#faf9ff;border-left:3px solid var(--accent-line);
+  border-radius:0 8px 8px 0;color:#5a5570}
+.docbody blockquote p{margin:4px 0}
+.docbody hr{border:0;border-top:1px solid var(--line);margin:16px 0}
+.docbody a{color:var(--accent)}
+.tablewrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:10px 0}
+.docbody table{width:100%;border-collapse:collapse;font-size:13px}
+.docbody th,.docbody td{border:1px solid #e6e6ee;padding:6px 8px;vertical-align:top;text-align:left}
+.docbody th{background:#fafafc;font-weight:700;white-space:nowrap}
 
 /* ── 弹窗 / toast ─────────────────────── */
 .modal{position:fixed;inset:0;background:rgba(24,22,34,.42);display:none;align-items:center;justify-content:center;
@@ -192,6 +239,12 @@ table.rt-table .rate{font-weight:700}
     <p class="hint" id="wrong-hint"></p>
   </div>
   <div class="block-grid" id="block-grid"></div>
+  <div class="docsrow">
+    <span class="t">明早考前看</span>
+    <button class="doclink" data-act="doc" data-doc="card">考前口诀卡</button>
+    <button class="doclink" data-act="doc" data-doc="plan">今晚复习方案</button>
+    <button class="doclink" data-act="doc" data-doc="guide">使用说明</button>
+  </div>
   <footer class="foot">
     <button class="btn" data-act="export">导出记录（JSON）</button>
     <button class="btn" data-act="import">导入记录（JSON）</button>
@@ -206,6 +259,7 @@ table.rt-table .rate{font-weight:700}
     <div class="tb-row">
       <button class="quit" data-act="quit">退出</button>
       <div class="pg"><i id="pg-fill"></i></div>
+      <button class="auto" id="act-auto" data-act="auto" title="答对后是否 1 秒自动跳下一题">自动:关</button>
       <span class="tb-time">用时 <b id="bar-time">00:00</b></span>
     </div>
     <div class="tb-row2">
@@ -215,7 +269,7 @@ table.rt-table .rate{font-weight:700}
     </div>
   </div>
   <div class="qwrap"><div class="qcard" id="qcard"></div></div>
-  <p class="quitline" id="drill-line">1–4 / A–D 选答案 · Enter 继续 · Esc 退出</p>
+  <p class="quitline" id="drill-line">1–4 / A–D 选答案 · Enter 下一题 · Esc 退出</p>
 </section>
 
 <!-- 结算屏 -->
@@ -235,7 +289,19 @@ table.rt-table .rate{font-weight:700}
     <button class="btn" data-act="again" id="act-again">再来一轮</button>
     <button class="btn ghost" data-act="copy">复制今晚小结</button>
   </div>
-  <div class="rt-back"><button class="btn sm" style="width:100%" data-act="home">回到开始屏</button></div>
+  <div class="rt-back">
+    <button class="btn sm" data-act="doc" data-doc="card">考前口诀卡</button>
+    <button class="btn sm" data-act="home">回到开始屏</button>
+  </div>
+</section>
+
+<!-- 文档阅读层（考前口诀卡 / 今晚复习方案 / 使用说明） -->
+<section class="screen" id="scr-doc">
+  <div class="docbar">
+    <button class="quit" data-act="doc-back">← 返回</button>
+    <h2 id="doc-title">文档</h2>
+  </div>
+  <article class="docbody" id="doc-body"></article>
 </section>
 
 <div class="modal" id="modal"><div class="modal-card" id="modal-card"></div></div>
@@ -318,8 +384,45 @@ table.rt-table .rate{font-weight:700}
   }
 
   /* ══ 记录 ══════════════════════════════════ */
-  function blankStore() { return { stat: {}, rounds: [], last: null }; }
+  function blankStore() {
+    return { stat: {}, rounds: [], last: null, settings: { autoNext: false }, current: null };
+  }
   function num(v) { v = Number(v); return isFinite(v) && v > 0 ? v : 0; }
+  function strList(v) { return Array.isArray(v) ? v.filter(function (x) { return typeof x === "string"; }) : []; }
+  function normMode(m) { return ["plan", "block", "redo"].indexOf(m) >= 0 ? m : "block"; }
+  /* 进行中本轮的快照（刷新后接着做）。题库改过、id 失效时由 resumeRound 丢条目，不在这里崩。 */
+  function normalizeCurrent(c) {
+    if (!c || typeof c !== "object") return null;
+    var ids = strList(c.ids);
+    if (!ids.length) return null;
+    var perTopic = {};
+    if (c.perTopic && typeof c.perTopic === "object") {
+      Object.keys(c.perTopic).forEach(function (k) {
+        var t = c.perTopic[k];
+        if (!t || typeof t !== "object") return;
+        perTopic[k] = { topic: k, total: num(t.total), ok: num(t.ok) };
+      });
+    }
+    var mainIds = strList(c.mainIds);
+    var idx = Math.floor(num(c.idx));
+    return {
+      mode: normMode(c.mode),
+      title: typeof c.title === "string" ? c.title : "",
+      ids: ids,
+      mainIds: mainIds.length ? mainIds : ids.slice(),
+      idx: Math.min(idx, ids.length),
+      done: Math.min(Math.floor(num(c.done)), ids.length),
+      ok: Math.floor(num(c.ok)),
+      phase: c.phase === "redo" ? "redo" : "main",
+      wrongIds: strList(c.wrongIds),
+      pendingRedoIds: strList(c.pendingRedoIds),
+      phaseOk: Math.floor(num(c.phaseOk)),
+      phaseDone: Math.floor(num(c.phaseDone)),
+      perTopic: perTopic,
+      startAt: typeof c.startAt === "string" ? c.startAt : new Date().toISOString(),
+      autoNext: c.autoNext === true
+    };
+  }
   function normalizeStore(raw) {
     var out = blankStore();
     if (!raw || typeof raw !== "object") return out;
@@ -333,30 +436,32 @@ table.rt-table .rate{font-weight:700}
     rounds.slice(-200).forEach(function (r) {
       if (!r || typeof r !== "object") return;
       out.rounds.push({
-        mode: ["plan", "block", "redo"].indexOf(r.mode) >= 0 ? r.mode : "block",
+        mode: normMode(r.mode),
         startAt: typeof r.startAt === "string" ? r.startAt : "",
         endAt: typeof r.endAt === "string" ? r.endAt : "",
         costMs: num(r.costMs),
         total: num(r.total),
         ok: num(r.ok),
-        wrongIds: Array.isArray(r.wrongIds) ? r.wrongIds.filter(function (x) { return typeof x === "string"; }) : []
+        wrongIds: strList(r.wrongIds)
       });
     });
     var L = raw.last;
     if (L && typeof L === "object") {
       out.last = {
-        mode: ["plan", "block", "redo"].indexOf(L.mode) >= 0 ? L.mode : "block",
+        mode: normMode(L.mode),
         startAt: typeof L.startAt === "string" ? L.startAt : "",
         endAt: typeof L.endAt === "string" ? L.endAt : "",
         costMs: num(L.costMs),
         total: num(L.total),
         ok: num(L.ok),
-        wrongIds: Array.isArray(L.wrongIds) ? L.wrongIds.filter(function (x) { return typeof x === "string"; }) : [],
-        itemIds: Array.isArray(L.itemIds) ? L.itemIds.filter(function (x) { return typeof x === "string"; }) : [],
+        wrongIds: strList(L.wrongIds),
+        itemIds: strList(L.itemIds),
         perTopic: Array.isArray(L.perTopic) ? L.perTopic.filter(function (t) { return t && typeof t.topic === "string"; })
           .map(function (t) { return { topic: t.topic, total: num(t.total), ok: num(t.ok) }; }) : []
       };
     }
+    out.settings = { autoNext: !!(raw.settings && raw.settings.autoNext === true) };
+    out.current = normalizeCurrent(raw.current);
     return out;
   }
   function loadStore() {
@@ -380,10 +485,11 @@ table.rt-table .rate{font-weight:700}
   var store = loadStore();
 
   /* ══ 状态 ══════════════════════════════════ */
-  var S = { view: "home" };
+  var S = { view: "home", docFrom: "home" };
   var R = null;          // 本轮
   var timerId = null;
   var modalClose = null;
+  function autoNextOn() { return !!(store.settings && store.settings.autoNext); }
 
   function fmtClock(ms) {
     var t = Math.max(0, Math.floor(ms / 1000));
@@ -406,10 +512,6 @@ table.rt-table .rate{font-weight:700}
   function stemHTML(stem) {
     return esc(stem).replace(/_{3,}/g, '<span class="blank" aria-label="空格"></span>');
   }
-  function srcLine(item) {
-    if (!item || !item.src) return "";
-    return '<p class="srcline">出处：' + esc(item.src) + "</p>";
-  }
   function toast(msg, ms) {
     var el = $("#toast");
     el.textContent = msg;
@@ -417,11 +519,34 @@ table.rt-table .rate{font-weight:700}
     clearTimeout(toast._t);
     toast._t = setTimeout(function () { el.classList.remove("show"); }, ms || 2200);
   }
+  function updateAutoBtn() {
+    var b = $("#act-auto");
+    if (!b) return;
+    var on = autoNextOn();
+    b.textContent = "自动:" + (on ? "开" : "关");
+    b.classList.toggle("on", on);
+    b.setAttribute("aria-pressed", on ? "true" : "false");
+  }
+  function toggleAuto() {
+    store.settings.autoNext = !autoNextOn();
+    saveStore();
+    updateAutoBtn();
+    toast(autoNextOn() ? "自动跳题：开（答对 1 秒翻页）" : "自动跳题：关（答对也停下来看要点）");
+  }
+  /* 判分反馈：对/错都写「考点」，错的再写「易错点」 */
+  function feedbackHTML(item, correct) {
+    var h = '<p class="fb-head">' + (correct ? "✓" : "✗") + " 考点：<b>" + esc(item.topic || "未分类") + "</b></p>";
+    h += '<p class="fb-line"><b>规则：</b>' + esc(item.rule || "") + "</p>";
+    if (!correct && item.trap) h += '<p class="fb-line"><b>易错点：</b>' + esc(item.trap) + "</p>";
+    if (item.src) h += '<p class="fb-src">出处：' + esc(item.src) + "</p>";
+    h += '<button type="button" class="btn ack" data-act="ack">' + (correct ? "下一题 →" : "记住了 →") + "</button>";
+    return h;
+  }
 
   /* ══ 视图切换 ══════════════════════════════ */
   function switchView(name) {
     S.view = name;
-    ["home", "drill", "result"].forEach(function (v) {
+    ["home", "drill", "result", "doc"].forEach(function (v) {
       var el = $("#scr-" + v);
       if (el) el.classList.toggle("is-active", v === name);
     });
@@ -485,22 +610,41 @@ table.rt-table .rate{font-weight:700}
   }
 
   /* ══ 本轮引擎 ══════════════════════════════ */
+  function makeRound(o) {
+    o = o || {};
+    var r = {
+      mode: normMode(o.mode), title: o.title || "",
+      main: (o.main || []).slice(), list: (o.list || o.main || []).slice(),
+      phase: o.phase === "redo" ? "redo" : "main",
+      idx: Math.floor(num(o.idx)), done: Math.floor(num(o.done)),
+      phaseOk: Math.floor(num(o.phaseOk)), judgeCount: Math.floor(num(o.idx)),
+      ok: Math.floor(num(o.ok)), wrongIds: (o.wrongIds || []).slice(),
+      pendingRedo: (o.pendingRedo || []).slice(),
+      perTopic: {}, locked: true, autoTimer: null, startAt: Date.now()
+    };
+    var t = o.startAt ? new Date(o.startAt).getTime() : NaN;
+    if (isFinite(t) && t > 0) r.startAt = t;
+    if (o.perTopic && Object.keys(o.perTopic).length) {
+      Object.keys(o.perTopic).forEach(function (k) {
+        var x = o.perTopic[k] || {};
+        r.perTopic[k] = { topic: x.topic || k, total: num(x.total), ok: num(x.ok) };
+      });
+    } else {
+      r.main.forEach(function (it) {
+        if (!r.perTopic[it.topic]) r.perTopic[it.topic] = { topic: it.topic, total: 0, ok: 0 };
+        r.perTopic[it.topic].total += 1;
+      });
+    }
+    return r;
+  }
+
   function startRound(mode, items, opts) {
     items = (items || []).filter(Boolean);
     if (!items.length) { toast("没有可刷的题"); return; }
     stopTimer();
-    R = {
-      mode: mode, main: items.slice(), list: items.slice(), phase: "main",
-      idx: 0, done: 0, phaseOk: 0, judgeCount: 0,
-      ok: 0, wrongIds: [], pendingRedo: [], perTopic: {},
-      locked: true, autoTimer: null, startAt: Date.now(), lastItem: null,
-      title: (opts && opts.title) || ""
-    };
-    R.main.forEach(function (it) {
-      if (!R.perTopic[it.topic]) R.perTopic[it.topic] = { topic: it.topic, total: 0, ok: 0 };
-      R.perTopic[it.topic].total += 1;
-    });
+    R = makeRound({ mode: mode, title: (opts && opts.title) || "", main: items, list: items });
     switchView("drill");
+    updateAutoBtn();
     renderQuestion();
     startTimer();
   }
@@ -531,15 +675,13 @@ table.rt-table .rate{font-weight:700}
         '<span class="mark"></span></button>';
     });
     html += "</div>";
-    html += '<div class="verdict" id="verdict"></div>';
-    html += '<div class="explain" id="explain"><p class="rule">' + esc(item.rule || "") + '</p>' +
-      (item.trap ? '<p class="trap">' + esc(item.trap) + "</p>" : "") + srcLine(item) +
-      '<button type="button" class="btn ack" data-act="ack">记住了 →</button></div>';
+    html += '<div class="fb" id="fb"></div>';
     wrap.innerHTML = html;
     $("#bar-topic").textContent = item.topic || "—";
     $("#bar-time").textContent = fmtClock(Date.now() - R.startAt);
     updateBar();
     var q = $(".qwrap"); if (q) q.scrollTop = 0;
+    snapshotRound();
   }
 
   function judge(optIdx) {
@@ -565,6 +707,7 @@ table.rt-table .rate{font-weight:700}
 
     recordAttempt(item, correct);
 
+    var fb = $("#fb");
     if (correct) {
       R.phaseOk += 1;
       if (R.phase === "main") {
@@ -572,20 +715,16 @@ table.rt-table .rate{font-weight:700}
         var t = R.perTopic[item.topic];
         if (t) t.ok += 1;
       }
-      var v = $("#verdict");
-      if (v) {
-        v.innerHTML = "✓ " + esc(item.rule || "答对了") + srcLine(item);
-        v.classList.add("show");
-      }
-      R.autoTimer = setTimeout(advance, 1000);
+      if (fb) { fb.className = "fb show fb-ok"; fb.innerHTML = feedbackHTML(item, true); }
+      if (autoNextOn()) R.autoTimer = setTimeout(advance, 1000);
     } else {
       if (R.phase === "main") R.wrongIds.push(item.id);
       R.pendingRedo.push(item);
-      var ex = $("#explain");
-      if (ex) ex.classList.add("show");
+      if (fb) { fb.className = "fb show fb-bad"; fb.innerHTML = feedbackHTML(item, false); }
     }
     R.done = R.idx + 1;
     updateBar();
+    snapshotRound();
   }
 
   function advance() {
@@ -619,36 +758,131 @@ table.rt-table .rate{font-weight:700}
     finishRound();
   }
 
-  function finishRound() {
-    var costMs = Date.now() - R.startAt;
-    var endAt = new Date();
-    var perTopic = Object.keys(R.perTopic).map(function (k) {
-      var t = R.perTopic[k];
-      return { topic: t.topic, total: t.total, ok: t.ok, rate: t.total ? Math.round((t.ok / t.total) * 100) : 0 };
+  function topicRows(perTopic) {
+    return Object.keys(perTopic || {}).map(function (k) {
+      var t = perTopic[k] || {};
+      return {
+        topic: t.topic || k, total: num(t.total), ok: num(t.ok),
+        rate: t.total ? Math.round((num(t.ok) / num(t.total)) * 100) : 0
+      };
     }).sort(function (a, b) { return a.rate - b.rate; });
+  }
 
-    var entry = {
-      mode: R.mode,
-      startAt: new Date(R.startAt).toISOString(),
-      endAt: endAt.toISOString(),
-      costMs: costMs,
-      total: R.main.length,
-      ok: R.ok,
-      wrongIds: R.wrongIds.slice()
-    };
+  function commitRound(entry, perTopic, mainIds) {
     store.rounds.push(entry);
     if (store.rounds.length > 200) store.rounds = store.rounds.slice(-200);
     store.last = {
-      mode: entry.mode, startAt: entry.startAt, endAt: entry.endAt, costMs: costMs,
+      mode: entry.mode, startAt: entry.startAt, endAt: entry.endAt, costMs: entry.costMs,
       total: entry.total, ok: entry.ok, wrongIds: entry.wrongIds.slice(),
-      itemIds: R.main.map(function (it) { return it.id; }),
-      perTopic: perTopic
+      itemIds: (mainIds || []).slice(), perTopic: perTopic
     };
+    store.current = null;
     saveStore();
     var result = store.last;
     R = null;
     stopTimer();
     renderResult(result);
+  }
+
+  function finishRound() {
+    if (!R) return;
+    var endAt = new Date();
+    var entry = {
+      mode: normMode(R.mode),
+      startAt: new Date(R.startAt).toISOString(),
+      endAt: endAt.toISOString(),
+      costMs: Math.max(0, endAt.getTime() - R.startAt),
+      total: R.main.length,
+      ok: R.ok,
+      wrongIds: R.wrongIds.slice()
+    };
+    commitRound(entry, topicRows(R.perTopic), R.main.map(function (it) { return it.id; }));
+  }
+
+  /* 刷新前落盘：判分 / 翻题后都写。锁定态（刚点完没翻页）按「下一题」记，避免重复判分。 */
+  function snapshotRound() {
+    if (!R) {
+      if (store.current) { store.current = null; saveStore(); }
+      return;
+    }
+    var ids = R.list.map(function (it) { return it.id; });
+    var phase = R.phase;
+    var idx = R.locked ? R.idx + 1 : R.idx;
+    var phaseOk = R.phaseOk;
+    var pending = uniq(R.pendingRedo).map(function (it) { return it.id; });
+    if (idx >= ids.length) {
+      if (pending.length) {          // 本阶段答完，且还有错题 → 快照直接进重练轮
+        ids = pending; idx = 0; phase = "redo"; phaseOk = 0; pending = [];
+      } else {
+        idx = ids.length;            // 本轮已答完（刷新后会直接看到结算）
+      }
+    }
+    store.current = {
+      mode: normMode(R.mode), title: R.title || "",
+      ids: ids, mainIds: R.main.map(function (it) { return it.id; }),
+      idx: idx, done: idx, ok: R.ok, phase: phase,
+      wrongIds: R.wrongIds.slice(), pendingRedoIds: pending,
+      phaseOk: phaseOk, phaseDone: idx,
+      perTopic: R.perTopic, startAt: new Date(R.startAt).toISOString(),
+      autoNext: autoNextOn()
+    };
+    saveStore();
+  }
+
+  function finishFromCurrent(c) {
+    var endAt = new Date();
+    var startMs = new Date(c.startAt).getTime();
+    if (!isFinite(startMs) || startMs <= 0) startMs = endAt.getTime();
+    var entry = {
+      mode: normMode(c.mode), startAt: new Date(startMs).toISOString(),
+      endAt: endAt.toISOString(), costMs: Math.max(0, endAt.getTime() - startMs),
+      total: c.mainIds.length, ok: c.ok, wrongIds: c.wrongIds.slice()
+    };
+    commitRound(entry, topicRows(c.perTopic), c.mainIds);
+  }
+
+  /* 启动时恢复进行中的本轮（刷新不丢进度） */
+  function resumeRound() {
+    var c = store.current;
+    if (!c) return false;
+    var list = [], keptIds = [];
+    c.ids.forEach(function (id) {
+      var it = itemById[id];
+      if (it) { list.push(it); keptIds.push(id); }
+    });
+    if (!list.length) { store.current = null; saveStore(); return false; }
+    var pending = c.pendingRedoIds.map(function (id) { return itemById[id]; }).filter(Boolean);
+    var mainItems = c.mainIds.map(function (id) { return itemById[id]; }).filter(Boolean);
+    if (!mainItems.length) mainItems = c.phase === "main" ? list.slice() : [];
+    var idx = Math.min(c.idx, list.length);
+
+    if (idx >= list.length) {
+      if (pending.length) {
+        R = makeRound({
+          mode: c.mode, title: c.title, main: mainItems, list: pending.slice(), phase: "redo",
+          idx: 0, done: 0, phaseOk: 0, ok: c.ok, wrongIds: c.wrongIds,
+          pendingRedo: [], perTopic: c.perTopic, startAt: c.startAt
+        });
+        switchView("drill"); updateAutoBtn(); renderQuestion(); startTimer();
+        toast("还有错题没重练：共 " + pending.length + " 题", 2600);
+        return true;
+      }
+      finishFromCurrent(c);
+      return true;
+    }
+
+    R = makeRound({
+      mode: c.mode, title: c.title, main: mainItems, list: list, phase: c.phase,
+      idx: idx, done: idx, phaseOk: c.phaseOk, ok: c.ok, wrongIds: c.wrongIds,
+      pendingRedo: pending, perTopic: c.perTopic, startAt: c.startAt
+    });
+    R.judgeCount = c.phase === "main" ? c.done : Math.max(c.done, mainItems.length);
+    switchView("drill");
+    updateAutoBtn();
+    renderQuestion();
+    startTimer();
+    toast("接着上次：已做 " + idx + "/" + list.length + (c.phase === "redo" ? "（重练）" : ""));
+    return true;
   }
 
   /* ══ 计时 ══════════════════════════════════ */
@@ -823,7 +1057,9 @@ table.rt-table .rate{font-weight:700}
   }
   function clearAll() {
     if (!confirm("清空全部练习记录（作答统计 + 每轮成绩）？此操作不可撤销。")) return;
+    var keepAuto = autoNextOn();
     store = blankStore();
+    store.settings.autoNext = keepAuto;
     saveStore();
     toast("已清空全部记录");
     renderHome();
@@ -858,15 +1094,45 @@ table.rt-table .rate{font-weight:700}
   function askQuit() {
     if (!R) { renderHome(); return; }
     var total = R.main.length;
-    var done = R.judgeCount;
-    var msg = done === 0
-      ? "本轮 " + total + " 题还没开始做，确定退出？"
-      : "本轮 " + total + " 题只做了 " + Math.min(done, total) + " 题，确定退出？";
+    var msg;
+    if (R.phase === "redo") {
+      msg = "本轮 " + total + " 题已做完，错题还没重练完，确定退出？";
+    } else {
+      var done = Math.min(R.done, total);
+      msg = done === 0
+        ? "本轮 " + total + " 题还没开始做，确定退出？"
+        : "本轮 " + total + " 题只做了 " + done + " 题，确定退出？";
+    }
     if (!confirm(msg)) return;
     stopTimer();
     R = null;
+    store.current = null;      // 退出＝放弃本轮，不写 rounds
+    saveStore();
     renderHome();
-    toast("已退出，本轮不写成绩记录");
+    toast("已退出，本轮已放弃（不写成绩记录）");
+  }
+
+  /* ══ 页内文档（构建期把 md 转成 HTML 注入 FLASH_DOCS） ══ */
+  function openDoc(key, from) {
+    var docs = window.FLASH_DOCS;
+    var d = docs && docs[key];
+    if (!d || !d.html) { toast("文档还没打包，先跑 node build.mjs"); return false; }
+    S.docFrom = from || (S.view === "result" ? "result" : "home");
+    $("#doc-title").textContent = d.title || "文档";
+    var body = $("#doc-body");
+    body.innerHTML = d.html;
+    $$("table", body).forEach(function (t) {
+      var w = document.createElement("div");
+      w.className = "tablewrap";
+      t.parentNode.insertBefore(w, t);
+      w.appendChild(t);
+    });
+    switchView("doc");
+    return true;
+  }
+  function closeDoc() {
+    if (S.docFrom === "result" && lastResult()) { renderResult(lastResult()); return; }
+    renderHome();
   }
 
   document.addEventListener("click", function (e) {
@@ -884,6 +1150,9 @@ table.rt-table .rate{font-weight:700}
       }
       if (act === "quit") { askQuit(); return; }
       if (act === "ack") { advance(); return; }
+      if (act === "auto") { toggleAuto(); return; }
+      if (act === "doc") { openDoc(t.getAttribute("data-doc")); return; }
+      if (act === "doc-back") { closeDoc(); return; }
       if (act === "redo-wrong") {
         var res = lastResult();
         if (!res || !res.wrongIds.length) return;
@@ -920,6 +1189,7 @@ table.rt-table .rate{font-weight:700}
     if (e.key === "Escape") {
       if ($("#modal").classList.contains("is-open")) { closeModal(); e.preventDefault(); return; }
       if (S.view === "drill") { e.preventDefault(); askQuit(); return; }
+      if (S.view === "doc") { e.preventDefault(); closeDoc(); return; }
       if (S.view === "result") { renderHome(); return; }
       return;
     }
@@ -954,21 +1224,30 @@ table.rt-table .rate{font-weight:700}
   function boot() {
     initData();
     indexBlocks();
+    updateAutoBtn();
     var hq = parseHash();
+    if (hq.view === "doc") {
+      var docs = window.FLASH_DOCS;
+      if (docs && docs[hq.doc] && openDoc(hq.doc, "home")) return;
+    }
     if (!blocks.length) { renderHome(); return; }
+    if (hq.view === "result") {
+      if (lastResult()) { renderResult(lastResult()); return; }
+    }
+    // 「只刷错题」是明确指令，优先于"接着上次"
+    if (hq.list === "wrong") {
+      var w = wrongItems();
+      if (w.length) { startRound("redo", w, { title: "只刷错题" }); return; }
+    }
+    // 有进行中的本轮就接着做：刷新时地址栏可能还带着 #block=N / #view=drill，
+    // 那也是"刷新"，不该把进度清零。要换组或放弃本轮，请先按「退出」。
+    if (store.current && resumeRound()) return;
     if (hq.block) {
       var no = Number(hq.block);
       if (/^[1-9]$/.test(String(hq.block)) && blockByNo[no]) {
         startRound("block", blockByNo[no].items.slice(), { title: "Block " + no });
         return;
       }
-    }
-    if (hq.list === "wrong") {
-      var w = wrongItems();
-      if (w.length) { startRound("redo", w, { title: "只刷错题" }); return; }
-    }
-    if (hq.view === "result") {
-      if (lastResult()) { renderResult(lastResult()); return; }
     }
     if (hq.view === "drill") {
       if (planItems().length) { startRound("plan", planItems(), { title: "今晚方案" }); return; }
@@ -982,9 +1261,12 @@ table.rt-table .rate{font-weight:700}
       var it = currentItem();
       return {
         view: S.view,
+        settings: store.settings,
+        current: store.current,
+        docs: window.FLASH_DOCS ? Object.keys(window.FLASH_DOCS) : [],
         blocks: blocks.map(function (b) { return { block: b.block, title: b.title, n: b.items.length, minutes: b.minutes }; }),
         round: R ? {
-          mode: R.mode, phase: R.phase, idx: R.idx, listLen: R.list.length, done: R.done,
+          mode: R.mode, title: R.title, phase: R.phase, idx: R.idx, listLen: R.list.length, done: R.done,
           judged: R.judgeCount, ok: R.ok, phaseOk: R.phaseOk, locked: R.locked,
           pendingRedo: R.pendingRedo.length, wrongIds: R.wrongIds.slice(),
           itemId: it ? it.id : null, topic: it ? it.topic : null, answer: it ? it.answer : null,
@@ -1000,7 +1282,10 @@ table.rt-table .rate{font-weight:700}
     startBlock: function (no) { if (blockByNo[no]) startRound("block", blockByNo[no].items.slice(), { title: "Block " + no }); },
     home: renderHome,
     judge: judge,
-    advance: advance
+    advance: advance,
+    openDoc: openDoc,
+    closeDoc: closeDoc,
+    toggleAuto: toggleAuto
   };
 
   boot();
