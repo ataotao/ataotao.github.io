@@ -1,0 +1,367 @@
+{
+  "group": "gz",
+  "title": "广州卷真题同款",
+  "block": 5,
+  "items": [
+    {
+      "id": "gz-001",
+      "topic": "比较级",
+      "level": 1,
+      "stem": "Developments in technology now tie us ______ than ever before.",
+      "cn": null,
+      "options": [
+        "close",
+        "closely",
+        "closer",
+        "the closest"
+      ],
+      "answer": "C",
+      "rule": "than 要求比较级：close 的比较级是 closer；closely 的比较级是 more closely。",
+      "trap": "别写 more close；close 的比较级直接加 -er。",
+      "src": "执信22-23·语法选择（越秀）",
+      "verified": true
+    },
+    {
+      "id": "gz-002",
+      "topic": "代词",
+      "level": 1,
+      "stem": "We can text. We can talk to each ______ at the push of a button on WeChat.",
+      "cn": null,
+      "options": [
+        "another",
+        "others",
+        "the other",
+        "other"
+      ],
+      "answer": "D",
+      "rule": "each other 是固定搭配「彼此」，不能写成 each another 或 each others。",
+      "trap": "another 是「另一个」，不能与 each 连用。",
+      "src": "执信22-23·语法选择（越秀）",
+      "verified": true
+    },
+    {
+      "id": "gz-003",
+      "topic": "连词",
+      "level": 1,
+      "stem": "There are, of course, advantages to these modern ways of communicating. ______, do we ever think about what we are losing?",
+      "cn": null,
+      "options": [
+        "But",
+        "So",
+        "However",
+        "Then"
+      ],
+      "answer": "C",
+      "rule": "However 是副词，句首独立时加逗号；But 是连词，不能这样带逗号独立使用。",
+      "trap": "But 虽也表转折，但句首独立加逗号用 However；So/Then 是顺承。",
+      "src": "执信22-23·语法选择（越秀）",
+      "verified": true
+    },
+    {
+      "id": "gz-004",
+      "topic": "情态动词",
+      "level": 2,
+      "stem": "Moreover, while texts come and go, letters can ______ forever.",
+      "cn": null,
+      "options": [
+        "keep",
+        "keeping",
+        "kept",
+        "be kept"
+      ],
+      "answer": "D",
+      "rule": "letters 是被保留的对象，情态动词后表被动用 be kept。",
+      "trap": "can 后不能直接跟 kept；被动要 can be done。",
+      "src": "执信22-23·语法选择（越秀）",
+      "verified": true
+    },
+    {
+      "id": "gz-005",
+      "topic": "不定式",
+      "level": 1,
+      "stem": "After they walked a few miles, the wise man told the young man ______ back and kill the cow.",
+      "cn": null,
+      "options": [
+        "go",
+        "to go",
+        "going",
+        "went"
+      ],
+      "answer": "B",
+      "rule": "tell sb to do sth，不定式作宾语补足语。",
+      "trap": "tell 后不能跟光杆动词 go，也不能用 going。",
+      "src": "育才实验20-21·语法选择（越秀）",
+      "verified": true
+    },
+    {
+      "id": "gz-006",
+      "topic": "比较级",
+      "level": 1,
+      "stem": "You see, we are ______ than before.",
+      "cn": null,
+      "options": [
+        "good",
+        "much better",
+        "much more better",
+        "the best"
+      ],
+      "answer": "B",
+      "rule": "than 前用比较级；much 修饰比较级，better 本身已是比较级。",
+      "trap": "much more better 是双重比较，广州卷最爱设的错项。",
+      "src": "育才实验20-21·语法选择（越秀）",
+      "verified": true
+    },
+    {
+      "id": "gz-007",
+      "topic": "现在完成时",
+      "level": 1,
+      "stem": "We have a cow. We ______ her for five years.",
+      "cn": null,
+      "options": [
+        "kept",
+        "was keeping",
+        "have kept",
+        "will keep"
+      ],
+      "answer": "C",
+      "rule": "for five years 表持续到现在，用现在完成时 have kept。",
+      "trap": "上文是 We have a cow（现在的状态），for five years 才落到现在完成时。",
+      "src": "育才实验20-21·语法选择（越秀）",
+      "verified": true
+    },
+    {
+      "id": "gz-008",
+      "topic": "动名词",
+      "level": 1,
+      "stem": "As someone who likes writing and ______ letters, I often feel sad.",
+      "cn": null,
+      "options": [
+        "receiving",
+        "received",
+        "receive",
+        "to receive"
+      ],
+      "answer": "A",
+      "rule": "and 连接平行成分：likes 后 writing 与 receiving 都用动名词。",
+      "trap": "likes 后接 doing；平行结构两边形式必须一致。",
+      "src": "执信22-23·语法选择（越秀）",
+      "verified": true
+    },
+    {
+      "id": "gz-009",
+      "topic": "冠词",
+      "level": 1,
+      "stem": "To begin with, there's lots of love in ______ handwritten letter.",
+      "cn": null,
+      "options": [
+        "the",
+        "an",
+        "a",
+        "—（不填）"
+      ],
+      "answer": "C",
+      "rule": "handwritten 首音是辅音 /h/，可数单数泛指用 a。",
+      "trap": "冠词按读音不按字母，元音音素前才用 an。",
+      "src": "执信22-23·语法选择（越秀）",
+      "verified": true
+    },
+    {
+      "id": "gz-010",
+      "topic": "定语从句",
+      "level": 2,
+      "stem": "A few years ago, the young man ______ travelled on the same road decided to visit the family.",
+      "cn": null,
+      "options": [
+        "which",
+        "who",
+        "where",
+        "when"
+      ],
+      "answer": "B",
+      "rule": "先行词 the young man 指人，定语从句用 who。",
+      "trap": "人用 who，物用 which；where 只能指地点。",
+      "src": "育才实验20-21·语法选择（越秀）",
+      "verified": true
+    },
+    {
+      "id": "gz-011",
+      "topic": "被动语态（现在）",
+      "level": 2,
+      "stem": "If you follow what ______ above, you will be accepted by people around you.",
+      "cn": null,
+      "options": [
+        "is given",
+        "are given",
+        "was given",
+        "were given"
+      ],
+      "answer": "A",
+      "rule": "what 引导主语从句按单数，被动用 is given；主句将来时，从句用现在时。",
+      "trap": "what 作主语按单数用 is；if 从句表示将来也不用 was/were。",
+      "src": "西关外国语25-26·语法选择",
+      "verified": true
+    },
+    {
+      "id": "gz-012",
+      "topic": "不定式",
+      "level": 1,
+      "stem": "When you step into a new environment, you must have a strong wish ______ in.",
+      "cn": null,
+      "options": [
+        "to fit",
+        "fitting",
+        "fit",
+        "fitted"
+      ],
+      "answer": "A",
+      "rule": "wish to do 是固定搭配，不定式作 wish 的宾语。",
+      "trap": "wish / hope / decide 后接 to do，不接 doing。",
+      "src": "西关外国语25-26·语法选择",
+      "verified": true
+    },
+    {
+      "id": "gz-013",
+      "topic": "动名词",
+      "level": 1,
+      "stem": "Spend some time ______ about your strong points.",
+      "cn": null,
+      "options": [
+        "think",
+        "to think",
+        "thinking",
+        "thinks"
+      ],
+      "answer": "C",
+      "rule": "spend time doing sth，spend 后固定接动名词。",
+      "trap": "spend time 后不用 to do，也不用动词原形。",
+      "src": "西关外国语25-26·语法选择",
+      "verified": true
+    },
+    {
+      "id": "gz-014",
+      "topic": "非谓语辨析",
+      "level": 2,
+      "stem": "Optimism makes both you and other people ______ pleased.",
+      "cn": null,
+      "options": [
+        "feel",
+        "to feel",
+        "feels",
+        "felt"
+      ],
+      "answer": "A",
+      "rule": "make sb do sth，使役动词后接省 to 不定式。",
+      "trap": "make 后不加 to；变被动 be made to do 才把 to 补回来。",
+      "src": "西关外国语25-26·语法选择",
+      "verified": true
+    },
+    {
+      "id": "gz-015",
+      "topic": "不定代词",
+      "level": 2,
+      "stem": "And expecting ______ to be perfect can add to your stress level too.",
+      "cn": null,
+      "options": [
+        "other",
+        "others",
+        "another",
+        "the others"
+      ],
+      "answer": "B",
+      "rule": "expect others to be perfect：others 泛指「别人」，后不接名词。",
+      "trap": "another 是单数「另一个」，不能泛指一群人。",
+      "src": "南沙23-24·语法选择",
+      "verified": true
+    },
+    {
+      "id": "gz-016",
+      "topic": "条件状语从句",
+      "level": 1,
+      "stem": "In her opinion, if you don't talk to someone about your problems, you ______ worse.",
+      "cn": null,
+      "options": [
+        "will feel",
+        "are feeling",
+        "felt",
+        "have felt"
+      ],
+      "answer": "A",
+      "rule": "if 从句用一般现在时，主句用一般将来时（主将从现）。",
+      "trap": "从句里出现 will 就是错；will 只能放主句。",
+      "src": "白云24-25·语法选择",
+      "verified": true
+    },
+    {
+      "id": "gz-017",
+      "topic": "被动语态（将来）",
+      "level": 2,
+      "stem": "She says her problems ______ in the future with others as much as possible.",
+      "cn": null,
+      "options": [
+        "have been shared",
+        "were shared",
+        "are shared",
+        "will be shared"
+      ],
+      "answer": "D",
+      "rule": "in the future 提示将来，problems 是被分享，用 will be shared。",
+      "trap": "被动将来是 will be done，别漏掉 be。",
+      "src": "白云24-25·语法选择",
+      "verified": true
+    },
+    {
+      "id": "gz-018",
+      "topic": "连词",
+      "level": 1,
+      "stem": "Do you think your time is not enough ______ you have so many things to do?",
+      "cn": null,
+      "options": [
+        "because",
+        "so",
+        "if",
+        "what"
+      ],
+      "answer": "A",
+      "rule": "后句说明原因：事太多导致时间不够，用 because 引导原因从句。",
+      "trap": "后句是原因不是条件；若读成 if 条件句，语义正好相反。",
+      "src": "南沙23-24·语法选择",
+      "verified": true
+    },
+    {
+      "id": "gz-019",
+      "topic": "让步状语从句",
+      "level": 2,
+      "stem": "______ you cannot keep away from stress, you can keep it under control.",
+      "cn": null,
+      "options": [
+        "However",
+        "But",
+        "And",
+        "Although"
+      ],
+      "answer": "D",
+      "rule": "前后让步：虽躲不开压力，但能控制它，用 Although。",
+      "trap": "Although 不与 but 连用；However 后需逗号且不能连接两句。",
+      "src": "南沙23-24·语法选择",
+      "verified": true
+    },
+    {
+      "id": "gz-020",
+      "topic": "祈使句",
+      "level": 1,
+      "stem": "“______ more careful next time!” she said.",
+      "cn": null,
+      "options": [
+        "Being",
+        "To be",
+        "Been",
+        "Be"
+      ],
+      "answer": "D",
+      "rule": "祈使句以动词原形开头：Be more careful。",
+      "trap": "Being / To be 都不能单独构成祈使句。",
+      "src": "铁一22-23·语法选择（越秀）",
+      "verified": true
+    }
+  ]
+}
