@@ -152,6 +152,32 @@ html.drilling body{overflow:hidden}
 .fb-peek .fb-head{color:#9a6a12}
 .fb-peek .fb-line b{color:#7a5a14}
 .fb-note{margin:0;font-size:11.5px;line-height:1.45;color:#9a6a12}
+/* 换题条：上一题 / 答题卡 / 下一题（在题卡下方，不占题卡空间） */
+.qnav{flex:0 0 auto;display:flex;align-items:center;gap:6px;padding:2px 0 0}
+.navbtn{flex:1 1 0;display:flex;align-items:center;justify-content:center;gap:4px;min-height:36px;padding:4px 8px;
+  border-radius:9px;border:1.5px solid var(--line);background:#fff;color:var(--ink-2);
+  font-size:12.5px;font-weight:600;line-height:1.2;cursor:pointer;white-space:nowrap}
+.navbtn:active{transform:scale(.98)}
+.navbtn.sheet{flex:1.6 1 0;color:var(--accent);border-color:var(--accent-line);background:var(--accent-soft)}
+.navbtn b{font-variant-numeric:tabular-nums;font-weight:700}
+/* 答题卡弹窗：题号网格，状态一眼可见 */
+.sheet-sub{margin:0 0 10px;font-size:12px;color:var(--muted);line-height:1.5}
+.sheet-legend{display:flex;flex-wrap:wrap;gap:6px 12px;margin:0 0 10px;font-size:11.5px;color:var(--muted)}
+.sheet-legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:4px;
+  vertical-align:-1px;border:1px solid transparent}
+.sheet-legend .l-ok{background:var(--ok-soft);border-color:#b9e2c9}
+.sheet-legend .l-bad{background:var(--bad-soft);border-color:#f2c4be}
+.sheet-legend .l-peek{background:#fff8ec;border-color:#e8c98a}
+.sheet-legend .l-cur{background:#fff;border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
+.sheet-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(44px,1fr));gap:7px}
+.sheet-cell{min-height:40px;padding:4px 2px;border-radius:9px;border:1.5px solid var(--line);background:#fff;
+  color:var(--ink-2);font-size:12.5px;font-weight:700;font-variant-numeric:tabular-nums;cursor:pointer}
+.sheet-cell:active{transform:scale(.95)}
+.sheet-cell.is-ok{background:var(--ok-soft);border-color:#b9e2c9;color:var(--ok)}
+.sheet-cell.is-bad{background:var(--bad-soft);border-color:#f2c4be;color:var(--bad)}
+.sheet-cell.is-peek{background:#fff8ec;border-color:#e8c98a;color:#8a6410}
+.sheet-cell.is-cur{box-shadow:0 0 0 2px var(--accent);border-color:var(--accent)}
+@media(max-width:380px){.navbtn{font-size:12px;padding:4px 3px}.navbtn.sheet{flex:1.9 1 0}}
 
 /* ── 结算屏 ───────────────────────────── */
 .rt-hero{text-align:center;padding:26px 0 6px}
@@ -306,7 +332,12 @@ table.rt-table .rate{font-weight:700}
     </div>
   </div>
   <div class="qwrap"><div class="qcard" id="qcard"></div></div>
-  <p class="quitline" id="drill-line">1–4 / A–D 选答案 · Enter 下一题 · Esc 退出</p>
+  <div class="qnav" id="qnav">
+    <button type="button" class="navbtn" data-act="prev" id="nav-prev" title="上一题（←）">‹ 上一题</button>
+    <button type="button" class="navbtn sheet" data-act="sheet" id="nav-sheet" title="打开答题卡，点题号切换">答题卡 <b id="nav-count">0/0</b></button>
+    <button type="button" class="navbtn" data-act="next" id="nav-next" title="下一题（→）；还没作答时就是跳过">下一题 ›</button>
+  </div>
+  <p class="quitline" id="drill-line">← → 换题 · 1–4 / A–D 选答案 · Enter 下一题 · Esc 退出</p>
 </section>
 
 <!-- 结算屏 -->
@@ -3070,7 +3101,7 @@ table.rt-table .rate{font-weight:700}
   }
  ]
 };
-window.FLASH_DOCS = {"card":{"title":"考前口诀卡","html":"<h1>动词三件套 · 考前口诀卡</h1>\n<p><strong>2026-11-06 考前 15 分钟，只读这一页</strong>（B2 的 30 题 + B1 动词题里只留 20 行，全是「明天会考 + 你真会错」的）</p>\n<table><thead><tr><th>信号词</th><th>规则</th><th>口诀（照做）</th></tr></thead><tbody><tr><td>括号给词 <code>(apply)(need)(check)</code></td><td>先定这空是谓语还是非谓语：谓语看时态/三单/被动，非谓语看搭配</td><td>先定成分再变形：谓语看时态和三单，非谓语看搭配</td></tr><tr><td>空前后有 <code>by / without</code>、<code>be used to</code>、<code>addicted to</code></td><td>介词后只能接动名词</td><td>介词后一律 doing；to 当介词时也一样</td></tr><tr><td><code>enjoy / finish / mind / practise / keep</code> 后</td><td>只接 doing，不接 to do</td><td>这五个词后只放 doing</td></tr><tr><td><code>make sb do</code> 改成被动</td><td>to 必须还原：be made to do</td><td>主动不写 to，被动把 to 补回来</td></tr><tr><td>物作主语 + <code>need</code></td><td>need doing = need to be done</td><td>东西要修：need doing，不写 to do</td></tr><tr><td><code>remember / forget / stop / regret</code> 后</td><td>doing 指已做过，to do 指还没做</td><td>做过用 doing，还没做用 to do；找时间线索</td></tr><tr><td><code>ask / tell / want sb ___</code>；<code>too…to</code>；<code>enough to</code></td><td>这几处都接 to do，to 后是原形</td><td>求人做事、too…to、enough to 只放原形</td></tr><tr><td><code>is/are + ___</code>（every day）；<code>was/were + ___</code>（yesterday）</td><td>被动 = be + 过去分词，be 跟时态变</td><td>先问「谁被」：be 变时态，过去分词照抄</td></tr><tr><td><code>will + ___</code>（next year）；<code>have + ___</code>（so far）</td><td>将来 will be done；完成 have been done</td><td>will 后加 be，have 后加 been；少一个就成主动</td></tr><tr><td><code>if</code> 从句 + 主句有 <code>will</code></td><td>从句用一般现在时表将来</td><td>if 从句用现在时，will 只准放主句</td></tr><tr><td><code>for</code> / <code>since</code></td><td>since 接时间点，for 接时间段</td><td>since 跟点，for 跟段；2015 只配 since</td></tr><tr><td><code>have been to</code> / <code>have gone to</code></td><td>been 去过已回，gone 去了未回</td><td>twice、ever 只配 been；人不在现场用 gone</td></tr><tr><td><code>borrow / buy / die / leave</code> + <code>for/since</code></td><td>短暂动词换成延续动词 keep / have / be</td><td>「借了两周」写 has kept for，不写 has borrowed for</td></tr><tr><td>单数主语 + <code>every day / usually</code></td><td>一般现在时第三人称单数加 -s/-es</td><td>主语单数，动词加 s（collects 不是 collect）</td></tr><tr><td><code>said / told / announced</code> + 后面从句</td><td>从句退一步（will→would）；真理不退</td><td>主句过去，从句退一步；真理不退</td></tr><tr><td><code>while</code> + 两个动作同时</td><td>while 从句用 was/were doing</td><td>while 后 was doing，主句接 did</td></tr><tr><td><code>be made of</code> / <code>be made from</code></td><td>看得出原材料用 of，看不出用 from</td><td>看得出 of，看不出 from；纸、酒用 from</td></tr><tr><td><code>—Must I …?</code></td><td>否定答语用 needn't，mustn't 是禁止</td><td>must 问，needn't 答；mustn't 是「不许」</td></tr><tr><td><code>neither … nor</code> 连接主语</td><td>谓语跟 nor 后最近的主语一致</td><td>nor 后面跟谁，动词就跟谁</td></tr><tr><td><code>The number of</code> / <code>A number of</code></td><td>中心词是 number 用单数；A number of 用复数</td><td>The number 单数，A number 复数</td></tr></tbody></table>\n<p><strong>读不完就只看前三行。</strong></p>"},"plan":{"title":"今晚复习方案","html":"<h1>语法闪练 · 今晚突击方案（广州越秀 · 九上期中 · 2026-11-06 考前夜）</h1>\n<ul><li>状态：<strong>已实施</strong>（2026-11-05 晚）；工具 <code>英语/语法闪练.html</code>，数据 <code>英语/语法闪练/data/g*.json</code></li><li>服务对象：广州市越秀区某校初三（九上），教材沪教牛津版（广州版）<strong>2024 新教材</strong>，期中范围 U1–U4</li><li>依据：① 老师发的《复习指引》（<code>英语/题库/</code>）② 学生期中模拟得分（<code>英语/题库/期中模拟考得分.png</code>）③ 仓库已有四张 U1–U4 过关卷题库（<code>英语/练习工具/data/</code>）④ 两轮外部调研（<code>docs/plans/广州九上英语期中-调研A-卷型与语法考点.md</code>、<code>…调研B-真题与命题特点.md</code>）</li></ul>\n<hr>\n<h2>一、一页纸结论</h2>\n<p><strong>今晚只做一件事：把语法类 25 分从\"几乎全丢\"救回到\"能拿一半以上\"。</strong></p>\n<p>模拟考 45/110。语法直接相关的三块（语法选择 15 + 语法填空 5 + 语篇填词 5 = 25 分）合计只拿了 <strong>3 分</strong>，丢了 22 分；这 22 分里有一大半是\"看到信号词就该条件反射\"的形式题，<strong>是一晚上能补回来的</strong>。阅读理解 16 分、作文 9 分的缺口不是今晚能补的，<strong>今晚不要碰</strong>。</p>\n<p>目标定在：语法选择 2/10 → 6~7/10（+6~7.5 分）、语法填空 0/5 → 2~3/5（+2~3 分）、语篇填词 0/5 → 1~2/5（+1~2 分），合计<strong>今晚争取捡回 9~12 分</strong>。</p>\n<h2>二、为什么是语法（把得分表摊开算账）</h2>\n<table><thead><tr><th>题型</th><th>满分</th><th>得分</th><th>丢分</th><th>今晚能不能补</th></tr></thead><tbody><tr><td>语法选择</td><td>15</td><td>3</td><td><strong>-12</strong></td><td>✅ 主力，形式识别一晚能通</td></tr><tr><td>语法填空（校本给词变形）</td><td>5</td><td>0</td><td><strong>-5</strong></td><td>✅ 两步判断法，最容易从 0 变 2~3</td></tr><tr><td>语篇填词（首字母）</td><td>5</td><td>0</td><td><strong>-5</strong></td><td>⚠️ 一半靠拼写，今晚只能抢回\"词性+变形\"那部分</td></tr><tr><td>完形填空</td><td>10</td><td>4</td><td>-6</td><td>❌ 考词义辨析，一晚练不出来</td></tr><tr><td>阅读理解</td><td>30</td><td>14</td><td>-16</td><td>❌ 慢工</td></tr><tr><td>阅读填空（六选五）</td><td>5</td><td>0</td><td>-5</td><td>❌ 语篇衔接，性价比最低</td></tr><tr><td>匹配阅读</td><td>10</td><td>6</td><td>-4</td><td>➖ 明早提醒一句\"先圈人名需求关键词\"即可</td></tr><tr><td>回答问题</td><td>10</td><td>7</td><td>-3</td><td>➖ 不动</td></tr><tr><td>书面表达</td><td>20</td><td>11</td><td>-9</td><td>❌ 一晚升不了格，明早只看作文结构清单</td></tr></tbody></table>\n<blockquote>同一份账，越算越清楚：<strong>把 25 分语法分补回一半，比在阅读上磨一小时划算得多。</strong></blockquote>\n<h2>三、广州卷到底怎么考（这决定闪练题长什么样）</h2>\n<p>调研结论（证据与链接见调研 A/B 两份文档）：</p>\n<ol><li><strong>语法选择不是 10 个独立单句，是一篇 190~260 词的语篇挖 10 个空</strong>（新卷 10 空 × 1.5 分 = 15 分，错一空掉 1.5 分，比旧卷更贵）。考点<strong>地毯式覆盖、同类最多 2 空</strong>。</li><li><strong>四个选项是\"同维度最小对立项\"</strong>：四个时态、主动 vs 被动×时态、<code>to do / doing / done</code>、同根派生（<code>special / specially / specialty</code>）、<code>a / an / the / 零冠词</code>、<code>other</code> 系列。<strong>它不考近义词辨析</strong>（那是完形填空的事）。</li><li><strong>每个空都有可指认的信号词</strong>：<code>than</code>、<code>as…as</code>、<code>much</code>、<code>for five years</code>、<code>recently</code>、<code>yesterday</code>、<code>if</code>、<code>every day</code>、<code>so far</code>。→ 学生 3/15 的根因不是读不懂语篇，而是<strong>\"信号词 → 形式\"的条件反射没建立</strong>。</li><li><strong>语篇结构几乎固定</strong>：叙事用一般过去时、结尾议论用一般现在时/现在完成时的\"双时态\"。</li><li><strong>新教材把三个语法点各占一个单元</strong>：U1 形容词+that 从句、U2 句子类型（含感叹句）、U3 系动词 —— 和老师复习指引点名的三个点<strong>完全对上</strong>。这解释了为什么广州卷特别爱考 <code>系动词+形容词</code> 和 <code>How/What 感叹句</code>。</li><li><strong>本校的\"语法填空 5 分\"不是广州中考题型</strong>（8 份真题卷 0 份有整段语法填空），实际是校本\"5 句 + 括号给词 + 变形\"；而<strong>语篇填词（首字母）是广州独有题型</strong>，考\"词义+拼写+变形\"三件事。</li><li>2025 广州中考语法选择 15 空实际考点分布：时态 3、非谓语 1、被动 1、从句连接词 1、比较级 1、形容词副词 1、<strong>冠词/代词/介词/连词/不定代词合计 5 空（7.5 分，纯记忆分）</strong>、情态动词 1、There be 1。</li></ol>\n<p><strong>所以闪练做成\"一句一信号词、四选项同维度\"的最小对立题</strong>——把语篇题里的单个空抽出来练反射，练的是同一个东西。</p>\n<h2>四、今晚 90 分钟时间表（标准版）</h2>\n<p>工具：双击 <code>英语/语法闪练.html</code>（离线、单文件、手机也能开）。5 个 block 一共 <strong>134 题</strong>。 开始屏底部（结算屏也有）有 <strong>考前口诀卡 / 今晚复习方案 / 使用说明</strong> 三个页内入口，不用去找文件——明早要看的口诀卡就在里面。</p>\n<table><thead><tr><th>时间</th><th>做什么</th><th>题量</th><th>为什么这个顺序</th></tr></thead><tbody><tr><td>20:00–20:05</td><td>摊开得分表，只看语法选择/语法填空/语篇填词三行，说清今晚只打这三行</td><td>—</td><td>先建立\"今晚有明确目标\"的心理契约</td></tr><tr><td>20:05–20:17</td><td><strong>Block 1 从句与句子类型</strong>（点「开始今晚方案」自动进）</td><td>30</td><td>送分题开场，先把手感和信心打出来</td></tr><tr><td>20:17–20:35</td><td><strong>Block 2 动词三件套</strong>（非谓语/时态/语态）</td><td>30</td><td>最大失分区，趁状态最好啃</td></tr><tr><td>20:35–20:50</td><td><strong>Block 3 词法速记</strong>（冠词/介词/代词/连词/比较级/系动词）</td><td>30</td><td>纯记忆小分，刷完立刻见正确率上升</td></tr><tr><td>20:50–20:58</td><td><strong>Block 4 不规则动词闪刷</strong></td><td>24</td><td>每个 15 秒，节奏快，背了就得分</td></tr><tr><td>20:58–21:08</td><td><strong>Block 5 广州卷真题同款</strong>（越秀执信/铁一/育才实验等往年期中真题原句）</td><td>20</td><td>用真卷验一遍：还差哪几个点一目了然</td></tr><tr><td>21:08–21:20</td><td>结算页点「重练错题」，<strong>一直重练到全对</strong></td><td>视错题</td><td>错题重练是今晚唯一\"把不会变成会\"的环节</td></tr><tr><td>21:20–21:30</td><td>看结算页「按考点正确率」，把 <strong>&lt;60% 的考点抄到一张纸上</strong>，明早带着走</td><td>—</td><td>明早只看这张纸，不再刷题</td></tr></tbody></table>\n<p><strong>如果今晚只剩 45 分钟（极限版）</strong>：跳过 Block 1 和 Block 3，只做 <strong>Block 2 → Block 4 → Block 5 → 重练错题</strong>（65 题）。理由：动词三件套是最大失分区，不规则动词是最便宜的送分，真题同款是最接近考场的检验。</p>\n<blockquote>表里的分钟数是按\"做对也要点一下看考点\"算的（每次多点一下，整轮比纯点选多 2~3 分钟）。真赶时间就开顶栏的 <code>自动:开</code>，做对的题会自动翻页。</blockquote>\n<h2>五、怎么用工具（三条铁律，比刷题量重要）</h2>\n<ol><li><strong>先点，再看。</strong> 不许先读解析再点选项——那就不是练反射，是练\"抄答案\"。点错了系统立刻停下来给你看 <code>规则</code> + <code>易错点</code>，<strong>只看这两句，10 秒内翻页</strong>，别读第三遍。</li><li><strong>错了的题必须重练到对。</strong> 本轮结束时点「重练错题」，重练时<strong>选项顺序不变</strong>（所以不能靠\"上次选 B\"蒙）。一次做对不算会，重练还能对才算。</li><li><strong>不许查书、不许问、不许停。</strong> 拿不准也先点一个（模拟真实考场）；不确定的题在真卷上是要先跳过的，但闪练里请<strong>先点再看</strong>，让错误暴露出来。<strong>真卡住了就点选项下方的「看答案」</strong>——它会直接亮答案和讲解，代价是这题不计入正确率、但要进重练队列。宁可点「看答案」，也不要蒙一个再骗自己\"我会了\"。</li></ol>\n<p><strong>关于\"做对要不要停\"</strong>：默认<strong>停</strong>。做对之后会显示这一空的 <code>考点</code> + <code>规则</code> + <code>出处</code>，点「下一题 →」（或 <code>Enter</code>）再走——这是给孩子\"看一眼要点\"的时间，别急着划过去。只剩 45 分钟想冲量时，把顶栏的 <code>自动:关</code> 点成 <code>自动:开</code>，做对的题 1 秒自动翻页（答错仍然必须手动点）。</p>\n<h2>六、明早考前 15 分钟（只做四件事，不做新题）</h2>\n<ol><li>看昨晚抄的那张 <strong>&lt;60% 考点纸</strong>（预计 3~6 个点），每个点默念一句 <code>rule</code>。</li><li>看 <strong>Block 4 里错过的不规则动词</strong>（页面「重练错题」→ 筛 block 4 也行，直接看错题即可），5~8 个词过一遍。</li><li>默念三条最容易丢的口诀：</li></ol>\n<ul><li><code>than</code> 就升级、<code>as…as</code> 就还原；<code>much</code> 只加比较级，不能 <code>much more better</code>。</li><li>物作主语先想被动；先定时态再定单复（<code>tickets → have been sold</code>）。</li><li>介词后必 <code>doing</code>；<code>make/let/have</code> 后光杆动词，<code>be made</code> 后补 <code>to</code>。</li></ul>\n<ol><li>只在脑子里过一遍考场流程（下一节），<strong>不要动笔做新题</strong>——早上做错一道会崩心态。</li></ol>\n<h2>七、考场上的做题流程（语法选择是语篇题，这一步比多刷 20 题有用）</h2>\n<p><strong>语法选择（10 空 × 1.5 分）</strong></p>\n<ol><li><strong>先通读全文 60 秒</strong>，只判断一件事：叙事基调是过去还是现在（决定全篇时态坐标）。</li><li>逐个空：先看<strong>空的左右有什么信号词</strong>（<code>than</code>/<code>as…as</code>/<code>for+时间段</code>/<code>recently</code>/<code>if</code>/<code>every day</code>），信号词决定形式。</li><li>看到 \"物 + 动词\" 先想<strong>被动</strong>；看到 <code>make/let/have/see</code> 后想<strong>光杆动词</strong>；看到介词后想 <strong>doing</strong>。</li><li>冠词/介词/连词/代词这四类不要纠结语感，用规则：可数单数必戴帽、再次提到用 the、后面有主谓用 <code>because/although</code>、只有名词短语用 <code>because of</code>。</li><li>一空最多给 40 秒，超了就凭第一直觉选一个并做个记号，最后再看。</li></ol>\n<p><strong>语法填空（校本 5 句给词变形）</strong> —— 两步判断法：</p>\n<ul><li><strong>有括号</strong>：先定词性（缺名词/动词/形容词/副词）→ 再定时态与语态 → 最后单复数/比较级变形。</li><li><strong>无括号</strong>：只可能是 冠词 / 介词 / 连词 / 代词 / 关系词 / 引导词 / 强调句 that / 助动词。</li></ul>\n<p><strong>语篇填词（首字母，5 × 1 分）</strong> —— 必须\"三查\"：</p>\n<ol><li>查<strong>词性</strong>（这空缺名词还是动词）；</li><li>查<strong>变形</strong>（时态 / 单复数 / 比较级）；</li><li>查<strong>拼写</strong>（<code>-ough</code>、双写辅音、<code>ie/ei</code>）。<strong>拼写错 = 0 分</strong>，首字母题不给词库，没词就是 0。</li></ol>\n<h2>八、明确不做（今晚的时间守卫）</h2>\n<ul><li>❌ 阅读理解推断题、六选五语篇填空：0/5 → 最多 2 分，两小时也练不出来。</li><li>❌ 作文升格：一晚改不出内容，明早只看结构清单（三段式 + 两个高级句型）。</li><li>❌ 完形填空的词义辨析：那是长期词汇积累，今晚碰了只会打击信心。</li><li>❌ 刷整套卷：一套 100 分钟，今晚没有这个预算。</li></ul>\n<h2>九、证据强度与没核实的事（别把推断当事实）</h2>\n<table><thead><tr><th>结论</th><th>证据强度</th></tr></thead><tbody><tr><td>笔试 110 分、语法选择 10 空 15 分、语篇填词 5 分首字母</td><td><strong>高</strong>：广州 2027 新中考官方口径（市教育局方案 + 羊城晚报）＋学生本人模拟卷实测逐项吻合</td></tr><tr><td>语法选择是语篇挖空、选项为同维度最小对立</td><td><strong>高</strong>：8 份广州/越秀往年期中真卷原文逐题统计（调研 B）</td></tr><tr><td>闪练里 Block 5 的 20 道题</td><td><strong>真题原文</strong>：<code>src</code> 逐题标了年份/学校（执信、铁一、育才实验、南沙、白云、广大附中、西关外国语），可回原卷核对</td></tr><tr><td>新教材 U1–U4 = 形容词+that / 句子类型 / 系动词 / 句子成分</td><td><strong>中高</strong>：教辅单元页 + 老师复习指引的三个点完全吻合；未核教材原页</td></tr><tr><td>越秀区今年期中真题</td><td><strong>未查到公开版本</strong>（区教研室不公开期中卷）。上文\"高频\"≠ 今年真题，是往年真卷 + 中考真题统计</td></tr><tr><td>每晚能捡回 9~12 分</td><td><strong>估算</strong>，不是承诺；取决于今晚实际投入时间</td></tr></tbody></table>\n<h2>十、工具侧（给维护者）</h2>\n<table><thead><tr><th>文件</th><th>作用</th></tr></thead><tbody><tr><td><code>英语/语法闪练.html</code></td><td><strong>产物</strong>，单文件离线版，双击即用（由 build 生成，不手改，ADR-0003）</td></tr><tr><td><code>英语/语法闪练/index.html</code></td><td>源码版（从 <code>data/bundle.js</code> 读 <code>window.FLASH_DATA</code>）</td></tr><tr><td><code>英语/语法闪练/build.mjs</code></td><td>校验 + 打数据包 + 生成单文件版；<code>--strict</code> 缺文件即失败</td></tr><tr><td><code>英语/语法闪练/data/SCHEMA.md</code></td><td>数据格式、受控考点词表、质量红线</td></tr><tr><td><code>英语/语法闪练/data/VOCAB.md</code></td><td>U1–U4 词汇语境、不规则动词表</td></tr><tr><td><code>英语/语法闪练/data/g1-clause.json</code> … <code>g5-verbform.json</code></td><td>五个 block 的题库</td></tr><tr><td><code>英语/语法闪练/qa.mjs</code></td><td>无头 Chrome 交互断言</td></tr><tr><td><code>docs/plans/语法闪练-审题报告.md</code></td><td>独立审题员的逐题复核报告</td></tr></tbody></table>\n<p>验收口径：<code>node 英语/语法闪练/build.mjs --strict</code> 全绿（<strong>134 题 / 5 个 block / 43 个考点</strong>）· <code>qa.mjs</code> <strong>97 条断言 0 失败</strong>（源码版 / 单文件版 / <code>file://</code> 离线三种入口各跑一遍）· lead 另做了端到端验收（真跑 Block 4 一整轮：故意错 3 题 → 展开讲解 → 错题重练 → 结算 → 记录写入，14 项断言全过）· 数据校验覆盖\"id 唯一 / 选项 4 个不重复 / 答案在选项内 / 题干只有一个空 / rule≤60 字 / trap≤50 字 / 考点在受控词表 / level3≤15% / 答案分布不偏\"。</p>\n<p>审题：<code>docs/plans/语法闪练-审题报告.md</code>（独立审题员逐题复核 134/134，查出「必须改 4 题」已全部修掉，处置记录见该报告第七节）。</p>\n<h3>后续（不急，等考完再做）</h3>\n<ol><li>~~<code>开始.html</code> 增加「语法闪练」入口~~ <strong>已做（2026-11-05）</strong>：入口卡片「⚡ 语法闪练」+ <code>RECORD_KEYS</code> 加 <code>eng9a-flash-v1</code>（备份会带上它）+ <code>collect()</code> 加一段统计；站点发布清单 <code>tools/publish.ps1</code> 的 training 项也加了 <code>英语/语法闪练.html</code>，已随 <code>-Only training -Prune -Commit -Push</code> 上线（站点仓库 <code>4eb6cff</code>）。契约文档 §一/§二/§四 已同步。</li><li>训练台（<code>工具/dsh-plugin/records.js</code>）认识 <code>eng9a-flash-v1</code>：现在导出的快照只能当存档，<code>BACKUP_APPS</code> 白名单还没有这个键（未知键会被跳过、不报错）。</li><li>受控考点拆细：<code>冠词·不定/定冠词/零冠词</code>、<code>比较级·同级/程度修饰/特殊结构</code>，以及新增 <code>主将从现</code>、<code>be used to / used to</code>（现在分别被迫挂在 <code>条件状语从句</code>、<code>动名词</code> 下，结算页会把两种错因并成一行）。</li><li>补 1–2 题附加疑问句（本次 30 题上限已满，按广州卷频率排在 13 个考点之后）。</li><li><strong>既有问题（与本次无关）</strong>：<code>node 工具/dsh-plugin/selfcheck.mjs</code> 当前失败 1 条 —— <code>recent 应按导出时间倒序</code>（实际拿到「物理」，期望「道德与法治」）。用本次改动之前的 <code>开始.html</code> 复跑同样失败，属插件/固定样本的既有问题，<code>工具/dsh-plugin/</code> 本次未改动。</li></ol>"},"guide":{"title":"使用说明","html":"<h1>语法闪练 · 使用说明</h1>\n<p>给「九上英语期中考前一晚」用的一次性突击工具：<strong>点一下就知道对错</strong>，判完立刻给「考点 + 规则 +（答错时）易错点 + 出处」，看完点「下一题 →」再走；本轮结束时错的题自动重练到做对为止。刷新页面不会丢进度。刷完给一张「考点正确率」表，看哪几个点明早还得扫一眼。</p>\n<ul><li>配套方案：<code>docs/plans/语法闪练与今晚复习方案.md</code>（时间表、考场流程、明确不做的事）</li><li>考前口诀卡：<code>英语/语法闪练/考前口诀卡.md</code>（明早 15 分钟只看这一页）</li><li>题库出处与命题依据：<code>docs/plans/广州九上英语期中-调研A-卷型与语法考点.md</code>、<code>…调研B-真题与命题特点.md</code></li></ul>\n<h2>一、怎么打开</h2>\n<p><strong>直接双击 <code>英语/语法闪练.html</code></strong>（单文件、离线、不用服务器；手机用浏览器打开同一个文件也行）。</p>\n<p><strong>网页版</strong>（手机/平板直接开，不用传文件）：&lt;https://ataotao.github.io/1/英语/语法闪练.html&gt; —— 也可以从站点首页 &lt;https://ataotao.github.io/1/&gt; 的「⚡ 语法闪练」卡片进。发布走站点仓库 <code>tools/publish.ps1</code>（清单里必须有这个文件，见 <code>docs/plans/开始页与深链契约.md</code> §四）。</p>\n<ul><li>这个 <code>.html</code> 是<strong>产物</strong>，由 <code>node 英语/语法闪练/build.mjs</code> 从 <code>index.html</code> + <code>data/</code> 生成，<strong>不要手改</strong>（ADR-0003）。</li><li>源码版要先起服务：<code>node 英语/练习工具/serve.mjs 4312</code>，再开 <code>http://127.0.0.1:4312/英语/语法闪练/index.html</code>。</li><li>数据存在本机浏览器（<code>localStorage</code>，键 <code>eng9a-flash-v1</code>），换设备/清缓存会丢，记得导出。<strong>网页版与本地版是两份记录</strong>（不同源），互不同步。</li></ul>\n<h2>二、开始屏：两个入口</h2>\n<table><thead><tr><th>按钮</th><th>作用</th></tr></thead><tbody><tr><td><strong>开始今晚方案</strong></td><td>按 Block 1 → 2 → 3 → 4 → 5 串成一整轮（现在共 <strong>134 题</strong>，弹窗会报预计时长）。今晚就用这个</td></tr><tr><td><strong>只刷我错过的题</strong></td><td>把所有做错过（<code>wrong &gt; 0</code>）的题捞出来重刷；没做错过时是灰的</td></tr></tbody></table>\n<p>下面的 block 卡片可以<strong>单独点进去</strong>只刷这一组（这张卡也在提示这组考什么）：</p>\n<table><thead><tr><th>Block</th><th>内容</th><th>题数</th><th>依据</th></tr></thead><tbody><tr><td>1</td><td>从句与句子类型（<code>adj + that</code>、宾语从句语序/时态、感叹句、疑问句、祈使句）</td><td>30</td><td>复习指引 U1/U2 语法点</td></tr><tr><td>2</td><td>动词三件套（非谓语 / 时态 / 主动被动四时态）</td><td>30</td><td>模拟考最大失分区</td></tr><tr><td>3</td><td>词法速记（系动词、形容词副词、比较级、冠词、代词、介词、连词）</td><td>30</td><td>广州卷「纯记忆分」占 5 空</td></tr><tr><td>4</td><td>不规则动词闪刷（过去式 / 过去分词）</td><td>24</td><td>课本 P142–143</td></tr><tr><td>5</td><td><strong>广州卷真题同款</strong>（越秀执信/铁一/育才实验、南沙、白云、广大附中、西关外国语往年期中真题原句）</td><td>20</td><td>调研 B 摘录的真题</td></tr></tbody></table>\n<h2>三、做题屏：点一下就是判分，看完要点再走</h2>\n<ul><li><strong>题卡顶部有一行「历史」</strong>（做过才显示，没做过不占版面）：<code>历史：做对 3 次 · 做错 2 次 · 看答案 1 次（共 6 次）</code>。</li></ul>\n<p>它来自本机累计记录，<strong>刷新、换题、重练都还在</strong>；鼠标悬停能看到「上次作答：…」。判完一次这一行立刻 +1，所以每道题\"错过几次\"一目了然。</p>\n<ul><li><strong>没有提交按钮</strong>。点 A/B/C/D 立刻判：</li><li><strong>对</strong>：变绿打勾，展开 <strong>考点 + 规则 + 出处</strong>，<strong>等你点「下一题 →」或按 <code>Enter</code></strong> 才翻页（做对了也要看一眼要点）。想让会的题自己翻过去，把顶栏的 <code>自动:关</code> 点成 <code>自动:开</code>，之后做对 1.0 秒自动翻页（这个开关会被记住）。</li><li><strong>错</strong>：所选项变红、正确项标绿，下方展开 <strong>考点 + 规则 + 易错点 + 出处</strong>，点「记住了 →」或按 <code>Enter</code> 继续。<strong>这题会进本轮末尾的重练队列</strong>。</li><li>反馈块固定是这个顺序：<code>✓/✗</code> → <strong>考点</strong>（例：比较级）→ 规则 → 易错点（仅答错）→ 出处。</li><li><strong>卡住了可以点选项下方的「看答案」</strong>：直接亮出正确项 + 完整讲解，不用再猜。代价是 <strong>这题不计入正确率</strong>（避免刷答案把分数抬高），但<strong>会进本轮末尾的重练队列</strong>——没自己想起来就算没掌握，最后必须再做一次。结算页会单列「另有 N 题看了答案（没计入正确率，已加入重练）」。</li><li>顶栏：<code>退出</code> · 进度条 <code>x/134</code> · 正确率 · 用时 · 当前考点（右上角小标签）·<code>自动:关/开</code>。正确率的分母是<strong>判过的题</strong>，不含看答案的题。</li><li><strong>刷新/误关页面不会丢进度</strong>：本轮做到第几题、做对几题都存在本机，重新打开会<strong>自动接着上次那一题</strong>继续（toast 会提示「接着上次：已做 x/y」）。点「退出」才算放弃本轮。</li><li>本轮全部做完后自动进入<strong>重练轮</strong>（只做刚才错的题，选项顺序不变，做对才放你走）；重练再错继续重来。</li><li>键盘：<code>1 2 3 4</code> / <code>A B C D</code> 选，<code>Enter</code> 继续，<code>Esc</code> 退出（会先确认）。</li></ul>\n<h2>四、结算屏</h2>\n<ul><li>大号正确率 + <code>对 X / Y</code> + 用时（<code>Y</code> 是<strong>判过的题数</strong>，不含看答案的题）。</li><li><strong>考点正确率表</strong>：按考点聚合，<strong>低于 60% 的排最前面</strong>——这就是明早要再看一眼的那几个点。表里的「题数」和顶部「对 X / Y」同口径，<strong>都不含看答案的题</strong>（某个考点全看了答案，该行显示 <code>0 题 / —</code> 并排在最前）。</li><li>看答案的题会单列一行 <code>另有 N 题看了答案（没计入正确率，已加入重练）</code>，并在错题区用琥珀色「看答案」标签标出来，可点跳题。</li><li>四个按钮：<code>重练错题（N）</code>、<code>再来一轮</code>、<code>复制今晚小结</code>（markdown 进剪贴板，含正确率、弱考点、错题 id·考点·出处）、<code>回到开始屏</code>；另有一个 <code>考前口诀卡</code> 入口（明早 15 分钟要看的就是它）。</li></ul>\n<h2>五、页内资料：方案 / 口诀卡 / 本说明</h2>\n<p>开始屏底部（结算屏也有）有一行入口：<strong>考前口诀卡 ｜ 今晚复习方案 ｜ 使用说明</strong>，点开在<strong>页面内直接读</strong>，不用去找文件、也不用联网。</p>\n<ul><li>这三份文档在 <code>build.mjs</code> 构建时从仓库里的 <code>.md</code> 转成 HTML 一起打进 <code>data/bundle.js</code>（<code>window.FLASH_DOCS</code>），所以单文件离线版也带着它们。</li><li>为什么不直接链 <code>.md</code>：浏览器打开 <code>.md</code> 只会下载或显示成源码，页内渲染才叫\"方便查看\"。</li><li>改了文档要重新 <code>node build.mjs</code> 才会同步进页面。</li></ul>\n<h2>六、记录：导出 / 导入 / 清空</h2>\n<p>存在 <code>localStorage</code> 的 <code>eng9a-flash-v1</code>：</p>\n<pre><code>{ stat: { \"vf-001\": { att: 2, ok: 1, wrong: 1, peek: 1, at: \"ISO 时间\" }, ... },  // 单题累计：作答/对/错/看答案\n  rounds: [ { mode: \"plan|block|redo\", startAt, endAt, costMs, total, ok, wrongIds: [],\n              peek: 2, peekIds: [\"wd-011\", \"gz-003\"] } ],   // 「看答案」不计分，只在轮次里留痕\n  last:   { ...上一轮结算，结算屏读它 },\n  current:{ mode, title, ids: [...], idx, done, ok, phase, wrongIds, pendingRedoIds,\n            phaseOk, phaseDone, perTopic, peekIds, startAt },  // 进行中本轮；刷新靠它恢复，退出/结算时清空\n  settings:{ autoNext: false } }                               // 「自动跳题」开关</code></pre>\n<ul><li><code>stat</code> 就是题卡顶部那行「历史」的来源：<code>att</code> 作答次数、<code>ok</code> 做对、<code>wrong</code> 做错、<code>peek</code> 看答案、<code>at</code> 最近一次时间。<strong>看答案只加 <code>peek</code>，不动 <code>att/ok/wrong</code></strong>，所以正确率口径不受影响。</li><li>正确率口径：<code>正确率 = 答对 / 判过题数</code>，<strong>判过题数 = 进度 − 看答案的题</strong>。看答案的题不算对也不算错，只保证它最后一定进重练。</li></ul>\n<ul><li><strong>导出记录（JSON）</strong>：<code>英语-语法闪练-YYYY-MM-DD.json</code>，外壳是仓库统一格式 <code>{ \"schema\": \"lt.practice-records/1\", \"subject\": \"英语\", \"tool\": \"语法闪练\", \"exportedAt\", \"data\": {...} }</code>（ADR-0001）。导出后放进仓库 <code>学习记录/</code> 即可进档案。</li><li><strong>导入记录</strong>：<strong>整份覆盖</strong>本机记录，先弹确认；文件坏了只提示「导入失败」，不动原记录。导入的是旧版文件（没有 <code>current</code> / <code>settings</code>）也正常。</li><li><strong>清空记录</strong>：连 <code>stat</code> / <code>rounds</code> / <code>last</code> / <code>current</code> 一起清，不可撤销。</li><li>注意：训练台（<code>工具/dsh-plugin/</code>）目前还不认识 <code>eng9a-flash-v1</code>，导出的快照暂时只当存档；要纳入统计得改 <code>records.js</code> 的解析。</li></ul>\n<h2>七、深链（打开就落到指定位置）</h2>\n<p>只在启动时读一次，运行中不回写地址栏。</p>\n<table><thead><tr><th>深链</th><th>落到</th></tr></thead><tbody><tr><td><code>#block=1</code> … <code>#block=5</code></td><td>直接开这一组（<strong>注意</strong>：如果上一轮还没「退出」，刷新带 hash 也会先接着上次——想换组请先点「退出」）</td></tr><tr><td><code>#view=drill</code></td><td>接着上次继续；没有进行中的本轮就从第一题开始</td></tr><tr><td><code>#view=result</code></td><td>打开上次结算</td></tr><tr><td><code>#list=wrong</code></td><td>只刷错过的题（这是明确指令，<strong>会覆盖</strong>进行中的本轮）</td></tr><tr><td>`#view=doc&amp;doc=card\\</td><td>plan\\</td><td>guide`</td><td>直接打开页内文档（口诀卡 / 今晚复习方案 / 使用说明）</td></tr></tbody></table>\n<p>非法值按 key 静默忽略、回默认，不报错。</p>\n<h2>八、改题库 / 重建</h2>\n<pre><code>cd 英语/语法闪练\nnode build.mjs              # 校验 + 生成 data/bundle.js 与 ../语法闪练.html\nnode build.mjs --strict     # 缺题库文件也算失败（发布前用）</code></pre>\n<p><code>build.mjs</code> 强制校验：<code>id</code> 唯一且格式对 · 考点在<strong>受控词表</strong>内 · <code>options</code> 恰好 4 个不重复 · <code>answer</code> ∈ A–D · <code>stem</code> 恰好一个 <code>______</code> · <code>rule</code> ≤60 字 · <code>trap</code> ≤50 字 · 文件内与全库题干不重复 · <code>level:3</code> ≤15%。</p>\n<ul><li>数据格式、受控考点词表、质量红线：<code>data/SCHEMA.md</code></li><li>词汇与话题范围、不规则动词表：<code>data/VOCAB.md</code></li><li>block 标题 / 预计分钟 / 一句话提示：<code>data/blocks.json</code></li><li>加一组题：在 <code>data/</code> 放一个新的 <code>gN-xxx.json</code>（<code>group</code> 必须是 <code>clause|verb|word|gz|verbform</code>），再在 <code>build.mjs</code> 的 <code>TOPICS</code> 与 <code>SPEC</code> 里登记；<strong>产物只能由 build 生成</strong>。</li></ul>\n<h2>九、已知取舍（不是 bug）</h2>\n<ol><li><strong>单句而不是语篇</strong>：广州语法选择真卷是一篇 200 词短文挖 10 空。闪练把每个空抽成一句，练的是「信号词 → 形式」的反射；<strong>考场流程（先通读定时态基调）写在方案文档第七节</strong>，别指望闪练代替它。</li><li><strong>语篇填词（首字母）练不了</strong>：那题要写出完整单词，考拼写；闪练只覆盖它的「词性 + 变形」部分。拼写靠明早看单词表。</li><li><strong>完形填空不做</strong>：广州完形四选项是<strong>同词性不同词义</strong>，属词汇辨析，和语法闪练不是一个东西。</li><li><strong>不判「得分」</strong>：题库没有分值口径，只算正确率。</li><li><strong>「出处」不是真题原文的承诺</strong>：Block 5 的题干取自真卷原文并在 <code>src</code> 标了年份/学校，可回原卷核对；其余 block 是自编题，<code>src</code> 只标「哪个单元的哪个语法点」。</li></ol>\n<h2>十、出问题了怎么查</h2>\n<table><thead><tr><th>现象</th><th>原因 / 处理</th></tr></thead><tbody><tr><td>刷新后没接着上次</td><td>说明这一轮已经点过「退出」或已结算（<code>current</code> 被清）；重新点「开始今晚方案」即可。想保留进度就别中途退出</td></tr><tr><td>点「考前口诀卡」提示「文档还没打包」</td><td>文档是构建期注入的：跑一次 <code>node build.mjs</code></td></tr><tr><td>打开后显示「题库还没生成」</td><td><code>data/bundle.js</code> 没生成：跑 <code>node build.mjs</code></td></tr><tr><td>开始屏有灰色「题库待生成」卡片</td><td>对应 <code>data/g*.json</code> 缺失（<code>build.mjs</code> 的警告里会写缺哪个）</td></tr><tr><td>记录不见了</td><td>换了浏览器/设备，或清了缓存；用「导入记录」恢复</td></tr><tr><td>手机上点选项没反应</td><td>先确认页面没被「退出确认」弹窗挡住；<code>Esc</code> 或点「再看看」关掉</td></tr><tr><td>想看某题为什么这么判</td><td>判完的反馈里依次是 <code>考点</code> + <code>规则</code> + <code>易错点</code>（仅答错）+ <code>出处</code>；题库原文在 <code>data/g*.json</code></td></tr></tbody></table>"}};
+window.FLASH_DOCS = {"card":{"title":"考前口诀卡","html":"<h1>动词三件套 · 考前口诀卡</h1>\n<p><strong>2026-11-06 考前 15 分钟，只读这一页</strong>（B2 的 30 题 + B1 动词题里只留 20 行，全是「明天会考 + 你真会错」的）</p>\n<table><thead><tr><th>信号词</th><th>规则</th><th>口诀（照做）</th></tr></thead><tbody><tr><td>括号给词 <code>(apply)(need)(check)</code></td><td>先定这空是谓语还是非谓语：谓语看时态/三单/被动，非谓语看搭配</td><td>先定成分再变形：谓语看时态和三单，非谓语看搭配</td></tr><tr><td>空前后有 <code>by / without</code>、<code>be used to</code>、<code>addicted to</code></td><td>介词后只能接动名词</td><td>介词后一律 doing；to 当介词时也一样</td></tr><tr><td><code>enjoy / finish / mind / practise / keep</code> 后</td><td>只接 doing，不接 to do</td><td>这五个词后只放 doing</td></tr><tr><td><code>make sb do</code> 改成被动</td><td>to 必须还原：be made to do</td><td>主动不写 to，被动把 to 补回来</td></tr><tr><td>物作主语 + <code>need</code></td><td>need doing = need to be done</td><td>东西要修：need doing，不写 to do</td></tr><tr><td><code>remember / forget / stop / regret</code> 后</td><td>doing 指已做过，to do 指还没做</td><td>做过用 doing，还没做用 to do；找时间线索</td></tr><tr><td><code>ask / tell / want sb ___</code>；<code>too…to</code>；<code>enough to</code></td><td>这几处都接 to do，to 后是原形</td><td>求人做事、too…to、enough to 只放原形</td></tr><tr><td><code>is/are + ___</code>（every day）；<code>was/were + ___</code>（yesterday）</td><td>被动 = be + 过去分词，be 跟时态变</td><td>先问「谁被」：be 变时态，过去分词照抄</td></tr><tr><td><code>will + ___</code>（next year）；<code>have + ___</code>（so far）</td><td>将来 will be done；完成 have been done</td><td>will 后加 be，have 后加 been；少一个就成主动</td></tr><tr><td><code>if</code> 从句 + 主句有 <code>will</code></td><td>从句用一般现在时表将来</td><td>if 从句用现在时，will 只准放主句</td></tr><tr><td><code>for</code> / <code>since</code></td><td>since 接时间点，for 接时间段</td><td>since 跟点，for 跟段；2015 只配 since</td></tr><tr><td><code>have been to</code> / <code>have gone to</code></td><td>been 去过已回，gone 去了未回</td><td>twice、ever 只配 been；人不在现场用 gone</td></tr><tr><td><code>borrow / buy / die / leave</code> + <code>for/since</code></td><td>短暂动词换成延续动词 keep / have / be</td><td>「借了两周」写 has kept for，不写 has borrowed for</td></tr><tr><td>单数主语 + <code>every day / usually</code></td><td>一般现在时第三人称单数加 -s/-es</td><td>主语单数，动词加 s（collects 不是 collect）</td></tr><tr><td><code>said / told / announced</code> + 后面从句</td><td>从句退一步（will→would）；真理不退</td><td>主句过去，从句退一步；真理不退</td></tr><tr><td><code>while</code> + 两个动作同时</td><td>while 从句用 was/were doing</td><td>while 后 was doing，主句接 did</td></tr><tr><td><code>be made of</code> / <code>be made from</code></td><td>看得出原材料用 of，看不出用 from</td><td>看得出 of，看不出 from；纸、酒用 from</td></tr><tr><td><code>—Must I …?</code></td><td>否定答语用 needn't，mustn't 是禁止</td><td>must 问，needn't 答；mustn't 是「不许」</td></tr><tr><td><code>neither … nor</code> 连接主语</td><td>谓语跟 nor 后最近的主语一致</td><td>nor 后面跟谁，动词就跟谁</td></tr><tr><td><code>The number of</code> / <code>A number of</code></td><td>中心词是 number 用单数；A number of 用复数</td><td>The number 单数，A number 复数</td></tr></tbody></table>\n<p><strong>读不完就只看前三行。</strong></p>"},"plan":{"title":"今晚复习方案","html":"<h1>语法闪练 · 今晚突击方案（广州越秀 · 九上期中 · 2026-11-06 考前夜）</h1>\n<ul><li>状态：<strong>已实施</strong>（2026-11-05 晚）；工具 <code>英语/语法闪练.html</code>，数据 <code>英语/语法闪练/data/g*.json</code></li><li>服务对象：广州市越秀区某校初三（九上），教材沪教牛津版（广州版）<strong>2024 新教材</strong>，期中范围 U1–U4</li><li>依据：① 老师发的《复习指引》（<code>英语/题库/</code>）② 学生期中模拟得分（<code>英语/题库/期中模拟考得分.png</code>）③ 仓库已有四张 U1–U4 过关卷题库（<code>英语/练习工具/data/</code>）④ 两轮外部调研（<code>docs/plans/广州九上英语期中-调研A-卷型与语法考点.md</code>、<code>…调研B-真题与命题特点.md</code>）</li></ul>\n<hr>\n<h2>一、一页纸结论</h2>\n<p><strong>今晚只做一件事：把语法类 25 分从\"几乎全丢\"救回到\"能拿一半以上\"。</strong></p>\n<p>模拟考 45/110。语法直接相关的三块（语法选择 15 + 语法填空 5 + 语篇填词 5 = 25 分）合计只拿了 <strong>3 分</strong>，丢了 22 分；这 22 分里有一大半是\"看到信号词就该条件反射\"的形式题，<strong>是一晚上能补回来的</strong>。阅读理解 16 分、作文 9 分的缺口不是今晚能补的，<strong>今晚不要碰</strong>。</p>\n<p>目标定在：语法选择 2/10 → 6~7/10（+6~7.5 分）、语法填空 0/5 → 2~3/5（+2~3 分）、语篇填词 0/5 → 1~2/5（+1~2 分），合计<strong>今晚争取捡回 9~12 分</strong>。</p>\n<h2>二、为什么是语法（把得分表摊开算账）</h2>\n<table><thead><tr><th>题型</th><th>满分</th><th>得分</th><th>丢分</th><th>今晚能不能补</th></tr></thead><tbody><tr><td>语法选择</td><td>15</td><td>3</td><td><strong>-12</strong></td><td>✅ 主力，形式识别一晚能通</td></tr><tr><td>语法填空（校本给词变形）</td><td>5</td><td>0</td><td><strong>-5</strong></td><td>✅ 两步判断法，最容易从 0 变 2~3</td></tr><tr><td>语篇填词（首字母）</td><td>5</td><td>0</td><td><strong>-5</strong></td><td>⚠️ 一半靠拼写，今晚只能抢回\"词性+变形\"那部分</td></tr><tr><td>完形填空</td><td>10</td><td>4</td><td>-6</td><td>❌ 考词义辨析，一晚练不出来</td></tr><tr><td>阅读理解</td><td>30</td><td>14</td><td>-16</td><td>❌ 慢工</td></tr><tr><td>阅读填空（六选五）</td><td>5</td><td>0</td><td>-5</td><td>❌ 语篇衔接，性价比最低</td></tr><tr><td>匹配阅读</td><td>10</td><td>6</td><td>-4</td><td>➖ 明早提醒一句\"先圈人名需求关键词\"即可</td></tr><tr><td>回答问题</td><td>10</td><td>7</td><td>-3</td><td>➖ 不动</td></tr><tr><td>书面表达</td><td>20</td><td>11</td><td>-9</td><td>❌ 一晚升不了格，明早只看作文结构清单</td></tr></tbody></table>\n<blockquote>同一份账，越算越清楚：<strong>把 25 分语法分补回一半，比在阅读上磨一小时划算得多。</strong></blockquote>\n<h2>三、广州卷到底怎么考（这决定闪练题长什么样）</h2>\n<p>调研结论（证据与链接见调研 A/B 两份文档）：</p>\n<ol><li><strong>语法选择不是 10 个独立单句，是一篇 190~260 词的语篇挖 10 个空</strong>（新卷 10 空 × 1.5 分 = 15 分，错一空掉 1.5 分，比旧卷更贵）。考点<strong>地毯式覆盖、同类最多 2 空</strong>。</li><li><strong>四个选项是\"同维度最小对立项\"</strong>：四个时态、主动 vs 被动×时态、<code>to do / doing / done</code>、同根派生（<code>special / specially / specialty</code>）、<code>a / an / the / 零冠词</code>、<code>other</code> 系列。<strong>它不考近义词辨析</strong>（那是完形填空的事）。</li><li><strong>每个空都有可指认的信号词</strong>：<code>than</code>、<code>as…as</code>、<code>much</code>、<code>for five years</code>、<code>recently</code>、<code>yesterday</code>、<code>if</code>、<code>every day</code>、<code>so far</code>。→ 学生 3/15 的根因不是读不懂语篇，而是<strong>\"信号词 → 形式\"的条件反射没建立</strong>。</li><li><strong>语篇结构几乎固定</strong>：叙事用一般过去时、结尾议论用一般现在时/现在完成时的\"双时态\"。</li><li><strong>新教材把三个语法点各占一个单元</strong>：U1 形容词+that 从句、U2 句子类型（含感叹句）、U3 系动词 —— 和老师复习指引点名的三个点<strong>完全对上</strong>。这解释了为什么广州卷特别爱考 <code>系动词+形容词</code> 和 <code>How/What 感叹句</code>。</li><li><strong>本校的\"语法填空 5 分\"不是广州中考题型</strong>（8 份真题卷 0 份有整段语法填空），实际是校本\"5 句 + 括号给词 + 变形\"；而<strong>语篇填词（首字母）是广州独有题型</strong>，考\"词义+拼写+变形\"三件事。</li><li>2025 广州中考语法选择 15 空实际考点分布：时态 3、非谓语 1、被动 1、从句连接词 1、比较级 1、形容词副词 1、<strong>冠词/代词/介词/连词/不定代词合计 5 空（7.5 分，纯记忆分）</strong>、情态动词 1、There be 1。</li></ol>\n<p><strong>所以闪练做成\"一句一信号词、四选项同维度\"的最小对立题</strong>——把语篇题里的单个空抽出来练反射，练的是同一个东西。</p>\n<h2>四、今晚 90 分钟时间表（标准版）</h2>\n<p>工具：双击 <code>英语/语法闪练.html</code>（离线、单文件、手机也能开）。5 个 block 一共 <strong>134 题</strong>。 开始屏底部（结算屏也有）有 <strong>考前口诀卡 / 今晚复习方案 / 使用说明</strong> 三个页内入口，不用去找文件——明早要看的口诀卡就在里面。</p>\n<table><thead><tr><th>时间</th><th>做什么</th><th>题量</th><th>为什么这个顺序</th></tr></thead><tbody><tr><td>20:00–20:05</td><td>摊开得分表，只看语法选择/语法填空/语篇填词三行，说清今晚只打这三行</td><td>—</td><td>先建立\"今晚有明确目标\"的心理契约</td></tr><tr><td>20:05–20:17</td><td><strong>Block 1 从句与句子类型</strong>（点「开始今晚方案」自动进）</td><td>30</td><td>送分题开场，先把手感和信心打出来</td></tr><tr><td>20:17–20:35</td><td><strong>Block 2 动词三件套</strong>（非谓语/时态/语态）</td><td>30</td><td>最大失分区，趁状态最好啃</td></tr><tr><td>20:35–20:50</td><td><strong>Block 3 词法速记</strong>（冠词/介词/代词/连词/比较级/系动词）</td><td>30</td><td>纯记忆小分，刷完立刻见正确率上升</td></tr><tr><td>20:50–20:58</td><td><strong>Block 4 不规则动词闪刷</strong></td><td>24</td><td>每个 15 秒，节奏快，背了就得分</td></tr><tr><td>20:58–21:08</td><td><strong>Block 5 广州卷真题同款</strong>（越秀执信/铁一/育才实验等往年期中真题原句）</td><td>20</td><td>用真卷验一遍：还差哪几个点一目了然</td></tr><tr><td>21:08–21:20</td><td>结算页点「重练错题」，<strong>一直重练到全对</strong></td><td>视错题</td><td>错题重练是今晚唯一\"把不会变成会\"的环节</td></tr><tr><td>21:20–21:30</td><td>看结算页「按考点正确率」，把 <strong>&lt;60% 的考点抄到一张纸上</strong>，明早带着走</td><td>—</td><td>明早只看这张纸，不再刷题</td></tr></tbody></table>\n<p><strong>如果今晚只剩 45 分钟（极限版）</strong>：跳过 Block 1 和 Block 3，只做 <strong>Block 2 → Block 4 → Block 5 → 重练错题</strong>（65 题）。理由：动词三件套是最大失分区，不规则动词是最便宜的送分，真题同款是最接近考场的检验。</p>\n<blockquote>表里的分钟数是按\"做对也要点一下看考点\"算的（每次多点一下，整轮比纯点选多 2~3 分钟）。真赶时间就开顶栏的 <code>自动:开</code>，做对的题会自动翻页。</blockquote>\n<h2>五、怎么用工具（三条铁律，比刷题量重要）</h2>\n<ol><li><strong>先点，再看。</strong> 不许先读解析再点选项——那就不是练反射，是练\"抄答案\"。点错了系统立刻停下来给你看 <code>规则</code> + <code>易错点</code>，<strong>只看这两句，10 秒内翻页</strong>，别读第三遍。</li><li><strong>错了的题必须重练到对。</strong> 本轮结束时点「重练错题」，重练时<strong>选项顺序不变</strong>（所以不能靠\"上次选 B\"蒙）。一次做对不算会，重练还能对才算。</li><li><strong>不许查书、不许问、不许停。</strong> 拿不准也先点一个（模拟真实考场）；不确定的题在真卷上是要先跳过的，但闪练里请<strong>先点再看</strong>，让错误暴露出来。<strong>真卡住了就点选项下方的「看答案」</strong>——它会直接亮答案和讲解，代价是这题不计入正确率、但要进重练队列。宁可点「看答案」，也不要蒙一个再骗自己\"我会了\"。</li></ol>\n<p><strong>关于\"做对要不要停\"</strong>：默认<strong>停</strong>。做对之后会显示这一空的 <code>考点</code> + <code>规则</code> + <code>出处</code>，点「下一题 →」（或 <code>Enter</code>）再走——这是给孩子\"看一眼要点\"的时间，别急着划过去。只剩 45 分钟想冲量时，把顶栏的 <code>自动:关</code> 点成 <code>自动:开</code>，做对的题 1 秒自动翻页（答错仍然必须手动点）。</p>\n<h2>六、明早考前 15 分钟（只做四件事，不做新题）</h2>\n<ol><li>看昨晚抄的那张 <strong>&lt;60% 考点纸</strong>（预计 3~6 个点），每个点默念一句 <code>rule</code>。</li><li>看 <strong>Block 4 里错过的不规则动词</strong>（页面「重练错题」→ 筛 block 4 也行，直接看错题即可），5~8 个词过一遍。</li><li>默念三条最容易丢的口诀：</li></ol>\n<ul><li><code>than</code> 就升级、<code>as…as</code> 就还原；<code>much</code> 只加比较级，不能 <code>much more better</code>。</li><li>物作主语先想被动；先定时态再定单复（<code>tickets → have been sold</code>）。</li><li>介词后必 <code>doing</code>；<code>make/let/have</code> 后光杆动词，<code>be made</code> 后补 <code>to</code>。</li></ul>\n<ol><li>只在脑子里过一遍考场流程（下一节），<strong>不要动笔做新题</strong>——早上做错一道会崩心态。</li></ol>\n<h2>七、考场上的做题流程（语法选择是语篇题，这一步比多刷 20 题有用）</h2>\n<p><strong>语法选择（10 空 × 1.5 分）</strong></p>\n<ol><li><strong>先通读全文 60 秒</strong>，只判断一件事：叙事基调是过去还是现在（决定全篇时态坐标）。</li><li>逐个空：先看<strong>空的左右有什么信号词</strong>（<code>than</code>/<code>as…as</code>/<code>for+时间段</code>/<code>recently</code>/<code>if</code>/<code>every day</code>），信号词决定形式。</li><li>看到 \"物 + 动词\" 先想<strong>被动</strong>；看到 <code>make/let/have/see</code> 后想<strong>光杆动词</strong>；看到介词后想 <strong>doing</strong>。</li><li>冠词/介词/连词/代词这四类不要纠结语感，用规则：可数单数必戴帽、再次提到用 the、后面有主谓用 <code>because/although</code>、只有名词短语用 <code>because of</code>。</li><li>一空最多给 40 秒，超了就凭第一直觉选一个并做个记号，最后再看。</li></ol>\n<p><strong>语法填空（校本 5 句给词变形）</strong> —— 两步判断法：</p>\n<ul><li><strong>有括号</strong>：先定词性（缺名词/动词/形容词/副词）→ 再定时态与语态 → 最后单复数/比较级变形。</li><li><strong>无括号</strong>：只可能是 冠词 / 介词 / 连词 / 代词 / 关系词 / 引导词 / 强调句 that / 助动词。</li></ul>\n<p><strong>语篇填词（首字母，5 × 1 分）</strong> —— 必须\"三查\"：</p>\n<ol><li>查<strong>词性</strong>（这空缺名词还是动词）；</li><li>查<strong>变形</strong>（时态 / 单复数 / 比较级）；</li><li>查<strong>拼写</strong>（<code>-ough</code>、双写辅音、<code>ie/ei</code>）。<strong>拼写错 = 0 分</strong>，首字母题不给词库，没词就是 0。</li></ol>\n<h2>八、明确不做（今晚的时间守卫）</h2>\n<ul><li>❌ 阅读理解推断题、六选五语篇填空：0/5 → 最多 2 分，两小时也练不出来。</li><li>❌ 作文升格：一晚改不出内容，明早只看结构清单（三段式 + 两个高级句型）。</li><li>❌ 完形填空的词义辨析：那是长期词汇积累，今晚碰了只会打击信心。</li><li>❌ 刷整套卷：一套 100 分钟，今晚没有这个预算。</li></ul>\n<h2>九、证据强度与没核实的事（别把推断当事实）</h2>\n<table><thead><tr><th>结论</th><th>证据强度</th></tr></thead><tbody><tr><td>笔试 110 分、语法选择 10 空 15 分、语篇填词 5 分首字母</td><td><strong>高</strong>：广州 2027 新中考官方口径（市教育局方案 + 羊城晚报）＋学生本人模拟卷实测逐项吻合</td></tr><tr><td>语法选择是语篇挖空、选项为同维度最小对立</td><td><strong>高</strong>：8 份广州/越秀往年期中真卷原文逐题统计（调研 B）</td></tr><tr><td>闪练里 Block 5 的 20 道题</td><td><strong>真题原文</strong>：<code>src</code> 逐题标了年份/学校（执信、铁一、育才实验、南沙、白云、广大附中、西关外国语），可回原卷核对</td></tr><tr><td>新教材 U1–U4 = 形容词+that / 句子类型 / 系动词 / 句子成分</td><td><strong>中高</strong>：教辅单元页 + 老师复习指引的三个点完全吻合；未核教材原页</td></tr><tr><td>越秀区今年期中真题</td><td><strong>未查到公开版本</strong>（区教研室不公开期中卷）。上文\"高频\"≠ 今年真题，是往年真卷 + 中考真题统计</td></tr><tr><td>每晚能捡回 9~12 分</td><td><strong>估算</strong>，不是承诺；取决于今晚实际投入时间</td></tr></tbody></table>\n<h2>十、工具侧（给维护者）</h2>\n<table><thead><tr><th>文件</th><th>作用</th></tr></thead><tbody><tr><td><code>英语/语法闪练.html</code></td><td><strong>产物</strong>，单文件离线版，双击即用（由 build 生成，不手改，ADR-0003）</td></tr><tr><td><code>英语/语法闪练/index.html</code></td><td>源码版（从 <code>data/bundle.js</code> 读 <code>window.FLASH_DATA</code>）</td></tr><tr><td><code>英语/语法闪练/build.mjs</code></td><td>校验 + 打数据包 + 生成单文件版；<code>--strict</code> 缺文件即失败</td></tr><tr><td><code>英语/语法闪练/data/SCHEMA.md</code></td><td>数据格式、受控考点词表、质量红线</td></tr><tr><td><code>英语/语法闪练/data/VOCAB.md</code></td><td>U1–U4 词汇语境、不规则动词表</td></tr><tr><td><code>英语/语法闪练/data/g1-clause.json</code> … <code>g5-verbform.json</code></td><td>五个 block 的题库</td></tr><tr><td><code>英语/语法闪练/qa.mjs</code></td><td>无头 Chrome 交互断言</td></tr><tr><td><code>docs/plans/语法闪练-审题报告.md</code></td><td>独立审题员的逐题复核报告</td></tr></tbody></table>\n<p>验收口径：<code>node 英语/语法闪练/build.mjs --strict</code> 全绿（<strong>134 题 / 5 个 block / 43 个考点</strong>）· <code>qa.mjs</code> <strong>97 条断言 0 失败</strong>（源码版 / 单文件版 / <code>file://</code> 离线三种入口各跑一遍）· lead 另做了端到端验收（真跑 Block 4 一整轮：故意错 3 题 → 展开讲解 → 错题重练 → 结算 → 记录写入，14 项断言全过）· 数据校验覆盖\"id 唯一 / 选项 4 个不重复 / 答案在选项内 / 题干只有一个空 / rule≤60 字 / trap≤50 字 / 考点在受控词表 / level3≤15% / 答案分布不偏\"。</p>\n<p>审题：<code>docs/plans/语法闪练-审题报告.md</code>（独立审题员逐题复核 134/134，查出「必须改 4 题」已全部修掉，处置记录见该报告第七节）。</p>\n<h3>后续（不急，等考完再做）</h3>\n<ol><li>~~<code>开始.html</code> 增加「语法闪练」入口~~ <strong>已做（2026-11-05）</strong>：入口卡片「⚡ 语法闪练」+ <code>RECORD_KEYS</code> 加 <code>eng9a-flash-v1</code>（备份会带上它）+ <code>collect()</code> 加一段统计；站点发布清单 <code>tools/publish.ps1</code> 的 training 项也加了 <code>英语/语法闪练.html</code>，已随 <code>-Only training -Prune -Commit -Push</code> 上线（站点仓库 <code>4eb6cff</code>）。契约文档 §一/§二/§四 已同步。</li><li>训练台（<code>工具/dsh-plugin/records.js</code>）认识 <code>eng9a-flash-v1</code>：现在导出的快照只能当存档，<code>BACKUP_APPS</code> 白名单还没有这个键（未知键会被跳过、不报错）。</li><li>受控考点拆细：<code>冠词·不定/定冠词/零冠词</code>、<code>比较级·同级/程度修饰/特殊结构</code>，以及新增 <code>主将从现</code>、<code>be used to / used to</code>（现在分别被迫挂在 <code>条件状语从句</code>、<code>动名词</code> 下，结算页会把两种错因并成一行）。</li><li>补 1–2 题附加疑问句（本次 30 题上限已满，按广州卷频率排在 13 个考点之后）。</li><li><strong>既有问题（与本次无关）</strong>：<code>node 工具/dsh-plugin/selfcheck.mjs</code> 当前失败 1 条 —— <code>recent 应按导出时间倒序</code>（实际拿到「物理」，期望「道德与法治」）。用本次改动之前的 <code>开始.html</code> 复跑同样失败，属插件/固定样本的既有问题，<code>工具/dsh-plugin/</code> 本次未改动。</li></ol>"},"guide":{"title":"使用说明","html":"<h1>语法闪练 · 使用说明</h1>\n<p>给「九上英语期中考前一晚」用的一次性突击工具：<strong>点一下就知道对错</strong>，判完立刻给「考点 + 规则 +（答错时）易错点 + 出处」，看完点「下一题 →」再走；本轮结束时错的题自动重练到做对为止。刷新页面不会丢进度。刷完给一张「考点正确率」表，看哪几个点明早还得扫一眼。</p>\n<ul><li>配套方案：<code>docs/plans/语法闪练与今晚复习方案.md</code>（时间表、考场流程、明确不做的事）</li><li>考前口诀卡：<code>英语/语法闪练/考前口诀卡.md</code>（明早 15 分钟只看这一页）</li><li>题库出处与命题依据：<code>docs/plans/广州九上英语期中-调研A-卷型与语法考点.md</code>、<code>…调研B-真题与命题特点.md</code></li></ul>\n<h2>一、怎么打开</h2>\n<p><strong>直接双击 <code>英语/语法闪练.html</code></strong>（单文件、离线、不用服务器；手机用浏览器打开同一个文件也行）。</p>\n<p><strong>网页版</strong>（手机/平板直接开，不用传文件）：&lt;https://ataotao.github.io/1/英语/语法闪练.html&gt; —— 也可以从站点首页 &lt;https://ataotao.github.io/1/&gt; 的「⚡ 语法闪练」卡片进。发布走站点仓库 <code>tools/publish.ps1</code>（清单里必须有这个文件，见 <code>docs/plans/开始页与深链契约.md</code> §四）。</p>\n<ul><li>这个 <code>.html</code> 是<strong>产物</strong>，由 <code>node 英语/语法闪练/build.mjs</code> 从 <code>index.html</code> + <code>data/</code> 生成，<strong>不要手改</strong>（ADR-0003）。</li><li>源码版要先起服务：<code>node 英语/练习工具/serve.mjs 4312</code>，再开 <code>http://127.0.0.1:4312/英语/语法闪练/index.html</code>。</li><li>数据存在本机浏览器（<code>localStorage</code>，键 <code>eng9a-flash-v1</code>），换设备/清缓存会丢，记得导出。<strong>网页版与本地版是两份记录</strong>（不同源），互不同步。</li></ul>\n<h2>二、开始屏：两个入口</h2>\n<table><thead><tr><th>按钮</th><th>作用</th></tr></thead><tbody><tr><td><strong>开始今晚方案</strong></td><td>按 Block 1 → 2 → 3 → 4 → 5 串成一整轮（现在共 <strong>134 题</strong>，弹窗会报预计时长）。今晚就用这个</td></tr><tr><td><strong>只刷我错过的题</strong></td><td>把所有做错过或看过答案（<code>wrong &gt; 0</code> 或 <code>peek &gt; 0</code>）的题捞出来重刷；都没「错过」时是灰的</td></tr></tbody></table>\n<p>下面的 block 卡片可以<strong>单独点进去</strong>只刷这一组（这张卡也在提示这组考什么）：</p>\n<table><thead><tr><th>Block</th><th>内容</th><th>题数</th><th>依据</th></tr></thead><tbody><tr><td>1</td><td>从句与句子类型（<code>adj + that</code>、宾语从句语序/时态、感叹句、疑问句、祈使句）</td><td>30</td><td>复习指引 U1/U2 语法点</td></tr><tr><td>2</td><td>动词三件套（非谓语 / 时态 / 主动被动四时态）</td><td>30</td><td>模拟考最大失分区</td></tr><tr><td>3</td><td>词法速记（系动词、形容词副词、比较级、冠词、代词、介词、连词）</td><td>30</td><td>广州卷「纯记忆分」占 5 空</td></tr><tr><td>4</td><td>不规则动词闪刷（过去式 / 过去分词）</td><td>24</td><td>课本 P142–143</td></tr><tr><td>5</td><td><strong>广州卷真题同款</strong>（越秀执信/铁一/育才实验、南沙、白云、广大附中、西关外国语往年期中真题原句）</td><td>20</td><td>调研 B 摘录的真题</td></tr></tbody></table>\n<h2>三、做题屏：点一下就是判分，看完要点再走</h2>\n<ul><li><strong>题卡顶部有一行「历史」</strong>（做过才显示，没做过不占版面）：<code>历史：做对 3 次 · 做错 2 次 · 看答案 1 次（共 6 次）</code>。</li></ul>\n<p>它来自本机累计记录，<strong>刷新、换题、重练都还在</strong>；鼠标悬停能看到「上次作答：…」。判完一次这一行立刻 +1，所以每道题\"错过几次\"一目了然。</p>\n<ul><li><strong>没有提交按钮</strong>。点 A/B/C/D 立刻判：</li><li><strong>对</strong>：变绿打勾，展开 <strong>考点 + 规则 + 出处</strong>，<strong>等你点「下一题 →」或按 <code>Enter</code></strong> 才翻页（做对了也要看一眼要点）。想让会的题自己翻过去，把顶栏的 <code>自动:关</code> 点成 <code>自动:开</code>，之后做对 1.0 秒自动翻页（这个开关会被记住）。</li><li><strong>错</strong>：所选项变红、正确项标绿，下方展开 <strong>考点 + 规则 + 易错点 + 出处</strong>，点「记住了 →」或按 <code>Enter</code> 继续。<strong>这题会进本轮末尾的重练队列</strong>。</li><li>反馈块固定是这个顺序：<code>✓/✗</code> → <strong>考点</strong>（例：比较级）→ 规则 → 易错点（仅答错）→ 出处。</li><li><strong>卡住了可以点选项下方的「看答案」</strong>：直接亮出正确项 + 完整讲解，不用再猜。代价是 <strong>这题不计入正确率</strong>（避免刷答案把分数抬高），但<strong>会进本轮末尾的重练队列</strong>——没自己想起来就算没掌握，最后必须再做一次。结算页会单列「另有 N 题看了答案（没计入正确率，已加入重练）」。<strong>看过答案的题也会被开始屏的「只刷我错过的题」收进去。</strong></li><li><strong>想换题不用退出</strong>：题卡下方有一条 <code>‹ 上一题</code> ｜ <code>答题卡 1/20</code> ｜ <code>下一题 ›</code>，键盘 <code>←</code> / <code>→</code> 也能换。</li><li>点「答题卡」会弹出本轮所有题的题号网格，格子上标着<strong>做对（绿）/ 做错（红）/ 看答案（琥珀）/ 未做</strong>，点哪个题号就切到哪题（一轮 134 题也能滚动）。</li><li><strong>换题本身不判分、不计数</strong>：进度条与正确率只按真做了的题算。</li><li>已作答的题切回去是<strong>只读回看</strong>：当时的讲解还在，但不能重复判分、也不会重复计分。</li><li>有跳过的题时本轮不会结束；点讲解里的「下一题 →」会跳到下一道还没做的题，跳过的题最后绕回来。想结束/放弃本轮仍点「退出」。</li><li>顶栏：<code>退出</code> · 进度条 <code>x/134</code> · 正确率 · 用时 · 当前考点（右上角小标签）·<code>自动:关/开</code>。正确率的分母是<strong>判过的题</strong>，不含看答案的题。</li><li><strong>刷新/误关页面不会丢进度</strong>：本轮做到第几题、做对几题、哪些题看过答案都存在本机，重新打开会<strong>自动接着上次那一题</strong>继续（toast 会提示「接着上次：已做 x/y」），答题卡上的对/错/看答案状态也一并恢复。点「退出」才算放弃本轮。</li><li>本轮全部做完后自动进入<strong>重练轮</strong>（只做刚才错的题，选项顺序不变，做对才放你走）；重练再错继续重来。</li><li>键盘：<code>1 2 3 4</code> / <code>A B C D</code> 选，<code>←</code> / <code>→</code> 换题，<code>Enter</code> 继续，<code>Esc</code> 退出（会先确认）。</li></ul>\n<h2>四、结算屏</h2>\n<ul><li>大号正确率 + <code>对 X / Y</code> + 用时（<code>Y</code> 是<strong>判过的题数</strong>，不含看答案的题）。</li><li><strong>考点正确率表</strong>：按考点聚合，<strong>低于 60% 的排最前面</strong>——这就是明早要再看一眼的那几个点。表里的「题数」和顶部「对 X / Y」同口径，<strong>都不含看答案的题</strong>（某个考点全看了答案，该行显示 <code>0 题 / —</code> 并排在最前）。</li><li>看答案的题会单列一行 <code>另有 N 题看了答案（没计入正确率，已加入重练）</code>，并在错题区用琥珀色「看答案」标签标出来，可点跳题。</li><li>四个按钮：<code>重练错题（N）</code>、<code>再来一轮</code>、<code>复制今晚小结</code>（markdown 进剪贴板，含正确率、弱考点、错题 id·考点·出处）、<code>回到开始屏</code>；另有一个 <code>考前口诀卡</code> 入口（明早 15 分钟要看的就是它）。</li></ul>\n<h2>五、页内资料：方案 / 口诀卡 / 本说明</h2>\n<p>开始屏底部（结算屏也有）有一行入口：<strong>考前口诀卡 ｜ 今晚复习方案 ｜ 使用说明</strong>，点开在<strong>页面内直接读</strong>，不用去找文件、也不用联网。</p>\n<ul><li>这三份文档在 <code>build.mjs</code> 构建时从仓库里的 <code>.md</code> 转成 HTML 一起打进 <code>data/bundle.js</code>（<code>window.FLASH_DOCS</code>），所以单文件离线版也带着它们。</li><li>为什么不直接链 <code>.md</code>：浏览器打开 <code>.md</code> 只会下载或显示成源码，页内渲染才叫\"方便查看\"。</li><li>改了文档要重新 <code>node build.mjs</code> 才会同步进页面。</li></ul>\n<h2>六、记录：导出 / 导入 / 清空</h2>\n<p>存在 <code>localStorage</code> 的 <code>eng9a-flash-v1</code>：</p>\n<pre><code>{ stat: { \"vf-001\": { att: 2, ok: 1, wrong: 1, peek: 1, at: \"ISO 时间\" }, ... },  // 单题累计：作答/对/错/看答案\n  rounds: [ { mode: \"plan|block|redo\", startAt, endAt, costMs, total, ok, wrongIds: [],\n              peek: 2, peekIds: [\"wd-011\", \"gz-003\"] } ],   // 「看答案」不计分，只在轮次里留痕\n  last:   { ...上一轮结算，结算屏读它 },\n  current:{ mode, title, ids: [...], idx, done, ok, phase, wrongIds, pendingRedoIds,\n            phaseOk, phaseDone, perTopic, peekIds,\n            results: { \"cl-003\": { picked: 1, peek: false, correct: true }, ... },  // 每题结果，切题/刷新用\n            startAt },  // 进行中本轮；刷新靠它恢复，退出/结算时清空\n  settings:{ autoNext: false } }                               // 「自动跳题」开关</code></pre>\n<ul><li><code>stat</code> 就是题卡顶部那行「历史」的来源：<code>att</code> 作答次数、<code>ok</code> 做对、<code>wrong</code> 做错、<code>peek</code> 看答案、<code>at</code> 最近一次时间。<strong>看答案只加 <code>peek</code>，不动 <code>att/ok/wrong</code></strong>，所以正确率口径不受影响。</li><li><code>current.results</code> 是「进行中本轮」每道题的结果（<code>picked</code> 选的选项、<code>peek</code> 是否看答案、<code>correct</code> 对错），答题卡的颜色与「切回已作答的题只读回看」都靠它；旧版记录没有这个字段时按旧逻辑恢复。</li><li>正确率口径：<code>正确率 = 答对 / 判过题数</code>，<strong>判过题数 = 进度 − 看答案的题</strong>。看答案的题不算对也不算错，只保证它最后一定进重练。</li></ul>\n<ul><li><strong>导出记录（JSON）</strong>：<code>英语-语法闪练-YYYY-MM-DD.json</code>，外壳是仓库统一格式 <code>{ \"schema\": \"lt.practice-records/1\", \"subject\": \"英语\", \"tool\": \"语法闪练\", \"exportedAt\", \"data\": {...} }</code>（ADR-0001）。导出后放进仓库 <code>学习记录/</code> 即可进档案。</li><li><strong>导入记录</strong>：<strong>整份覆盖</strong>本机记录，先弹确认；文件坏了只提示「导入失败」，不动原记录。导入的是旧版文件（没有 <code>current</code> / <code>settings</code>）也正常。</li><li><strong>清空记录</strong>：连 <code>stat</code> / <code>rounds</code> / <code>last</code> / <code>current</code> 一起清，不可撤销。</li><li>注意：训练台（<code>工具/dsh-plugin/</code>）目前还不认识 <code>eng9a-flash-v1</code>，导出的快照暂时只当存档；要纳入统计得改 <code>records.js</code> 的解析。</li></ul>\n<h2>七、深链（打开就落到指定位置）</h2>\n<p>只在启动时读一次，运行中不回写地址栏。</p>\n<table><thead><tr><th>深链</th><th>落到</th></tr></thead><tbody><tr><td><code>#block=1</code> … <code>#block=5</code></td><td>直接开这一组（<strong>注意</strong>：如果上一轮还没「退出」，刷新带 hash 也会先接着上次——想换组请先点「退出」）</td></tr><tr><td><code>#view=drill</code></td><td>接着上次继续；没有进行中的本轮就从第一题开始</td></tr><tr><td><code>#view=result</code></td><td>打开上次结算</td></tr><tr><td><code>#list=wrong</code></td><td>只刷错过的题（做错或看过答案都算；这是明确指令，<strong>会覆盖</strong>进行中的本轮）</td></tr><tr><td>`#view=doc&amp;doc=card\\</td><td>plan\\</td><td>guide`</td><td>直接打开页内文档（口诀卡 / 今晚复习方案 / 使用说明）</td></tr></tbody></table>\n<p>非法值按 key 静默忽略、回默认，不报错。</p>\n<h2>八、改题库 / 重建</h2>\n<pre><code>cd 英语/语法闪练\nnode build.mjs              # 校验 + 生成 data/bundle.js 与 ../语法闪练.html\nnode build.mjs --strict     # 缺题库文件也算失败（发布前用）</code></pre>\n<p><code>build.mjs</code> 强制校验：<code>id</code> 唯一且格式对 · 考点在<strong>受控词表</strong>内 · <code>options</code> 恰好 4 个不重复 · <code>answer</code> ∈ A–D · <code>stem</code> 恰好一个 <code>______</code> · <code>rule</code> ≤60 字 · <code>trap</code> ≤50 字 · 文件内与全库题干不重复 · <code>level:3</code> ≤15%。</p>\n<ul><li>数据格式、受控考点词表、质量红线：<code>data/SCHEMA.md</code></li><li>词汇与话题范围、不规则动词表：<code>data/VOCAB.md</code></li><li>block 标题 / 预计分钟 / 一句话提示：<code>data/blocks.json</code></li><li>加一组题：在 <code>data/</code> 放一个新的 <code>gN-xxx.json</code>（<code>group</code> 必须是 <code>clause|verb|word|gz|verbform</code>），再在 <code>build.mjs</code> 的 <code>TOPICS</code> 与 <code>SPEC</code> 里登记；<strong>产物只能由 build 生成</strong>。</li></ul>\n<h2>九、已知取舍（不是 bug）</h2>\n<ol><li><strong>单句而不是语篇</strong>：广州语法选择真卷是一篇 200 词短文挖 10 空。闪练把每个空抽成一句，练的是「信号词 → 形式」的反射；<strong>考场流程（先通读定时态基调）写在方案文档第七节</strong>，别指望闪练代替它。</li><li><strong>语篇填词（首字母）练不了</strong>：那题要写出完整单词，考拼写；闪练只覆盖它的「词性 + 变形」部分。拼写靠明早看单词表。</li><li><strong>完形填空不做</strong>：广州完形四选项是<strong>同词性不同词义</strong>，属词汇辨析，和语法闪练不是一个东西。</li><li><strong>不判「得分」</strong>：题库没有分值口径，只算正确率。</li><li><strong>「出处」不是真题原文的承诺</strong>：Block 5 的题干取自真卷原文并在 <code>src</code> 标了年份/学校，可回原卷核对；其余 block 是自编题，<code>src</code> 只标「哪个单元的哪个语法点」。</li></ol>\n<h2>十、出问题了怎么查</h2>\n<table><thead><tr><th>现象</th><th>原因 / 处理</th></tr></thead><tbody><tr><td>刷新后没接着上次</td><td>说明这一轮已经点过「退出」或已结算（<code>current</code> 被清）；重新点「开始今晚方案」即可。想保留进度就别中途退出</td></tr><tr><td>点「考前口诀卡」提示「文档还没打包」</td><td>文档是构建期注入的：跑一次 <code>node build.mjs</code></td></tr><tr><td>打开后显示「题库还没生成」</td><td><code>data/bundle.js</code> 没生成：跑 <code>node build.mjs</code></td></tr><tr><td>开始屏有灰色「题库待生成」卡片</td><td>对应 <code>data/g*.json</code> 缺失（<code>build.mjs</code> 的警告里会写缺哪个）</td></tr><tr><td>记录不见了</td><td>换了浏览器/设备，或清了缓存；用「导入记录」恢复</td></tr><tr><td>手机上点选项没反应</td><td>先确认页面没被「退出确认」弹窗挡住；<code>Esc</code> 或点「再看看」关掉</td></tr><tr><td>想看某题为什么这么判</td><td>判完的反馈里依次是 <code>考点</code> + <code>规则</code> + <code>易错点</code>（仅答错）+ <code>出处</code>；题库原文在 <code>data/g*.json</code></td></tr></tbody></table>"}};
 </script>
 <script>
 (function () {
@@ -3135,10 +3166,11 @@ window.FLASH_DOCS = {"card":{"title":"考前口诀卡","html":"<h1>动词三件�
   function planItems() {
     return itemsOfBlocks(blocks.map(function (b) { return b.block; }));
   }
+  /* 「错过」= 做错过 或 看过答案（用户口径：看过答案等于没掌握） */
   function wrongItems() {
     return allItems().filter(function (it) {
       var s = store.stat[it.id];
-      return s && Number(s.wrong) > 0;
+      return s && (Number(s.wrong) > 0 || Number(s.peek) > 0);
     });
   }
   function planMinutes() {
@@ -3169,6 +3201,22 @@ window.FLASH_DOCS = {"card":{"title":"考前口诀卡","html":"<h1>动词三件�
     }
     var mainIds = strList(c.mainIds);
     var idx = Math.floor(num(c.idx));
+    // 每题结果（新版快照才有；旧快照没有 results，resumeRound 里按旧逻辑补）
+    var results = {};
+    var hasResults = !!(c.results && typeof c.results === "object");
+    if (hasResults) {
+      Object.keys(c.results).forEach(function (id) {
+        var r = c.results[id];
+        if (!r || typeof r !== "object") return;
+        var picked = Number(r.picked);
+        if (!isFinite(picked) || picked < -1 || picked > 3) picked = -1;
+        results[id] = {
+          picked: Math.floor(picked),
+          peek: r.peek === true,
+          correct: r.correct === true ? true : (r.correct === false ? false : null)
+        };
+      });
+    }
     return {
       mode: normMode(c.mode),
       title: typeof c.title === "string" ? c.title : "",
@@ -3184,6 +3232,8 @@ window.FLASH_DOCS = {"card":{"title":"考前口诀卡","html":"<h1>动词三件�
       phaseOk: Math.floor(num(c.phaseOk)),
       phaseDone: Math.floor(num(c.phaseDone)),
       perTopic: perTopic,
+      results: results,
+      legacy: !hasResults,
       startAt: typeof c.startAt === "string" ? c.startAt : new Date().toISOString(),
       autoNext: c.autoNext === true
     };
@@ -3344,7 +3394,7 @@ window.FLASH_DOCS = {"card":{"title":"考前口诀卡","html":"<h1>动词三件�
     var wrongBtn = $("#act-wrong");
     wrongBtn.disabled = !hasData || wq === 0;
     $("#wrong-hint").textContent = !hasData ? "" :
-      (wq > 0 ? "错过的题：" + wq + " 道（含以前做错的）" : "还没有做错的题，先刷一轮吧。");
+      (wq > 0 ? "错过的题：" + wq + " 道（做错或看过答案都算）" : "还没有错过的题，先刷一轮吧。");
 
     var grid = $("#block-grid");
     grid.innerHTML = "";
@@ -3389,6 +3439,9 @@ window.FLASH_DOCS = {"card":{"title":"考前口诀卡","html":"<h1>动词三件�
       ok: Math.floor(num(o.ok)), wrongIds: (o.wrongIds || []).slice(),
       pendingRedo: (o.pendingRedo || []).slice(),
       peekIds: (o.peekIds || []).slice(), phasePeek: 0, redoPeek: 0, peekHold: false,
+      // 本阶段每题的结果：{ picked, peek, correct }。切题/刷新后靠它还原题卡状态，不许重复判分。
+      results: (o.results && typeof o.results === "object") ? o.results : {},
+      justAnswered: false,
       perTopic: {}, locked: true, autoTimer: null, startAt: Date.now()
     };
     var t = o.startAt ? new Date(o.startAt).getTime() : NaN;
@@ -3426,6 +3479,8 @@ window.FLASH_DOCS = {"card":{"title":"考前口诀卡","html":"<h1>动词三件�
     var pct = total ? Math.round((R.done / total) * 100) : 0;
     $("#pg-fill").style.width = pct + "%";
     $("#bar-progress").textContent = R.done + "/" + total + (R.phase === "redo" ? " 重练" : "");
+    var navCount = $("#nav-count");
+    if (navCount) navCount.textContent = Math.min(R.idx + 1, total) + "/" + total;
     // 看答案的题不计入正确率的分子/分母
     var judged = Math.max(0, R.done - phasePeekCount());
     $("#bar-rate").innerHTML = judged > 0
@@ -3434,7 +3489,10 @@ window.FLASH_DOCS = {"card":{"title":"考前口诀卡","html":"<h1>动词三件�
   }
   function phasePeekCount() {
     if (!R) return 0;
-    return R.phase === "main" ? R.peekIds.length : R.redoPeek;
+    // 直接用本题结果里标了 peek 的条数：主轮/重练轮、刷新后同一口径
+    var n = 0, rs = R.results || {};
+    Object.keys(rs).forEach(function (id) { if (rs[id] && rs[id].peek) n += 1; });
+    return n;
   }
 
   /* 单题历史：这一题历史上做对几次、做错几次、看答案几次。
@@ -3467,9 +3525,12 @@ window.FLASH_DOCS = {"card":{"title":"考前口诀卡","html":"<h1>动词三件�
   function renderQuestion() {
     var item = currentItem();
     if (!item) { endPhase(); return; }
-    R.locked = false;
-    R.peekHold = false;
+    var res = R.results[item.id] || null;
+    R.locked = !!res;
+    R.peekHold = !!(res && res.peek);
+    R.justAnswered = false;
     clearTimeout(R.autoTimer);
+    if (R.phase === "redo" && res && res.peek) R.redoPeek = Math.max(1, R.redoPeek);
     var wrap = $("#qcard");
     var html = '<div class="qhist" id="qhist"></div>';
     html += '<div class="qstem">' + stemHTML(item.stem) + "</div>";
@@ -3482,9 +3543,10 @@ window.FLASH_DOCS = {"card":{"title":"考前口诀卡","html":"<h1>动词三件�
     });
     html += "</div>";
     // 逃生阀：只在「还没判、也没看答案」时出现
-    html += '<button type="button" class="peeklink" data-act="peek">看答案</button>';
+    if (!res) html += '<button type="button" class="peeklink" data-act="peek">看答案</button>';
     html += '<div class="fb" id="fb"></div>';
     wrap.innerHTML = html;
+    if (res) paintResult(item, res);   // 切回已作答的题：只还原画面，不动任何统计
     paintHist();
     $("#bar-topic").textContent = item.topic || "—";
     $("#bar-time").textContent = fmtClock(Date.now() - R.startAt);
@@ -3493,10 +3555,32 @@ window.FLASH_DOCS = {"card":{"title":"考前口诀卡","html":"<h1>动词三件�
     snapshotRound();
   }
 
+  /* 已作答的题重新显示时用：把当时的判分/看答案状态原样画出来（只读） */
+  function paintResult(item, res) {
+    var els = $$(".opt", $("#qcard"));
+    els.forEach(function (el) { el.disabled = true; });
+    var correctIdx = LETTERS.indexOf(item.answer);
+    if (res.peek) {
+      if (els[correctIdx]) els[correctIdx].classList.add("is-right");
+      var fbP = $("#fb");
+      if (fbP) { fbP.className = "fb show fb-peek"; fbP.innerHTML = peekHTML(item); }
+      return;
+    }
+    var picked = els[res.picked];
+    if (picked) {
+      picked.classList.add(res.correct ? "is-ok" : "is-bad");
+      var mark = picked.querySelector(".mark");
+      if (mark) mark.textContent = res.correct ? "✓" : "✗";
+    }
+    if (res.correct !== true && els[correctIdx]) els[correctIdx].classList.add("is-right");
+    var fb = $("#fb");
+    if (fb) { fb.className = "fb show " + (res.correct === true ? "fb-ok" : "fb-bad"); fb.innerHTML = feedbackHTML(item, res.correct === true); }
+  }
+
   function judge(optIdx) {
     if (!R || R.locked) return;
     var item = currentItem();
-    if (!item) return;
+    if (!item || R.results[item.id]) return;
     var opts = item.options.slice(0, 4);
     if (optIdx < 0 || optIdx >= opts.length) return;
     var correctIdx = LETTERS.indexOf(item.answer);
@@ -3504,7 +3588,9 @@ window.FLASH_DOCS = {"card":{"title":"考前口诀卡","html":"<h1>动词三件�
     var correct = optIdx === correctIdx;
     R.locked = true;
     R.peekHold = false;
+    R.justAnswered = true;
     R.judgeCount += 1;
+    R.results[item.id] = { picked: optIdx, peek: false, correct: correct };
     hidePeek();
 
     var els = $$(".opt", $("#qcard"));
@@ -3534,7 +3620,7 @@ window.FLASH_DOCS = {"card":{"title":"考前口诀卡","html":"<h1>动词三件�
       R.pendingRedo.push(item);
       if (fb) { fb.className = "fb show fb-bad"; fb.innerHTML = feedbackHTML(item, false); }
     }
-    R.done = R.idx + 1;
+    R.done += 1;
     updateBar();
     snapshotRound();
   }
@@ -3567,10 +3653,12 @@ window.FLASH_DOCS = {"card":{"title":"考前口诀卡","html":"<h1>动词三件�
   function doPeek() {
     if (!R || R.locked) return;
     var item = currentItem();
-    if (!item) return;
+    if (!item || R.results[item.id]) return;
     R.locked = true;
     R.peekHold = true;
-    R.done = R.idx + 1;
+    R.justAnswered = true;
+    R.done += 1;
+    R.results[item.id] = { picked: -1, peek: true, correct: null };
     // 看答案也记进单题历史（只加 peek 计数，绝不动 att/ok/wrong，所以正确率口径不变）
     var st = statOf(item.id);
     if (!st) st = store.stat[item.id] = { att: 0, ok: 0, wrong: 0, at: "" };
@@ -3593,15 +3681,87 @@ window.FLASH_DOCS = {"card":{"title":"考前口诀卡","html":"<h1>动词三件�
     toast(R.phase === "main" ? "这题不计分，已加入重练" : "这题不计分");
   }
 
+  /* 「下一题 →」= 继续：跳到下一道还没做的题；全做完就进重练/结算 */
   function advance() {
     if (!R) return;
     clearTimeout(R.autoTimer);
     R.autoTimer = null;
     R.peekHold = false;
-    R.idx += 1;
-    R.done = R.idx;
-    if (R.idx >= R.list.length) { endPhase(); return; }
+    R.justAnswered = false;
+    if (R.done >= R.list.length) { endPhase(); return; }
+    var next = firstUnansweredAfter(R.idx);
+    if (next < 0) { endPhase(); return; }
+    R.idx = next;
     renderQuestion();
+  }
+  function firstUnansweredAfter(from) {
+    if (!R) return -1;
+    var n = R.list.length;
+    for (var k = 1; k <= n; k++) {
+      var i = (from + k) % n;
+      if (!R.results[R.list[i].id]) return i;
+    }
+    return -1;
+  }
+  function firstUnansweredIndex() {
+    if (!R) return -1;
+    for (var i = 0; i < R.list.length; i++) {
+      if (!R.results[R.list[i].id]) return i;
+    }
+    return -1;
+  }
+
+  /* ══ 换题（答题卡 / 上一题 / 下一题） ═════════
+     切题本身不判分、不计进度；已作答的题切回来只读回看，不重复计分。 */
+  function navStep(d) {
+    if (!R) return;
+    var n = R.list.length;
+    if (!n) return;
+    var item = currentItem();
+    if (d > 0 && item && R.results[item.id]) { advance(); return; }  // 已作答时「下一题」= 继续
+    clearTimeout(R.autoTimer);
+    R.autoTimer = null;
+    R.idx = ((R.idx + d) % n + n) % n;
+    R.justAnswered = false;
+    renderQuestion();
+  }
+  function jumpTo(i) {
+    if (!R || !isFinite(i) || i < 0 || i >= R.list.length) return;
+    closeModal();
+    clearTimeout(R.autoTimer);
+    R.autoTimer = null;
+    R.idx = Math.floor(i);
+    R.justAnswered = false;
+    renderQuestion();
+  }
+  function sheetCell(item, i) {
+    var res = R.results[item.id];
+    var cls = "sheet-cell", status = "未做";
+    if (res) {
+      if (res.peek) { cls += " is-peek"; status = "看答案"; }
+      else if (res.correct === true) { cls += " is-ok"; status = "做对"; }
+      else if (res.correct === false) { cls += " is-bad"; status = "做错"; }
+      else { status = "已做"; }
+    }
+    if (i === R.idx) cls += " is-cur";
+    return '<button type="button" class="' + cls + '" data-act="sheet-go" data-i="' + i +
+      '" data-id="' + esc(item.id) + '" title="第 ' + (i + 1) + " 题 · " + esc(item.topic || "") +
+      " · " + status + '">' + (i + 1) + "</button>";
+  }
+  function openSheet() {
+    if (!R) return;
+    clearTimeout(R.autoTimer);
+    R.autoTimer = null;
+    var n = R.list.length;
+    var html = "<h3>答题卡</h3>" +
+      '<p class="sheet-sub">' + esc(R.title || "") + " · 共 " + n + " 题 · 已做 " + R.done + " 题" +
+      (R.phase === "redo" ? " · 重练轮" : "") + "</p>" +
+      '<div class="sheet-legend"><span><i class="l-ok"></i>做对</span><span><i class="l-bad"></i>做错</span>' +
+      '<span><i class="l-peek"></i>看答案</span><span><i style="background:#fff"></i>未做</span>' +
+      '<span><i class="l-cur"></i>当前题</span></div>' +
+      '<div class="sheet-grid">' + R.list.map(sheetCell).join("") + "</div>" +
+      '<div class="modal-actions"><button class="btn" data-act="modal-cancel">关闭</button></div>';
+    openModal(html);
   }
 
   function uniq(list) {
@@ -3618,6 +3778,7 @@ window.FLASH_DOCS = {"card":{"title":"考前口诀卡","html":"<h1>动词三件�
       R.list = next;
       R.phase = "redo";
       R.idx = 0; R.done = 0; R.phaseOk = 0; R.redoPeek = 0;
+      R.results = {}; R.justAnswered = false;
       toast("错题重练：" + next.length + " 题，做对才算过");
       renderQuestion();
       return;
@@ -3677,7 +3838,8 @@ window.FLASH_DOCS = {"card":{"title":"考前口诀卡","html":"<h1>动词三件�
     commitRound(entry, topicRows(R.perTopic), R.main.map(function (it) { return it.id; }));
   }
 
-  /* 刷新前落盘：判分 / 翻题后都写。锁定态（刚点完没翻页）按「下一题」记，避免重复判分。 */
+  /* 刷新前落盘：判分 / 翻题 / 切题后都写。
+     刚判完还没翻页时按「下一题」记（避免刷新后重复判分）；看答案停留态按本题记。 */
   function snapshotRound() {
     if (!R) {
       if (store.current) { store.current = null; saveStore(); }
@@ -3685,26 +3847,30 @@ window.FLASH_DOCS = {"card":{"title":"考前口诀卡","html":"<h1>动词三件�
     }
     var ids = R.list.map(function (it) { return it.id; });
     var phase = R.phase;
-    // 「看答案」停留态（还没点下一题）：idx 停在本题，刷新后原样显示讲解
-    var idx = (R.locked && !R.peekHold) ? R.idx + 1 : R.idx;
+    var idx = (R.justAnswered && !R.peekHold) ? R.idx + 1 : R.idx;
     var done = R.done;
     var phaseOk = R.phaseOk;
     var pending = uniq(R.pendingRedo).map(function (it) { return it.id; });
-    if (idx >= ids.length) {
+    var results = R.results;
+    if (done >= ids.length) {
       if (pending.length) {          // 本阶段答完，且还有错题 → 快照直接进重练轮
-        ids = pending; idx = 0; done = 0; phase = "redo"; phaseOk = 0; pending = [];
+        ids = pending; idx = 0; done = 0; phase = "redo"; phaseOk = 0; pending = []; results = {};
       } else {
         idx = ids.length;            // 本轮已答完（刷新后会直接看到结算）
         done = ids.length;
       }
+    } else if (idx >= ids.length) {
+      idx = firstUnansweredIndex();  // 有跳过的题：刷新回到第一道还没做的
+      if (idx < 0) idx = 0;
     }
+    done = Math.min(done, ids.length);
     store.current = {
       mode: normMode(R.mode), title: R.title || "",
       ids: ids, mainIds: R.main.map(function (it) { return it.id; }),
-      idx: idx, done: Math.max(done, idx), ok: R.ok, phase: phase,
+      idx: idx, done: done, ok: R.ok, phase: phase,
       wrongIds: R.wrongIds.slice(), pendingRedoIds: pending,
-      peekIds: R.peekIds.slice(),
-      phaseOk: phaseOk, phaseDone: Math.max(done, idx),
+      peekIds: R.peekIds.slice(), results: results,
+      phaseOk: phaseOk, phaseDone: done,
       perTopic: R.perTopic, startAt: new Date(R.startAt).toISOString(),
       autoNext: autoNextOn()
     };
@@ -3724,6 +3890,27 @@ window.FLASH_DOCS = {"card":{"title":"考前口诀卡","html":"<h1>动词三件�
     commitRound(entry, topicRows(c.perTopic), c.mainIds);
   }
 
+  /* 旧版快照没有 results：按「前 done 题顺序已做」补一份，避免切回去重复判分。
+     新快照永远带 results，这条分支只为兼容旧记录。 */
+  function legacyResults(list, done, wrongIds, peekIds, pendingIds, phase) {
+    var out = {};
+    var n = Math.min(done, list.length);
+    for (var i = 0; i < n; i++) {
+      var id = list[i].id;
+      if (phase === "main") {
+        if (peekIds.indexOf(id) >= 0) out[id] = { picked: -1, peek: true, correct: null };
+        else if (wrongIds.indexOf(id) >= 0) out[id] = { picked: -1, peek: false, correct: false };
+        else out[id] = { picked: -1, peek: false, correct: true };
+      } else {
+        out[id] = { picked: -1, peek: false, correct: pendingIds.indexOf(id) < 0 };
+      }
+    }
+    return out;
+  }
+  function firstUnansweredIn(list, results) {
+    for (var i = 0; i < list.length; i++) if (!results[list[i].id]) return i;
+    return -1;
+  }
   /* 启动时恢复进行中的本轮（刷新不丢进度） */
   function resumeRound() {
     var c = store.current;
@@ -3737,43 +3924,41 @@ window.FLASH_DOCS = {"card":{"title":"考前口诀卡","html":"<h1>动词三件�
     var pending = c.pendingRedoIds.map(function (id) { return itemById[id]; }).filter(Boolean);
     var mainItems = c.mainIds.map(function (id) { return itemById[id]; }).filter(Boolean);
     if (!mainItems.length) mainItems = c.phase === "main" ? list.slice() : [];
+    var done = Math.min(c.done, list.length);
+    var results = c.results || {};
+    if (c.legacy && done > 0) {
+      results = legacyResults(list, done, c.wrongIds, c.peekIds, c.pendingRedoIds, c.phase);
+    }
     var idx = Math.min(c.idx, list.length);
 
     if (idx >= list.length) {
-      if (pending.length) {
+      if (done >= list.length && pending.length) {
         R = makeRound({
           mode: c.mode, title: c.title, main: mainItems, list: pending.slice(), phase: "redo",
           idx: 0, done: 0, phaseOk: 0, ok: c.ok, wrongIds: c.wrongIds,
-          pendingRedo: [], perTopic: c.perTopic, startAt: c.startAt, peekIds: c.peekIds
+          pendingRedo: [], perTopic: c.perTopic, startAt: c.startAt, peekIds: c.peekIds, results: {}
         });
         switchView("drill"); updateAutoBtn(); renderQuestion(); startTimer();
         toast("还有错题没重练：共 " + pending.length + " 题", 2600);
         return true;
       }
-      finishFromCurrent(c);
-      return true;
+      if (done >= list.length) { finishFromCurrent(c); return true; }
+      idx = firstUnansweredIn(list, results);   // 有跳过的题：回到第一道没做的
+      if (idx < 0) idx = 0;
     }
 
     R = makeRound({
       mode: c.mode, title: c.title, main: mainItems, list: list, phase: c.phase,
-      idx: idx, done: c.done, phaseOk: c.phaseOk, ok: c.ok, wrongIds: c.wrongIds,
-      pendingRedo: pending, perTopic: c.perTopic, startAt: c.startAt, peekIds: c.peekIds
+      idx: idx, done: done, phaseOk: c.phaseOk, ok: c.ok, wrongIds: c.wrongIds,
+      pendingRedo: pending, perTopic: c.perTopic, startAt: c.startAt, peekIds: c.peekIds,
+      results: results
     });
-    R.judgeCount = c.done;
+    R.judgeCount = done;
     switchView("drill");
     updateAutoBtn();
-    renderQuestion();
+    renderQuestion();   // 已经作答的那道题（含看答案停留态）由 results 自动还原
     startTimer();
-    // 「刚看完答案就刷新」：原样停在讲解态，不重新判、不再计分
-    if (c.done > idx && list[idx]) {
-      R.locked = true;
-      R.peekHold = true;
-      if (R.phase === "redo") R.redoPeek = 1;
-      paintPeek(list[idx]);
-      updateBar();
-      snapshotRound();
-    }
-    toast("接着上次：已做 " + c.done + "/" + list.length + (c.phase === "redo" ? "（重练）" : ""));
+    toast("接着上次：已做 " + done + "/" + list.length + (c.phase === "redo" ? "（重练）" : ""));
     return true;
   }
 
@@ -4065,7 +4250,7 @@ window.FLASH_DOCS = {"card":{"title":"考前口诀卡","html":"<h1>动词三件�
       "<h3>今晚方案</h3>" +
       "<p>" + blocks.length + " 个 block · 共 <b>" + total + "</b> 题 · 预计 <b>" + mins + "</b> 分钟</p>" +
       '<p class="modal-hint">按 Block ' + blocks.map(function (b) { return b.block; }).join(" → ") +
-      " 顺序刷；答错的题本轮末尾自动重练，做对才进结算。</p>" +
+      " 顺序刷；卡住可换题或看答案，答错/看答案的题本轮末尾自动重练，做对才进结算。</p>" +
       '<div class="modal-actions"><button class="btn" data-act="modal-cancel">再看看</button>' +
       '<button class="btn primary" data-act="plan-start">开始</button></div>'
     );
@@ -4125,10 +4310,14 @@ window.FLASH_DOCS = {"card":{"title":"考前口诀卡","html":"<h1>动词三件�
       if (act === "modal-cancel") { closeModal(); return; }
       if (act === "wrong-queue") {
         var w = wrongItems();
-        if (!w.length) { toast("还没有做错的题"); return; }
+        if (!w.length) { toast("还没有错过的题（做错或看答案都算）"); return; }
         startRound("redo", w, { title: "只刷错题" });
         return;
       }
+      if (act === "prev") { navStep(-1); return; }
+      if (act === "next") { navStep(1); return; }
+      if (act === "sheet") { openSheet(); return; }
+      if (act === "sheet-go") { jumpTo(Number(t.getAttribute("data-i"))); return; }
       if (act === "quit") { askQuit(); return; }
       if (act === "ack") { advance(); return; }
       if (act === "peek") { doPeek(); return; }
@@ -4178,6 +4367,9 @@ window.FLASH_DOCS = {"card":{"title":"考前口诀卡","html":"<h1>动词三件�
     }
     if (S.view !== "drill" || !R) return;
     if (e.metaKey || e.ctrlKey || e.altKey) return;
+    if ($("#modal").classList.contains("is-open")) return;
+    if (e.key === "ArrowLeft") { e.preventDefault(); navStep(-1); return; }
+    if (e.key === "ArrowRight") { e.preventDefault(); navStep(1); return; }
     if (e.key === "Enter") {
       e.preventDefault();
       if (R.locked) advance();
@@ -4250,6 +4442,7 @@ window.FLASH_DOCS = {"card":{"title":"考前口诀卡","html":"<h1>动词三件�
         blocks: blocks.map(function (b) { return { block: b.block, title: b.title, n: b.items.length, minutes: b.minutes }; }),
         round: R ? {
           mode: R.mode, title: R.title, phase: R.phase, idx: R.idx, listLen: R.list.length, done: R.done,
+          listIds: R.list.map(function (it) { return it.id; }),
           judged: R.judgeCount, ok: R.ok, phaseOk: R.phaseOk, locked: R.locked,
           pendingRedo: R.pendingRedo.length, wrongIds: R.wrongIds.slice(),
           peekIds: R.peekIds.slice(), peekCount: phasePeekCount(), peekHold: R.peekHold,
@@ -4268,6 +4461,9 @@ window.FLASH_DOCS = {"card":{"title":"考前口诀卡","html":"<h1>动词三件�
     judge: judge,
     advance: advance,
     peek: doPeek,
+    jumpTo: jumpTo,
+    navStep: navStep,
+    openSheet: openSheet,
     openDoc: openDoc,
     closeDoc: closeDoc,
     toggleAuto: toggleAuto
