@@ -310,7 +310,7 @@ $Jobs = @(
     }
     @{
         Key       = 'training'
-        Name      = '做题思维训练（五个训练器 + 开始页）'
+        Name      = '做题思维训练（各科训练器 + 开始页）'
         Root      = $TrainingRoot
         Target    = Join-Path $repoRoot '1'
         Items     = @(
@@ -326,6 +326,8 @@ $Jobs = @(
             '物理/物理思维脚手架.html'
             @{ Path = '物理/图片';          Filter = '*.png' }
             '英语/九上英语过关练习.html'
+            # 语法闪练：单文件（题库 + 说明文档都已内联），双击即用，不需要原卷图
+            '英语/语法闪练.html'
         )
         GitPaths  = @('1')
         BuildHint = '在各自训练器目录里重新构建出 HTML；开始.html 是手写的静态页'
