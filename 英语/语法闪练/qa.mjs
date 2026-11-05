@@ -164,7 +164,7 @@ ok("卡片显示 hint（数据里有就显示）", await $(`(() => {
   return !card.querySelector('.bhint') ? true : card.querySelector('.bhint').textContent.length > 0; })()`));
 ok("开始今晚方案按钮可用", !(await $(`document.querySelector('#act-plan').disabled`)));
 ok("清空记录后「只刷我错过的题」禁用并提示", (await $(`document.querySelector('#act-wrong').disabled`)) &&
-  /还没有做错的题/.test(await text("#wrong-hint")));
+  /还没有错过/.test(await text("#wrong-hint")));
 ok("页脚有导出/导入/清空", await $(`(() => ['export','import','clear'].every(a => !!document.querySelector('[data-act="' + a + '"]')))()`));
 ok("无进行中的本轮（current = null）", S.current === null, JSON.stringify(S.current));
 ok("默认不自动跳题（settings.autoNext=false）", S.settings && S.settings.autoNext === false);
@@ -461,9 +461,13 @@ ok("有错题后按钮启用并显示数量", !(await $(`document.querySelector(
 await click("#act-wrong");
 await sleep(380);
 S = await state();
-const wrongSet = Object.keys(S.store.stat).filter((id) => S.store.stat[id].wrong > 0);
-ok("只刷错题队列 mode=redo", S.view === "drill" && S.round.mode === "redo", JSON.stringify(S.round && S.round.mode));
-ok("队列里每题都是做错过的", S.round && S.round.itemId && wrongSet.indexOf(S.round.itemId) >= 0,
+// 新口径：做错过 或 看过答案 都算「错过」
+const wrongSet = Object.keys(S.store.stat).filter((id) => {
+  const s = S.store.stat[id] || {};
+  return Number(s.wrong || 0) > 0 || Number(s.peek || 0) > 0;
+});
+ok("只刷错过题队列 mode=redo", S.view === "drill" && S.round.mode === "redo", JSON.stringify(S.round && S.round.mode));
+ok("队列里每题都是错过过的（含看答案）", S.round && S.round.itemId && wrongSet.indexOf(S.round.itemId) >= 0,
   (S.round && S.round.itemId) + " in " + JSON.stringify(wrongSet));
 await pressEsc();
 await sleep(500);
@@ -913,6 +917,147 @@ group("单题历史（做对/做错累计）");
   ok("历史行不影响退出流程", (await state()).view === "home", (await state()).view);
 }
 
+/* ── 8.6 看答案计入「只刷我错过的题」 ───────────── */
+group("看答案计入只刷我错过的题");
+{
+  const st = await state();
+  const expect = Object.keys(st.store.stat).filter((id) => {
+    const s2 = st.store.stat[id] || {};
+    return Number(s2.wrong || 0) > 0 || Number(s2.peek || 0) > 0;
+  });
+  ok("开始屏提示按「做错 + 看答案」计数", /错过的题：\d+ 道/.test(await text("#wrong-hint")) &&
+    new RegExp("错过的题：" + expect.length + " 道").test(await text("#wrong-hint")),
+    (await text("#wrong-hint")) + " expect=" + expect.length);
+  ok("8.5 里只看了答案的 vf-002 也算错过（前置条件）", expect.indexOf("vf-002") >= 0, JSON.stringify(expect.slice(-6)));
+  await click("#act-wrong");
+  await sleep(380);
+  S = await state();
+  ok("错过题队列数量 = 做错 ∪ 看答案", S.view === "drill" && S.round.mode === "redo" && S.round.listLen === expect.length,
+    JSON.stringify({ len: S.round && S.round.listLen, expect: expect.length }));
+  await click("#nav-sheet");
+  await sleep(220);
+  const wsSheet = await $(`(() => ({
+    open: document.querySelector('#modal').classList.contains('is-open'),
+    cells: document.querySelectorAll('#modal .sheet-cell').length,
+    cell001: !!document.querySelector('#modal .sheet-cell[data-id="vf-001"]'),
+    cell002: !!document.querySelector('#modal .sheet-cell[data-id="vf-002"]')
+  }))()`);
+  ok("答题卡里能看到看答案过的 vf-002（只 peek 没 wrong 也收进队列）",
+    wsSheet.open && wsSheet.cells === expect.length && wsSheet.cell002, JSON.stringify(wsSheet));
+  ok("答题卡里也在做错过的 vf-001", wsSheet.cell001, JSON.stringify(wsSheet));
+  await click('#modal [data-act="modal-cancel"]');
+  await sleep(160);
+  await pressEsc();
+  await sleep(520);
+  ok("退出错过题队列回开始屏", (await state()).view === "home");
+}
+
+/* ── 8.7 切换其他题（答题卡 / 上一题 / 下一题） ─── */
+group("切换其他题（答题卡 / 上一题 / 下一题）");
+{
+  await reload("#block=" + dlBlock);
+  await sleep(260);
+  S = await state();
+  const SN = S.round.listLen;
+  const nav = await $(`(() => {
+    const p = document.querySelector('#nav-prev'), s = document.querySelector('#nav-sheet'),
+      n = document.querySelector('#nav-next'), bar = document.querySelector('#qnav');
+    const r = bar && bar.getBoundingClientRect();
+    return { prev: !!p && !!p.offsetParent, sheet: !!s && !!s.offsetParent, next: !!n && !!n.offsetParent,
+      count: (document.querySelector('#nav-count') || {}).textContent || '',
+      barBottom: r ? Math.round(r.bottom) : -1, ih: innerHeight, iw: innerWidth,
+      docW: document.documentElement.scrollWidth }; })()`);
+  ok("做题屏有换题条（上一题/答题卡/下一题）", nav.prev && nav.sheet && nav.next, JSON.stringify(nav));
+  ok("换题条显示当前题号 1/N", nav.count === "1/" + SN, nav.count);
+  ok("换题条在视口内且不横向溢出", nav.barBottom > 0 && nav.barBottom <= nav.ih + 1 && nav.docW <= nav.iw + 1,
+    JSON.stringify(nav));
+  await click("#nav-next");
+  await sleep(160);
+  S = await state();
+  const prog0 = await text("#bar-progress");
+  ok("未作答点「下一题」= 跳到第 2 题（跳过，不计数）",
+    S.round.idx === 1 && S.round.done === 0 && prog0 === "0/" + SN,
+    JSON.stringify({ idx: S.round.idx, done: S.round.done, prog: prog0 }));
+  await click("#nav-prev");
+  await sleep(160);
+  S = await state();
+  ok("「上一题」回到第 1 题", S.round.idx === 0 && S.round.itemId === S.round.listIds[0],
+    JSON.stringify({ idx: S.round.idx }));
+  await click("#nav-sheet");
+  await sleep(220);
+  const sheet0 = await $(`(() => ({
+    open: document.querySelector('#modal').classList.contains('is-open'),
+    cells: document.querySelectorAll('#modal .sheet-cell').length,
+    cur: document.querySelectorAll('#modal .sheet-cell.is-cur').length,
+    curFirst: /is-cur/.test((document.querySelector('#modal .sheet-cell[data-i="0"]') || {}).className || '')
+  }))()`);
+  ok("「答题卡」弹窗列出本轮全部题并标出当前题",
+    sheet0.open && sheet0.cells === SN && sheet0.cur === 1 && sheet0.curFirst, JSON.stringify(sheet0));
+  await click('#modal .sheet-cell[data-i="4"]');
+  await sleep(220);
+  S = await state();
+  ok("点答题卡题号跳到第 5 题，弹窗关闭", S.round.idx === 4 && S.round.itemId === S.round.listIds[4] &&
+    !(await $(`document.querySelector('#modal').classList.contains('is-open')`)), JSON.stringify({ idx: S.round.idx }));
+  const jumpId = S.round.itemId;
+  await answerWith(true);
+  await sleep(160);
+  S = await state();
+  ok("跳着作答：进度 1/N、正确率 1/1 100%",
+    (await text("#bar-progress")) === "1/" + SN && /1\/1 100%/.test(await text("#bar-rate")),
+    JSON.stringify({ prog: await text("#bar-progress"), rate: await text("#bar-rate") }));
+  await click("#nav-sheet");
+  await sleep(220);
+  const sheet1 = await $(`(() => ({
+    okCell: /is-ok/.test((document.querySelector('#modal .sheet-cell[data-i="4"]') || {}).className || ''),
+    curCell: /is-cur/.test((document.querySelector('#modal .sheet-cell[data-i="4"]') || {}).className || '')
+  }))()`);
+  ok("答题卡把刚答对的题标绿、并标为当前", sheet1.okCell && sheet1.curCell, JSON.stringify(sheet1));
+  await click('#modal .sheet-cell[data-i="4"]');   // 再点当前题：关闭弹窗、留在本题回看
+  await sleep(200);
+  const rev = await $(`(() => { const fb = document.querySelector('#fb');
+    const ack = fb && fb.querySelector('[data-act="ack"]');
+    return { locked: [...document.querySelectorAll('#qcard .opt')].every(o => o.disabled),
+      fbShown: !!fb && getComputedStyle(fb).display !== 'none',
+      fbOk: /考点：/.test(fb ? fb.textContent : ''), peekBtn: !!document.querySelector('#qcard [data-act="peek"]'),
+      ack: ack ? ack.textContent.trim() : '' }; })()`);
+  ok("切回已作答的题是只读回看（锁定 + 讲解 + 没有看答案按钮）",
+    rev.locked && rev.fbShown && rev.fbOk && !rev.peekBtn && /下一题/.test(rev.ack), JSON.stringify(rev));
+  const beforeAtt = Number((await state()).store.stat[jumpId].att);
+  await pressDigit(1);
+  await sleep(140);
+  S = await state();
+  ok("回看时再按选项不会重复判分", Number(S.store.stat[jumpId].att) === beforeAtt && S.round.done === 1,
+    JSON.stringify({ att: S.store.stat[jumpId].att, done: S.round.done }));
+  await click('#qcard [data-act="ack"]');
+  await sleep(240);
+  S = await state();
+  ok("「下一题」继续时跳到下一道还没做的题（第 6 题）", S.round.idx === 5 && S.round.done === 1,
+    JSON.stringify({ idx: S.round.idx, done: S.round.done }));
+  await key("ArrowRight", "ArrowRight", 39, 140);
+  S = await state();
+  ok("键盘 → 换到下一题", S.round.idx === 6, JSON.stringify({ idx: S.round.idx }));
+  await key("ArrowLeft", "ArrowLeft", 37, 140);
+  S = await state();
+  ok("键盘 ← 换回上一题", S.round.idx === 5, JSON.stringify({ idx: S.round.idx }));
+  ok("换题/跳过不改变进度（仍 1/N）", (await text("#bar-progress")) === "1/" + SN, await text("#bar-progress"));
+  await hardReload();
+  S = await state();
+  ok("刷新后作答状态与进度都在（1/N）", S.view === "drill" && S.round.done === 1 &&
+    (await text("#bar-progress")) === "1/" + SN, JSON.stringify({ done: S.round && S.round.done }));
+  await click("#nav-sheet");
+  await sleep(240);
+  const sheet2 = await $(`(() => ({
+    okCell: /is-ok/.test((document.querySelector('#modal .sheet-cell[data-i="4"]') || {}).className || ''),
+    cells: document.querySelectorAll('#modal .sheet-cell').length
+  }))()`);
+  ok("刷新后答题卡仍把第 5 题标成做对", sheet2.okCell && sheet2.cells === SN, JSON.stringify(sheet2));
+  await click('#modal [data-act="modal-cancel"]');
+  await sleep(160);
+  await pressEsc();
+  await sleep(520);
+  ok("退出本轮回开始屏", (await state()).view === "home");
+}
+
 /* ── 9. 390px 手机视口 ───────────────────────── */
 group("390px 手机视口");
 await send("Emulation.setDeviceMetricsOverride", { width: 390, height: 844, deviceScaleFactor: 2, mobile: true });
@@ -940,6 +1085,13 @@ ok("390 视口选项高度 ≥48px", mob.opts.every((o) => o.h >= 48), JSON.stri
 ok("390 视口无需整页滚动即可看题与选项", mob.docH <= mob.ih + 1 && (!mob.qScroll || mob.qScroll.sh <= mob.qScroll.ch + 1),
   JSON.stringify({ docH: mob.docH, ih: mob.ih, q: mob.qScroll }));
 ok("390 视口顶栏 topic 与自动开关可见", mob.topicVisible && mob.autoVisible);
+const mobNav = await $(`(() => { const b = document.querySelector('#qnav');
+  if (!b) return null; const r = b.getBoundingClientRect();
+  return { top: Math.round(r.top), bottom: Math.round(r.bottom), h: Math.round(r.height),
+    visible: !!b.offsetParent, docW: document.documentElement.scrollWidth, iw: innerWidth, ih: innerHeight }; })()`);
+ok("390 视口换题条（上一题/答题卡/下一题）可见且不溢出",
+  mobNav && mobNav.visible && mobNav.h >= 34 && mobNav.bottom <= mobNav.ih + 1 && mobNav.docW <= mobNav.iw + 1,
+  JSON.stringify(mobNav));
 const mobPeekBtn = await $(`(() => { const b = document.querySelector('#qcard [data-act="peek"]');
   if (!b) return null; const r = b.getBoundingClientRect();
   return { top: Math.round(r.top), bottom: Math.round(r.bottom), h: Math.round(r.height), ih: innerHeight,

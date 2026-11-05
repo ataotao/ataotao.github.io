@@ -152,6 +152,32 @@ html.drilling body{overflow:hidden}
 .fb-peek .fb-head{color:#9a6a12}
 .fb-peek .fb-line b{color:#7a5a14}
 .fb-note{margin:0;font-size:11.5px;line-height:1.45;color:#9a6a12}
+/* 换题条：上一题 / 答题卡 / 下一题（在题卡下方，不占题卡空间） */
+.qnav{flex:0 0 auto;display:flex;align-items:center;gap:6px;padding:2px 0 0}
+.navbtn{flex:1 1 0;display:flex;align-items:center;justify-content:center;gap:4px;min-height:36px;padding:4px 8px;
+  border-radius:9px;border:1.5px solid var(--line);background:#fff;color:var(--ink-2);
+  font-size:12.5px;font-weight:600;line-height:1.2;cursor:pointer;white-space:nowrap}
+.navbtn:active{transform:scale(.98)}
+.navbtn.sheet{flex:1.6 1 0;color:var(--accent);border-color:var(--accent-line);background:var(--accent-soft)}
+.navbtn b{font-variant-numeric:tabular-nums;font-weight:700}
+/* 答题卡弹窗：题号网格，状态一眼可见 */
+.sheet-sub{margin:0 0 10px;font-size:12px;color:var(--muted);line-height:1.5}
+.sheet-legend{display:flex;flex-wrap:wrap;gap:6px 12px;margin:0 0 10px;font-size:11.5px;color:var(--muted)}
+.sheet-legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:4px;
+  vertical-align:-1px;border:1px solid transparent}
+.sheet-legend .l-ok{background:var(--ok-soft);border-color:#b9e2c9}
+.sheet-legend .l-bad{background:var(--bad-soft);border-color:#f2c4be}
+.sheet-legend .l-peek{background:#fff8ec;border-color:#e8c98a}
+.sheet-legend .l-cur{background:#fff;border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
+.sheet-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(44px,1fr));gap:7px}
+.sheet-cell{min-height:40px;padding:4px 2px;border-radius:9px;border:1.5px solid var(--line);background:#fff;
+  color:var(--ink-2);font-size:12.5px;font-weight:700;font-variant-numeric:tabular-nums;cursor:pointer}
+.sheet-cell:active{transform:scale(.95)}
+.sheet-cell.is-ok{background:var(--ok-soft);border-color:#b9e2c9;color:var(--ok)}
+.sheet-cell.is-bad{background:var(--bad-soft);border-color:#f2c4be;color:var(--bad)}
+.sheet-cell.is-peek{background:#fff8ec;border-color:#e8c98a;color:#8a6410}
+.sheet-cell.is-cur{box-shadow:0 0 0 2px var(--accent);border-color:var(--accent)}
+@media(max-width:380px){.navbtn{font-size:12px;padding:4px 3px}.navbtn.sheet{flex:1.9 1 0}}
 
 /* ── 结算屏 ───────────────────────────── */
 .rt-hero{text-align:center;padding:26px 0 6px}
@@ -306,7 +332,12 @@ table.rt-table .rate{font-weight:700}
     </div>
   </div>
   <div class="qwrap"><div class="qcard" id="qcard"></div></div>
-  <p class="quitline" id="drill-line">1–4 / A–D 选答案 · Enter 下一题 · Esc 退出</p>
+  <div class="qnav" id="qnav">
+    <button type="button" class="navbtn" data-act="prev" id="nav-prev" title="上一题（←）">‹ 上一题</button>
+    <button type="button" class="navbtn sheet" data-act="sheet" id="nav-sheet" title="打开答题卡，点题号切换">答题卡 <b id="nav-count">0/0</b></button>
+    <button type="button" class="navbtn" data-act="next" id="nav-next" title="下一题（→）；还没作答时就是跳过">下一题 ›</button>
+  </div>
+  <p class="quitline" id="drill-line">← → 换题 · 1–4 / A–D 选答案 · Enter 下一题 · Esc 退出</p>
 </section>
 
 <!-- 结算屏 -->
@@ -410,10 +441,11 @@ table.rt-table .rate{font-weight:700}
   function planItems() {
     return itemsOfBlocks(blocks.map(function (b) { return b.block; }));
   }
+  /* 「错过」= 做错过 或 看过答案（用户口径：看过答案等于没掌握） */
   function wrongItems() {
     return allItems().filter(function (it) {
       var s = store.stat[it.id];
-      return s && Number(s.wrong) > 0;
+      return s && (Number(s.wrong) > 0 || Number(s.peek) > 0);
     });
   }
   function planMinutes() {
@@ -444,6 +476,22 @@ table.rt-table .rate{font-weight:700}
     }
     var mainIds = strList(c.mainIds);
     var idx = Math.floor(num(c.idx));
+    // 每题结果（新版快照才有；旧快照没有 results，resumeRound 里按旧逻辑补）
+    var results = {};
+    var hasResults = !!(c.results && typeof c.results === "object");
+    if (hasResults) {
+      Object.keys(c.results).forEach(function (id) {
+        var r = c.results[id];
+        if (!r || typeof r !== "object") return;
+        var picked = Number(r.picked);
+        if (!isFinite(picked) || picked < -1 || picked > 3) picked = -1;
+        results[id] = {
+          picked: Math.floor(picked),
+          peek: r.peek === true,
+          correct: r.correct === true ? true : (r.correct === false ? false : null)
+        };
+      });
+    }
     return {
       mode: normMode(c.mode),
       title: typeof c.title === "string" ? c.title : "",
@@ -459,6 +507,8 @@ table.rt-table .rate{font-weight:700}
       phaseOk: Math.floor(num(c.phaseOk)),
       phaseDone: Math.floor(num(c.phaseDone)),
       perTopic: perTopic,
+      results: results,
+      legacy: !hasResults,
       startAt: typeof c.startAt === "string" ? c.startAt : new Date().toISOString(),
       autoNext: c.autoNext === true
     };
@@ -619,7 +669,7 @@ table.rt-table .rate{font-weight:700}
     var wrongBtn = $("#act-wrong");
     wrongBtn.disabled = !hasData || wq === 0;
     $("#wrong-hint").textContent = !hasData ? "" :
-      (wq > 0 ? "错过的题：" + wq + " 道（含以前做错的）" : "还没有做错的题，先刷一轮吧。");
+      (wq > 0 ? "错过的题：" + wq + " 道（做错或看过答案都算）" : "还没有错过的题，先刷一轮吧。");
 
     var grid = $("#block-grid");
     grid.innerHTML = "";
@@ -664,6 +714,9 @@ table.rt-table .rate{font-weight:700}
       ok: Math.floor(num(o.ok)), wrongIds: (o.wrongIds || []).slice(),
       pendingRedo: (o.pendingRedo || []).slice(),
       peekIds: (o.peekIds || []).slice(), phasePeek: 0, redoPeek: 0, peekHold: false,
+      // 本阶段每题的结果：{ picked, peek, correct }。切题/刷新后靠它还原题卡状态，不许重复判分。
+      results: (o.results && typeof o.results === "object") ? o.results : {},
+      justAnswered: false,
       perTopic: {}, locked: true, autoTimer: null, startAt: Date.now()
     };
     var t = o.startAt ? new Date(o.startAt).getTime() : NaN;
@@ -701,6 +754,8 @@ table.rt-table .rate{font-weight:700}
     var pct = total ? Math.round((R.done / total) * 100) : 0;
     $("#pg-fill").style.width = pct + "%";
     $("#bar-progress").textContent = R.done + "/" + total + (R.phase === "redo" ? " 重练" : "");
+    var navCount = $("#nav-count");
+    if (navCount) navCount.textContent = Math.min(R.idx + 1, total) + "/" + total;
     // 看答案的题不计入正确率的分子/分母
     var judged = Math.max(0, R.done - phasePeekCount());
     $("#bar-rate").innerHTML = judged > 0
@@ -709,7 +764,10 @@ table.rt-table .rate{font-weight:700}
   }
   function phasePeekCount() {
     if (!R) return 0;
-    return R.phase === "main" ? R.peekIds.length : R.redoPeek;
+    // 直接用本题结果里标了 peek 的条数：主轮/重练轮、刷新后同一口径
+    var n = 0, rs = R.results || {};
+    Object.keys(rs).forEach(function (id) { if (rs[id] && rs[id].peek) n += 1; });
+    return n;
   }
 
   /* 单题历史：这一题历史上做对几次、做错几次、看答案几次。
@@ -742,9 +800,12 @@ table.rt-table .rate{font-weight:700}
   function renderQuestion() {
     var item = currentItem();
     if (!item) { endPhase(); return; }
-    R.locked = false;
-    R.peekHold = false;
+    var res = R.results[item.id] || null;
+    R.locked = !!res;
+    R.peekHold = !!(res && res.peek);
+    R.justAnswered = false;
     clearTimeout(R.autoTimer);
+    if (R.phase === "redo" && res && res.peek) R.redoPeek = Math.max(1, R.redoPeek);
     var wrap = $("#qcard");
     var html = '<div class="qhist" id="qhist"></div>';
     html += '<div class="qstem">' + stemHTML(item.stem) + "</div>";
@@ -757,9 +818,10 @@ table.rt-table .rate{font-weight:700}
     });
     html += "</div>";
     // 逃生阀：只在「还没判、也没看答案」时出现
-    html += '<button type="button" class="peeklink" data-act="peek">看答案</button>';
+    if (!res) html += '<button type="button" class="peeklink" data-act="peek">看答案</button>';
     html += '<div class="fb" id="fb"></div>';
     wrap.innerHTML = html;
+    if (res) paintResult(item, res);   // 切回已作答的题：只还原画面，不动任何统计
     paintHist();
     $("#bar-topic").textContent = item.topic || "—";
     $("#bar-time").textContent = fmtClock(Date.now() - R.startAt);
@@ -768,10 +830,32 @@ table.rt-table .rate{font-weight:700}
     snapshotRound();
   }
 
+  /* 已作答的题重新显示时用：把当时的判分/看答案状态原样画出来（只读） */
+  function paintResult(item, res) {
+    var els = $$(".opt", $("#qcard"));
+    els.forEach(function (el) { el.disabled = true; });
+    var correctIdx = LETTERS.indexOf(item.answer);
+    if (res.peek) {
+      if (els[correctIdx]) els[correctIdx].classList.add("is-right");
+      var fbP = $("#fb");
+      if (fbP) { fbP.className = "fb show fb-peek"; fbP.innerHTML = peekHTML(item); }
+      return;
+    }
+    var picked = els[res.picked];
+    if (picked) {
+      picked.classList.add(res.correct ? "is-ok" : "is-bad");
+      var mark = picked.querySelector(".mark");
+      if (mark) mark.textContent = res.correct ? "✓" : "✗";
+    }
+    if (res.correct !== true && els[correctIdx]) els[correctIdx].classList.add("is-right");
+    var fb = $("#fb");
+    if (fb) { fb.className = "fb show " + (res.correct === true ? "fb-ok" : "fb-bad"); fb.innerHTML = feedbackHTML(item, res.correct === true); }
+  }
+
   function judge(optIdx) {
     if (!R || R.locked) return;
     var item = currentItem();
-    if (!item) return;
+    if (!item || R.results[item.id]) return;
     var opts = item.options.slice(0, 4);
     if (optIdx < 0 || optIdx >= opts.length) return;
     var correctIdx = LETTERS.indexOf(item.answer);
@@ -779,7 +863,9 @@ table.rt-table .rate{font-weight:700}
     var correct = optIdx === correctIdx;
     R.locked = true;
     R.peekHold = false;
+    R.justAnswered = true;
     R.judgeCount += 1;
+    R.results[item.id] = { picked: optIdx, peek: false, correct: correct };
     hidePeek();
 
     var els = $$(".opt", $("#qcard"));
@@ -809,7 +895,7 @@ table.rt-table .rate{font-weight:700}
       R.pendingRedo.push(item);
       if (fb) { fb.className = "fb show fb-bad"; fb.innerHTML = feedbackHTML(item, false); }
     }
-    R.done = R.idx + 1;
+    R.done += 1;
     updateBar();
     snapshotRound();
   }
@@ -842,10 +928,12 @@ table.rt-table .rate{font-weight:700}
   function doPeek() {
     if (!R || R.locked) return;
     var item = currentItem();
-    if (!item) return;
+    if (!item || R.results[item.id]) return;
     R.locked = true;
     R.peekHold = true;
-    R.done = R.idx + 1;
+    R.justAnswered = true;
+    R.done += 1;
+    R.results[item.id] = { picked: -1, peek: true, correct: null };
     // 看答案也记进单题历史（只加 peek 计数，绝不动 att/ok/wrong，所以正确率口径不变）
     var st = statOf(item.id);
     if (!st) st = store.stat[item.id] = { att: 0, ok: 0, wrong: 0, at: "" };
@@ -868,15 +956,87 @@ table.rt-table .rate{font-weight:700}
     toast(R.phase === "main" ? "这题不计分，已加入重练" : "这题不计分");
   }
 
+  /* 「下一题 →」= 继续：跳到下一道还没做的题；全做完就进重练/结算 */
   function advance() {
     if (!R) return;
     clearTimeout(R.autoTimer);
     R.autoTimer = null;
     R.peekHold = false;
-    R.idx += 1;
-    R.done = R.idx;
-    if (R.idx >= R.list.length) { endPhase(); return; }
+    R.justAnswered = false;
+    if (R.done >= R.list.length) { endPhase(); return; }
+    var next = firstUnansweredAfter(R.idx);
+    if (next < 0) { endPhase(); return; }
+    R.idx = next;
     renderQuestion();
+  }
+  function firstUnansweredAfter(from) {
+    if (!R) return -1;
+    var n = R.list.length;
+    for (var k = 1; k <= n; k++) {
+      var i = (from + k) % n;
+      if (!R.results[R.list[i].id]) return i;
+    }
+    return -1;
+  }
+  function firstUnansweredIndex() {
+    if (!R) return -1;
+    for (var i = 0; i < R.list.length; i++) {
+      if (!R.results[R.list[i].id]) return i;
+    }
+    return -1;
+  }
+
+  /* ══ 换题（答题卡 / 上一题 / 下一题） ═════════
+     切题本身不判分、不计进度；已作答的题切回来只读回看，不重复计分。 */
+  function navStep(d) {
+    if (!R) return;
+    var n = R.list.length;
+    if (!n) return;
+    var item = currentItem();
+    if (d > 0 && item && R.results[item.id]) { advance(); return; }  // 已作答时「下一题」= 继续
+    clearTimeout(R.autoTimer);
+    R.autoTimer = null;
+    R.idx = ((R.idx + d) % n + n) % n;
+    R.justAnswered = false;
+    renderQuestion();
+  }
+  function jumpTo(i) {
+    if (!R || !isFinite(i) || i < 0 || i >= R.list.length) return;
+    closeModal();
+    clearTimeout(R.autoTimer);
+    R.autoTimer = null;
+    R.idx = Math.floor(i);
+    R.justAnswered = false;
+    renderQuestion();
+  }
+  function sheetCell(item, i) {
+    var res = R.results[item.id];
+    var cls = "sheet-cell", status = "未做";
+    if (res) {
+      if (res.peek) { cls += " is-peek"; status = "看答案"; }
+      else if (res.correct === true) { cls += " is-ok"; status = "做对"; }
+      else if (res.correct === false) { cls += " is-bad"; status = "做错"; }
+      else { status = "已做"; }
+    }
+    if (i === R.idx) cls += " is-cur";
+    return '<button type="button" class="' + cls + '" data-act="sheet-go" data-i="' + i +
+      '" data-id="' + esc(item.id) + '" title="第 ' + (i + 1) + " 题 · " + esc(item.topic || "") +
+      " · " + status + '">' + (i + 1) + "</button>";
+  }
+  function openSheet() {
+    if (!R) return;
+    clearTimeout(R.autoTimer);
+    R.autoTimer = null;
+    var n = R.list.length;
+    var html = "<h3>答题卡</h3>" +
+      '<p class="sheet-sub">' + esc(R.title || "") + " · 共 " + n + " 题 · 已做 " + R.done + " 题" +
+      (R.phase === "redo" ? " · 重练轮" : "") + "</p>" +
+      '<div class="sheet-legend"><span><i class="l-ok"></i>做对</span><span><i class="l-bad"></i>做错</span>' +
+      '<span><i class="l-peek"></i>看答案</span><span><i style="background:#fff"></i>未做</span>' +
+      '<span><i class="l-cur"></i>当前题</span></div>' +
+      '<div class="sheet-grid">' + R.list.map(sheetCell).join("") + "</div>" +
+      '<div class="modal-actions"><button class="btn" data-act="modal-cancel">关闭</button></div>';
+    openModal(html);
   }
 
   function uniq(list) {
@@ -893,6 +1053,7 @@ table.rt-table .rate{font-weight:700}
       R.list = next;
       R.phase = "redo";
       R.idx = 0; R.done = 0; R.phaseOk = 0; R.redoPeek = 0;
+      R.results = {}; R.justAnswered = false;
       toast("错题重练：" + next.length + " 题，做对才算过");
       renderQuestion();
       return;
@@ -952,7 +1113,8 @@ table.rt-table .rate{font-weight:700}
     commitRound(entry, topicRows(R.perTopic), R.main.map(function (it) { return it.id; }));
   }
 
-  /* 刷新前落盘：判分 / 翻题后都写。锁定态（刚点完没翻页）按「下一题」记，避免重复判分。 */
+  /* 刷新前落盘：判分 / 翻题 / 切题后都写。
+     刚判完还没翻页时按「下一题」记（避免刷新后重复判分）；看答案停留态按本题记。 */
   function snapshotRound() {
     if (!R) {
       if (store.current) { store.current = null; saveStore(); }
@@ -960,26 +1122,30 @@ table.rt-table .rate{font-weight:700}
     }
     var ids = R.list.map(function (it) { return it.id; });
     var phase = R.phase;
-    // 「看答案」停留态（还没点下一题）：idx 停在本题，刷新后原样显示讲解
-    var idx = (R.locked && !R.peekHold) ? R.idx + 1 : R.idx;
+    var idx = (R.justAnswered && !R.peekHold) ? R.idx + 1 : R.idx;
     var done = R.done;
     var phaseOk = R.phaseOk;
     var pending = uniq(R.pendingRedo).map(function (it) { return it.id; });
-    if (idx >= ids.length) {
+    var results = R.results;
+    if (done >= ids.length) {
       if (pending.length) {          // 本阶段答完，且还有错题 → 快照直接进重练轮
-        ids = pending; idx = 0; done = 0; phase = "redo"; phaseOk = 0; pending = [];
+        ids = pending; idx = 0; done = 0; phase = "redo"; phaseOk = 0; pending = []; results = {};
       } else {
         idx = ids.length;            // 本轮已答完（刷新后会直接看到结算）
         done = ids.length;
       }
+    } else if (idx >= ids.length) {
+      idx = firstUnansweredIndex();  // 有跳过的题：刷新回到第一道还没做的
+      if (idx < 0) idx = 0;
     }
+    done = Math.min(done, ids.length);
     store.current = {
       mode: normMode(R.mode), title: R.title || "",
       ids: ids, mainIds: R.main.map(function (it) { return it.id; }),
-      idx: idx, done: Math.max(done, idx), ok: R.ok, phase: phase,
+      idx: idx, done: done, ok: R.ok, phase: phase,
       wrongIds: R.wrongIds.slice(), pendingRedoIds: pending,
-      peekIds: R.peekIds.slice(),
-      phaseOk: phaseOk, phaseDone: Math.max(done, idx),
+      peekIds: R.peekIds.slice(), results: results,
+      phaseOk: phaseOk, phaseDone: done,
       perTopic: R.perTopic, startAt: new Date(R.startAt).toISOString(),
       autoNext: autoNextOn()
     };
@@ -999,6 +1165,27 @@ table.rt-table .rate{font-weight:700}
     commitRound(entry, topicRows(c.perTopic), c.mainIds);
   }
 
+  /* 旧版快照没有 results：按「前 done 题顺序已做」补一份，避免切回去重复判分。
+     新快照永远带 results，这条分支只为兼容旧记录。 */
+  function legacyResults(list, done, wrongIds, peekIds, pendingIds, phase) {
+    var out = {};
+    var n = Math.min(done, list.length);
+    for (var i = 0; i < n; i++) {
+      var id = list[i].id;
+      if (phase === "main") {
+        if (peekIds.indexOf(id) >= 0) out[id] = { picked: -1, peek: true, correct: null };
+        else if (wrongIds.indexOf(id) >= 0) out[id] = { picked: -1, peek: false, correct: false };
+        else out[id] = { picked: -1, peek: false, correct: true };
+      } else {
+        out[id] = { picked: -1, peek: false, correct: pendingIds.indexOf(id) < 0 };
+      }
+    }
+    return out;
+  }
+  function firstUnansweredIn(list, results) {
+    for (var i = 0; i < list.length; i++) if (!results[list[i].id]) return i;
+    return -1;
+  }
   /* 启动时恢复进行中的本轮（刷新不丢进度） */
   function resumeRound() {
     var c = store.current;
@@ -1012,43 +1199,41 @@ table.rt-table .rate{font-weight:700}
     var pending = c.pendingRedoIds.map(function (id) { return itemById[id]; }).filter(Boolean);
     var mainItems = c.mainIds.map(function (id) { return itemById[id]; }).filter(Boolean);
     if (!mainItems.length) mainItems = c.phase === "main" ? list.slice() : [];
+    var done = Math.min(c.done, list.length);
+    var results = c.results || {};
+    if (c.legacy && done > 0) {
+      results = legacyResults(list, done, c.wrongIds, c.peekIds, c.pendingRedoIds, c.phase);
+    }
     var idx = Math.min(c.idx, list.length);
 
     if (idx >= list.length) {
-      if (pending.length) {
+      if (done >= list.length && pending.length) {
         R = makeRound({
           mode: c.mode, title: c.title, main: mainItems, list: pending.slice(), phase: "redo",
           idx: 0, done: 0, phaseOk: 0, ok: c.ok, wrongIds: c.wrongIds,
-          pendingRedo: [], perTopic: c.perTopic, startAt: c.startAt, peekIds: c.peekIds
+          pendingRedo: [], perTopic: c.perTopic, startAt: c.startAt, peekIds: c.peekIds, results: {}
         });
         switchView("drill"); updateAutoBtn(); renderQuestion(); startTimer();
         toast("还有错题没重练：共 " + pending.length + " 题", 2600);
         return true;
       }
-      finishFromCurrent(c);
-      return true;
+      if (done >= list.length) { finishFromCurrent(c); return true; }
+      idx = firstUnansweredIn(list, results);   // 有跳过的题：回到第一道没做的
+      if (idx < 0) idx = 0;
     }
 
     R = makeRound({
       mode: c.mode, title: c.title, main: mainItems, list: list, phase: c.phase,
-      idx: idx, done: c.done, phaseOk: c.phaseOk, ok: c.ok, wrongIds: c.wrongIds,
-      pendingRedo: pending, perTopic: c.perTopic, startAt: c.startAt, peekIds: c.peekIds
+      idx: idx, done: done, phaseOk: c.phaseOk, ok: c.ok, wrongIds: c.wrongIds,
+      pendingRedo: pending, perTopic: c.perTopic, startAt: c.startAt, peekIds: c.peekIds,
+      results: results
     });
-    R.judgeCount = c.done;
+    R.judgeCount = done;
     switchView("drill");
     updateAutoBtn();
-    renderQuestion();
+    renderQuestion();   // 已经作答的那道题（含看答案停留态）由 results 自动还原
     startTimer();
-    // 「刚看完答案就刷新」：原样停在讲解态，不重新判、不再计分
-    if (c.done > idx && list[idx]) {
-      R.locked = true;
-      R.peekHold = true;
-      if (R.phase === "redo") R.redoPeek = 1;
-      paintPeek(list[idx]);
-      updateBar();
-      snapshotRound();
-    }
-    toast("接着上次：已做 " + c.done + "/" + list.length + (c.phase === "redo" ? "（重练）" : ""));
+    toast("接着上次：已做 " + done + "/" + list.length + (c.phase === "redo" ? "（重练）" : ""));
     return true;
   }
 
@@ -1340,7 +1525,7 @@ table.rt-table .rate{font-weight:700}
       "<h3>今晚方案</h3>" +
       "<p>" + blocks.length + " 个 block · 共 <b>" + total + "</b> 题 · 预计 <b>" + mins + "</b> 分钟</p>" +
       '<p class="modal-hint">按 Block ' + blocks.map(function (b) { return b.block; }).join(" → ") +
-      " 顺序刷；答错的题本轮末尾自动重练，做对才进结算。</p>" +
+      " 顺序刷；卡住可换题或看答案，答错/看答案的题本轮末尾自动重练，做对才进结算。</p>" +
       '<div class="modal-actions"><button class="btn" data-act="modal-cancel">再看看</button>' +
       '<button class="btn primary" data-act="plan-start">开始</button></div>'
     );
@@ -1400,10 +1585,14 @@ table.rt-table .rate{font-weight:700}
       if (act === "modal-cancel") { closeModal(); return; }
       if (act === "wrong-queue") {
         var w = wrongItems();
-        if (!w.length) { toast("还没有做错的题"); return; }
+        if (!w.length) { toast("还没有错过的题（做错或看答案都算）"); return; }
         startRound("redo", w, { title: "只刷错题" });
         return;
       }
+      if (act === "prev") { navStep(-1); return; }
+      if (act === "next") { navStep(1); return; }
+      if (act === "sheet") { openSheet(); return; }
+      if (act === "sheet-go") { jumpTo(Number(t.getAttribute("data-i"))); return; }
       if (act === "quit") { askQuit(); return; }
       if (act === "ack") { advance(); return; }
       if (act === "peek") { doPeek(); return; }
@@ -1453,6 +1642,9 @@ table.rt-table .rate{font-weight:700}
     }
     if (S.view !== "drill" || !R) return;
     if (e.metaKey || e.ctrlKey || e.altKey) return;
+    if ($("#modal").classList.contains("is-open")) return;
+    if (e.key === "ArrowLeft") { e.preventDefault(); navStep(-1); return; }
+    if (e.key === "ArrowRight") { e.preventDefault(); navStep(1); return; }
     if (e.key === "Enter") {
       e.preventDefault();
       if (R.locked) advance();
@@ -1525,6 +1717,7 @@ table.rt-table .rate{font-weight:700}
         blocks: blocks.map(function (b) { return { block: b.block, title: b.title, n: b.items.length, minutes: b.minutes }; }),
         round: R ? {
           mode: R.mode, title: R.title, phase: R.phase, idx: R.idx, listLen: R.list.length, done: R.done,
+          listIds: R.list.map(function (it) { return it.id; }),
           judged: R.judgeCount, ok: R.ok, phaseOk: R.phaseOk, locked: R.locked,
           pendingRedo: R.pendingRedo.length, wrongIds: R.wrongIds.slice(),
           peekIds: R.peekIds.slice(), peekCount: phasePeekCount(), peekHold: R.peekHold,
@@ -1543,6 +1736,9 @@ table.rt-table .rate{font-weight:700}
     judge: judge,
     advance: advance,
     peek: doPeek,
+    jumpTo: jumpTo,
+    navStep: navStep,
+    openSheet: openSheet,
     openDoc: openDoc,
     closeDoc: closeDoc,
     toggleAuto: toggleAuto

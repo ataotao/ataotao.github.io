@@ -89,6 +89,24 @@ await send("Page.reload", { ignoreCache: false });
 await sleep(1200);
 await snap("01-做题", { width: 390, viewport: true });
 
+// 1.5) 单题历史（给本题塞历史后刷新；随后清掉，不影响后面的截图）
+{
+  const hid = await evaluate("window.FLASH_APP.state().round.itemId");
+  await evaluate(`(() => { const v = JSON.parse(localStorage.getItem('eng9a-flash-v1') || '{}') || {};
+    v.stat = v.stat || {};
+    v.stat[${JSON.stringify(hid)}] = { att: 5, ok: 3, wrong: 2, peek: 1, at: new Date().toISOString() };
+    v.current = null;
+    localStorage.setItem('eng9a-flash-v1', JSON.stringify(v)); })()`);
+  await send("Page.reload", { ignoreCache: false });
+  await sleep(1000);
+  await snap("05-历史", { width: 390, viewport: true });
+  await evaluate("localStorage.removeItem('eng9a-flash-v1')");
+  await send("Page.navigate", { url: url + "#block=" + pick.block });
+  await sleep(300);
+  await send("Page.reload", { ignoreCache: false });
+  await sleep(1000);
+}
+
 // 2) 看答案（不计分，琥珀色讲解 + 下一题）
 {
   await evaluate(`document.querySelector('#qcard [data-act="peek"]').click()`);
@@ -107,6 +125,15 @@ await snap("01-做题", { width: 390, viewport: true });
   await snap("02-答错讲解", { width: 390, viewport: true });
   await enter();
   await sleep(220);
+}
+
+// 3.5) 答题卡（此时已有 1 题看答案 + 1 题答错，状态色最全）
+{
+  await evaluate(`document.querySelector('#nav-sheet').click()`);
+  await sleep(320);
+  await snap("06-答题卡", { width: 390, viewport: true });
+  await evaluate(`document.querySelector('#modal [data-act="modal-cancel"]').click()`);
+  await sleep(180);
 }
 
 // 4) 结算：把剩下的题做对，重练做对，停在结算屏
