@@ -171,8 +171,92 @@ const blocks = [...new Set(items.map((i) => i.block))]
     };
   });
 
+// ---- 附带文档：把仓库里的 markdown 转成页内可读的 HTML ----
+// 为什么在构建期转换：`.md` 在浏览器里只会变成下载或源码，页内直接渲染才叫"方便查看"，
+// 而且单文件离线版也能一并带走（不依赖相对路径、不依赖联网）。
+// 只支持我们这几份文档用到的语法：标题 / 段落 / 粗体 / 行内代码 / 链接 / 列表 / 引用 / 分隔线 / 表格 / 代码块。
+function mdToHtml(md) {
+  const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  const inline = (s) =>
+    esc(s)
+      .replace(/`([^`]+)`/g, "<code>$1</code>")
+      .replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>")
+      .replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
+  const lines = String(md).replace(/^\uFEFF/, "").replace(/\r\n?/g, "\n").split("\n");
+  const out = [];
+  const STOP = /^(#{1,6}\s|[-*]\s|\d+\.\s|>|\||```|-{3,}$|\*{3,}$)/;
+  let i = 0;
+  while (i < lines.length) {
+    const line = lines[i].trim();
+    if (!line) { i++; continue; }
+    const before = i;
+
+    if (/^```/.test(line)) {
+      i++;
+      const buf = [];
+      while (i < lines.length && !/^```/.test(lines[i].trim())) buf.push(lines[i++]);
+      i++;
+      out.push("<pre><code>" + esc(buf.join("\n")) + "</code></pre>");
+    } else if (/^-{3,}$/.test(line) || /^\*{3,}$/.test(line)) {
+      out.push("<hr>");
+      i++;
+    } else if (/^(#{1,6})\s+/.test(line)) {
+      const m = line.match(/^(#{1,6})\s+(.*)$/);
+      const lv = Math.min(m[1].length, 4);
+      out.push(`<h${lv}>${inline(m[2])}</h${lv}>`);
+      i++;
+    } else if (line.startsWith("|") && i + 1 < lines.length && /\|/.test(lines[i + 1]) && /-/.test(lines[i + 1])) {
+      const cells = (s) => s.replace(/^\s*\|/, "").replace(/\|\s*$/, "").split("|").map((x) => x.trim());
+      const head = cells(line);
+      i += 2;
+      const rows = [];
+      while (i < lines.length && lines[i].trim().startsWith("|")) rows.push(cells(lines[i++].trim()));
+      out.push(
+        "<table><thead><tr>" + head.map((c) => `<th>${inline(c)}</th>`).join("") + "</tr></thead><tbody>" +
+        rows.map((r) => "<tr>" + r.map((c) => `<td>${inline(c)}</td>`).join("") + "</tr>").join("") + "</tbody></table>"
+      );
+    } else if (/^>\s?/.test(line)) {
+      const buf = [];
+      while (i < lines.length && /^>\s?/.test(lines[i].trim())) buf.push(lines[i++].trim().replace(/^>\s?/, ""));
+      out.push("<blockquote>" + buf.map(inline).join("<br>") + "</blockquote>");
+    } else if (/^[-*]\s+/.test(line) || /^\d+\.\s+/.test(line)) {
+      const ordered = /^\d+\.\s+/.test(line);
+      const re = ordered ? /^\d+\.\s+/ : /^[-*]\s+/;
+      const buf = [];
+      while (i < lines.length) {
+        const t = lines[i].trim();
+        if (re.test(t)) { buf.push(t.replace(re, "")); i++; }
+        else break;
+      }
+      const tag = ordered ? "ol" : "ul";
+      out.push(`<${tag}>` + buf.map((x) => `<li>${inline(x)}</li>`).join("") + `</${tag}>`);
+    } else {
+      const buf = [];
+      while (i < lines.length && lines[i].trim() && !STOP.test(lines[i].trim())) buf.push(lines[i++].trim());
+      if (!buf.length) buf.push(lines[i++].trim());
+      out.push("<p>" + inline(buf.join(" ")) + "</p>");
+    }
+    if (i === before) i++; // 兜底：任何分支都必须前进，避免死循环
+  }
+  return out.join("\n");
+}
+
+const DOC_FILES = [
+  { key: "card", title: "考前口诀卡", file: "考前口诀卡.md" },
+  { key: "plan", title: "今晚复习方案", file: "../../docs/plans/语法闪练与今晚复习方案.md" },
+  { key: "guide", title: "使用说明", file: "使用说明.md" },
+];
+const docs = {};
+for (const d of DOC_FILES) {
+  const p = join(here, d.file);
+  if (!existsSync(p)) { warn(`缺少文档 ${d.file}，「${d.title}」在页内不可用`); continue; }
+  docs[d.key] = { title: d.title, html: mdToHtml(readFileSync(p, "utf8")) };
+}
+
 const bundle = { blocks };
-const dataScript = `window.FLASH_DATA = ${JSON.stringify(bundle, null, 1)};\n`;
+const dataScript =
+  `window.FLASH_DATA = ${JSON.stringify(bundle, null, 1)};\n` +
+  `window.FLASH_DOCS = ${JSON.stringify(docs)};\n`;
 writeFileSync(join(dataDir, "bundle.js"), dataScript, "utf8");
 
 // ---- 单文件版 ----
@@ -198,6 +282,7 @@ const missing = Object.keys(TOPICS).filter((g) => !groups.some((x) => x.group ==
 console.log("");
 console.log(`分 block：${blocks.map((b) => `B${b.block} ${b.title} ${b.items.length}题`).join(" ｜ ")}`);
 console.log(`合计 ${items.length} 题 · 考点 ${byTopic.size} 个 · 未复核 ${unverifiedIds.length}${unverifiedIds.length ? "（" + unverifiedIds.join(",") + "）" : ""}`);
+console.log(`页内文档：${Object.keys(docs).map((k) => `${docs[k].title}(${(docs[k].html.length / 1024).toFixed(0)}KB)`).join(" · ") || "无"}`);
 if (missing.length) console.log(`未启用的题组：${missing.join(", ")}`);
 
 if (warnings.length) {

@@ -87,7 +87,16 @@ await send("Page.navigate", { url: url + "#block=" + pick.block });
 await sleep(300);
 await send("Page.reload", { ignoreCache: false });
 await sleep(1200);
-await snap("01-做题", { width: 390, viewport: true });
+
+// 1) 做题：答对一题后停住（默认不自动跳题）——看得出来「考点：」与「下一题 →」
+{
+  const s = await st();
+  await digit("ABCD".indexOf(s.round.answer));
+  await sleep(450);
+  await snap("01-做题", { width: 390, viewport: true });
+  await enter();
+  await sleep(250);
+}
 
 // 2) 答错讲解（手机上答一声，停在讲解条）
 {
