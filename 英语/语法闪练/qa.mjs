@@ -849,6 +849,70 @@ group("题干中文提示");
   }
 }
 
+/* ── 8.5 单题历史（做对/做错/看答案 累计次数，刷新后仍在） ───────── */
+group("单题历史（做对/做错累计）");
+{
+  const setStat = (stat) => $(`(() => {
+    const v = JSON.parse(localStorage.getItem('eng9a-flash-v1') || '{}') || {};
+    v.stat = ${JSON.stringify(stat)}; v.current = null;
+    localStorage.setItem('eng9a-flash-v1', JSON.stringify(v)); return true; })()`);
+  const hist = () => $(`(() => { const el = document.querySelector('#qhist');
+    return el ? { text: el.textContent.trim(), shown: el.classList.contains('show'),
+                  title: el.getAttribute('title') || '' } : null; })()`);
+
+  const ISO = new Date(Date.now() - 3600e3).toISOString();
+  // vf-001 有历史（对 3 / 错 2 / 看答案 1），vf-002 全新
+  await setStat({ "vf-001": { att: 5, ok: 3, wrong: 2, peek: 1, at: ISO } });
+  await reload("#block=4");
+  const h1 = await hist();
+  ok("做过历史次数的题，题卡顶部显示一行历史",
+    h1 && h1.shown && /历史：/.test(h1.text), JSON.stringify(h1));
+  ok("历史文案含做对/做错/看答案与总次数",
+    h1 && /做对 3 次/.test(h1.text) && /做错 2 次/.test(h1.text) && /看答案 1 次/.test(h1.text) && /共 6 次/.test(h1.text),
+    h1 && h1.text);
+  ok("悬停 title 有上次作答时间", h1 && /上次作答：/.test(h1.title), h1 && h1.title);
+
+  // 刷新后仍在（用户诉求的核心）
+  await hardReload();
+  const h2 = await hist();
+  ok("刷新后历史行仍在、数字不变", h2 && h2.shown && h2.text === h1.text, JSON.stringify(h2));
+
+  // 判一次后立即把本次算进去
+  const s0 = await state();
+  const item0 = s0.round && s0.round.itemId;
+  await click("#qcard .opt[data-i='" + "ABCD".indexOf(s0.round.answer) + "']");
+  await sleep(200);
+  const h3 = await hist();
+  ok("判分后历史立即 +1（含本次：att 5→6，含看答案 1 次共 7）", h3 && /做对 4 次/.test(h3.text) && /共 7 次/.test(h3.text), h3 && h3.text);
+  await click('[data-act="ack"]');
+  await sleep(350);
+
+  // 全新题：不显示历史行
+  const h4 = await hist();
+  ok("没做过的题不显示历史行（不占版面）", h4 && !h4.shown && h4.text === "", JSON.stringify(h4));
+
+  // 看答案：只加「看答案」次数，不动 att/ok/wrong
+  const before = (await state()).store.stat["vf-002"] || { att: 0, ok: 0, wrong: 0 };
+  await click("#qcard [data-act='peek']");
+  await sleep(250);
+  const h5 = await hist();
+  const after = (await state()).store.stat["vf-002"] || {};
+  ok("看答案后历史行出现「看答案 1 次」", h5 && h5.shown && /看答案 1 次/.test(h5.text), h5 && h5.text);
+  ok("看答案不动 att/ok/wrong（正确率口径不变）",
+    Number(after.att || 0) === Number(before.att || 0) &&
+    Number(after.ok || 0) === Number(before.ok || 0) &&
+    Number(after.wrong || 0) === Number(before.wrong || 0),
+    JSON.stringify({ before, after }));
+  ok("看答案次数已落盘（stat.peek=1）", Number(after.peek || 0) === 1, JSON.stringify(after));
+
+  // 关掉本轮，恢复干净状态给后面组用
+  await pressEsc();
+  await sleep(400);
+  await click('[data-act="modal-cancel"]');
+  await sleep(300);
+  ok("历史行不影响退出流程", (await state()).view === "home", (await state()).view);
+}
+
 /* ── 9. 390px 手机视口 ───────────────────────── */
 group("390px 手机视口");
 await send("Emulation.setDeviceMetricsOverride", { width: 390, height: 844, deviceScaleFactor: 2, mobile: true });

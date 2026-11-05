@@ -100,6 +100,10 @@ html.drilling body{overflow:hidden}
   border-bottom:2px solid var(--accent);background:rgba(124,92,214,.11);border-radius:2px 2px 0 0}
 .qcn{font-size:12.5px;line-height:1.55;color:#6f6a86;background:#faf9ff;border-left:3px solid var(--accent-line);
   border-radius:6px;padding:6px 9px}
+/* 单题历史（做对/做错/看答案的累计次数）：存在 stat 里，刷新后仍在 */
+.qhist{display:none;font-size:11.5px;line-height:1.4;color:#8a8a97;text-align:right;
+  font-variant-numeric:tabular-nums;margin:0 0 -4px}
+.qhist.show{display:block}
 .opts{display:flex;flex-direction:column;gap:8px}
 .opt{display:flex;align-items:center;gap:10px;width:100%;min-height:50px;padding:7px 12px;border-radius:12px;
   border:1.5px solid var(--line);background:#fff;cursor:pointer;text-align:left;
@@ -249,6 +253,7 @@ table.rt-table .rate{font-weight:700}
 .rv-line{margin:0 0 5px;font-size:12.8px;line-height:1.55;color:#3f3f4a}
 .rv-line b{color:#2d2d38}
 .rv-src{margin:0;font-size:11.5px;color:#9a9aa5}
+.rv-hist{margin:6px 0 0;font-size:11.5px;color:#7b7b8a;font-variant-numeric:tabular-nums}
 #toast{position:fixed;left:50%;bottom:26px;transform:translate(-50%,14px);background:rgba(30,28,40,.94);color:#fff;
   font-size:13px;line-height:1.45;padding:9px 15px;border-radius:10px;max-width:86vw;text-align:center;
   opacity:0;pointer-events:none;transition:opacity .18s,transform .18s;z-index:80}
@@ -465,7 +470,8 @@ table.rt-table .rate{font-weight:700}
     Object.keys(stat).forEach(function (id) {
       var s = stat[id];
       if (!s || typeof s !== "object") return;
-      out.stat[id] = { att: num(s.att), ok: num(s.ok), wrong: num(s.wrong), at: typeof s.at === "string" ? s.at : "" };
+      out.stat[id] = { att: num(s.att), ok: num(s.ok), wrong: num(s.wrong),
+        peek: num(s.peek), at: typeof s.at === "string" ? s.at : "" };
     });
     var rounds = Array.isArray(raw.rounds) ? raw.rounds : [];
     rounds.slice(-200).forEach(function (r) {
@@ -706,6 +712,33 @@ table.rt-table .rate{font-weight:700}
     return R.phase === "main" ? R.peekIds.length : R.redoPeek;
   }
 
+  /* 单题历史：这一题历史上做对几次、做错几次、看答案几次。
+     数据一直在 store.stat（recordAttempt 累加），只是以前没显示；它是持久化的，所以刷新后照样在。 */
+  function statOf(id) { return store.stat[id] || null; }
+  function histText(id) {
+    var s = statOf(id);
+    if (!s) return "";
+    var att = num(s.att), ok = num(s.ok), wrong = num(s.wrong), peek = num(s.peek);
+    if (!att && !peek) return "";
+    var parts = [];
+    if (ok) parts.push("做对 " + ok + " 次");
+    if (wrong) parts.push("做错 " + wrong + " 次");
+    if (peek) parts.push("看答案 " + peek + " 次");
+    if (!parts.length) return "";
+    return "历史：" + parts.join(" · ") + "（共 " + (att + peek) + " 次）";
+  }
+  function paintHist() {
+    var el = $("#qhist");
+    if (!el) return;
+    var item = currentItem();
+    var t = item ? histText(item.id) : "";
+    el.textContent = t;
+    el.classList.toggle("show", !!t);
+    var s = item ? statOf(item.id) : null;
+    if (s && s.at) el.title = "上次作答：" + fmtDateTime(new Date(s.at));
+    else el.removeAttribute("title");
+  }
+
   function renderQuestion() {
     var item = currentItem();
     if (!item) { endPhase(); return; }
@@ -713,7 +746,8 @@ table.rt-table .rate{font-weight:700}
     R.peekHold = false;
     clearTimeout(R.autoTimer);
     var wrap = $("#qcard");
-    var html = '<div class="qstem">' + stemHTML(item.stem) + "</div>";
+    var html = '<div class="qhist" id="qhist"></div>';
+    html += '<div class="qstem">' + stemHTML(item.stem) + "</div>";
     if (item.cn) html += '<div class="qcn">' + esc(item.cn) + "</div>";
     html += '<div class="opts" role="group" aria-label="选项">';
     item.options.slice(0, 4).forEach(function (txt, i) {
@@ -726,6 +760,7 @@ table.rt-table .rate{font-weight:700}
     html += '<button type="button" class="peeklink" data-act="peek">看答案</button>';
     html += '<div class="fb" id="fb"></div>';
     wrap.innerHTML = html;
+    paintHist();
     $("#bar-topic").textContent = item.topic || "—";
     $("#bar-time").textContent = fmtClock(Date.now() - R.startAt);
     updateBar();
@@ -757,6 +792,7 @@ table.rt-table .rate{font-weight:700}
     els.forEach(function (el) { el.disabled = true; });
 
     recordAttempt(item, correct);
+    paintHist();     // 历史次数把这一次也算进去
 
     var fb = $("#fb");
     if (correct) {
@@ -810,6 +846,11 @@ table.rt-table .rate{font-weight:700}
     R.locked = true;
     R.peekHold = true;
     R.done = R.idx + 1;
+    // 看答案也记进单题历史（只加 peek 计数，绝不动 att/ok/wrong，所以正确率口径不变）
+    var st = statOf(item.id);
+    if (!st) st = store.stat[item.id] = { att: 0, ok: 0, wrong: 0, at: "" };
+    st.peek = num(st.peek) + 1;
+    saveStore();
     if (R.phase === "main") {
       if (R.peekIds.indexOf(item.id) < 0) {
         R.peekIds.push(item.id);
@@ -821,6 +862,7 @@ table.rt-table .rate{font-weight:700}
       R.redoPeek += 1;                    // 重练轮再看答案不再重排，避免死循环
     }
     paintPeek(item);
+    paintHist();
     updateBar();
     snapshotRound();
     toast(R.phase === "main" ? "这题不计分，已加入重练" : "这题不计分");
@@ -1129,6 +1171,8 @@ table.rt-table .rate{font-weight:700}
     }).join("") + "</div>";
     html += '<p class="rv-line"><b>规则：</b>' + esc(it.rule || "") + "</p>";
     if (it.trap) html += '<p class="rv-line"><b>易错点：</b>' + esc(it.trap) + "</p>";
+    var h = histText(id);
+    if (h) html += '<p class="rv-hist">' + esc(h) + "</p>";
     if (it.src) html += '<p class="rv-src">出处：' + esc(it.src) + "</p>";
     html += '<div class="modal-actions"><button class="btn primary" data-act="modal-cancel">关闭</button></div>';
     openModal(html);
