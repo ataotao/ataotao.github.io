@@ -79,7 +79,7 @@ const enter = () => key("Enter", "Enter", 13, 35);
 // 0) 开始屏（桌面 1440，整页）
 await snap("00-开始", { width: 1440 });
 
-// 1) 做题（手机 390 一屏）
+// 1) 做题（手机 390 一屏，未作答：能看到「看答案」按钮）
 const S0 = await st();
 const pick = S0.blocks.slice().sort((a, b) => a.n - b.n)[0];
 await send("Emulation.setDeviceMetricsOverride", { width: 390, height: 844, deviceScaleFactor: 2, mobile: true });
@@ -87,18 +87,18 @@ await send("Page.navigate", { url: url + "#block=" + pick.block });
 await sleep(300);
 await send("Page.reload", { ignoreCache: false });
 await sleep(1200);
+await snap("01-做题", { width: 390, viewport: true });
 
-// 1) 做题：答对一题后停住（默认不自动跳题）——看得出来「考点：」与「下一题 →」
+// 2) 看答案（不计分，琥珀色讲解 + 下一题）
 {
-  const s = await st();
-  await digit("ABCD".indexOf(s.round.answer));
-  await sleep(450);
-  await snap("01-做题", { width: 390, viewport: true });
+  await evaluate(`document.querySelector('#qcard [data-act="peek"]').click()`);
+  await sleep(2600);   // 等 toast 淡出，截图干净（toast 文案由 qa.mjs 断言）
+  await snap("04-看答案", { width: 390, viewport: true });
   await enter();
   await sleep(250);
 }
 
-// 2) 答错讲解（手机上答一声，停在讲解条）
+// 3) 答错讲解（答一声，停在讲解条）
 {
   const s = await st();
   const ci = "ABCD".indexOf(s.round.answer);
@@ -106,10 +106,10 @@ await sleep(1200);
   await sleep(400);
   await snap("02-答错讲解", { width: 390, viewport: true });
   await enter();
-  await sleep(200);
+  await sleep(220);
 }
 
-// 3) 结算：把剩下的题做对，重练做对，停在结算屏
+// 4) 结算：把剩下的题做对，重练做对，停在结算屏
 {
   let guard = 0;
   while (guard++ < 400) {
@@ -119,10 +119,12 @@ await sleep(1200);
     await enter();
   }
   await send("Emulation.clearDeviceMetricsOverride");
-  await sleep(2600);   // 等「错题重练」提示自己淡出，截图干净
+  await sleep(2600);   // 等提示自己淡出，截图干净
   await snap("03-结算", { width: 1440 });
   const st2 = await st();
-  console.log("result:", JSON.stringify({ view: st2.view, pct: await evaluate("document.querySelector('#rt-pct').textContent") }));
+  console.log("result:", JSON.stringify({ view: st2.view, pct: await evaluate("document.querySelector('#rt-pct').textContent"),
+    peek: await evaluate("(document.querySelector('#rt-peek')||{}).textContent"),
+    chips: await evaluate("document.querySelectorAll('#rt-chips .chip').length") }));
 }
 
 ws.close();
