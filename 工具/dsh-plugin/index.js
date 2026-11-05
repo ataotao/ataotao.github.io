@@ -26,7 +26,7 @@ const SUBJECTS = [
   },
   {
     key: 'politics', name: '道德与法治', kind: 'cards',
-    data: '道德与法治/考点数据.json',
+    data: '道德与法治/考点数据.json', paper: '道德与法治/试卷数据.json',
     html: '道德与法治/核心考点训练.html',
   },
   {
@@ -195,13 +195,19 @@ function scanCards(root, subject) {
     const paperPath = abs(root, subject.paper)
     const paper = readJson(paperPath)
     if (paper.ok) {
-      const questions = Array.isArray(paper.value?.questions) ? paper.value.questions : []
+      /* 新结构 {papers:[...]}，老的 {id,name,questions} 也认 */
+      const raw = paper.value || {}
+      const list = Array.isArray(raw.papers) ? raw.papers
+        : (Array.isArray(raw.questions) ? [raw] : [])
+      const questions = list.flatMap((p) => (Array.isArray(p?.questions) ? p.questions : []))
+      const firstName = list[0]?.name ?? relPath(root, paperPath)
       papers = {
-        name: paper.value?.name ?? relPath(root, paperPath),
+        name: list.length > 1 ? `${firstName} 等 ${list.length} 份卷` : firstName,
         items: questions.length,
+        subs: questions.filter((q) => q?.kind === 'sub').length,
         file: relPath(root, paperPath),
       }
-      const noAnswer = questions.filter((q) => q?.ans === undefined || q?.ans === null).length
+      const noAnswer = questions.filter((q) => q?.kind !== 'sub' && (q?.ans === undefined || q?.ans === null)).length
       if (noAnswer) todos.push(todo('missing_answer', '套卷缺答案', `${noAnswer} 道选择题没有 ans`, papers.file))
     } else {
       todos.push(todo('unreadable', '套卷数据读不出来', paper.error, relPath(root, paperPath)))
