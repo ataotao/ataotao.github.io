@@ -101,7 +101,7 @@
   <header>
     <div>
       <h1>做题训练 · 开始</h1>
-      <p class="sub">一个入口：今天练什么、六科在哪、记录怎么备份</p>
+      <p class="sub">一个入口：今天练什么、各科在哪、记录怎么备份</p>
     </div>
     <div class="today-date"><b id="today-label">—</b><span id="streak-label">正在看你的记录…</span></div>
   </header>
@@ -117,7 +117,7 @@
   </section>
 
   <section>
-    <h2>六科入口 <span class="hint">点开就能练，离线可用</span></h2>
+    <h2>各科入口 <span class="hint">点开就能练，离线可用</span></h2>
     <div class="grid" id="subjects"></div>
   </section>
 
@@ -139,9 +139,9 @@
   <details class="help">
     <summary>怎么用（30 秒读完）</summary>
     <ul>
-      <li><b>建议用 Chrome / Edge</b>：六科记录都存在同一个浏览器的本机存储里，换浏览器就看不到旧记录（但可以用备份文件恢复）。</li>
+      <li><b>建议用 Chrome / Edge</b>：各科记录都存在同一个浏览器的本机存储里，换浏览器就看不到旧记录（但可以用备份文件恢复）。</li>
       <li><b>把这一页收藏</b>：电脑上按 <code>Ctrl+D</code>；手机上「添加到主屏幕」。以后不用再翻文件夹。</li>
-      <li><b>顺序建议</b>：先做「今天做什么」里的三条，再去六科入口补弱项。不用每科都练。</li>
+      <li><b>顺序建议</b>：先做「今天做什么」里的三条，再去各科入口补弱项。不用每科都练。</li>
       <li><b>每周备份</b>：点一次「备份全部记录」，把文件放进 <code>学习记录/</code>。清浏览器缓存前一定要备份。</li>
       <li><b>手机上</b>：本站已发布到 <code>ataotao.github.io/1/</code>，随时可打开；英文单词 App 在站点首页。</li>
     </ul>
@@ -174,6 +174,9 @@
       file: '函数思维脚手架.html', quick: '#view=task', quickText: '本次任务', wrong: '#view=report', wrongText: '训练报告' },
     { key: 'english',  name: '英语过关',    icon: '📄', accent: '#7c5cd6', href: '英语/九上英语过关练习.html', desc: 'U1–U4 原卷 + 三段式讲解',
       file: '九上英语过关练习.html', quick: '#view=practice&mode=drill', quickText: '过关练习', wrong: '#view=review&tab=wrong', wrongText: '错题复盘' },
+    { key: 'flash',    name: '语法闪练',    icon: '⚡', accent: '#7c5cd6', href: '英语/语法闪练.html', desc: '134 题点选闪练 · 错题自动重练',
+      file: '语法闪练.html', quick: '', quickText: '', wrong: '', wrongText: '',
+      note: '考前突击：点一下就知道对错，做错的当晚重练到会' },
     { key: 'words',    name: '英语单词',    icon: '📖', accent: '#1f7a56',
       href: IS_FILE ? 'https://ataotao.github.io/' : '../index.html',
       file: '站点首页', quick: '', quickText: '', wrong: '', wrongText: '',
@@ -190,7 +193,8 @@
     { key: 'physScaffold.v2', subject: 'physics' },
     { key: 'fn_scaffold_v1', subject: 'math' },
     { key: 'jjb-jiuzhong-shang-v1', subject: 'firstaid' },
-    { key: 'eng9a-practice-v1', subject: 'english' }
+    { key: 'eng9a-practice-v1', subject: 'english' },
+    { key: 'eng9a-flash-v1', subject: 'flash' }
   ];
 
   // ---------- 工具 ----------
@@ -366,6 +370,29 @@
       for (var k2 in (v.at || {})) stamps.push(v.at[k2]);
       stamps.forEach(function (stamp) {
         var d = dateFromStamp(stamp);
+        if (!d) return;
+        if (!s.last || d > s.last) s.last = d;
+        if (todayKey(d) === today) seenToday += 1;
+      });
+      s.today = seenToday > 0 ? 1 : 0;
+    })();
+
+    // 英语语法闪练（eng9a-flash-v1：stat[id] = att/ok/wrong/peek/at，另有 rounds[]）
+    (function () {
+      var v = readJSON('eng9a-flash-v1'); if (!v) return;
+      var s = bump('flash');
+      var today = todayKey();
+      var seenToday = 0;
+      for (var id in (v.stat || {})) {
+        var r = v.stat[id] || {};
+        s.attempts += num(r.att); s.correct += num(r.ok); s.wrong += num(r.wrong);
+        var d = dateFromStamp(r.at);
+        if (!d) continue;
+        if (!s.last || d > s.last) s.last = d;
+        if (todayKey(d) === today) seenToday += 1;
+      }
+      (v.rounds || []).forEach(function (rd) {
+        var d = dateFromStamp(rd && rd.endAt);
         if (!d) return;
         if (!s.last || d > s.last) s.last = d;
         if (todayKey(d) === today) seenToday += 1;
