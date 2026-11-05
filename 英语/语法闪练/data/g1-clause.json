@@ -1,0 +1,547 @@
+{
+  "group": "clause",
+  "title": "从句与句子类型",
+  "block": 1,
+  "items": [
+    {
+      "id": "cl-001",
+      "topic": "adj + that 从句",
+      "level": 1,
+      "stem": "Wang Zhenyi was sure ______ the lunar eclipse was a natural event, not a sign from heaven.",
+      "cn": null,
+      "options": [
+        "that",
+        "what",
+        "which",
+        "whether"
+      ],
+      "answer": "A",
+      "rule": "sure/certain/afraid/glad 后的 that 从句中 that 不作成分，只起连接作用。",
+      "trap": "从句主宾齐全时只能填 that；what、which 必须自己在从句里当主语或宾语。",
+      "src": "U1 · 复习指引",
+      "verified": true
+    },
+    {
+      "id": "cl-002",
+      "topic": "adj + that 从句",
+      "level": 1,
+      "stem": "Mr Li was glad ______ his students had put the safety rules into practice.",
+      "cn": null,
+      "options": [
+        "what",
+        "which",
+        "whether",
+        "that"
+      ],
+      "answer": "D",
+      "rule": "glad/sorry/afraid 等形容词后接陈述事实的从句用 that，that 可省略。",
+      "trap": "从句已完整，别再塞 what/which；填 whether 等于问“是否”，与事实句意矛盾。",
+      "src": "U3 · 复习指引",
+      "verified": true
+    },
+    {
+      "id": "cl-003",
+      "topic": "宾语从句",
+      "level": 3,
+      "stem": "Scientists were not sure ______ they could use to measure the temperature of boiling water.",
+      "cn": null,
+      "options": [
+        "that",
+        "what",
+        "how",
+        "whether"
+      ],
+      "answer": "B",
+      "rule": "从句里 use 缺宾语时用 what：它既起连接作用，又在从句里充当宾语。",
+      "trap": "not sure 后面不一定是 that；先数从句缺不缺成分，缺宾语就选 what。",
+      "src": "U2 · 复习指引",
+      "verified": true
+    },
+    {
+      "id": "cl-004",
+      "topic": "it 作形式主语",
+      "level": 1,
+      "stem": "______ is necessary that every student should know how to deal with pressure before the exam.",
+      "cn": null,
+      "options": [
+        "It",
+        "That",
+        "This",
+        "There"
+      ],
+      "answer": "A",
+      "rule": "真正主语是 that 从句且太长时，句首用 it 占位，从句移到后面。",
+      "trap": "后面的 that 从句已经当主语，句首只能填 it，别再填 That。",
+      "src": "U4 · 复习指引",
+      "verified": true
+    },
+    {
+      "id": "cl-005",
+      "topic": "it 作形式主语",
+      "level": 2,
+      "stem": "It is very kind ______ you to help the old people in the community centre every Saturday.",
+      "cn": null,
+      "options": [
+        "for",
+        "to",
+        "of",
+        "with"
+      ],
+      "answer": "C",
+      "rule": "It is + 评价人的形容词（kind/nice/polite）+ of sb + to do 句型。",
+      "trap": "kind 说的是“你”这个人的品质，所以用 of；说事情难易才用 for。",
+      "src": "U4 · 复习指引",
+      "verified": true
+    },
+    {
+      "id": "cl-006",
+      "topic": "it 作形式主语",
+      "level": 2,
+      "stem": "It is important ______ teenagers to keep a good habit of reading English aloud every morning.",
+      "cn": null,
+      "options": [
+        "for",
+        "of",
+        "with",
+        "to"
+      ],
+      "answer": "A",
+      "rule": "It is + 评价事情的形容词（如 important）+ for sb + to do。",
+      "trap": "important 评的是“早读这件事”，不是人的品格，所以不能填 of。",
+      "src": "U4 · 复习指引",
+      "verified": true
+    },
+    {
+      "id": "cl-007",
+      "topic": "宾语从句",
+      "level": 2,
+      "stem": "The volunteer asked me ______ I had ever helped at the old people's home before.",
+      "cn": null,
+      "options": [
+        "that",
+        "what",
+        "which",
+        "if"
+      ],
+      "answer": "D",
+      "rule": "ask 后表示“是否”用 if 或 whether 引导宾语从句，表示事实才用 that。",
+      "trap": "ever、有没有做过，问的是“是否”，that 无法表达疑问。",
+      "src": "U4 · 复习指引",
+      "verified": true
+    },
+    {
+      "id": "cl-008",
+      "topic": "宾语从句",
+      "level": 2,
+      "stem": "It depends on ______ our class can raise enough money for the volunteer trip.",
+      "cn": null,
+      "options": [
+        "whether",
+        "that",
+        "if",
+        "what"
+      ],
+      "answer": "A",
+      "rule": "介词后面接“是否”只能用 whether，不能用 if；whether 从句可作介词宾语。",
+      "trap": "看到 depends on 别填 if：on 后面被介词卡住，只能 whether。",
+      "src": "U4 · 复习指引",
+      "verified": true
+    },
+    {
+      "id": "cl-009",
+      "topic": "宾语从句语序",
+      "level": 1,
+      "stem": "Could you tell me ______ the science museum tomorrow?",
+      "cn": null,
+      "options": [
+        "when will we visit",
+        "when we will visit",
+        "when do we visit",
+        "when did we visit"
+      ],
+      "answer": "B",
+      "rule": "宾语从句一律用陈述语序：连接词 + 主语 + 谓语，助动词不再提前。",
+      "trap": "别照着问句抄 when will we；从句部分要把 we will 摆回正序。",
+      "src": "U2 · 复习指引",
+      "verified": true
+    },
+    {
+      "id": "cl-010",
+      "topic": "宾语从句语序",
+      "level": 2,
+      "stem": "Nobody told me ______ after the science show, so I had to wait outside.",
+      "cn": null,
+      "options": [
+        "where did the two geniuses go",
+        "where went the two geniuses",
+        "where had the two geniuses gone",
+        "where the two geniuses had gone"
+      ],
+      "answer": "D",
+      "rule": "疑问词后直接跟主语，从句不再倒装，也不用 did 加动词原形。",
+      "trap": "从句里不能倒装：did/had 后面要先接主语，别再写成问句语序。",
+      "src": "U2 · 复习指引",
+      "verified": true
+    },
+    {
+      "id": "cl-011",
+      "topic": "宾语从句语序",
+      "level": 3,
+      "stem": "The reporter asked Wang Zhenyi ______ such an accurate model of the lunar eclipse.",
+      "cn": null,
+      "options": [
+        "how did she make",
+        "how she had made",
+        "how she has made",
+        "what she had made"
+      ],
+      "answer": "B",
+      "rule": "宾语从句先保证陈述语序，再让从句时态呼应主句的过去时。",
+      "trap": "疑问词后出现 did 就是词序错；主句 asked 是过去时，从句要退到过去。",
+      "src": "U1 · 复习指引",
+      "verified": true
+    },
+    {
+      "id": "cl-012",
+      "topic": "宾语从句时态",
+      "level": 1,
+      "stem": "In class, our science teacher told us that light ______ much faster than sound.",
+      "cn": null,
+      "options": [
+        "travelled",
+        "has travelled",
+        "travels",
+        "would travel"
+      ],
+      "answer": "C",
+      "rule": "宾语从句表客观真理、自然规律时，主句即使过去时，从句仍用一般现在时。",
+      "trap": "别看到 told 就把从句退回过去；光速是客观事实，永远用现在时。",
+      "src": "U1 · 复习指引",
+      "verified": true
+    },
+    {
+      "id": "cl-013",
+      "topic": "宾语从句时态",
+      "level": 2,
+      "stem": "The head teacher announced that the school ______ a science show the next Friday.",
+      "cn": null,
+      "options": [
+        "will hold",
+        "holds",
+        "would hold",
+        "has held"
+      ],
+      "answer": "C",
+      "rule": "主句是过去时，从句的将来要改成 would do，时间状语也随之改写。",
+      "trap": "announced 是过去时，别把 will 原样搬进从句，will 要变 would。",
+      "src": "U4 · 复习指引",
+      "verified": true
+    },
+    {
+      "id": "cl-014",
+      "topic": "宾语从句时态",
+      "level": 1,
+      "stem": "Mary said she ______ very nervous before her speech last Friday.",
+      "cn": null,
+      "options": [
+        "is",
+        "has been",
+        "will be",
+        "was"
+      ],
+      "answer": "D",
+      "rule": "主句 said 是过去时，从句描述过去的事用一般过去时，前后时态一致。",
+      "trap": "从句有 last Friday，主句又已过去，is、will be、has been 都站不住。",
+      "src": "U3 · 复习指引",
+      "verified": true
+    },
+    {
+      "id": "cl-015",
+      "topic": "状语从句",
+      "level": 2,
+      "stem": "______ I was reading about Archimedes, my sister was drawing a picture of the golden crown.",
+      "cn": null,
+      "options": [
+        "While",
+        "Until",
+        "As soon as",
+        "So that"
+      ],
+      "answer": "A",
+      "rule": "while 引导的时间状语从句常用进行时，表示主从句两个动作同时进行。",
+      "trap": "两个 was doing 并排出现指“同时”；until、so that 都不表同时。",
+      "src": "U1 · 复习指引",
+      "verified": true
+    },
+    {
+      "id": "cl-016",
+      "topic": "状语从句",
+      "level": 2,
+      "stem": "Please speak more slowly ______ everyone in the class can follow you.",
+      "cn": null,
+      "options": [
+        "because",
+        "though",
+        "even if",
+        "so that"
+      ],
+      "answer": "D",
+      "rule": "so that 引导目的状语从句，从句常带 can/could/would；because 表原因。",
+      "trap": "“让大家都听懂”是目的，不是原因也不是让步；even if 会读成“即使大家都懂”。",
+      "src": "U4 · 复习指引",
+      "verified": true
+    },
+    {
+      "id": "cl-017",
+      "topic": "条件状语从句",
+      "level": 1,
+      "stem": "If the rain ______ tomorrow, we will visit the science museum with our foreign friends.",
+      "cn": null,
+      "options": [
+        "stops",
+        "will stop",
+        "stopped",
+        "has stopped"
+      ],
+      "answer": "A",
+      "rule": "if 条件状语从句表将来用一般现在时，主句才用 will，即“主将从现”。",
+      "trap": "从句里有 tomorrow 也不能用 will stop；主将从现只看从句位置。",
+      "src": "U1 · 复习指引",
+      "verified": true
+    },
+    {
+      "id": "cl-018",
+      "topic": "条件状语从句",
+      "level": 2,
+      "stem": "You will never get rid of the pressure ______ you learn to share your feelings with others.",
+      "cn": null,
+      "options": [
+        "unless",
+        "if",
+        "though",
+        "because"
+      ],
+      "answer": "A",
+      "rule": "unless 意为 if not，引导否定的条件；主句用将来时，从句用一般现在时。",
+      "trap": "“否则摆脱不了压力”要的是“除非”；填 if 意思正好相反。",
+      "src": "U4 · 复习指引",
+      "verified": true
+    },
+    {
+      "id": "cl-019",
+      "topic": "让步状语从句",
+      "level": 1,
+      "stem": "______ her life was short, Wang Zhenyi still wrote many important books about the stars.",
+      "cn": null,
+      "options": [
+        "But",
+        "Although",
+        "Because",
+        "If"
+      ],
+      "answer": "B",
+      "rule": "although/though 引出让步从句放句首，主句前用逗号，后面不再加 but。",
+      "trap": "句首是从句位置，只能放 Although；But 不能这样带从句作状语。",
+      "src": "U1 · 复习指引",
+      "verified": true
+    },
+    {
+      "id": "cl-020",
+      "topic": "让步状语从句",
+      "level": 2,
+      "stem": "Though the young inventor failed many times, ______ he never gave up his idea.",
+      "cn": null,
+      "options": [
+        "but",
+        "and",
+        "so",
+        "—（不填）"
+      ],
+      "answer": "D",
+      "rule": "though/although 不与 but、and 等并列连词连用；主句直接接主语。",
+      "trap": "中文“虽然……但是”要拆开，只能留一个连词；此空不填才是对的。",
+      "src": "U2 · 复习指引",
+      "verified": true
+    },
+    {
+      "id": "cl-021",
+      "topic": "名词性从句",
+      "level": 3,
+      "stem": "______ the ancient people believed about the eclipse turned out to be wrong.",
+      "cn": null,
+      "options": [
+        "What",
+        "That",
+        "Which",
+        "How"
+      ],
+      "answer": "A",
+      "rule": "主语从句缺宾语时用 what：它既连接又在从句中当宾语，that 不能作成分。",
+      "trap": "believed 后面没有宾语，填 that 会让从句断掉；what 才补得上。",
+      "src": "U1 · 复习指引",
+      "verified": true
+    },
+    {
+      "id": "cl-022",
+      "topic": "名词性从句",
+      "level": 2,
+      "stem": "The trouble is ______ the new machine in the lab keeps making strange noises.",
+      "cn": null,
+      "options": [
+        "what",
+        "that",
+        "whether",
+        "how"
+      ],
+      "answer": "B",
+      "rule": "表语从句用 that 引导时，that 不作成分，只把从句接到 be 动词后面。",
+      "trap": "be 后面的从句主宾齐全就该用 that；别看到 is 就条件反射选 what。",
+      "src": "U2 · 复习指引",
+      "verified": true
+    },
+    {
+      "id": "cl-023",
+      "topic": "感叹句",
+      "level": 1,
+      "stem": "______ clever answer the little boy gave to the teacher's question!",
+      "cn": null,
+      "options": [
+        "What",
+        "What a",
+        "How",
+        "How a"
+      ],
+      "answer": "B",
+      "rule": "What a/an + 形容词 + 可数名词单数 + 主语 + 谓语；how 只接形容词或副词。",
+      "trap": "空后紧跟单数名词 answer，要 What a；只写 What 就漏了冠词。",
+      "src": "U1 · 复习指引",
+      "verified": true
+    },
+    {
+      "id": "cl-024",
+      "topic": "感叹句",
+      "level": 2,
+      "stem": "______ great progress the volunteer team has made this term!",
+      "cn": null,
+      "options": [
+        "What a",
+        "How",
+        "How a",
+        "What"
+      ],
+      "answer": "D",
+      "rule": "不可数名词前感叹用 What + 形容词 + 名词，不加 a/an；how 只修饰形/副。",
+      "trap": "progress 不可数，加 a 就错；空后是名词短语就用 What。",
+      "src": "U4 · 复习指引",
+      "verified": true
+    },
+    {
+      "id": "cl-025",
+      "topic": "感叹句",
+      "level": 2,
+      "stem": "______ interesting stories the old artist told us about his childhood!",
+      "cn": null,
+      "options": [
+        "How",
+        "What a",
+        "What",
+        "How a"
+      ],
+      "answer": "C",
+      "rule": "复数名词前感叹也用 What + 形容词 + 名词；how 后面不能直接跟名词。",
+      "trap": "stories 是复数，What a 立刻排掉；剩下 What 才接名词短语。",
+      "src": "U3 · 复习指引",
+      "verified": true
+    },
+    {
+      "id": "cl-026",
+      "topic": "感叹句",
+      "level": 2,
+      "stem": "______ hard the young scientist worked to make her model of the eclipse accurate!",
+      "cn": null,
+      "options": [
+        "What",
+        "What a",
+        "How",
+        "How a"
+      ],
+      "answer": "C",
+      "rule": "How + 形容词/副词 + 主语 + 谓语；中心词是形/副时用 how 不用 what。",
+      "trap": "空后是副词 hard 修饰 worked，不是名词，所以不能用 What。",
+      "src": "U1 · 复习指引",
+      "verified": true
+    },
+    {
+      "id": "cl-027",
+      "topic": "特殊疑问句",
+      "level": 2,
+      "stem": "—______ will the new library be open to students? —In about two weeks, I think.",
+      "cn": null,
+      "options": [
+        "How long",
+        "How often",
+        "How soon",
+        "How far"
+      ],
+      "answer": "C",
+      "rule": "How soon 问“多久以后”，答语常用 in + 一段时间；How long 问持续时间。",
+      "trap": "in about two weeks 是“两周后”，不是“持续两周”，别选 How long。",
+      "src": "U2 · 复习指引",
+      "verified": true
+    },
+    {
+      "id": "cl-028",
+      "topic": "特殊疑问句",
+      "level": 2,
+      "stem": "—______ does your class go to the community centre to help the old? —Once a month.",
+      "cn": null,
+      "options": [
+        "How long",
+        "How soon",
+        "How often",
+        "How far"
+      ],
+      "answer": "C",
+      "rule": "How often 问频率，答语是 once a month、twice a week 这类次数。",
+      "trap": "答语是频率，选 How often；How soon 必须配 in + 一段时间。",
+      "src": "U4 · 复习指引",
+      "verified": true
+    },
+    {
+      "id": "cl-029",
+      "topic": "祈使句",
+      "level": 1,
+      "stem": "Be careful with the glass tube, ______ you will break it.",
+      "cn": null,
+      "options": [
+        "and",
+        "but",
+        "so",
+        "or"
+      ],
+      "answer": "D",
+      "rule": "祈使句 + and + 好结果；祈使句 + or + 坏结果，“or”意为“否则”。",
+      "trap": "“小心，否则会摔碎”是坏结果，用 or；填 and 意思会变成“就会”。",
+      "src": "U2 · 复习指引",
+      "verified": true
+    },
+    {
+      "id": "cl-030",
+      "topic": "直接引语间接引语",
+      "level": 3,
+      "stem": "Alex said, 'We will visit the science museum next week,' so he told me that they ______ the science museum the next week.",
+      "cn": null,
+      "options": [
+        "visit",
+        "visited",
+        "would visit",
+        "have visited"
+      ],
+      "answer": "C",
+      "rule": "直接引语变间接引语：人称跟着转述人改，时态后退一步，will 变 would。",
+      "trap": "said 后转述，will 要退成 would；人称 we 也要改成 they。",
+      "src": "U2 · 复习指引",
+      "verified": true
+    }
+  ]
+}
