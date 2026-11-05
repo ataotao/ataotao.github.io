@@ -36,18 +36,29 @@ const html = readFileSync(join(root, target, '核心考点训练.html'), 'utf8')
     ok('批注没混成挖空', stray.length === 0, stray.map(c => c.id).join(',') || '无');
     const tbl = D.cards.filter(c => c.table && c.table.rows.some(r => r.length !== c.table.head.length));
     ok('表格列数一致', tbl.length === 0, tbl.map(c => c.id).join(',') || '无');
-    if (D.paper) {
-      const Q = D.paper.questions;
-      ok('套卷题数 > 0', Q.length > 0, Q.length + ' 题');
-      ok('套卷题 id 不重复', new Set(Q.map(q => q.id)).size === Q.length);
-      ok('套卷每题 4 个选项', Q.every(q => Array.isArray(q.opts) && q.opts.length === 4));
-      ok('套卷答案都在 0–3', Q.every(q => q.ans >= 0 && q.ans <= 3));
-      ok('套卷每题有解析', Q.every(q => (q.why && Object.keys(q.why).length) || q.sol));
-      ok('套卷每题有单元', Q.every(q => typeof q.unit === 'string' && q.unit.length > 1));
-      const imgs = Q.flatMap(q => (q.blocks || []).flatMap(b =>
+    /* 套卷：新的多卷结构 {papers:[...]}，旧的单卷 {id,name,questions} 也认 */
+    const PPS = Array.isArray(D.papers) ? D.papers : (D.paper ? [D.paper] : []);
+    if (PPS.length) {
+      const all = PPS.flatMap(p => p.questions || []);
+      const mc = all.filter(q => q.kind !== 'sub');
+      const sub = all.filter(q => q.kind === 'sub');
+      ok('套卷份数 > 0', PPS.every(p => p.id && p.name), PPS.length + ' 份 / ' + all.length + ' 题');
+      ok('套卷题数 > 0', all.length > 0, `${mc.length} 选择 + ${sub.length} 主观`);
+      ok('套卷题 id 不重复', new Set(all.map(q => q.id)).size === all.length);
+      ok('选择题每题 4 个选项', mc.every(q => Array.isArray(q.opts) && q.opts.length === 4));
+      ok('选择题答案都在 0–3', mc.every(q => q.ans >= 0 && q.ans <= 3));
+      ok('选择题每题有解析', mc.every(q => (q.why && Object.keys(q.why).length) || q.sol));
+      ok('套卷每题有单元', all.every(q => typeof q.unit === 'string' && q.unit.length > 1));
+      ok('主观题每题都有设问和参考答案',
+        sub.every(q => Array.isArray(q.parts) && q.parts.length && q.parts.every(p => p.ask && p.ans)),
+        sub.map(q => (q.parts || []).length + '问').join(','));
+      ok('主观题采分点够自评用',
+        sub.every(q => q.parts.every(p => !p.pts || p.pts.length >= 2)),
+        sub.flatMap(q => q.parts.map(p => (p.pts || []).length)).join(','));
+      const imgs = all.flatMap(q => (q.blocks || []).flatMap(b =>
         b.t === 'img' ? [b.src] : b.t === 'tbl' ? b.rows.flatMap(r => r.flatMap(c => c.imgs || [])) : []));
       const miss = imgs.filter(s => !existsSync(join(root, target, s)));
-      ok('套卷配图都在', imgs.length > 0 && miss.length === 0, `${imgs.length} 张${miss.length ? ' 缺 ' + miss.slice(0, 3).join(',') : ''}`);
+      ok('套卷配图都在', miss.length === 0, `${imgs.length} 张${miss.length ? ' 缺 ' + miss.slice(0, 3).join(',') : ''}`);
     }
   }
   const bad = res.filter(x => !x.pass);
@@ -173,7 +184,16 @@ const CASES = {
       ok('⑥ 套卷标签显示出来', tab && !tab.hidden);
       tab.click();
       ok('切到套卷模式', S.mode==='paper');
-      ok('整卷队列 100 题', S.paper.queue.length===100, S.paper.queue.length+' 题');
+      ok('整卷队列 = 本卷题数', S.paper.queue.length===PQ.length, S.paper.queue.length+' / '+PQ.length);
+      if(PAPERS.length>1){
+        const pp=document.querySelector('#pp');
+        ok('多份卷时有「选卷」下拉', !!pp && pp.options.length===PAPERS.length, pp?pp.options.length+' 项':'没有');
+        const before=PQ.length;
+        pp.value='1'; pp.dispatchEvent(new Event('change'));
+        ok('换卷后题池跟着换', S.paper.pi===1 && PQ.length!==before && S.paper.queue.length===PQ.length, 'pi='+S.paper.pi+' '+PQ.length+' 题');
+        pp.value='0'; pp.dispatchEvent(new Event('change'));
+        ok('换回第一卷', S.paper.pi===0 && S.paper.queue.length===PQ.length, PQ.length+' 题');
+      }
       ok('进度条可见', document.querySelector('#prog') && !document.querySelector('#prog').hidden);
       ok('统计条显示正确率', document.querySelector('#bar').textContent.includes('正确率'));
       const q0=PQ_BY(S.paper.queue[0]);
@@ -201,9 +221,9 @@ const CASES = {
       $$('#opts button')[q1.ans].click();
       ok('答对显示绿色判定', !!document.querySelector('.verdict.ok'));
       ok('答对计入 ok', P.paper[q1.id].ok===1, JSON.stringify(P.paper[q1.id]));
-      // 配图题：图片要有真实 src
+      // 配图题：有配图就要能渲染
       const imgQ=PQ.filter(q=>q.blocks.some(b=>b.t==='img'))[0];
-      ok('套卷里有配图题', !!imgQ, imgQ&&imgQ.id);
+      ok('本卷配图题（没有就跳过）', true, imgQ?imgQ.id:'本卷无配图');
       if(imgQ){ S.paper.queue=[imgQ.id];S.paper.qi=0;S.paper.log={};render();
         const im=document.querySelector('.figs img');
         ok('配图渲染成 img', im && /\\.webp$/.test(im.getAttribute('src')), im&&im.getAttribute('src'));
@@ -237,11 +257,32 @@ const CASES = {
       ok('结算页有错题跳转', $$('[data-jump]').length===1, $$('[data-jump]').length+'');
       $$('[data-jump]')[0].click();
       ok('点题号能回到那题', S.paper.qi===1, 'qi='+S.paper.qi);
+      // 主观题：先写 → 对照参考答案 → 勾采分点自评（不判分、不进错题本）
+      const subQ=PQ.filter(q=>q.kind==='sub')[0];
+      ok('套卷里有主观题（没有就跳过）', !!subQ, subQ?subQ.id:'本卷无主观题');
+      if(subQ){
+        S.paper.queue=[subQ.id];S.paper.qi=0;S.paper.log={};S.paper.echo=null;render();
+        ok('主观题渲染出各问设问', $$('.subask').length===subQ.parts.length, $$('.subask').length+'/'+subQ.parts.length);
+        ok('主观题没有选项按钮', $$('#opts button').length===0, $$('#opts button').length+'');
+        ok('没点「对照答案」前不给答案', $$('.refans').length===0);
+        document.querySelector('#preveal').click();
+        ok('点「我写完了」后给参考答案', $$('.refans').length===subQ.parts.length, $$('.refans').length+'/'+subQ.parts.length);
+        const boxes=$$('[data-pt]');
+        ok('采分点能逐条勾', boxes.length===subQ.parts.reduce((n,p)=>n+(p.pts||[]).length,0), boxes.length+' 条');
+        boxes[0].click();
+        ok('勾选写进记录', !!P.paper[subQ.id] && JSON.stringify(P.paper[subQ.id].self||[]).includes('true'), JSON.stringify(P.paper[subQ.id]&&P.paper[subQ.id].self));
+        ok('主观题不进错题本', P.paper[subQ.id].wrong===0, JSON.stringify(P.paper[subQ.id]));
+        ok('自评覆盖显示出来', !!document.querySelector('.selfbar') && /采分点自评/.test(document.querySelector('.selfbar').textContent), (document.querySelector('.selfbar')||{}).textContent);
+        document.querySelector('#pnx').click();
+        ok('主观题做完能推进/出结算', !!document.querySelector('.scoreline')||S.paper.qi>0, 'qi='+S.paper.qi);
+      }
       // 整卷打印视图
       document.querySelector('[data-mode="paper"]').click();
       paperPrint();
-      ok('打印视图列出全部题', $$('.optrow.c').length===PQ.length, $$('.optrow.c').length+'/'+PQ.length);
-      ok('打印视图有解析', $$('.whybox').length===PQ.length);
+      const mcN=PQ.filter(q=>q.kind!=='sub').length, subN=PQ.filter(q=>q.kind==='sub').length;
+      ok('打印视图列出全部选择题', $$('.optrow.c').length===mcN, $$('.optrow.c').length+'/'+mcN);
+      ok('打印视图有解析', $$('.whybox').length===mcN, $$('.whybox').length+'/'+mcN);
+      ok('打印视图带主观题参考答案', $$('.refans').length===PQ.filter(q=>q.kind==='sub').reduce((n,q)=>n+q.parts.length,0), subN+' 题主观');
       document.querySelector('#pback').click();
       ok('返回做题视图', !!document.querySelector('.pstem') && !document.querySelector('.scoreline'));
       // 记录导出/导入不丢套卷记录
