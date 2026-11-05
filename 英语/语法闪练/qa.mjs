@@ -123,6 +123,21 @@ async function answerWith(correct) {
   await sleep(140);
   return s.round;
 }
+/* 结算页考点表快照：rows[i].cells = [考点, 题数, 正确, 正确率] */
+const tableSnapshot = () => $(`(() => ({
+  pct: document.querySelector('#rt-pct').textContent.trim(),
+  sub: document.querySelector('#rt-sub').textContent.trim(),
+  rows: [...document.querySelectorAll('#rt-body tr')].map(tr => ({
+    topic: tr.querySelector('td.tp') ? tr.querySelector('td.tp').textContent.trim() : '',
+    cells: [...tr.querySelectorAll('td')].map(td => td.textContent.trim()),
+    weak: tr.classList.contains('weak') })) }))()`);
+function sumCol(rows, i) {
+  return rows.reduce((a, r) => a + (Number(r.cells[i]) || 0), 0);
+}
+function parsedXY(sub) {
+  const m = String(sub).match(/对\s*(\d+)\s*\/\s*(\d+)/);
+  return m ? { x: Number(m[1]), y: Number(m[2]) } : null;
+}
 
 /* ── 1. 启动与开始屏 ─────────────────────────── */
 group("启动与开始屏");
@@ -384,12 +399,15 @@ ok("重练错题按钮带数量", /重练错题（\d+）/.test(rt.redo) && /（1
 ok("重练错题按钮可用（N>0）", !rt.redoDis);
 ok("鼓励语指向弱项考点", rt.note.length > 8 && (last.perTopic.some((t) => t.ok / t.total < 0.6) ? /再看一眼/.test(rt.note) : true), rt.note);
 ok("结算页有「考前口诀卡」入口", rt.docBtn);
+ok("本轮没看答案时结算页不显示「另有…看了答案」", !(await $(`document.querySelector('#rt-peek').classList.contains('show')`)));
 ok("本轮写入 rounds（1 条）", S.store.rounds.length === 1, JSON.stringify(S.store.rounds));
 {
   const r = S.store.rounds[0];
   ok("rounds 字段完整", r.mode === "block" && r.total === last.total && r.ok === last.ok &&
     Array.isArray(r.wrongIds) && r.wrongIds.length === 1 && /^\d{4}-\d{2}-\d{2}T/.test(r.startAt) && r.costMs > 0,
     JSON.stringify(r));
+  ok("没看答案的一轮 rounds.peek = 0 且 peekIds 为空", (r.peek || 0) === 0 && Array.isArray(r.peekIds) && r.peekIds.length === 0,
+    JSON.stringify({ peek: r.peek, ids: r.peekIds }));
 }
 ok("localStorage 键 eng9a-flash-v1 已写入（含 settings/current）", await $(`(() => { try {
   const v = JSON.parse(localStorage.getItem('eng9a-flash-v1') || 'null');
@@ -449,6 +467,253 @@ ok("队列里每题都是做错过的", S.round && S.round.itemId && wrongSet.in
   (S.round && S.round.itemId) + " in " + JSON.stringify(wrongSet));
 await pressEsc();
 await sleep(500);
+
+/* ── 5.5 看答案（逃生阀：不计分、进重练） ─────── */
+group("看答案（不计分、进重练）");
+await reload("");
+await click(`.bcard[data-block="${smallest.block}"]`);
+await sleep(420);
+S = await state();
+const PN = S.round.listLen;
+const pkBtnInfo = await $(`(() => { const b = document.querySelector('#qcard [data-act="peek"]');
+  if (!b) return null;
+  const cs = getComputedStyle(b);
+  const r = b.getBoundingClientRect();
+  const opts = [...document.querySelectorAll('#qcard .opt')];
+  const lastOpt = opts[opts.length - 1].getBoundingClientRect();
+  const fb = document.querySelector('#fb');
+  return { text: b.textContent.trim(), cls: b.className, h: Math.round(r.height),
+    top: Math.round(r.top), lastOptBottom: Math.round(lastOpt.bottom),
+    beforeFb: !!(fb && (b.compareDocumentPosition(fb) & Node.DOCUMENT_POSITION_FOLLOWING)),
+    bg: cs.backgroundColor, color: cs.color }; })()`);
+ok("未判题显示「看答案」按钮", pkBtnInfo && pkBtnInfo.text === "看答案", JSON.stringify(pkBtnInfo));
+ok("「看答案」是次要样式（虚线浅灰，不是紫色主按钮）",
+  pkBtnInfo && /peeklink/.test(pkBtnInfo.cls) && pkBtnInfo.bg !== "rgb(124, 92, 214)" && pkBtnInfo.h >= 30,
+  JSON.stringify(pkBtnInfo && { cls: pkBtnInfo.cls, bg: pkBtnInfo.bg, h: pkBtnInfo.h }));
+ok("「看答案」在选项下方、反馈区上方",
+  pkBtnInfo && pkBtnInfo.top >= pkBtnInfo.lastOptBottom - 1 && pkBtnInfo.beforeFb === true,
+  JSON.stringify(pkBtnInfo && { top: pkBtnInfo.top, optBottom: pkBtnInfo.lastOptBottom, beforeFb: pkBtnInfo.beforeFb }));
+
+const q1 = S.round;
+const q1Id = q1.itemId;
+const statBefore = Object.assign({ att: 0, ok: 0, wrong: 0 }, S.store.stat[q1Id] || {});
+await click('#qcard [data-act="peek"]');
+await sleep(260);
+const pk = await $(`(() => { const fb = document.querySelector('#fb');
+  const ack = fb && fb.querySelector('[data-act="ack"]');
+  const head = fb && fb.querySelector('.fb-head');
+  return { right: !!document.querySelector('#qcard .opt.is-right'),
+    bad: !!document.querySelector('#qcard .opt.is-bad'),
+    locked: [...document.querySelectorAll('#qcard .opt')].every(o => o.disabled),
+    peekBtn: !!document.querySelector('#qcard [data-act="peek"]'),
+    fbCls: fb ? fb.className : '', fbText: fb ? fb.textContent.trim() : '',
+    head: head ? head.textContent.trim() : '',
+    ack: ack ? ack.textContent.trim() : '', ackH: ack ? Math.round(ack.getBoundingClientRect().height) : 0,
+    prog: document.querySelector('#bar-progress').textContent,
+    rate: document.querySelector('#bar-rate').textContent.trim(),
+    toast: (document.querySelector('#toast') || {}).textContent || '' }; })()`);
+ok("点「看答案」：正确项绿框、不给任何选项标红", pk.right && !pk.bad, JSON.stringify({ r: pk.right, b: pk.bad }));
+ok("点「看答案」：选项全部锁死", pk.locked);
+ok("点「看答案」：反馈是琥珀中性样式（不是绿色 ✓）",
+  /fb-peek/.test(pk.fbCls) && !/fb-ok/.test(pk.fbCls) && /👀 看答案/.test(pk.head) && !/✓/.test(pk.head),
+  JSON.stringify({ cls: pk.fbCls, head: pk.head }));
+ok("点「看答案」：反馈写「考点 / 规则 / 易错点 / 出处」",
+  /考点：/.test(pk.fbText) && pk.fbText.indexOf(q1.topic) >= 0 && /规则：/.test(pk.fbText) &&
+  /易错点：/.test(pk.fbText) && (/出处：/.test(pk.fbText) || !q1.src), pk.fbText.slice(0, 170));
+ok("点「看答案」：明确写「这题没计入正确率，已加入重练」",
+  /没计入正确率/.test(pk.fbText) && /已加入重练/.test(pk.fbText), pk.fbText.slice(-60));
+ok("点「看答案」：按钮变「下一题 →」且 ≥44px", /下一题/.test(pk.ack) && pk.ackH >= 44, JSON.stringify({ t: pk.ack, h: pk.ackH }));
+ok("看答案后「看答案」按钮消失", !pk.peekBtn);
+ok("看答案计入进度（1/N）", pk.prog === "1/" + PN, pk.prog);
+ok("看答案后分母为 0 显示「正确率 —」（不是 0/0 0%）", pk.rate === "正确率 —", pk.rate);
+ok("看答案有 toast 提示不计分", /不计分/.test(pk.toast), pk.toast);
+S = await state();
+ok("看答案不计入 stat（不算一次作答）",
+  (S.store.stat[q1Id] || { att: 0 }).att === statBefore.att && (S.store.stat[q1Id] || { wrong: 0 }).wrong === statBefore.wrong,
+  JSON.stringify({ before: statBefore, after: S.store.stat[q1Id] }));
+ok("看答案不计 phaseOk / ok", S.round.phaseOk === 0 && S.round.ok === 0,
+  JSON.stringify({ p: S.round.phaseOk, o: S.round.ok }));
+ok("看答案的题进 redo 队列且 peekIds 记下",
+  S.round.pendingRedo === 1 && S.round.peekIds.indexOf(q1Id) >= 0,
+  JSON.stringify({ pr: S.round.pendingRedo, ids: S.round.peekIds }));
+ok("快照 current 里带 peekIds", S.current && S.current.peekIds.indexOf(q1Id) >= 0,
+  JSON.stringify(S.current && S.current.peekIds));
+
+// 「刚看完答案就刷新」：原样停在讲解态，不再出现按钮
+await hardReload();
+S = await state();
+const hold = await $(`(() => ({
+  peekBtn: !!document.querySelector('#qcard [data-act="peek"]'),
+  right: !!document.querySelector('#qcard .opt.is-right'),
+  bad: !!document.querySelector('#qcard .opt.is-bad'),
+  fb: (document.querySelector('#fb') || {}).textContent || '',
+  rate: document.querySelector('#bar-rate').textContent.trim(),
+  prog: document.querySelector('#bar-progress').textContent }))()`);
+ok("刷新后仍停在这道题的看答案状态",
+  S.view === "drill" && S.round && S.round.itemId === q1Id && S.round.peekHold === true,
+  JSON.stringify({ v: S.view, id: S.round && S.round.itemId, hold: S.round && S.round.peekHold }));
+ok("刷新后「看答案」按钮不出现（已看过）", !hold.peekBtn);
+ok("刷新后正确项仍绿、仍无红色", hold.right && !hold.bad, JSON.stringify({ r: hold.right, b: hold.bad }));
+ok("刷新后仍显示看答案讲解、正确率仍为 —", /看答案/.test(hold.fb) && hold.rate === "正确率 —",
+  JSON.stringify({ rate: hold.rate, prog: hold.prog }));
+ok("刷新后进度仍是 1/N", hold.prog === "1/" + PN, hold.prog);
+ok("刷新后 current.peekIds 仍在", S.current && S.current.peekIds.indexOf(q1Id) >= 0);
+await pressEnter();
+await sleep(240);
+S = await state();
+ok("看完答案按 Enter 进入下一题", S.round && S.round.itemId !== q1Id);
+ok("新一题「看答案」按钮恢复显示", !!(await $(`document.querySelector('#qcard [data-act="peek"]')`)));
+
+// 答对 1 题 + 看答案 1 题 → 顶栏 1/1 100%（不是 1/2 50%）
+await answerWith(true);
+await sleep(120);
+ok("顶栏分母不含看答案：答对 1 + 看答案 1 显示 1/1 100%",
+  (await text("#bar-rate")).indexOf("1/1 100%") >= 0, await text("#bar-rate"));
+ok("此时进度 2/N", (await text("#bar-progress")) === "2/" + PN, await text("#bar-progress"));
+await hardReload();
+S = await state();
+ok("刷新后正确率口径保持 1/1 100%", (await text("#bar-rate")).indexOf("1/1 100%") >= 0 &&
+  S.current && S.current.peekIds.length === 1, JSON.stringify({ rate: await text("#bar-rate") }));
+ok("刷新后进度 2/N", (await text("#bar-progress")) === "2/" + PN);
+await pressEnter();
+await sleep(200);
+
+// 主轮剩下的全做对 → 重练队列里应有「看答案」那道
+{
+  let guard = 0;
+  while (guard++ < 400) {
+    const st = await state();
+    if (!st.round || st.view !== "drill") break;
+    if (st.round.phase !== "main") break;
+    if (!st.round.locked) await answerWith(true);
+    await pressEnter();
+  }
+}
+S = await state();
+ok("主轮结束进入重练轮（看答案的题也在里面）",
+  S.round && S.round.phase === "redo" && S.round.listLen === 1 && S.round.itemId === q1Id,
+  S.round && JSON.stringify({ phase: S.round.phase, len: S.round.listLen, id: S.round.itemId }));
+// 重练轮再看答案：不再重排，只讲 + 下一题
+await click('#qcard [data-act="peek"]');
+await sleep(240);
+S = await state();
+ok("重练轮再看答案不再重排（pendingRedo=0，避免死循环）",
+  S.round && S.round.phase === "redo" && S.round.pendingRedo === 0, JSON.stringify({ pr: S.round && S.round.pendingRedo }));
+ok("重练轮看答案说明不带「已加入重练」",
+  /没计入正确率/.test(await text("#fb")) && !/已加入重练/.test(await text("#fb")), await text("#fb"));
+await pressEnter();
+await sleep(450);
+S = await state();
+ok("重练轮看完答案可以直接结束本轮", S.view === "result", S.view);
+
+// 结算页：Y 不含 peek、另有 N 题、琥珀 chips 可回看
+const rtPeek = await $(`(() => ({ pct: document.querySelector('#rt-pct').textContent.trim(),
+  sub: document.querySelector('#rt-sub').textContent.trim(),
+  peek: document.querySelector('#rt-peek').textContent.trim(),
+  peekShown: document.querySelector('#rt-peek').classList.contains('show'),
+  chips: [...document.querySelectorAll('#rt-chips .chip')].map(c => c.textContent.trim()),
+  chipsShown: document.querySelector('#rt-chips').classList.contains('show'),
+  redo: document.querySelector('#act-redo').textContent.trim() }))()`);
+const pkRound = (S.store.rounds || [])[S.store.rounds.length - 1] || {};
+const pkJudged = (S.store.last.total || 0) - (pkRound.peek || 0);
+ok("结算「对 X / Y」的 Y 不含看答案的题",
+  new RegExp("对\\s*" + S.store.last.ok + "\\s*/\\s*" + pkJudged).test(rtPeek.sub), rtPeek.sub);
+ok("结算大号正确率按（total - peek）算",
+  rtPeek.pct === (pkJudged ? Math.round((S.store.last.ok / pkJudged) * 100) + "%" : "—"),
+  rtPeek.pct + " judged=" + pkJudged);
+ok("结算页出现「另有 1 题看了答案（没计入正确率，已加入重练）」",
+  rtPeek.peekShown && /另有\s*1\s*题看了答案/.test(rtPeek.peek) && /没计入正确率/.test(rtPeek.peek), rtPeek.peek);
+ok("琥珀色 chips 列出看答案的题", rtPeek.chipsShown && rtPeek.chips.length === 1 && rtPeek.chips[0].length > 0,
+  JSON.stringify(rtPeek.chips));
+ok("看答案的题不进错题清单（重练错题 N=0 且禁用）", /（0）/.test(rtPeek.redo) && (await $(`document.querySelector('#act-redo').disabled`)),
+  rtPeek.redo);
+ok("rounds 记录带 peek 计数与 peekIds",
+  pkRound.peek === 1 && Array.isArray(pkRound.peekIds) && pkRound.peekIds.indexOf(q1Id) >= 0,
+  JSON.stringify({ peek: pkRound.peek, ids: pkRound.peekIds }));
+const pkSummary = await $(`window.FLASH_APP.summary()`);
+ok("今晚小结新增「## 看了答案的题」且带 id·topic·出处",
+  /## 看了答案的题/.test(pkSummary) && new RegExp(q1Id).test(pkSummary) &&
+  /正确率：\d+%/.test(pkSummary) && /另有 1 题看了答案/.test(pkSummary), String(pkSummary).slice(0, 260));
+await click('#rt-chips .chip');
+await sleep(300);
+const rv = await $(`(() => ({ open: document.querySelector('#modal').classList.contains('is-open'),
+  right: !!document.querySelector('#modal .rv-opt.is-right'),
+  text: (document.querySelector('#modal-card') || {}).textContent || '' }))()`);
+ok("点 chips 可回看该题（正确项标绿、含规则/出处）",
+  rv.open && rv.right && /规则：/.test(rv.text) && (/出处：/.test(rv.text) || !q1.src), JSON.stringify({ open: rv.open, right: rv.right }));
+await click('[data-act="modal-cancel"]');
+await sleep(200);
+ok("回看弹窗可关闭", !(await $(`document.querySelector('#modal').classList.contains('is-open')`)));
+await shot("qa-06-peek-result");
+// 深链重开结算：口径仍一致（peek 信息来自 rounds 配对）
+await reload("#view=result");
+S = await state();
+ok("深链 #view=result 仍显示看答案口径", S.view === "result" &&
+  /另有\s*1\s*题看了答案/.test(await text("#rt-peek")) && (await $(`document.querySelectorAll('#rt-chips .chip').length`)) === 1,
+  await text("#rt-peek"));
+
+// 结算「考点表现」表：看答案的题要从题数/正确率里剔掉（否则会把没判的题算成答错）
+{
+  const t = await tableSnapshot();
+  const row = t.rows.find((r) => r.topic === q1.topic);
+  const xy = parsedXY(t.sub);
+  ok("考点表把看答案的题从题数里剔除（1 题对 1 = 100%，不是 2 题对 1 = 92%）",
+    row && row.cells[1] === "1" && row.cells[2] === "1" && row.cells[3] === "100%",
+    JSON.stringify(row));
+  ok("考点表 Σ题数 = 对 X / Y 的 Y", xy && sumCol(t.rows, 1) === xy.y,
+    JSON.stringify({ sum: sumCol(t.rows, 1), y: xy && xy.y }));
+  ok("考点表 Σ正确 = 对 X / Y 的 X", xy && sumCol(t.rows, 2) === xy.x,
+    JSON.stringify({ sum: sumCol(t.rows, 2), x: xy && xy.x }));
+  ok("看答案的考点率与大号正确率一致（都是 100%）", t.pct === "100%" && row && row.cells[3] === "100%",
+    JSON.stringify({ pct: t.pct, row: row && row.cells[3] }));
+  const sum = await $(`window.FLASH_APP.summary()`);
+  ok("小结「低于 60% 的考点」同口径：不再把这个 100% 的考点误列弱项",
+    /## 低于 60% 的考点/.test(sum) && !new RegExp("- " + q1.topic + "：").test(sum), String(sum).slice(0, 220));
+}
+await click('[data-act="home"]');
+await sleep(250);
+
+/* ── 5.6 结算表：某考点全看答案 → 0 题 / — / 排最前 ── */
+group("结算考点表：全看答案的考点");
+{
+  const st0 = await state();
+  const byTopic = {};
+  st0.items.filter((i) => i.block === smallest.block).forEach((i) => { byTopic[i.topic] = (byTopic[i.topic] || 0) + 1; });
+  const targetTopic = Object.keys(byTopic).find((t) => byTopic[t] >= 2) || Object.keys(byTopic)[0];
+  ok("找到可用于「全看答案」的考点", !!targetTopic, targetTopic + " × " + byTopic[targetTopic]);
+  await reload("#block=" + smallest.block);
+  {
+    let guard = 0;
+    while (guard++ < 400) {
+      const st = await state();
+      if (!st.round || st.view !== "drill") break;
+      if (st.round.phase === "main" && st.round.topic === targetTopic) {
+        await click('#qcard [data-act="peek"]');
+        await sleep(130);
+      } else if (!st.round.locked) {
+        await answerWith(true);
+      }
+      await pressEnter();
+    }
+  }
+  S = await state();
+  ok("全看答案的一轮能正常进结算", S.view === "result", S.view);
+  const t = await tableSnapshot();
+  const row = t.rows[0] || {};
+  ok("全看答案的考点行：题数 0、正确 0、正确率 —",
+    row.topic === targetTopic && row.cells[1] === "0" && row.cells[2] === "0" && row.cells[3] === "—",
+    JSON.stringify(row));
+  ok("「—」的考点排在最前面并标红", row.topic === targetTopic && row.weak, JSON.stringify(t.rows.slice(0, 2)));
+  const xy = parsedXY(t.sub);
+  ok("全看答案一轮：考点表 Σ题数 = 对 X / Y 的 Y", xy && sumCol(t.rows, 1) === xy.y,
+    JSON.stringify({ sum: sumCol(t.rows, 1), y: xy && xy.y }));
+  ok("全看答案一轮：另有 N 题看了答案", /另有\s*2\s*题看了答案/.test(await text("#rt-peek")), await text("#rt-peek"));
+  const sum = await $(`window.FLASH_APP.summary()`);
+  ok("小结里「—」考点按 0 题/— 列出",
+    new RegExp("- " + targetTopic + "：0 题对 0（—）").test(sum), String(sum).slice(0, 260));
+}
+await click('[data-act="home"]');
+await sleep(250);
 
 /* ── 6. 深链 ─────────────────────────────────── */
 group("深链");
@@ -611,6 +876,32 @@ ok("390 视口选项高度 ≥48px", mob.opts.every((o) => o.h >= 48), JSON.stri
 ok("390 视口无需整页滚动即可看题与选项", mob.docH <= mob.ih + 1 && (!mob.qScroll || mob.qScroll.sh <= mob.qScroll.ch + 1),
   JSON.stringify({ docH: mob.docH, ih: mob.ih, q: mob.qScroll }));
 ok("390 视口顶栏 topic 与自动开关可见", mob.topicVisible && mob.autoVisible);
+const mobPeekBtn = await $(`(() => { const b = document.querySelector('#qcard [data-act="peek"]');
+  if (!b) return null; const r = b.getBoundingClientRect();
+  return { top: Math.round(r.top), bottom: Math.round(r.bottom), h: Math.round(r.height), ih: innerHeight,
+    docW: document.documentElement.scrollWidth }; })()`);
+ok("390 视口「看答案」按钮可见且不挤出屏幕",
+  mobPeekBtn && mobPeekBtn.top >= 0 && mobPeekBtn.bottom <= mobPeekBtn.ih + 1 && mobPeekBtn.h >= 30 &&
+  mobPeekBtn.docW <= 391, JSON.stringify(mobPeekBtn));
+await click('#qcard [data-act="peek"]');
+await sleep(260);
+const mobPeek = await $(`(() => {
+  const ack = document.querySelector('#fb [data-act="ack"]');
+  const r = ack && ack.getBoundingClientRect();
+  const opts = [...document.querySelectorAll('#qcard .opt')].map(o => { const q = o.getBoundingClientRect();
+    return { top: Math.round(q.top), bottom: Math.round(q.bottom) }; });
+  return { shown: getComputedStyle(document.querySelector('#fb')).display !== 'none',
+    right: !!document.querySelector('#qcard .opt.is-right'),
+    bad: !!document.querySelector('#qcard .opt.is-bad'),
+    ackBottom: r ? Math.round(r.bottom) : -1, ih: innerHeight, ackH: r ? Math.round(r.height) : 0,
+    optsInView: opts.every(o => o.top >= 0 && o.bottom <= innerHeight + 1),
+    docW: document.documentElement.scrollWidth }; })()`);
+ok("390 看答案后：讲解条+下一题仍在一屏内、选项不被挤出",
+  mobPeek.shown && mobPeek.right && !mobPeek.bad && mobPeek.optsInView &&
+  mobPeek.ackBottom > 0 && mobPeek.ackBottom <= mobPeek.ih + 1 && mobPeek.ackH >= 44 && mobPeek.docW <= 391,
+  JSON.stringify(mobPeek));
+await pressEnter();
+await sleep(220);
 await answerWith(true);
 await sleep(220);
 const mobOk = await $(`(() => {
