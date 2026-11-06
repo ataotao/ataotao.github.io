@@ -60,6 +60,16 @@ function stagedChanges() {
   return items;
 }
 
+// 题库下的位图默认是"原卷扫描件"：页面不读它（读的是 images/试卷/*.webp 或
+// 页面里 base64 内联的裁图），所以拦下时直接给出该加的那行 .gitignore，
+// 而不是让人对着报错自己想。例外只有真被页面加载的（英语/题库/九上_U*.jpg）。
+const ARCHIVE = 'C:\\OneDrive\\陶宸欣\\学习资料\\题库';
+function ignoreHint(rel) {
+  if (!rel.includes('题库/')) return null;
+  const dir = rel.slice(0, rel.lastIndexOf('/'));
+  return `想留档：先把文件放 ${ARCHIVE}，再执行  echo "${dir}/*.${rel.split('.').pop()}" >> .gitignore`;
+}
+
 function checkStaged() {
   const items = stagedChanges();
   const fails = [];
@@ -71,11 +81,11 @@ function checkStaged() {
     const ext = extname(rel).toLowerCase();
 
     if (size > HARD) {
-      fails.push({ rel, size, why: `超过 ${mb(HARD)} 单文件上限` });
+      fails.push({ rel, size, why: `超过 ${mb(HARD)} 单文件上限`, hint: ignoreHint(rel) });
       continue;
     }
     if (BITMAP.has(ext) && size >= IMAGE_SOFT) {
-      warns.push({ rel, size, why: '位图：先压成 webp（工具/compress-pages.js）再入库' });
+      warns.push({ rel, size, why: '位图：先压成 webp（工具/compress-pages.js）再入库', hint: ignoreHint(rel) });
       continue;
     }
     if (size >= SOFT) {
@@ -83,14 +93,20 @@ function checkStaged() {
     }
   }
 
-  for (const w of warns) console.log(`${YEL}⚠${OFF}  ${kb(w.size).padStart(8)}  ${w.rel}\n           ${w.why}`);
+  for (const w of warns) {
+    console.log(`${YEL}⚠${OFF}  ${kb(w.size).padStart(8)}  ${w.rel}\n           ${w.why}`);
+    if (w.hint) console.log(`           ${DIM}${w.hint}${OFF}`);
+  }
   if (fails.length) {
     console.error('');
-    for (const f of fails) console.error(`${RED}✗${OFF}  ${mb(f.size).padStart(8)}  ${f.rel}\n           ${f.why}`);
+    for (const f of fails) {
+      console.error(`${RED}✗${OFF}  ${mb(f.size).padStart(8)}  ${f.rel}\n           ${f.why}`);
+      if (f.hint) console.error(`           ${f.hint}`);
+    }
     console.error(`\n${RED}提交被拦下${OFF}：${fails.length} 个文件超过单文件上限。`);
     console.error(`处理方式（选一个）：`);
     console.error(`  · 压成 webp / 缩图后入库      node 工具/check-size.mjs --all  看现状`);
-    console.error(`  · 本机留档，不入库            把规则加进 .gitignore，再 git rm --cached`);
+    console.error(`  · 本机留档，不入库            加 .gitignore（上面已给出该加的那行）`);
     console.error(`  · 确实要原样入库（罕见）        git commit --no-verify`);
     return 1;
   }
