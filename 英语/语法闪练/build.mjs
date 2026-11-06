@@ -164,6 +164,27 @@ if (!existsSync(nearPath)) {
   if (noNear.length) warn(`near-topics.json 缺少考点的邻接项（这些点会退化为同 block 干扰项）：${noNear.join("、")}`);
 }
 
+// ---- 考点识别线索（解析里的「怎么认出」） ----
+// key = 考点，值 = 一句「先看哪里 → 怎么判断」。缺一条都算错：解析缺线索就退化回「只讲规则」。
+const cuePath = join(dataDir, "topic-cues.json");
+const cues = {};
+if (!existsSync(cuePath)) {
+  warn("缺少 data/topic-cues.json，解析里不会显示「怎么认出」");
+} else {
+  let raw = {};
+  try { raw = readJson(cuePath); } catch (e) { err(`topic-cues.json: JSON 解析失败 — ${e.message}`); }
+  Object.keys(raw || {}).forEach((k) => {
+    if (k.charAt(0) === "_") return;
+    const v = raw[k];
+    if (!ALL_TOPICS.has(k)) { err(`topic-cues.json: key "${k}" 不在受控词表内`); return; }
+    if (typeof v !== "string" || !v.trim()) { err(`topic-cues.json: "${k}" 的识别线索为空`); return; }
+    if (chars(v) > 60) { err(`topic-cues.json: "${k}" 的线索 ${chars(v)} 字，超过 60`); return; }
+    cues[k] = v.trim();
+  });
+  const noCue = [...allTopicsSeen].filter((t) => !cues[t]);
+  if (noCue.length) err(`topic-cues.json 缺少这些考点的识别线索（解析会缺一行）：${noCue.join("、")}`);
+}
+
 // ---- 组包 ----
 const items = [];
 for (const g of groups) {
@@ -277,12 +298,67 @@ for (const d of DOC_FILES) {
   docs[d.key] = { title: d.title, html: mdToHtml(readFileSync(p, "utf8")) };
 }
 
+// ---- 考点识别速查表：从 data/topic-cues.json + 题库题量生成（不手抄第二份） ----
+const escHtml = (s) => String(s ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+const topicCount = new Map();
+for (const it of items) topicCount.set(it.topic, (topicCount.get(it.topic) || 0) + 1);
+const QUICK_SECTIONS = [
+  { title: "一、从句与句子类型 · Block 1", topics: TOPICS.clause },
+  { title: "二、动词三件套 · Block 2", topics: TOPICS.verb },
+  { title: "三、词法速记 · Block 3", topics: TOPICS.word },
+  { title: "四、不规则动词闪刷 · Block 4", topics: TOPICS.verbform },
+];
+function quickTableHtml() {
+  let h = '<h1>考点识别速查表 · 九上 U1–U4</h1>' +
+    '<p class="lead">每个考点一句「先看哪里 → 怎么判断」。做题时先用它归考点，再想规则；' +
+    '「题数」= 本题库里的题量，<code>0</code> 表示考纲里有、这次没出题。' +
+    '线索与 `data/topic-cues.json` 同源，改数据后重跑 build 即可。</p>';
+  for (const sec of QUICK_SECTIONS) {
+    const rows = sec.topics.filter((t) => cues[t]).map((t) =>
+      '<tr><td class="tp">' + escHtml(t) + '</td><td class="n">' + (topicCount.get(t) || 0) + '</td><td>' + escHtml(cues[t]) + '</td></tr>');
+    if (!rows.length) continue;
+    h += '<h2>' + escHtml(sec.title) + '</h2>' +
+      '<table class="q"><thead><tr><th>考点</th><th>题数</th><th>怎么认出</th></tr></thead><tbody>' +
+      rows.join("") + '</tbody></table>';
+  }
+  return h;
+}
+const quickHtml = quickTableHtml();
+docs.quick = { title: "考点识别速查表", html: quickHtml };
+// 页内文档顺序：口诀卡 → 对比卡 → 速查表 → 方案 → 说明（缺失的跳过）
+const DOC_ORDER = ["card", "pair", "quick", "plan", "guide"];
+const orderedDocs = {};
+DOC_ORDER.forEach((k) => { if (docs[k]) orderedDocs[k] = docs[k]; });
+
 const bundle = { blocks };
 const dataScript =
   `window.FLASH_DATA = ${JSON.stringify(bundle, null, 1)};\n` +
   `window.FLASH_NEAR = ${JSON.stringify(near)};\n` +
-  `window.FLASH_DOCS = ${JSON.stringify(docs)};\n`;
+  `window.FLASH_CUES = ${JSON.stringify(cues)};\n` +
+  `window.FLASH_DOCS = ${JSON.stringify(orderedDocs)};\n`;
 writeFileSync(join(dataDir, "bundle.js"), dataScript, "utf8");
+
+// ---- 单文件打印版：考点识别速查表（A4） ----
+const QUICK_CSS = `
+@page{size:A4 portrait;margin:8mm}
+*{box-sizing:border-box}
+body{margin:0;font:10.2px/1.3 "Microsoft YaHei","PingFang SC","Noto Sans SC",system-ui,sans-serif;color:#222}
+h1{font-size:15px;margin:0 0 2px}
+h2{font-size:10.6px;margin:6px 0 2px;padding-bottom:1.5px;border-bottom:1px solid #ddd;color:#5b4bb5}
+.lead{font-size:9px;color:#666;margin:0 0 5px;line-height:1.35}
+code{font:inherit;background:#f3f1fa;padding:0 2px;border-radius:3px}
+table{width:100%;border-collapse:collapse;table-layout:fixed}
+th,td{padding:1.1px 4px;border-bottom:1px solid #ececf2;vertical-align:top;text-align:left}
+th{background:#f6f3ff;font-size:9.6px;font-weight:700;color:#5b4bb5}
+th:nth-child(1),td.tp{width:20%}
+th:nth-child(2),td.n{width:6%;text-align:center;color:#9a9aa5}
+tr{break-inside:avoid;page-break-inside:avoid}
+h2{break-after:avoid;page-break-after:avoid}
+`;
+const quickPage = '<!doctype html>\n<html lang="zh-CN">\n<head>\n<meta charset="utf-8">\n' +
+  '<title>考点识别速查表 · 九上 U1–U4</title>\n<style>' + QUICK_CSS + '</style>\n</head>\n<body>\n' +
+  quickHtml + '\n</body>\n</html>\n';
+writeFileSync(join(here, "考点识别速查表.html"), quickPage, "utf8");
 
 // ---- 单文件版 ----
 const htmlPath = join(here, "index.html");
@@ -307,8 +383,8 @@ const missing = Object.keys(TOPICS).filter((g) => !groups.some((x) => x.group ==
 console.log("");
 console.log(`分 block：${blocks.map((b) => `B${b.block} ${b.title} ${b.items.length}题`).join(" ｜ ")}`);
 console.log(`合计 ${items.length} 题 · 考点 ${byTopic.size} 个 · 未复核 ${unverifiedIds.length}${unverifiedIds.length ? "（" + unverifiedIds.join(",") + "）" : ""}`);
-console.log(`考点邻接表：${Object.keys(near).length} 个考点有邻近项`);
-console.log(`页内文档：${Object.keys(docs).map((k) => `${docs[k].title}(${(docs[k].html.length / 1024).toFixed(0)}KB)`).join(" · ") || "无"}`);
+console.log(`考点邻接表：${Object.keys(near).length} 个考点有邻近项 · 识别线索：${Object.keys(cues).length} 条`);
+console.log(`页内文档：${Object.keys(orderedDocs).map((k) => `${orderedDocs[k].title}(${(orderedDocs[k].html.length / 1024).toFixed(0)}KB)`).join(" · ") || "无"}`);
 if (missing.length) console.log(`未启用的题组：${missing.join(", ")}`);
 
 if (warnings.length) {
@@ -322,5 +398,6 @@ if (problems.length) {
 } else {
   console.log("\n✓ 数据校验通过");
   console.log("→ data/bundle.js");
+  console.log("→ 考点识别速查表.html（单文件打印版，A4）");
   if (existsSync(join(here, "..", "语法闪练.html"))) console.log("→ ../语法闪练.html（单文件，可双击打开）");
 }

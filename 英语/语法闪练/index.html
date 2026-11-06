@@ -169,6 +169,11 @@ html.drilling body{overflow:hidden}
 .spot-opt.is-right{border-style:solid;border-color:var(--ok);box-shadow:inset 0 0 0 1px var(--ok);color:var(--ok)}
 .spot-opt.is-right .badge{border-color:var(--ok);color:var(--ok)}
 .spot-opt[disabled]{cursor:default}
+/* 解析里的「怎么认出」：一句话说清「先看哪里 → 怎么判断」 */
+.fb-cue{background:#f6f3ff;border-radius:8px;padding:6px 9px;margin:6px 0}
+.fb-cue b{color:#5b4bb5}
+.rv-cue{background:#f6f3ff;border-radius:8px;padding:6px 9px}
+.rv-cue b{color:#5b4bb5}
 .fb-peek{background:#fff8ec;border-left-color:#d99a2b}
 .fb-peek .fb-head{color:#9a6a12}
 .fb-peek .fb-line b{color:#7a5a14}
@@ -282,6 +287,27 @@ table.rt-table .rate{font-weight:700}
 .docbody th,.docbody td{border:1px solid #e6e6ee;padding:6px 8px;vertical-align:top;text-align:left}
 .docbody th{background:#fafafc;font-weight:700;white-space:nowrap}
 
+/* ── 打印：只印当前打开的文档（速查表 Ctrl+P 就是一页 A4） ── */
+@media print{
+  @page{size:A4 portrait;margin:10mm}
+  body{background:#fff}
+  #toast,#modal,.docbar,.topbar,.qnav,.quitline,.foot,.docsrow,.rt-actions,.rt-back,.hero{display:none!important}
+  .screen{display:none!important}
+  .screen.is-active{display:block!important}
+  #scr-doc .docbody{max-width:none;margin:0;padding:0;border-radius:0;font-size:10.4px;line-height:1.3}
+  #scr-doc .docbody h1{font-size:15px;margin:0 0 2px}
+  #scr-doc .docbody h2{font-size:10.8px;margin:6px 0 2px;padding-bottom:1.5px}
+  #scr-doc .docbody h3{font-size:10.4px;margin:5px 0 2px}
+  #scr-doc .docbody p{margin:3px 0}
+  #scr-doc .docbody table{font-size:9.8px}
+  #scr-doc .docbody th,#scr-doc .docbody td{padding:1.2px 4px}
+  #scr-doc .docbody th{white-space:normal}
+  #scr-doc .docbody code{background:none;padding:0}
+  .tablewrap{overflow:visible!important;margin:0}
+  tr{break-inside:avoid;page-break-inside:avoid}
+  h2{break-after:avoid;page-break-after:avoid}
+}
+
 /* ── 弹窗 / toast ─────────────────────── */
 .modal{position:fixed;inset:0;background:rgba(24,22,34,.42);display:none;align-items:center;justify-content:center;
   padding:20px;z-index:60}
@@ -335,6 +361,7 @@ table.rt-table .rate{font-weight:700}
     <span class="t">明早考前看</span>
     <button class="doclink" data-act="doc" data-doc="card">考前口诀卡</button>
     <button class="doclink" data-act="doc" data-doc="pair">最小对立对卡</button>
+    <button class="doclink" data-act="doc" data-doc="quick">考点识别速查表</button>
     <button class="doclink" data-act="doc" data-doc="plan">今晚复习方案</button>
     <button class="doclink" data-act="doc" data-doc="guide">使用说明</button>
   </div>
@@ -393,6 +420,7 @@ table.rt-table .rate{font-weight:700}
   <div class="rt-back">
     <button class="btn sm" data-act="doc" data-doc="card">考前口诀卡</button>
     <button class="btn sm" data-act="doc" data-doc="pair">最小对立对卡</button>
+    <button class="btn sm" data-act="doc" data-doc="quick">考点识别速查表</button>
     <button class="btn sm" data-act="home">回到开始屏</button>
   </div>
 </section>
@@ -687,9 +715,20 @@ table.rt-table .rate{font-weight:700}
     updateAutoBtn();
     toast(autoNextOn() ? "自动跳题：开（答对 1 秒翻页）" : "自动跳题：关（答对也停下来看要点）");
   }
+  /* 解析里的「怎么认出」：数据在 data/topic-cues.json（构建时注入 window.FLASH_CUES）。
+     它回答的不是「这题考什么」，而是「凭什么一眼看出它考这个」——先看哪里、怎么判断。 */
+  function cueOf(item) {
+    var c = window.FLASH_CUES;
+    return (c && item && item.topic && typeof c[item.topic] === "string") ? c[item.topic] : "";
+  }
+  function cueLineHTML(item) {
+    var cue = cueOf(item);
+    return cue ? '<p class="fb-line fb-cue"><b>怎么认出：</b>' + esc(cue) + "</p>" : "";
+  }
   /* 判分反馈：对/错都写「考点」，错的再写「易错点」 */
   function feedbackHTML(item, correct) {
     var h = '<p class="fb-head">' + (correct ? "✓" : "✗") + " 考点：<b>" + esc(item.topic || "未分类") + "</b></p>";
+    h += cueLineHTML(item);           // 先教「怎么看出来」，再给规则
     h += '<p class="fb-line"><b>规则：</b>' + esc(item.rule || "") + "</p>";
     if (!correct && item.trap) h += '<p class="fb-line"><b>易错点：</b>' + esc(item.trap) + "</p>";
     h += spotWrongNoteHTML(item);      // 只判考点模式下，考点判错时追加一行（答案反馈里）
@@ -938,6 +977,7 @@ table.rt-table .rate{font-weight:700}
     var pi = spotPickedIndex(item);
     var ok = pi >= 0 && spotOrderOf(item)[pi] === item.topic;
     var h = '<p class="fb-head">' + (ok ? "✓" : "✗") + " 考点：<b>" + esc(item.topic || "未分类") + "</b></p>";
+    h += cueLineHTML(item);           // 判考点这一屏就是教「怎么认」的地方
     h += '<p class="fb-line"><b>规则：</b>' + esc(item.rule || "") + "</p>";
     h += '<button type="button" class="btn ack" data-act="ack">看选项，选答案 →</button>';
     return h;
@@ -1164,6 +1204,7 @@ table.rt-table .rate{font-weight:700}
   function peekHTML(item) {
     var addRedo = R && R.phase === "main";
     var h = '<p class="fb-head">👀 看答案 · 考点：<b>' + esc(item.topic || "未分类") + "</b></p>";
+    h += cueLineHTML(item);
     h += '<p class="fb-line"><b>规则：</b>' + esc(item.rule || "") + "</p>";
     if (item.trap) h += '<p class="fb-line"><b>易错点：</b>' + esc(item.trap) + "</p>";
     if (item.src) h += '<p class="fb-src">出处：' + esc(item.src) + "</p>";
@@ -1649,6 +1690,8 @@ table.rt-table .rate{font-weight:700}
     if (!it) { toast("题库里找不到这道题"); return; }
     var ci = LETTERS.indexOf(it.answer);
     var html = '<h3>回看 · ' + esc(it.topic || "") + "</h3>";
+    var cue = cueOf(it);
+    if (cue) html += '<p class="rv-line rv-cue"><b>怎么认出：</b>' + esc(cue) + "</p>";
     html += '<p class="rv-stem">' + stemHTML(it.stem) + "</p>";
     if (it.cn) html += '<p class="rv-cn">' + esc(it.cn) + "</p>";
     html += '<div class="rv-opts">' + it.options.slice(0, 4).map(function (txt, i) {
