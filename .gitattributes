@@ -1,0 +1,3 @@
+# Git hooks 必须保持 LF：CRLF 会让 shebang 在非 Windows 环境变成 "bad interpreter"。
+# 其余文件维持 core.autocrlf 的既有行为，不在这里统一换行（那会造成全库重归一化 diff）。
+.githooks/* text eol=lf
