@@ -114,7 +114,23 @@ function checkStaged() {
   return 0;
 }
 
+function hookEnabled() {
+  try {
+    return execFileSync('git', ['config', 'core.hooksPath'], { cwd: ROOT, encoding: 'utf8' }).trim() === '.githooks';
+  } catch {
+    return false;
+  }
+}
+
 function fullAudit() {
+  // 本机钩子是机器级配置，不随 clone 传过来。这条提醒的意义是：
+  // 只要你跑过一次体检，就知道现在"提交时没人管"还是"有人在管"。
+  // CI 里不提示——那边的兜底本来就是 workflow 本身。
+  if (!process.env.CI && !hookEnabled()) {
+    console.log(`${RED}⚠ 本机 pre-commit 钩子未启用${OFF}：现在提交不会经过容量闸门。`);
+    console.log(`   修：${DIM}git config core.hooksPath .githooks${OFF}   或  ${DIM}powershell -File 工具/setup.ps1${OFF}\n`);
+  }
+
   const files = git(['ls-files', '-z']);
   let total = 0;
   const byDir = new Map();
