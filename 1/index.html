@@ -162,9 +162,9 @@
 
   // ---------- 科目定义（href 在本地与 /1/ 发布页都成立） ----------
   var SUBJECTS = [
-    { key: 'history',  name: '历史',        icon: '🏛', accent: '#b4713a', href: '历史/核心考点训练.html', desc: '九上 254 个考点 + 100 题套卷',
+    { key: 'history',  name: '历史',        icon: '🏛', accent: '#b4713a', href: '历史/核心考点训练.html', desc: '九上 254 个考点 + 2 份套卷（含期中卷）',
       file: '核心考点训练.html', quick: '#mode=choice&fs=star', quickText: '★必背四选一', wrong: '#mode=wrong', wrongText: '错题强化' },
-    { key: 'politics', name: '道德与法治',  icon: '⚖',  accent: '#e05252', href: '道德与法治/核心考点训练.html', desc: '九上 128 个考点，按单元配图',
+    { key: 'politics', name: '道德与法治',  icon: '⚖',  accent: '#e05252', href: '道德与法治/核心考点训练.html', desc: '九上 128 个考点 + 期中套卷',
       file: '核心考点训练.html', quick: '#mode=choice&fs=star', quickText: '★必背四选一', wrong: '#mode=wrong', wrongText: '错题强化' },
     { key: 'formula',  name: '公式记背',    icon: '∑',  accent: '#c58a12', href: '公式记背/公式记背.html', desc: '24 条公式 + 12 步例题',
       file: '公式记背.html', quick: '#mode=recite&fs=today', quickText: '今日必背', wrong: '#mode=wrong', wrongText: '错题' },
@@ -267,7 +267,9 @@
       var paper = v.paper || {};
       for (var q in paper) {
         var p = paper[q] || {};
-        s.attempts += num(p.seen); s.correct += num(p.ok); s.wrong += num(p.wrong);
+        if (!p.self) {                     // 主观题没有对错，不计入正确率（题量由 days 统计）
+          s.attempts += num(p.seen); s.correct += num(p.ok); s.wrong += num(p.wrong);
+        }
         var pl = dateFromStamp(p.last); if (pl && (!s.last || pl > s.last)) s.last = pl;
       }
       bumpDays(v.days);
