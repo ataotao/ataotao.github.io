@@ -141,6 +141,29 @@ for (const m of MUST) {
   if (!files.includes(m)) (strict ? err : warn)(`缺少题库文件 data/${m}`);
 }
 
+// ---- 考点邻接表（「只判考点」模式的干扰项来源） ----
+// key = 正确考点，值 = 3 个最容易和它混的邻近考点。改表不用改 index.html。
+const nearPath = join(dataDir, "near-topics.json");
+const near = {};
+if (!existsSync(nearPath)) {
+  warn("缺少 data/near-topics.json，「只判考点」的干扰考点会退化为同 block 的其它考点");
+} else {
+  let raw = {};
+  try { raw = readJson(nearPath); } catch (e) { err(`near-topics.json: JSON 解析失败 — ${e.message}`); }
+  Object.keys(raw || {}).forEach((k) => {
+    if (k.charAt(0) === "_") return;   // "_doc" 之类的说明字段
+    const v = raw[k];
+    if (!ALL_TOPICS.has(k)) { err(`near-topics.json: key "${k}" 不在受控词表内`); return; }
+    if (!Array.isArray(v) || v.length !== 3) { err(`near-topics.json: "${k}" 应给出恰好 3 个邻近考点`); return; }
+    if (new Set(v).size !== 3) { err(`near-topics.json: "${k}" 的 3 个邻近考点有重复`); return; }
+    const bad = v.filter((x) => typeof x !== "string" || !ALL_TOPICS.has(x) || x === k);
+    if (bad.length) { err(`near-topics.json: "${k}" 的邻近考点非法（${bad.join(" / ")}）`); return; }
+    near[k] = v.slice();
+  });
+  const noNear = [...allTopicsSeen].filter((t) => !near[t]);
+  if (noNear.length) warn(`near-topics.json 缺少考点的邻接项（这些点会退化为同 block 干扰项）：${noNear.join("、")}`);
+}
+
 // ---- 组包 ----
 const items = [];
 for (const g of groups) {
@@ -243,6 +266,7 @@ function mdToHtml(md) {
 
 const DOC_FILES = [
   { key: "card", title: "考前口诀卡", file: "考前口诀卡.md" },
+  { key: "pair", title: "最小对立对卡", file: "最小对立对卡.md" },
   { key: "plan", title: "今晚复习方案", file: "../../docs/plans/语法闪练与今晚复习方案.md" },
   { key: "guide", title: "使用说明", file: "使用说明.md" },
 ];
@@ -256,6 +280,7 @@ for (const d of DOC_FILES) {
 const bundle = { blocks };
 const dataScript =
   `window.FLASH_DATA = ${JSON.stringify(bundle, null, 1)};\n` +
+  `window.FLASH_NEAR = ${JSON.stringify(near)};\n` +
   `window.FLASH_DOCS = ${JSON.stringify(docs)};\n`;
 writeFileSync(join(dataDir, "bundle.js"), dataScript, "utf8");
 
@@ -282,6 +307,7 @@ const missing = Object.keys(TOPICS).filter((g) => !groups.some((x) => x.group ==
 console.log("");
 console.log(`分 block：${blocks.map((b) => `B${b.block} ${b.title} ${b.items.length}题`).join(" ｜ ")}`);
 console.log(`合计 ${items.length} 题 · 考点 ${byTopic.size} 个 · 未复核 ${unverifiedIds.length}${unverifiedIds.length ? "（" + unverifiedIds.join(",") + "）" : ""}`);
+console.log(`考点邻接表：${Object.keys(near).length} 个考点有邻近项`);
 console.log(`页内文档：${Object.keys(docs).map((k) => `${docs[k].title}(${(docs[k].html.length / 1024).toFixed(0)}KB)`).join(" · ") || "无"}`);
 if (missing.length) console.log(`未启用的题组：${missing.join(", ")}`);
 

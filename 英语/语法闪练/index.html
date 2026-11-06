@@ -148,6 +148,27 @@ html.drilling body{overflow:hidden}
   border:1.5px dashed #d6d6e2;background:#fbfbfd;color:#7b7b8a;font-size:12.5px;font-weight:600;
   cursor:pointer;line-height:1.2}
 .peeklink:active{transform:scale(.97)}
+/* 「只判考点」第一屏：4 个考点按钮（故意和 A/B/C/D 选项长得不一样，避免当成选项） */
+.spot-lead{margin:0;font-size:12.5px;color:var(--muted);text-align:center}
+.spot-panel{display:flex;flex-direction:column;gap:8px}
+.spot-opt{display:flex;align-items:center;gap:10px;width:100%;min-height:48px;padding:8px 12px;border-radius:12px;
+  border:1.5px dashed var(--accent-line);background:#fbfaff;cursor:pointer;text-align:left;
+  font-size:14px;font-weight:600;line-height:1.35;color:var(--ink-2);
+  transition:background .12s,border-color .12s,transform .08s}
+.spot-opt:active{transform:scale(.994)}
+.spot-opt .badge{flex:0 0 auto;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  border:1.5px solid #cfcfdc;background:#fff;color:#6b6b78;font-size:12px;font-weight:700}
+.spot-opt .txt{flex:1 1 auto;min-width:0}
+.spot-opt .mark{flex:0 0 auto;width:16px;text-align:center;font-size:15px;font-weight:700}
+.spot-opt.is-ok{background:var(--ok-soft);border-style:solid;border-color:var(--ok);color:var(--ok)}
+.spot-opt.is-ok .badge{background:var(--ok);border-color:var(--ok);color:#fff}
+.spot-opt.is-ok .mark{color:var(--ok)}
+.spot-opt.is-bad{background:var(--bad-soft);border-style:solid;border-color:var(--bad);color:var(--bad)}
+.spot-opt.is-bad .badge{background:var(--bad);border-color:var(--bad);color:#fff}
+.spot-opt.is-bad .mark{color:var(--bad)}
+.spot-opt.is-right{border-style:solid;border-color:var(--ok);box-shadow:inset 0 0 0 1px var(--ok);color:var(--ok)}
+.spot-opt.is-right .badge{border-color:var(--ok);color:var(--ok)}
+.spot-opt[disabled]{cursor:default}
 .fb-peek{background:#fff8ec;border-left-color:#d99a2b}
 .fb-peek .fb-head{color:#9a6a12}
 .fb-peek .fb-line b{color:#7a5a14}
@@ -191,6 +212,13 @@ html.drilling body{overflow:hidden}
 .rt-note.warn{background:#fdf0ee;border-color:#f3cfc9;color:#8d2f24}
 .rt-peek{display:none;margin:9px 0 0;font-size:12.5px;line-height:1.5;color:#9a6a12;text-align:center}
 .rt-peek.show{display:block}
+/* 结算屏「考点识别」一行：只判考点模式才有 */
+.rt-spot{display:none;margin:10px 0 0;padding:9px 12px;border-radius:10px;background:#faf9ff;
+  border:1px solid var(--accent-line);font-size:12.8px;line-height:1.6;color:#4b3a86;text-align:center;
+  font-variant-numeric:tabular-nums}
+.rt-spot.show{display:block}
+.rt-spot b{font-weight:800;color:var(--accent)}
+.rt-spot .rt-spot-wt{display:block;margin-top:3px;font-size:11.8px;color:#8d2f24}
 .rt-chips{display:none;flex-wrap:wrap;gap:6px;margin:14px 0 0}
 .rt-chips.show{display:flex}
 .rt-chips .ct{flex:0 0 100%;font-size:11.5px;color:var(--muted);margin-bottom:1px}
@@ -299,12 +327,14 @@ table.rt-table .rate{font-weight:700}
   <div class="actions">
     <button class="btn primary" data-act="plan" id="act-plan">开始今晚方案</button>
     <button class="btn ghost" data-act="wrong-queue" id="act-wrong">只刷我错过的题</button>
+    <button class="btn ghost" data-act="spot" id="act-spot">只判考点（10 题）</button>
     <p class="hint" id="wrong-hint"></p>
   </div>
   <div class="block-grid" id="block-grid"></div>
   <div class="docsrow">
     <span class="t">明早考前看</span>
     <button class="doclink" data-act="doc" data-doc="card">考前口诀卡</button>
+    <button class="doclink" data-act="doc" data-doc="pair">最小对立对卡</button>
     <button class="doclink" data-act="doc" data-doc="plan">今晚复习方案</button>
     <button class="doclink" data-act="doc" data-doc="guide">使用说明</button>
   </div>
@@ -348,6 +378,7 @@ table.rt-table .rate{font-weight:700}
   </div>
   <div class="rt-note" id="rt-note"></div>
   <p class="rt-peek" id="rt-peek"></p>
+  <p class="rt-spot" id="rt-spot"></p>
   <h2 class="rt-h2">考点表现（低于 60% 的排在最前面）</h2>
   <table class="rt-table">
     <thead><tr><th>考点</th><th class="num">题数</th><th class="num">正确</th><th class="num">正确率</th></tr></thead>
@@ -361,6 +392,7 @@ table.rt-table .rate{font-weight:700}
   </div>
   <div class="rt-back">
     <button class="btn sm" data-act="doc" data-doc="card">考前口诀卡</button>
+    <button class="btn sm" data-act="doc" data-doc="pair">最小对立对卡</button>
     <button class="btn sm" data-act="home">回到开始屏</button>
   </div>
 </section>
@@ -460,7 +492,33 @@ table.rt-table .rate{font-weight:700}
   }
   function num(v) { v = Number(v); return isFinite(v) && v > 0 ? v : 0; }
   function strList(v) { return Array.isArray(v) ? v.filter(function (x) { return typeof x === "string"; }) : []; }
-  function normMode(m) { return ["plan", "block", "redo"].indexOf(m) >= 0 ? m : "block"; }
+  function normMode(m) { return ["plan", "block", "redo", "spot"].indexOf(m) >= 0 ? m : "block"; }
+  /* 考点模式的两份快照：comp = 结算/轮次记录（只有计数），current = 进行中本轮（含每题选项顺序） */
+  function normSpotComp(v) {
+    if (!v || typeof v !== "object") return null;
+    var total = Math.floor(num(v.total));
+    return { total: total, ok: Math.min(Math.floor(num(v.ok)), total), wrongTopics: strList(v.wrongTopics).slice(0, 20) };
+  }
+  function normSpotCurrent(v) {
+    if (!v || typeof v !== "object") return null;
+    var picked = {}, order = {};
+    if (v.picked && typeof v.picked === "object") {
+      Object.keys(v.picked).forEach(function (id) {
+        var i = Number(v.picked[id]);
+        if (isFinite(i) && i >= 0 && i <= 3) picked[id] = Math.floor(i);
+      });
+    }
+    if (v.order && typeof v.order === "object") {
+      Object.keys(v.order).forEach(function (id) {
+        var arr = Array.isArray(v.order[id]) ? v.order[id].filter(function (t) { return typeof t === "string" && t; }) : [];
+        if (arr.length >= 2) order[id] = arr.slice(0, 6);
+      });
+    }
+    return {
+      total: Math.floor(num(v.total)), ok: Math.floor(num(v.ok)),
+      picked: picked, order: order, wrongTopics: strList(v.wrongTopics).slice(0, 20), hold: null
+    };
+  }
   /* 进行中本轮的快照（刷新后接着做）。题库改过、id 失效时由 resumeRound 丢条目，不在这里崩。 */
   function normalizeCurrent(c) {
     if (!c || typeof c !== "object") return null;
@@ -508,6 +566,7 @@ table.rt-table .rate{font-weight:700}
       phaseDone: Math.floor(num(c.phaseDone)),
       perTopic: perTopic,
       results: results,
+      spot: normSpotCurrent(c.spot),
       legacy: !hasResults,
       startAt: typeof c.startAt === "string" ? c.startAt : new Date().toISOString(),
       autoNext: c.autoNext === true
@@ -535,7 +594,8 @@ table.rt-table .rate{font-weight:700}
         ok: num(r.ok),
         wrongIds: strList(r.wrongIds),
         peek: num(r.peek),
-        peekIds: strList(r.peekIds)
+        peekIds: strList(r.peekIds),
+        spot: normSpotComp(r.spot)
       });
     });
     var L = raw.last;
@@ -549,6 +609,7 @@ table.rt-table .rate{font-weight:700}
         ok: num(L.ok),
         wrongIds: strList(L.wrongIds),
         itemIds: strList(L.itemIds),
+        spot: normSpotComp(L.spot),
         perTopic: Array.isArray(L.perTopic) ? L.perTopic.filter(function (t) { return t && typeof t.topic === "string"; })
           .map(function (t) { return { topic: t.topic, total: num(t.total), ok: num(t.ok), peek: num(t.peek) }; }) : []
       };
@@ -631,6 +692,7 @@ table.rt-table .rate{font-weight:700}
     var h = '<p class="fb-head">' + (correct ? "✓" : "✗") + " 考点：<b>" + esc(item.topic || "未分类") + "</b></p>";
     h += '<p class="fb-line"><b>规则：</b>' + esc(item.rule || "") + "</p>";
     if (!correct && item.trap) h += '<p class="fb-line"><b>易错点：</b>' + esc(item.trap) + "</p>";
+    h += spotWrongNoteHTML(item);      // 只判考点模式下，考点判错时追加一行（答案反馈里）
     if (item.src) h += '<p class="fb-src">出处：' + esc(item.src) + "</p>";
     h += '<button type="button" class="btn ack" data-act="ack">' + (correct ? "下一题 →" : "记住了 →") + "</button>";
     return h;
@@ -668,6 +730,8 @@ table.rt-table .rate{font-weight:700}
     planBtn.disabled = !hasData;
     var wrongBtn = $("#act-wrong");
     wrongBtn.disabled = !hasData || wq === 0;
+    var spotBtn = $("#act-spot");
+    if (spotBtn) spotBtn.disabled = !hasData;
     $("#wrong-hint").textContent = !hasData ? "" :
       (wq > 0 ? "错过的题：" + wq + " 道（做错或看过答案都算）" : "还没有错过的题，先刷一轮吧。");
 
@@ -716,6 +780,8 @@ table.rt-table .rate{font-weight:700}
       peekIds: (o.peekIds || []).slice(), phasePeek: 0, redoPeek: 0, peekHold: false,
       // 本阶段每题的结果：{ picked, peek, correct }。切题/刷新后靠它还原题卡状态，不许重复判分。
       results: (o.results && typeof o.results === "object") ? o.results : {},
+      // 只判考点模式的状态（非该模式为 null）：total/ok 只算考点，不污染答案口径
+      spot: o.spot ? normSpotCurrent(o.spot) : null,
       justAnswered: false,
       perTopic: {}, locked: true, autoTimer: null, startAt: Date.now()
     };
@@ -739,11 +805,188 @@ table.rt-table .rate{font-weight:700}
     items = (items || []).filter(Boolean);
     if (!items.length) { toast("没有可刷的题"); return; }
     stopTimer();
-    R = makeRound({ mode: mode, title: (opts && opts.title) || "", main: items, list: items });
+    R = makeRound({ mode: mode, title: (opts && opts.title) || "", main: items, list: items,
+      spot: (opts && opts.spot) || null });
     switchView("drill");
     updateAutoBtn();
     renderQuestion();
     startTimer();
+  }
+
+  /* ══ 只判考点（spot）：先判考点，再回原题选答案 ═══════════
+     口径：答案统计（store.stat / perTopic / 顶部正确率）完全不变，考点单独计数。 */
+  var SPOT_LIMIT = 10;
+  function hashStr(s) {
+    var h = 2166136261;
+    s = String(s == null ? "" : s);
+    for (var i = 0; i < s.length; i++) {
+      h ^= s.charCodeAt(i);
+      h = Math.imul(h, 16777619);
+    }
+    return h >>> 0;
+  }
+  /* 4 个候选考点 = 正确考点 + FLASH_NEAR 的 3 个邻近项；缺失/不足时用同 block / 全题库其它考点补齐 */
+  function spotCandidates(item) {
+    var topic = item.topic || "未分类";
+    var out = [topic];
+    var near = window.FLASH_NEAR && window.FLASH_NEAR[topic];
+    (Array.isArray(near) ? near : []).forEach(function (t) {
+      if (typeof t === "string" && t && out.length < 4 && out.indexOf(t) < 0) out.push(t);
+    });
+    if (out.length < 4) {
+      var pool = [];
+      var b = blockByNo[item.block];
+      if (b) pool = pool.concat(b.items.map(function (it) { return it.topic; }));
+      pool = pool.concat(allItems().map(function (it) { return it.topic; }));
+      pool.forEach(function (t) {
+        if (out.length < 4 && typeof t === "string" && t && out.indexOf(t) < 0) out.push(t);
+      });
+    }
+    return out;
+  }
+  /* 每题候选顺序稳定：按 item.id 哈希做确定性洗牌，刷新后不变，正确项也不总在第一位 */
+  function spotOrderOf(item) {
+    if (!item) return [];
+    if (R && R.spot && R.spot.order[item.id]) return R.spot.order[item.id];
+    var cands = spotCandidates(item);
+    var seed = hashStr(item.id) || 1;
+    var rand = function () {
+      seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0;
+      return seed / 4294967296;
+    };
+    for (var i = cands.length - 1; i > 0; i--) {
+      var j = Math.floor(rand() * (i + 1));
+      var tmp = cands[i]; cands[i] = cands[j]; cands[j] = tmp;
+    }
+    if (R && R.spot) R.spot.order[item.id] = cands.slice();
+    return cands;
+  }
+  /* 选题池：block 1/2/3/5 按题库顺序交错排成一条固定序列（跳过 block 4 纯背不规则动词）。
+     一组 10 题 = 顺着这条序列往下取，走完 110 题再从头。不是随机：同一天重开拿到的是同一组。 */
+  function spotPool() {
+    var rot = [1, 2, 3, 5], qs = {}, out = [], i, max = 0;
+    rot.forEach(function (no) {
+      var b = blockByNo[no];
+      qs[no] = b ? b.items.slice() : [];
+      if (qs[no].length > max) max = qs[no].length;
+    });
+    for (i = 0; i < max; i++) {
+      rot.forEach(function (no) { if (qs[no][i]) out.push(qs[no][i]); });
+    }
+    return out;
+  }
+  /* 已经做完几组「只判考点」——游标靠它推进（重练轮不算新的一组） */
+  function spotRoundNo() {
+    var n = 0;
+    (store.rounds || []).forEach(function (r) { if (r && r.mode === "spot") n += 1; });
+    return n;
+  }
+  /* 选题：错题/看答案优先（最多 5 题），其余按「第几组」从池子游标处补齐。
+     同一个 store 状态每次结果完全一样（qa 可复现）；相邻两组不重复（错题优先的题除外）。 */
+  function spotItems(limit) {
+    limit = Math.floor(num(limit));
+    if (!limit) limit = SPOT_LIMIT;
+    var pool = spotPool();
+    if (!pool.length) return [];
+    var out = [], seen = {};
+    wrongItems().slice(0, 5).forEach(function (it) {
+      if (out.length >= limit || !it || seen[it.id]) return;
+      seen[it.id] = 1; out.push(it);
+    });
+    var start = (spotRoundNo() * SPOT_LIMIT) % pool.length;
+    for (var k = 0; out.length < limit && k < pool.length; k++) {
+      var it = pool[(start + k) % pool.length];
+      if (!it || seen[it.id]) continue;
+      seen[it.id] = 1; out.push(it);
+    }
+    return out.slice(0, limit);
+  }
+  function startSpot(n) {
+    var items = spotItems(n);
+    if (!items.length) { toast("没有可判考点的题"); return false; }
+    startRound("spot", items, { title: "只判考点",
+      spot: { total: 0, ok: 0, picked: {}, order: {}, wrongTopics: [] } });
+    return true;
+  }
+  function spotPickedIndex(item) {
+    if (!R || !R.spot || !item) return -1;
+    var i = R.spot.picked[item.id];
+    return i === undefined ? -1 : i;
+  }
+  /* 当前这道题在考点模式里的阶段：
+     "judge"  = 第一屏，只有 4 个考点按钮（还没判）
+     "hold"   = 刚判完考点，等点「看选项，选答案 →」
+     "answer" = 第二屏，考点已判、答案还没答
+     ""       = 不是考点模式 / 重练轮 / 已答完（正常题卡） */
+  function spotStateOf(item) {
+    if (!R || !R.spot || R.phase !== "main" || !item) return "";
+    if (R.results && R.results[item.id]) return "";
+    if (spotPickedIndex(item) < 0) return "judge";
+    return R.spot.hold === item.id ? "hold" : "answer";
+  }
+  function spotPanelHTML(item) {
+    var order = spotOrderOf(item);
+    var h = '<p class="spot-lead">这题在考哪个考点？</p><div class="spot-panel" role="group" aria-label="考点">';
+    order.forEach(function (t, i) {
+      h += '<button type="button" class="spot-opt" data-i="' + i + '">' +
+        '<span class="badge">' + (i + 1) + '</span><span class="txt">' + esc(t) + "</span>" +
+        '<span class="mark"></span></button>';
+    });
+    return h + "</div>";
+  }
+  function spotFeedbackHTML(item) {
+    var pi = spotPickedIndex(item);
+    var ok = pi >= 0 && spotOrderOf(item)[pi] === item.topic;
+    var h = '<p class="fb-head">' + (ok ? "✓" : "✗") + " 考点：<b>" + esc(item.topic || "未分类") + "</b></p>";
+    h += '<p class="fb-line"><b>规则：</b>' + esc(item.rule || "") + "</p>";
+    h += '<button type="button" class="btn ack" data-act="ack">看选项，选答案 →</button>';
+    return h;
+  }
+  /* 判考点：只改 R.spot，绝不动 store.stat / perTopic / R.ok / R.done（答案口径不变） */
+  function judgeSpot(i) {
+    if (!R || !R.spot || R.phase !== "main") return;
+    var item = currentItem();
+    if (!item || R.results[item.id] || spotPickedIndex(item) >= 0) return;
+    var order = spotOrderOf(item);
+    i = Math.floor(Number(i));
+    if (!isFinite(i) || i < 0 || i >= order.length) return;
+    R.spot.picked[item.id] = i;
+    R.spot.total += 1;
+    if (order[i] === item.topic) R.spot.ok += 1;
+    else if (R.spot.wrongTopics.indexOf(item.topic) < 0) R.spot.wrongTopics.push(item.topic);
+    R.spot.hold = item.id;      // 停在第一屏讲解态，点 ack / Enter 才进第二屏
+    R.locked = true;
+    paintSpotPanel(item);
+    updateBar();
+    snapshotRound();
+  }
+  /* 第一屏判完后就地画绿/红 + 反馈（不重渲染整张卡） */
+  function paintSpotPanel(item) {
+    var pi = spotPickedIndex(item);
+    if (pi < 0) return;
+    var order = spotOrderOf(item);
+    var correctIdx = order.indexOf(item.topic);
+    var ok = order[pi] === item.topic;
+    var els = $$(".spot-opt", $("#qcard"));
+    els.forEach(function (el) { el.disabled = true; });
+    var picked = els[pi];
+    if (picked) {
+      picked.classList.add(ok ? "is-ok" : "is-bad");
+      var mark = picked.querySelector(".mark");
+      if (mark) mark.textContent = ok ? "✓" : "✗";
+    }
+    if (!ok && els[correctIdx]) els[correctIdx].classList.add("is-right");
+    var fb = $("#fb");
+    if (fb) { fb.className = "fb show " + (ok ? "fb-ok" : "fb-bad"); fb.innerHTML = spotFeedbackHTML(item); }
+  }
+  /* 考点判错时，答案反馈里追加一行 */
+  function spotWrongNoteHTML(item) {
+    if (!R || !R.spot || R.phase !== "main" || !item) return "";
+    var pi = spotPickedIndex(item);
+    if (pi < 0) return "";
+    var order = spotOrderOf(item);
+    if (!order[pi] || order[pi] === item.topic) return "";
+    return '<p class="fb-line fb-spotwarn">⚠ 考点判错了：你选的是 ' + esc(order[pi]) + "</p>";
   }
 
   function currentItem() { return R && R.idx < R.list.length ? R.list[R.idx] : null; }
@@ -801,7 +1044,9 @@ table.rt-table .rate{font-weight:700}
     var item = currentItem();
     if (!item) { endPhase(); return; }
     var res = R.results[item.id] || null;
-    R.locked = !!res;
+    var sp = spotStateOf(item);
+    if (R.spot) R.spot.hold = null;      // 重新渲染＝离开「刚判完考点」的停留态
+    R.locked = !!res || sp === "judge";
     R.peekHold = !!(res && res.peek);
     R.justAnswered = false;
     clearTimeout(R.autoTimer);
@@ -810,20 +1055,31 @@ table.rt-table .rate{font-weight:700}
     var html = '<div class="qhist" id="qhist"></div>';
     html += '<div class="qstem">' + stemHTML(item.stem) + "</div>";
     if (item.cn) html += '<div class="qcn">' + esc(item.cn) + "</div>";
-    html += '<div class="opts" role="group" aria-label="选项">';
-    item.options.slice(0, 4).forEach(function (txt, i) {
-      html += '<button type="button" class="opt" data-i="' + i + '" data-k="' + LETTERS[i] + '">' +
-        '<span class="badge">' + LETTERS[i] + '</span><span class="txt">' + esc(txt) + "</span>" +
-        '<span class="mark"></span></button>';
-    });
-    html += "</div>";
-    // 逃生阀：只在「还没判、也没看答案」时出现
-    if (!res) html += '<button type="button" class="peeklink" data-act="peek">看答案</button>';
+    if (sp === "judge") {
+      // 第一屏：只有考点按钮，绝不出现 A/B/C/D，也不出现「看答案」
+      html += spotPanelHTML(item);
+    } else {
+      html += '<div class="opts" role="group" aria-label="选项">';
+      item.options.slice(0, 4).forEach(function (txt, i) {
+        html += '<button type="button" class="opt" data-i="' + i + '" data-k="' + LETTERS[i] + '">' +
+          '<span class="badge">' + LETTERS[i] + '</span><span class="txt">' + esc(txt) + "</span>" +
+          '<span class="mark"></span></button>';
+      });
+      html += "</div>";
+      // 逃生阀：只在「还没判、也没看答案」时出现
+      if (!res) html += '<button type="button" class="peeklink" data-act="peek">看答案</button>';
+    }
     html += '<div class="fb" id="fb"></div>';
     wrap.innerHTML = html;
     if (res) paintResult(item, res);   // 切回已作答的题：只还原画面，不动任何统计
     paintHist();
-    $("#bar-topic").textContent = item.topic || "—";
+    $("#bar-topic").textContent = sp === "judge" ? "考点？" : (item.topic || "—");
+    var hint = $("#drill-line");
+    if (hint) {
+      hint.textContent = (R.spot && R.phase === "main" && sp === "judge")
+        ? "1–4 选考点 · Enter 继续 · ← → 换题 · Esc 退出"
+        : "← → 换题 · 1–4 / A–D 选答案 · Enter 下一题 · Esc 退出";
+    }
     $("#bar-time").textContent = fmtClock(Date.now() - R.startAt);
     updateBar();
     var q = $(".qwrap"); if (q) q.scrollTop = 0;
@@ -1086,7 +1342,9 @@ table.rt-table .rate{font-weight:700}
       // perTopic 只加一个 peek 字段（看答案数），total/ok 语义不变
       perTopic: (perTopic || []).map(function (t) {
         return { topic: t.topic, total: num(t.total), ok: num(t.ok), peek: num(t.peek) };
-      })
+      }),
+      // 旧数据没有 spot → null（渲染时按「不是考点模式」处理）
+      spot: normSpotComp(entry.spot)
     };
     store.current = null;
     saveStore();
@@ -1108,7 +1366,9 @@ table.rt-table .rate{font-weight:700}
       ok: R.ok,
       wrongIds: R.wrongIds.slice(),
       peek: R.peekIds.length,
-      peekIds: R.peekIds.slice()
+      peekIds: R.peekIds.slice(),
+      // 只判考点：单独计数，不动 total/ok（答案口径）
+      spot: R.spot ? { total: R.spot.total, ok: R.spot.ok, wrongTopics: R.spot.wrongTopics.slice() } : null
     };
     commitRound(entry, topicRows(R.perTopic), R.main.map(function (it) { return it.id; }));
   }
@@ -1145,6 +1405,12 @@ table.rt-table .rate{font-weight:700}
       idx: idx, done: done, ok: R.ok, phase: phase,
       wrongIds: R.wrongIds.slice(), pendingRedoIds: pending,
       peekIds: R.peekIds.slice(), results: results,
+      // 考点屏已判、答案未答的题：这里带上 picked/order，刷新后回到第二屏且不重判考点
+      spot: R.spot ? {
+        total: R.spot.total, ok: R.spot.ok,
+        picked: R.spot.picked, order: R.spot.order,
+        wrongTopics: R.spot.wrongTopics.slice()
+      } : null,
       phaseOk: phaseOk, phaseDone: done,
       perTopic: R.perTopic, startAt: new Date(R.startAt).toISOString(),
       autoNext: autoNextOn()
@@ -1160,7 +1426,8 @@ table.rt-table .rate{font-weight:700}
       mode: normMode(c.mode), startAt: new Date(startMs).toISOString(),
       endAt: endAt.toISOString(), costMs: Math.max(0, endAt.getTime() - startMs),
       total: c.mainIds.length, ok: c.ok, wrongIds: c.wrongIds.slice(),
-      peek: c.peekIds.length, peekIds: c.peekIds.slice()
+      peek: c.peekIds.length, peekIds: c.peekIds.slice(),
+      spot: c.spot ? { total: c.spot.total, ok: c.spot.ok, wrongTopics: (c.spot.wrongTopics || []).slice() } : null
     };
     commitRound(entry, topicRows(c.perTopic), c.mainIds);
   }
@@ -1211,7 +1478,8 @@ table.rt-table .rate{font-weight:700}
         R = makeRound({
           mode: c.mode, title: c.title, main: mainItems, list: pending.slice(), phase: "redo",
           idx: 0, done: 0, phaseOk: 0, ok: c.ok, wrongIds: c.wrongIds,
-          pendingRedo: [], perTopic: c.perTopic, startAt: c.startAt, peekIds: c.peekIds, results: {}
+          pendingRedo: [], perTopic: c.perTopic, startAt: c.startAt, peekIds: c.peekIds, results: {},
+          spot: c.spot
         });
         switchView("drill"); updateAutoBtn(); renderQuestion(); startTimer();
         toast("还有错题没重练：共 " + pending.length + " 题", 2600);
@@ -1226,7 +1494,7 @@ table.rt-table .rate{font-weight:700}
       mode: c.mode, title: c.title, main: mainItems, list: list, phase: c.phase,
       idx: idx, done: done, phaseOk: c.phaseOk, ok: c.ok, wrongIds: c.wrongIds,
       pendingRedo: pending, perTopic: c.perTopic, startAt: c.startAt, peekIds: c.peekIds,
-      results: results
+      results: results, spot: c.spot
     });
     R.judgeCount = done;
     switchView("drill");
@@ -1266,6 +1534,30 @@ table.rt-table .rate{font-weight:700}
     return { count: 0, ids: [] };
   }
 
+  /* 结算屏「考点识别 对 X/Y」一行：只有只判考点模式才有；旧数据 spot=null 时整行隐藏 */
+  function renderSpotLine(res) {
+    var el = $("#rt-spot");
+    if (!el) return;
+    var sp = res && res.spot;
+    var st = sp ? Math.floor(num(sp.total)) : 0;
+    if (!st) { el.innerHTML = ""; el.classList.remove("show"); return; }
+    var so = Math.min(st, Math.floor(num(sp.ok)));
+    var srate = Math.round((so / st) * 100);
+    var total = Number(res.total) || 0, ok = Number(res.ok) || 0;
+    var pk = peekOfResult(res);
+    var judged = Math.max(0, total - pk.count);
+    var arate = judged ? Math.round((ok / judged) * 100) : 0;
+    var h = "考点识别 对 <b>" + so + "</b>/" + st + "（<b>" + srate + "%</b>） · 答案 对 <b>" + ok + "</b>/" +
+      judged + "（" + (judged ? arate + "%" : "—") + "）";
+    var wt = strList(sp.wrongTopics);
+    if (wt.length) {
+      h += '<span class="rt-spot-wt">判错的考点：' + esc(wt.slice(0, 5).join("、")) +
+        (wt.length > 5 ? " 等" : "") + "</span>";
+    }
+    el.innerHTML = h;
+    el.classList.add("show");
+  }
+
   function renderResult(res) {
     if (!res) { renderHome(); return; }
     var total = Number(res.total) || 0;
@@ -1285,6 +1577,7 @@ table.rt-table .rate{font-weight:700}
       peekEl.innerHTML = "";
       peekEl.classList.remove("show");
     }
+    renderSpotLine(res);
 
     // 每个考点：题数/正确率都剔掉「看答案」的题（与大号正确率、对 X/Y 同口径）
     var rows = (res.perTopic || []).map(function (t) {
@@ -1325,10 +1618,17 @@ table.rt-table .rate{font-weight:700}
 
     var note = $("#rt-note");
     note.className = "rt-note";
+    // 只判考点模式：答案分再高，考点识别不到 80% 也先别夸「稳了」
+    var sp = res.spot;
+    var spTotal = sp ? Math.floor(num(sp.total)) : 0;
+    var spRate = spTotal ? Math.round((Math.min(spTotal, Math.floor(num(sp.ok))) / spTotal) * 100) : null;
     if (weak.length) {
       note.classList.add("warn");
       note.innerHTML = "明早考前把这 <b>" + weak.length + "</b> 个点再看一眼：" + esc(weak.slice(0, 4).map(function (t) { return t.topic; }).join("、")) +
         (weak.length > 4 ? " 等" : "") + "。";
+    } else if (spRate !== null && spRate < 80) {
+      note.classList.add("warn");
+      note.innerHTML = "答案对了 " + rate + "%，但考点识别只有 <b>" + spRate + "%</b>：先把「判考点」练到 8/10，再回普通模式刷速度。";
     } else if (rate >= 85) {
       note.innerHTML = "今晚这块稳了（" + rate + "%），明早保持手感就行。";
     } else {
@@ -1338,6 +1638,7 @@ table.rt-table .rate{font-weight:700}
     var nr = (res.wrongIds || []).length;
     $("#act-redo").textContent = "重练错题（" + nr + "）";
     $("#act-redo").disabled = nr === 0;
+    $("#act-again").textContent = res.mode === "spot" ? "下一组 10 题" : "再来一轮";
     $("#act-again").disabled = !(res.itemIds && res.itemIds.length);
     switchView("result");
   }
@@ -1397,6 +1698,12 @@ table.rt-table .rate{font-weight:700}
     lines.push("");
     lines.push("- 时间：" + (res.endAt ? fmtDateTime(new Date(res.endAt)) : fmtDateTime(new Date())));
     lines.push("- 正确率：" + (judged ? rate + "%" : "—") + "（对 " + ok + " / " + judged + "）");
+    if (res.spot && num(res.spot.total)) {
+      var st = Math.floor(num(res.spot.total)), so = Math.min(st, Math.floor(num(res.spot.ok)));
+      lines.push("- 考点识别：" + so + " / " + st + "（" + Math.round((so / st) * 100) + "%）");
+      var wt = strList(res.spot.wrongTopics);
+      if (wt.length) lines.push("- 判错的考点：" + wt.slice(0, 5).join("、") + (wt.length > 5 ? " 等" : ""));
+    }
     if (pk.count > 0) lines.push("- 另有 " + pk.count + " 题看了答案（没计入正确率，已加入重练）");
     lines.push("- 用时：" + fmtClock(res.costMs));
     lines.push("");
@@ -1589,12 +1896,22 @@ table.rt-table .rate{font-weight:700}
         startRound("redo", w, { title: "只刷错题" });
         return;
       }
+      if (act === "spot") { startSpot(); return; }
       if (act === "prev") { navStep(-1); return; }
       if (act === "next") { navStep(1); return; }
       if (act === "sheet") { openSheet(); return; }
       if (act === "sheet-go") { jumpTo(Number(t.getAttribute("data-i"))); return; }
       if (act === "quit") { askQuit(); return; }
-      if (act === "ack") { advance(); return; }
+      if (act === "ack") {
+        var ackItem = currentItem();
+        if (R && R.spot && ackItem && R.spot.hold === ackItem.id) {   // 第一屏「看选项，选答案 →」
+          R.spot.hold = null;
+          renderQuestion();
+          return;
+        }
+        advance();
+        return;
+      }
       if (act === "peek") { doPeek(); return; }
       if (act === "peek-id") { openPeekReview(t.getAttribute("data-id")); return; }
       if (act === "auto") { toggleAuto(); return; }
@@ -1610,6 +1927,8 @@ table.rt-table .rate{font-weight:700}
       if (act === "again") {
         var r2 = lastResult();
         if (!r2 || !r2.itemIds.length) return;
+        // 只判考点：这里的按钮是「下一组 10 题」，顺着题库往后开新一组，而不是把同 10 题再做一遍
+        if (r2.mode === "spot") { startSpot(); return; }
         var its = r2.itemIds.map(function (id) { return itemById[id]; }).filter(Boolean);
         startRound(r2.mode || "block", its, { title: "再来一轮" });
         return;
@@ -1623,6 +1942,8 @@ table.rt-table .rate{font-weight:700}
     }
     var opt = e.target.closest ? e.target.closest(".opt") : null;
     if (opt && !opt.disabled && R && S.view === "drill") { judge(Number(opt.getAttribute("data-i"))); return; }
+    var spotOpt = e.target.closest ? e.target.closest(".spot-opt") : null;
+    if (spotOpt && !spotOpt.disabled && R && S.view === "drill") { judgeSpot(Number(spotOpt.getAttribute("data-i"))); return; }
     var card = e.target.closest ? e.target.closest(".bcard") : null;
     if (card && !card.disabled && card.dataset.block) {
       var no = Number(card.dataset.block);
@@ -1643,6 +1964,20 @@ table.rt-table .rate{font-weight:700}
     if (S.view !== "drill" || !R) return;
     if (e.metaKey || e.ctrlKey || e.altKey) return;
     if ($("#modal").classList.contains("is-open")) return;
+    var spSt = spotStateOf(currentItem());
+    if (spSt === "judge") {          // 考点屏：1–4 选考点，其他键先不判答案
+      if (e.key === "ArrowLeft") { e.preventDefault(); navStep(-1); return; }
+      if (e.key === "ArrowRight") { e.preventDefault(); navStep(1); return; }
+      if (/^[1-4]$/.test(e.key)) { e.preventDefault(); judgeSpot(Number(e.key) - 1); return; }
+      if (e.key === "Enter") { e.preventDefault(); }   // 考点还没判，Enter 不翻页
+      return;
+    }
+    if (spSt === "hold") {           // 刚判完考点：Enter 进第二屏
+      if (e.key === "ArrowLeft") { e.preventDefault(); navStep(-1); return; }
+      if (e.key === "ArrowRight") { e.preventDefault(); navStep(1); return; }
+      if (e.key === "Enter") { e.preventDefault(); R.spot.hold = null; renderQuestion(); return; }
+      return;
+    }
     if (e.key === "ArrowLeft") { e.preventDefault(); navStep(-1); return; }
     if (e.key === "ArrowRight") { e.preventDefault(); navStep(1); return; }
     if (e.key === "Enter") {
@@ -1725,6 +2060,13 @@ table.rt-table .rate{font-weight:700}
           src: it ? (it.src || "") : null
         } : null,
         store: store,
+        // 只判考点：当前阶段（judge/hold/answer）、计数、每题选项顺序（非该模式为 null）
+        spot: R && R.spot ? {
+          stage: it ? (spotStateOf(it) || (R.results && R.results[it.id] ? "done" : "")) : "",
+          total: R.spot.total, ok: R.spot.ok,
+          picked: R.spot.picked, order: R.spot.order,
+          wrongTopics: R.spot.wrongTopics.slice()
+        } : null,
         items: allItems().map(function (i) { return { id: i.id, block: i.block, topic: i.topic, answer: i.answer, src: i.src || "", cn: i.cn || null }; })
       };
     },
@@ -1732,6 +2074,8 @@ table.rt-table .rate{font-weight:700}
     importText: applyImportText,
     summary: summaryText,
     startBlock: function (no) { if (blockByNo[no]) startRound("block", blockByNo[no].items.slice(), { title: "Block " + no }); },
+    startSpot: startSpot,          // 只判考点：n 可选，默认 10 题
+    spotItems: spotItems,          // 只判考点的选题（qa / 调试用）
     home: renderHome,
     judge: judge,
     advance: advance,
