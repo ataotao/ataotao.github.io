@@ -16,6 +16,7 @@
   shots.mjs               生成 <科目>/预览截图/*.png（有套卷的多截 3–5 张）
   shots-formula.mjs       生成 公式记背/预览截图/*.png
   check-size.mjs          容量闸门：单文件上限 / 全库预算（pre-commit 自动跑）
+  setup.mjs               换机器第一件事：装钩子 + 跑一次容量体检
   parity.mjs              产物一致性：重建后与盘上产物比对，抓"改了源忘了 build"
   qa/                     一次性探针脚本（mk-*.mjs：造测试页、截图、跑断言）
   _transcribe/            逐页转录的原始 JSON（每 3–4 页一个文件）
@@ -156,8 +157,22 @@ node 工具/check-size.mjs          # 检查暂存区（pre-commit 自动调用�
 node 工具/check-size.mjs --all    # 全库体检：目录排行 + 单文件 ≥800KB 清单
 ```
 
-**clone 后一次性启用钩子**：`git config core.hooksPath .githooks`
-（钩子只调用上面的脚本，规则与阈值全在脚本头部，改规矩就改那一处。）
+**换机器 / 重新 clone 后第一件事**：
+
+```powershell
+node 工具/setup.mjs
+```
+
+它做三件事：确认 node ≥18、把 `core.hooksPath` 指到 `.githooks`、跑一次容量体检。
+幂等，随便跑几次。**必须手动跑一次的原因**：`core.hooksPath` 是机器级 git 配置，
+不会随 clone 传过来，不配的话 `.githooks/pre-commit` 就是个没人调用的文件。
+
+忘配了也有兜底：`.github/workflows/repo-budget.yml` 在每次 push 和每月 3 日
+跑同一套检查（`check-size.mjs --all` + `parity.mjs`），不需要任何本机设置——
+只是发现得晚一步（推到远端才发现，而不是提交前）。另外 `check-size.mjs --all`
+在本机跑时，如果钩子没启用，开头会红字提醒你。
+
+（钩子只调用 `check-size.mjs`，规则与阈值全在脚本头部，改规矩就改那一处。）
 
 判断一个文件该不该入库，只有一条标准：**页面或构建在运行时读它吗？**
 

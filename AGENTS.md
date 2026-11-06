@@ -41,6 +41,10 @@
 
 ### 容量与产物一致性
 
+- **换机器 / 重新 clone 后先跑 `node 工具/setup.mjs`**（装钩子 + 体检，幂等）。
+  `core.hooksPath` 是机器级 git 配置，不随 clone 传过来；服务器兜底在
+  `.github/workflows/repo-budget.yml`（每次 push + 每月 3 日）。
+
 - **入库判据只有一条：页面或构建运行时读它吗。** 读就入库；不读就本机留档（原卷照片只留 `images/试卷/*.webp`）。
   跟踪总量已从 202 MB 降到 82 MB，别再加回去。规则与阈值写在 `工具/check-size.mjs` 头部，`pre-commit` 自动跑。
 - **产物不手改，改源后重建**（ADR-0003）。改完源跑 `node 工具/parity.mjs`：它快照→构建→比对→还原，
