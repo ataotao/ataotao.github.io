@@ -4,6 +4,8 @@ package-lock.json
 bun.lock
 .omo/
 # skills/
+__pycache__/
+*.pyc
 
 # 物理题库工具：中间产物（可重建，不进版本库，避免仓库膨胀）
 物理/_recon/图片备份/

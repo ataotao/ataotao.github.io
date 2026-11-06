@@ -89,11 +89,31 @@ def _stage(path, text):
     _save_manifest(m)
 
 
+KEEP_BAK = 3  # 每个文件只留最近 3 份 .bak-*
+
+
+def _prune_bak(path):
+    """每次 build 都会备份一个 1MB 级的 HTML/pack.json。不清就会攒成几十个
+    （2026-11-06 清出来 24 个共 7.6MB），而且它们不进版本库、也没人会去翻。
+    ts() 是 %Y%m%d-%H%M%S，字典序即时间序，所以排序后砍掉最旧的。"""
+    d, base = os.path.split(path)
+    try:
+        names = [n for n in os.listdir(d or '.') if n.startswith(base + '.bak-')]
+    except OSError:
+        return
+    for n in sorted(names)[:-KEEP_BAK] if len(names) > KEEP_BAK else []:
+        try:
+            os.remove(os.path.join(d, n))
+        except OSError:
+            pass
+
+
 def backup(path):
     if not os.path.exists(path):
         return
     try:
         shutil.copy2(path, path + '.bak-' + ts())
+        _prune_bak(path)
     except PermissionError:
         m = _manifest()
         if path not in m['backups']:
