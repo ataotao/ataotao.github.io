@@ -1,0 +1,39 @@
+name: 容量与产物一致性
+
+# 为什么放服务器上：本机的 pre-commit 钩子靠 `git config core.hooksPath .githooks`，
+# 那是机器级配置，换电脑 / 重新 clone 就没了。这里不依赖任何本机设置——
+# 忘配钩子也照样有人兜底，只是发现得晚一步（推到远端才发现，而不是提交前）。
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+  schedule:
+    # 每月 3 日 01:00 UTC = 北京时间 09:00，跟"月初看一眼仓库体重"的习惯对齐
+    - cron: '0 1 3 * *'
+
+permissions:
+  contents: read
+
+jobs:
+  budget:
+    name: 容量预算
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: 跟踪总量与单文件上限
+        run: node 工具/check-size.mjs --all
+
+  parity:
+    name: 产物一致性
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: 重建后与盘上产物比对
+        run: node 工具/parity.mjs

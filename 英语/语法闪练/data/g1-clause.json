@@ -16,8 +16,8 @@
         "whether"
       ],
       "answer": "A",
-      "rule": "sure/certain/afraid/glad 后的 that 从句中 that 不作成分，只起连接作用。",
-      "trap": "从句主宾齐全时只能填 that；what、which 必须自己在从句里当主语或宾语。",
+      "rule": "空前是 sure 这类表确信/情感的形容词，从句成分齐全就用 that，不止这四个词。",
+      "trap": "that 不作成分；what/which 必须在从句里当主语或宾语。",
       "src": "U1 · 复习指引",
       "verified": true
     },
@@ -34,8 +34,8 @@
         "that"
       ],
       "answer": "D",
-      "rule": "glad/sorry/afraid 等形容词后接陈述事实的从句用 that，that 可省略。",
-      "trap": "从句已完整，别再塞 what/which；填 whether 等于问“是否”，与事实句意矛盾。",
+      "rule": "glad/sorry 等只是举例：说人的情绪/确信的形容词接陈述事实，都用 that。",
+      "trap": "事实句选 that；别再塞 what/which；只有表「是否」才用 whether。",
       "src": "U3 · 复习指引",
       "verified": true
     },
@@ -52,7 +52,7 @@
         "whether"
       ],
       "answer": "B",
-      "rule": "从句里 use 缺宾语时用 what：它既起连接作用，又在从句里充当宾语。",
+      "rule": "空前虽是 not sure，但从句 use 缺宾语 → what：它既连接又作宾语。",
       "trap": "not sure 后面不一定是 that；先数从句缺不缺成分，缺宾语就选 what。",
       "src": "U2 · 复习指引",
       "verified": true
@@ -541,6 +541,42 @@
       "rule": "直接引语变间接引语：人称跟着转述人改，时态后退一步，will 变 would。",
       "trap": "said 后转述，will 要退成 would；人称 we 也要改成 they。",
       "src": "U2 · 复习指引",
+      "verified": true
+    },
+    {
+      "id": "cl-031",
+      "topic": "adj + that 从句",
+      "level": 2,
+      "stem": "I'm not sure ______ Uncle Wang will come to the science show or not.",
+      "cn": null,
+      "options": [
+        "that",
+        "whether",
+        "what",
+        "which"
+      ],
+      "answer": "B",
+      "rule": "sure 在否定/疑问句中表「不确定是否」，从句成分齐全时也用 whether。",
+      "trap": "别见 sure 就填 that；not sure 表示不确定，从句完整也用 whether。",
+      "src": "补题 · U1 边界",
+      "verified": true
+    },
+    {
+      "id": "cl-032",
+      "topic": "adj + that 从句",
+      "level": 2,
+      "stem": "After three tries, the boy was ______ that he could solve the puzzle by himself.",
+      "cn": null,
+      "options": [
+        "sure",
+        "easy",
+        "difficult",
+        "hard"
+      ],
+      "answer": "A",
+      "rule": "主语是人时用 sure/glad 这类述人形容词；easy/hard 说事情难易，不接 that。",
+      "trap": "easy/hard 描述事情，不能写成 sb is easy that…。",
+      "src": "补题 · 形容词搭配",
       "verified": true
     }
   ]

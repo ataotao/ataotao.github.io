@@ -171,8 +171,8 @@ ok("默认不自动跳题（settings.autoNext=false）", S.settings && S.setting
 
 // 开始屏「明早考前看」文档入口
 const homeDocs = await $(`(() => [...document.querySelectorAll('#scr-home [data-act="doc"]')].map(b => b.getAttribute('data-doc')))()`);
-ok("开始屏有 3 个文档入口（口诀卡/方案/说明）", (homeDocs || []).join(",") === "card,plan,guide", JSON.stringify(homeDocs));
-ok("FLASH_DOCS 注入三个 key", (S.docs || []).join(",") === "card,plan,guide", JSON.stringify(S.docs));
+ok("开始屏有 5 个文档入口（口诀卡/对比卡/速查表/方案/说明）", (homeDocs || []).join(",") === "card,pair,quick,plan,guide", JSON.stringify(homeDocs));
+ok("FLASH_DOCS 注入五个 key", (S.docs || []).join(",") === "card,pair,quick,plan,guide", JSON.stringify(S.docs));
 
 await click('#act-plan');
 await sleep(250);
@@ -524,6 +524,9 @@ ok("点「看答案」：反馈是琥珀中性样式（不是绿色 ✓）",
 ok("点「看答案」：反馈写「考点 / 规则 / 易错点 / 出处」",
   /考点：/.test(pk.fbText) && pk.fbText.indexOf(q1.topic) >= 0 && /规则：/.test(pk.fbText) &&
   /易错点：/.test(pk.fbText) && (/出处：/.test(pk.fbText) || !q1.src), pk.fbText.slice(0, 170));
+ok("「看答案」解析里先给「怎么认出」线索，再给规则",
+  /怎么认出：/.test(pk.fbText) && pk.fbText.indexOf("怎么认出：") < pk.fbText.indexOf("规则："),
+  pk.fbText.slice(0, 140));
 ok("点「看答案」：明确写「这题没计入正确率，已加入重练」",
   /没计入正确率/.test(pk.fbText) && /已加入重练/.test(pk.fbText), pk.fbText.slice(-60));
 ok("点「看答案」：按钮变「下一题 →」且 ≥44px", /下一题/.test(pk.ack) && pk.ackH >= 44, JSON.stringify({ t: pk.ack, h: pk.ackH }));
@@ -810,6 +813,39 @@ ok("「使用说明」能打开且标题正确", (await state()).view === "doc" 
   await text("#doc-title"));
 await click('[data-act="doc-back"]');
 await sleep(280);
+await click('#scr-home [data-act="doc"][data-doc="pair"]');
+await sleep(320);
+const pairInfo = await $(`(() => ({
+  view: (window.FLASH_APP.state() || {}).view,
+  title: (document.querySelector('#doc-title') || {}).textContent || '',
+  h3: document.querySelectorAll('#doc-body h3').length,
+  tables: document.querySelectorAll('#doc-body table').length,
+  rows: document.querySelectorAll('#doc-body tr').length }))()`);
+ok("「最小对立对卡」能打开且标题正确", pairInfo.view === "doc" && pairInfo.title === "最小对立对卡",
+  JSON.stringify({ view: pairInfo.view, title: pairInfo.title }));
+ok("对比卡渲染出 20 张卡（20 个 h3 / 20 张表 / 60 行）",
+  pairInfo.h3 === 20 && pairInfo.tables === 20 && pairInfo.rows === 60, JSON.stringify(pairInfo));
+await click('[data-act="doc-back"]');
+await sleep(280);
+await click('#scr-home [data-act="doc"][data-doc="quick"]');
+await sleep(340);
+const quickInfo = await $(`(() => ({
+  view: (window.FLASH_APP.state() || {}).view,
+  title: (document.querySelector('#doc-title') || {}).textContent || '',
+  h1: (document.querySelector('#doc-body h1') || {}).textContent || '',
+  h2: document.querySelectorAll('#doc-body h2').length,
+  tables: document.querySelectorAll('#doc-body table').length,
+  rows: document.querySelectorAll('#doc-body tbody tr').length,
+  empty: [...document.querySelectorAll('#doc-body tbody tr')].filter(tr => !tr.textContent.trim()).length,
+  dot: [...document.querySelectorAll('#doc-body tbody td:nth-child(3)')].every(td => td.textContent.trim().length > 4) }))()`);
+ok("「考点识别速查表」能打开且标题正确", quickInfo.view === "doc" && quickInfo.title === "考点识别速查表",
+  JSON.stringify({ view: quickInfo.view, title: quickInfo.title }));
+ok("速查表按 4 个 block 分组、每个考点一行且线索不为空",
+  quickInfo.h2 === 4 && quickInfo.tables === 4 && quickInfo.rows === 49 && quickInfo.empty === 0 && quickInfo.dot,
+  JSON.stringify(quickInfo));
+await shot("qa-13-quick");
+await click('[data-act="doc-back"]');
+await sleep(280);
 // 结算屏入口
 await reload("#view=result");
 await click('#scr-result [data-act="doc"][data-doc="card"]');
@@ -822,6 +858,9 @@ ok("从结算页进入，返回时回到结算页", (await state()).view === "re
 // 深链
 await reload("#view=doc&doc=card");
 ok("深链 #view=doc&doc=card 打开口诀卡", (await state()).view === "doc" && (await text("#doc-title")) === "考前口诀卡",
+  (await text("#doc-title")));
+await reload("#view=doc&doc=pair");
+ok("深链 #view=doc&doc=pair 打开对比卡", (await state()).view === "doc" && (await text("#doc-title")) === "最小对立对卡",
   (await text("#doc-title")));
 await reload("#view=doc&doc=nope");
 ok("非法 doc 值静默忽略（回开始屏）", (await state()).view === "home", (await state()).view);
@@ -1193,7 +1232,179 @@ ok("清空后 stat/rounds/current 全空", Object.keys(S.store.stat).length === 
   S.current === null && /清空/.test(dialogMessages.slice(-1)[0] || ""), JSON.stringify(S.store));
 ok("清空保留「自动跳题」偏好", S.settings.autoNext === true, JSON.stringify(S.settings));
 
-/* ── 11. 无题库兜底 ──────────────────────────── */
+/* 上一组结尾把「自动跳题」打开了，考点模式答对会自动翻页，先关掉再测 */
+if ((await state()).settings.autoNext) { await $(`window.FLASH_APP.toggleAuto()`); }
+await $(`window.FLASH_APP.home()`);
+await sleep(150);
+
+/* ── 11. 只判考点（spot） ───────────────────── */
+group("只判考点（spot）");
+const spotEntry = await $(`(() => { const b = document.querySelector('#act-spot');
+  return { exists: !!b, text: b ? b.textContent.trim() : '', dis: b ? b.disabled : true }; })()`);
+ok("开始屏有「只判考点」入口且可用", spotEntry.exists && /只判考点/.test(spotEntry.text) && !spotEntry.dis,
+  JSON.stringify(spotEntry));
+
+const cueCover = await $(`(() => { const items = (window.FLASH_APP.state() || {}).items || [];
+  const c = window.FLASH_CUES || {}; const seen = {}; const miss = [];
+  items.forEach((it) => { if (seen[it.topic]) return; seen[it.topic] = 1; if (!c[it.topic]) miss.push(it.topic); });
+  return { topics: Object.keys(seen).length, cues: Object.keys(c).length, miss: miss }; })()`);
+ok("每个考点都有「怎么认出」线索（43 个考点全覆盖）",
+  cueCover.miss.length === 0 && cueCover.topics === 43 && cueCover.cues >= 43,
+  JSON.stringify({ topics: cueCover.topics, cues: cueCover.cues, miss: cueCover.miss }));
+
+await $(`window.FLASH_APP.startSpot(3)`);
+await sleep(220);
+S = await state();
+ok("startSpot(3)：进入做题屏、mode=spot、3 题",
+  S.view === "drill" && S.round && S.round.mode === "spot" && S.round.listLen === 3,
+  JSON.stringify({ view: S.view, mode: S.round && S.round.mode, n: S.round && S.round.listLen }));
+
+const spFirst = await $(`(() => ({
+  opt: document.querySelectorAll('#qcard .opt').length,
+  spot: document.querySelectorAll('#qcard .spot-opt').length,
+  panel: !!document.querySelector('#qcard .spot-panel'),
+  peekBtn: !!document.querySelector('#qcard [data-act="peek"]'),
+  chip: (document.querySelector('#bar-topic') || {}).textContent || '',
+  line: (document.querySelector('#drill-line') || {}).textContent || '' }))()`);
+ok("第一屏只有 4 个考点按钮（没有 A/B/C/D、没有看答案）",
+  spFirst.opt === 0 && spFirst.spot === 4 && spFirst.panel && !spFirst.peekBtn, JSON.stringify(spFirst));
+ok("第一屏顶栏显示「考点？」、底部提示改为选考点",
+  /考点/.test(spFirst.chip) && /选考点/.test(spFirst.line), JSON.stringify(spFirst));
+await shot("qa-10-spot-first");
+
+S = await state();
+const spId1 = S.round.itemId;
+const spOrder1 = S.spot.order[spId1];
+const spCi1 = spOrder1.indexOf(S.round.topic);
+ok("候选考点是 4 个互不相同的考点，且含正确考点",
+  spOrder1.length === 4 && spCi1 >= 0 && new Set(spOrder1).size === 4, JSON.stringify(spOrder1));
+await click('#qcard .spot-opt[data-i="' + spCi1 + '"]');
+await sleep(160);
+S = await state();
+const spHit = await $(`(() => ({
+  ok: document.querySelectorAll('#qcard .spot-opt.is-ok').length,
+  locked: [...document.querySelectorAll('#qcard .spot-opt')].every(b => b.disabled),
+  fb: (document.querySelector('#fb') || {}).textContent || '',
+  ack: !!document.querySelector('#fb [data-act="ack"]'),
+  rate: (document.querySelector('#bar-rate') || {}).textContent || '' }))()`);
+ok("判对考点：正确项变绿、按钮锁定、反馈给考点与规则",
+  spHit.ok === 1 && spHit.locked && /考点/.test(spHit.fb) && /规则/.test(spHit.fb) && spHit.ack,
+  spHit.fb.slice(0, 60));
+ok("判考点后的解析先给「怎么认出」线索、再给规则",
+  /怎么认出：/.test(spHit.fb) && spHit.fb.indexOf("怎么认出：") < spHit.fb.indexOf("规则："),
+  spHit.fb.slice(0, 120));
+await shot("qa-12-spot-cue");
+ok("判考点不动答案口径：正确率仍显示「—」、考点计数 1/1",
+  /—/.test(spHit.rate) && S.spot.total === 1 && S.spot.ok === 1,
+  JSON.stringify({ rate: spHit.rate, spot: [S.spot.total, S.spot.ok] }));
+
+await click('#fb [data-act="ack"]');
+await sleep(200);
+const spSecond = await $(`(() => ({
+  opt: document.querySelectorAll('#qcard .opt').length,
+  spot: document.querySelectorAll('#qcard .spot-opt').length,
+  peekBtn: !!document.querySelector('#qcard [data-act="peek"]') }))()`);
+ok("点「看选项，选答案 →」进第二屏：出现 4 个选项、考点按钮消失",
+  spSecond.opt === 4 && spSecond.spot === 0 && spSecond.peekBtn, JSON.stringify(spSecond));
+
+S = await state();
+await click('#qcard .opt[data-k="' + S.round.answer + '"]');
+await sleep(160);
+S = await state();
+ok("第二屏答对：答案 ok=1，考点计数不变",
+  S.round.ok === 1 && S.spot.total === 1 && S.spot.ok === 1,
+  JSON.stringify({ ok: S.round.ok, spot: [S.spot.total, S.spot.ok] }));
+const ansFb = await text("#fb");
+ok("普通判分解析里也有「怎么认出」线索", /怎么认出：/.test(ansFb) && /规则：/.test(ansFb), ansFb.slice(0, 120));
+await click('#fb [data-act="ack"]');
+await sleep(200);
+
+/* 第二题：故意判错考点 */
+S = await state();
+const spId2 = S.round.itemId, spT2 = S.round.topic, spOrder2 = S.spot.order[spId2];
+const spWrong = (spOrder2.indexOf(spT2) + 1) % 4;
+await click('#qcard .spot-opt[data-i="' + spWrong + '"]');
+await sleep(160);
+S = await state();
+const spMiss = await $(`(() => ({
+  bad: document.querySelectorAll('#qcard .spot-opt.is-bad').length,
+  right: document.querySelectorAll('#qcard .spot-opt.is-right').length,
+  fb: (document.querySelector('#fb') || {}).textContent || '' }))()`);
+ok("判错考点：所选标红、正确考点标绿、进 wrongTopics",
+  spMiss.bad === 1 && spMiss.right === 1 && /✗/.test(spMiss.fb) &&
+  S.spot.total === 2 && S.spot.ok === 1 && S.spot.wrongTopics.indexOf(spT2) >= 0,
+  JSON.stringify({ fb: spMiss.fb.slice(0, 40), wt: S.spot.wrongTopics }));
+
+await click('#fb [data-act="ack"]');
+await sleep(200);
+
+/* 刷新：应该回到第二屏，且不重复判考点 */
+await hardReload();
+S = await state();
+const spBack = await $(`(() => ({
+  opt: document.querySelectorAll('#qcard .opt').length,
+  spot: document.querySelectorAll('#qcard .spot-opt').length }))()`);
+ok("考点判完刷新：回到第二屏（有选项、无考点按钮）、不重判考点",
+  S.view === "drill" && S.round && S.round.mode === "spot" && spBack.opt === 4 && spBack.spot === 0 &&
+  S.spot.total === 2 && S.spot.ok === 1,
+  JSON.stringify({ view: S.view, mode: S.round && S.round.mode, spBack, spot: S.spot && [S.spot.total, S.spot.ok] }));
+
+S = await state();
+await click('#qcard .opt[data-k="' + S.round.answer + '"]');
+await sleep(160);
+await click('#fb [data-act="ack"]');
+await sleep(200);
+
+/* 第三题：判对考点 + 答对 → 进结算 */
+S = await state();
+const spId3 = S.round.itemId, spOrder3 = S.spot.order[spId3];
+await click('#qcard .spot-opt[data-i="' + spOrder3.indexOf(S.round.topic) + '"]');
+await sleep(160);
+await click('#fb [data-act="ack"]');
+await sleep(200);
+S = await state();
+await click('#qcard .opt[data-k="' + S.round.answer + '"]');
+await sleep(160);
+await click('#fb [data-act="ack"]');
+await sleep(450);
+S = await state();
+const rtSpot = await $(`(() => ({
+  shown: document.querySelector('#rt-spot').classList.contains('show'),
+  txt: (document.querySelector('#rt-spot') || {}).textContent || '',
+  pct: (document.querySelector('#rt-pct') || {}).textContent || '' }))()`);
+ok("结算进入 result 屏", S.view === "result", S.view);
+ok("结算「考点识别 对 2/3 · 答案 对 3/3（100%）」",
+  rtSpot.shown && /考点识别/.test(rtSpot.txt) && /2\s*\/\s*3/.test(rtSpot.txt) &&
+  /3\s*\/\s*3/.test(rtSpot.txt) && /100%/.test(rtSpot.pct) && /判错的考点/.test(rtSpot.txt),
+  JSON.stringify(rtSpot).slice(0, 240));
+const rtNote = await text("#rt-note");
+ok("答案 100% 但考点识别 <80% 时，提词改说「先练判考点」（不说稳了）",
+  /考点识别/.test(rtNote) && /判考点/.test(rtNote) && !/稳了/.test(rtNote), rtNote);
+
+const spLast = S.store.last && S.store.last.spot;
+const spLastRound = S.store.rounds[S.store.rounds.length - 1] && S.store.rounds[S.store.rounds.length - 1].spot;
+ok("store.last 与 rounds[] 都带考点计数（total=3 ok=2）",
+  spLast && spLast.total === 3 && spLast.ok === 2 && spLastRound && spLastRound.total === 3 && spLastRound.ok === 2,
+  JSON.stringify({ last: spLast, round: spLastRound }));
+await shot("qa-11-spot-result");
+
+const spotAgainLabel = await text("#act-again");
+const prevIds = ((S.store.last && S.store.last.itemIds) || []).join(",");
+await click('#act-again');
+await sleep(350);
+S = await state();
+ok("考点轮结算按钮是「下一组 10 题」", /下一组/.test(spotAgainLabel), spotAgainLabel);
+ok("「下一组」开新一组（10 题、与上一组不同、仍从考点屏开始）",
+  S.view === "drill" && S.round && S.round.mode === "spot" && S.round.listLen === 10 &&
+  S.round.listIds.join(",") !== prevIds &&
+  (await $(`document.querySelectorAll('#qcard .spot-opt').length`)) === 4 && S.spot && S.spot.total === 0,
+  JSON.stringify({ view: S.view, mode: S.round && S.round.mode, n: S.round && S.round.listLen, total: S.spot && S.spot.total }));
+
+// 收尾：直接回开始屏（不弹「退出」确认，后面的兜底组会 reload）
+await $(`window.FLASH_APP.home()`);
+await sleep(150);
+
+/* ── 12. 无题库兜底 ──────────────────────────── */
 group("无题库兜底");
 // 单文件版（../语法闪练.html）把数据内联了，没有 src=bundle.js 可拦；这一组对它没有意义，跳过。
 const usesExternalBundle = await $(`!!document.querySelector('script[src="data/bundle.js"]')`);
@@ -1215,7 +1426,7 @@ if (!usesExternalBundle) {
     view: document.querySelector('#scr-home').classList.contains('is-active') }))()`);
   ok("无数据时不白屏、显示友好提示", noData.app && noData.view && /题库还没生成/.test(noData.banner) && /build\.mjs/.test(noData.banner),
     JSON.stringify(noData));
-  ok("无数据时开始按钮禁用、卡片全灰、文档入口仍在", noData.planDis && noData.allMissing && noData.docLinks === 3,
+  ok("无数据时开始按钮禁用、卡片全灰、文档入口仍在", noData.planDis && noData.allMissing && noData.docLinks === 5,
     JSON.stringify(noData));
   {
     const exc = events.slice(-40).filter((e) => e.method === "Runtime.exceptionThrown");
