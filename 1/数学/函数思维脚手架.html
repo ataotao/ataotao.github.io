@@ -716,8 +716,8 @@ var BANK = [
 /* ---------------- 3 反比例函数 · |k| 的几何意义 ---------------- */
 {
   id:'q3', topic:'反比例函数', method:'k 的几何意义', title:'矩形面积求 k',
-  stem:'如图，点 P 是反比例函数 y = k/x（k > 0）图象上的一点，过点 P 分别作 x 轴、y 轴的垂线，垂足为 A、B，矩形 OAPB 的面积为 6。\n求 k 的值。',
-  graph:{rev:1, f:function(x){return 6/x;}, rects:[{x:2,y:3}], marks:[{x:2,y:3,l:'P'},{x:2,y:0,l:'A'},{x:0,y:3,l:'B'}],
+  stem:'点 P 是反比例函数 y = k/x（k > 0）图象上的一点，过点 P 分别作 x 轴、y 轴的垂线，垂足为 A、B，矩形 OAPB 的面积为 6。\n求 k 的值。',
+  graph:{rev:2, f:function(x){return 6/x;}, rects:[{x:2,y:3}], marks:[{x:2,y:3,l:'P'},{x:2,y:0,l:'A'},{x:0,y:3,l:'B'}],
          x0:-7,x1:7,y0:-7,y1:7,sx:1,sy:1,w:340,h:270},
   steps:[
     {dim:'trans', type:'multi',
@@ -818,8 +818,8 @@ var BANK = [
 /* ---------------- 4 一次函数与反比例函数 · 交点与不等式 ---------------- */
 {
   id:'q4', topic:'函数综合', method:'图象法解不等式', title:'交点、不等式解集与面积',
-  stem:'如图，一次函数 y = -x + 5 的图象与反比例函数 y = 6/x 的图象交于 A(2, 3)、B(3, 2) 两点。\n(1) 求不等式 -x + 5 > 6/x 的解集；\n(2) 求 △AOB 的面积（O 为坐标原点）。',
-  graph:{rev:1, f:function(x){return -x+5;}, f2:function(x){return 6/x;},
+  stem:'一次函数 y = -x + 5 的图象与反比例函数 y = 6/x 的图象交于 A(2, 3)、B(3, 2) 两点。\n(1) 求不等式 -x + 5 > 6/x 的解集；\n(2) 求 △AOB 的面积（O 为坐标原点）。',
+  graph:{rev:2, f:function(x){return -x+5;}, f2:function(x){return 6/x;},
          marks:[{x:2,y:3,l:'A'},{x:3,y:2,l:'B'}],
          x0:-7,x1:8,y0:-7,y1:8,sx:2,sy:2,w:340,h:280},
   steps:[
@@ -1244,8 +1244,8 @@ var BANK = [
 /* ---------------- 8 分段函数 · 图象信息 ---------------- */
 {
   id:'q8', topic:'函数图象', method:'分段函数与行程图', title:'折线图读速度',
-  stem:'小明从家骑自行车去图书馆：先匀速骑行 10 分钟到书店，此时离家 2000 米；在书店停留 5 分钟；再匀速骑行 5 分钟到达图书馆，此时离家 3000 米。\n图中折线表示他离家的距离 s（米）与时间 t（分钟）之间的关系。\n(1) 第 15 分钟到第 20 分钟，他的骑行速度是多少？\n(2) 从出发到抵达图书馆，全程的平均速度是多少？\n(3) 哪一段时间内，s 与 t 成正比例函数关系？',
-  graph:{rev:1, poly:[[0,0],[10,2000],[15,2000],[20,3000]],
+  stem:'小明从家骑自行车去图书馆：先匀速骑行 10 分钟到书店，此时离家 2000 米；在书店停留 5 分钟；再匀速骑行 5 分钟到达图书馆，此时离家 3000 米。\n用 s（米）表示他离家的距离，t（分钟）表示出发后经过的时间。\n(1) 第 15 分钟到第 20 分钟，他的骑行速度是多少？\n(2) 从出发到抵达图书馆，全程的平均速度是多少？\n(3) 哪一段时间内，s 与 t 成正比例函数关系？',
+  graph:{rev:2, poly:[[0,0],[10,2000],[15,2000],[20,3000]],
          marks:[{x:10,y:2000,l:'(10,2000)'},{x:15,y:2000,l:''},{x:20,y:3000,l:'(20,3000)'}],
          x0:0,x1:22,y0:0,y1:3200,sx:5,sy:1000,w:340,h:270},
   steps:[
@@ -8870,6 +8870,18 @@ function viewLibQ(){
   h.push('<div class="small muted" style="margin-bottom:8px">母题 Q' + (vs.qi + 1) + '：' + esc(q.title) +
          '（' + esc(q.method) + '）。先自己做，再对照“变了什么”。</div>');
   h.push('<div class="stem">' + esc(v.stem) + '</div>');
+  /* 有些变式写的是“其他条件不变 / 在原题图象下”，条件或图在母题里：
+     把母题题干（和母题图）放在变式题面上方，默认折叠；这类变式默认展开。 */
+  var needMother = /(原题|其他条件不变)/.test(v.stem);
+  var motherFig = !!(q.graph && q.graph.rev !== 99);
+  h.push('<details class="var"' + (needMother ? ' open' : '') + '><summary>母题原题' +
+         (needMother ? '（这题的条件/图在母题里，已展开）' : (motherFig ? '（题干 + 图）' : '（题干）')) +
+         '</summary>' +
+         '<div class="body"><div style="white-space:pre-wrap">' + esc(q.stem) + '</div>');
+  if(motherFig){
+    h.push('<div class="plotbig" style="margin-top:10px">' + plotSVG(q.graph) + '</div>');
+  }
+  h.push('</div></details>');
   if(fields.length){
     h.push('<div style="margin-top:14px">' + fieldsHTML(fields, vs.ent || {}, done && vs.ok === false) + '</div>');
     if(!done && fields.some(function(fd){ return fd.type === 'num' || fd.type === 'coef'; })){
