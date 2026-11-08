@@ -2604,12 +2604,42 @@ window.PHYS_DATA = {"packs":[{"id":"pk-w1","name":"第1周 · 简单机械（杠
 .ex-btns{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:12px}
 .ex-btns .btn{min-height:40px;display:inline-flex;align-items:center}
 .ex-area{margin-top:12px}
-.ex-jump{display:grid;grid-template-columns:repeat(auto-fill,minmax(44px,1fr));gap:7px;margin-top:10px}
-.ex-num{min-height:42px;border:1px solid var(--line);border-radius:9px;background:#fff;font-size:13.5px;font-weight:600;font-variant-numeric:tabular-nums}
-.ex-num:hover{border-color:#c9c2b4}
-.ex-num.on{border-color:var(--brand);background:var(--brand-l);color:var(--brand-d);font-weight:700}
-.ex-num.ok{border-color:#cfe6d8;background:var(--ok-bg);color:var(--ok)}
-.ex-num.no{border-color:#eccfcd;background:var(--bad-bg);color:var(--bad)}
+/* 题目清单（预览式选题）：一行一题 = 题号 + 题干摘要 + 原题缩略图 + 状态。
+   取代原来的纯题号格子 —— 选之前能看见这题大概在问什么。 */
+.ex-pick{margin-top:10px;border:1px solid var(--line);border-radius:12px;background:#fff;overflow:hidden}
+.ex-pick-h{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;padding:10px 12px;border-bottom:1px solid var(--line);background:#fcfbf8}
+.ex-pick-h b{font-size:13.5px;font-weight:800;letter-spacing:.03em}
+.ex-pick-hint{font-size:11.5px;color:var(--muted)}
+.ex-pick-list{max-height:min(58vh,470px);overflow-y:auto;overscroll-behavior:contain}
+.ex-pick-row{display:grid;grid-template-columns:40px minmax(0,1fr) 78px;gap:10px;align-items:center;
+  padding:9px 12px;border-top:1px dashed var(--line);background:#fff;cursor:pointer;text-align:left}
+.ex-pick-row:first-child{border-top:0}
+.ex-pick-row:hover{background:#fbf7ee}
+.ex-pick-row.on{background:var(--brand-l);box-shadow:inset 3px 0 0 var(--brand)}
+.ex-pick-no{display:grid;place-items:center;min-height:38px;border:1px solid var(--line);border-radius:9px;
+  background:#fff;font-size:14px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--ink2)}
+.ex-pick-no.ok{border-color:#cfe6d8;background:var(--ok-bg);color:var(--ok)}
+.ex-pick-no.no{border-color:#eccfcd;background:var(--bad-bg);color:var(--bad)}
+.ex-pick-no.on{border-color:var(--brand);color:var(--brand-d);font-weight:800}
+.ex-pick-no.tonight{box-shadow:inset 0 0 0 2px #eec277;border-color:#e3b95f;color:#8a5309;font-weight:800}
+.ex-pick-no.tonight::after{content:'★';margin-left:2px;font-size:10px;vertical-align:2px}
+.ex-pick-main{min-width:0}
+.ex-pick-ask{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+  font-size:13.5px;line-height:1.55;color:var(--ink2);word-break:break-word}
+.ex-pick-meta{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-top:4px;font-size:11.5px;color:var(--muted)}
+.ex-pick-meta .st{font-weight:700}
+.ex-pick-meta .st.ok{color:var(--ok)}
+.ex-pick-meta .st.no{color:var(--bad)}
+.ex-pick-meta .st.cur{color:var(--brand-d)}
+.ex-pick-th{position:relative;display:block;width:78px;height:58px;border:1px solid var(--line);border-radius:8px;
+  background:#f5f2ea;overflow:hidden;padding:0;cursor:zoom-in;flex:0 0 auto}
+.ex-pick-th img{width:100%;height:100%;object-fit:cover;display:block}
+.ex-pick-th::after{content:'放大';position:absolute;right:3px;bottom:3px;font-size:10px;line-height:1.4;
+  padding:0 4px;border-radius:5px;background:rgba(255,255,255,.88);color:var(--muted)}
+.ex-pick-th:hover{border-color:var(--brand)}
+.ex-pick-th:hover::after{color:var(--brand-d)}
+.ex-pick-th:focus-visible{outline:2px solid var(--brand);outline-offset:1px}
+.ex-pick-row:focus-visible{outline:2px solid var(--brand);outline-offset:-2px}
 .ex-nav{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:12px}
 .ex-nav .btn{min-height:40px}
 .ex-feedback{margin-top:14px;border-top:1px dashed var(--line);padding-top:12px}
@@ -2681,8 +2711,6 @@ window.PHYS_DATA = {"packs":[{"id":"pk-w1","name":"第1周 · 简单机械（杠
 .ex-night .go{margin-top:10px}
 .ex-skip{border:1px dashed var(--line);background:#fbfaf7;border-radius:11px;padding:9px 13px;margin:-2px 0 12px;
   font-size:12.5px;color:var(--muted);line-height:1.7}
-.ex-num.tonight{box-shadow:inset 0 0 0 2px #eec277;color:#8a5309;font-weight:800;border-color:#e3b95f}
-.ex-num.tonight::after{content:'★';margin-left:2px;font-size:10px;vertical-align:2px}
 /* ---------- 宽屏（PC）：左边作答 / 右边考点 · 公式 · 解析 ---------- */
 .app.ex-wide{max-width:1480px}
 .ex-split{display:grid;grid-template-columns:minmax(0,1fr);gap:0}
@@ -2701,7 +2729,8 @@ window.PHYS_DATA = {"packs":[{"id":"pk-w1","name":"第1周 · 简单机械（杠
 }
 @media (max-width:640px){
   .ex-mega{font-size:27px}
-  .ex-jump{grid-template-columns:repeat(5,1fr)}
+  .ex-pick-row{grid-template-columns:34px minmax(0,1fr) 62px;gap:8px;padding:8px 9px}
+  .ex-pick-th{width:62px;height:48px}
   .ex-wstat{min-width:0}
   .ex-wrow{flex-wrap:wrap}
   .ex-wright{flex-direction:row;align-items:center;width:100%;justify-content:flex-end}
@@ -2895,6 +2924,14 @@ window.PHYS_DATA = {"packs":[{"id":"pk-w1","name":"第1周 · 简单机械（杠
     box.classList.add('ex-imgs');
     return box;
   }
+
+  /* 题干摘要（选题清单用）：压成一行、最多交给 CSS 截两行；没有文字就退回原题图 */
+  function askPreview(q) {
+    var t = String(q.ask || q.stem || '').replace(/\s+/g, ' ').trim();
+    return t || ('第 ' + (q.no || '?') + ' 题：题干见原题图');
+  }
+  /* askImg 允许是数组（跨页原题），清单里只取第一张做缩略图 */
+  function firstImg(src) { return Array.isArray(src) ? src[0] : src; }
 
   /* 把当前题写进地址栏（只改 hash，不触发 hashchange），刷新/收藏能回到这题 */
   function syncHash(h) {
@@ -3516,7 +3553,7 @@ window.PHYS_DATA = {"packs":[{"id":"pk-w1","name":"第1周 · 简单机械（杠
     });
     nav.appendChild(next);
 
-    var jumpBtn = h('button', { class: 'btn-ghost', type: 'button', text: '题号清单' });
+    var jumpBtn = h('button', { class: 'btn-ghost', type: 'button', text: '题目清单' });
     nav.appendChild(jumpBtn);
 
     var fin = h('button', { class: 'btn-ghost', type: 'button', text: '整卷结果' });
@@ -3525,22 +3562,75 @@ window.PHYS_DATA = {"packs":[{"id":"pk-w1","name":"第1周 · 简单机械（杠
     nav.appendChild(fin);
     root.appendChild(nav);
 
-    /* 跳题清单 */
-    var jumpBox = h('div', { class: 'ex-jump', style: 'display:none' });
+    /* 题目清单（预览式选题）：选之前能看见题干摘要和原题缩略图 */
+    var jumpBox = h('div', { class: 'ex-pick', style: 'display:none' });
+    var pickHead = h('div', { class: 'ex-pick-h' });
+    pickHead.appendChild(h('b', { text: '题目清单' }));
+    pickHead.appendChild(h('span', { class: 'ex-pick-hint', text: '共 ' + V.order.length + ' 题 · 点一行跳到那题 · 点右边的缩略图先放大看原题（不跳题）' }));
+    jumpBox.appendChild(pickHead);
+    var pickList = h('div', { class: 'ex-pick-list' });
     V.order.forEach(function (qi2, pos) {
       var qq = qs[qi2] || {};
       var r2 = recOf(pack.id, qq.id);
-      var cw = cumWrong(r2);
-      var cls = 'ex-num' + (pos === V.pos ? ' on' : '') + (r2 ? (r2.ok ? ' ok' : ' no') : '') + (qq.tonight ? ' tonight' : '');
-      var b = h('button', { class: cls, type: 'button', title: '第 ' + qq.no + ' 题' + (cw ? ' · 累计错 ' + cw + ' 次' : '') + (qq.tonight ? ' · 今晚重点' : ''), text: String(qq.no || '?') });
-      b.addEventListener('click', function () { V.pos = pos; V.echo = null; rerender(); });
-      jumpBox.appendChild(b);
+      var cur = pos === V.pos;
+      var state = '', stCls = '';
+      if (isSelf(qq)) { state = '对答案 · 不判分'; }
+      else if (!r2) { state = '还没做'; }
+      else if (r2.ok) { state = '上次做对 · 累计对 ' + cumOk(r2) + ' 次'; stCls = 'ok'; }
+      else { state = '上次做错 · 累计错 ' + cumWrong(r2) + ' 次'; stCls = 'no'; }
+      var noCls = 'ex-pick-no' + (cur ? ' on' : '') +
+        (!isSelf(qq) && r2 ? (r2.ok ? ' ok' : ' no') : '') + (qq.tonight ? ' tonight' : '');
+      var askTxt = askPreview(qq);
+      var row = h('div', {
+        class: 'ex-pick-row' + (cur ? ' on' : ''), role: 'button', tabindex: '0',
+        title: '第 ' + qq.no + ' 题：' + askTxt
+      });
+      row.appendChild(h('span', { class: noCls, text: String(qq.no || '?') }));
+      var main = h('span', { class: 'ex-pick-main' });
+      main.appendChild(h('span', { class: 'ex-pick-ask', text: askTxt }));
+      var meta = h('span', { class: 'ex-pick-meta' });
+      meta.appendChild(h('span', { class: 'st' + (cur ? ' cur' : stCls ? ' ' + stCls : ''),
+        text: (cur ? '当前题 · ' : '') + state }));
+      if (qq.group) meta.appendChild(h('span', { text: qq.group }));
+      (qq.tags || []).slice(0, 2).forEach(function (t) { meta.appendChild(h('span', { text: t })); });
+      main.appendChild(meta);
+      row.appendChild(main);
+      var src = firstImg(qq.askImg);
+      if (src) {
+        var th = h('span', { class: 'ex-pick-th', role: 'button', tabindex: '0', 'aria-label': '放大第 ' + qq.no + ' 题原题图' });
+        var thumb = document.createElement('img');
+        thumb.loading = 'lazy';
+        thumb.alt = '第 ' + qq.no + ' 题原题缩略图';
+        thumb.src = src;
+        th.appendChild(thumb);
+        th.addEventListener('click', function (e) { e.stopPropagation(); UI.zoom(src); });
+        th.addEventListener('keydown', function (e) {
+          if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.stopPropagation(); UI.zoom(src); }
+        });
+        row.appendChild(th);
+      } else {
+        row.appendChild(h('span', { class: 'ex-pick-th' }));
+      }
+      row.addEventListener('click', function () { V.pos = pos; V.echo = null; rerender(); });
+      row.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); row.click(); }
+      });
+      pickList.appendChild(row);
     });
-    jumpBtn.addEventListener('click', function () {
-      var open = jumpBox.style.display !== 'none';
-      jumpBox.style.display = open ? 'none' : '';
-      if (!open) jumpBox.scrollIntoView && jumpBox.scrollIntoView({ block: 'nearest' });
-    });
+    jumpBox.appendChild(pickList);
+
+    var pickOpen = false;
+    function setPick(open) {
+      pickOpen = open;
+      jumpBox.style.display = open ? '' : 'none';
+      jumpBtn.textContent = open ? '题目清单 ▴' : '题目清单';
+      jumpBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+      if (!open) return;
+      var onRow = pickList.querySelector('.ex-pick-row.on');
+      if (onRow && onRow.scrollIntoView) { try { onRow.scrollIntoView({ block: 'nearest' }); } catch (e) { } }
+    }
+    jumpBtn.setAttribute('aria-expanded', 'false');
+    jumpBtn.addEventListener('click', function () { setPick(!pickOpen); });
     root.appendChild(jumpBox);
 
     /* 地址栏跟随当前题（只在整卷模式；只练错的模式刷新后回到"只练错的"） */
