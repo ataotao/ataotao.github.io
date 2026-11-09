@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>化学思维脚手架 · 九上</title>
+<style>
+:root{
+  --acc:#0e7490; --acc2:#0b5c73; --acc-soft:#e6f4f8;
+  --bg:#fbfaf7; --card:#ffffff; --line:#e6e2da; --ink:#26211c; --mut:#6f665a;
+  --ok:#1a7f4b; --ok-soft:#e8f6ee; --bad:#c0392b; --bad-soft:#fdeceb;
+  --warn:#b07b12; --warn-soft:#fdf4e3;
+  --r:14px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:var(--bg); color:var(--ink);
+  font:15px/1.72 -apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei","Segoe UI",sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:960px;margin:0 auto;padding:28px 20px 80px}
+header.top{display:flex;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:18px}
+header.top h1{font-size:26px;margin:0;letter-spacing:.5px}
+header.top .sub{color:var(--mut);font-size:13px;margin-top:2px}
+.pill{
+  margin-left:auto;background:var(--acc-soft);color:var(--acc2);border:1px solid #cfe6ee;
+  border-radius:999px;padding:7px 16px;font-size:14px;font-weight:600;white-space:nowrap;
+}
+nav.tabs{display:flex;gap:6px;flex-wrap:wrap;border-bottom:1px solid var(--line);margin-bottom:24px;position:sticky;top:0;background:var(--bg);z-index:9;padding-top:4px}
+nav.tabs button{
+  appearance:none;border:0;background:transparent;font:inherit;font-size:15px;color:var(--mut);
+  padding:10px 14px;border-bottom:2px solid transparent;cursor:pointer;border-radius:8px 8px 0 0;
+}
+nav.tabs button:hover{background:#f3f0ea;color:var(--ink)}
+nav.tabs button.on{color:var(--acc2);border-bottom-color:var(--acc);font-weight:600;background:transparent}
+section.view{display:none}
+section.view.on{display:block;animation:fade .18s ease}
+@keyframes fade{from{opacity:0;transform:translateY(3px)}to{opacity:1;transform:none}}
+
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px 20px;margin-bottom:14px}
+.card h3{margin:0 0 10px;font-size:17px}
+.card h4{margin:16px 0 6px;font-size:15px;color:var(--acc2)}
+.card p{margin:8px 0}
+.mut{color:var(--mut);font-size:13.5px}
+.small{font-size:13px}
+
+.scoregrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.scorebox{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px}
+.scorebox .k{font-size:12.5px;color:var(--mut);letter-spacing:.4px}
+.scorebox .v{font-size:26px;font-weight:700;color:var(--acc2);line-height:1.3}
+.scorebox .v small{font-size:14px;font-weight:500;color:var(--mut)}
+
+.lead{background:linear-gradient(180deg,#f2fafc,#ffffff);border:1px solid #d5eaf1;border-radius:var(--r);padding:16px 20px;margin-bottom:14px}
+.lead b{color:var(--acc2)}
+
+ul.tight{margin:6px 0 6px 0;padding-left:20px}
+ul.tight li{margin:4px 0}
+
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{padding:9px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{font-size:12.5px;color:var(--mut);font-weight:600;background:#faf8f4;letter-spacing:.3px}
+tr:last-child td{border-bottom:0}
+td.no{width:44px;color:var(--mut);font-variant-numeric:tabular-nums}
+td.ans{width:64px;font-weight:700;letter-spacing:1px}
+.tag-ok{color:var(--ok);font-weight:700}
+.tag-bad{color:var(--bad);font-weight:700}
+.tag-pend{color:var(--warn);font-weight:700}
+
+.qt{border:1px solid var(--line);border-radius:12px;margin-bottom:10px;background:var(--card);overflow:hidden}
+.qt summary{cursor:pointer;padding:12px 16px;display:flex;align-items:center;gap:10px;font-weight:600;list-style:none}
+.qt summary::-webkit-details-marker{display:none}
+.qt summary::before{content:"▸";color:var(--mut);font-size:12px;transition:transform .15s}
+.qt[open] summary::before{transform:rotate(90deg)}
+.qt .body{padding:0 16px 16px;border-top:1px dashed var(--line);margin-top:2px}
+.qt .stem{margin-top:12px;color:var(--ink)}
+.qt .why{background:#faf8f4;border-left:3px solid var(--acc);padding:10px 14px;border-radius:0 8px 8px 0;margin-top:12px;font-size:14px;white-space:pre-wrap}
+.qt .why b{color:var(--acc2)}
+.chip{display:inline-block;font-size:12px;padding:1px 8px;border-radius:999px;background:#f1eee8;color:var(--mut);margin-left:auto;font-weight:500}
+.chip.ok{background:var(--ok-soft);color:var(--ok)}
+.chip.bad{background:var(--bad-soft);color:var(--bad)}
+.chip.pend{background:var(--warn-soft);color:var(--warn)}
+
+.blanks{display:grid;gap:8px;margin-top:12px}
+.blankrow{border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:#fcfbf9}
+.blankrow .q{font-size:14px}
+.blankrow .line{font-size:13.5px;color:var(--mut);margin-top:4px}
+.blankrow .line em{font-style:normal;color:var(--ink);font-weight:600}
+
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:720px){.grid2{grid-template-columns:1fr}}
+
+.mod{border-left:4px solid var(--acc);padding-left:14px;margin:22px 0}
+.mod h3{margin:0 0 4px;font-size:17px}
+.mod .gist{color:var(--mut);font-size:13px;margin-bottom:8px}
+.kv{display:grid;grid-template-columns:88px 1fr;gap:6px 12px;font-size:14px}
+.kv b{color:var(--acc2);font-weight:600}
+
+.tpl{border:1px solid var(--line);border-radius:12px;padding:14px 16px;background:var(--card);margin-bottom:12px}
+.tpl h4{margin:0 0 6px;color:var(--acc2);font-size:15px}
+.steps{counter-reset:s;margin:8px 0 0;padding:0;list-style:none}
+.steps li{counter-increment:s;position:relative;padding-left:26px;margin:6px 0;font-size:14px}
+.steps li::before{content:counter(s);position:absolute;left:0;top:2px;width:18px;height:18px;border-radius:50%;background:var(--acc-soft);color:var(--acc2);font-size:11.5px;font-weight:700;display:flex;align-items:center;justify-content:center}
+
+.drillbar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.btn{appearance:none;border:1px solid var(--acc);background:var(--acc);color:#fff;font:inherit;font-size:14px;padding:8px 16px;border-radius:9px;cursor:pointer}
+.btn.ghost{background:#fff;color:var(--acc2);border-color:#cfe0e6}
+.btn:hover{filter:brightness(1.06)}
+.prog{font-size:13px;color:var(--mut);font-variant-numeric:tabular-nums}
+
+.qcard{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px 20px}
+.qcard .qn{font-size:12.5px;color:var(--mut);margin-bottom:6px}
+.qcard .stem{font-size:16px;font-weight:600;margin-bottom:14px;line-height:1.7}
+.opts{display:grid;gap:9px}
+.opt{display:flex;gap:10px;align-items:flex-start;border:1px solid var(--line);border-radius:10px;padding:11px 14px;cursor:pointer;background:#fdfcfa;transition:.12s}
+.opt:hover{border-color:#bfd8e0;background:#f7fbfc}
+.opt .l{width:20px;height:20px;flex:0 0 20px;border-radius:50%;border:1px solid #cfc7ba;display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--mut);margin-top:2px}
+.opt.right{border-color:var(--ok);background:var(--ok-soft)}
+.opt.right .l{border-color:var(--ok);background:var(--ok);color:#fff}
+.opt.wrong{border-color:var(--bad);background:var(--bad-soft)}
+.opt.wrong .l{border-color:var(--bad);background:var(--bad);color:#fff}
+.opt.dim{opacity:.62}
+.fb{margin-top:14px;padding:12px 14px;border-radius:10px;font-size:14px;display:none;white-space:pre-wrap}
+.fb.on{display:block}
+.fb.ok{background:var(--ok-soft);border:1px solid #bfe3ce}
+.fb.bad{background:var(--bad-soft);border:1px solid #f0c9c5}
+.fb b{color:var(--acc2)}
+
+.empty{color:var(--mut);font-size:14px;padding:10px 0}
+kbd{background:#f1eee8;border:1px solid var(--line);border-radius:5px;padding:1px 6px;font-size:12.5px;font-family:inherit}
+hr.sep{border:0;border-top:1px dashed var(--line);margin:18px 0}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <div>
+      <h1>化学 · 思维脚手架</h1>
+      <div class="sub">九上 · 期中诊断 + 知识框架 + 题型模板 + 错题回炉</div>
+    </div>
+    <div class="pill" id="pill">—</div>
+  </header>
+
+  <nav class="tabs" id="tabs"></nav>
+
+  <section class="view" id="v-diag"></section>
+  <section class="view" id="v-map"></section>
+  <section class="view" id="v-method"></section>
+  <section class="view" id="v-drill"></section>
+  <section class="view" id="v-doc"></section>
+
+</div>
+
+<script>
+window.__DATA__={"exam":{"meta":{"title":"2026—2027 学年第一学期 初三级化学科期中考试","paper":"8 页 / 60 分 / 60 分钟","student":"陶宸欣","date":"2026-11","source":"C:/Users/tzvuf/OneDrive/陶宸欣/学习资料/题库/化学/2026-2027学年第一学期期中考试","structure":[{"part":"第一部分 选择题","detail":"12 题 × 2 分 = 24 分"},{"part":"第二部分 非选择题","detail":"填空 5 题（13–17）= 36 分"}]},"questions":[{"no":1,"type":"choice","pts":2,"tag":"变化与性质","stem":"下列我国古代发明及应用，不涉及化学变化的是","options":["活字印刷","火药爆炸","陶瓷烧制","粮食酿酒"],"ans":"A","mine":"A","ok":true,"why":"判据只有一条：有没有新物质生成。活字印刷是排版、上墨、压印，字块和纸的材质都没变，属物理变化；火药爆炸生成大量气体、陶瓷烧制把黏土变成新的硅酸盐、粮食酿酒把淀粉变成酒精，都有新物质。"},{"no":2,"type":"choice","pts":2,"tag":"化学史","stem":"主持测定铟、铱、锑、铕等的相对原子质量数据，并被确认为国际标准的科学家是","options":["拉瓦锡","道尔顿","门捷列夫","张青莲"],"ans":"D","mine":"D","ok":true,"why":"张青莲主持测定的铟、铱、锑、铕等相对原子质量被国际原子量委员会采用为新标准。四个人各管一段：拉瓦锡—质量守恒与空气成分；道尔顿—原子学说；门捷列夫—元素周期表；张青莲—相对原子质量。"},{"no":3,"type":"choice","pts":2,"tag":"化学用语","stem":"下列有关化学用语表示正确的是","options":["氦气：He₂","二氧化硫：O₂S","铝离子：Al⁺³","氢氧化镁：Mg(OH)₂"],"ans":"D","mine":"C","ok":false,"why":"A 错在氦是单原子分子，化学式就是 He（稀有气体、金属、固态非金属都用元素符号表示）；B 错在命名从右往左读，SO₂ 才是二氧化硫；C 是本题的陷阱——离子符号的规矩是「数字在前、正负号在后、写右上角」，应为 Al³⁺，写成 Al⁺³ 是把化合价的写法混进来了（化合价才写 +3，符号在前数字在后）。D 正确。\n一句话记：离子 Al³⁺（3 在前），化合价 +3（+ 在前）。"},{"no":4,"type":"choice","pts":2,"tag":"微粒构成","stem":"构成下列物质的微观粒子与构成氧气的微观粒子类型相同的是","options":["铁","氯化钠","过氧化氢","碳酸钙"],"ans":"C","mine":"A","ok":false,"why":"氧气由氧分子构成。铁由铁原子构成；氯化钠由钠离子和氯离子构成；碳酸钙由钙离子和碳酸根离子构成；只有过氧化氢由过氧化氢分子构成。\n判据：由分子构成的物质＝非金属氧化物、酸、有机物，以及 H₂、O₂、N₂、Cl₂ 这类非金属单质气体。看到「金属／盐」优先想离子或原子。"},{"no":5,"type":"choice","pts":2,"tag":"空气","stem":"下列有关空气及其成分的说法正确的是","options":["洁净的空气属于纯净物","稀有气体可用于制作霓虹灯","NO₂、SO₂、CO₂ 和可吸入颗粒物等是影响空气质量的主要污染物","空气中的氢气可用作气球填充气"],"ans":"B","mine":"B","ok":true,"why":"空气永远是混合物，「洁净」只是说没有尘埃；CO₂ 是空气的正常成分，不计入空气污染物（污染物是 SO₂、NO₂、CO、O₃ 和可吸入颗粒物）；气球要填密度小又稳定的氦气，氢气易爆，而且空气里几乎没有氢气。"},{"no":6,"type":"choice","pts":2,"tag":"氧气性质","stem":"下列说法不正确的是","options":["细铁丝在氧气中燃烧，火星四射，生成四氧化三铁","硫在空气中燃烧产生大量白烟，生成二氧化硫","石蜡浮于水面，其密度比水的小","木炭在氧气中燃烧发出白光，生成二氧化碳"],"ans":"B","mine":"C","ok":false,"why":"「大量白烟」是红磷的专属现象。硫在空气中是微弱的淡蓝色火焰（在纯氧中是蓝紫色），生成有刺激性气味的气体。C 说石蜡浮在水面、密度比水小，这句话本身是对的，所以它不是「不正确」的那一项。\n四个现象背准：铁—火星四射、黑色固体；硫—淡蓝/蓝紫、刺激性气味；红磷—大量白烟；木炭—发白光、生成使石灰水变浑浊的气体。"},{"no":7,"type":"choice","pts":2,"tag":"实验基本操作","stem":"下列实验操作规范的是","options":["点燃酒精灯（用另一只燃着的酒精灯引燃）","量取液体（试剂瓶横置倾倒）","过滤（直接倾倒，未用玻璃棒引流）","收集氢气（向下排空气法，导管伸到瓶底）"],"ans":"D","mine":"B","ok":false,"why":"A 绝对禁止：用燃着的酒精灯引燃另一只，洒出的酒精会着火，只能用火柴。B 试剂瓶倾倒时瓶塞要倒放、标签要向着手心，图里横置倾倒不规范。C 过滤必须用玻璃棒引流，且漏斗下端管口要紧靠烧杯内壁。D 氢气密度比空气小，用向下排空气法、瓶口向下、导管伸到瓶底，正确。"},{"no":8,"type":"choice","pts":2,"tag":"化学式与元素","stem":"维生素 C（C₆H₈O₆）主要存在于蔬菜、水果中……下列关于维生素 C 的说法中不正确的是","options":["维生素 C 中 C、H、O 原子的个数比为 3∶4∶3","维生素 C 由 6 个碳原子、8 个氢原子、6 个氧原子构成","维生素 C 中氧元素的质量分数最大","维生素 C 受热后容易发生化学反应"],"ans":"B","mine":"C","ok":false,"why":"B 错在「主体」：物质由元素组成，只有「一个分子」才谈由几个原子构成，应说「1 个维生素 C 分子由 6 个碳原子、8 个氢原子、6 个氧原子构成」。\nC 是对的：C 72、H 8、O 96，相对分子质量 176，氧占 96/176≈54.5% 最大。D 也对——所以蔬菜不宜久煮。"},{"no":9,"type":"choice","pts":2,"tag":"空气与生活","stem":"下列生活应用或生产活动与所述化学知识没有关联的是","options":["将湿抹布晾晒在阳光下—温度升高，分子运动加快","氮气用作保护气—氮气化学性质稳定","潜水时需要携带氧气瓶—氧气具有助燃性","煮沸时，若水的硬度高，易结垢—硬水中含有较多可溶性钙、镁化合物"],"ans":"C","mine":"C","ok":true,"why":"潜水带氧气瓶用的是氧气「能供给呼吸」，不是「助燃性」。助燃性是支持别的物质燃烧，两回事——中考特别爱在这里下钩子。"},{"no":10,"type":"choice","pts":2,"tag":"电解水","stem":"用如图所示装置进行电解水实验，下列说法正确的是","options":["a 管产生的气体具有可燃性","b 管连接电源正极","实验证明水由氢元素和氧元素组成","a、b 两管产生气体的质量比约为 1∶2"],"ans":"C","mine":"C","ok":true,"why":"口诀「正氧负氢，氢二氧一」——这「二比一」是体积比，不是质量比（质量比约 1∶8），所以 D 错。图中 a 管气体少，接的是正极，出来的是氧气，氧气助燃但不可燃，所以 A 错、B 也错。C 是这个实验的结论：水由氢元素和氧元素组成。"},{"no":11,"type":"choice","pts":2,"tag":"微粒结构示意图","stem":"关于下列微粒说法不正确的是（① +17 2 8 7；② +11 2 8 1；③ +9 2 8；④ +11 2 8）","options":["图中一共涉及 4 种元素","①易得电子","①②位于同一周期","③④结合可形成化合物 NaF"],"ans":"A","mine":"B","ok":false,"why":"①是氯原子（17 号），②是钠原子（11 号），③是氟离子（9 号得 1 个电子），④是钠离子（11 号失 1 个电子）。质子数决定元素种类，只有 Cl、Na、F 三种，A 错。①最外层 7 个电子，易得 1 个；①②核外都排了 3 层，都在第三周期；③F⁻ 与 ④Na⁺ 结合就是 NaF。"},{"no":12,"type":"choice","pts":2,"tag":"实验分析","stem":"关于下列实验的说法，正确的是","options":["实验①：烧杯乙中溶液变红，说明氨分子进入烧杯乙","实验②：反应前后天平读数发生变化，说明该反应不符合质量守恒定律","实验③：点燃氢气时发出尖锐爆鸣声，说明氢气较纯","实验④：用排水法收集氧气，说明氧气的密度比空气大"],"ans":"A","mine":"A","ok":true,"why":"①浓氨水挥发出的氨分子不断运动，进入乙烧杯使酚酞变红——这是分子运动的经典实验。②碳酸钠和盐酸生成 CO₂ 逸出，天平读数变小，但把跑掉的气体算进来，总质量仍然相等，不能否定质量守恒。③尖锐爆鸣声说明氢气不纯，声音很小才是较纯。④排水法说明氧气不易溶于水，与密度无关（密度靠向上排空气法体现）。"},{"no":13,"type":"fill","pts":6,"tag":"元素与化学式","stem":"「嫦娥五号」采回的月壤中含有多种元素和矿物质。（1）月壤中硅元素含量达 19.6%，主要以二氧化硅的形式存在。元素周期表中硅元素的信息（14 Si 硅 28.09）及氧原子结构（+8 2 6）如图。（2）月壤中含有 Ca₈YFe(PO₄)₇、FeTiO₃ 等矿物质。","blanks":[{"k":"①","ask":"硅元素的相对原子质量","ans":"28.09","mine":"8（字迹待核）","ok":false,"why":"周期表小格下方 28.09 就是相对原子质量；左上 14 是原子序数（＝质子数＝核电荷数）。你把两空写串了。"},{"k":"②","ask":"氧原子的核电荷数","ans":"8","mine":"14（字迹待核）","ok":false,"why":"核电荷数＝质子数＝原子序数，氧是 8 号，看结构示意图圆圈里的「+8」直接读。"},{"k":"③","ask":"根据化合物的分类，二氧化硅属于","ans":"氧化物","mine":"化合物","ok":false,"why":"「化合物」是大类，题目问「根据化合物的分类」，要往下走一层：SiO₂ 由两种元素组成且其中一种是氧，属于氧化物。"},{"k":"④","ask":"磷酸钠的化学式（已知磷酸根 PO₄³⁻）","ans":"Na₃PO₄","mine":"PO₄","ok":false,"why":"你只写了酸根，漏了金属。钠是 +1，磷酸根 −3，交叉得 Na₃PO₄。写化学式先定「谁在前谁在后」，再交叉配平。"},{"k":"⑤","ask":"FeTiO₃ 中 Ti 元素的化合价（已知 Fe 为 +2）","ans":"+4","mine":"+3","ok":false,"why":"用正负化合价代数和为零：(+2)＋x＋(−2)×3＝0，x＝+4。别凭感觉，列式子。"},{"k":"⑥","ask":"该反应的反应类型（CO₂ 与 H₂ 在含铁催化剂上生成甲醇）","ans":"不属于四种基本反应类型（其他反应）","mine":"「分…」（字迹待核）","ok":false,"why":"CO₂＋3H₂ —含铁催化剂→ CH₃OH＋H₂O：两种反应物、两种生成物，既不是「多变一」也不是「一变多」，不属于化合/分解/置换/复分解。看到两种反应物、两种产物，先排除四大类型。"},{"k":"⑦","ask":"产物中碳、氢、氧元素的质量比（最简比）","ans":"6∶3∶16（若参考答案只按甲醇计则为 3∶1∶4）","mine":"2∶3∶2","ok":false,"why":"质量比要先数原子个数再乘相对原子质量，不能直接抄个数。CH₃OH 与 H₂O 合计：C 12、H 6、O 32 → 6∶3∶16。★ 此空参考答案以老师讲评为准。"}]},{"no":14,"type":"fill","pts":7,"tag":"水与净化","stem":"阅读材料回答。材料一：2005 至 2024 年广州市各类用水量趋势（总用水量、农业用水量、工业用水量、城镇公共用水量）。材料二：两种海水淡化技术（图 a 太阳能蒸馏；图 b 渗透膜加压）。","blanks":[{"k":"(1)","ask":"2005 至 2024 年，____用水量呈增加趋势","ans":"城镇公共用水量","mine":"城镇公共用水量","ok":true,"why":"看图只比「斜率的正负」。工业那一线一路往下，农业基本走平，只有城镇公共用水量微微抬头。"},{"k":"(2)","ask":"工业生产规模扩大，工业用水总量却下降，分析可能的原因","ans":"提高工业用水的重复利用率（循环冷却、污水处理后回用）","mine":"增添污水处理设施，节约了水资源","ok":true,"why":"答到了「处理后再用」，方向对。更标准的说法是「提高水的重复利用率／循环使用」——考试写关键词更保险。"},{"k":"(3)","ask":"图 a 中利用的净水方法／海水汽化时从微观上看发生改变的是","ans":"蒸馏；分子间的间隔（间隔变大）","mine":"物理变化","ok":false,"why":"两个空你都写成了「物理变化」。第一个空问的是「方法名称」，要写蒸馏（汽化再冷凝）；第二个空问「微观上什么变了」，要写分子间隔——分子本身没变、没分成原子，所以才是物理变化。「物理变化」是结论，不是答案。"},{"k":"(4)","ask":"理论上通过渗透膜的主要微观粒子是____（填粒子符号）","ans":"H₂O","mine":"（空白）","ok":false,"why":"只有水分子能透过渗透膜，盐离子被挡住，所以填 H₂O。注意题要求写「粒子符号」，不是写「水分子」。"},{"k":"(5)","ask":"下列叙述正确的是____（填标号）","ans":"D（膜技术净水过程中发生了物理变化）","mine":"A","ok":false,"why":"A 说「原理与过滤类似」不严谨：过滤只拦不溶性固体，膜法拦的是溶解的大分子和细菌，靠孔径筛分但不是过滤。★ 此项 A/D 均有可能被判对，以老师讲评为准；你自己要记住的判据是：全程没有生成新物质 = 物理变化。"}]},{"no":15,"type":"fill","pts":8,"tag":"气体制取与实验设计","stem":"「气火箭」比赛。图 1 火箭与底座；图 2 发生装置（分液漏斗＋锥形瓶 a）与量筒（甲）、以及排水测气装置（b、c）。","blanks":[{"k":"(1)①","ask":"实验室用二氧化锰催化 H₂O₂ 分解制氧气的化学符号表达式","ans":"2H₂O₂ —MnO₂→ 2H₂O＋O₂↑","mine":"「H₂O₂ H₂O₂」（字迹待核）","ok":false,"why":"方程式四件套缺一不可：配平、条件（MnO₂ 写在箭头上）、气体符号、化学式正确。H₂O₂ 分解必须配 2，否则氧原子不平。"},{"k":"(1)②","ask":"不可能作为制取二氧化碳的组合是____（填标号），理由是____","ans":"D（Zn＋H₂SO₄）；反应物中不含碳元素，生成物不可能是 CO₂","mine":"C；「氢不会作为二氧化锰的原料」","ok":false,"why":"判据是「元素守恒」：要生成 CO₂，反应物里必须有碳。A、B、C 都含碳酸根/碳酸氢根，只有 D 是锌和硫酸，产物是氢气。你选 C 且理由写成「二氧化锰」，是把上一小题的催化剂搬过来了。"},{"k":"(2)①","ask":"图 2 中仪器甲的名称","ans":"量筒","mine":"「通过分液漏斗控制」","ok":false,"why":"甲标在右侧那根带刻度的直筒上，就是量筒——它在这里用来量排出水的体积，从而量出气体体积。仪器名称题只写名称，不要写用途。"},{"k":"(2)②","ask":"装置的连接顺序 a→____→____→d","ans":"a→b→c→d","mine":"a→b→c→d","ok":true,"why":"气体从短管 b 进瓶、把水从长管 c 压出，水流入量筒 d，读排出的水就等于读出气体体积。"},{"k":"(3)①","ask":"实验 1、2、3 用于探究____对过氧化氢分解快慢的影响","ans":"过氧化氢溶液的浓度（溶质质量分数）","mine":"催化剂","ok":false,"why":"控制变量看「变了什么」：1、2、3 号催化剂都是 FeCl₃（相同），变的是 H₂O₂ 溶液 15/10/5 mL 配水 15/20/25 mL——总液量都是 30 mL，浓度在变。所以探究的是浓度。"},{"k":"(3)②","ask":"依据实验____的数据，得出催化能力 FeCl₃＞CuCl₂","ans":"3 和 4","mine":"3、4","ok":true,"why":"比催化能力必须「其他条件全同、只换催化剂」：3 号（FeCl₃，19.8）与 4 号（CuCl₂，9.9）正好一对。"},{"k":"(3)③","ask":"针对影响过氧化氢分解速率的因素，还可关注哪些","ans":"温度（也可写催化剂的用量／接触面积）","mine":"颜色","ok":false,"why":"颜色不是影响反应速率的因素。可写：温度、催化剂的用量、催化剂颗粒大小（接触面积）、是否搅拌。"}]},{"no":16,"type":"fill","pts":8,"tag":"空气与资源利用","stem":"材料一：某区域空气中 CO₂ 浓度三年变化（图 1，按月）；不同催化剂下 CO₂ 转化率与温度关系（图 2，Ni 与 Ni-CeO₂）。材料二：工业分离气体的方法（分离液态空气、沸石分子筛）。","blanks":[{"k":"(1)","ask":"该区域空气中 CO₂ 浓度的变化趋势","ans":"先升高后降低再升高（冬春高、夏季低，呈季节性波动）","mine":"增大走势","ok":false,"why":"描述趋势要按时间分段读：1→5 月上升，5→8 月下降到谷底，8→12 月又回升。只说「增大」漏掉了中间那段大幅下降。"},{"k":"(2)","ask":"空气中 CO₂ 达 880 μL/L，则 1 L 空气中至少含碳元素____μg","ans":"约 471（≈470）","mine":"880","ok":false,"why":"你直接把体积当成了质量。路径：880 μL＝0.88 mL → n＝0.88 mL÷22400 mL/mol≈3.93×10⁻⁵ mol → m(C)＝3.93×10⁻⁵×12 g≈4.7×10⁻⁴ g≈471 μg。这类题三步：换算体积→求物质的量→乘相对原子质量。"},{"k":"(3)①","ask":"尿素的相对分子质量","ans":"60","mine":"（字迹待核）","ok":false,"why":"CO(NH₂)₂：12＋16＋(14＋2)×2＝60。"},{"k":"(3)②","ask":"最佳反应条件","ans":"用 Ni-CeO₂ 作催化剂，温度约 300 ℃","mine":"「…200 ℃」（字迹待核）","ok":false,"why":"看图 2：Ni-CeO₂ 曲线在 300 ℃ 附近最高（约 85%），Ni 曲线到 360 ℃ 才 45%。答「条件」要把催化剂和温度一起写。"},{"k":"(4)","ask":"分离液态空气法能分离氮气和液氧，依据的是两者的____不同","ans":"沸点","mine":"密度","ok":false,"why":"工业制氧是「加压液化 → 蒸发」，沸点低的氮先跑出来，剩下液氧。分离液态空气只发生物理变化，靠的就是沸点差。"},{"k":"(5)①","ask":"图中微粒「○」代表的是____（填「氮分子」或「氧分子」）","ans":"氧分子","mine":"粒子","ok":false,"why":"题干说「氮气被吸附、氧气通过」，能穿过分子筛跑到富氧空气那一侧的圆圈就是氧分子。题目给了二选一，就一定要在两者里挑一个。"},{"k":"(5)②","ask":"富氧空气中氧气与其他气体的体积比可能是","ans":"A（1∶1）","mine":"A","ok":true,"why":"空气里 O₂ 占 21%，富氧必然大于 21%。只有 1∶1（即 50%）大于 21%；1∶5 是 16.7%、1∶6 是 14%、21∶79 就是普通空气。"},{"k":"(5)③","ask":"画出反应前物质的微观粒子示意图（3O₂ 放电 O₃）","ans":"反应前画 3 个 O₂ 分子（每个由 2 个氧原子构成）","mine":"已画（无法判对错）","ok":false,"why":"质量守恒的本质是原子种类和个数不变：左边 3 个 O₂ 共 6 个氧原子，右边 2 个 O₃ 也是 6 个。画图题先数原子总数再落笔。"}]},{"no":17,"type":"fill","pts":7,"tag":"空气中氧气含量测定","stem":"实验一：拉瓦锡测定空气组成（图甲曲颈甑、汞槽、玻璃钟罩）；仿照该原理用红磷测定（图乙集气瓶＋传感器，图丙压强变化）。探究二：用红热的玻璃导管引燃红磷验证质量守恒。","blanks":[{"k":"(1)","ask":"曲颈甑中汞的作用","ans":"与瓶内氧气反应，消耗掉氧气（使钟罩内压强减小、汞上升）","mine":"「防止跑出」","ok":false,"why":"汞是「反应物」，不是「塞子」。它慢慢和氧气反应生成氧化汞，把氧气消耗掉，钟罩内压强下降，汞被压上来，上升的体积就是氧气的体积。"},{"k":"(2)①","ask":"图乙中集气瓶内水的作用","ans":"吸收红磷燃烧生成的白烟（P₂O₅），防止污染空气，同时降温","mine":"「分子在不停降温」","ok":false,"why":"水在测氧气含量实验里管两件事：吸白烟（P₂O₅ 有毒、会污染）＋降温帮助尽快冷却。别和「分子运动」混在一起。"},{"k":"(2)②","ask":"图丙中初始阶段压强增大的原因","ans":"红磷燃烧放热，瓶内气体温度升高、体积膨胀，压强增大","mine":"「分子在运动」","ok":false,"why":"压强图要「分两段读」：一开始升高＝放热导致温度升、压强升；冷却后下降＝氧气被消耗，气体总量减少。你写的原因和「压强」没有因果关系。"},{"k":"(3)①","ask":"当氧气含量低于约____时，蜡烛便不再燃烧","ans":"16%","mine":"16","ok":true,"why":"读图：氧气的线从 20% 一路降到 16% 附近，蜡烛熄灭，同时 CO₂ 升到约 3%。"},{"k":"(3)②","ask":"在空气 95%＋CO₂ 5% 中重做实验，蜡烛____（填「能」或「不能」）点燃","ans":"能","mine":"（字迹待核）","ok":false,"why":"逻辑是：CO₂ 达到 5% 时蜡烛仍能烧 → 说明熄灭不是 CO₂ 造成的 → 是氧气浓度太低。所以填「能」。"},{"k":"(4)","ask":"m(P)＋m(O₂)＝m(X)，X 代表的物质是____（填化学式）","ans":"P₂O₅","mine":"（字迹待核）","ok":false,"why":"红磷在氧气中燃烧只生成五氧化二磷，化学式 P₂O₅（4P＋5O₂ 点燃 2P₂O₅）。"},{"k":"(5)","ask":"能体现锥形瓶内物质质量与时间关系的图像是","ans":"D（氧元素的质量：一条水平线）","mine":"D","ok":true,"why":"瓶内氧元素只是从「氧气里」搬到「P₂O₅ 里」，总量不变，所以是水平线。A 气体总质量下降、C 固体质量上升都是真实变化，但题目问的是「物质质量」守恒的那一条；B 氮气质量本应不变，图却画成下降，是错的图。"}]}]},"drill":{"title":"化学 · 错题回炉（本次卷失分点衍生）","note":"点一下选项就判分，错了直接看「为什么」。这些题全部来自本次期中卷的失分点：变化判断、微粒构成、化学用语规范、化合价、实验操作、图像与计算。","items":[{"id":"c01","tag":"变化与性质","q":"下列变化属于化学变化的是","o":["冰雪融化","铁丝弯曲","食物腐烂","酒精挥发"],"a":2,"why":"只有食物腐烂生成了新物质。其余三个只是形状或状态变了。"},{"id":"c02","tag":"变化与性质","q":"化学变化的本质特征是","o":["发光发热","有颜色变化","有新物质生成","有气体放出"],"a":2,"why":"发光、变色、放气都可能出现在物理变化里（如电灯发光）。判据永远是「有没有新物质」。"},{"id":"c03","tag":"微粒构成","q":"下列物质由分子构成的是","o":["铁","氯化钠","二氧化碳","碳酸钙"],"a":2,"why":"金属（铁）由原子构成，盐（NaCl、CaCO₃）由离子构成，非金属氧化物（CO₂）由分子构成。"},{"id":"c04","tag":"微粒构成","q":"下列物质由离子构成的是","o":["氧气","铜","硝酸钾","蒸馏水"],"a":2,"why":"硝酸钾是盐，由 K⁺ 和 NO₃⁻ 构成。氧气、水由分子构成，铜由原子构成。"},{"id":"c05","tag":"化学用语","q":"下列化学用语书写正确的是","o":["氦气 He₂","硫酸铝 AlSO₄","2 个氢原子 H₂","氯化铁 FeCl₃"],"a":3,"why":"氦气是 He；硫酸铝 Al₂(SO₄)₃（Al 为 +3、SO₄ 为 −2）；2 个氢原子写 2H，H₂ 是一个氢分子。"},{"id":"c06","tag":"化学用语","q":"铝离子的符号是","o":["Al⁺³","Al₃⁺","Al³⁺","Al(3+)"],"a":2,"why":"离子：数字在前、正负号在后、写右上角 → Al³⁺。写成 Al⁺³ 是把化合价（符号在前）的规矩混进来了。"},{"id":"c07","tag":"化学用语","q":"二氧化硫的化学式是","o":["O₂S","SO₂","SO₃","S₂O"],"a":1,"why":"读法从右往左：SO₂ 读「二氧化硫」。O₂S 这种写法是错的——氧通常写在右边。"},{"id":"c08","tag":"化学用语","q":"氢氧化镁的化学式是","o":["MgOH","Mg(OH)₂","Mg₂OH","MgH₂O₂"],"a":1,"why":"Mg 为 +2、OH 为 −1，交叉得 Mg(OH)₂，氢氧根多于一个要加括号。"},{"id":"c09","tag":"元素与周期表","q":"某元素在周期表中的小格写着「14  Si  硅  28.09」，它的相对原子质量是","o":["14","28.09","14.09","42"],"a":1,"why":"小格下方 28.09 是相对原子质量；左上 14 是原子序数（＝质子数＝核电荷数＝核外电子数）。"},{"id":"c10","tag":"原子结构","q":"氧原子的核电荷数是","o":["8","16","6","2"],"a":0,"why":"核电荷数＝质子数＝原子序数。氧是 8 号，结构示意图圆圈里写的就是「+8」。16 是相对原子质量。"},{"id":"c11","tag":"化学式","q":"磷酸钠的化学式是","o":["NaPO₄","Na₃PO₄","Na₂PO₄","Na(PO₄)₃"],"a":1,"why":"Na 为 +1、PO₄ 为 −3，交叉得 Na₃PO₄。写化学式两步：定顺序 → 交叉配平。"},{"id":"c12","tag":"化合价","q":"FeTiO₃ 中铁为 +2 价，则钛（Ti）的化合价为","o":["+2","+3","+4","+6"],"a":2,"why":"(+2)＋x＋(−2)×3＝0 → x＝+4。列式子，不要凭感觉。"},{"id":"c13","tag":"物质分类","q":"二氧化硅（SiO₂）属于","o":["单质","氧化物","酸","碱"],"a":1,"why":"两种元素组成、其中一种是氧 → 氧化物。它也是化合物，但「化合物的分类」要答更具体的那一层。"},{"id":"c14","tag":"氧气性质","q":"硫在空气中燃烧的现象是","o":["产生大量白烟","发出蓝紫色火焰","发出微弱的淡蓝色火焰，生成有刺激性气味的气体","火星四射，生成黑色固体"],"a":2,"why":"蓝紫色是硫在纯氧中的现象；白烟是红磷；火星四射是铁丝。"},{"id":"c15","tag":"氧气性质","q":"细铁丝在氧气中燃烧的生成物是","o":["Fe₂O₃","Fe₃O₄","FeO","Fe(OH)₃"],"a":1,"why":"3Fe＋2O₂ 点燃 Fe₃O₄（黑色固体）。Fe₂O₃ 是铁生锈的产物，条件不同。"},{"id":"c16","tag":"气体制取","q":"实验室用过氧化氢制氧气的化学方程式是","o":["H₂O₂＝H₂O＋O₂","2H₂O₂ —MnO₂→ 2H₂O＋O₂↑","2H₂O —通电→ 2H₂↑＋O₂↑","H₂O₂ —MnO₂→ H₂＋O₂"],"a":1,"why":"要配平（H₂O₂ 前系数 2）、要写条件（MnO₂ 在箭头上）、要标气体符号；D 产物写错（不可能生成 H₂）。"},{"id":"c17","tag":"电解水","q":"电解水时，连接电源正极的玻璃管中收集到的气体是","o":["氢气","氧气","氮气","二氧化碳"],"a":1,"why":"口诀「正氧负氢」：正极出氧气（体积少），负极出氢气（体积多）。"},{"id":"c18","tag":"电解水","q":"电解水生成的氢气和氧气的体积比约为","o":["1∶2","2∶1","1∶8","8∶1"],"a":1,"why":"体积比 2∶1（氢多氧少），质量比 1∶8。这两个数中考必考，别混。"},{"id":"c19","tag":"气体制取","q":"下列反应物组合中，不能用来制取二氧化碳的是","o":["CaCO₃＋稀盐酸","Na₂CO₃＋稀盐酸","NaHCO₃＋稀硫酸","Zn＋稀硫酸"],"a":3,"why":"要生成 CO₂，反应物里必须有碳。锌和稀硫酸生成的是氢气。"},{"id":"c20","tag":"空气与资源","q":"工业上分离液态空气制氧气，依据的是氮气和氧气的什么性质不同","o":["密度","沸点","溶解性","颜色"],"a":1,"why":"先加压液化，再升温蒸发，沸点低的氮先逸出。整个过程没有新物质，属物理变化。"},{"id":"c21","tag":"空气中氧气含量","q":"用红磷燃烧测定空气中氧气含量时，瓶内压强随时间的变化是","o":["始终不变","先变大后变小","一直变小","先变小后变大"],"a":1,"why":"先变大：燃烧放热、温度升高；后变小：氧气被消耗且温度降回室温，最终低于初始值。"},{"id":"c22","tag":"空气中氧气含量","q":"该实验中集气瓶内放少量水，其作用不包括","o":["吸收生成的白烟","降低瓶内温度","防止高温溅落物炸裂瓶底","增加瓶内氧气量"],"a":3,"why":"水不可能增加氧气。其余三条都是真作用。"},{"id":"c23","tag":"燃烧条件","q":"由图可知，当氧气体积分数低于约多少时，蜡烛便不再燃烧","o":["7%","16%","21%","5%"],"a":1,"why":"蜡烛熄灭时氧气约 16%，比红磷的 7% 高得多——不同可燃物维持燃烧所需的最低氧浓度不同。"},{"id":"c24","tag":"质量守恒","q":"红磷燃烧验证质量守恒，锥形瓶内固体物质的质量随时间如何变化","o":["不变","增大","减小","先增大后减小"],"a":1,"why":"固体从「只有红磷」变成「红磷＋P₂O₅」，质量增大。变的是固体的组成，瓶内总质量仍然守恒。"},{"id":"c25","tag":"质量守恒","q":"下列说法正确的是","o":["5 g 水蒸发得到 5 g 水蒸气，说明它符合质量守恒定律","蜡烛燃烧后质量变小，说明不符合质量守恒定律","镁条燃烧后固体质量增大，符合质量守恒定律","只有化合反应才符合质量守恒定律"],"a":2,"why":"质量守恒是化学反应的规律，物理变化谈不上「符合」。蜡烛变轻是 CO₂ 和水跑掉了；镁条变重是把空气中的氧加进来了——把跑掉和加进来的都算上，总质量不变。任何化学反应都遵守。"}]}};
+</script>
+<script>
+(function () {
+  'use strict';
+
+  var D = window.__DATA__ || { exam: { questions: [] }, drill: { items: [] } };
+  var EXAM = D.exam, DRILL = D.drill;
+  var KEY = 'chemScaffold.v1';
+
+  // ---------- 存储 ----------
+  function load() {
+    try { var v = JSON.parse(localStorage.getItem(KEY) || 'null'); return v || { stat: {}, days: {} }; }
+    catch (e) { return { stat: {}, days: {} }; }
+  }
+  function save(s) { try { localStorage.setItem(KEY, JSON.stringify(s)); } catch (e) {} }
+  var S = load();
+
+  function todayKey() {
+    var d = new Date();
+    return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+  }
+  function logAnswer(id, ok) {
+    var st = S.stat[id] || (S.stat[id] = { att: 0, ok: 0, wrong: 0, at: 0 });
+    st.att++; if (ok) st.ok++; else st.wrong++;
+    st.at = Date.now();
+    var k = todayKey();
+    var d = S.days[k] || (S.days[k] = { n: 0, ok: 0 });
+    d.n++; if (ok) d.ok++;
+    save(S);
+  }
+
+  // ---------- 统计 ----------
+  var QS = EXAM.questions || [];
+  var CHOICE = QS.filter(function (q) { return q.type === 'choice'; });
+  var FILLS = QS.filter(function (q) { return q.type === 'fill'; });
+  var isPend = function (b) { return /待核|无法判/.test(String(b.mine || '')); };
+
+  function score() {
+    var cOk = 0, cPts = 0;
+    CHOICE.forEach(function (q) { cPts += q.pts; if (q.ok) cOk += q.pts; });
+    var fPts = 0, fGet = 0, fPend = 0;
+    FILLS.forEach(function (q) {
+      fPts += q.pts;
+      var per = q.pts / q.blanks.length;
+      q.blanks.forEach(function (b) { if (b.ok) fGet += per; if (isPend(b)) fPend++; });
+    });
+    return { cPts: cPts, cOk: cOk, fPts: fPts, fGet: fGet, fPend: fPend, total: cPts + fPts, get: cOk + fGet };
+  }
+
+  // ---------- 视图切换 ----------
+  var TABS = [
+    { k: 'diag', n: '① 期中诊断' },
+    { k: 'map', n: '② 知识框架' },
+    { k: 'method', n: '③ 题型模板' },
+    { k: 'drill', n: '④ 错题回炉' },
+    { k: 'doc', n: '⑤ 使用说明' }
+  ];
+  var cur = 'diag';
+
+  function go(k, opts) {
+    if (!TABS.some(function (t) { return t.k === k; })) k = 'diag';
+    cur = k;
+    TABS.forEach(function (t) {
+      document.getElementById('v-' + t.k).classList.toggle('on', t.k === k);
+    });
+    Array.prototype.forEach.call(document.querySelectorAll('#tabs button'), function (b) {
+      b.classList.toggle('on', b.dataset.k === k);
+    });
+    if (!opts || !opts.keep) window.scrollTo({ top: 0, behavior: 'instant' in window ? 'instant' : 'auto' });
+  }
+
+  function buildTabs() {
+    var nav = document.getElementById('tabs');
+    TABS.forEach(function (t) {
+      var b = document.createElement('button');
+      b.textContent = t.n; b.dataset.k = t.k;
+      b.onclick = function () { go(t.k); };
+      nav.appendChild(b);
+    });
+  }
+
+  function readHash() {
+    var h = (location.hash || '').replace(/^#/, '');
+    var p = new URLSearchParams(h);
+    var v = p.get('view');
+    if (v) go(v);
+    if (p.get('list') === 'wrong') drillList = 'wrong';
+  }
+
+  // ---------- ① 诊断 ----------
+  function renderDiag() {
+    var s = score();
+    var el = document.getElementById('v-diag');
+    var choiceWrong = CHOICE.filter(function (q) { return !q.ok; });
+    var badBlanks = [];
+    FILLS.forEach(function (q) {
+      q.blanks.forEach(function (b) { if (!b.ok) badBlanks.push({ q: q, b: b }); });
+    });
+
+    var html = '';
+    html += '<div class="scoregrid">' +
+      '<div class="scorebox"><div class="k">选择题</div><div class="v">' + s.cOk + '<small> / ' + s.cPts + '</small></div></div>' +
+      '<div class="scorebox"><div class="k">非选择题（估算）</div><div class="v">≈' + Math.round(s.fGet) + '<small> / ' + s.fPts + '</small></div></div>' +
+      '<div class="scorebox"><div class="k">合计（估算）</div><div class="v">≈' + Math.round(s.get) + '<small> / ' + s.total + '</small></div></div>' +
+      '<div class="scorebox"><div class="k">选择题正确率</div><div class="v">' + Math.round(s.cOk / s.cPts * 100) + '<small> %</small></div></div>' +
+      '</div>';
+
+    html += '<div class="lead">' +
+      '<p><b>一句话结论</b>：分数不是卡在「不会」，而是卡在两件事——① 概念只记结论、不记<b>判据</b>（物理变化 vs 微观解释、助燃 vs 供呼吸）；② <b>化学用语规范</b>不过关（离子符号、化学式只写酸根、化合价不列式）。这两类都是「一次记清、长期受益」的错。</p>' +
+      '<p class="mut">选择题 ' + CHOICE.length + ' 题错 ' + choiceWrong.length + ' 题；非选择题 ' + badBlanks.length + ' 空有失分，其中 ' + s.fPend + ' 空手写字迹难辨按「待核」处理（所以你真实分数可能再高 1—2 分）。</p>' +
+      '</div>';
+
+    // 选择题表
+    html += '<div class="card"><h3>选择题逐题对表（每题 2 分）</h3>' +
+      '<p class="mut small">计分口径：<b>只按答题卡上的填涂判定</b>。试卷空白处另有铅笔圈注，与填涂不一致，不作为作答、不计入分数。</p>' +
+      '<table><thead><tr>' +
+      '<th>题</th><th>答案</th><th>你的</th><th>判</th><th>考什么</th></tr></thead><tbody>';
+    CHOICE.forEach(function (q) {
+      var cls = q.ok ? 'tag-ok' : 'tag-bad';
+      html += '<tr><td class="no">' + q.no + '</td><td class="ans">' + q.ans + '</td><td class="ans">' + q.mine + '</td>' +
+        '<td class="' + cls + '">' + (q.ok ? '✓' : '✗') + '</td><td class="small mut">' + q.tag + '</td></tr>';
+    });
+    html += '</tbody></table></div>';
+
+    // 填空一览
+    html += '<div class="card"><h3>非选择题：哪些空丢了分</h3><table><thead><tr>' +
+      '<th>题</th><th>空</th><th>问什么</th><th>判</th></tr></thead><tbody>';
+    FILLS.forEach(function (q) {
+      q.blanks.forEach(function (b) {
+        var pend = isPend(b);
+        var cls = b.ok ? 'tag-ok' : (pend ? 'tag-pend' : 'tag-bad');
+        var mark = b.ok ? '✓' : (pend ? '△' : '✗');
+        html += '<tr><td class="no">' + q.no + '</td><td class="no">' + b.k + '</td>' +
+          '<td class="small">' + b.ask + '</td><td class="' + cls + '">' + mark + '</td></tr>';
+      });
+    });
+    html += '</tbody></table><p class="mut">△ = 你的字迹我没有把握，请照卷子核对一下再定。</p></div>';
+
+    // 归因
+    html += '<div class="card"><h3>失分归因（按可补回的难易排序）</h3>' +
+      '<h4>1. 化学用语不规范 —— 一次记清，长期受益</h4>' +
+      '<ul class="tight">' +
+      '<li>离子符号 <b>Al³⁺</b>（数字在前）vs 化合价 <b>+3</b>（符号在前）</li>' +
+      '<li>化学式要「交叉配平」：磷酸钠 <b>Na₃PO₄</b>，不能只写酸根 PO₄</li>' +
+      '<li>化合价要<b>列方程</b>：FeTiO₃ 里 Ti 是 +4，不是 +3</li>' +
+      '<li>氦气写 <b>He</b>（单原子分子），不是 He₂</li>' +
+      '</ul>' +
+      '<h4>2. 概念停在「结论」，没落到「判据」</h4>' +
+      '<ul class="tight">' +
+      '<li>问「微观上什么变了」→ 答分子<b>间隔</b>，不是答「物理变化」</li>' +
+      '<li>潜水用氧气 → 是<b>供给呼吸</b>，不是助燃性</li>' +
+      '<li>分离液态空气 → 靠<b>沸点</b>不同，不是密度</li>' +
+      '<li>红磷燃烧瓶内压强先升 → 是<b>放热使温度升高</b>，不是「分子在运动」</li>' +
+      '</ul>' +
+      '<h4>3. 计算与数据处理没有套路</h4>' +
+      '<p>880 μL/L 的 CO₂ 求碳的质量，要「体积 → 物质的量 → 质量」三步走，直接抄 880 就是 0 分；' +
+      '质量比要先数原子个数、再乘相对原子质量（不是把个数当比值）。</p>' +
+      '</div>';
+
+    // 逐题讲评
+    html += '<div class="card"><h3>逐题讲评（点开看）</h3><p class="mut">每题都写了「为什么」，不是只给答案。</p>';
+    QS.forEach(function (q) {
+      var sum = document.createElement('div');
+      var head = '';
+      if (q.type === 'choice') {
+        head = '第 ' + q.no + ' 题 · ' + q.ans + ' · 你选 ' + q.mine;
+      } else {
+        var okN = q.blanks.filter(function (b) { return b.ok; }).length;
+        head = '第 ' + q.no + ' 题（' + q.pts + ' 分）· ' + okN + '/' + q.blanks.length + ' 空对';
+      }
+      var cls = q.type === 'choice' ? (q.ok ? 'ok' : 'bad') : ((q.blanks.filter(function (b) { return b.ok; }).length >= q.blanks.length / 2) ? 'ok' : 'bad');
+      html += '<details class="qt"><summary>' + head + '<span class="chip ' + cls + '">' + q.tag + '</span></summary><div class="body">';
+      html += '<div class="stem">' + q.stem + '</div>';
+      if (q.type === 'choice') {
+        html += '<ul class="tight">';
+        ['A', 'B', 'C', 'D'].forEach(function (L, i) {
+          if (!q.options[i]) return;
+          var mark = (L === q.ans) ? ' ✅' : (L === q.mine ? ' ←你选' : '');
+          html += '<li>' + L + '．' + q.options[i] + mark + '</li>';
+        });
+        html += '</ul>';
+        html += '<div class="why"><b>为什么</b>：' + q.why + '</div>';
+      } else {
+        html += '<div class="blanks">';
+        q.blanks.forEach(function (b) {
+          var pend = isPend(b);
+          var m = b.ok ? '<span class="tag-ok">✓</span>' : (pend ? '<span class="tag-pend">△待核</span>' : '<span class="tag-bad">✗</span>');
+          html += '<div class="blankrow"><div class="q">' + b.k + ' ' + b.ask + '  ' + m + '</div>' +
+            '<div class="line">标准答案：<em>' + b.ans + '</em>　｜　你的：<em>' + b.mine + '</em></div>' +
+            '<div class="why" style="margin-top:8px">' + b.why + '</div></div>';
+        });
+        html += '</div>';
+      }
+      html += '</div></details>';
+    });
+    html += '</div>';
+
+    el.innerHTML = html;
+  }
+
+  // ---------- ② 知识框架 ----------
+  var MODULES = [
+    {
+      t: '一、走进化学世界', g: '判「变化」、判「性质」、判「操作」——三判就够',
+      rows: [
+        ['变化判据', '有没有新物质生成。物理变化：形状/状态变（破碎、升华、挥发、熔化）；化学变化：燃烧、锈蚀、腐烂、酿酒、烧制。'],
+        ['性质区分', '「需要发生化学变化才表现出来」的是化学性质（可燃性、氧化性、稳定性、腐蚀性）；颜色、气味、熔点、密度、溶解性属物理性质。'],
+        ['药品取用', '固体：块状用镊子、粉末用药匙；液体：瓶塞倒放、标签向手心、口对口紧靠。'],
+        ['加热', '酒精灯外焰；绝对禁止用燃着的灯去引燃另一只；试管夹夹在中上部，液体不超过 1/3。'],
+        ['过滤', '一贴二低三靠：滤纸贴紧、滤纸低于漏斗口、液面低于滤纸边缘；玻璃棒引流，漏斗下端管口紧靠烧杯内壁。'],
+        ['量取', '量筒平放桌面，视线与凹液面最低处相平；接近刻度改用胶头滴管，不能在量筒里配溶液。'],
+        ['气密性', '手握试管（或微热），导管口有气泡、松手后回水柱，说明不漏气。']
+      ]
+    },
+    {
+      t: '二、我们周围的空气', g: '成分 → 氧气性质 → 制取 → 催化剂',
+      rows: [
+        ['空气成分', 'N₂ 78%、O₂ 21%、稀有气体 0.94%、CO₂ 0.03%、其他 0.03%。空气是混合物，「洁净」也不改变这一点。'],
+        ['污染物', 'SO₂、NO₂、CO、O₃、可吸入颗粒物。CO₂ 不是污染物（但它是温室气体）。'],
+        ['燃烧现象', '碳—白光；硫—空气中淡蓝、纯氧中蓝紫，刺激性气味；磷—大量白烟；铁—火星四射、黑色固体 Fe₃O₄；镁—耀眼白光、白色固体；石蜡—明亮火焰、水珠＋使石灰水变浑浊的气体。'],
+        ['制氧气', 'KMnO₄ 加热（固体加热型）、KClO₃＋MnO₂ 加热、H₂O₂＋MnO₂（固液常温型）。'],
+        ['收集', '排水法（不易溶于水）、向上排空气法（密度比空气大）、向下排空气法（密度比空气小，如 H₂）。'],
+        ['催化剂', '「一变两不变」：改变反应速率；本身质量不变、化学性质不变。催化剂不参与生成物的量。']
+      ]
+    },
+    {
+      t: '三、物质构成的奥秘', g: '分子/原子/离子 → 元素 → 化学式 → 化合价',
+      rows: [
+        ['三种微粒', '分子：CO₂、H₂O、O₂；原子：Fe、Cu、C、稀有气体；离子：NaCl、CaCO₃、NaOH、Na₃PO₄。'],
+        ['分子性质', '体积质量小、不断运动、有间隔（间隔受温度影响：热胀冷缩、汽化）。'],
+        ['原子结构', '核电荷数＝质子数＝核外电子数＝原子序数；相对原子质量≈质子数＋中子数。'],
+        ['周期表小格', '左上：原子序数；中间：元素符号/名称；下方：相对原子质量。'],
+        ['元素周期', '电子层数＝周期数；最外层电子数＝主族序数（同族化学性质相似）。'],
+        ['离子', '数字在前、符号在后、写右上角：Al³⁺、SO₄²⁻。得电子带负电（阴离子），失电子带正电。'],
+        ['化合价', '符号在前、数字在后、写在正上方：+3。化合物中正负化合价代数和为零。'],
+        ['化学式写法', '正价在前负价在后 → 交叉 → 约简 → 检查：Na₃PO₄、Al₂(SO₄)₃、Mg(OH)₂。'],
+        ['三个计算', '相对分子质量；元素质量比＝(个数×相对原子质量)之比；元素质量分数＝该元素总质量÷相对分子质量。']
+      ]
+    },
+    {
+      t: '四、自然界的水', g: '净化 → 硬水软水 → 电解水 → 水的组成',
+      rows: [
+        ['净化四步', '沉淀（明矾）→ 过滤 → 吸附（活性炭，除色除味）→ 蒸馏（净化程度最高，可除可溶性杂质）。消毒杀菌属化学变化。'],
+        ['硬水软水', '硬水含较多可溶性钙镁化合物，加肥皂水泡沫少、易结垢；煮沸（生活中）或蒸馏（实验室）可降低硬度。'],
+        ['电解水', '正氧负氢：正极出氧气、负极出氢气；体积比 1∶2（氢∶氧），质量比 1∶8。结论：水由氢、氧两种元素组成。'],
+        ['微观过程', '水分子分成氢原子和氧原子，原子重新组合成氢分子和氧分子——分子可分、原子不可分。'],
+        ['节水', '提高重复利用率、循环冷却、污水处理后回用——这也是「工业用水下降」的答题抓手。']
+      ]
+    },
+    {
+      t: '五、质量守恒定律', g: '六不变两变 → 配平 → 方程式 → 图像',
+      rows: [
+        ['六不变', '原子种类、原子数目、原子质量、元素种类、元素质量、物质总质量。'],
+        ['两变', '分子种类一定变；分子总数可能变。'],
+        ['适用范围', '只适用于化学变化；解释「变轻/变重」时要把跑掉的气体和加进来的氧气算进去。'],
+        ['书写四步', '写（化学式）→ 配（系数）→ 注（条件、↑↓）→ 等（短线改等号）。'],
+        ['常见配平', '最小公倍数法与观察法；H₂O₂ 分解要配 2，P＋O₂ 要配 4 和 5。'],
+        ['图像三段读法', '① 看坐标轴（横纵各是什么）；② 找拐点（反应开始/结束）；③ 判断该量是否守恒（守恒＝水平线）。']
+      ]
+    },
+    {
+      t: '六、碳和碳的氧化物', g: '若本学期已学到，按这条线补',
+      rows: [
+        ['碳单质', '金刚石（硬）、石墨（软、导电）、C₆₀；碳单质常温稳定，高温可燃、可还原金属氧化物。'],
+        ['CO₂ 制取', 'CaCO₃＋2HCl → CaCl₂＋H₂O＋CO₂↑（不用稀硫酸：生成微溶 CaSO₄ 包住石灰石；不用碳酸钠粉末：反应太快）。'],
+        ['CO₂ 性质', '不燃烧不支持燃烧、密度比空气大 → 灭火；与水生成碳酸（使石蕊变红，加热又变紫）；使澄清石灰水变浑浊。'],
+        ['CO 性质', '可燃、有毒、有还原性（炼铁）。'],
+        ['温室效应', 'CO₂ 增多导致温室效应增强；减排途径：减少化石燃料、植树造林、CO₂ 捕集与资源化利用。']
+      ]
+    }
+  ];
+
+  function renderMap() {
+    var el = document.getElementById('v-map');
+    var html = '<div class="lead"><p><b>怎么用</b>：不要从头背。做题卡住时，回到对应板块，只找「判据」那一行——' +
+      '每个空、每道选择题，最后都能归结为一句判据。</p></div>';
+    MODULES.forEach(function (m) {
+      html += '<div class="mod"><h3>' + m.t + '</h3><div class="gist">' + m.g + '</div><div class="kv">';
+      m.rows.forEach(function (r) {
+        html += '<b>' + r[0] + '</b><div>' + r[1] + '</div>';
+      });
+      html += '</div></div>';
+    });
+    el.innerHTML = html;
+  }
+
+  // ---------- ③ 题型模板 ----------
+  var TPLS = [
+    {
+      t: '题型一：选择题（12 题 24 分）——四个固定陷阱',
+      steps: [
+        '绝对化表述：出现「一定、都、只有、任何」先怀疑。例外：质量守恒「一定」成立。',
+        '张冠李戴：把 A 物质的现象安到 B 上（白烟＝红磷，不是硫）。遇到现象题先默念四句口诀。',
+        '现象 ≠ 结论：「生成二氧化碳」是结论，「使石灰水变浑浊」才是现象。',
+        '单位与比例：体积比 2∶1、质量比 1∶8，出题人最爱在这里对调。'
+      ],
+      tip: '本次卷第 3、6、7、8、11 题都是这类陷阱，错法都指向「记了结论、没记判据」。'
+    },
+    {
+      t: '题型二：微观示意图（第 13⑤、16⑤③）——三步走',
+      steps: [
+        '先认图例：哪个球代表哪种原子（图上一定给），别凭大小猜。',
+        '数原子：反应前后每种原子的总数必须相等，这条能直接判对错。',
+        '写式子：把「几个什么分子」写成化学式并配平，题目要的类型、质量比就都出来了。'
+      ],
+      tip: '画图题的评分点只有「原子种类对、个数对」，画得丑不扣分。'
+    },
+    {
+      t: '题型三：实验探究（第 15③、17）——控制变量表',
+      steps: [
+        '问「探究什么因素」→ 找那组实验里唯一变的那一列，答案就是它。',
+        '问「依据哪两组数据」→ 找其他列全相同、只有目标列不同的一对。',
+        '问「还能关注什么因素」→ 温度、浓度、接触面积、催化剂用量，四选一写。',
+        '问「作用是什么」→ 从「吸收生成物、降温、防止污染、形成密闭、便于观察」里挑。'
+      ],
+      tip: '本次第 15③① 你写「催化剂」，但那组实验催化剂是相同的（都是 FeCl₃），变的是浓度。'
+    },
+    {
+      t: '题型四：图像题（第 16①②、17⑤）——三段读',
+      steps: [
+        '看轴：横轴是时间/温度/月份，纵轴是浓度/质量/转化率，先默读一遍。',
+        '找拐点：起点、最高点、最低点、终点，用「先…后…再…」把趋势讲一遍。',
+        '判守恒：守恒的量画出来一定是水平线；会变的量一定单调上升或下降。',
+        '算数值：像 880 μL/L 这种，先换单位再算，不要跳步。'
+      ],
+      tip: '第 16① 你只写了「增大」，漏掉中间 5→8 月的大幅下降——趋势题必须分段。'
+    },
+    {
+      t: '题型五：化学计算（本次第 13⑦、16②）',
+      steps: [
+        '相对分子质量：各原子相对原子质量 × 个数，再相加。',
+        '元素质量比：(个数×相对原子质量) 之比，最后约成最简整数比。',
+        '元素质量分数：该元素总质量 ÷ 相对分子质量 × 100%。',
+        '含某元素的质量：先求物质的物质的量（体积→mol），再乘相对原子质量。'
+      ],
+      tip: '写出中间的式子再算——不写式子，错了连自己都看不出错在哪。'
+    }
+  ];
+
+  function renderMethod() {
+    var el = document.getElementById('v-method');
+    var html = '<div class="lead"><p><b>五套模板</b>。做题时先认题型，再套步骤；卡住时回来对一下第几步断了。</p></div>';
+    TPLS.forEach(function (t) {
+      html += '<div class="tpl"><h4>' + t.t + '</h4><ol class="steps">';
+      t.steps.forEach(function (s) { html += '<li>' + s + '</li>'; });
+      html += '</ol><p class="mut small" style="margin-top:10px">' + t.tip + '</p></div>';
+    });
+    el.innerHTML = html;
+  }
+
+  // ---------- ④ 错题回炉 ----------
+  var drillList = 'all', dq = null, dTotal = 0, dRight = 0, dAnswered = false;
+
+  function pickQueue() {
+    var items = DRILL.items || [];
+    var wrongIds = {};
+    Object.keys(S.stat).forEach(function (id) { if (S.stat[id].wrong > 0) wrongIds[id] = 1; });
+    var pool = drillList === 'wrong' ? items.filter(function (it) { return wrongIds[it.id]; }) : items.slice();
+    if (!pool.length) pool = items.slice();
+    return pool;
+  }
+
+  function renderDrill(reset) {
+    var el = document.getElementById('v-drill');
+    var q_ = pickQueue();
+    if (reset || !dq) { dq = q_; dTotal = 0; dRight = 0; dIdx = 0; }
+    else { dq = q_; }
+
+    var html = '';
+    html += '<div class="drillbar">' +
+      '<button class="btn" id="d-start">重新开始</button>' +
+      '<button class="btn ghost" id="d-wrong">只练错题</button>' +
+      '<span class="prog" id="d-prog"></span></div>';
+    html += '<div id="d-body"></div>';
+    el.innerHTML = html;
+
+    document.getElementById('d-start').onclick = function () { drillList = 'all'; dq = null; renderDrill(true); };
+    document.getElementById('d-wrong').onclick = function () { drillList = 'wrong'; dq = null; renderDrill(true); };
+
+    nextDrill();
+  }
+
+  var dIdx = 0;
+  function nextDrill() {
+    var body = document.getElementById('d-body');
+    if (!body) return;
+    if (!dq.length) { body.innerHTML = '<div class="empty">没有题目。</div>'; return; }
+    if (dIdx >= dq.length) {
+      body.innerHTML = '<div class="card" style="text-align:center"><h3>这一轮做完了</h3>' +
+        '<p>本轮 ' + dTotal + ' 题，答对 <b>' + dRight + '</b> 题，正确率 ' +
+        Math.round(dRight / Math.max(1, dTotal) * 100) + '%</p>' +
+        '<p class="mut">答错的题已经记下来了，下次点「只练错题」会再出现。</p>' +
+        '<button class="btn" id="again">再来一轮</button></div>';
+      document.getElementById('again').onclick = function () { dIdx = 0; dq = pickQueue(); dTotal = 0; dRight = 0; nextDrill(); };
+      updateProg();
+      return;
+    }
+    var it = dq[dIdx];
+    dAnswered = false;
+    var h = '<div class="qcard">' +
+      '<div class="qn">第 ' + (dIdx + 1) + ' / ' + dq.length + ' 题　·　' + it.tag + '</div>' +
+      '<div class="stem">' + it.q + '</div><div class="opts">';
+    it.o.forEach(function (o, i) {
+      h += '<div class="opt" data-i="' + i + '"><span class="l">' + 'ABCD'[i] + '</span><span>' + o + '</span></div>';
+    });
+    h += '</div><div class="fb" id="d-fb"></div></div>';
+    body.innerHTML = h;
+
+    Array.prototype.forEach.call(body.querySelectorAll('.opt'), function (op) {
+      op.onclick = function () {
+        if (dAnswered) return;
+        dAnswered = true;
+        var i = Number(op.dataset.i), ok = (i === it.a);
+        var fb = document.getElementById('d-fb');
+        Array.prototype.forEach.call(body.querySelectorAll('.opt'), function (x) {
+          var j = Number(x.dataset.i);
+          if (j === it.a) x.classList.add('right');
+          else if (j === i) x.classList.add('wrong');
+          else x.classList.add('dim');
+        });
+        fb.className = 'fb on ' + (ok ? 'ok' : 'bad');
+        fb.innerHTML = (ok ? '<b>✓ 对</b>　' : '<b>✗ 错</b>　正确答案是 ' + 'ABCD'[it.a] + '。') + it.why;
+        dTotal++; if (ok) dRight++;
+        logAnswer(it.id, ok);
+        updateProg();
+        var btn = document.createElement('button');
+        btn.className = 'btn'; btn.textContent = '下一题';
+        btn.style.marginTop = '12px';
+        btn.onclick = function () { dIdx++; nextDrill(); };
+        fb.appendChild(document.createElement('br'));
+        fb.appendChild(btn);
+      };
+    });
+    updateProg();
+  }
+
+  function updateProg() {
+    var p = document.getElementById('d-prog');
+    if (!p) return;
+    p.textContent = '本轮 ' + dTotal + ' 题　对 ' + dRight + ' 题' +
+      (drillList === 'wrong' ? '（只练错题）' : '');
+  }
+
+  // ---------- ⑤ 说明 ----------
+  function renderDoc() {
+    var el = document.getElementById('v-doc');
+    var s = score();
+    el.innerHTML =
+      '<div class="card"><h3>这份脚手架是什么</h3>' +
+      '<p>它由一张真实卷子长出来：<b>2026—2027 学年第一学期 初三级化学科期中考试</b>（8 页 / 60 分）。' +
+      '前四个页签分别对应四件事，第五个是本说明：</p>' +
+      '<ul class="tight">' +
+      '<li><b>期中诊断</b>：逐题对答案、逐空说明为什么，以及失分归因。</li>' +
+      '<li><b>知识框架</b>：九上六个板块的判据清单，做题卡住时回来查。</li>' +
+      '<li><b>题型模板</b>：五类题型的固定步骤，认题型比背知识更快提分。</li>' +
+      '<li><b>错题回炉</b>：' + (DRILL.items || []).length + ' 道点选即判的题，全部由本次失分点衍生；答错自动进错题库。</li>' +
+      '</ul></div>' +
+
+      '<div class="card"><h3>口径与约定</h3>' +
+      '<p class="small">① 选择题按答题卡填涂计分（每题 2 分）；非选择题按「每空均分该题分值」估算，' +
+      '手写无法辨认的空按「待核」处理、暂不计分——所以估算分是<b>下限</b>。</p>' +
+      '<p class="small">② 有几处参考答案本身存在合理歧义（第 13⑤ 质量比、第 14(5) 选 A 还是 D），已在题目里标注「以老师讲评为准」。</p>' +
+      '<p class="small">③ 本次估算：选择题 ' + s.cOk + '/' + s.cPts + '，非选择题 ≈' + Math.round(s.fGet) + '/' + s.fPts +
+      '，合计 ≈' + Math.round(s.get) + '/' + s.total + '。</p>' +
+      '<p class="small">④ 记录存在本机 localStorage（键 <kbd>chemScaffold.v1</kbd>），' +
+      '「开始.html」的「今天做什么」会读它，也可以在开始页一键备份。</p></div>' +
+
+      '<div class="card"><h3>原始材料</h3>' +
+      '<p class="small">卷子与答题卡照片（6 张 JPG）保存在：<br><span class="mut">C:/Users/tzvuf/OneDrive/陶宸欣/学习资料/题库/化学/2026-2027学年第一学期期中考试/</span></p>' +
+      '<p class="small">题目与批改数据（可复用、可改）在 <b>化学/题库/2026-2027期中卷.json</b>；闪练题在 <b>化学/源/data/drill.json</b>。</p>' +
+      '<p class="small mut">本页是产物，不要手改：改源之后在 <b>化学/</b> 下跑 <kbd>node 工具/build.mjs</kbd> 重建。</p></div>' +
+
+      '<div class="card"><h3>接下来的三次练习（建议）</h3>' +
+      '<ol class="steps">' +
+      '<li>今天：错题回炉一轮（约 10 分钟），错的当晚再刷一遍「只练错题」。</li>' +
+      '<li>本周：把「三、物质构成的奥秘」那张表抄一遍，重点是化学式交叉法与化合价列式。</li>' +
+      '<li>考前：只做题型模板二、四（微观示意图、图像题），这两类是本次失分最集中的。</li>' +
+      '</ol></div>';
+  }
+
+  // ---------- 启动 ----------
+  buildTabs();
+  renderDiag();
+  renderMap();
+  renderMethod();
+  renderDoc();
+  renderDrill(true);
+  var s0 = score();
+  document.getElementById('pill').textContent = '本次估算 ≈' + Math.round(s0.get) + ' / ' + s0.total;
+  readHash();
+  go(cur, { keep: true });
+  if (!location.hash) go('diag');
+})();
+</script>
+</body>
+</html>

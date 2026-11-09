@@ -31,6 +31,11 @@ const TARGETS = [
     watch: ['物理/物理思维脚手架.html', '物理/题库/pack-全部.json'],
   },
   {
+    name: '化学 · 思维脚手架',
+    cmd: ['node', ['化学/工具/build.mjs']],
+    watch: ['化学/化学思维脚手架.html'],
+  },
+  {
     name: '英语 · 语法闪练',
     cmd: ['node', ['英语/语法闪练/build.mjs']],
     watch: ['英语/语法闪练.html', '英语/语法闪练/data/bundle.js', '英语/语法闪练/考点识别速查表.html'],

@@ -107,6 +107,9 @@ for (const p of usedPacks) {
     if (!FOCUS.includes(q.focus)) err(wt + '：focus 非法（' + q.focus + '）');
     if (!Array.isArray(q.tags) || !q.tags.length) err(wt + '：tags 不能为空');
     else q.tags.forEach(t => { if (!TAGS.includes(t)) err(wt + '：tag 不在规范清单 → ' + t); });
+    if (q.score !== undefined && (typeof q.score !== 'number' || !isFinite(q.score) || q.score <= 0)) {
+      err(wt + '：score（分值）必须是正数');
+    }
     if (!q.askImg || (Array.isArray(q.askImg) && !q.askImg.length)) err(wt + '：缺少 askImg');
     else checkImg(q.askImg, wt + ' askImg');
     if (q.ansImg) checkImg(q.ansImg, wt + ' ansImg');

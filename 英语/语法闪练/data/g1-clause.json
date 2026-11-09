@@ -578,6 +578,114 @@
       "trap": "easy/hard 描述事情，不能写成 sb is easy that…。",
       "src": "补题 · 形容词搭配",
       "verified": true
+    },
+    {
+      "id": "cl-033",
+      "topic": "感叹句",
+      "level": 1,
+      "stem": "SwagBot can find the best grass by itself. ______ a smart invention it is!",
+      "cn": null,
+      "options": [
+        "What",
+        "How",
+        "What a",
+        "How a"
+      ],
+      "answer": "A",
+      "rule": "感叹句 What + a/an + 形容词 + 单数名词 + 主谓；How 后接形容词或副词。",
+      "trap": "空后已有 a smart invention，再选 What a 就重复冠词。",
+      "src": "2026-2027期中·语法选择",
+      "verified": true
+    },
+    {
+      "id": "cl-034",
+      "topic": "宾语从句",
+      "level": 2,
+      "stem": "Rita could not understand it, so she asked her mum ______ all the gifts were dolls.",
+      "cn": null,
+      "options": [
+        "that",
+        "why",
+        "what",
+        "whether"
+      ],
+      "answer": "B",
+      "rule": "宾语从句问原因用 why 引导，从句保持陈述语序。",
+      "trap": "从句完整就填 that / whether；上文说她「想不明白」，问的是原因，要用 why。",
+      "src": "2026-2027期中·语法选择",
+      "verified": true
+    },
+    {
+      "id": "cl-035",
+      "topic": "adj + that 从句",
+      "level": 2,
+      "stem": "I am glad ______ SwagBot can find the most nutritious grass for me.",
+      "cn": null,
+      "options": [
+        "that",
+        "what",
+        "which",
+        "whether"
+      ],
+      "answer": "A",
+      "rule": "glad/sure 等表情绪、看法的形容词后接 that 从句，that 不作成分。",
+      "trap": "从句不缺成分就别填 what/which；whether 要表「是否」。",
+      "src": "2026-2027期中·语法选择",
+      "verified": true
+    },
+    {
+      "id": "cl-036",
+      "topic": "状语从句",
+      "level": 2,
+      "stem": "______ looking around, she saw a grandma doll with gray hair.",
+      "cn": null,
+      "options": [
+        "Before",
+        "Until",
+        "When",
+        "Unless"
+      ],
+      "answer": "C",
+      "rule": "When + 现在分词相当于 when she was doing，表动作同时发生。",
+      "trap": "Before 会把顺序读反：她是「环顾四周时」看到娃娃的。",
+      "src": "2026-2027期中·语法选择",
+      "verified": true
+    },
+    {
+      "id": "cl-037",
+      "topic": "状语从句",
+      "level": 2,
+      "stem": "Move the cattle to a new field ______ they have damaged the grass too much.",
+      "cn": null,
+      "options": [
+        "before",
+        "after",
+        "until",
+        "since"
+      ],
+      "answer": "A",
+      "rule": "before 表「趁…还没」，先赶牛再防草被吃坏，符合做事目的。",
+      "trap": "after 是「草已吃坏才搬」；按常识用 before，别按中文硬套。",
+      "src": "2026-2027期中·语法选择",
+      "verified": true
+    },
+    {
+      "id": "cl-038",
+      "topic": "条件状语从句",
+      "level": 1,
+      "stem": "______ you keep trying, you will make it in the end.",
+      "cn": null,
+      "options": [
+        "If",
+        "Unless",
+        "Until",
+        "Before"
+      ],
+      "answer": "A",
+      "rule": "条件状语从句用 if 引导，主句一般将来时，从句用一般现在时。",
+      "trap": "Unless 相当于 if not，填进去意思正好相反；代回读一遍。",
+      "src": "2026-2027期中·语法选择",
+      "verified": true
     }
   ]
 }

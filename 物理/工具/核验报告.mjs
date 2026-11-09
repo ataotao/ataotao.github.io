@@ -15,7 +15,7 @@ const QDIR = path.join(ROOT, '题库');
 const OUT = path.join(ROOT, '核验清单.md');
 
 const packs = fs.readdirSync(QDIR)
-  .filter(f => /^pack-w.*\.json$/.test(f))
+  .filter(f => /^pack-(w|mid).*\.json$/.test(f))
   .map(f => JSON.parse(fs.readFileSync(path.join(QDIR, f), 'utf8')));
 const concepts = JSON.parse(fs.readFileSync(path.join(ROOT, '源', 'data', 'concepts.json'), 'utf8')).cards || [];
 const guided = JSON.parse(fs.readFileSync(path.join(ROOT, '源', 'data', 'guided.json'), 'utf8')).items || [];
@@ -40,14 +40,14 @@ const packRows = [];
 
 for (const pk of packs) {
   const qs = pk.questions || [];
-  let c = 0, f = 0, s = 0, ai = 0;
+  let c = 0, f = 0, s = 0, ai = 0, pkHaveAnsImg = 0;
   for (const q of qs) {
     total++;
     const aiHave = hasAnsImg(q);
     if (q.type === 'choice') { choiceN++; c++; }
     else if (q.type === 'selfcheck') { selfN++; s++; }
     else { fillN++; f++; }
-    if (aiHave) withAnsImg++; else noAnsImg++;
+    if (aiHave) { withAnsImg++; pkHaveAnsImg++; } else noAnsImg++;
     if (isPending(q.solution)) pending++;
     if (q.point) pointN++;
     if (Array.isArray(q.formulas) && q.formulas.some(x => x && String(x.f || '').trim())) formulaN++;
@@ -61,7 +61,7 @@ for (const pk of packs) {
       cLevel.push({ pack: pk.id, no: q.no, id: q.id, what: '解析还是占位文字（待补）' });
     }
   }
-  packRows.push({ id: pk.id, name: pk.name, n: qs.length, c, f, s, note: pk.note || '' });
+  packRows.push({ id: pk.id, name: pk.name, n: qs.length, c, f, s, note: pk.note || '', hasImg: pkHaveAnsImg > 0 });
 }
 
 const now = new Date();
@@ -81,7 +81,7 @@ p('| 题包 / 题目 | ' + packs.length + ' 套 / ' + total + ' 题 |');
 p('| 选择题（答案取自 docx 文末答案表） | ' + choiceN + ' |');
 p('| 填空/解答/实验（答案取自原卷答案图） | ' + fillN + ' |');
 p('| 自评题（画图/说理，不判分） | ' + selfN + ' |');
-p('| **非选择题有原卷答案图可对照** | **' + withAnsImg + ' / ' + (fillN + selfN) + ' 题（100%）** |');
+p('| **非选择题有原卷答案图可对照** | **' + withAnsImg + ' / ' + (fillN + selfN) + ' 题（' + Math.round(withAnsImg * 100 / Math.max(1, fillN + selfN)) + '%）** |');
 p('| 选择题（答案来自答案表，不需要答案图） | ' + choiceN + ' 题 |');
 p('| 解析仍为占位（待补） | ' + pending + ' 题 |');
 p('| 解析区已标「考点」（point） | ' + pointN + ' / ' + total + ' 题 |');
@@ -94,7 +94,9 @@ p('');
 p('| 题包 | 名称 | 题数 | 选择 | 填空/解答 | 自评 | 答案来源与疑点 |');
 p('|---|---|---|---|---|---|---|');
 for (const r of packRows) {
-  const ev = '选择题→原卷答案表；其余→原卷答案图' + (r.note ? '；**疑点已记录**' : '');
+  const ev = r.hasImg
+    ? ('选择题→原卷答案表；其余→原卷答案图' + (r.note ? '；**疑点已记录**' : ''))
+    : ('本卷无答案表、无答案图：答案由卷面数据核算并与教师红笔订正对拍（非选择题需人工核）');
   p('| ' + r.id + ' | ' + r.name.replace(/\|/g, '/') + ' | ' + r.n + ' | ' + r.c + ' | ' + r.f + ' | ' + r.s + ' | ' + ev + ' |');
 }
 p('');

@@ -38,6 +38,17 @@ $PY = Find-Exe 'python' $PythonExe @(
   "$env:ProgramFiles\Python313\python.exe",
   "$env:USERPROFILE\.dsh\dsh-runtimes\dsh-primary-runtime\dependencies\python\python.exe"
 )
+# Windows 自带的 WindowsApps\python.exe 常是「应用商店占位符」：一跑就失败，会被误判成数据有问题。
+# 先换一个非 WindowsApps 的 python；换不到就实测一次，跑不起来就当没装（跳过 python 检查）。
+if ($PY -and $PY -like '*WindowsApps*') {
+  $alt = @(Get-Command python.exe -All -ErrorAction SilentlyContinue |
+    ForEach-Object { $_.Source } | Where-Object { $_ -and $_ -notlike '*WindowsApps*' })
+  if ($alt.Count) { $PY = $alt[0] }
+}
+if ($PY) {
+  & $PY -c "import sys" 2>$null | Out-Null
+  if ($LASTEXITCODE -ne 0) { $PY = $null }
+}
 
 $fail = 0
 Write-Host "=== 物理脚手架 · 一键闸门 ===" -ForegroundColor Cyan

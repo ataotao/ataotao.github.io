@@ -13,9 +13,10 @@
     '杠杆五要素', '杠杆平衡条件', '杠杆分类', '最小力', '杠杆动态平衡',
     '定滑轮与动滑轮', '滑轮组', '功', '功率', '机械效率', '测机械效率实验',
     '动能与势能', '机械能转化', '分子动理论', '扩散现象', '分子间作用力',
-    '内能', '改变内能的方式', '温度热量内能辨析', '比热容', '热量计算', '热值', '热机效率', '能量守恒', '实验探究'
+    '内能', '改变内能的方式', '温度热量内能辨析', '比热容', '热量计算', '热值', '热机效率', '能量守恒',
+    '电荷与摩擦起电', '电流与电路', '串并联电路', '电学实验', '实验探究'
   ];
-  var TOPICS = ['杠杆', '滑轮', '功和功率', '机械效率', '机械能', '分子与内能', '比热容与热值', '热机与能量', '实验探究'];
+  var TOPICS = ['杠杆', '滑轮', '功和功率', '机械效率', '机械能', '分子与内能', '比热容与热值', '热机与能量', '电学', '实验探究'];
   var LEVELS = ['未练', '生疏', '熟悉', '掌握'];
   var LEVEL_CLS = ['cd-lv0', 'cd-lv1', 'cd-lv2', 'cd-lv3'];
   var QUICK_N = 20;
@@ -196,7 +197,7 @@
       return c.tags && c.tags.indexOf(tag) >= 0;
     }).map(function (c) { return c.id; }));
   }
-  /* ?topic=杠杆 按主题（9 个）练；?tag=杠杆五要素 按考点（25 个）练 */
+  /* ?topic=杠杆 按主题（10 个）练；?tag=杠杆五要素 按考点（25 个）练 */
   function idsByTopic(topic) {
     return U.shuffle(allCards().filter(function (c) {
       return c.topic === topic;
@@ -248,6 +249,7 @@
     if (p.mode === 'wrong') { startQuiz({ kind: 'wrong', label: '错卡重练', back: {} }); return; }
     if (p.mode === 'list') { S.page = 'list'; renderList(); return; }
     if (p.mode === 'tags') { S.page = 'tags'; renderTags(); return; }
+    if (p.mode === 'topics') { S.page = 'topics'; renderTopics(); return; }
     if (p.card) {
       var c = cardById(p.card);
       if (c) { startQuiz({ kind: 'single', cid: c.id, label: '单张练习', back: { mode: 'list' } }); return; }
@@ -400,6 +402,7 @@
     acts.appendChild(bigBtn('快练一轮 · ' + Math.min(QUICK_N, cards.length) + ' 张', 'btn-primary', function () {
       startQuiz({ kind: 'quick', label: '快练一轮', back: {} });
     }));
+    acts.appendChild(bigBtn('按主题练', '', function () { nav({ mode: 'topics' }); }));
     acts.appendChild(bigBtn('按考点练', '', function () { nav({ mode: 'tags' }); }));
     var wb = bigBtn('错卡重练 · ' + wrongN, '', function () {
       startQuiz({ kind: 'wrong', label: '错卡重练', back: {} });
@@ -438,25 +441,62 @@
     window.scrollTo(0, 0);
   }
 
-  /* ---------------- 按考点练 ---------------- */
+  /* ---------------- 按考点练 / 按主题练 ---------------- */
+  /* 展示顺序以 TAGS / TOPICS 为准；数据里出现清单外的考点/主题时追加在后面，
+     避免「加了卡却看不到入口」（清单是本地常量，容易和数据脱节） */
+  function tagOrder() {
+    var out = TAGS.slice(), seen = {};
+    out.forEach(function (t) { seen[t] = 1; });
+    allCards().forEach(function (c) {
+      (c.tags || []).forEach(function (t) { if (t && !seen[t]) { seen[t] = 1; out.push(t); } });
+    });
+    return out;
+  }
+  function topicOrder() {
+    var out = TOPICS.slice(), seen = {};
+    out.forEach(function (t) { seen[t] = 1; });
+    allCards().forEach(function (c) { if (c.topic && !seen[c.topic]) { seen[c.topic] = 1; out.push(c.topic); } });
+    return out;
+  }
+  function groupBtn(title, cards, onClick, extra) {
+    var m = 0, pr = 0;
+    cards.forEach(function (c) { var l = lvOf(c.id); if (l === 3) m++; if (l > 0) pr++; });
+    var b = UI.el('button', { class: 'cd-tagbtn', type: 'button' });
+    b.innerHTML = '<b>' + UI.escape(title) + '</b>' +
+      '<span>' + m + ' / ' + cards.length + ' 张已掌握' +
+        (pr > m ? '　·　已练 ' + pr : (pr ? '　·　全练过' : '')) + (extra || '') + '</span>' +
+      '<div class="cd-mini"><i class="p" style="width:' + Math.round(pr / cards.length * 100) + '%"></i>' +
+      '<i class="g" style="width:' + Math.round(m / cards.length * 100) + '%"></i></div>';
+    b.addEventListener('click', onClick);
+    return b;
+  }
   function renderTags() {
     var root = S.root;
     root.innerHTML = '';
     root.appendChild(pageHead('按考点练', '点一个考点，只练这一类。「掌握 / 总张数」后面是已练张数；进度条浅色 = 已练，绿色 = 已掌握。', {}));
     var grid = UI.el('div', { class: 'cd-taggrid' });
-    TAGS.forEach(function (tag) {
+    tagOrder().forEach(function (tag) {
       var cs = allCards().filter(function (c) { return c.tags && c.tags.indexOf(tag) >= 0; });
       if (!cs.length) return;
-      var m = 0, pr = 0;
-      cs.forEach(function (c) { var l = lvOf(c.id); if (l === 3) m++; if (l > 0) pr++; });
-      var b = UI.el('button', { class: 'cd-tagbtn', type: 'button' });
-      b.innerHTML = '<b>' + UI.escape(tag) + '</b>' +
-        '<span>' + m + ' / ' + cs.length + ' 张已掌握' +
-          (pr > m ? '　·　已练 ' + pr : (pr ? '　·　全练过' : '')) + '</span>' +
-        '<div class="cd-mini"><i class="p" style="width:' + Math.round(pr / cs.length * 100) + '%"></i>' +
-        '<i class="g" style="width:' + Math.round(m / cs.length * 100) + '%"></i></div>';
-      b.addEventListener('click', function () { nav({ tag: tag }); });
-      grid.appendChild(b);
+      grid.appendChild(groupBtn(tag, cs, function () { nav({ tag: tag }); }));
+    });
+    root.appendChild(grid);
+    window.scrollTo(0, 0);
+  }
+  function renderTopics() {
+    var root = S.root;
+    var groups = [];
+    topicOrder().forEach(function (topic) {
+      var cs = allCards().filter(function (c) { return c.topic === topic; });
+      if (cs.length) groups.push([topic, cs]);
+    });
+    root.innerHTML = '';
+    root.appendChild(pageHead('按主题练', '一个主题 = 一类知识（杠杆 / 滑轮 / 电学 …）。点进去把这一主题的卡连着练完。',
+      {}, UI.el('span', { class: 'tiny muted', text: '共 ' + groups.length + ' 个主题' })));
+    var grid = UI.el('div', { class: 'cd-taggrid' });
+    groups.forEach(function (g) {
+      var cs = g[1];
+      grid.appendChild(groupBtn(g[0], cs, function () { nav({ topic: g[0] }); }, ''));
     });
     root.appendChild(grid);
     window.scrollTo(0, 0);

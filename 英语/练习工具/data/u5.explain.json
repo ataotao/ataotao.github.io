@@ -1,0 +1,401 @@
+{
+  "unit": "U5",
+  "items": {
+    "1": {
+      "topic": "冠词",
+      "point": "不定冠词 a/an 用于首次提到的单数可数名词；a 用于辅音音素开头，an 用于元音音素开头。",
+      "why": "store 首次出现、单数可数，读音以辅音开头，用 a。the 要上文已提到或特指，an 要接元音音素开头的词，D 处则缺冠词。",
+      "trap": "看到 before ___ store 凭语感填 the；判断特指要看上文有没有出现过。"
+    },
+    "2": {
+      "topic": "情态动词",
+      "point": "Why not do sth? 是提建议的固定句型，not 后直接接动词原形。",
+      "why": "Why not get her a lovely doll? 意为「为什么不给她买个漂亮娃娃呢」，用原形 get。to get 不符合该句型，getting 需要介词或进行时语境，got 是过去式。",
+      "trap": "看到 not 就按否定结构加 to；Why not 与 had better 后面都只接原形。"
+    },
+    "3": {
+      "topic": "状语从句",
+      "point": "when doing 表示「当……时」，主从句主语一致时可省略主语和 be。",
+      "why": "When looking around, she saw a grandma doll 意为「环顾四周时，她看到了一个奶奶娃娃」。Before / Until 与「看」这个动作的先后不合，If 表条件，此处无条件关系。",
+      "trap": "按中文「直到」把 Until 塞进来；先判断两个动作是同时还是有先后。"
+    },
+    "4": {
+      "topic": "宾语从句",
+      "point": "宾语从句连接词看两点：从句缺不缺成分（缺成分用 what），句意需要什么关系（原因用 why）。",
+      "why": "asked her mum ___ all the gifts were dolls：从句完整，但问的是「为什么礼物都是娃娃」，用 why。that 只表陈述，what 在完整句里多余，how 与「礼物都是娃娃」不搭。",
+      "trap": "从句完整就填 that 是最常见的错；先问自己这句话是在陈述事实还是在问原因。"
+    },
+    "5": {
+      "topic": "代词",
+      "point": "one 替代上文提到的「一个（同类东西）」，it 指同一个对象，ones 是复数。",
+      "why": "Her parents promised one for her fifth birthday 中 one = a doll，是「一个娃娃」。ones 为复数，it 指同一只娃娃，that 不用于这种不定指替代。",
+      "trap": "以为 it 与 one 可以互换；one 是新的一个，it 是原来那一个。"
+    },
+    "6": {
+      "topic": "副词辨析",
+      "point": "Sadly 是副词，可修饰整个句子，放句首加逗号表示「不幸的是」。",
+      "why": "Sadly, they both died in a traffic accident 中的 Sadly 修饰整句。Sad / Sadder 是形容词不能作句子状语，Sadness 是名词，都不能这样用。",
+      "trap": "形容词与副词混用；修饰整句要副词，且后接逗号。"
+    },
+    "7": {
+      "topic": "比较级",
+      "point": "有 than 的比较结构用比较级；最高级才需要 the。",
+      "why": "than any other gift 已明确比较关系，用 more precious。precious 是原级，most precious / the most precious 是最高级，不能与 than 连用。",
+      "trap": "看到 the 就想填最高级；先找句子里的 than。"
+    },
+    "8": {
+      "topic": "词形转换",
+      "point": "表示「第几十」用序数词：sixty → sixtieth；前面已有物主代词时不再加 the。",
+      "why": "Linda's ___ birthday 要「60 岁生日」，用 sixtieth。sixty 是基数词，sixties 表年代，the sixtieth 与 Linda's 重复。",
+      "trap": "把「60 岁生日」写成 sixty birthday；生日要用序数词。"
+    },
+    "9": {
+      "topic": "一般过去时",
+      "point": "叙述过去发生的一次性动作，用一般过去时；forget 的过去式是 forgot。",
+      "why": "信里说「我忘了寄这个包裹」，动作在过去，用 forgot。forget 是原形，will forget 表将来，was forgetting 是过去进行时，都不合。",
+      "trap": "被从句 should have received 带出现在时；主句讲的是过去的事。"
+    },
+    "10": {
+      "topic": "最高级",
+      "point": "出现 in the world 这类范围状语时用最高级，且最高级前加 the。",
+      "why": "made her the ___ child in the world 有明确范围，用 the happiest。happy 是原级，happier 需 than，happily 是副词不能修饰 child。",
+      "trap": "看到 the ___ child 直接填原级；先找 in the world 这类范围词。"
+    },
+    "11": {
+      "topic": "词义辨析",
+      "point": "按上下文选动词：恐怖分子对女孩上学做的事是「阻止」。",
+      "why": "they stopped girls from attending school 意为「阻止女孩上学」。encouraged / allowed 语义相反，forced 要接 to do 而非 from doing。",
+      "trap": "看到 from 就随手填；stop sb from doing 是固定搭配。"
+    },
+    "12": {
+      "topic": "短语动词",
+      "point": "call for attention to sth 意为「呼吁关注某事」；pay attention to 中的 to 是介词。",
+      "why": "空格后有 for，只能接 calling。paying 后面接 to 而不是 for，waiting for / caring for 语义不合。",
+      "trap": "只记住 pay attention to，忽略空格后其实是 for。"
+    },
+    "13": {
+      "topic": "词义辨析",
+      "point": "按语境选词：遭枪击后「受伤但活了下来」。",
+      "why": "She was seriously hurt but survived 意为「她受了重伤但活了下来」。punished 是受罚，fooled 是被骗，caught 是被抓，都与 hospital / survived 不搭。",
+      "trap": "凭中文「被抓住」选 caught；抓住 hurt 与 hospital 的语义链。"
+    },
+    "14": {
+      "topic": "形容词辨析",
+      "point": "instead of being + adj 表示「并没有……」，要与后文 became even more… 形成对比。",
+      "why": "frightened 意为「害怕的」，是被枪击后的自然反应，正好被 instead of 否定。pleased / ashamed 语义不合，awkward 是「尴尬的」。",
+      "trap": "忽略 instead of 的转折作用，误填褒义词。"
+    },
+    "15": {
+      "topic": "形容词辨析",
+      "point": "be determined to do sth 是固定搭配，意为「下定决心做某事」。",
+      "why": "became even more determined to fight 意为「更加坚定地抗争」。doubtful / hesitant 语义相反，convinced 后接 of / that 而不接 to do。",
+      "trap": "把 determined 与 convinced 混用；后者是「确信」，不接 to do。"
+    },
+    "16": {
+      "topic": "词义辨析",
+      "point": "found 意为「创立」，与动词 join（加入已有的组织）不同。",
+      "why": "She has since founded the Malala Fund 意为「此后她创立了马拉拉基金」。supported 是支持，attended 是出席，joined 是加入别人的组织。",
+      "trap": "把「创立」写成 joined；先看组织是不是她自己办的。"
+    },
+    "17": {
+      "topic": "短语动词",
+      "point": "raise awareness 是固定搭配，意为「提高意识」；raise 及物，rise 不及物。",
+      "why": "meeting leaders and raising awareness 与 meet 并列，用 raising。rising 不能带宾语，lowering 语义相反，showing 不与 awareness 搭配。",
+      "trap": "raise / rise 不分；有宾语就用 raise。"
+    },
+    "18": {
+      "topic": "词义辨析",
+      "point": "make a difference 是固定短语，意为「带来改变、起作用」。",
+      "why": "one voice can make a difference 意为「一个声音也能带来改变」。promise / mistake / decision 搭配成立，但与「一个声音的作用」不符。",
+      "trap": "只按搭配排除，忘了核对句意；先定语义场。"
+    },
+    "19": {
+      "topic": "词义辨析",
+      "point": "inspire sb to do sth 意为「激励某人做某事」。",
+      "why": "Her courage has inspired millions of people to fight 意为「她的勇气激励了数百万人去抗争」。amazed 是「使惊讶」，attracted 是「吸引」，interested 接 in，都不能接 to fight。",
+      "trap": "把 inspire 与 amaze 混；后者没有「激励去做」的含义。"
+    },
+    "20": {
+      "topic": "词义辨析",
+      "point": "prove that… 意为「证明」，与前文的例证形成论证关系。",
+      "why": "She proves that age and gender are never excuses 意为「她证明了年龄和性别从不是借口」。considers 多接 consider…(to be)，explains / suggests 语气弱于「用经历证明」。",
+      "trap": "按中文「她认为」选 considers；这里是从经历得证的「证明」。"
+    },
+    "21": {
+      "topic": "细节理解",
+      "point": "人物观点题回到该人物的段落找同义改写句。",
+      "why": "C 对应 students who are most distracted benefit the most from bans。A 与「关机也降低专注力」相反，B 原文未提，D 把「挣扎的学生」错读成小学。",
+      "trap": "凭常识选 A；每个选项都要在原文找到对应句才能选。"
+    },
+    "22": {
+      "topic": "原因细节",
+      "point": "问某人的理由，先锁定人名，再回到他出场的那一段找他说的话。",
+      "why": "A 对应 Mr. Torres 的话：phones can be useful learning tools… teach students how to use them responsibly。B 是家长安全那一段的观点，C 与原文相反，D 未提。",
+      "trap": "把相邻段里别人的观点当成他的；先锁定人名再定位。"
+    },
+    "23": {
+      "topic": "词义猜测",
+      "point": "猜短语用下文定义法：短语后面常有一句解释或举例。",
+      "why": "A middle path 后面紧跟 Some schools have found a compromise，compromise 就是线索。A 是「完全避免」，B 是「政府规定」，D 是「技术教育之路」，都没有「折中」义。",
+      "trap": "按字面把 path 译成「道路」；看下文有没有解释词。"
+    },
+    "24": {
+      "topic": "写作意图",
+      "point": "举例的作用是支撑本段观点，答案在本段主旨句。",
+      "why": "日本和澳大利亚两所学校都在 A middle path? 一节，用以说明 compromise。A / C 与「折中」相反，D 属于过度推断。",
+      "trap": "把「举例」读成「对比」；先找该段主旨句。"
+    },
+    "25": {
+      "topic": "作者态度",
+      "point": "作者既呈现支持方也呈现反对方并给出折中方案，态度为客观平衡。",
+      "why": "C 对应全文结构：正方案例—反方理由—折中做法。A / B 只取一半，D 与作者详细论证不符。",
+      "trap": "看到大量支持性例证就选 A；注意后半还有 The case against。"
+    },
+    "26": {
+      "topic": "写作意图",
+      "point": "开头对话的作用看对话后的评价句，而不是对话字面。",
+      "why": "D 对应 a man of few words… His performance speaks far louder than any words ever could。C 只是字面「不紧张」，A 与 few words 相反，B 是全文而非对话的作用。",
+      "trap": "把字面事实当意图；要看对话之后的作者评价。"
+    },
+    "27": {
+      "topic": "细节加减",
+      "point": "数字细节题要动笔算：1 枚个人金牌 + 3 个团体项目金牌 = 4 枚。",
+      "why": "D 对应 won the gold medal for the second time… He also helped China win gold in three other events。B 漏掉个人那枚，A / C 把 Asian record 写成 world record。",
+      "trap": "读到 three 就选 three；把「1+3」算清楚。"
+    },
+    "28": {
+      "topic": "原因细节",
+      "point": "原因题的答案常紧跟现象后的解释句。",
+      "why": "A 对应 one shot, no matter how good, means nothing for the next one。B 是泛泛之谈，C / D 原文并未说「太累」「已破很多纪录」。",
+      "trap": "用「他很努力」这类通用理由选 B；要找原文的具体原因。"
+    },
+    "29": {
+      "topic": "引语推断",
+      "point": "引语说明什么，答案要落在引语的核心信息上。",
+      "why": "D 对应 he trained at the shooting range all day。A 把「没空闲」夸大成靠教练，B 是无据推断，C 讲天赋而引语讲的是时间投入。",
+      "trap": "抓错引语重点；核心是 little free time + trained all day。"
+    },
+    "30": {
+      "topic": "文章出处",
+      "point": "判断出处看文体与主题：这是一篇运动员人物特写。",
+      "why": "A 对应「体育 + 人物」。B / D 强调新闻娱乐，C 强调历史，都与人物特写不符。",
+      "trap": "看到 Asian Games 就选 News；先判断文体。"
+    },
+    "31": {
+      "topic": "细节理解",
+      "point": "细节题先定位关键词所在句，再取同义改写。",
+      "why": "C 对应 you don't even need to be a coding genius… What really matters is having a creative mind。A 与原文相反，B 是入口形式不是品质，D 未提。",
+      "trap": "被 one-minute quiz 吸引选 B；那是入口，不是最重要的品质。"
+    },
+    "32": {
+      "topic": "细节理解",
+      "point": "问「为什么做某事」要在该职业的描述里找目的句。",
+      "why": "C 对应 Ethical hackers work to find security weaknesses before cybercriminals can use them。A 属 cyber investigator，B 属 game security designer，D 属 forensics expert。",
+      "trap": "把四个职业的职责张冠李戴；每个选项都回原文对号。"
+    },
+    "33": {
+      "topic": "信息匹配",
+      "point": "匹配题要把「兴趣句」与「职责句」逐一对号，四个选项都要验一遍。",
+      "why": "D 中 Sam 爱挖根究底，对应 cyber investigator 的 follow digital clues。A 的「耐心、发现小错误」应对应 forensics expert，B 的「设计规则」不属 forensics，C 的「爱讲解」应对应 digital safety educator。",
+      "trap": "只验一个顺眼的选项就作答；四个都要对号。"
+    },
+    "34": {
+      "topic": "细节理解",
+      "point": "题干情境（恢复被删记录）去找职责描述里含 recover 的段落。",
+      "why": "C 对应 digital forensics experts… use special software to recover deleted files。A 教人安全上网，B 是合法入侵找漏洞，D 保护游戏与 App。",
+      "trap": "看到 hospital 就往医疗类职业猜；按「恢复文件」定位。"
+    },
+    "35": {
+      "topic": "主旨标题",
+      "point": "最佳标题要覆盖全文对象与结构。",
+      "why": "D 对应全文用测验引出五种网络安全职业。A 只覆盖个别段落，B 与「不需要编程天才」相反，C 是测验的说法不是主旨。",
+      "trap": "用首段一句当标题；看全文有几个并列板块。"
+    },
+    "36": {
+      "topic": "阅读填空",
+      "point": "五选五看三条线索：代词指代、连接词、与上下句重复的词。",
+      "why": "空后接着介绍国土与首都，前面应是「这是世界杯史上人口第三少的参赛国」，D 与后文 small / population 呼应。B 讲名字来源，与地理介绍不衔接。",
+      "trap": "按「国家介绍」套路选 B；先看空后第一句讲什么。"
+    },
+    "37": {
+      "topic": "阅读填空",
+      "point": "空格后若在解释某个细节，前面那句必须提到这个细节。",
+      "why": "空后解释国旗上蓝白红与十颗黄星的含义，E 的 This identity is seen in its flag 正好引出。",
+      "trap": "忽略后句在讲国旗；E 是唯一与 flag 匹配的选项。"
+    },
+    "38": {
+      "topic": "阅读填空",
+      "point": "空格后讲名字含义，前面应交代名字的来源。",
+      "why": "空后 The name translates as 'green cape'，前句要说名字由葡萄牙探险者 15 世纪所给，B 衔接。D 讲世界杯排名，与「名字来源」话题不符。",
+      "trap": "没发现话题从「名字」跳到「排名」；看空后一句的主题。"
+    },
+    "39": {
+      "topic": "阅读填空",
+      "point": "However 提示前后是转折对照，前面那句应与后句相反。",
+      "why": "空后说日常最常说克里奥尔语，前句应是「官方语言是葡萄牙语」，A 提供这一对照。",
+      "trap": "忽略 However 的对照作用，随便填一句并列信息。"
+    },
+    "40": {
+      "topic": "阅读填空",
+      "point": "空后 however 转到「最热月份的旅游」时，前面需要补出气温信息。",
+      "why": "空前讲冬季 25°C，空后 however 转到最热的 8、9 月，C 补出「可超 30°C」最顺。",
+      "trap": "只接「旅游」话题；注意温度这条线索。"
+    },
+    "41": {
+      "topic": "匹配阅读",
+      "point": "匹配题抓题干里的动作词：play / watch a play 只对应戏剧活动。",
+      "why": "题干 watch a play 与 while bathing 的阿基米德故事指向 B 的 Science Drama。D 是 Science Talk Hall（听讲座），不是看戏剧。",
+      "trap": "看到 science 就选 D；关键是「看戏剧」这个动作。"
+    },
+    "42": {
+      "topic": "匹配阅读",
+      "point": "题干出现具体人名与「听她们的故事」，直接对应故事分享类活动。",
+      "why": "王贞仪、居里夫人与「听生平、如何克服困难」对应 C 的 Great Minds Story Club。A 是心理信箱，D 是物理讲座，都不匹配。",
+      "trap": "只看到 women scientists 就乱选；还要看活动形式是「讲故事」。"
+    },
+    "43": {
+      "topic": "匹配阅读",
+      "point": "匹配题两组关键词都要命中：传统节日 + 分享家庭故事。",
+      "why": "端午包粽子、想分享家庭故事并听别人的家庭习俗，完全对应 F 的 Family Traditions Fair。",
+      "trap": "被「节日」干扰去选其他活动；要找「家庭传统」这一组词。"
+    },
+    "44": {
+      "topic": "匹配阅读",
+      "point": "题干是「压力大、睡不好、想听建议」，对应提供建议的栏目。",
+      "why": "heavy pressure / can't fall asleep / hopes to get useful advice 对应 A 的 Dear Agony Aunt Corner（给学习压力与时间管理建议）。",
+      "trap": "只抓 exam 就去选学习类活动；题干要的是「建议」。"
+    },
+    "45": {
+      "topic": "匹配阅读",
+      "point": "题干强调动手做、把想法变成发明。",
+      "why": "enjoys doing practical work / turn small ideas into new inventions 对应 E 的 Little Inventors Workshop。",
+      "trap": "看到 inventions 就选科学讲座；要的是「动手做」。"
+    },
+    "46": {
+      "topic": "回答问题 how",
+      "point": "特殊疑问 how 问方式或内容变化，答案就是描述变化的那一句。",
+      "why": "参考答案：Students have to read a short passage or a conversation, not just one sentence。原文第二句即答案；这次多抄了背景句和评价句，不算错但不够简洁。",
+      "trap": "整段照抄；只取回答问题的那一句。"
+    },
+    "47": {
+      "topic": "回答问题 problem",
+      "point": "问 problem / 后果，要定位含 may / lose / patience 这类词的句子。",
+      "why": "参考答案：Students may just try to finish reading fast and lose the patience to read anything in depth。这次答成「数学题也在变、用数学解决实际问题」，抄的是上一段，没答「问题」。",
+      "trap": "看到 math exercises 就抄上一段；先看清问的是 problem。"
+    },
+    "48": {
+      "topic": "回答问题 why",
+      "point": "why 问原因，答案常是 to do 表目的的短语。",
+      "why": "参考答案：To attract more customers。原文 For example, to attract more customers… 这次答到了要点，但把整段都抄上了。",
+      "trap": "把举例整段抄上；why 题只需目的短语。"
+    },
+    "49": {
+      "topic": "回答问题 message",
+      "point": "message / take away 问作者要让读者记住的话，通常在结尾段。",
+      "why": "参考答案：We should never forget why we started and shouldn't take things too far。这次抄了结尾两句，但第二句没写完（moring 应为 moving），书面作答要写完整句。",
+      "trap": "抄半句就停；写完检查句子是否完整。"
+    },
+    "50": {
+      "topic": "开放表达",
+      "point": "Do you support…? Why? 要先明确表态，再给至少一条理由，约 30 词。",
+      "why": "参考思路：Yes, I do. Because longer passages help us use English in real situations, and reading more also improves our thinking。这次只写 Yes, I do. 加一句语法错误的理由，词数不足且理由不成立。",
+      "trap": "只表态不给理由；记住「表态 + because 理由 + 收尾」三段式。"
+    },
+    "51": {
+      "topic": "介词短语",
+      "point": "by oneself 意为「靠自己、自行」。",
+      "why": "It can drive by itself 意为「它能自己开」。that / before / what / how 都不能与 itself 构成「独自」的意思；这次填成 that。",
+      "trap": "见空就填连词；先判断空后是名词性成分还是介词短语。"
+    },
+    "52": {
+      "topic": "介词 like",
+      "point": "be like = 像，like 作介词后接名词。",
+      "why": "SwagBot is like the world's first 'smart cow' 意为「斯瓦格机器人就像世界上第一头『智能牛』」。before 表时间，语义不合。",
+      "trap": "只把 like 当动词「喜欢」；此处是介词「像」。"
+    },
+    "53": {
+      "topic": "感叹句",
+      "point": "感叹句 What + a/an + 形容词 + 单数名词 + 主谓！How 后接形容词或副词。",
+      "why": "What a smart invention it is! 空后是 a smart invention 这个名词短语，用 What。How 不能接「a + 名词」。",
+      "trap": "看到中文「多么」就填 How；看空后是不是 a + 名词。"
+    },
+    "54": {
+      "topic": "状语从句",
+      "point": "before 引导时间状语从句，表示「在……之前」。",
+      "why": "move cattle to a new field before they have damaged the grass 意为「在牛把草啃坏之前把它们转移到新草地」。by 表示「到……为止」，与提前转移不合。",
+      "trap": "把 by 当「在……之前」；by + 时间点是「到……为止」。"
+    },
+    "55": {
+      "topic": "宾语从句",
+      "point": "形容词 glad 后接 that 从句，说明高兴的原因。",
+      "why": "I am glad that it can find the most nutritious grass 中 that 引导从句，从句本身完整。what 必须在从句里充当成分，此处不需要。",
+      "trap": "从句完整仍填 what；what 必须作成分（主语或宾语）。"
+    },
+    "56": {
+      "topic": "短语动词",
+      "point": "mess up 是固定短语，意为「弄砸、搞糟」。",
+      "why": "I would mess up almost every cake 意为「我几乎把每个蛋糕都搞砸」。给出首字母 m 且空后有 up，只有 mess 符合；这次写 memory 没利用 up 这个搭配线索。",
+      "trap": "只看首字母联想名词；先看空后的 up。"
+    },
+    "57": {
+      "topic": "副词",
+      "point": "hardly 意为「几乎不」，本身是否定副词。",
+      "why": "I could hardly bake a simple cookie without burning it 意为「我几乎烤不好一块饼干」。hard 是「努力地/硬的」，与 could + without burning 的否定语气不合。",
+      "trap": "把 hardly 当 hard 的副词；hardly 表否定。"
+    },
+    "58": {
+      "topic": "句型 It is adj of sb",
+      "point": "It is + adj + of sb + to do sth 用于评价某人的行为。",
+      "why": "It is awful of you to waste so much flour and butter 意为「你这样浪费面粉黄油真糟糕」。空在 of you 之前要填形容词；这次写 attention 是名词，句式也不对。",
+      "trap": "看到 a 就当冠词；注意空后是 of you to do 的句式。"
+    },
+    "59": {
+      "topic": "介词短语",
+      "point": "in addition to 意为「除……之外（还）」，to 是介词。",
+      "why": "In addition to watching online tutorials 意为「除了看在线教程之外」。空后是 to watching，只有 addition 能构成 in addition to。",
+      "trap": "把 in addition to 与 besides 混；整块记搭配。"
+    },
+    "60": {
+      "topic": "名词",
+      "point": "hands-on practice 意为「动手实践」，practice 此处是不可数名词。",
+      "why": "get more hands-on practice 意为「获得更多动手实践」。parents 是「父母」，与 hands-on 的修饰关系不成立。",
+      "trap": "按首字母猜名词；先看形容词 hands-on 修饰什么。"
+    },
+    "61": {
+      "topic": "短语动词",
+      "point": "focus on 意为「专注于」，on 是介词后接动名词。",
+      "why": "I had to focus on following the steps 意为「我必须专注于按步骤操作」。follow 不与 on + doing 搭配，fix / face 也不合。",
+      "trap": "看到 following 就填 follow；空格后的 on 是关键线索。"
+    },
+    "62": {
+      "topic": "形容词",
+      "point": "ordinary 意为「普通的」，与 simple 并列修饰 task。",
+      "why": "not an ordinary or simple task 意为「不是一件普通或简单的任务」。其余三项都不合「普通」义。",
+      "trap": "只按首字母 o 联想；要能与 simple 并列且句意通顺。"
+    },
+    "63": {
+      "topic": "被动语态",
+      "point": "技能是「被磨炼」出来的对象，用过去被动 were + 过去分词。",
+      "why": "my baking skills were sharpened and became much better 意为「我的烘焙技能被磨炼得越来越好」。这次写 satisfaction，词性、词义都不对。",
+      "trap": "忽略「技能被磨」的被动关系；注意 and 后的 became 是系动词。"
+    },
+    "64": {
+      "topic": "词形转换",
+      "point": "with amazement 意为「惊讶地」，介词 with 后接名词。",
+      "why": "My father looked at it with amazement 意为「父亲惊讶地看着它」。amazed / amazing 是形容词不能放 with 后，satisfaction 与「不敢相信」的语境不合。",
+      "trap": "把 -ed 形容词放介词后；with + 名词。"
+    },
+    "65": {
+      "topic": "词形转换",
+      "point": "be satisfied with 意为「对……满意」，用 -ed 形容词修饰人。",
+      "why": "I am deeply satisfied with the progress 意为「我对自己的进步很满意」。satisfaction 是名词不能作表语，satisfying 修饰物。",
+      "trap": "把 satisfied 与 satisfying 混；人 satisfied，物 satisfying。"
+    },
+    "66": {
+      "topic": "建议信写作",
+      "point": "建议信结构：理解处境 → 两条建议 + 理由 → 鼓励祝愿，100–120 词。",
+      "why": "参考思路：I'm sorry to hear that… First, why not make a to-do list so that you can… Second, you'd better talk with your parents or friends, because… Remember that everyone improves at their own pace. I'm sure you'll do better! 这次失分主要在句子骨架：must can 叠加、you can successful 缺 be、整句无谓语。",
+      "trap": "中文直译；先写「谁 + 做什么」的主谓骨架，再补时态情态，最后逐句检查有没有谓语。"
+    }
+  }
+}

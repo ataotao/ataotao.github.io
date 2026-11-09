@@ -392,6 +392,150 @@
       "trap": "别看到 the students 就选 were；看 nor 后最近的 teacher 定单数。",
       "src": "U3 · 家庭生活",
       "verified": true
+    },
+    {
+      "id": "vb-031",
+      "topic": "情态动词",
+      "level": 2,
+      "stem": "Why not ______ her a lovely doll for her birthday?",
+      "cn": null,
+      "options": [
+        "to get",
+        "getting",
+        "get",
+        "got"
+      ],
+      "answer": "C",
+      "rule": "Why not do sth? 是提建议句型，not 后直接接动词原形。",
+      "trap": "看到 not 就按否定式加 to；Why not 后只接原形 get。",
+      "src": "2026-2027期中·语法选择",
+      "verified": true
+    },
+    {
+      "id": "vb-032",
+      "topic": "情态动词",
+      "level": 2,
+      "stem": "You ______ be so worried about the coming exam — you have already done your best.",
+      "cn": null,
+      "options": [
+        "mustn't",
+        "needn't",
+        "can't",
+        "may not"
+      ],
+      "answer": "B",
+      "rule": "needn't 表「不必」；mustn't 表禁止，can't 表推测「不可能」。",
+      "trap": "「不必担心」用 needn't；mustn't 是禁止，can't 是推测。",
+      "src": "2026-2027期中·语法选择",
+      "verified": true
+    },
+    {
+      "id": "vb-033",
+      "topic": "一般过去时",
+      "level": 1,
+      "stem": "I ______ to send you the package that you should have received in 1956.",
+      "cn": null,
+      "options": [
+        "forget",
+        "forgot",
+        "will forget",
+        "was forgetting"
+      ],
+      "answer": "B",
+      "rule": "整句讲过去的事，主句谓语用一般过去时，forgot 与从句呼应。",
+      "trap": "被 should have received 带成现在时；forget 的过去式是 forgot。",
+      "src": "2026-2027期中·语法选择",
+      "verified": true
+    },
+    {
+      "id": "vb-034",
+      "topic": "不定式",
+      "level": 1,
+      "stem": "I decided ______ more hands-on practice after watching the video tutorials.",
+      "cn": null,
+      "options": [
+        "getting",
+        "to get",
+        "get",
+        "got"
+      ],
+      "answer": "B",
+      "rule": "decide 后接不定式 to do；decide doing 和 decide do 都不成立。",
+      "trap": "受前面 after watching 影响写成 getting；记 decide to do。",
+      "src": "2026-2027期中·语法选择",
+      "verified": true
+    },
+    {
+      "id": "vb-035",
+      "topic": "动名词",
+      "level": 2,
+      "stem": "It is no use ______ about things you cannot change.",
+      "cn": null,
+      "options": [
+        "worry",
+        "to worry",
+        "worrying",
+        "worried"
+      ],
+      "answer": "C",
+      "rule": "It is no use doing sth：It 是形式主语，真正主语是动名词短语。",
+      "trap": "看到 It is… 就接 to do；no use / no good 后面固定用动名词。",
+      "src": "2026-2027期中·语法选择",
+      "verified": true
+    },
+    {
+      "id": "vb-036",
+      "topic": "一般过去时",
+      "level": 2,
+      "stem": "Though the recovery was painful, her spirit ______ strong and unbroken.",
+      "cn": null,
+      "options": [
+        "remain",
+        "remains",
+        "remaining",
+        "remained"
+      ],
+      "answer": "D",
+      "rule": "让步从句用 was，主句谓语保持过去时，remain 用 remained。",
+      "trap": "spirit 让人觉得「现在也坚强」就选 remains；看 was 定过去时。",
+      "src": "2026-2027期中·语法选择",
+      "verified": true
+    },
+    {
+      "id": "vb-037",
+      "topic": "被动语态（过去）",
+      "level": 2,
+      "stem": "Slowly, my baking skills ______ by daily practice and became much better.",
+      "cn": null,
+      "options": [
+        "sharpened",
+        "were sharpened",
+        "are sharpened",
+        "have sharpened"
+      ],
+      "answer": "B",
+      "rule": "skill 是「被磨炼」的对象，过去被动用 were + 过去分词。",
+      "trap": "看到 became 就选主动 sharpened；有 by 短语就该想到被动。",
+      "src": "2026-2027期中·语法选择",
+      "verified": true
+    },
+    {
+      "id": "vb-038",
+      "topic": "主谓一致",
+      "level": 2,
+      "stem": "Everything ______ going well since the new term started.",
+      "cn": null,
+      "options": [
+        "are",
+        "is",
+        "were",
+        "be"
+      ],
+      "answer": "B",
+      "rule": "everything 等不定代词作主语视为单数，谓语用 is。",
+      "trap": "since 从句有 started 就选过去时；主语是 everything，用单数 is。",
+      "src": "2026-2027期中·语法选择",
+      "verified": true
     }
   ]
 }

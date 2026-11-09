@@ -4,7 +4,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <meta name="theme-color" content="#f7f5f0" />
-<title>英语过关练习 · U1–U4</title>
+<title>英语过关练习 · 九上 U1–U5</title>
 <style>
   :root{
     --bg:#f7f5f0; --card:#fffdf9; --ink:#26221c; --ink-2:#5a534a; --ink-3:#8a8175;
@@ -87,6 +87,16 @@
     font-family:Georgia,"Times New Roman","Songti SC","Noto Serif SC",serif;word-break:break-word}
   .inline-blank-wrap{display:inline-flex;align-items:baseline;gap:3px;margin:0 3px;vertical-align:baseline}
   .blank-no{font-size:11px;color:var(--brand);font-family:system-ui,sans-serif;position:relative;top:-.4em}
+  /* 单题卡里的「本大题原文」折叠面板（阅读 / 完形 / 语法选择等选择型大题） */
+  .item-passage{margin:0 0 14px;border:1px solid var(--line-2);border-radius:10px;background:#fcf9f1;overflow:hidden}
+  .item-passage>summary{cursor:pointer;padding:8px 14px;font-size:12.5px;color:var(--brand);
+    letter-spacing:.5px;list-style:none;user-select:none}
+  .item-passage>summary::-webkit-details-marker{display:none}
+  .item-passage>summary::before{content:"▸ ";color:var(--ink-3)}
+  .item-passage[open]>summary::before{content:"▾ "}
+  .item-passage .passage-text{border:0;border-top:1px solid var(--line-2);border-radius:0;background:transparent;
+    font-size:16.5px;line-height:2.05;color:var(--ink);padding:12px 16px;max-height:44vh;overflow:auto;
+    font-family:Georgia,"Times New Roman","Songti SC","Noto Serif SC",serif;word-break:break-word}
   .field.inline-blank{width:7.2em;min-width:88px;padding:3px 8px;font-size:16.5px;line-height:1.5;
     border-radius:7px;border-bottom-width:2px;margin:0 1px;text-align:center}
   .blank-list{margin-top:16px;border-top:1px dashed var(--line-2);padding-top:12px}
@@ -281,7 +291,7 @@
 <header class="topbar">
   <div class="brand">
     <div class="seal">九上</div>
-    <div><h1>英语过关练习</h1><p id="brand-sub">U1–U4 · 按原卷分区</p></div>
+    <div><h1>英语过关练习</h1><p id="brand-sub">U1–U5 · 按原卷分区</p></div>
   </div>
   <nav class="tabs" role="tablist" aria-label="视图">
     <button class="tab" role="tab" data-view="practice" aria-selected="true">做题</button>
@@ -365,6 +375,7 @@
         stem: it.stem || "", cn: it.cn || "",
         options: it.options || [], marked: (it.marked || "").toUpperCase() || null,
         handwriting: it.handwriting || [], note: it.note || "",
+        passage: it.passage || "",
         answer: (k.answer || "").toUpperCase(), answerRaw: k.answer || "", alt: k.alt || [],
         topic: e.topic || k.topic || "", point: e.point || "",
         why: e.why || k.why || "", trap: e.trap || "",
@@ -380,6 +391,7 @@
     return {
       unit: u.unit, title: u.title || "九上 " + u.unit, header: u.header || {},
       note: u.note || "", passages: u.passages || {}, items: items, sections: sections,
+      scan: u.scan || null,
       mc: items.filter(function (i) { return i.kind === "mc"; }),
       fills: items.filter(function (i) { return i.kind === "fill"; })
     };
@@ -405,7 +417,12 @@
   function acceptedList(it) {
     return [it.answerRaw].concat(it.alt || []).map(norm).filter(Boolean);
   }
-  function scanHref(it) { return SCAN_BASE + "/九上_" + it.unit + ".jpg"; }
+  function scanHref(it) {
+    /* 单元可用 scan 指定原卷图（题库内文件名）；显式 null = 该单元没有收录原卷 */
+    var u = UNIT_BY[it.unit];
+    var f = u && u.scan;
+    return f ? SCAN_BASE + "/" + f : null;
+  }
 
   /* ══ 记录 ══════════════════════════════════════════ */
   function remapRecord(o) {
@@ -522,10 +539,30 @@
     var u = unit();
     return S.onlyFills ? u.fills : u.items;
   }
-  /* 语篇题（目前只有 U2 语法填空）：一整段短文里的多个空算「一步」，
-     像原卷那样一次看完整篇、一起作答，而不是拆成孤立的一空一卡。 */
+  /* 语篇题：一整段短文里的多个空算「一步」，像原卷那样一次看完整篇、一起作答。
+     只有「本大题所有小题都是填空、且短文里带 {{n}} 空位」时才做成语篇卡；
+     选择型大题（语法选择/完形/阅读）改用单题卡 + 原文折叠面板。 */
   function passageSection(it) {
-    return it && it.section && unit().passages[it.section] ? it.section : null;
+    if (!it || !it.section) return null;
+    var u = unit(), text = u.passages[it.section];
+    if (!text || String(text).indexOf("{{") < 0) return null;
+    var same = u.items.filter(function (x) { return x.section === it.section; });
+    for (var i = 0; i < same.length; i++) if (same[i].kind !== "fill") return null;
+    return it.section;
+  }
+  /* 单题卡上方的「本大题原文」面板：数据里 item.passage = passages 的键 */
+  function itemPassageHTML(it) {
+    if (!it.passage) return "";
+    var u = unit(), text = u.passages[it.passage];
+    if (text == null || text === "") return "";
+    var body = String(text).replace(/\{\{(\d+)\}\}/g, function (_m, n) { return "______(" + n + ")"; });
+    return '<details class="item-passage" open><summary>' + esc(it.passage) + " · 本大题原文</summary>" +
+      '<div class="passage-text">' + esc(body) + "</div></details>";
+  }
+  /* 短文里的 {{n}} 按「题号」取题，不能按数组下标（大题题号不一定从 1 开始） */
+  function pickBlank(list, no) {
+    for (var i = 0; i < list.length; i++) if (list[i].no === no) return list[i];
+    return list[no - 1] || null;
   }
   function steps() {
     var u = unit(), list = items(), out = [], seen = {};
@@ -637,7 +674,7 @@
     html += "</div>";
     html += '<button class="btn sm" data-act="cards">答题卡</button>';
     html += '<button class="btn sm ghost" data-act="only-fills" aria-pressed="' + (S.onlyFills ? "true" : "false") + '">只看填空</button>';
-    if (!ONLINE) html += '<a class="btn sm ghost" href="' + esc(scanHref(it)) + '" target="_blank" rel="noopener">原卷</a>';
+    if (!ONLINE && scanHref(it)) html += '<a class="btn sm ghost" href="' + esc(scanHref(it)) + '" target="_blank" rel="noopener">原卷</a>';
     html += '<span class="spacer"></span>';
     html += '<span class="hint">' + esc(u.unit) + " · " + esc(u.title) + "</span>";
     html += "</div>";
@@ -671,6 +708,7 @@
     html += '<span class="unit">' + esc(u.title) + " · " + (isExam() ? "模拟考" : "过关") + "</span>";
     html += "</div>";
 
+    html += itemPassageHTML(it);
     html += '<div class="stem">' + (it.cn ? '<span class="cn" lang="zh">' + esc(it.cn) + "</span>" : "") +
       esc(it.stem).replace(/_{3,}/g, '<span class="blank"></span>') + "</div>";
 
@@ -685,7 +723,7 @@
     } else if (S.reveals[it.id]) {
       html += '<button data-act="redo">重做本题</button>';
     }
-    if (!ONLINE) html += '<a href="' + esc(scanHref(it)) + '" target="_blank" rel="noopener">看原卷</a>';
+    if (!ONLINE && scanHref(it)) html += '<a href="' + esc(scanHref(it)) + '" target="_blank" rel="noopener">看原卷</a>';
     html += '<span class="hint">本大题共 ' + sectionCount(it.section) + " 题</span>";
     html += "</div>";
 
@@ -731,14 +769,14 @@
     html += '<div class="passage-text">';
     text.split(/\{\{(\d+)\}\}/).forEach(function (seg, i) {
       if (i % 2 === 0) { html += esc(seg); return; }
-      var it = list[+seg - 1];
+      var it = pickBlank(list, +seg);
       if (it) html += inlineBlankHTML(it);
     });
     html += "</div>";
 
     html += '<div class="qtools">';
     if (!isExam() && revealed) html += '<button data-act="redo-passage">整篇重做</button>';
-    if (!ONLINE) html += '<a href="' + esc(scanHref(first)) + '" target="_blank" rel="noopener">看原卷</a>';
+    if (!ONLINE && scanHref(first)) html += '<a href="' + esc(scanHref(first)) + '" target="_blank" rel="noopener">看原卷</a>';
     html += '<span class="hint">共 ' + list.length + " 空 · 一次提交，按空判分</span>";
     html += "</div>";
 
@@ -1369,7 +1407,7 @@
     }
     if (e.key === "ArrowLeft") { e.preventDefault(); go(-1); return; }
     if (e.key === "ArrowRight") { e.preventDefault(); go(1); return; }
-    var map = { "1": 0, "2": 1, "3": 2, "4": 3, a: 0, b: 1, c: 2, d: 3, A: 0, B: 1, C: 2, D: 3 };
+    var map = { "1": 0, "2": 1, "3": 2, "4": 3, "5": 4, "6": 5, a: 0, b: 1, c: 2, d: 3, e: 4, f: 5, A: 0, B: 1, C: 2, D: 3, E: 4, F: 5 };
     if (Object.prototype.hasOwnProperty.call(map, e.key) && !shownState(it) && it.kind === "mc") {
       var opt = it.options[map[e.key]];
       if (!opt) return;

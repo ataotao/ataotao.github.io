@@ -8,7 +8,8 @@ QDIR = os.path.join(ROOT, '题库')
 tot_q = 0
 problems = []
 for fn in sorted(os.listdir(QDIR)):
-    if not fn.startswith('pack-w') or not fn.endswith('.json'):
+    # 周练（pack-w*）、期中（pack-mid*）都要审计；pack-全部.json 是合并产物，跳过
+    if not (fn.startswith('pack-w') or fn.startswith('pack-mid')) or not fn.endswith('.json'):
         continue
     p = json.load(open(os.path.join(QDIR, fn), encoding='utf-8'))
     graded = [q for q in p['questions'] if q['type'] != 'selfcheck']

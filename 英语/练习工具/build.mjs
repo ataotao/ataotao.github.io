@@ -7,7 +7,7 @@
 //   items[].noLabel  = 可选，如 U4「句型翻译」的 "(1)"
 //   items[].fields   = 填空题按卷面横线数拆几个输入框
 //   passages         = 按 section 共享的长文本（U2 语法填空短文）
-import { readFileSync, writeFileSync, existsSync } from "node:fs";
+import { readFileSync, writeFileSync, existsSync, readdirSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -19,7 +19,14 @@ const readJson = (p) => JSON.parse(strip(readFileSync(p, "utf8")));
 const units = [];
 const problems = [];
 
-for (const n of [1, 2, 3, 4]) {
+// 单元列表从 data/ 里的 u<N>.json 自动发现（新增单元只需放文件，不用改这里）
+const unitNums = readdirSync(dataDir)
+  .map((f) => /^u(\d+)\.json$/.exec(f))
+  .filter(Boolean)
+  .map((m) => Number(m[1]))
+  .sort((a, b) => a - b);
+
+for (const n of unitNums) {
   const dataPath = join(dataDir, `u${n}.json`);
   if (!existsSync(dataPath)) {
     console.warn(`! 缺少 ${dataPath}，跳过 U${n}`);
@@ -49,8 +56,9 @@ for (const n of [1, 2, 3, 4]) {
     seen.add(rawId);
     const k = (key?.items || {})[rawId] || {};
     if (it.kind === "mc") {
-      if (!it.options || it.options.length !== 4) problems.push(`${unitName} ${rawId} 选项不是 4 个`);
-      if (!/^[A-D]$/.test(String(k.answer || ""))) problems.push(`${unitName} ${rawId} 选择题答案缺失`);
+      // 选项数 2–6：期中/模考卷的「五选五」「六选五」匹配题同样按选择处理
+      if (!it.options || it.options.length < 2 || it.options.length > 6) problems.push(`${unitName} ${rawId} 选项数不在 2–6 之间`);
+      if (!/^[A-F]$/.test(String(k.answer || ""))) problems.push(`${unitName} ${rawId} 选择题答案缺失`);
       else if (!it.options.some((o) => o.k === k.answer)) problems.push(`${unitName} ${rawId} 答案 ${k.answer} 不在选项里`);
     }
     if (it.kind === "fill") {
@@ -65,6 +73,8 @@ for (const n of [1, 2, 3, 4]) {
     header: data.header || {},
     note: data.note || "",
     passages: data.passages || {},
+    // 原卷图（题库内文件名）；数据里没有就按老约定「九上_U{n}.jpg」，显式 null 表示没有收录
+    scan: data.scan === undefined ? `九上_${unitName}.jpg` : data.scan,
     items,
     key: key || { items: {} },
     explain: explain ? explain.items || {} : {},
@@ -133,7 +143,7 @@ if (problems.length) {
   problems.forEach((p) => console.error("  - " + p));
   process.exitCode = 1;
 } else {
-  console.log("✓ 数据校验通过（id 唯一 / 选择题 4 选项且答案在选项内 / 填空题有答案或标存疑）");
+  console.log("✓ 数据校验通过（id 唯一 / 选择题 2–6 选项且答案在选项内 / 填空题有答案或标存疑）");
 }
 console.log(
   `✓ ${units.length} 个单元 · ${total} 题 · 选择 ${mcTotal} · 填空 ${fillTotal}（按空 ${fieldTotal}）· 原卷有作答 ${marked} · 存疑 ${doubt} · 无参考答案 ${manual} · 四段式解析 ${explained}/${total}`

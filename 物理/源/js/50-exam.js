@@ -362,18 +362,24 @@
   function packStat(pack) {
     var rec = packRec(pack.id), qs = qsOf(pack);
     var graded = 0, gradedDone = 0, ok = 0, selfTotal = 0, nextId = '', cum = 0, book = 0;
+    var full = 0, got = 0;          /* 分值判分：题目带 score 时，满分/得分才算得出来 */
     qs.forEach(function (q) {
       var r = rec[q.id];
       if (isSelf(q)) { selfTotal++; return; }
       graded++;
-      if (r) { gradedDone++; if (r.ok) ok++; cum += cumWrong(r); }
-      else if (!nextId) nextId = q.id;
+      var sc = Number(q.score);
+      if (isFinite(sc) && sc > 0) full += sc;
+      if (r) {
+        gradedDone++; if (r.ok) ok++;
+        cum += cumWrong(r);
+        if (r.ok && isFinite(sc) && sc > 0) got += sc;
+      } else if (!nextId) nextId = q.id;
       if (inWrongBook(pack.id, q.id)) book++;
     });
     return {
       total: qs.length, graded: graded, gradedDone: gradedDone,
       selfTotal: selfTotal, ok: ok, wrong: gradedDone - ok,
-      wrongBook: book, cumWrong: cum,
+      wrongBook: book, cumWrong: cum, full: full, got: got,
       rate: gradedDone ? ok / gradedDone : null, nextId: nextId
     };
   }
@@ -613,8 +619,9 @@
     });
     if (tags.children.length) card.appendChild(tags);
 
-    var line = '共 ' + st.graded + ' 题（判分）· 已录 ' + st.gradedDone;
+    var line = (st.full ? '满分 ' + st.full + ' 分 · ' : '') + '共 ' + st.graded + ' 题（判分）· 已录 ' + st.gradedDone;
     if (st.gradedDone) line += ' · 对 ' + st.ok + ' · 错 ' + st.wrong + ' · 正确率 ' + U.fmtPct(st.rate);
+    if (st.full) line += ' · 已得 ' + st.got + ' 分';
     if (st.cumWrong) line += ' · 累计做错 ' + st.cumWrong + ' 次';
     if (st.selfTotal) line += ' · 另有 ' + st.selfTotal + ' 题对答案不判分';
     card.appendChild(h('p', { class: 'ex-statline', text: line }));
@@ -692,6 +699,7 @@
     /* 整套进度 */
     var pr = h('div', { class: 'ex-prog' });
     pr.appendChild(h('span', { text: '整套已录 ' + st.gradedDone + ' / ' + st.graded + ' · 对 ' + st.ok +
+      (st.full ? ' · 得 ' + st.got + ' / ' + st.full + ' 分' : '') +
       (st.cumWrong ? ' · 累计错 ' + st.cumWrong + ' 次' : '') }));
     pr.appendChild(barEl(st.graded ? st.gradedDone / st.graded : 0,
       st.rate === null ? '' : (st.rate >= 0.75 ? 'ok' : (st.rate >= 0.4 ? '' : 'warn'))));
@@ -1089,11 +1097,15 @@
 
     var score = h('div', { class: 'ex-score' });
     var mega = h('div', { class: 'ex-mega' + (!wrong.length && !undone.length && st.graded ? ' ok' : '') });
-    mega.innerHTML = st.ok + '<span style="font-size:15px;font-weight:600;color:var(--muted)"> / ' + st.graded + ' 题</span>';
+    if (st.full) {
+      mega.innerHTML = st.got + '<span style="font-size:15px;font-weight:600;color:var(--muted)"> / ' + st.full + ' 分</span>';
+    } else {
+      mega.innerHTML = st.ok + '<span style="font-size:15px;font-weight:600;color:var(--muted)"> / ' + st.graded + ' 题</span>';
+    }
     score.appendChild(mega);
     var meta = h('div', { class: 'small muted' });
     meta.innerHTML = (st.rate === null ? '还没开始录' : '正确率 ' + U.fmtPct(st.rate)) +
-      '<br>已录 ' + st.gradedDone + ' / ' + st.graded + ' 题' +
+      '<br>已录 ' + st.gradedDone + ' / ' + st.graded + ' 题 · 对 ' + st.ok + ' 题' +
       (st.cumWrong ? ' · 累计做错 ' + st.cumWrong + ' 次' : '') +
       (st.selfTotal ? ' · ' + st.selfTotal + ' 题对答案不判分' : '');
     score.appendChild(meta);

@@ -542,6 +542,366 @@
       "trap": "be 后直接放 doubt 是词性错；表语位置要形容词 doubtful。",
       "src": "U2 · 词形转换",
       "verified": true
+    },
+    {
+      "id": "wd-031",
+      "topic": "代词",
+      "level": 2,
+      "stem": "Linda's parents promised ______ for her fifth birthday — a doll.",
+      "cn": null,
+      "options": [
+        "one",
+        "ones",
+        "it",
+        "that"
+      ],
+      "answer": "A",
+      "rule": "one 替代上文泛指的单数可数名词 a doll；ones 只代复数。",
+      "trap": "看到 a doll 就想用 it；it 指同一件已知物，这里是「一个」。",
+      "src": "2026-2027期中·语法选择",
+      "verified": true
+    },
+    {
+      "id": "wd-032",
+      "topic": "最高级",
+      "level": 1,
+      "stem": "The doll, given by 'Angel of Joy', made her the ______ child in the world.",
+      "cn": null,
+      "options": [
+        "happy",
+        "happier",
+        "happiest",
+        "happily"
+      ],
+      "answer": "C",
+      "rule": "the + 最高级 + 名词 + in the world，表示三者以上的比较范围。",
+      "trap": "看到 the ___ child 就填原级；in the world 已是最高级信号。",
+      "src": "2026-2027期中·语法选择",
+      "verified": true
+    },
+    {
+      "id": "wd-033",
+      "topic": "比较级",
+      "level": 1,
+      "stem": "The never-received gift was ______ than any other gift in her eyes.",
+      "cn": null,
+      "options": [
+        "precious",
+        "more precious",
+        "most precious",
+        "the most precious"
+      ],
+      "answer": "B",
+      "rule": "than 是比较级标志，多音节形容词前加 more；any other 提示比较对象。",
+      "trap": "in her eyes 诱你填最高级；有 than 就必须用 more precious。",
+      "src": "2026-2027期中·语法选择",
+      "verified": true
+    },
+    {
+      "id": "wd-034",
+      "topic": "词形转换",
+      "level": 2,
+      "stem": "It was Linda's ______ birthday, and she got a gift with a card.",
+      "cn": null,
+      "options": [
+        "sixty",
+        "sixtieth",
+        "sixties",
+        "the sixtieth"
+      ],
+      "answer": "B",
+      "rule": "表「第几个生日」用序数词；所有格 Linda's 后直接跟 sixtieth。",
+      "trap": "填 sixty 变成「六十个生日」；所有格已限定，别再加 the。",
+      "src": "2026-2027期中·语篇填词",
+      "verified": true
+    },
+    {
+      "id": "wd-035",
+      "topic": "副词辨析",
+      "level": 1,
+      "stem": "______, they both died in a traffic accident before the doll arrived.",
+      "cn": null,
+      "options": [
+        "Sad",
+        "Sadly",
+        "Sadness",
+        "Sadder"
+      ],
+      "answer": "B",
+      "rule": "句首修饰整个句子用副词 Sadly，意为「令人难过的是」。",
+      "trap": "句首就想填形容词 Sad；这里修饰整句，要用副词 Sadly。",
+      "src": "2026-2027期中·语法选择",
+      "verified": true
+    },
+    {
+      "id": "wd-036",
+      "topic": "冠词",
+      "level": 1,
+      "stem": "Rita stopped before ______ store, as if drawn by something invisible.",
+      "cn": null,
+      "options": [
+        "a",
+        "an",
+        "the",
+        "—（不填）"
+      ],
+      "answer": "A",
+      "rule": "store 首次出现且表泛指，用不定冠词 a；an 接元音音素开头的词。",
+      "trap": "store 以辅音音素开头，选 an 只看字母不看音；泛指不用 the。",
+      "src": "2026-2027期中·语法选择",
+      "verified": true
+    },
+    {
+      "id": "wd-037",
+      "topic": "介词",
+      "level": 1,
+      "stem": "The robot can drive ______ itself and move cows from one field to another.",
+      "cn": null,
+      "options": [
+        "by",
+        "with",
+        "on",
+        "for"
+      ],
+      "answer": "A",
+      "rule": "by oneself 是固定搭配，表「独自、靠自己」。",
+      "trap": "中文「自己开」容易想到 with；by itself 才是「自行」。",
+      "src": "2026-2027期中·语法选择",
+      "verified": true
+    },
+    {
+      "id": "wd-038",
+      "topic": "介词短语",
+      "level": 1,
+      "stem": "______ addition to watching online tutorials, I decided to get hands-on practice.",
+      "cn": null,
+      "options": [
+        "In",
+        "On",
+        "At",
+        "By"
+      ],
+      "answer": "A",
+      "rule": "in addition to 是固定短语，to 后接名词或动名词。",
+      "trap": "按中文「另外」猜 on 或 by；把 in addition to 整块记住。",
+      "src": "2026-2027期中·语法选择",
+      "verified": true
+    },
+    {
+      "id": "wd-039",
+      "topic": "短语动词",
+      "level": 2,
+      "stem": "I realized that I had to ______ on following the steps carefully.",
+      "cn": null,
+      "options": [
+        "focus",
+        "follow",
+        "fix",
+        "face"
+      ],
+      "answer": "A",
+      "rule": "focus on 表「集中注意力于」，后接名词或动名词。",
+      "trap": "follow 不能接 on；fix on、face on 也不成搭配，先验介词。",
+      "src": "2026-2027期中·语法选择",
+      "verified": true
+    },
+    {
+      "id": "wd-040",
+      "topic": "短语动词",
+      "level": 1,
+      "stem": "When I first started, I would ______ up almost every cake I tried to make.",
+      "cn": null,
+      "options": [
+        "mess",
+        "make",
+        "take",
+        "pick"
+      ],
+      "answer": "A",
+      "rule": "mess up 表「弄砸」；make up 编造，take up 占用，pick up 捡起。",
+      "trap": "空后还有 up，别选 make；「把蛋糕做砸」是 mess up。",
+      "src": "2026-2027期中·语法选择",
+      "verified": true
+    },
+    {
+      "id": "wd-041",
+      "topic": "词形转换",
+      "level": 2,
+      "stem": "Now, I am deeply ______ with the progress I have made.",
+      "cn": null,
+      "options": [
+        "satisfy",
+        "satisfied",
+        "satisfying",
+        "satisfaction"
+      ],
+      "answer": "B",
+      "rule": "be + 过去分词 + with 表人的感受，satisfied 意为「满意的」。",
+      "trap": "satisfying 指事物「令人满意的」；主语是 I，要用 satisfied。",
+      "src": "2026-2027期中·语篇填词",
+      "verified": true
+    },
+    {
+      "id": "wd-042",
+      "topic": "词形转换",
+      "level": 2,
+      "stem": "My father looked at the cake with ______ and said it looked like a pro's work.",
+      "cn": null,
+      "options": [
+        "amaze",
+        "amazed",
+        "amazement",
+        "amazing"
+      ],
+      "answer": "C",
+      "rule": "介词 with 后接名词，amazement 表「惊讶」，with amazement 意为惊讶地。",
+      "trap": "填 amazing 是把形容词放在介词后；with 后要用名词。",
+      "src": "2026-2027期中·语篇填词",
+      "verified": true
+    },
+    {
+      "id": "wd-043",
+      "topic": "副词辨析",
+      "level": 2,
+      "stem": "I could ______ bake a simple cookie without burning it.",
+      "cn": null,
+      "options": [
+        "hard",
+        "hardly",
+        "harder",
+        "hardest"
+      ],
+      "answer": "B",
+      "rule": "hardly 意为「几乎不」；hard 作副词是「努力地」，两词意思不同。",
+      "trap": "中文「很难烤好」会选 hard；could hardly 才是「几乎不能」。",
+      "src": "2026-2027期中·语法选择",
+      "verified": true
+    },
+    {
+      "id": "wd-044",
+      "topic": "形容词辨析",
+      "level": 3,
+      "stem": "Baking a perfect cake is not an ______ or simple task.",
+      "cn": null,
+      "options": [
+        "ordinary",
+        "ancient",
+        "outgoing",
+        "opposite"
+      ],
+      "answer": "A",
+      "rule": "与 simple 并列需形容词，ordinary 表「普通的」，符合句意。",
+      "trap": "与 simple 并列处要填「普通」义，其余三项都不合句意。",
+      "src": "2026-2027期中·语法选择",
+      "verified": true
+    },
+    {
+      "id": "wd-045",
+      "topic": "词义辨析",
+      "level": 2,
+      "stem": "When the terrorists took over her hometown, they ______ girls from attending school.",
+      "cn": null,
+      "options": [
+        "encouraged",
+        "forced",
+        "allowed",
+        "stopped"
+      ],
+      "answer": "D",
+      "rule": "stop sb from doing 表「阻止某人做某事」；force/allow 接 to do。",
+      "trap": "中文「不让女孩上学」会选 forced；force sb to do 不接 from。",
+      "src": "2026-2027期中·完形填空",
+      "verified": true
+    },
+    {
+      "id": "wd-046",
+      "topic": "词义辨析",
+      "level": 1,
+      "stem": "Malala's story teaches us that one voice can make a ______.",
+      "cn": null,
+      "options": [
+        "promise",
+        "mistake",
+        "difference",
+        "decision"
+      ],
+      "answer": "C",
+      "rule": "make a difference 是固定搭配，表「起作用、带来改变」。",
+      "trap": "make a promise 语法没错但语义不通；看「一个声音」能起什么作用。",
+      "src": "2026-2027期中·完形填空",
+      "verified": true
+    },
+    {
+      "id": "wd-047",
+      "topic": "词义辨析",
+      "level": 2,
+      "stem": "Her courage has ______ millions of people to fight for their dreams.",
+      "cn": null,
+      "options": [
+        "inspired",
+        "amazed",
+        "attracted",
+        "interested"
+      ],
+      "answer": "A",
+      "rule": "inspire sb to do 表「激励某人做某事」，与 fight for dreams 呼应。",
+      "trap": "amazed、interested 都不接 to do；interest 要接 in doing。",
+      "src": "2026-2027期中·完形填空",
+      "verified": true
+    },
+    {
+      "id": "wd-048",
+      "topic": "短语动词",
+      "level": 3,
+      "stem": "She described her daily life under the terrorists and ______ for attention to girls' education.",
+      "cn": null,
+      "options": [
+        "waiting",
+        "calling",
+        "paying",
+        "caring"
+      ],
+      "answer": "B",
+      "rule": "call for 表「呼吁、要求」；此处与 attention to education 搭配。",
+      "trap": "wait for 是「等待」，pay for 是「付款」，都与「呼吁关注」无关。",
+      "src": "2026-2027期中·完形填空",
+      "verified": true
+    },
+    {
+      "id": "wd-049",
+      "topic": "短语动词",
+      "level": 2,
+      "stem": "She travels all over the world, meeting leaders and ______ awareness of education.",
+      "cn": null,
+      "options": [
+        "raising",
+        "rising",
+        "lowering",
+        "showing"
+      ],
+      "answer": "A",
+      "rule": "raise 是及物动词，「提高意识」说 raise awareness；rise 不及物。",
+      "trap": "rise 与 raise 形近，awareness 前缺宾语时要用及物的 raising。",
+      "src": "2026-2027期中·完形填空",
+      "verified": true
+    },
+    {
+      "id": "wd-050",
+      "topic": "词义辨析",
+      "level": 3,
+      "stem": "Instead of giving up, she became even more ______ to fight for education rights.",
+      "cn": null,
+      "options": [
+        "doubtful",
+        "determined",
+        "hesitant",
+        "convinced"
+      ],
+      "answer": "B",
+      "rule": "be determined to do 表「下定决心做某事」，more 修饰形容词。",
+      "trap": "doubtful、hesitant 与 instead of giving up 相反，别选。",
+      "src": "2026-2027期中·完形填空",
+      "verified": true
     }
   ]
 }
