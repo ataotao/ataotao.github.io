@@ -8,7 +8,10 @@
       "topic": "adj + that 从句",
       "level": 1,
       "stem": "Wang Zhenyi was sure ______ the lunar eclipse was a natural event, not a sign from heaven.",
-      "cn": null,
+      "cn": "王贞仪确信月食是一种自然现象，而不是上天发出的征兆。",
+      "gloss": {
+        "sign from heaven": "上天发出的征兆"
+      },
       "options": [
         "that",
         "what",
@@ -26,7 +29,10 @@
       "topic": "adj + that 从句",
       "level": 1,
       "stem": "Mr Li was glad ______ his students had put the safety rules into practice.",
-      "cn": null,
+      "cn": "李老师很高兴他的学生把安全规则落实到了行动中。",
+      "gloss": {
+        "into practice": "付诸实践"
+      },
       "options": [
         "what",
         "which",
@@ -44,7 +50,7 @@
       "topic": "宾语从句",
       "level": 3,
       "stem": "Scientists were not sure ______ they could use to measure the temperature of boiling water.",
-      "cn": null,
+      "cn": "科学家们不确定能用什么来测量沸水的温度。",
       "options": [
         "that",
         "what",
@@ -62,7 +68,10 @@
       "topic": "it 作形式主语",
       "level": 1,
       "stem": "______ is necessary that every student should know how to deal with pressure before the exam.",
-      "cn": null,
+      "cn": "每个学生都有必要在考试前懂得如何应对压力。",
+      "gloss": {
+        "deal with": "应对"
+      },
       "options": [
         "It",
         "That",
@@ -80,7 +89,10 @@
       "topic": "it 作形式主语",
       "level": 2,
       "stem": "It is very kind ______ you to help the old people in the community centre every Saturday.",
-      "cn": null,
+      "cn": "你每个星期六都到社区中心帮助老人，真是太好了。",
+      "gloss": {
+        "community centre": "社区活动中心"
+      },
       "options": [
         "for",
         "to",
@@ -98,7 +110,7 @@
       "topic": "it 作形式主语",
       "level": 2,
       "stem": "It is important ______ teenagers to keep a good habit of reading English aloud every morning.",
-      "cn": null,
+      "cn": "青少年每天早晨养成大声朗读英语的好习惯很重要。",
       "options": [
         "for",
         "of",
@@ -116,7 +128,10 @@
       "topic": "宾语从句",
       "level": 2,
       "stem": "The volunteer asked me ______ I had ever helped at the old people's home before.",
-      "cn": null,
+      "cn": "那位志愿者问我以前有没有在养老院帮过忙。",
+      "gloss": {
+        "old people's home": "养老院"
+      },
       "options": [
         "that",
         "what",
@@ -134,7 +149,10 @@
       "topic": "宾语从句",
       "level": 2,
       "stem": "It depends on ______ our class can raise enough money for the volunteer trip.",
-      "cn": null,
+      "cn": "这取决于我们班能否为这次志愿者旅行筹到足够的钱。",
+      "gloss": {
+        "depends on": "取决于"
+      },
       "options": [
         "whether",
         "that",
@@ -152,7 +170,7 @@
       "topic": "宾语从句语序",
       "level": 1,
       "stem": "Could you tell me ______ the science museum tomorrow?",
-      "cn": null,
+      "cn": "你能告诉我我们明天什么时候去参观科学博物馆吗？",
       "options": [
         "when will we visit",
         "when we will visit",
@@ -170,7 +188,10 @@
       "topic": "宾语从句语序",
       "level": 2,
       "stem": "Nobody told me ______ after the science show, so I had to wait outside.",
-      "cn": null,
+      "cn": "没人告诉我那两位天才在科学展演结束后去了哪里，所以我只好在外面等。",
+      "gloss": {
+        "science show": "科学展演"
+      },
       "options": [
         "where did the two geniuses go",
         "where went the two geniuses",
@@ -188,7 +209,7 @@
       "topic": "宾语从句语序",
       "level": 3,
       "stem": "The reporter asked Wang Zhenyi ______ such an accurate model of the lunar eclipse.",
-      "cn": null,
+      "cn": "记者问王贞仪是怎样做出如此精确的月食模型的。",
       "options": [
         "how did she make",
         "how she had made",
@@ -206,7 +227,7 @@
       "topic": "宾语从句时态",
       "level": 1,
       "stem": "In class, our science teacher told us that light ______ much faster than sound.",
-      "cn": null,
+      "cn": "课堂上，我们的科学老师告诉我们，光传播得比声音快得多。",
       "options": [
         "travelled",
         "has travelled",
@@ -224,7 +245,10 @@
       "topic": "宾语从句时态",
       "level": 2,
       "stem": "The head teacher announced that the school ______ a science show the next Friday.",
-      "cn": null,
+      "cn": "校长宣布学校将在下周五举办一场科学展演。",
+      "gloss": {
+        "head teacher": "校长（英式说法）"
+      },
       "options": [
         "will hold",
         "holds",
@@ -242,7 +266,7 @@
       "topic": "宾语从句时态",
       "level": 1,
       "stem": "Mary said she ______ very nervous before her speech last Friday.",
-      "cn": null,
+      "cn": "玛丽说上周五演讲前她非常紧张。",
       "options": [
         "is",
         "has been",
@@ -260,7 +284,7 @@
       "topic": "状语从句",
       "level": 2,
       "stem": "______ I was reading about Archimedes, my sister was drawing a picture of the golden crown.",
-      "cn": null,
+      "cn": "我在读关于阿基米德的资料时，妹妹正在画那顶金冠。",
       "options": [
         "While",
         "Until",
@@ -278,7 +302,10 @@
       "topic": "状语从句",
       "level": 2,
       "stem": "Please speak more slowly ______ everyone in the class can follow you.",
-      "cn": null,
+      "cn": "请说慢一点，好让班上每个人都能听懂你的话。",
+      "gloss": {
+        "follow": "听懂（不是“跟随”）"
+      },
       "options": [
         "because",
         "though",
@@ -296,7 +323,7 @@
       "topic": "条件状语从句",
       "level": 1,
       "stem": "If the rain ______ tomorrow, we will visit the science museum with our foreign friends.",
-      "cn": null,
+      "cn": "如果明天雨停了，我们就和外国朋友一起去参观科学博物馆。",
       "options": [
         "stops",
         "will stop",
@@ -314,7 +341,10 @@
       "topic": "条件状语从句",
       "level": 2,
       "stem": "You will never get rid of the pressure ______ you learn to share your feelings with others.",
-      "cn": null,
+      "cn": "除非你学会与人分享自己的感受，否则你永远无法摆脱压力。",
+      "gloss": {
+        "get rid of": "摆脱"
+      },
       "options": [
         "unless",
         "if",
@@ -332,7 +362,7 @@
       "topic": "让步状语从句",
       "level": 1,
       "stem": "______ her life was short, Wang Zhenyi still wrote many important books about the stars.",
-      "cn": null,
+      "cn": "虽然王贞仪的一生很短暂，她仍然写了许多关于星辰的重要著作。",
       "options": [
         "But",
         "Although",
@@ -350,7 +380,10 @@
       "topic": "让步状语从句",
       "level": 2,
       "stem": "Though the young inventor failed many times, ______ he never gave up his idea.",
-      "cn": null,
+      "cn": "虽然这位年轻的发明家失败了很多次，但他从未放弃自己的想法。",
+      "gloss": {
+        "gave up": "放弃"
+      },
       "options": [
         "but",
         "and",
@@ -368,7 +401,10 @@
       "topic": "名词性从句",
       "level": 3,
       "stem": "______ the ancient people believed about the eclipse turned out to be wrong.",
-      "cn": null,
+      "cn": "古人关于日月食的种种看法最终被证明是错误的。",
+      "gloss": {
+        "turned out": "结果证明"
+      },
       "options": [
         "What",
         "That",
@@ -386,7 +422,10 @@
       "topic": "名词性从句",
       "level": 2,
       "stem": "The trouble is ______ the new machine in the lab keeps making strange noises.",
-      "cn": null,
+      "cn": "麻烦的是实验室里的新机器老是发出奇怪的响声。",
+      "gloss": {
+        "keeps making": "不断地发出"
+      },
       "options": [
         "what",
         "that",
@@ -404,7 +443,7 @@
       "topic": "感叹句",
       "level": 1,
       "stem": "______ clever answer the little boy gave to the teacher's question!",
-      "cn": null,
+      "cn": "这个小男孩对老师的问题给出了多么聪明的回答啊！",
       "options": [
         "What",
         "What a",
@@ -422,7 +461,7 @@
       "topic": "感叹句",
       "level": 2,
       "stem": "______ great progress the volunteer team has made this term!",
-      "cn": null,
+      "cn": "志愿者团队这学期取得了多么大的进步啊！",
       "options": [
         "What a",
         "How",
@@ -440,7 +479,7 @@
       "topic": "感叹句",
       "level": 2,
       "stem": "______ interesting stories the old artist told us about his childhood!",
-      "cn": null,
+      "cn": "这位老艺术家给我们讲了多么有趣的童年故事啊！",
       "options": [
         "How",
         "What a",
@@ -458,7 +497,7 @@
       "topic": "感叹句",
       "level": 2,
       "stem": "______ hard the young scientist worked to make her model of the eclipse accurate!",
-      "cn": null,
+      "cn": "这位年轻的科学家为了把日月食模型做得精确，付出了多么大的努力啊！",
       "options": [
         "What",
         "What a",
@@ -476,7 +515,7 @@
       "topic": "特殊疑问句",
       "level": 2,
       "stem": "—______ will the new library be open to students? —In about two weeks, I think.",
-      "cn": null,
+      "cn": "——新图书馆还要多久才向学生开放？——我想大约两周后吧。",
       "options": [
         "How long",
         "How often",
@@ -494,7 +533,10 @@
       "topic": "特殊疑问句",
       "level": 2,
       "stem": "—______ does your class go to the community centre to help the old? —Once a month.",
-      "cn": null,
+      "cn": "——你们班多久去一次社区中心帮助老人？——每月一次。",
+      "gloss": {
+        "the old": "老年人"
+      },
       "options": [
         "How long",
         "How soon",
@@ -512,7 +554,7 @@
       "topic": "祈使句",
       "level": 1,
       "stem": "Be careful with the glass tube, ______ you will break it.",
-      "cn": null,
+      "cn": "小心那根玻璃管，否则你会把它弄坏的。",
       "options": [
         "and",
         "but",
@@ -530,7 +572,7 @@
       "topic": "直接引语间接引语",
       "level": 3,
       "stem": "Alex said, 'We will visit the science museum next week,' so he told me that they ______ the science museum the next week.",
-      "cn": null,
+      "cn": "亚历克斯说：“我们下周要去参观科学博物馆。”所以他告诉我，他们下周要去参观科学博物馆。",
       "options": [
         "visit",
         "visited",
@@ -548,7 +590,10 @@
       "topic": "adj + that 从句",
       "level": 2,
       "stem": "I'm not sure ______ Uncle Wang will come to the science show or not.",
-      "cn": null,
+      "cn": "我不确定王叔叔会不会来参加科学展演。",
+      "gloss": {
+        "or not": "（whether…or not）……与否"
+      },
       "options": [
         "that",
         "whether",
@@ -566,7 +611,11 @@
       "topic": "adj + that 从句",
       "level": 2,
       "stem": "After three tries, the boy was ______ that he could solve the puzzle by himself.",
-      "cn": null,
+      "cn": "试了三次之后，这个男孩确信自己能够独立解开这道谜题。",
+      "gloss": {
+        "tries": "尝试（次）",
+        "puzzle": "谜题"
+      },
       "options": [
         "sure",
         "easy",
@@ -584,7 +633,10 @@
       "topic": "感叹句",
       "level": 1,
       "stem": "SwagBot can find the best grass by itself. ______ a smart invention it is!",
-      "cn": null,
+      "cn": "斯瓦格博特能自己找到最好的草。这真是一项聪明的发明啊！",
+      "gloss": {
+        "by itself": "自行"
+      },
       "options": [
         "What",
         "How",
@@ -602,7 +654,7 @@
       "topic": "宾语从句",
       "level": 2,
       "stem": "Rita could not understand it, so she asked her mum ______ all the gifts were dolls.",
-      "cn": null,
+      "cn": "丽塔不明白这是怎么回事，就去问妈妈为什么所有的礼物都是洋娃娃。",
       "options": [
         "that",
         "why",
@@ -620,7 +672,7 @@
       "topic": "adj + that 从句",
       "level": 2,
       "stem": "I am glad ______ SwagBot can find the most nutritious grass for me.",
-      "cn": null,
+      "cn": "我很高兴斯瓦格博特能为我找到最有营养的草。",
       "options": [
         "that",
         "what",
@@ -638,7 +690,11 @@
       "topic": "状语从句",
       "level": 2,
       "stem": "______ looking around, she saw a grandma doll with gray hair.",
-      "cn": null,
+      "cn": "她环顾四周时，看见了一个灰白头发的奶奶玩偶。",
+      "gloss": {
+        "looking around": "环顾四周",
+        "grandma doll": "奶奶造型的玩偶"
+      },
       "options": [
         "Before",
         "Until",
@@ -656,7 +712,11 @@
       "topic": "状语从句",
       "level": 2,
       "stem": "Move the cattle to a new field ______ they have damaged the grass too much.",
-      "cn": null,
+      "cn": "在牛群把草破坏得太厉害之前，把它们赶到新的草地去。",
+      "gloss": {
+        "cattle": "牛群",
+        "field": "草地"
+      },
       "options": [
         "before",
         "after",
@@ -674,7 +734,10 @@
       "topic": "条件状语从句",
       "level": 1,
       "stem": "______ you keep trying, you will make it in the end.",
-      "cn": null,
+      "cn": "如果你一直努力尝试，最终你会成功的。",
+      "gloss": {
+        "make it": "成功"
+      },
       "options": [
         "If",
         "Unless",

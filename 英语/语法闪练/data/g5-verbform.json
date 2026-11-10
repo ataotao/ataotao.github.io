@@ -8,7 +8,11 @@
       "topic": "不规则动词·过去式",
       "level": 1,
       "stem": "Last week our class ______ (sell) old books to raise money for the charity.",
-      "cn": "上周我们班卖掉旧书为慈善募捐。",
+      "cn": "上周我们班卖掉旧书，为慈善机构筹款。",
+      "gloss": {
+        "raise money": "筹款",
+        "charity": "慈善机构"
+      },
       "options": [
         "sold",
         "sell",
@@ -44,7 +48,10 @@
       "topic": "不规则动词·过去式",
       "level": 1,
       "stem": "Mr Li ______ (teach) us how to make a model of the lunar eclipse last term.",
-      "cn": "上学期李老师教我们做了月食模型。",
+      "cn": "上学期李老师教我们怎样制作月食模型。",
+      "gloss": {
+        "lunar eclipse": "月食"
+      },
       "options": [
         "teached",
         "teaching",
@@ -62,7 +69,10 @@
       "topic": "不规则动词·过去式",
       "level": 1,
       "stem": "The police ______ (catch) the man who cheated the old man of his savings.",
-      "cn": "警察抓住了骗走老人积蓄的那个人。",
+      "cn": "警察抓住了那个骗走老人积蓄的人。",
+      "gloss": {
+        "savings": "积蓄；存款"
+      },
       "options": [
         "catched",
         "caught",
@@ -80,7 +90,7 @@
       "topic": "不规则动词·过去式",
       "level": 1,
       "stem": "Wang Zhenyi ______ (bring) her simple model to the classroom and showed it to us.",
-      "cn": "王贞仪把她的简易模型带进教室给我们看。",
+      "cn": "王贞仪把她的简易模型带到教室，展示给我们看。",
       "options": [
         "bringed",
         "brought",
@@ -98,7 +108,10 @@
       "topic": "不规则动词·过去式",
       "level": 1,
       "stem": "At first I ______ (think) the story was boring, but the ending surprised me.",
-      "cn": "起初我以为这个故事很无聊，但结局让我吃惊。",
+      "cn": "起初我以为这个故事很无聊，但结局让我大吃一惊。",
+      "gloss": {
+        "At first": "起初"
+      },
       "options": [
         "thought",
         "think",
@@ -116,7 +129,10 @@
       "topic": "不规则动词·过去式",
       "level": 1,
       "stem": "We ______ (find) the lost keys under the sofa after searching for half an hour.",
-      "cn": "找了半小时后我们在沙发下找到了丢失的钥匙。",
+      "cn": "我们找了半个小时，终于在沙发下面找到了丢失的钥匙。",
+      "gloss": {
+        "lost": "丢失的"
+      },
       "options": [
         "finded",
         "find",
@@ -134,7 +150,10 @@
       "topic": "不规则动词·过去式",
       "level": 1,
       "stem": "She ______ (leave) the party early because she had to look after her sister.",
-      "cn": "她提前离开聚会，因为要照顾妹妹。",
+      "cn": "她提前离开了聚会，因为她得去照顾妹妹。",
+      "gloss": {
+        "look after": "照顾"
+      },
       "options": [
         "leaved",
         "leave",
@@ -152,7 +171,10 @@
       "topic": "不规则动词·过去式",
       "level": 1,
       "stem": "He ______ (keep) practising every day, so his spoken English improved fast.",
-      "cn": "他坚持每天练习，所以口语进步很快。",
+      "cn": "他每天坚持练习，所以英语口语进步很快。",
+      "gloss": {
+        "keep": "坚持；一直（做）"
+      },
       "options": [
         "keeped",
         "keep",
@@ -170,7 +192,7 @@
       "topic": "不规则动词·过去式",
       "level": 1,
       "stem": "The baby ______ (sleep) for only four hours last night, so he was tired today.",
-      "cn": "宝宝昨晚只睡了四小时，所以今天很累。",
+      "cn": "宝宝昨晚只睡了四个小时，所以今天很累。",
       "options": [
         "sleeped",
         "slept",
@@ -188,7 +210,7 @@
       "topic": "不规则动词·过去式",
       "level": 2,
       "stem": "Archimedes ______ (write) down his idea about the golden crown in a short note.",
-      "cn": "阿基米德把关于金冠的想法写在了一张短笺上。",
+      "cn": "阿基米德把关于金冠的想法写在一张短笺上。",
       "options": [
         "writed",
         "write",
@@ -206,7 +228,10 @@
       "topic": "不规则动词·过去式",
       "level": 2,
       "stem": "The two geniuses ______ (eat) nothing but bread during their long journey.",
-      "cn": "两位天才在长途旅行中只吃了面包。",
+      "cn": "两位天才在漫长的旅途中除了面包什么也没吃。",
+      "gloss": {
+        "nothing but": "只有；除……外什么也不"
+      },
       "options": [
         "ate",
         "eat",
@@ -224,7 +249,10 @@
       "topic": "不规则动词·过去分词",
       "level": 1,
       "stem": "Up to now, three new bridges ______ across the river to connect the two villages.",
-      "cn": "到目前为止，河上已经建起三座新桥连接两个村子。",
+      "cn": "到目前为止，河上已经建起了三座新桥，把两个村子连接起来。",
+      "gloss": {
+        "Up to now": "到目前为止"
+      },
       "options": [
         "have been builded",
         "have been build",
@@ -242,7 +270,10 @@
       "topic": "不规则动词·过去分词",
       "level": 1,
       "stem": "So far, this story has been ______ to children in many countries.",
-      "cn": "到目前为止，这个故事已经讲给许多国家的孩子听。",
+      "cn": "到目前为止，这个故事已经讲给许多国家的孩子们听了。",
+      "gloss": {
+        "So far": "到目前为止"
+      },
       "options": [
         "told",
         "tell",
@@ -260,7 +291,10 @@
       "topic": "不规则动词·过去分词",
       "level": 1,
       "stem": "So far, the story of Wang Zhenyi ______ to thousands of students in our school.",
-      "cn": "到目前为止，王贞仪的故事已经讲给我校数千名学生听。",
+      "cn": "到目前为止，王贞仪的故事已经讲给我们学校数千名学生听了。",
+      "gloss": {
+        "So far": "到目前为止"
+      },
       "options": [
         "has told",
         "has been tell",
@@ -278,7 +312,7 @@
       "topic": "不规则动词·过去分词",
       "level": 2,
       "stem": "The window ______ by a ball, so we had to ask someone to repair it.",
-      "cn": "窗户被球打破了，所以我们得找人修。",
+      "cn": "窗户被球打破了，所以我们只好找人修理。",
       "options": [
         "was broke",
         "was broken",
@@ -296,7 +330,11 @@
       "topic": "不规则动词·过去分词",
       "level": 2,
       "stem": "A lot of plastic bags ______ into the sea every year, which harms sea animals.",
-      "cn": "每年大量塑料袋被丢进海里，危害海洋动物。",
+      "cn": "每年都有大量塑料袋被扔进海里，危害海洋动物。",
+      "gloss": {
+        "harms": "危害",
+        "which": "这（指代前面整件事）"
+      },
       "options": [
         "are thrown",
         "are threw",
@@ -332,7 +370,10 @@
       "topic": "不规则动词·过去分词",
       "level": 2,
       "stem": "The children were well ______ in the hiding game, so nobody could find them.",
-      "cn": "孩子们在捉迷藏中藏得很好，没人找得到。",
+      "cn": "孩子们在捉迷藏中藏得很好，所以没人能找到他们。",
+      "gloss": {
+        "hiding game": "捉迷藏"
+      },
       "options": [
         "hided",
         "hid",
@@ -350,7 +391,10 @@
       "topic": "不规则动词·过去分词",
       "level": 2,
       "stem": "He has ______ the best way to deal with the pressure from his studies.",
-      "cn": "他已经选出了应对学业压力的最好办法。",
+      "cn": "他已经选出了应对学习压力的最好方法。",
+      "gloss": {
+        "deal with": "应对；处理"
+      },
       "options": [
         "chose",
         "choosed",
@@ -368,7 +412,10 @@
       "topic": "不规则动词·过去分词",
       "level": 2,
       "stem": "The old bike has been ______ for ten years, but it still works well.",
-      "cn": "这辆旧自行车已经骑了十年，但还很好用。",
+      "cn": "这辆旧自行车已经被骑了十年，但依然很好骑。",
+      "gloss": {
+        "works well": "好用；运转正常"
+      },
       "options": [
         "rode",
         "rided",
@@ -387,6 +434,9 @@
       "level": 2,
       "stem": "Our class has ______ part in the volunteer work at the old people's home for three years.",
       "cn": "我们班已经连续三年参加敬老院的志愿工作。",
+      "gloss": {
+        "part in": "参加（活动）"
+      },
       "options": [
         "took",
         "taken",
@@ -404,7 +454,10 @@
       "topic": "不规则动词·过去分词",
       "level": 3,
       "stem": "The lanterns ______ by students are hanging in the hall for the School Food Festival.",
-      "cn": "学生们做的灯笼正挂在礼堂里，为学校美食节做准备。",
+      "cn": "为了迎接学校美食节，学生们做的灯笼正挂在礼堂里。",
+      "gloss": {
+        "School Food Festival": "学校美食节"
+      },
       "options": [
         "made",
         "making",
@@ -422,7 +475,11 @@
       "topic": "不规则动词·过去分词",
       "level": 3,
       "stem": "The letter ______ by hand was sent to the teacher to ask for advice.",
-      "cn": "那封手写的信被寄给老师征求意见。",
+      "cn": "那封手写的信寄给了老师，向他征求意见。",
+      "gloss": {
+        "by hand": "手工；亲手",
+        "ask for advice": "征求意见"
+      },
       "options": [
         "wrote",
         "write",

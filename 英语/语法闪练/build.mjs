@@ -51,6 +51,102 @@ if (!existsSync(metaPath)) err("缺少 data/blocks.json");
 const meta = existsSync(metaPath) ? readJson(metaPath) : { blocks: [] };
 const metaByBlock = new Map((meta.blocks || []).map((b) => [b.block, b]));
 
+// ---- 悬停词表（data/glossary.json）：题干每个词 → 中文 ----
+// 词表是「悬停看词义」的唯一数据源：缺一个词 = 学生滑过去没反应，所以这里按词点名。
+// 算法与 index.html 的 stemHTML 保持一致：长短语优先、短语不跨过 ______ 空。
+const glossPath = join(dataDir, "glossary.json");
+const glossary = { words: {}, phrases: {} };
+const phraseList = [];
+const normEn = (s) => String(s ?? "").toLowerCase().replace(/\u2019/g, "'");
+const sortPhrases = (list) => list.sort((a, b) => b.n - a.n || (a.key < b.key ? -1 : a.key > b.key ? 1 : 0));
+if (!existsSync(glossPath)) {
+  warn("缺少 data/glossary.json：题干没有悬停词义（答后译文仍来自 item.cn）");
+} else {
+  let raw = {};
+  try { raw = readJson(glossPath); } catch (e) { err(`glossary.json: JSON 解析失败 — ${e.message}`); }
+  const bad = (m) => err(`glossary.json: ${m}`);
+  Object.keys((raw && raw.words) || {}).forEach((k) => {
+    const v = raw.words[k];
+    if (typeof v !== "string" || !v.trim()) return bad(`words["${k}"] 释义为空`);
+    if (k !== k.trim() || k !== k.toLowerCase()) bad(`words 键应为小写、无首尾空格："${k}"`);
+    if (/\s/.test(k)) bad(`words 键是单词，不该含空格："${k}"（短语请放 phrases）`);
+    if (chars(v) > 34) warn(`glossary.json: words["${k}"] 释义 ${chars(v)} 字，偏长（≤34）`);
+    glossary.words[k] = v.trim();
+  });
+  Object.keys((raw && raw.phrases) || {}).forEach((k) => {
+    const v = raw.phrases[k];
+    if (typeof v !== "string" || !v.trim()) return bad(`phrases["${k}"] 释义为空`);
+    const ws = keyWords(k);
+    if (ws.length < 2) return bad(`phrases 键至少两个词："${k}"`);
+    if (ws.length > 6) return bad(`phrases 键太长（>6 词）："${k}"`);
+    if (k !== k.trim() || k !== k.toLowerCase()) bad(`phrases 键应为小写、无首尾空格："${k}"`);
+    if (glossary.words[k]) bad(`"${k}" 同时出现在 words 与 phrases`);
+    if (chars(v) > 44) warn(`glossary.json: phrases["${k}"] 释义 ${chars(v)} 字，偏长（≤44）`);
+    glossary.phrases[k] = v.trim();
+    phraseList.push({ key: k, ws, n: ws.length });
+  });
+  sortPhrases(phraseList);
+}
+
+// 把题干切成英文词（与 index.html 的 WORD_RE 一致：首尾都是字母，不吞引号）
+function stemWordList(stem) {
+  const re = /[A-Za-z](?:[A-Za-z'\u2019-]*[A-Za-z])?/g;
+  const out = [];
+  let m;
+  while ((m = re.exec(stem))) out.push({ lo: normEn(m[0]), s: m.index, e: m.index + m[0].length });
+  return out;
+}
+// 词表键 → 词数组（小写、去掉键尾的所有格撇号，题干切词里没有尾撇号）
+function keyWords(key) {
+  return normEn(key).split(/\s+/).filter(Boolean).map((w) => w.replace(/'+$/, ""));
+}
+function keyInStem(ws, wordList) {
+  for (let i = 0; i + ws.length <= wordList.length; i++) {
+    let same = true;
+    for (let j = 0; j < ws.length; j++) if (wordList[i + j].lo !== ws[j]) { same = false; break; }
+    if (same) return true;
+  }
+  return false;
+}
+// 某题实际生效的词表：全局词表 + item.gloss 语境覆盖
+function itemGlossTable(it) {
+  const words = Object.assign({}, glossary.words);
+  const phrases = phraseList.slice();
+  if (it && it.gloss && typeof it.gloss === "object" && !Array.isArray(it.gloss)) {
+    Object.keys(it.gloss).forEach((k) => {
+      const v = it.gloss[k];
+      const ws = keyWords(k);
+      if (!ws.length) return;
+      if (ws.length === 1) words[ws[0]] = v;
+      else phrases.push({ key: k, ws, n: ws.length });
+    });
+    sortPhrases(phrases);
+  }
+  return { words, phrases };
+}
+// 返回被短语块覆盖的词下标（与 index.html 的贪心匹配同规则）
+function phraseCovered(stem, wordList, phrases) {
+  const covered = new Array(wordList.length).fill(false);
+  let i = 0;
+  while (i < wordList.length) {
+    let hit = null;
+    for (const ph of phrases) {
+      if (i + ph.n > wordList.length) continue;
+      let same = true;
+      for (let j = 0; j < ph.n; j++) if (wordList[i + j].lo !== ph.ws[j]) { same = false; break; }
+      if (!same) continue;
+      if (stem.slice(wordList[i].s, wordList[i + ph.n - 1].e).indexOf("___") >= 0) continue;
+      hit = ph;
+      break;
+    }
+    if (hit) {
+      for (let j = 0; j < hit.n; j++) covered[i + j] = true;
+      i += hit.n;
+    } else i += 1;
+  }
+  return covered;
+}
+
 // ---- 读所有数据文件 ----
 const files = readdirSync(dataDir)
   .filter((f) => /^g\d.*\.json$/.test(f))
@@ -61,6 +157,7 @@ const groups = [];
 const seenId = new Map();   // id -> file
 const seenStem = new Map(); // stem -> id
 const allTopicsSeen = new Set();
+let cnTotal = 0, covWordsTotal = 0, covWordsHit = 0;   // 译文 / 悬停覆盖统计
 
 for (const f of files) {
   let doc;
@@ -83,6 +180,7 @@ for (const f of files) {
   const prefix = GROUP_PREFIX[group];
   const localStem = new Map();
   let level3 = 0, unverified = 0;
+  const missWordsAll = [];
 
   doc.items.forEach((it, i) => {
     const where = `${f} 第 ${i + 1} 条${it.id ? `（${it.id}）` : ""}`;
@@ -104,6 +202,7 @@ for (const f of files) {
     if (seenStem.has(stem)) err(`${where}: 题干与 ${seenStem.get(stem)} 重复`);
     else seenStem.set(stem, id);
     if (localStem.has(stem)) err(`${where}: 文件内题干重复`);
+    const stemWords = stemWordList(stem);
 
     const opts = it.options;
     if (!Array.isArray(opts) || opts.length !== 4) err(`${where}: options 必须是长度 4 的数组`);
@@ -115,7 +214,40 @@ for (const f of files) {
       if (norm.some((o) => /_{3,}/.test(o))) err(`${where}: 选项里不要出现下划线空`);
     }
     if (!/^[A-D]$/.test(String(it.answer ?? ""))) err(`${where}: answer 应为 A–D`);
-    if (it.cn != null && typeof it.cn !== "string") err(`${where}: cn 应为字符串或 null`);
+    // ---- 整句译文（答完题显示在题干下方） ----
+    const cn = it.cn == null ? "" : String(it.cn).trim();
+    if (!cn) {
+      (strict ? err : warn)(`${where}: 缺少 cn 整句译文（答完题就没有译文可显示）`);
+    } else {
+      cnTotal++;
+      if (chars(cn) > 120) warn(`${where}: cn ${chars(cn)} 字，偏长（≤120）`);
+      if (!/[\u4e00-\u9fff]/.test(cn)) err(`${where}: cn 里没有中文`);
+      if (/_{2,}/.test(cn)) err(`${where}: cn 里不要留 ______（按正确选项补全后翻译）`);
+    }
+    // ---- 语境义覆盖（item.gloss）：只放「和词典第一义不同」的词/短语 ----
+    if (it.gloss != null) {
+      if (typeof it.gloss !== "object" || Array.isArray(it.gloss)) err(`${where}: gloss 应为对象`);
+      else Object.keys(it.gloss).forEach((k) => {
+        const v = it.gloss[k];
+        const ws = keyWords(k);
+        if (typeof v !== "string" || !v.trim()) err(`${where}: gloss["${k}"] 释义为空`);
+        if (!ws.length || ws.length > 6) err(`${where}: gloss 键格式不对："${k}"`);
+        else if (!keyInStem(ws, stemWords)) err(`${where}: gloss 键在题干里找不到："${k}"`);
+      });
+    }
+    // ---- 悬停覆盖率：题干每个词要么在全局词表，要么被短语 / gloss 覆盖 ----
+    {
+      const table = itemGlossTable(it);
+      const covered = phraseCovered(stem, stemWords, table.phrases);
+      let miss = 0;
+      stemWords.forEach((w, k) => {
+        if (covered[k] || table.words[w.lo]) return;
+        miss++;
+        missWordsAll.push(w.lo);
+      });
+      covWordsTotal += stemWords.length;
+      covWordsHit += stemWords.length - miss;
+    }
     if (!String(it.rule ?? "").trim()) err(`${where}: rule 为空`);
     if (chars(it.rule) > 60) err(`${where}: rule ${chars(it.rule)} 字，超过 60`);
     if (!String(it.trap ?? "").trim()) err(`${where}: trap 为空`);
@@ -129,6 +261,10 @@ for (const f of files) {
     err(`${f}: level 3 占 ${level3}/${doc.items.length}，超过 15%`);
   }
   if (unverified) warn(`${f}: ${unverified} 题标了 verified:false，需人工复核`);
+  if (missWordsAll.length) {
+    const uniq = [...new Set(missWordsAll)];
+    warn(`${f}: 悬停词义缺 ${uniq.length} 个词形：${uniq.slice(0, 8).join("、")}${uniq.length > 8 ? " 等" : ""}（补 data/glossary.json 或该题 gloss）`);
+  }
 
   // block 内组顺序：block 升序，同 block 按文件名（= 便宜的顺序控制）
   groups.push({ group, block, title: doc.title, file: f, items: doc.items });
@@ -192,7 +328,7 @@ for (const g of groups) {
     items.push({
       id: it.id, group: g.group, block: g.block,
       topic: it.topic, level: it.level,
-      stem: it.stem, cn: it.cn ?? null,
+      stem: it.stem, cn: it.cn ?? null, gloss: it.gloss ?? null,
       options: it.options.map((o) => String(o).trim()),
       answer: it.answer,
       rule: it.rule, trap: it.trap, src: it.src,
@@ -335,6 +471,7 @@ const dataScript =
   `window.FLASH_DATA = ${JSON.stringify(bundle, null, 1)};\n` +
   `window.FLASH_NEAR = ${JSON.stringify(near)};\n` +
   `window.FLASH_CUES = ${JSON.stringify(cues)};\n` +
+  `window.FLASH_GLOSS = ${JSON.stringify(glossary)};\n` +
   `window.FLASH_DOCS = ${JSON.stringify(orderedDocs)};\n`;
 writeFileSync(join(dataDir, "bundle.js"), dataScript, "utf8");
 
@@ -384,6 +521,8 @@ console.log("");
 console.log(`分 block：${blocks.map((b) => `B${b.block} ${b.title} ${b.items.length}题`).join(" ｜ ")}`);
 console.log(`合计 ${items.length} 题 · 考点 ${byTopic.size} 个 · 未复核 ${unverifiedIds.length}${unverifiedIds.length ? "（" + unverifiedIds.join(",") + "）" : ""}`);
 console.log(`考点邻接表：${Object.keys(near).length} 个考点有邻近项 · 识别线索：${Object.keys(cues).length} 条`);
+console.log(`悬停词表：${Object.keys(glossary.words).length} 词 · ${Object.keys(glossary.phrases).length} 短语 · 题干词覆盖 ${covWordsHit}/${covWordsTotal}（${covWordsTotal ? Math.round((covWordsHit / covWordsTotal) * 100) : 0}%）`);
+console.log(`答后译文：${cnTotal}/${items.length} 题有 cn`);
 console.log(`页内文档：${Object.keys(orderedDocs).map((k) => `${orderedDocs[k].title}(${(orderedDocs[k].html.length / 1024).toFixed(0)}KB)`).join(" · ") || "无"}`);
 if (missing.length) console.log(`未启用的题组：${missing.join(", ")}`);
 

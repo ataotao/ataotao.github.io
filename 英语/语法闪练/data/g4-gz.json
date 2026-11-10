@@ -8,7 +8,10 @@
       "topic": "比较级",
       "level": 1,
       "stem": "Developments in technology now tie us ______ than ever before.",
-      "cn": null,
+      "cn": "如今科技的发展把我们联系得比以往任何时候都更紧密。",
+      "gloss": {
+        "tie": "使紧密相连"
+      },
       "options": [
         "close",
         "closely",
@@ -26,7 +29,11 @@
       "topic": "代词",
       "level": 1,
       "stem": "We can text. We can talk to each ______ at the push of a button on WeChat.",
-      "cn": null,
+      "cn": "我们可以发短信，也可以在微信上按一下按钮就彼此交谈。",
+      "gloss": {
+        "text": "发短信",
+        "at the push of a button": "按一下按钮"
+      },
       "options": [
         "another",
         "others",
@@ -44,7 +51,7 @@
       "topic": "连词",
       "level": 1,
       "stem": "There are, of course, advantages to these modern ways of communicating. ______, do we ever think about what we are losing?",
-      "cn": null,
+      "cn": "当然，这些现代交流方式有种种好处。然而，我们可曾想过自己正在失去什么？",
       "options": [
         "But",
         "So",
@@ -62,7 +69,11 @@
       "topic": "情态动词",
       "level": 2,
       "stem": "Moreover, while texts come and go, letters can ______ forever.",
-      "cn": null,
+      "cn": "此外，短信来去匆匆，而书信却可以永远保存下来。",
+      "gloss": {
+        "texts": "短信",
+        "come and go": "来来去去；转瞬即逝"
+      },
       "options": [
         "keep",
         "keeping",
@@ -80,7 +91,10 @@
       "topic": "不定式",
       "level": 1,
       "stem": "After they walked a few miles, the wise man told the young man ______ back and kill the cow.",
-      "cn": null,
+      "cn": "走了几英里后，那位智者吩咐年轻人回去把那头奶牛杀掉。",
+      "gloss": {
+        "told": "让；吩咐"
+      },
       "options": [
         "go",
         "to go",
@@ -98,7 +112,10 @@
       "topic": "比较级",
       "level": 1,
       "stem": "You see, we are ______ than before.",
-      "cn": null,
+      "cn": "你看，我们比以前好多了。",
+      "gloss": {
+        "You see": "你看；要知道"
+      },
       "options": [
         "good",
         "much better",
@@ -116,7 +133,10 @@
       "topic": "现在完成时",
       "level": 1,
       "stem": "We have a cow. We ______ her for five years.",
-      "cn": null,
+      "cn": "我们有一头奶牛，已经养了它五年了。",
+      "gloss": {
+        "her": "它（指那头奶牛）"
+      },
       "options": [
         "kept",
         "was keeping",
@@ -134,7 +154,11 @@
       "topic": "动名词",
       "level": 1,
       "stem": "As someone who likes writing and ______ letters, I often feel sad.",
-      "cn": null,
+      "cn": "作为一个喜欢写信和收信的人，我常常感到难过。",
+      "gloss": {
+        "As": "作为",
+        "writing": "写信"
+      },
       "options": [
         "receiving",
         "received",
@@ -152,7 +176,10 @@
       "topic": "冠词",
       "level": 1,
       "stem": "To begin with, there's lots of love in ______ handwritten letter.",
-      "cn": null,
+      "cn": "首先，一封手写的信里饱含着许多爱意。",
+      "gloss": {
+        "To begin with": "首先"
+      },
       "options": [
         "the",
         "an",
@@ -170,7 +197,10 @@
       "topic": "定语从句",
       "level": 2,
       "stem": "A few years ago, the young man ______ travelled on the same road decided to visit the family.",
-      "cn": null,
+      "cn": "几年前，那个曾走过同一条路的年轻人决定去拜访那户人家。",
+      "gloss": {
+        "the family": "那户人家"
+      },
       "options": [
         "which",
         "who",
@@ -188,7 +218,10 @@
       "topic": "被动语态（现在）",
       "level": 2,
       "stem": "If you follow what ______ above, you will be accepted by people around you.",
-      "cn": null,
+      "cn": "如果你照着上面所说的去做，周围的人就会接纳你。",
+      "gloss": {
+        "follow": "遵照；按照"
+      },
       "options": [
         "is given",
         "are given",
@@ -206,7 +239,10 @@
       "topic": "不定式",
       "level": 1,
       "stem": "When you step into a new environment, you must have a strong wish ______ in.",
-      "cn": null,
+      "cn": "当你踏入一个新环境时，你一定很想融入其中。",
+      "gloss": {
+        "step into": "走进；踏入"
+      },
       "options": [
         "to fit",
         "fitting",
@@ -224,7 +260,10 @@
       "topic": "动名词",
       "level": 1,
       "stem": "Spend some time ______ about your strong points.",
-      "cn": null,
+      "cn": "花些时间想想自己的长处。",
+      "gloss": {
+        "strong points": "长处；优点"
+      },
       "options": [
         "think",
         "to think",
@@ -242,7 +281,10 @@
       "topic": "非谓语辨析",
       "level": 2,
       "stem": "Optimism makes both you and other people ______ pleased.",
-      "cn": null,
+      "cn": "乐观能让你和别人都感到愉快。",
+      "gloss": {
+        "makes": "使；让"
+      },
       "options": [
         "feel",
         "to feel",
@@ -260,7 +302,10 @@
       "topic": "不定代词",
       "level": 2,
       "stem": "And expecting ______ to be perfect can add to your stress level too.",
-      "cn": null,
+      "cn": "而且，期待别人完美无缺也会加重你的压力。",
+      "gloss": {
+        "add to": "增加；加重"
+      },
       "options": [
         "other",
         "others",
@@ -278,7 +323,10 @@
       "topic": "条件状语从句",
       "level": 1,
       "stem": "In her opinion, if you don't talk to someone about your problems, you ______ worse.",
-      "cn": null,
+      "cn": "在她看来，如果你不跟别人谈谈自己的问题，你会感觉更糟。",
+      "gloss": {
+        "In her opinion": "在她看来"
+      },
       "options": [
         "will feel",
         "are feeling",
@@ -296,7 +344,10 @@
       "topic": "被动语态（将来）",
       "level": 2,
       "stem": "She says her problems ______ in the future with others as much as possible.",
-      "cn": null,
+      "cn": "她说，今后她会尽可能多地和别人分享自己的问题。",
+      "gloss": {
+        "as much as possible": "尽可能"
+      },
       "options": [
         "have been shared",
         "were shared",
@@ -314,7 +365,7 @@
       "topic": "连词",
       "level": 1,
       "stem": "Do you think your time is not enough ______ you have so many things to do?",
-      "cn": null,
+      "cn": "你是不是觉得时间不够用，因为你有那么多事情要做？",
       "options": [
         "because",
         "so",
@@ -332,7 +383,11 @@
       "topic": "让步状语从句",
       "level": 2,
       "stem": "______ you cannot keep away from stress, you can keep it under control.",
-      "cn": null,
+      "cn": "虽然你无法避开压力，但你可以把它控制住。",
+      "gloss": {
+        "keep away from": "远离；避开",
+        "keep it under control": "把它控制住"
+      },
       "options": [
         "However",
         "But",
@@ -350,7 +405,7 @@
       "topic": "祈使句",
       "level": 1,
       "stem": "“______ more careful next time!” she said.",
-      "cn": null,
+      "cn": "“下次要更小心！”她说。",
       "options": [
         "Being",
         "To be",

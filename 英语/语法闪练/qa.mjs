@@ -69,6 +69,29 @@ const pressEnter = () => key("Enter", "Enter", 13, 45);
 const pressEsc = () => key("Escape", "Escape", 27, 60);
 const click = async (sel) => $(`(() => { const el = document.querySelector(${JSON.stringify(sel)}); if (el) { el.click(); return true; } return false; })()`);
 const state = () => $("window.FLASH_APP ? window.FLASH_APP.state() : null");
+/* 悬停词义用：把鼠标移到元素中心（先滚到视口中间，避免元素在滚动区外） */
+const hover = async (sel) => {
+  const box = await $(`(() => { const el = document.querySelector(${JSON.stringify(sel)});
+    if (!el) return null; el.scrollIntoView({ block: "center" });
+    const r = el.getBoundingClientRect();
+    return { x: Math.round(r.left + r.width / 2), y: Math.round(r.top + r.height / 2) }; })()`);
+  if (!box) return null;
+  await send("Input.dispatchMouseEvent", { type: "mouseMoved", x: box.x, y: box.y, button: "none" });
+  await sleep(160);
+  return box;
+};
+const moveAway = async () => {
+  await send("Input.dispatchMouseEvent", { type: "mouseMoved", x: 2, y: 2, button: "none" });
+  await sleep(130);
+};
+const tipState = () => $(`(() => { const t = document.querySelector('#zh-tip');
+  if (!t) return { show: false, zh: '', en: '', visible: false, inside: false };
+  const r = t.getBoundingClientRect();
+  return { show: t.classList.contains('show'),
+    zh: ((t.querySelector('.zt-zh') || {}).textContent || '').trim(),
+    en: ((t.querySelector('.zt-en') || {}).textContent || '').trim(),
+    visible: r.width > 0 && r.height > 0,
+    inside: r.left >= -1 && r.right <= window.innerWidth + 1 && r.top >= -1 && r.bottom <= window.innerHeight + 1 }; })()`);
 const shot = async (name, w = 1440) => {
   const metrics = await send("Page.getLayoutMetrics");
   const css = metrics.cssContentSize || metrics.contentSize;
@@ -873,23 +896,123 @@ ok("FLASH_DOCS 缺失时点入口只提示、不崩", (await state()).view === "
   /文档还没打包/.test(await text("#toast")) && /build\.mjs/.test(await text("#toast")), await text("#toast"));
 await $(`window.FLASH_DOCS = window.__savedDocs; true`);
 
-/* ── 8. 题干中文提示（cn） ───────────────────── */
-group("题干中文提示");
+/* ── 8. 答后译文 + 悬停词义 ─────────────────── */
+group("答后译文与悬停词义");
 {
-  const st2 = await state();
-  const byBlock = {};
-  st2.items.forEach((i) => { (byBlock[i.block] = byBlock[i.block] || []).push(i); });
-  const cnBlock = Object.keys(byBlock).map(Number).find((b) => byBlock[b].every((i) => i.cn));
-  if (!cnBlock) {
-    ok("题库里没有中文提示题，跳过", true);
-  } else {
-    await reload("#block=" + cnBlock);
-    const cnInfo = await $(`(() => { const el = document.querySelector('#qcard .qcn');
-      return el ? { text: el.textContent.trim(), h: Math.round(el.getBoundingClientRect().height) } : null; })()`);
-    ok("题干下有 cn 时渲染中文提示", cnInfo && cnInfo.text.length > 2 && cnInfo.h > 10, JSON.stringify(cnInfo));
-    await pressEsc();
-    await sleep(450);
+  const st8 = await state();
+  ok("全局词表已注入（words ≥ 300、phrases > 0）",
+    st8.gloss && st8.gloss.words >= 300 && st8.gloss.phrases > 0, JSON.stringify(st8.gloss));
+  ok("window.FLASH_GLOSS 带 words/phrases（单文件版同样可用）",
+    await $(`!!(window.FLASH_GLOSS && window.FLASH_GLOSS.words && window.FLASH_GLOSS.phrases)`));
+  ok("题库每题都有 cn 整句译文", st8.items.length >= 170 && st8.items.every((i) => typeof i.cn === "string" && i.cn.length > 3),
+    st8.items.filter((i) => !i.cn).map((i) => i.id).join(",") || "全部有");
+
+  // 未作答：不显示译文，但词/短语可悬停
+  await reload("#block=4");
+  S = await state();
+  ok("作答前题干下方没有译文（不会靠译文泄题）",
+    (await $(`document.querySelectorAll('#qcard .qcn').length`)) === 0);
+  const zw0 = await $(`(() => { const el = document.querySelector('#qcard .qstem .zw');
+    return el ? { en: el.textContent.trim(), zh: el.getAttribute('data-zh') } : null; })()`);
+  ok("题干里的词包成 .zw 且带中文释义", zw0 && zw0.zh && zw0.zh.length > 0, JSON.stringify(zw0));
+  await hover("#qcard .qstem .zw");
+  {
+    const tip = await tipState();
+    ok("鼠标滑过单词 → 浮层显示中文释义", tip && tip.show && tip.zh.length > 0, JSON.stringify(tip));
+    ok("浮层中文就是该词的释义", tip && zw0 && tip.zh === zw0.zh, JSON.stringify(tip) + " expect=" + (zw0 && zw0.zh));
+    ok("浮层里同时给出原词", tip && tip.en.length > 0, tip && tip.en);
+    ok("浮层完整落在视口内（不跑出屏幕）", tip && tip.visible && tip.inside, JSON.stringify(tip));
   }
+  await moveAway();
+  ok("鼠标移开 → 浮层收起", !((await tipState()) || {}).show);
+
+  // 短语：题干里应能匹配到多词 .zw（最多翻 12 题找一个）
+  let phr = null, phrItem = null;
+  for (let i = 0; i < 12 && !phr; i++) {
+    const s = await state();
+    if (!s.round || s.view !== "drill") break;
+    phr = await $(`(() => { const el = [...document.querySelectorAll('#qcard .qstem .zw')]
+      .find((x) => /\\s/.test(x.textContent.trim()));
+      if (!el) return null; el.setAttribute('data-phr', '1');
+      return { en: el.textContent.trim(), zh: el.getAttribute('data-zh') }; })()`);
+    phrItem = s.round.itemId;
+    if (!phr) { await $(`window.FLASH_APP.jumpTo(${s.round.idx + 1})`); await sleep(90); }
+  }
+  ok("题干里能匹配到多词短语（短语整块可悬停，不是逐词拼）", !!phr, "item=" + phrItem + " " + JSON.stringify(phr));
+  if (phr) {
+    await hover("#qcard .qstem .zw[data-phr]");
+    const tip2 = await tipState();
+    ok("悬停短语 → 浮层给短语中文", tip2 && tip2.zh === phr.zh, JSON.stringify(tip2) + " expect=" + phr.zh);
+    await moveAway();
+  }
+
+  // 答完 → 题干下方出现译文
+  await reload("#block=4");
+  S = await state();
+  const cnExpect = S.round.cn;
+  await click("#qcard .opt[data-i='" + "ABCD".indexOf(S.round.answer) + "']");
+  await sleep(240);
+  {
+    const cnDom = await $(`(() => { const el = document.querySelector('#qcard .qcn');
+      if (!el) return null;
+      const t = el.querySelector('.qcn-txt') || el;
+      const stem = document.querySelector('#qcard .qstem');
+      const r = el.getBoundingClientRect();
+      return { text: t.textContent.trim(), below: r.top + 2 >= stem.getBoundingClientRect().bottom,
+        h: Math.round(r.height) }; })()`);
+    ok("答完题 → 英文句子下方出现整句译文", cnDom && cnDom.text === cnExpect && cnDom.below && cnDom.h > 10,
+      JSON.stringify(cnDom) + " expect=" + cnExpect);
+    ok("译文带「译」标记（和题干区分开）",
+      await $(`!!document.querySelector('#qcard .qcn .qcn-tag')`));
+  }
+
+  // 切到下一题再切回：译文仍在（renderQuestion 还原）
+  await click('[data-act="ack"]');
+  await sleep(220);
+  await $(`window.FLASH_APP.navStep(-1)`);
+  await sleep(220);
+  ok("切回已答的题，译文仍在",
+    (await $(`(() => { const el = document.querySelector('#qcard .qcn .qcn-txt'); return el ? el.textContent.trim() : ''; })()`)) === cnExpect);
+
+  // 看答案：译文同样出现
+  await $(`window.FLASH_APP.navStep(1)`);
+  await sleep(180);
+  await click("#qcard [data-act='peek']");
+  await sleep(230);
+  const peekCn = await $(`(() => { const el = document.querySelector('#qcard .qcn .qcn-txt'); return el ? el.textContent.trim() : ''; })()`);
+  ok("看答案 → 译文同样出现", !!peekCn && peekCn.length > 3, peekCn);
+
+  // 做完这一轮 → 结算页 chips 回看：弹窗里也有译文、题干也能悬停
+  for (let guard = 0; guard < 80; guard++) {
+    const s = await state();
+    if (!s.round || s.view !== "drill") break;
+    if (!s.round.locked) await answerWith(true);
+    await pressEnter();
+  }
+  S = await state();
+  ok("前置：答完一轮能进结算", S.view === "result", S.view);
+  if (await $(`!!document.querySelector('#rt-chips .chip')`)) {
+    await click("#rt-chips .chip");
+    await sleep(280);
+    const rv = await $(`(() => { const el = document.querySelector('#modal .rv-cn');
+      const stem = document.querySelector('#modal .rv-stem');
+      return el ? { text: (el.querySelector('.qcn-txt') || el).textContent.trim(),
+        zws: stem ? stem.querySelectorAll('.zw').length : 0 } : null; })()`);
+    ok("结算页回看：弹窗里显示这道题的译文", rv && rv.text.length > 3, JSON.stringify(rv));
+    ok("结算页回看：弹窗题干也能悬停看词义", rv && rv.zws > 0, JSON.stringify(rv));
+    if (rv && rv.zws > 0) {
+      await hover("#modal .rv-stem .zw");
+      const tip3 = await tipState();
+      ok("弹窗里悬停也出浮层", tip3 && tip3.show && tip3.zh.length > 0, JSON.stringify(tip3));
+      await moveAway();
+    }
+    await click('#modal [data-act="modal-cancel"]');
+    await sleep(180);
+  } else {
+    ok("结算页出现「看了答案的题」chip", false, "没有 chip");
+  }
+  await click('[data-act="home"]');
+  await sleep(220);
 }
 
 /* ── 8.5 单题历史（做对/做错/看答案 累计次数，刷新后仍在） ───────── */
@@ -1248,8 +1371,8 @@ const cueCover = await $(`(() => { const items = (window.FLASH_APP.state() || {}
   const c = window.FLASH_CUES || {}; const seen = {}; const miss = [];
   items.forEach((it) => { if (seen[it.topic]) return; seen[it.topic] = 1; if (!c[it.topic]) miss.push(it.topic); });
   return { topics: Object.keys(seen).length, cues: Object.keys(c).length, miss: miss }; })()`);
-ok("每个考点都有「怎么认出」线索（43 个考点全覆盖）",
-  cueCover.miss.length === 0 && cueCover.topics === 43 && cueCover.cues >= 43,
+ok("每个考点都有「怎么认出」线索（本次题库 " + cueCover.topics + " 个考点全覆盖）",
+  cueCover.miss.length === 0 && cueCover.topics >= 40 && cueCover.cues >= cueCover.topics,
   JSON.stringify({ topics: cueCover.topics, cues: cueCover.cues, miss: cueCover.miss }));
 
 await $(`window.FLASH_APP.startSpot(3)`);

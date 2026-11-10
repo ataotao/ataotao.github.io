@@ -89,6 +89,22 @@ await send("Page.reload", { ignoreCache: false });
 await sleep(1200);
 await snap("01-做题", { width: 390, viewport: true });
 
+// 1.2) 悬停词义（未作答时鼠标滑过单词，浮层显示中文）
+{
+  const box = await evaluate(`(() => { const el = document.querySelector('#qcard .qstem .zw');
+    if (!el) return null; const r = el.getBoundingClientRect();
+    return { x: Math.round(r.left + r.width / 2), y: Math.round(r.top + r.height / 2) }; })()`);
+  if (box) {
+    await send("Input.dispatchMouseEvent", { type: "mouseMoved", x: box.x, y: box.y, button: "none" });
+    await sleep(320);
+    await snap("07-悬停词义", { width: 390, viewport: true });
+    await send("Input.dispatchMouseEvent", { type: "mouseMoved", x: 2, y: 2, button: "none" });
+    await sleep(120);
+  } else {
+    console.log("⚠ 没找到可悬停的词，跳过 07-悬停词义");
+  }
+}
+
 // 1.5) 单题历史（给本题塞历史后刷新；随后清掉，不影响后面的截图）
 {
   const hid = await evaluate("window.FLASH_APP.state().round.itemId");
