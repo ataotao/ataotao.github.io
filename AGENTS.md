@@ -62,7 +62,8 @@
 `开始.html` 是入口页，本地 `file://` 打开时读六科 localStorage 算「今天做什么」，网页发布版只做入口。
 它给各科传的 `#mode=` / `#fs=` / `#view=` 是**跨文件契约**：改入口页或改各科 hash 处理时必须同步，
 契约、任务生成规则、备份格式、发布链路都记在 `docs/plans/开始页与深链契约.md`。
-发布走 `C:\learn\ataotao.github.io\tools\publish.ps1`（会把 `开始.html` 改名成站点 `1/index.html`）。
+发布走 `C:\陶宸欣\ataotao.github.io\tools\publish.ps1`（会把 `开始.html` 改名成站点 `1/index.html`；
+站点：https://ataotao.github.io/1/ 。旧机器路径 `C:\learn\ataotao.github.io` 在本机不存在，别再找）。
 
 ### Issue tracker
 Issues live in GitHub Issues on `ataotao/learning-training`, via the `gh` CLI. See `docs/agents/issue-tracker.md`.

@@ -1284,6 +1284,12 @@ function exportRec() {
   setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 800);
 }
 
+/* 返回入口：本地双击打开时是 开始.html；发布到站点 1/ 之后入口叫 index.html */
+(function fixBacklink() {
+  var a = $('.backlink');
+  if (a && location.protocol !== 'file:') a.setAttribute('href', '../index.html');
+})();
+
 /* ================= 公式速查卡 ================= */
 /* 默认收起；展开时是覆盖层，不占每题高度。首次看过之后按钮上的红点消失。 */
 (function cheatCard() {
