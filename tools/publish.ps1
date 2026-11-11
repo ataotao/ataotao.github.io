@@ -323,6 +323,7 @@ $Jobs = @(
             @{ Path = '历史/images/试卷';   Filter = '*.webp' }
             '数学/函数思维脚手架.html'
             '数学/今晚急救包.html'
+            '数学/坐标图象训练.html'
             '物理/物理思维脚手架.html'
             @{ Path = '物理/图片';          Filter = '*.png' }
             '英语/九上英语过关练习.html'
