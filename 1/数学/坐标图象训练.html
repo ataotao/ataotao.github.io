@@ -1,0 +1,1332 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>坐标与图象 · 分层训练</title>
+<style>
+:root{
+  --ink:#1b2430; --muted:#6b7684; --line:#e3ded4; --paper:#faf8f4; --card:#ffffff;
+  --brand:#2f6fd0; --brand-d:#1d4f9c; --brand-l:#e8f0fb;
+  --ok:#1f7a4d; --ok-bg:#e9f6ee; --bad:#b3341f; --bad-bg:#fbeee9;
+  --warn:#b4690e; --warn-bg:#fdf3e3;
+  --radius:14px;
+  --sh:0 1px 2px rgba(27,36,48,.05),0 6px 20px -12px rgba(27,36,48,.18);
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;background:var(--paper);color:var(--ink);
+  font-family:"PingFang SC","Hiragino Sans GB","Microsoft YaHei",system-ui,-apple-system,"Segoe UI",sans-serif;
+  font-size:16px;line-height:1.7;
+}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
+.app{max-width:720px;margin:0 auto;padding:0 14px 60px}
+
+/* 顶栏 */
+.appbar{display:flex;align-items:center;gap:10px;padding:14px 0 12px;border-bottom:1px solid var(--line)}
+.backlink{width:32px;height:32px;flex:0 0 32px;border-radius:9px;border:1px solid var(--line);background:#fff;
+  display:grid;place-items:center;font-size:16px;color:var(--muted)}
+.backlink:hover{border-color:var(--brand);color:var(--brand)}
+.brand{display:flex;align-items:center;gap:10px;min-width:0}
+.logo{width:34px;height:34px;flex:0 0 34px;border-radius:10px;background:var(--brand);color:#fff;
+  display:grid;place-items:center;font:italic 700 15px/1 Georgia,serif;letter-spacing:.02em}
+.brand h1{font-size:16px;line-height:1.25;margin:0}
+.brand p{font-size:11.5px;color:var(--muted);line-height:1.4;margin:0}
+.bar-right{margin-left:auto;display:flex;align-items:center;gap:6px}
+.chip{font-size:12px;padding:3px 10px;border-radius:999px;background:var(--brand-l);color:var(--brand-d);white-space:nowrap}
+.chip.off{background:#f0ede6;color:var(--muted)}
+.btn-ghost{padding:6px 10px;border-radius:9px;font-size:13px;color:var(--muted)}
+.btn-ghost:hover{background:#efece4;color:var(--ink)}
+.btn{padding:9px 18px;border-radius:10px;background:#fff;border:1px solid var(--line);font-size:14px;font-weight:600}
+.btn:hover{border-color:#c9c2b4}
+.btn-primary{background:var(--brand);border-color:var(--brand);color:#fff}
+.btn-primary:hover{background:var(--brand-d);border-color:var(--brand-d)}
+.btn-primary:disabled{opacity:.4;cursor:not-allowed;background:var(--brand);border-color:var(--brand)}
+.screen{margin-top:18px}
+.foot{margin-top:26px;padding-top:14px;border-top:1px solid var(--line);font-size:12px;color:var(--muted);text-align:center;line-height:1.7}
+
+/* 首页 */
+.lead{background:#fff;border:1px solid var(--line);border-radius:16px;padding:18px 20px;box-shadow:var(--sh);margin-bottom:16px}
+.lead h2{font-size:19px;margin:0 0 8px;line-height:1.5}
+.lead p{margin:0;font-size:14px;color:var(--muted);line-height:1.8}
+.lead p b{color:var(--ink)}
+.levels{display:flex;flex-direction:column;gap:9px}
+.lv{display:flex;align-items:center;gap:13px;padding:13px 15px;background:#fff;border:1px solid var(--line);
+  border-radius:13px;box-shadow:0 1px 2px rgba(27,36,48,.04);transition:.15s;cursor:pointer}
+.lv:hover{border-color:var(--brand);transform:translateY(-1px);box-shadow:var(--sh)}
+.lv-n{width:34px;height:34px;flex:0 0 34px;border-radius:10px;display:grid;place-items:center;
+  font-weight:700;font-size:15px;background:var(--brand-l);color:var(--brand-d)}
+.lv.lv4 .lv-n{background:#efe9fb;color:#5b3fa8}
+.lv.lv5 .lv-n{background:var(--warn-bg);color:var(--warn)}
+.lv-b{min-width:0;flex:1}
+.lv-t{font-weight:700;font-size:15.5px;display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.lv-d{font-weight:400;font-size:12.5px;color:var(--muted)}
+.lv-s{font-size:12.5px;color:var(--muted);margin-top:2px;line-height:1.5}
+.lv-r{text-align:right;flex:0 0 auto;font-size:12px;color:var(--muted);line-height:1.4}
+.lv-r b{display:block;font-size:16px;color:var(--brand-d);font-variant-numeric:tabular-nums}
+.lv-r.none b{color:#c9c2b4;font-size:13px;font-weight:500}
+.howto{margin-top:18px;background:#fff;border:1px solid var(--line);border-radius:13px;padding:0 16px}
+.howto summary{padding:13px 0;font-size:14px;font-weight:600;cursor:pointer;list-style:none;color:var(--brand-d)}
+.howto summary::-webkit-details-marker{display:none}
+.howto summary::before{content:"＋ ";color:var(--muted)}
+.howto[open] summary::before{content:"− "}
+.howto .body{padding:0 0 16px;font-size:13.5px;color:var(--muted);line-height:1.85}
+.howto .body b{color:var(--ink)}
+.howto .body ol{padding-left:20px;margin:6px 0}
+
+/* 公式速查卡：顶部按钮，点开才看；面板覆盖在内容上方，不挤占每题高度 */
+.appbar{position:relative}
+.cheatbtn{position:relative;padding:6px 11px;border-radius:9px;font-size:13px;font-weight:600;
+  border:1px solid var(--line);background:#fff;color:var(--brand-d);white-space:nowrap}
+.cheatbtn:hover{background:var(--brand-l);border-color:#c8d8ee}
+.cheatbtn[aria-expanded="true"]{background:var(--brand-l);border-color:#c8d8ee}
+.cheatbtn.new::after{content:"";position:absolute;top:-2px;right:-2px;width:7px;height:7px;
+  border-radius:50%;background:#b3341f;box-shadow:0 0 0 2px #fff}
+.cheat{position:absolute;left:0;right:0;top:100%;z-index:40;margin-top:7px;padding:14px 16px 12px;
+  background:#fff;border:1px solid var(--line);border-radius:14px;
+  box-shadow:0 16px 40px rgba(28,38,52,.16);max-height:min(72vh,540px);overflow:auto}
+.cheat[hidden]{display:none}
+.cheat-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
+.cheat-h h3{font-size:14px;margin:0;color:var(--ink)}
+.cheat-x{border:0;background:none;font-size:20px;line-height:1;color:var(--muted);padding:0 4px;cursor:pointer}
+.cheat-g{display:grid;gap:9px 24px;grid-template-columns:1fr}
+.cheat-g h4{font-size:13px;margin:0 0 3px;color:var(--brand-d)}
+.cheat-g p,.cheat-g li{font-size:12.8px;color:var(--muted);line-height:1.75;margin:0}
+.cheat-g b{color:var(--ink)}
+.cheat-g ul{margin:2px 0 4px;padding-left:17px}
+.cheat-g section{border-top:1px solid #f0ece4;padding-top:8px}
+.cheat-foot{margin:10px 0 0;padding-top:9px;border-top:1px solid #f0ece4;font-size:12px;color:var(--muted)}
+@media(min-width:720px){.cheat-g{grid-template-columns:1fr 1fr}}
+
+/* 训练页 */
+.qbar{display:flex;align-items:center;gap:10px;margin-bottom:10px;font-size:12.5px;color:var(--muted)}
+.qbar .dots{display:flex;gap:4px;margin-left:auto}
+.qbar .dots i{width:7px;height:7px;border-radius:50%;background:#e3ded4;display:block}
+.qbar .dots i.ok{background:var(--ok)}
+.qbar .dots i.bad{background:var(--bad)}
+.qbar .dots i.now{background:var(--brand);transform:scale(1.5)}
+.streak{color:var(--warn);font-weight:600}
+.ask{background:#fff;border:1px solid var(--line);border-radius:13px;padding:13px 15px;
+  font-size:16px;line-height:1.75;box-shadow:0 1px 2px rgba(27,36,48,.04)}
+.ask b{color:var(--brand-d);font-variant-numeric:tabular-nums}
+.ask b.p{background:var(--brand-l);padding:1px 7px;border-radius:6px;font-family:Georgia,serif;font-size:1.05em}
+.ask .qsub{margin-top:9px;padding-top:9px;border-top:1px dashed var(--line);font-weight:600;color:var(--ink)}
+.ask .sub{display:block;font-size:13.5px;color:var(--muted);margin-top:5px;font-weight:400}
+.ask .rule{display:block;margin-top:9px;padding:8px 10px;border-radius:9px;background:#eef3fb;
+  border-left:3px solid var(--brand);font-size:13px;line-height:1.6;color:#2a4166;font-weight:400}
+.ask .rule b{color:var(--brand-d)}
+.ask .rule .tag{font-weight:700;color:var(--brand-d);margin-right:4px}
+.ask .rule .nb{white-space:nowrap}
+.stagewrap{margin:10px 0;background:#fff;border:1px solid var(--line);border-radius:13px;padding:4px;box-shadow:0 1px 2px rgba(27,36,48,.04)}
+.plane{width:100%;height:auto;display:block;touch-action:manipulation;border-radius:10px}
+.plane.tap{cursor:crosshair}
+.grid{stroke:#e9e4da;stroke-width:1}
+.axis{stroke:#8d8578;stroke-width:1.6}
+.tick{fill:#a49b8d;font-size:12.5px;font-family:inherit;font-variant-numeric:tabular-nums}
+.svgtext{font-size:13px;font-weight:700;font-family:inherit;paint-order:stroke;stroke:#fff;stroke-width:3.5px;stroke-linejoin:round}
+.flow{animation:flow 1s linear infinite}
+@keyframes flow{to{stroke-dashoffset:-24}}
+
+/* 控件 */
+.ctrl{margin-top:2px}
+.ctrlbody{background:#fff;border:1px solid var(--line);border-radius:13px;padding:12px 13px;box-shadow:0 1px 2px rgba(27,36,48,.04)}
+.pickrow{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.pickrow:last-child{margin-bottom:0}
+.picklabel{flex:0 0 auto;font-size:14px;font-weight:600;color:var(--muted);min-width:38px}
+.numpad{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px;flex:1;min-width:0}
+.numpad button{padding:9px 0;border:1px solid var(--line);border-radius:8px;background:#fff;
+  font-size:14.5px;font-weight:600;font-variant-numeric:tabular-nums;transition:.1s;min-width:0}
+.numpad button:hover{border-color:var(--brand);background:var(--brand-l)}
+.numpad button.on{background:var(--brand);border-color:var(--brand);color:#fff}
+.numpad button:disabled{opacity:.45;cursor:default}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.opts button{padding:12px 10px;border:1px solid var(--line);border-radius:10px;background:#fff;
+  font-size:14.5px;font-weight:600;text-align:center;transition:.12s;line-height:1.5}
+.opts button:hover{border-color:var(--brand);background:var(--brand-l)}
+.opts button.on{background:var(--brand);border-color:var(--brand);color:#fff}
+.opts.one{grid-template-columns:1fr}
+.ctrlfoot{display:flex;align-items:center;gap:10px;margin-top:10px}
+.ctrlfoot .hintline{font-size:12.5px;color:var(--muted)}
+
+/* 反馈 */
+.fb{margin-top:10px;border-radius:12px;padding:11px 14px;font-size:14px;line-height:1.75;border:1px solid}
+.fb.ok{background:var(--ok-bg);border-color:#bfe3cd;color:#175c3a}
+.fb.bad{background:var(--bad-bg);border-color:#f0cabe;color:#8d2a19}
+.fb.tip{background:#f5f2ec;border-color:var(--line);color:var(--muted)}
+.fb b{font-weight:700}
+.fb .next{margin-left:6px;padding:3px 12px;border-radius:8px;background:#fff;border:1px solid currentColor;
+  font-size:13px;font-weight:600;color:inherit;opacity:.9}
+.fb .next:hover{opacity:1}
+
+/* 结算 */
+.result{background:#fff;border:1px solid var(--line);border-radius:16px;padding:22px;box-shadow:var(--sh);text-align:center}
+.result h2{font-size:20px;margin:0 0 4px}
+.result .sub{font-size:13.5px;color:var(--muted);margin-bottom:18px}
+.ring{width:132px;height:132px;margin:0 auto 16px;position:relative}
+.ring svg{transform:rotate(-90deg)}
+.ring .pct{position:absolute;inset:0;display:grid;place-items:center;font-size:30px;font-weight:700;
+  color:var(--brand-d);font-variant-numeric:tabular-nums}
+.stats{display:flex;justify-content:center;gap:26px;margin:14px 0 20px}
+.stats div{text-align:center}
+.stats b{display:block;font-size:20px;font-variant-numeric:tabular-nums}
+.stats span{font-size:12px;color:var(--muted)}
+.verdict{font-size:14px;line-height:1.8;background:#f7f5f1;border-radius:11px;padding:12px 15px;margin-bottom:18px;text-align:left}
+.result .acts{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+
+/* 探索 */
+.explore{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px 18px;box-shadow:var(--sh)}
+.explore h3{font-size:16px;margin:0 0 4px}
+.explore p{font-size:13px;color:var(--muted);margin:0 0 12px;line-height:1.7}
+.slider{display:flex;align-items:center;gap:12px;margin-bottom:9px}
+.slider label{flex:0 0 64px;font-size:13.5px;font-weight:600;color:var(--muted)}
+.slider input[type=range]{flex:1;accent-color:var(--brand);height:22px}
+.slider .val{flex:0 0 52px;text-align:right;font-weight:700;font-variant-numeric:tabular-nums;color:var(--brand-d)}
+.formula{text-align:center;font-family:Georgia,serif;font-size:20px;margin:14px 0 6px;color:var(--brand-d)}
+.note{font-size:12.5px;color:var(--muted);text-align:center;line-height:1.7}
+
+/* 答题区：默认单列（手机/平板），PC 变两栏 */
+.playgrid,.exploregrid{display:flex;flex-direction:column;gap:10px}
+.playgrid>.pane-side,.exploregrid>.pane-side{display:contents}
+.playgrid .ask,.exploregrid .ask{order:-2}
+.playgrid .pane-graph,.exploregrid .pane-graph{order:-1;margin:0}
+.playgrid .ctrl,.playgrid .fb,.exploregrid .explore{margin:0}
+
+/* PC：一屏内同时看到图形 / 选项 / 反馈 */
+@media(min-width:880px){
+  .app{max-width:1060px;padding:0 18px 40px}
+  .appbar{padding:10px 0 9px}
+  .screen{margin-top:12px}
+  .foot{margin-top:14px;padding-top:10px}
+  .qbar{margin-bottom:10px}
+  .playgrid,.exploregrid{
+    display:grid;gap:14px 20px;align-items:start;
+    grid-template-columns:minmax(0,1fr) 404px;
+  }
+  .playgrid>.pane-side,.exploregrid>.pane-side{display:flex;flex-direction:column;gap:12px}
+  .playgrid>.pane-graph,.exploregrid>.pane-graph{
+    width:min(100%,600px,calc(100vh - 130px));justify-self:center;
+  }
+  .exploregrid .explore .formula{margin-top:4px}
+  /* 纯点击题（没有选项按钮）：单列居中，图形占满 */
+  .screen.single{max-width:560px;margin-left:auto;margin-right:auto}
+  .screen.single .playgrid{display:flex;flex-direction:column;gap:10px;align-items:stretch}
+  .screen.single .pane-side{display:contents}
+  .screen.single .pane-graph{width:min(100%,calc(100vh - 305px));margin:0 auto}
+  body.playing .foot{display:none}
+  body.playing .app{padding-bottom:10px}
+  html{scrollbar-gutter:stable}
+}
+
+@media(max-width:560px){
+  .app{padding:0 10px 50px}
+  .brand p{display:none}
+  .ask{font-size:15px;padding:11px 13px}
+  .ctrlbody{padding:10px 10px}
+  .pickrow{flex-direction:column;align-items:stretch;gap:3px;margin-bottom:9px}
+  .picklabel{font-size:12.5px;min-width:0}
+  .numpad{gap:4px}
+  .numpad button{padding:9px 0;font-size:13.5px;border-radius:7px}
+  .opts{grid-template-columns:1fr}
+  .lv{padding:11px 12px;gap:10px}
+  .lv-s{display:none}
+  .lv-d{display:none}
+  .result{padding:18px 14px}
+  .stats{gap:16px}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="appbar">
+    <a class="backlink" href="../开始.html" title="回到入口">←</a>
+    <div class="brand">
+      <div class="logo">xy</div>
+      <div><h1>坐标与图象</h1><p>五层：找点 → 读点 → 直线 → 抛物线 → 综合</p></div>
+    </div>
+    <div class="bar-right" id="barr"></div>
+    <button class="cheatbtn" id="cheatBtn" type="button" aria-expanded="false" aria-controls="cheatCard">公式</button>
+    <div class="cheat" id="cheatCard" hidden>
+      <div class="cheat-h"><h3>公式速查</h3>
+        <button class="cheat-x" id="cheatX" type="button" aria-label="关闭">×</button></div>
+      <div class="cheat-g">
+        <section>
+          <h4>点 (x, y) 怎么定位</h4>
+          <p>先横后竖：<b>x</b> 管左右（右正左负），<b>y</b> 管上下（上正下负）。</p>
+          <p>例：(3, −1) = 从原点向右 3 格，再向下 1 格。</p>
+        </section>
+        <section>
+          <h4>象限只看正负号</h4>
+          <p>第一 (+, +)　第二 (−, +)　第三 (−, −)　第四 (+, −)</p>
+          <p>落在坐标轴上的点，不属于任何象限。</p>
+        </section>
+        <section>
+          <h4>一次函数 y = kx + b</h4>
+          <ul>
+            <li><b>b</b>：直线与 y 轴的交点，坐标 (0, b)</li>
+            <li><b>k</b>：x 每加 1，y 就加 k（k &gt; 0 往上、k &lt; 0 往下、k = 0 水平）；|k| 越大越陡</li>
+          </ul>
+          <p>走格法：从 (0, b) 出发，<b>右 1 格、上 k 格</b>得到第二个点，两点一连就是这条直线。</p>
+        </section>
+        <section>
+          <h4>二次函数 y = a(x − h)² + k</h4>
+          <ul>
+            <li><b>a</b> 管开口：a &gt; 0 向上、a &lt; 0 向下；|a| 越大越窄</li>
+            <li><b>顶点 (h, k)</b>：括号里取反得 h，外面的数照抄得 k</li>
+            <li><b>对称轴</b>：过顶点的那条竖线 x = h</li>
+          </ul>
+          <p>求 a：把另一个点的坐标代进顶点式，a = 纵差 ÷ 横差的平方。</p>
+        </section>
+      </div>
+      <p class="cheat-foot">第 3 层题目下方蓝底的「规则」就是上面的一次函数那条；记不住才点开，别背。</p>
+    </div>
+  </header>
+  <main id="screen" class="screen"></main>
+  <footer class="foot">
+    先横后竖：x 管左右，y 管上下 · 点不准就用手指数格子<br>
+    每道题都是现场随机生成，同一道不会重复出现
+  </footer>
+</div>
+
+<script>
+(function () {
+'use strict';
+
+/* ================= 工具 ================= */
+var $ = function (s, r) { return (r || document).querySelector(s); };
+var MIN = -6, MAX = 6, PAD = 0.8, VW = 560;
+var U = VW / ((MAX - MIN) + PAD * 2);
+var M = '\u2212'; // 真减号
+var C = { brand: '#2f6fd0', ok: '#1f7a4d', bad: '#b3341f', warn: '#b4690e', ink: '#1b2430', para: '#5b3fa8', muted: '#99a3af' };
+
+function PX(x) { return (x - MIN + PAD) * U; }
+function PY(y) { return VW - (y - MIN + PAD) * U; }
+function ri(a, b) { return a + Math.floor(Math.random() * (b - a + 1)); }
+function pk(a) { return a[Math.floor(Math.random() * a.length)]; }
+function nz(a, b) { var v; do { v = ri(a, b); } while (v === 0); return v; }
+function sg(v) { return v < 0 ? M + Math.abs(v) : String(v); }
+function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
+function pt(x, y) { return '(' + sg(x) + ', ' + sg(y) + ')'; }
+function todayKey(d) {
+  d = d || new Date();
+  var p = function (n) { return (n < 10 ? '0' : '') + n; };
+  return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate());
+}
+
+function fmtLin(k, b) {
+  var s = 'y = ';
+  if (k === 1) s += 'x'; else if (k === -1) s += M + 'x'; else s += sg(k) + 'x';
+  if (b > 0) s += ' + ' + b; else if (b < 0) s += ' ' + M + ' ' + Math.abs(b);
+  return s;
+}
+function frac(a) {
+  if (a === 0.5) return '\u00BD';
+  if (a === -0.5) return M + '\u00BD';
+  return sg(a);
+}
+function fmtPara(a, h, k) {
+  var s = 'y = ';
+  if (a === 1) s += ''; else if (a === -1) s += M; else s += frac(a);
+  if (h === 0) { s += 'x\u00B2'; }
+  else { s += '(x ' + (h > 0 ? M + ' ' + h : '+ ' + Math.abs(h)) + ')\u00B2'; }
+  if (k > 0) s += ' + ' + k; else if (k < 0) s += ' ' + M + ' ' + Math.abs(k);
+  return s;
+}
+function qs(name) {
+  var m = location.hash.match(new RegExp('[#&]' + name + '=([^&]+)'));
+  return m ? decodeURIComponent(m[1]) : '';
+}
+
+/* ================= 记录 ================= */
+var KEY = 'mathcoord_v1';
+function loadRec() {
+  var r = null;
+  try { r = JSON.parse(localStorage.getItem(KEY) || 'null'); } catch (e) { r = null; }
+  if (!r || typeof r !== 'object') r = {};
+  if (!r.stat) r.stat = {};
+  if (!r.days) r.days = {};
+  if (!r.miss) r.miss = {};
+  if (typeof r.streak !== 'number') r.streak = 0;
+  if (typeof r.best !== 'number') r.best = 0;
+  return r;
+}
+function saveRec(r) { try { localStorage.setItem(KEY, JSON.stringify(r)); } catch (e) {} }
+
+var REC = loadRec();
+
+function recordOne(lid, ok, tag) {
+  REC.stat[lid] = REC.stat[lid] || { att: 0, ok: 0, at: 0 };
+  REC.stat[lid].att++;
+  if (ok) REC.stat[lid].ok++;
+  REC.stat[lid].at = Date.now();
+  var d = todayKey();
+  REC.days[d] = REC.days[d] || { n: 0, ok: 0 };
+  REC.days[d].n++;
+  if (ok) REC.days[d].ok++;
+  if (ok) { REC.streak++; if (REC.streak > REC.best) REC.best = REC.streak; }
+  else REC.streak = 0;
+  if (!ok && tag) {
+    REC.miss[tag] = REC.miss[tag] || { n: 0, at: 0 };
+    REC.miss[tag].n++;
+    REC.miss[tag].at = Date.now();
+  }
+  saveRec(REC);
+}
+
+/* ================= SVG 平面 ================= */
+var NS = 'http://www.w3.org/2000/svg';
+function el(tag, attrs, parent) {
+  var e = document.createElementNS(NS, tag);
+  for (var k in attrs) if (attrs[k] !== '' && attrs[k] !== null && attrs[k] !== undefined) e.setAttribute(k, attrs[k]);
+  if (parent) parent.appendChild(e);
+  return e;
+}
+var G = { svg: null, dyn: null };
+
+function buildPlane(host) {
+  host.innerHTML = '';
+  var svg = el('svg', { class: 'plane', viewBox: '0 0 560 560', preserveAspectRatio: 'xMidYMid meet' }, host);
+  var defs = el('defs', {}, svg);
+
+  var mk = el('marker', { id: 'arw', viewBox: '0 0 10 10', refX: '8.5', refY: '5', markerWidth: '7', markerHeight: '7', orient: 'auto-start-reverse' }, defs);
+  el('path', { d: 'M0.5,1.2 L9,5 L0.5,8.8 z', fill: '#8d8578' }, mk);
+  var mk2 = el('marker', { id: 'arw2', viewBox: '0 0 10 10', refX: '8.5', refY: '5', markerWidth: '6.5', markerHeight: '6.5', orient: 'auto-start-reverse' }, defs);
+  el('path', { d: 'M0.5,1.2 L9,5 L0.5,8.8 z', fill: C.ok }, mk2);
+
+  var gGrid = el('g', {}, svg);
+  for (var x = MIN; x <= MAX; x++) {
+    if (x === 0) continue;
+    el('line', { x1: PX(x), y1: PY(MIN), x2: PX(x), y2: PY(MAX), class: 'grid' }, gGrid);
+  }
+  for (var y = MIN; y <= MAX; y++) {
+    if (y === 0) continue;
+    el('line', { x1: PX(MIN), y1: PY(y), x2: PX(MAX), y2: PY(y), class: 'grid' }, gGrid);
+  }
+
+  var gAx = el('g', {}, svg);
+  el('line', { x1: PX(MIN) - 12, y1: PY(0), x2: PX(MAX) + 15, y2: PY(0), class: 'axis', 'marker-end': 'url(#arw)' }, gAx);
+  el('line', { x1: PX(0), y1: PY(MIN) + 12, x2: PX(0), y2: PY(MAX) - 15, class: 'axis', 'marker-end': 'url(#arw)' }, gAx);
+
+  for (var tx = MIN; tx <= MAX; tx++) {
+    if (tx === 0) continue;
+    var t1 = el('text', { x: PX(tx), y: PY(0) + 17, 'text-anchor': 'middle', class: 'tick' }, gAx);
+    t1.textContent = sg(tx);
+  }
+  for (var ty = MIN; ty <= MAX; ty++) {
+    if (ty === 0) continue;
+    var t2 = el('text', { x: PX(0) - 9, y: PY(ty) + 4.5, 'text-anchor': 'end', class: 'tick' }, gAx);
+    t2.textContent = sg(ty);
+  }
+  var ox = el('text', { x: PX(0) - 10, y: PY(0) + 16, 'text-anchor': 'end', class: 'tick' }, gAx);
+  ox.textContent = 'O';
+  var lx = el('text', { x: PX(MAX) + 13, y: PY(0) - 11, 'text-anchor': 'end', class: 'tick' }, gAx);
+  lx.textContent = 'x';
+  var ly = el('text', { x: PX(0) + 11, y: PY(MAX) - 9, class: 'tick' }, gAx);
+  ly.textContent = 'y';
+
+  G.svg = svg;
+  G.dyn = el('g', {}, svg);
+  svg.addEventListener('click', onPlaneClick);
+  return svg;
+}
+
+function toWorld(evt) {
+  var pt2 = G.svg.createSVGPoint();
+  pt2.x = evt.clientX; pt2.y = evt.clientY;
+  var m = G.svg.getScreenCTM().inverse();
+  var p = pt2.matrixTransform(m);
+  return { x: (p.x / U) - PAD + MIN, y: (VW - p.y) / U - PAD + MIN };
+}
+
+/* ---- 绘制 ---- */
+function label(x, y, str, color, g, dx, dy, anchor) {
+  var t = el('text', {
+    x: PX(x) + (dx === undefined ? 10 : dx),
+    y: PY(y) + (dy === undefined ? -9 : dy),
+    class: 'svgtext', fill: color, 'text-anchor': anchor || 'start'
+  }, g);
+  t.textContent = str;
+  return t;
+}
+
+function draw(items) {
+  if (!G.dyn) return;
+  while (G.dyn.firstChild) G.dyn.removeChild(G.dyn.firstChild);
+  (items || []).forEach(function (it) { paint(it, G.dyn); });
+}
+
+function paint(it, g) {
+  var i, e, d, pts;
+  switch (it.t) {
+    case 'pt':
+      el('circle', { cx: PX(it.x), cy: PY(it.y), r: it.r || 6.5, fill: it.c || C.brand, stroke: '#fff', 'stroke-width': 2.2 }, g);
+      if (it.label) label(it.x, it.y, it.label, it.c || C.brand, g, it.dx, it.dy, it.anchor);
+      if (it.ping) {
+        var pc = el('circle', { cx: PX(it.x), cy: PY(it.y), r: 9, fill: 'none', stroke: it.c || C.brand, 'stroke-width': 2.5 }, g);
+        el('animate', { attributeName: 'r', from: '9', to: '27', dur: '1.5s', repeatCount: 'indefinite' }, pc);
+        el('animate', { attributeName: 'opacity', from: '.75', to: '0', dur: '1.5s', repeatCount: 'indefinite' }, pc);
+      }
+      break;
+
+    case 'ring':
+      el('circle', { cx: PX(it.x), cy: PY(it.y), r: it.r || 11, fill: it.fill || 'none', stroke: it.c || C.ok, 'stroke-width': it.w || 2.6 }, g);
+      break;
+
+    case 'cross':
+      var s = it.s || 7.5;
+      el('line', { x1: PX(it.x) - s, y1: PY(it.y) - s, x2: PX(it.x) + s, y2: PY(it.y) + s, stroke: C.bad, 'stroke-width': 3.2, 'stroke-linecap': 'round' }, g);
+      el('line', { x1: PX(it.x) + s, y1: PY(it.y) - s, x2: PX(it.x) - s, y2: PY(it.y) + s, stroke: C.bad, 'stroke-width': 3.2, 'stroke-linecap': 'round' }, g);
+      break;
+
+    case 'line':
+      el('line', {
+        x1: PX(it.x1), y1: PY(it.y1), x2: PX(it.x2), y2: PY(it.y2),
+        stroke: it.c || C.brand, 'stroke-width': it.w || 2.6,
+        'stroke-dasharray': it.dash || '', 'stroke-linecap': 'round'
+      }, g);
+      break;
+
+    case 'seg':
+      el('line', {
+        x1: PX(it.x1), y1: PY(it.y1), x2: PX(it.x2), y2: PY(it.y2),
+        stroke: it.c || C.brand, 'stroke-width': it.w || 2, 'stroke-dasharray': it.dash || '', 'stroke-linecap': 'round'
+      }, g);
+      break;
+
+    case 'path':
+      d = (it.pts || []).map(function (p, k) { return (k ? 'L' : 'M') + PX(p[0]).toFixed(2) + ' ' + PY(p[1]).toFixed(2); }).join(' ');
+      el('path', {
+        d: d, fill: 'none', stroke: it.c || C.brand, 'stroke-width': it.w || 2,
+        'stroke-dasharray': it.dash === undefined ? '8 6' : it.dash,
+        'stroke-linecap': 'round', class: it.flow ? 'flow' : '',
+        'marker-end': it.arrow ? 'url(#arw2)' : ''
+      }, g);
+      break;
+
+    case 'para':
+      pts = [];
+      for (var xx = MIN - 0.6; xx <= MAX + 0.6; xx += 0.03) {
+        pts.push([xx, it.a * (xx - it.h) * (xx - it.h) + it.k]);
+      }
+      d = pts.map(function (p, k) { return (k ? 'L' : 'M') + PX(p[0]).toFixed(2) + ' ' + PY(p[1]).toFixed(2); }).join(' ');
+      el('path', { d: d, fill: 'none', stroke: it.c || C.para, 'stroke-width': it.w || 2.8, 'stroke-linejoin': 'round' }, g);
+      break;
+
+    case 'vline':
+      el('line', {
+        x1: PX(it.x), y1: PY(MIN), x2: PX(it.x), y2: PY(MAX),
+        stroke: it.c || C.warn, 'stroke-width': 1.8, 'stroke-dasharray': '7 5'
+      }, g);
+      break;
+
+    case 'text':
+      e = el('text', { x: PX(it.x), y: PY(it.y), 'text-anchor': it.anchor || 'middle', class: 'svgtext', fill: it.c || C.ink }, g);
+      e.textContent = it.s;
+      break;
+  }
+}
+
+/* ================= 题目生成 ================= */
+var LEVEL_NAME = { L1: '找点', L2: '读点', L3: '一次函数', L4: '二次函数', L5: '综合' };
+
+function genL1(d) {
+  var x, y, hint = null, tag = 'find';
+  if (d <= 0) {
+    x = ri(1, 5); y = ri(1, 5);
+    hint = '从原点出发：先向右 ' + x + ' 格，再向上 ' + y + ' 格。';
+    tag = 'find.q1';
+  } else if (d === 1) {
+    x = nz(-5, 5); y = nz(-5, 5);
+    tag = 'find.quad';
+  } else if (d === 2) {
+    if (Math.random() < 0.5) { x = nz(-5, 5); y = 0; } else { x = 0; y = nz(-5, 5); }
+    tag = 'find.axis';
+  } else {
+    x = nz(-6, 6); y = nz(-6, 6);
+    tag = 'find.big';
+  }
+  return {
+    lid: 'L1', tag: tag,
+    ask: '把点 <b class="p">' + pt(x, y) + '</b> 点出来',
+    hint: hint,
+    asks: [{ ui: 'tap', ans: [x, y] }],
+    solution: '先横后竖：x = ' + sg(x) + ' 决定' + (x > 0 ? '向右' : x < 0 ? '向左' : '不动') +
+      (x === 0 ? '' : ' ' + Math.abs(x) + ' 格') + '；y = ' + sg(y) + ' 决定' +
+      (y > 0 ? '向上' : y < 0 ? '向下' : '不动') + (y === 0 ? '' : ' ' + Math.abs(y) + ' 格') + '。'
+  };
+}
+
+function genL2(d) {
+  if (d >= 2 && Math.random() < 0.35) return genQuad();
+  var x, y, tag;
+  if (d <= 0) { x = ri(1, 5); y = ri(1, 5); tag = 'read.q1'; }
+  else if (d === 1) { x = nz(-5, 5); y = nz(-5, 5); tag = 'read.quad'; }
+  else if (d === 2) { if (Math.random() < 0.5) { x = nz(-5, 5); y = 0; } else { x = 0; y = nz(-5, 5); } tag = 'read.axis'; }
+  else { x = nz(-6, 6); y = nz(-6, 6); tag = 'read.big'; }
+  return {
+    lid: 'L2', tag: tag,
+    ask: '图上的点 <b>P</b> 的坐标是多少？',
+    draw: [{ t: 'pt', x: x, y: y, c: C.bad, label: 'P', ping: true }],
+    asks: [{
+      ui: 'nums', nums: [{ label: 'x =', min: -6, max: 6 }, { label: 'y =', min: -6, max: 6 }],
+      check: function (v) { return v[0] === x && v[1] === y; },
+      okMsg: 'P' + pt(x, y) + '。先数横的，再数竖的。',
+      badMsg: '应该是 P' + pt(x, y) + '：横向数到 ' + sg(x) + '，纵向数到 ' + sg(y) + '。',
+      keep: [{ t: 'path', pts: [[x, 0], [x, y], [0, y]], c: C.ok, dash: '7 5' }]
+    }]
+  };
+}
+
+function genQuad() {
+  var x = nz(-5, 5), y = nz(-5, 5);
+  var qn = x > 0 ? (y > 0 ? 1 : 4) : (y > 0 ? 2 : 3);
+  var name = ['第一象限', '第二象限', '第三象限', '第四象限'][qn - 1];
+  return {
+    lid: 'L2', tag: 'quad',
+    ask: '点 <b class="p">' + pt(x, y) + '</b> 在第几象限？',
+    draw: [{ t: 'pt', x: x, y: y, c: C.bad, label: 'Q' }],
+    asks: [{
+      ui: 'choice', opts: ['第一象限', '第二象限', '第三象限', '第四象限'], ans: qn - 1,
+      okMsg: '对。x ' + (x > 0 ? '正' : '负') + '、y ' + (y > 0 ? '正' : '负') + '，所以是' + name + '。',
+      badMsg: 'x = ' + sg(x) + '（' + (x > 0 ? '右' : '左') + '）、y = ' + sg(y) + '（' + (y > 0 ? '上' : '下') + '），是' + name + '。'
+    }],
+    solution: '象限只看正负号：(+, +) 第一，(' + M + ', +) 第二，(' + M + ', ' + M + ') 第三，(+, ' + M + ') 第四。'
+  };
+}
+
+function genWalk(d) {
+  var k = d <= 0 ? pk([1, 2]) : pk([1, 2, -1, -2]);
+  var b = ri(-4, 4); if (b === 0) b = 3;
+  var y1 = k + b;
+  if (y1 < MIN + 1 || y1 > MAX - 1) return genWalk(d);
+  var updown = k > 0 ? '向上' : '向下';
+  return {
+    lid: 'L3', tag: 'walk',
+    ask: '直线 <b>' + fmtLin(k, b) + '</b> 与 y 轴交于 <b>A' + pt(0, b) + '</b>。' +
+      (S.lid === 'L5' ? '' :
+        '<span class="rule"><span class="tag">规则</span>一次函数 <b>y = kx + b</b>：<b>x 每加 1，y 就加 k</b>' +
+        '（k 为正往上、为负往下）。本题 k = <b>' + sg(k) + '</b>，b = <b>' + sg(b) +
+        '</b>，代进去就是 <b class="nb">' + fmtLin(k, b) + '</b>。</span>'),
+    draw: [{ t: 'pt', x: 0, y: b, c: C.warn, label: 'A' + pt(0, b) }],
+    asks: [
+      {
+        ask: '从 A <b>沿直线</b>往右走 1 格（x 从 0 变成 1），y 变成几？',
+        ui: 'nums', nums: [{ label: 'y =', min: -6, max: 6 }],
+        check: function (v) { return v[0] === y1; },
+        okMsg: '对：y 从 ' + sg(b) + ' 出发，x 加 1 就加 k = ' + sg(k) + '，得 ' + sg(y1) +
+          '（也就是' + updown + ' ' + Math.abs(k) + ' 格）。',
+        badMsg: '<b>规则一：代入公式</b>　y = k×x + b = ' + sg(k) + '×1 ' +
+          (b > 0 ? '+ ' + b : M + ' ' + Math.abs(b)) + ' = <b>' + sg(y1) + '</b>' +
+          '<br><b>规则二：k 的意义</b>　x 加 1，y 就加 k = ' + sg(k) + '；从 ' + sg(b) + ' 加到 ' + sg(y1) + '。',
+        keep: [{ t: 'ring', x: 1, y: y1, c: C.brand, r: 12 }]
+      },
+      {
+        ask: '现在把 <b>' + pt(1, y1) + '</b> 在图上点出来（直线上 x = 1 的那个点）',
+        ui: 'tap', ans: [1, y1], origin: [0, b],
+        keep: [{ t: 'line', x1: -6.5, y1: k * -6.5 + b, x2: 6.5, y2: k * 6.5 + b, c: C.brand }]
+      }
+    ],
+    solution: '两点定一条直线：先找 b（与 y 轴交点），再按 k 走格（右 1 格就' + updown + ' ' + Math.abs(k) + ' 格）。'
+  };
+}
+
+function genReadKB(d) {
+  var k = pk([1, 2, -1, -2, 3, -3]);
+  var b = ri(-4, 4); if (b === 0) b = 2;
+  var x2 = 1, y2 = k + b;
+  if (y2 < MIN + 1 || y2 > MAX - 1) return genReadKB(d);
+  return {
+    lid: 'L3', tag: 'readkb',
+    ask: '图上的直线和坐标轴交于两点。',
+    draw: [
+      { t: 'line', x1: -6.6, y1: k * -6.6 + b, x2: 6.6, y2: k * 6.6 + b, c: C.brand },
+      { t: 'pt', x: 0, y: b, c: C.warn, label: pt(0, b) },
+      { t: 'pt', x: x2, y: y2, c: C.warn, label: pt(x2, y2) }
+    ],
+    asks: [
+      {
+        ask: '这条直线与 <b>y 轴</b> 交于哪里？b = ？',
+        ui: 'nums', nums: [{ label: 'b =', min: -5, max: 5 }],
+        check: function (v) { return v[0] === b; },
+        okMsg: '对，b = ' + sg(b) + '，就是与 y 轴交点的纵坐标。',
+        badMsg: '看直线和 y 轴的交点：' + pt(0, b) + '，所以 b = ' + sg(b) + '。'
+      },
+      {
+        ask: '图上标的两个点：' + pt(0, b) + ' 和 ' + pt(x2, y2) + '。x 从 0 到 1 增加了 1，y 增加了几格？k = ？',
+        ui: 'nums', nums: [{ label: 'k =', min: -3, max: 3 }],
+        check: function (v) { return v[0] === k; },
+        okMsg: '对，k = ' + sg(k) + '：x 从 0 到 1 加 1，y 从 ' + sg(b) + ' 变到 ' + sg(y2) + '。',
+        badMsg: '<b>规则：</b>k = 纵变化 ÷ 横变化。' +
+          '<br>横变化：1 − 0 = 1；纵变化：' + sg(y2) + ' − (' + sg(b) + ') = ' + sg(y2 - b) +
+          '<br>所以 k = ' + sg(y2 - b) + ' ÷ 1 = <b>' + sg(k) + '</b>。',
+        keep: [{ t: 'text', x: 4.2, y: k * 4.2 + b - 0.7, s: fmtLin(k, b), c: C.brand, anchor: 'end' }]
+      }
+    ]
+  };
+}
+
+function genSlopeCmp() {
+  var pool = [2, 1, -1, -2, 0.5, -0.5, 3, -3].filter(function (v) { return Math.abs(v) !== 0.5; });
+  var ks = [];
+  while (ks.length < 3) {
+    var v = pk([2, 1, -1, -2, 3, -3]);
+    if (ks.indexOf(v) < 0) ks.push(v);
+  }
+  var colors = ['#2f6fd0', '#b4690e', '#1f7a4d'];
+  var items = ks.map(function (k, i) {
+    return { t: 'line', x1: -6.6, y1: k * -6.6, x2: 6.6, y2: k * 6.6, c: colors[i], w: 2.8 };
+  });
+  var maxK = Math.max.apply(null, ks);
+  var ans = ks.indexOf(maxK);
+  return {
+    lid: 'L3', tag: 'kcmp',
+    ask: '三条直线都过原点。哪一条的 <b>k 最大</b>？',
+    draw: items,
+    asks: [{
+      ui: 'choice',
+      opts: ['A（蓝）', 'B（橙）', 'C（绿）'], ans: ans, one: true,
+      okMsg: '对。k 最大的那条，y 随 x 增加得最快。',
+      badMsg: '三条的 k 分别是 ' + ks.map(sg).join('、') + '，最大的是 ' + sg(maxK) + '。',
+      keep: ks.map(function (k, i) {
+        var px = k > 0 ? 2.2 : -2.2;
+        return { t: 'text', x: px, y: k * px, s: 'k=' + sg(k), c: colors[i], anchor: 'middle' };
+      })
+    }],
+    solution: 'k 是"每向右 1 格，向上几格"：k 越大越陡；k < 0 时直线往下走。'
+  };
+}
+
+function genL3(d) {
+  if (d <= 1) return genWalk(d);
+  if (d === 2) return genReadKB(d);
+  return genSlopeCmp();
+}
+
+function genPara(d) {
+  var a = d <= 0 ? pk([1, -1]) : pk([0.5, -0.5, 1, -1, 2, -2]);
+  var h = ri(-2, 2), k = ri(-3, 3);
+  var up = a > 0;
+  var axisIdx = [-2, -1, 0, 1, 2].indexOf(h);
+  return {
+    lid: 'L4', tag: 'para',
+    ask: '抛物线 <b>' + fmtPara(a, h, k) + '</b><span class="sub">先只看式子想，图在你答完之后才画</span>',
+    draw: [],
+    reveal: [
+      { t: 'para', a: a, h: h, k: k },
+      { t: 'vline', x: h },
+      { t: 'text', x: h, y: MAX - 0.4, s: 'x = ' + sg(h), c: C.warn, anchor: 'middle' },
+      { t: 'pt', x: h, y: k, c: C.para, label: '顶点' + pt(h, k), ping: true,
+        dx: h < 0 ? -10 : 10, dy: k === 0 ? -14 : -9, anchor: h < 0 ? 'end' : 'start' }
+    ],
+    asks: [
+      {
+        ask: '开口朝哪边？',
+        ui: 'choice', opts: ['向上', '向下'], ans: up ? 0 : 1, one: true,
+        okMsg: '对：a = ' + frac(a) + (up ? ' > 0' : ' < 0') + '，开口' + (up ? '向上' : '向下') + '。',
+        badMsg: '看 a 的符号：a = ' + frac(a) + (up ? ' > 0，开口向上' : ' < 0，开口向下') + '。'
+      },
+      {
+        ask: '顶点的坐标是多少？（函数在那个点取到最大值或最小值）',
+        ui: 'nums', nums: [{ label: '横', min: -6, max: 6 }, { label: '纵', min: -6, max: 6 }],
+        check: function (v) { return v[0] === h && v[1] === k; },
+        okMsg: '对，顶点 ' + pt(h, k) + '。',
+        badMsg: '顶点是 ' + pt(h, k) + '：括号里 x ' + (h > 0 ? '减 ' + h : h < 0 ? '加 ' + Math.abs(h) : '不加') + '，外面的常数是 ' + sg(k) + '。'
+      },
+      {
+        ask: '对称轴是哪一条？（过顶点、竖直的那条线）',
+        ui: 'choice', opts: ['x = ' + sg(h - 1), 'x = ' + sg(h), 'x = ' + sg(h + 1), 'y = ' + sg(k)], ans: 1, one: false,
+        okMsg: '对，对称轴是 x = ' + sg(h) + '，就是顶点的横坐标。',
+        badMsg: '对称轴是过顶点的竖直线：x = ' + sg(h) + '。'
+      }
+    ]
+  };
+}
+
+function genFindA(d) {
+  var a = pk([0.5, 1, -0.5, -1]);
+  var h = ri(-2, 1), k = ri(-1, 1);
+  var px = h + 2, py = k + 4 * a;
+  if (py < MIN + 1 || py > MAX - 1) return genFindA(d);
+  var opts = [-2, -1, -0.5, 0.5, 1, 2];
+  var ans = opts.indexOf(a);
+  return {
+    lid: 'L4', tag: 'finda',
+    ask: '抛物线顶点是 <b>' + pt(h, k) + '</b>，还经过点 <b>' + pt(px, py) + '</b>。求 <b>a</b>。（曲线答完才画）',
+    draw: [
+      { t: 'pt', x: h, y: k, c: C.para, label: '顶点', dx: h < 0 ? -10 : 10, anchor: h < 0 ? 'end' : 'start' },
+      { t: 'pt', x: px, y: py, c: C.warn, label: pt(px, py), dx: px >= 0 ? 10 : -10, anchor: px >= 0 ? 'start' : 'end' }
+    ],
+    reveal: [{ t: 'para', a: a, h: h, k: k }],
+    asks: [{
+      ui: 'choice',
+      opts: opts.map(function (v) { return 'a = ' + frac(v); }), ans: ans, one: false,
+      okMsg: '对，a = ' + frac(a) + '。',
+      badMsg: '设 y = a(x ' + (h > 0 ? M + ' ' + h : '+ ' + Math.abs(h)) + ')\u00B2 ' + (k >= 0 ? '+ ' + k : M + ' ' + Math.abs(k)) + '，代 ' + pt(px, py) + ' 得 a = ' + frac(a) + '。'
+    }],
+    solution: '顶点式 y = a(x − h)² + k：代另一个点，a = 纵差 ÷ 横差的平方。这里 (' + sg(py) + ' − ' + sg(k) + ') ÷ (' + (px - h) + ')² = ' + frac(a) + '。'
+  };
+}
+
+function genACompare() {
+  var opts = [0.5, 1, 2];
+  var shuffled = opts.slice().sort(function () { return Math.random() - 0.5; });
+  var colors = ['#2f6fd0', '#b4690e', '#1f7a4d'];
+  var items = shuffled.map(function (a, i) { return { t: 'para', a: a, h: 0, k: 0, c: colors[i], w: 2.6 }; });
+  var maxA = Math.max.apply(null, shuffled);
+  return {
+    lid: 'L4', tag: 'acmp',
+    ask: '三条抛物线都过原点。哪一条开口 <b>最窄</b>？',
+    draw: items,
+    asks: [{
+      ui: 'choice', opts: ['A（蓝）', 'B（橙）', 'C（绿）'], ans: shuffled.indexOf(maxA), one: true,
+      okMsg: '对：|a| 越大，开口越窄。',
+      badMsg: '三条的 a 分别是 ' + shuffled.map(frac).join('、') + '，|a| 最大的是 ' + frac(maxA) + '。'
+    }],
+    solution: 'a 管"张口大小"：|a| 越大越窄，|a| 越小越宽；a 的正负管开口朝上还是朝下。'
+  };
+}
+
+function genL4(d) {
+  if (d <= 1) return genPara(d);
+  if (d === 2) return genFindA(d);
+  return Math.random() < 0.5 ? genFindA(d) : genACompare();
+}
+
+var GEN = { L1: genL1, L2: genL2, L3: genL3, L4: genL4 };
+
+/* ================= 训练流程 ================= */
+var S = {
+  screen: 'home', lid: 'L1', qi: 0, total: 10, ok: 0, step: 0,
+  cur: null, acc: [], target: null, mode: '', first: true, recorded: false, locked: false, pendingStep: false, revealed: false,
+  startAt: 0, marks: [], diff: 0, streakRun: 0, maxRun: 0
+};
+
+function nextQ() {
+  if (S.qi >= S.total) { finishRound(); return; }
+  var lid = S.lid === 'L5' ? pk(['L1', 'L2', 'L3', 'L4']) : S.lid;
+  var q = GEN[lid](S.diff);
+  S.cur = q;
+  S.step = 0;
+  S.acc = [];
+  S.first = true;
+  S.recorded = false;
+  S.locked = false;
+  S.pendingStep = false;
+  S.revealed = false;
+  S.mode = '';
+  S.qi++;
+  renderQ();
+}
+
+function renderQ() {
+  var q = S.cur;
+  var dots = '';
+  for (var i = 0; i < S.total; i++) {
+    var cls = i < S.marks.length ? S.marks[i] : (i === S.qi - 1 ? 'now' : '');
+    dots += '<i class="' + cls + '"></i>';
+  }
+  var head = '' +
+    '<div class="qbar">' +
+    '<span>' + LEVEL_NAME[S.lid] + (S.lid === 'L5' ? ' · ' + LEVEL_NAME[q.lid] : '') +
+    ' · 第 ' + S.qi + ' / ' + S.total + ' 题</span>' +
+    (S.streakRun >= 3 ? '<span class="streak">连对 ' + S.streakRun + '</span>' : '') +
+    '<span class="dots">' + dots + '</span>' +
+    '</div>' +
+    '<div class="playgrid">' +
+    '<div class="stagewrap pane-graph"><div id="host"></div></div>' +
+    '<div class="pane-side">' +
+    '<div class="ask" id="ask"></div>' +
+    '<div class="ctrl" id="ctrl"></div>' +
+    '<div class="fb" id="fb" hidden></div>' +
+    '</div>' +
+    '</div>';
+
+  $('#screen').innerHTML = head;
+  document.body.classList.add('playing');
+  $('#screen').classList.toggle('single', (q.asks || []).every(function (a) { return a.ui === 'tap'; }));
+  $('#barr').innerHTML = '<span class="chip">' + LEVEL_NAME[S.lid] + '</span>' +
+    '<button class="btn-ghost" data-act="home">关卡</button>';
+  buildPlane($('#host'));
+  G.svg.classList.add('tap');
+  renderStep();
+}
+
+function renderStep() {
+  var q = S.cur, st = q.asks[S.step];
+  var bg = q.ask || '', cur = st.ask || '';
+  var head = (cur && bg && cur !== bg)
+    ? bg + '<div class="qsub">' + cur + '</div>'
+    : (cur || bg);
+  if (S.step === 0 && q.hint) head += '<span class="sub">提示：' + q.hint + '</span>';
+  $('#ask').innerHTML = head;
+  var items = (q.draw || []).concat(S.revealed ? (q.reveal || []) : [], S.acc, st.draw || []);
+  if (q.reveal && !S.revealed && !(q.draw || []).length) {
+    items = items.concat([{ t: 'text', x: 0, y: MIN + 0.9, s: '先在心里把图画出来，答完再对照', c: C.muted }]);
+  }
+  draw(items);
+  var ctrl = $('#ctrl');
+  ctrl.innerHTML = '';
+  S.mode = '';
+
+  if (st.ui === 'nums') {
+    mountNums(st.nums, function (vals) { judge(st.check(vals), st, vals); });
+  } else if (st.ui === 'choice') {
+    mountChoice(st, function (idx) { judge(idx === st.ans, st, idx); });
+  } else if (st.ui === 'tap') {
+    S.target = st.ans;
+    S.mode = 'tap';
+  }
+}
+
+function mountNums(defs, submit) {
+  var wrap = document.createElement('div');
+  wrap.className = 'ctrlbody';
+  var vals = defs.map(function () { return undefined; });
+
+  defs.forEach(function (df, i) {
+    var row = document.createElement('div');
+    row.className = 'pickrow';
+    var lab = document.createElement('span');
+    lab.className = 'picklabel';
+    lab.textContent = df.label;
+    row.appendChild(lab);
+    var pad = document.createElement('div');
+    pad.className = 'numpad';
+    for (var v = df.min; v <= df.max; v++) {
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.textContent = sg(v);
+      b.dataset.v = String(v);
+      b.dataset.i = String(i);
+      pad.appendChild(b);
+    }
+    row.appendChild(pad);
+    wrap.appendChild(row);
+  });
+
+  var foot = document.createElement('div');
+  foot.className = 'ctrlfoot';
+  var ok = document.createElement('button');
+  ok.className = 'btn btn-primary';
+  ok.textContent = '确定';
+  ok.disabled = true;
+  foot.appendChild(ok);
+  var hint = document.createElement('span');
+  hint.className = 'hintline';
+  hint.textContent = '选完 ' + defs.map(function (d) { return d.label.replace('=', '').trim(); }).join('、') + ' 再点确定';
+  foot.appendChild(hint);
+  wrap.appendChild(foot);
+
+  wrap.addEventListener('click', function (e) {
+    var b = e.target.closest('button');
+    if (!b) return;
+    if (b === ok) {
+      if (ok.disabled) return;
+      ok.disabled = true;
+      submit(vals);
+      return;
+    }
+    if (b.disabled) return;
+    var i = +b.dataset.i;
+    vals[i] = +b.dataset.v;
+    Array.prototype.forEach.call(b.parentNode.children, function (c) { c.classList.toggle('on', c === b); });
+    ok.disabled = vals.some(function (v) { return v === undefined; });
+  });
+
+  $('#ctrl').appendChild(wrap);
+}
+
+function mountChoice(st, submit) {
+  var wrap = document.createElement('div');
+  wrap.className = 'ctrlbody';
+  var box = document.createElement('div');
+  box.className = 'opts' + (st.one ? ' one' : '');
+  st.opts.forEach(function (txt, i) {
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.textContent = txt;
+    b.dataset.k = String(i);
+    box.appendChild(b);
+  });
+  wrap.appendChild(box);
+  wrap.addEventListener('click', function (e) {
+    var b = e.target.closest('button');
+    if (!b) return;
+    if (box.dataset.done) return;
+    box.dataset.done = '1';
+    Array.prototype.forEach.call(box.children, function (c) { c.disabled = true; });
+    b.classList.add('on');
+    submit(+b.dataset.k);
+  });
+  $('#ctrl').appendChild(wrap);
+}
+
+function fb(ok, html, withNext, label) {
+  var d = $('#fb');
+  d.hidden = false;
+  d.className = 'fb ' + (ok ? 'ok' : 'bad');
+  d.innerHTML = html + (withNext
+    ? ' <button class="next" data-act="next">' + (label || '下一题 →') + '</button>'
+    : '');
+  return d;
+}
+
+function judge(ok, st, val) {
+  if (!ok) S.first = false;
+  if (ok) {
+    S.acc = S.acc.concat(st.keep || []);
+    if (S.step < S.cur.asks.length - 1) {
+      S.pendingStep = true;
+      fb(true, st.okMsg || '对。', true, '继续 →');
+    } else {
+      fb(true, st.okMsg || '对。', true);
+    }
+  } else {
+    fb(false, st.badMsg || '再想想。', true);
+  }
+  if (S.step === S.cur.asks.length - 1) revealGraph();
+}
+
+/* 由式想图的题：答完才画真图。图是结算，不是提示 */
+function revealGraph() {
+  var q = S.cur;
+  if (!q.reveal || S.revealed) return;
+  S.revealed = true;
+  var st = q.asks[S.step];
+  draw((q.draw || []).concat(q.reveal, S.acc, st.draw || []));
+}
+
+/* 所有推进都等孩子自己点，避免反馈一闪而过 */
+function advance() {
+  if (S.screen !== 'play') return;
+  if (S.pendingStep) { S.pendingStep = false; S.step++; renderStep(); return; }
+  endQuestion(S.first);
+}
+
+function endQuestion(ok) {
+  if (S.locked) return;
+  S.locked = true;
+  if (!S.recorded) {
+    S.recorded = true;
+    recordOne(S.cur.lid, ok, S.cur.tag);
+  }
+  if (ok) {
+    S.ok++;
+    S.streakRun++;
+    if (S.streakRun > S.maxRun) S.maxRun = S.streakRun;
+    S.marks.push('ok');
+    if (S.streakRun % 3 === 0) S.diff = Math.min(S.diff + 1, 3);
+  } else {
+    S.streakRun = 0;
+    S.marks.push('bad');
+    S.diff = Math.max(S.diff - 1, 0);
+  }
+  nextQ();
+}
+
+/* 画布点击 */
+function onPlaneClick(evt) {
+  if (!S.mode) return;
+  var w = toWorld(evt);
+  if (w.x < MIN - 0.6 || w.x > MAX + 0.6 || w.y < MIN - 0.6 || w.y > MAX + 0.6) return;
+  var x = clamp(Math.round(w.x), MIN, MAX);
+  var y = clamp(Math.round(w.y), MIN, MAX);
+
+  if (S.mode === 'retry') {
+    if (x === S.target[0] && y === S.target[1]) {
+      S.mode = '';
+      fb(true, '这次对了。' + (S.cur.solution || ''), true);
+    }
+    return;
+  }
+
+  var st = S.cur.asks[S.step];
+  if (x === S.target[0] && y === S.target[1]) {
+    S.mode = '';
+    S.acc = S.acc.concat(st.keep || []);
+    var o = st.origin || [0, 0];
+    draw((S.cur.draw || []).concat(S.acc, [
+      { t: 'path', pts: [o, [x, o[1]], [x, y]], c: C.ok, dash: '8 6', arrow: true },
+      { t: 'pt', x: x, y: y, c: C.ok, r: 7, ping: true, label: pt(x, y) }
+    ]));
+    fb(true, '对。' + (S.cur.solution || ''), true);
+  } else {
+    S.first = false;
+    S.mode = 'retry';
+    var o0 = (S.cur.asks[S.step] && S.cur.asks[S.step].origin) || [0, 0];
+    draw((S.cur.draw || []).concat(S.acc, [
+      { t: 'cross', x: x, y: y },
+      { t: 'path', pts: [o0, [S.target[0], o0[1]], [S.target[0], S.target[1]]], c: C.ok, dash: '7 5', flow: true },
+      { t: 'ring', x: S.target[0], y: S.target[1], c: C.ok, r: 12 },
+      { t: 'pt', x: S.target[0], y: S.target[1], c: C.ok, r: 6, ping: true }
+    ]));
+    fb(false, diagMsg(x, y, S.target) + ' 绿圈是正确位置，照着点一遍。');
+  }
+}
+
+function diagMsg(cx, cy, t) {
+  var s = '你点在 ' + pt(cx, cy) + '。';
+  var parts = [];
+  if (cx !== t[0]) parts.push('x 要' + (t[0] > cx ? '再往右 ' : '再往左 ') + Math.abs(t[0] - cx) + ' 格');
+  if (cy !== t[1]) parts.push('y 要' + (t[1] > cy ? '再往上 ' : '再往下 ') + Math.abs(t[1] - cy) + ' 格');
+  if (!parts.length) return s;
+  return s + parts.join('，') + '。';
+}
+
+/* ================= 屏幕 ================= */
+function home() {
+  S.screen = 'home';
+  $('#screen').classList.remove('single');
+  document.body.classList.remove('playing');
+  $('#barr').innerHTML = '';
+  var lv = [
+    { id: 'L1', n: '1', t: '找点', d: '给坐标，在图上点出来', s: '先横后竖 · 从第一象限一路到坐标轴上', cls: '' },
+    { id: 'L2', n: '2', t: '读点', d: '看图上的点，说出坐标', s: '反着来一遍，读得准才算真的会', cls: '' },
+    { id: 'L3', n: '3', t: '一次函数', d: 'k 是"右一格升几格"', s: '走格法定两点 → 读 k、b → 比陡缓', cls: '' },
+    { id: 'L4', n: '4', t: '二次函数', d: '开口 · 顶点 · 对称轴', s: '只看式子先说结论，图在答完后才画出来', cls: 'lv4' },
+    { id: 'L5', n: '5', t: '综合', d: '四层混着抽，不再提示', s: '检验是不是真的会了', cls: 'lv5' }
+  ];
+  var h = '<div class="lead"><h2>点不出 (3, −1)，不是记性差</h2>' +
+    '<p>是"走格子"这个动作还没变成习惯。这里的每一道题，都只需要<b>一根手指</b>：先横着数，再竖着数。' +
+    '做错了不要紧，图上会画出正确的那条路，照着走一遍。</p></div>';
+  h += '<div class="levels">';
+  lv.forEach(function (v) {
+    var st = REC.stat[v.id];
+    var right = st && st.att ? Math.round(st.ok / st.att * 100) + '%' : '';
+    h += '<div class="lv ' + v.cls + '" data-lid="' + v.id + '">' +
+      '<div class="lv-n">' + v.n + '</div>' +
+      '<div class="lv-b"><div class="lv-t">' + v.t + '<span class="lv-d">' + v.d + '</span></div>' +
+      '<div class="lv-s">' + v.s + '</div></div>' +
+      '<div class="lv-r' + (right ? '' : ' none') + '"><b>' + (right || '未练') + '</b><span>' +
+      (st && st.att ? st.att + ' 题' : '') + '</span></div></div>';
+  });
+  h += '</div>';
+
+  h += '<details class="howto"><summary>怎么用（给家长的两分钟）</summary><div class="body">' +
+    '<p><b>为什么从"点格子"开始。</b>函数图象题丢分，多数不是不会算，是图在脑子里立不起来。' +
+    '坐标是图的地址：不会定位，后面的 k、b、顶点、对称轴全是背下来的空话。</p>' +
+    '<ol>' +
+    '<li><b>1→2 层每天各 5 分钟</b>，做到 90% 以上再往下。这两层只练一件事：先横后竖。</li>' +
+    '<li><b>第 3 层</b>只有一条规则：<b>x 加 1，y 就加 k</b>。从与 y 轴的交点 A(0, b) 出发，沿直线往右 1 格，y 就升 k 格——第二点有了，两点一连，直线出来。答题时这条规则会显示在题目里，照着套。</li>' +
+    '<li><b>第 4 层</b>只认三件事：a 管开口、顶点看括号、对称轴是顶点的横坐标。这一层<b>先不给图</b>——看式子先说结论，答完图才画出来，这样才练得到"由式想图"，而不是照着图念答案。</li>' +
+    '<li>做错时<b>不要讲</b>，让他照着图上的绿圈自己再点一遍——手比嘴记得牢。</li>' +
+    '</ol>' +
+    '<p style="margin-top:8px">忘了公式就点右上角<b>「公式」</b>：一张速查卡，收起时不占地方，' +
+    '三层的规则全在里面（点、象限、y = kx + b、a 管开口）。</p>' +
+    '<p style="margin-top:8px">记录存在本机，入口页的「今天做什么」会读它。换设备前用下面的按钮导出。</p>' +
+    '<p style="margin-top:10px"><button class="btn" data-act="export">导出记录</button> ' +
+    '<button class="btn" data-act="reset">清空本工具记录</button></p>' +
+    '</div></details>';
+
+  $('#screen').innerHTML = h;
+}
+
+function startLevel(lid) {
+  S.lid = lid;
+  S.qi = 0;
+  S.ok = 0;
+  S.marks = [];
+  S.streakRun = 0;
+  S.maxRun = 0;
+  S.diff = 0;
+  S.total = lid === 'L5' ? 12 : (lid === 'L3' || lid === 'L4' ? 6 : 10);
+  S.startAt = Date.now();
+  S.screen = 'play';
+  nextQ();
+}
+
+function finishRound() {
+  S.screen = 'result';
+  $('#screen').classList.remove('single');
+  document.body.classList.remove('playing');
+  var n = S.ok, tot = S.total;
+  var pct = Math.round(n / tot * 100);
+  var sec = Math.round((Date.now() - S.startAt) / 1000);
+  var R = 58, cir = 2 * Math.PI * R;
+  var color = pct >= 80 ? '#1f7a4d' : pct >= 50 ? '#b4690e' : '#b3341f';
+
+  var verdict;
+  if (pct >= 90) verdict = '这一层基本稳了。去下一层，别在这里反复刷。';
+  else if (pct >= 70) verdict = '差不多会了，但还不够快。再走一轮，把速度提上来。';
+  else if (pct >= 40) verdict = '方向对，但手还不熟。建议同一层再来一轮，别急着往上走。';
+  else verdict = '先别急。回第 1 层，把"先横后竖"练到不用想——这一层是地基。';
+
+  if (S.lid === 'L1' && pct < 70) verdict += ' 找点题做慢一点没关系，但每道题都要说出"先右几格、再上几格"。';
+  if (S.lid === 'L3' && pct < 70) verdict += ' 记住动作：从 b 出发，右一格、上 k 格，第二个点就有了。';
+
+  var h = '<div class="result">' +
+    '<h2>' + LEVEL_NAME[S.lid] + ' · 本轮结束</h2>' +
+    '<div class="sub">' + tot + ' 题 · 用时 ' + sec + ' 秒</div>' +
+    '<div class="ring"><svg width="132" height="132" viewBox="0 0 132 132">' +
+    '<circle cx="66" cy="66" r="' + R + '" fill="none" stroke="#eeeae2" stroke-width="11"/>' +
+    '<circle cx="66" cy="66" r="' + R + '" fill="none" stroke="' + color + '" stroke-width="11" ' +
+    'stroke-linecap="round" stroke-dasharray="' + cir + '" stroke-dashoffset="' + (cir * (1 - n / tot)) + '"/>' +
+    '</svg><div class="pct">' + pct + '%</div></div>' +
+    '<div class="stats">' +
+    '<div><b>' + n + '/' + tot + '</b><span>做对</span></div>' +
+    '<div><b>' + S.maxRun + '</b><span>本轮最高连对</span></div>' +
+    '<div><b>' + (tot - n) + '</b><span>做错</span></div>' +
+    '</div>' +
+    '<div class="verdict">' + verdict + '</div>' +
+    '<div class="acts">' +
+    '<button class="btn btn-primary" data-act="again">再来一轮</button>' +
+    '<button class="btn" data-act="home">回关卡</button>' +
+    ((S.lid === 'L1' || S.lid === 'L2') && pct >= 80 ? '<button class="btn" data-act="up">去第 ' + (S.lid === 'L1' ? '2' : '3') + ' 层</button>' : '') +
+    '</div></div>';
+  $('#barr').innerHTML = '<button class="btn-ghost" data-act="home">关卡</button>';
+  $('#screen').innerHTML = h;
+}
+
+/* 探索屏 */
+function explore(kind) {
+  S.screen = 'explore';
+  $('#screen').classList.remove('single');
+  document.body.classList.remove('playing');
+  $('#barr').innerHTML = '<span class="chip">自己玩</span><button class="btn-ghost" data-act="home">关卡</button>';
+  var h = '<div class="exploregrid">' +
+    '<div class="stagewrap pane-graph"><div id="host"></div></div>' +
+    '<div class="pane-side">' +
+    '<div class="ask">' +
+    (kind === 'line'
+      ? '拖动滑块，看 <b>k</b> 和 <b>b</b> 各自管什么。'
+      : '拖动滑块，看 <b>a</b>、<b>h</b>、<b>k</b> 各自管什么。') +
+    '</div>';
+  if (kind === 'line') {
+    h += '<div class="explore">' +
+      '<div class="formula" id="fml">y = 2x + 1</div>' +
+      '<div class="slider"><label>k</label><input type="range" id="sk" min="-3" max="3" step="0.5" value="2"><span class="val" id="vk">2</span></div>' +
+      '<div class="slider"><label>b</label><input type="range" id="sb" min="-5" max="5" step="1" value="1"><span class="val" id="vb">1</span></div>' +
+      '<p class="note">k：每向右 1 格，向上（或向下）几格 · b：直线与 y 轴交点的纵坐标</p>' +
+      '</div>';
+  } else {
+    h += '<div class="explore">' +
+      '<div class="formula" id="fml">y = (x − 1)² + 1</div>' +
+      '<div class="slider"><label>a</label><input type="range" id="sa" min="-2" max="2" step="0.5" value="1"><span class="val" id="va">1</span></div>' +
+      '<div class="slider"><label>h</label><input type="range" id="sh" min="-4" max="4" step="1" value="1"><span class="val" id="vh">1</span></div>' +
+      '<div class="slider"><label>k</label><input type="range" id="sk2" min="-4" max="4" step="1" value="1"><span class="val" id="vk2">1</span></div>' +
+      '<p class="note">a 管开口（正上负下、|a| 越大越窄）· 顶点就是 (h, k) · 对称轴 x = h</p>' +
+      '</div>';
+  }
+  h += '</div></div>';
+  $('#screen').innerHTML = h;
+  buildPlane($('#host'));
+
+  if (kind === 'line') {
+    var upd = function () {
+      var k = +$('#sk').value, b = +$('#sb').value;
+      $('#vk').textContent = sg(k); $('#vb').textContent = sg(b);
+      $('#fml').textContent = fmtLin(k, b);
+      draw([
+        { t: 'line', x1: -6.6, y1: k * -6.6 + b, x2: 6.6, y2: k * 6.6 + b, c: C.brand },
+        { t: 'pt', x: 0, y: b, c: C.warn, label: 'b = ' + sg(b) },
+        { t: 'path', pts: [[0, b], [1, b], [1, k + b]], c: C.ok, dash: '6 4', arrow: true },
+        { t: 'pt', x: 1, y: k + b, c: C.ok, r: 5 }
+      ]);
+    };
+    $('#sk').addEventListener('input', upd);
+    $('#sb').addEventListener('input', upd);
+    upd();
+  } else {
+    var upd2 = function () {
+      var a = +$('#sa').value, hh = +$('#sh').value, kk = +$('#sk2').value;
+      if (a === 0) { a = 0.5; $('#sa').value = '0.5'; }
+      $('#va').textContent = frac(a); $('#vh').textContent = sg(hh); $('#vk2').textContent = sg(kk);
+      $('#fml').textContent = fmtPara(a, hh, kk);
+      draw([
+        { t: 'para', a: a, h: hh, k: kk },
+        { t: 'vline', x: hh },
+        { t: 'pt', x: hh, y: kk, c: C.para, label: pt(hh, kk) }
+      ]);
+    };
+    ['sa', 'sh', 'sk2'].forEach(function (id) { $('#' + id).addEventListener('input', upd2); });
+    upd2();
+  }
+}
+
+/* ================= 事件 ================= */
+document.addEventListener('click', function (e) {
+  var t = e.target.closest('[data-act]');
+  if (t) {
+    var act = t.dataset.act;
+    if (act === 'home') { home(); return; }
+    if (act === 'next') { advance(); return; }
+    if (act === 'again') { startLevel(S.lid); return; }
+    if (act === 'up') { startLevel(S.lid === 'L1' ? 'L2' : 'L3'); return; }
+    if (act === 'export') { exportRec(); return; }
+    if (act === 'reset') {
+      if (confirm('清空这个工具的全部记录？（其他科目的记录不受影响）')) {
+        localStorage.removeItem(KEY);
+        REC = loadRec();
+        home();
+      }
+      return;
+    }
+  }
+  var lv = e.target.closest('.lv');
+  if (lv && lv.dataset.lid) { startLevel(lv.dataset.lid); return; }
+});
+
+function exportRec() {
+  var payload = {
+    schema: 'lt.practice-records/1',
+    kind: 'backup',
+    exportedAt: new Date().toISOString(),
+    apps: {}
+  };
+  payload.apps[KEY] = REC;
+  var blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = '坐标图象记录-' + todayKey() + '.json';
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 800);
+}
+
+/* 返回入口：本地双击打开时是 开始.html；发布到站点 1/ 之后入口叫 index.html */
+(function fixBacklink() {
+  var a = $('.backlink');
+  if (a && location.protocol !== 'file:') a.setAttribute('href', '../index.html');
+})();
+
+/* ================= 公式速查卡 ================= */
+/* 默认收起；展开时是覆盖层，不占每题高度。首次看过之后按钮上的红点消失。 */
+(function cheatCard() {
+  var KEY_SEEN = 'mathcoord_helpseen';
+  var btn = $('#cheatBtn'), card = $('#cheatCard');
+  if (!btn || !card) return;
+  function open(v) {
+    card.hidden = !v;
+    btn.setAttribute('aria-expanded', v ? 'true' : 'false');
+    if (v) {
+      btn.classList.remove('new');
+      try { localStorage.setItem(KEY_SEEN, '1'); } catch (e) {}
+    }
+  }
+  btn.addEventListener('click', function (e) {
+    e.stopPropagation();
+    open(card.hidden);
+  });
+  $('#cheatX').addEventListener('click', function () { open(false); btn.focus(); });
+  card.addEventListener('click', function (e) { e.stopPropagation(); });
+  document.addEventListener('click', function () { if (!card.hidden) open(false); });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && !card.hidden) { open(false); btn.focus(); }
+  });
+  try { if (!localStorage.getItem(KEY_SEEN)) btn.classList.add('new'); } catch (e) {}
+})();
+
+/* ================= 启动 ================= */
+function boot() {
+  var lv = qs('lv');
+  if (lv === 'line' || lv === 'para') { explore(lv); return; }
+  if (lv && LEVEL_NAME[lv]) { startLevel(lv); return; }
+  home();
+}
+boot();
+
+})();
+</script>
+</body>
+</html>

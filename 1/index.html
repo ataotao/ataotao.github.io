@@ -176,6 +176,8 @@
       file: '语文思维脚手架.html', quick: '#view=drill', quickText: '失分点闪练', wrong: '#view=drill&list=wrong', wrongText: '清错题' },
     { key: 'math',     name: '数学',        icon: '📐', accent: '#3b6fe0', href: '数学/函数思维脚手架.html', desc: '五步流程 + 闪练 + 整卷',
       file: '函数思维脚手架.html', quick: '#view=task', quickText: '本次任务', wrong: '#view=report', wrongText: '训练报告' },
+    { key: 'coord',    name: '坐标图象',    icon: '📍', accent: '#2f6fd0', href: '数学/坐标图象训练.html', desc: '五层闯关：找点 → 读点 → 直线 → 抛物线',
+      file: '坐标图象训练.html', quick: '#lv=L1', quickText: '找点', wrong: '#lv=L5', wrongText: '综合' },
     { key: 'english',  name: '英语过关',    icon: '📄', accent: '#7c5cd6', href: '英语/九上英语过关练习.html', desc: 'U1–U4 原卷 + 三段式讲解',
       file: '九上英语过关练习.html', quick: '#view=practice&mode=drill', quickText: '过关练习', wrong: '#view=review&tab=wrong', wrongText: '错题复盘' },
     { key: 'flash',    name: '语法闪练',    icon: '⚡', accent: '#7c5cd6', href: '英语/语法闪练.html', desc: '134 题点选闪练 · 错题自动重练',
@@ -198,6 +200,7 @@
     { key: 'chemScaffold.v1', subject: 'chem' },
     { key: 'ywScaffold.v1', subject: 'yuwen' },
     { key: 'fn_scaffold_v1', subject: 'math' },
+    { key: 'mathcoord_v1', subject: 'coord' },
     { key: 'jjb-jiuzhong-shang-v1', subject: 'firstaid' },
     { key: 'eng9a-practice-v1', subject: 'english' },
     { key: 'eng9a-flash-v1', subject: 'flash' }
@@ -377,6 +380,19 @@
       s.today = dates[todayKey()] ? 1 : 0;
     })();
 
+    // 数学·坐标图象（五层闯关）
+    (function () {
+      var v = readJSON('mathcoord_v1'); if (!v) return;
+      var s = bump('coord');
+      for (var id in (v.stat || {})) {
+        var e = v.stat[id] || {};
+        s.attempts += num(e.att); s.correct += num(e.ok); s.wrong += num(e.wrong);
+        var last = dateFromStamp(e.at); if (last && (!s.last || last > s.last)) s.last = last;
+      }
+      bumpDays(v.days);
+      var t = (v.days || {})[todayKey()]; if (t) s.today = num(t.n);
+    })();
+
     // 数学·急救包
     (function () {
       var v = readJSON('jjb-jiuzhong-shang-v1'); if (!v) return;
@@ -478,7 +494,7 @@
     }
 
     var now = new Date();
-    ['history', 'politics', 'formula', 'physics', 'chem', 'yuwen', 'math', 'english'].forEach(function (key) {
+    ['history', 'politics', 'formula', 'physics', 'chem', 'yuwen', 'math', 'coord', 'english'].forEach(function (key) {
       var s = stats[key];
       if (!s) return;
       var gap = s.last ? daysBetween(s.last, now) : 30;
@@ -525,6 +541,7 @@
     // 补足 3 条：记录少的时候也要给出可执行的短任务
     var defaults = [
       { key: 'math', title: '数学 · 10 分钟基础快练', reason: '保持手感，走一遍五步流程', hash: '#view=task' },
+      { key: 'coord', title: '坐标图象 · 5 分钟找点', reason: '先横后竖，练到不用想', hash: '#lv=L1' },
       { key: 'english', title: '英语 · 5 分钟逐题', reason: '一次 5 道，换换脑子', hash: '#view=practice' },
       { key: 'formula', title: '公式 · 3 分钟今日必背', reason: '每天必背的那几条', hash: '#mode=recite&fs=today' },
       { key: 'chem', title: '化学 · 10 分钟错题回炉', reason: '期中卷的失分点，点选即判', hash: '#view=drill' },
