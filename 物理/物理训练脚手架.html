@@ -1,0 +1,2372 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>物理训练脚手架</title>
+<style>
+:root{
+  --bg:#f5f7fb; --card:#fff; --ink:#1b2333; --muted:#6b7280; --line:#e6e9f2;
+  --brand:#0f9b8e; --brand-soft:#e6f6f4; --ok:#0f9d58; --ok-soft:#e8f6ee;
+  --bad:#d93025; --bad-soft:#fdecea; --warn:#c26a00; --warn-soft:#fff4e2;
+  --r:14px; --shadow:0 1px 2px rgba(20,30,60,.05),0 8px 24px rgba(20,30,60,.05);
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:var(--bg); color:var(--ink);
+  font:15px/1.7 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  -webkit-text-size-adjust:100%;
+}
+.wrap{max-width:860px;margin:0 auto;padding:0 16px 64px}
+header.top{
+  position:sticky;top:0;z-index:20;background:rgba(245,247,251,.92);
+  backdrop-filter:blur(10px);border-bottom:1px solid var(--line);
+}
+.top-in{max-width:860px;margin:0 auto;padding:10px 16px 0;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.brand{font-weight:800;font-size:17px;letter-spacing:.2px}
+.ver{font-size:11px;color:var(--muted);font-weight:600;border:1px solid var(--line);border-radius:20px;padding:1px 7px}
+.top-note{font-size:12px;color:var(--muted);margin-left:auto}
+nav.tabs{max-width:860px;margin:0 auto;padding:8px 16px 0;display:flex;gap:6px;overflow-x:auto;scrollbar-width:none}
+nav.tabs::-webkit-scrollbar{display:none}
+nav.tabs button{
+  flex:0 0 auto;border:0;background:transparent;color:var(--muted);font:inherit;font-size:14px;
+  padding:8px 12px;border-radius:10px 10px 0 0;cursor:pointer;border-bottom:2px solid transparent;
+}
+nav.tabs button:hover{color:var(--ink);background:#eef1f8}
+nav.tabs button.active{color:var(--brand);font-weight:700;border-bottom-color:var(--brand)}
+main{padding-top:18px}
+h2{font-size:19px;margin:26px 0 10px;letter-spacing:.2px}
+h3{font-size:16px;margin:18px 0 8px}
+p{margin:8px 0}
+.muted{color:var(--muted)}
+.small{font-size:13px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px;box-shadow:var(--shadow)}
+.card+.card{margin-top:12px}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.grow{flex:1}
+.btn{
+  appearance:none;border:1px solid var(--line);background:#fff;color:var(--ink);
+  font:inherit;font-size:14px;font-weight:600;padding:9px 16px;border-radius:11px;cursor:pointer;
+  transition:transform .06s ease,background .12s ease;
+}
+.btn:active{transform:scale(.98)}
+.btn-primary{background:var(--brand);border-color:var(--brand);color:#fff}
+.btn-primary:hover{background:#0c8a7e}
+.btn-ghost{background:transparent;border-color:transparent;color:var(--brand);padding:6px 8px}
+.btn-sm{padding:5px 10px;font-size:13px;border-radius:9px}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.pill{display:inline-block;font-size:12px;font-weight:700;padding:2px 9px;border-radius:20px;background:var(--brand-soft);color:var(--brand)}
+.pill.ok{background:var(--ok-soft);color:var(--ok)}
+.pill.bad{background:var(--bad-soft);color:var(--bad)}
+.pill.warn{background:var(--warn-soft);color:var(--warn)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px}
+.stat b{display:block;font-size:24px;line-height:1.2;margin-top:2px}
+.stat span{font-size:13px;color:var(--muted)}
+.module{
+  background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px;
+  display:flex;flex-direction:column;gap:6px;box-shadow:var(--shadow);
+}
+.module .mh{display:flex;align-items:center;gap:8px}
+.module .mh b{font-size:16px}
+.module .desc{font-size:13px;color:var(--muted);min-height:40px}
+.module .kinds{display:flex;flex-wrap:wrap;gap:6px;margin:2px 0 6px}
+.kind{font-size:12px;color:var(--muted);background:#f2f4fa;border-radius:7px;padding:2px 8px}
+.task{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px dashed var(--line)}
+.task:last-child{border-bottom:0}
+.task .no{width:26px;height:26px;border-radius:50%;background:var(--brand-soft);color:var(--brand);font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center;flex:0 0 auto}
+.task.done .no{background:var(--ok-soft);color:var(--ok)}
+.task .tt{flex:1;min-width:0}
+.task .tt b{display:block;font-size:14px}
+.task .tt span{font-size:12px;color:var(--muted)}
+.bar{height:6px;background:#eef1f8;border-radius:6px;overflow:hidden}
+.bar>i{display:block;height:100%;background:var(--brand);border-radius:6px;transition:width .25s ease}
+.qhead{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:6px}
+.qbody{font-size:17px;line-height:1.85}
+.qbody .hl{background:linear-gradient(transparent 62%,#ffe9a8 62%);padding:0 1px}
+.field{display:flex;align-items:center;gap:10px;margin:12px 0;flex-wrap:wrap}
+.field .lbl{font-size:15px;min-width:80px}
+.field .lbl.full{min-width:100%;margin-bottom:-4px;color:#3b4356;font-weight:600}
+.input{
+  flex:1;min-width:130px;max-width:260px;font:inherit;font-size:16px;padding:10px 12px;
+  border:1.5px solid var(--line);border-radius:11px;background:#fbfcff;color:var(--ink);outline:none;
+}
+.input:focus{border-color:var(--brand);background:#fff;box-shadow:0 0 0 3px rgba(15,155,142,.12)}
+.input.ok{border-color:var(--ok);background:var(--ok-soft)}
+.input.bad{border-color:var(--bad);background:var(--bad-soft)}
+.unit{color:var(--muted);font-size:14px}
+.fin{display:inline-flex;align-items:center;gap:8px}
+.fone{width:160px;border:1.5px solid var(--line);border-radius:9px;background:#fbfcff;text-align:center;font:inherit;font-size:16px;padding:9px 6px;outline:none;color:var(--ink)}
+.fone:focus{border-color:var(--brand);background:#fff}
+.fin.ok .fone{border-color:var(--ok);background:var(--ok-soft)}
+.fin.bad .fone{border-color:var(--bad);background:var(--bad-soft)}
+.padwrap{margin-top:10px}
+canvas.pad{display:block;width:100%;height:auto;background:#fff;border:1.5px dashed #c9d4ee;border-radius:12px;touch-action:none;cursor:crosshair}
+.opt{
+  display:block;width:100%;text-align:left;font:inherit;font-size:15px;padding:11px 14px;margin:8px 0;
+  border:1.5px solid var(--line);border-radius:11px;background:#fff;cursor:pointer;
+}
+.opt:hover{border-color:#c9d4ee;background:#fafbff}
+.opt.sel{border-color:var(--brand);background:var(--brand-soft)}
+.opt.ok{border-color:var(--ok);background:var(--ok-soft)}
+.opt.bad{border-color:var(--bad);background:var(--bad-soft)}
+.optgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:8px 0}
+.optgrid .opt{margin:0;padding:10px;display:flex;flex-direction:column;gap:6px;align-items:stretch}
+.optgrid .optfig svg{width:100%;height:auto;display:block}
+.optgrid .opt b{font-size:13px;color:var(--muted);font-weight:700}
+.fb{margin-top:14px;padding:14px 16px;border-radius:12px;border:1px solid var(--line);background:#fbfcff}
+.fb.good{border-color:#bfe6cf;background:var(--ok-soft)}
+.fb.bad{border-color:#f3c4bf;background:var(--bad-soft)}
+.fb .ftitle{font-weight:800;margin-bottom:6px}
+.fb ul{margin:6px 0 0;padding-left:20px}
+.fb li{margin:4px 0}
+.steps{list-style:none;padding:0;margin:8px 0 0}
+.steps li{display:flex;gap:8px;align-items:flex-start;margin:7px 0;font-size:14px;line-height:1.6}
+.steps .mk{flex:0 0 auto;font-weight:800;width:16px}
+.steps .mk.ok{color:var(--ok)}
+.steps .mk.bad{color:var(--bad)}
+.steps .stepno{font-weight:700;color:var(--brand);margin-right:2px}
+.tipbox{border-left:3px solid var(--warn);background:var(--warn-soft);padding:10px 12px;border-radius:0 10px 10px 0;font-size:14px;margin:12px 0}
+.figcap{font-size:12px;color:var(--muted);margin-top:14px;padding-top:12px;border-top:1px dashed var(--line)}
+.figbox{margin-top:6px}
+.figbox svg{width:100%;max-width:380px;height:auto;display:block;margin:0 auto}
+.figbefore{margin:10px 0 2px}
+.progress{height:5px;background:#e9edf6;border-radius:5px;overflow:hidden;margin:10px 0 0}
+.progress>i{display:block;height:100%;background:linear-gradient(90deg,#3fc9bb,#0f9b8e);border-radius:5px}
+table.tb{width:100%;border-collapse:collapse;font-size:14px}
+table.tb th,table.tb td{text-align:left;padding:8px 6px;border-bottom:1px solid var(--line)}
+table.tb th{font-size:12px;color:var(--muted);font-weight:600}
+table.tb td.n,table.tb th.n{text-align:right;font-variant-numeric:tabular-nums}
+.spark{display:flex;align-items:flex-end;gap:8px;height:70px;margin-top:8px}
+.spark .col{flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:4px}
+.spark .col i{display:block;width:100%;max-width:26px;background:#b9e6e1;border-radius:5px 5px 2px 2px;min-height:2px}
+.spark .col span{font-size:10px;color:var(--muted)}
+.wrongitem{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-bottom:1px dashed var(--line)}
+.wrongitem:last-child{border-bottom:0}
+.wrongitem .wt{flex:1;min-width:0;font-size:13px;color:#3b4356}
+.footer{margin-top:36px;text-align:center;font-size:12px;color:#9aa3b5}
+.empty{text-align:center;color:var(--muted);padding:26px 10px;font-size:14px}
+kbd{font:inherit;font-size:12px;border:1px solid var(--line);border-bottom-width:2px;border-radius:5px;padding:0 5px;background:#fff}
+@media (max-width:520px){
+  .top-note{display:none}
+  .qbody{font-size:16px}
+  .field .lbl{min-width:100%}
+  .input{max-width:none;flex-basis:100%}
+  .optgrid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="top-in">
+    <div class="brand">物理训练脚手架</div>
+    <span class="ver">v1</span>
+    <span class="top-note">认模型 · 认量 · 算到底 · 作图判断 · 读数</span>
+  </div>
+  <nav class="tabs" id="tabs">
+    <button data-go="today">今日</button>
+    <button data-go="model">认模型</button>
+    <button data-go="amount">认量</button>
+    <button data-go="calc">算到底</button>
+    <button data-go="draw">作图判断</button>
+    <button data-go="read">读数</button>
+    <button data-go="wrong">错题本</button>
+    <button data-go="report">报告</button>
+  </nav>
+</header>
+<main class="wrap" id="app"></main>
+<div class="footer">记录只存本机浏览器（localStorage）· 每周导出一次 · 单文件离线可用</div>
+
+<script id="core">
+/* =====================================================================
+   物理训练脚手架 · 纯逻辑层（不碰 DOM，可在 node 里单测）
+   题全部参数化生成；图全部内联 SVG，零图片依赖。
+   ===================================================================== */
+var PT = (function () {
+  'use strict';
+
+  var VERSION = 1;
+  var DAY = 86400000;
+
+  /* ---------- 随机：可复现（同一 seed 同一题） ---------- */
+  function mulberry32(seed) {
+    var a = seed >>> 0;
+    return function () {
+      a |= 0; a = (a + 0x6D2B79F5) | 0;
+      var t = Math.imul(a ^ (a >>> 15), 1 | a);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+  function ri(r, a, b) { return a + Math.floor(r() * (b - a + 1)); }
+  function pick(r, arr) { return arr[Math.floor(r() * arr.length)]; }
+  function shuffled(r, arr) {
+    var a = arr.slice();
+    for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(r() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; }
+    return a;
+  }
+
+  /* ---------- 数字解析：科学计数法 / 百分比 / 带单位 / 全角 / 负号变体 ---------- */
+  var SUP = { '⁰': '0', '¹': '1', '²': '2', '³': '3', '⁴': '4', '⁵': '5', '⁶': '6', '⁷': '7', '⁸': '8', '⁹': '9', '⁻': '-', '⁺': '+' };
+  function parseNum(input) {
+    if (input === null || input === undefined) return NaN;
+    if (typeof input === 'number') return isFinite(input) ? input : NaN;
+    var s = String(input).trim();
+    if (!s) return NaN;
+    s = s.replace(/[０-９]/g, function (c) { return String.fromCharCode(c.charCodeAt(0) - 0xFEE0); })
+      .replace(/[．。]/g, '.')
+      .replace(/[％]/g, '%')
+      .replace(/[−－—–]/g, '-')
+      .replace(/[×✕✖]/g, '×')
+      .replace(/[，,\s]/g, '');
+    s = s.replace(/[⁰¹²³⁴⁵⁶⁷⁸⁹⁻⁺]+/g, function (m) {
+      var out = '';
+      for (var i = 0; i < m.length; i++) out += (SUP[m.charAt(i)] || '');
+      return '^' + out;
+    });
+    s = s.replace(/[×xX*]\s*10\s*\^\s*/g, 'e');
+    s = s.replace(/%/g, '');
+    if (!s) return NaN;
+    var mf = s.match(/^([-+]?(?:\d+(?:\.\d*)?|\.\d+))\/([-+]?(?:\d+(?:\.\d*)?|\.\d+))$/);
+    if (mf) { var dv = parseFloat(mf[2]); return dv === 0 ? NaN : parseFloat(mf[1]) / dv; }
+    if (/^[-+]?(?:\d+(?:\.\d*)?|\.\d+)(?:e[-+]?\d+)?$/i.test(s)) return parseFloat(s);
+    /* 允许把单位一起打进来：30N / 0.4m / 4.2e3J/(kg·℃) */
+    var s2 = s.replace(/[A-Za-z\u4e00-\u9fa5℃°Ω()（）\/·、]+$/g, '');
+    if (s2 && s2 !== s && /^[-+]?(?:\d+(?:\.\d*)?|\.\d+)(?:e[-+]?\d+)?$/i.test(s2)) return parseFloat(s2);
+    return NaN;
+  }
+  function supStr(n) {
+    var SUPS = ['⁰', '¹', '²', '³', '⁴', '⁵', '⁶', '⁷', '⁸', '⁹'];
+    var str = String(Math.abs(n)), out = '';
+    for (var i = 0; i < str.length; i++) out += SUPS[+str.charAt(i)];
+    return (n < 0 ? '⁻' : '') + out;
+  }
+  /* 物理版数字显示：小数 + 科学计数法（不用上下分数） */
+  function fmtNum(x) {
+    if (!isFinite(x)) return '?';
+    if (x === 0) return '0';
+    var ax = Math.abs(x);
+    if (ax < 1e-3 || ax >= 1e5) {
+      var e = Math.floor(Math.log(ax) / Math.LN10);
+      var m = x / Math.pow(10, e);
+      m = Math.round(m * 1000) / 1000;
+      if (Math.abs(m) >= 10) { m = m / 10; e += 1; }
+      return String(m).replace('-', '−') + '×10' + supStr(e);
+    }
+    return String(Math.round(x * 1000) / 1000).replace('-', '−');
+  }
+  function relTol(ans, tol) {
+    return (tol === undefined || tol === null) ? Math.max(Math.abs(ans) * 1e-3, 1e-9) : Math.abs(tol);
+  }
+  function near(a, b, tol) { return isFinite(a) && Math.abs(a - b) <= (tol || 1e-9) + 1e-12; }
+
+  /* ---------- 判分：逐字段判，字段顺序 = 解题步骤 ---------- */
+  function judge(q, vals) {
+    var res = q.fields.map(function (f, i) {
+      var v = vals[i];
+      if (f.type === 'choice') return { ok: v === f.ans };
+      var x = (typeof v === 'number') ? v : parseNum(v);
+      if (!isFinite(x)) return { ok: false };
+      var ans = f.ans;
+      /* 百分比：答案存百分数（如 21），输入 21 / 21% / 0.21 都算对 */
+      if (f.unit === '%' && Math.abs(ans) > 1.5 && x !== 0 && Math.abs(x) <= 1.5) x = x * 100;
+      return { ok: Math.abs(x - ans) <= relTol(ans, f.tol) + 1e-9 };
+    });
+    var got = res.filter(function (x) { return x.ok; }).length;
+    return { ok: got === res.length, got: got, total: res.length, res: res };
+  }
+  function ansText(f) {
+    if (f.type === 'choice') return f.options[f.ans];
+    return fmtNum(f.ans) + (f.unit ? ' ' + f.unit : '');
+  }
+  function makeChoice(r, correct, distractors) {
+    var pool = [correct].concat(distractors), opts = [];
+    for (var i = 0; i < pool.length; i++) if (opts.indexOf(pool[i]) < 0) opts.push(pool[i]);
+    for (var j = opts.length - 1; j > 0; j--) { var k = Math.floor(r() * (j + 1)), t = opts[j]; opts[j] = opts[k]; opts[k] = t; }
+    return { type: 'choice', label: '', options: opts, ans: opts.indexOf(correct) };
+  }
+  function choiceField(r, correct, distractors, label) {
+    var f = makeChoice(r, correct, distractors);
+    f.label = label || '';
+    return f;
+  }
+
+  /* ================= 内联 SVG 图元（零图片） ================= */
+  function r1(x) { return isFinite(x) ? String(Math.round(x * 10) / 10) : '0'; }
+  function svgHead(W, H, label) {
+    return '<svg viewBox="0 0 ' + W + ' ' + H + '" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="' + (label || '题图') + '" font-family="-apple-system,PingFang SC,Microsoft YaHei,sans-serif">' +
+      '<rect width="' + W + '" height="' + H + '" fill="#fbfcff" rx="10"/>';
+  }
+  function svgTail() { return '</svg>'; }
+  function txt(x, y, s, size, fill, anchor, weight) {
+    return '<text x="' + r1(x) + '" y="' + r1(y) + '" font-size="' + (size || 12) + '" fill="' + (fill || '#1b2333') + '"' +
+      (anchor ? ' text-anchor="' + anchor + '"' : '') + (weight ? ' font-weight="' + weight + '"' : '') + '>' + s + '</text>';
+  }
+  function ln(x1, y1, x2, y2, color, w, dash) {
+    return '<line x1="' + r1(x1) + '" y1="' + r1(y1) + '" x2="' + r1(x2) + '" y2="' + r1(y2) + '" stroke="' + (color || '#1b2333') +
+      '" stroke-width="' + (w || 2) + '"' + (dash ? ' stroke-dasharray="' + dash + '"' : '') + ' stroke-linecap="round"/>';
+  }
+  function circle(x, y, rad, fill, stroke, w) {
+    return '<circle cx="' + r1(x) + '" cy="' + r1(y) + '" r="' + r1(rad) + '" fill="' + (fill || 'none') + '"' +
+      (stroke ? ' stroke="' + stroke + '" stroke-width="' + (w || 2) + '"' : '') + '/>';
+  }
+  function arrow(x1, y1, x2, y2, color, w) {
+    var ang = Math.atan2(y2 - y1, x2 - x1), L = 9;
+    var ax = x2 - L * Math.cos(ang - 0.4), ay = y2 - L * Math.sin(ang - 0.4);
+    var bx = x2 - L * Math.cos(ang + 0.4), by = y2 - L * Math.sin(ang + 0.4);
+    return ln(x1, y1, x2, y2, color, w || 2) +
+      '<path d="M' + r1(x2) + ' ' + r1(y2) + ' L' + r1(ax) + ' ' + r1(ay) + ' L' + r1(bx) + ' ' + r1(by) + ' Z" fill="' + (color || '#1b2333') + '"/>';
+  }
+  function hatch(x1, x2, y) {
+    var out = ln(x1, y, x2, y, '#6b7280', 3);
+    for (var i = x1 + 14; i < x2; i += 22) out += ln(i, y, i - 9, y + 11, '#c9d4ee', 1.6);
+    return out;
+  }
+
+  function svgTension(f) {
+    var mode = f.mode || 'two';
+    var W = 340, H = (mode === 'string') ? 250 : 210, s = [svgHead(W, H, '测力计示意图')];
+    if (mode === 'two') {
+      var F = f.F || 4;
+      s.push('<rect x="110" y="66" width="120" height="68" rx="10" fill="#fff" stroke="#0f9b8e" stroke-width="2.4"/>');
+      s.push(txt(170, 106, '弹簧测力计', 12, '#0f9b8e', 'middle', 600));
+      s.push(ln(110, 100, 88, 100, '#6b7280', 3));
+      s.push(circle(84, 100, 5, '#fff', '#6b7280', 2));
+      s.push(ln(230, 100, 252, 100, '#6b7280', 3));
+      s.push(circle(257, 100, 5, '#fff', '#6b7280', 2));
+      s.push(arrow(30, 100, 78, 100, '#d93025', 2.6));
+      s.push(txt(50, 88, F + ' N', 13, '#d93025', 'middle', 700));
+      s.push(arrow(310, 100, 262, 100, '#d93025', 2.6));
+      s.push(txt(290, 88, F + ' N', 13, '#d93025', 'middle', 700));
+      s.push(txt(170, 168, '两端各用 ' + F + ' N 的力沿相反方向拉，测力计静止', 11, '#6b7280', 'middle'));
+    } else if (mode === 'pulley') {
+      var G = f.G || 4;
+      s.push(hatch(40, 300, 26));
+      s.push(ln(210, 26, 210, 40, '#6b7280', 2.4));
+      s.push(circle(210, 64, 24, '#fff', '#6b7280', 2.6));
+      s.push(circle(210, 64, 4, '#6b7280'));
+      s.push('<rect x="161" y="150" width="50" height="46" rx="6" fill="#e6f6f4" stroke="#0f9b8e" stroke-width="2.2"/>');
+      s.push(txt(186, 179, 'G = ' + G + ' N', 12, '#0f9b8e', 'middle', 600));
+      /* 物体挂在定滑轮左侧切点的正下方，绳竖直上去正好与滑轮相切（无折角） */
+      s.push(ln(186, 150, 186, 64, '#1b2333', 2.2));
+      s.push('<path d="M186 64 A24 24 0 0 1 234 64" fill="none" stroke="#1b2333" stroke-width="2.2"/>');
+      s.push(ln(234, 64, 234, 110, '#1b2333', 2.2));
+      s.push('<rect x="214" y="110" width="40" height="66" rx="8" fill="#fff" stroke="#0f9b8e" stroke-width="2.2"/>');
+      s.push(txt(234, 148, '测力计', 10, '#0f9b8e', 'middle', 600));
+      s.push(arrow(234, 176, 234, 204, '#d93025', 2.6));
+    } else {
+      var G2 = f.G || 4;
+      s.push(hatch(60, 240, 24));
+      s.push(ln(150, 24, 150, 62, '#1b2333', 2.2));
+      s.push('<rect x="126" y="62" width="48" height="86" rx="9" fill="#fff" stroke="#0f9b8e" stroke-width="2.2"/>');
+      s.push(txt(150, 110, '测力计', 10, '#0f9b8e', 'middle', 600));
+      s.push(ln(150, 148, 150, 186, '#1b2333', 2.2));
+      s.push('<rect x="118" y="186" width="64" height="46" rx="6" fill="#e6f6f4" stroke="#0f9b8e" stroke-width="2.2"/>');
+      s.push(txt(150, 215, 'G = ' + G2 + ' N', 12, '#0f9b8e', 'middle', 600));
+    }
+    s.push(svgTail());
+    return s.join('');
+  }
+
+  function svgCharge(f) {
+    var W = 320, H = 220, s = [svgHead(W, H, '带电小球示意图')];
+    var mode = f.mode || 'touch';
+    if (mode === 'touch') {
+      s.push(hatch(40, 280, 26));
+      s.push(ln(220, 26, 220, 104, '#9aa3b5', 1.6, '4 4'));
+      s.push(circle(220, 120, 16, '#c9d4ee', '#6b7280', 2));
+      s.push(txt(220, 124, '球', 11, '#1b2333', 'middle', 600));
+      s.push('<rect x="40" y="102" width="96" height="16" rx="8" fill="#b58b3a"/>');
+      s.push(txt(88, 94, '橡胶棒（带负电）', 11, '#8a6420', 'middle'));
+      s.push(arrow(240, 120, 292, 120, '#d93025', 2.4));
+      s.push(txt(266, 108, '被弹开', 11, '#d93025', 'middle', 600));
+    } else {
+      s.push(hatch(40, 300, 26));
+      s.push(ln(110, 26, 110, 104, '#9aa3b5', 1.6, '4 4'));
+      s.push(ln(210, 26, 210, 104, '#9aa3b5', 1.6, '4 4'));
+      s.push(circle(110, 120, 16, '#c9d4ee', '#6b7280', 2));
+      s.push(circle(210, 120, 16, '#c9d4ee', '#6b7280', 2));
+      s.push(txt(110, 124, 'A', 12, '#1b2333', 'middle', 700));
+      s.push(txt(210, 124, 'B', 12, '#1b2333', 'middle', 700));
+      s.push(arrow(128, 120, 168, 120, '#d93025', 2.4));
+      s.push(arrow(192, 120, 152, 120, '#d93025', 2.4));
+      s.push(txt(160, 100, '相互吸引', 11, '#d93025', 'middle', 600));
+    }
+    s.push(svgTail());
+    return s.join('');
+  }
+
+  function svgStroke(f) {
+    var W = 300, H = 270, s = [svgHead(W, H, '汽油机冲程示意图')];
+    var stroke = f.stroke || 'compress';
+    var pistonY = (stroke === 'intake' || stroke === 'power') ? 150 : 104;
+    s.push(ln(100, 40, 100, 200, '#6b7280', 3));
+    s.push(ln(200, 40, 200, 200, '#6b7280', 3));
+    s.push(ln(100, 40, 200, 40, '#6b7280', 3));
+    s.push(ln(100, 200, 200, 200, '#6b7280', 3));
+    s.push('<rect x="104" y="' + pistonY + '" width="92" height="16" rx="3" fill="#c9d4ee" stroke="#6b7280" stroke-width="2"/>');
+    s.push(ln(150, pistonY + 16, 172, 226, '#6b7280', 4));
+    s.push(circle(150, 226, 24, 'none', '#6b7280', 2.4));
+    s.push(circle(172, 226, 4, '#6b7280'));
+    s.push(circle(150, 226, 4, '#6b7280'));
+    var intakeOpen = (stroke === 'intake'), exhaustOpen = (stroke === 'exhaust');
+    function valve(x, open, label) {
+      var headY = open ? 58 : 42;
+      var out = ln(x, 16, x, headY, '#1b2333', 3) + ln(x - 11, headY, x + 11, headY, '#1b2333', 3.6) + txt(x, 12, label, 10, '#6b7280', 'middle');
+      return out;
+    }
+    s.push(valve(126, intakeOpen, '进气门'));
+    s.push(valve(174, exhaustOpen, '排气门'));
+    if (stroke === 'intake') s.push(arrow(126, 70, 126, 96, '#0f9d58', 2));
+    if (stroke === 'exhaust') s.push(arrow(174, 96, 174, 68, '#d93025', 2));
+    if (stroke === 'power') {
+      s.push('<path d="M150 46 l-7 12 l14 0 l-7 12" fill="none" stroke="#e37400" stroke-width="2.4"/>');
+      s.push(txt(150, 88, '点火', 10, '#e37400', 'middle', 600));
+    }
+    if (stroke === 'compress' || stroke === 'exhaust') {
+      s.push(arrow(120, pistonY + 34, 120, pistonY + 10, '#d93025', 2));
+      s.push(arrow(180, pistonY + 34, 180, pistonY + 10, '#d93025', 2));
+    } else {
+      s.push(arrow(120, pistonY - 12, 120, pistonY + 12, '#d93025', 2));
+      s.push(arrow(180, pistonY - 12, 180, pistonY + 12, '#d93025', 2));
+    }
+    s.push(svgTail());
+    return s.join('');
+  }
+
+  function svgPulley(f) {
+    var W = 340, H = 300, s = [svgHead(W, H, '滑轮组示意图')];
+    var variant = f.variant || ('n' + (f.n || 2));
+    s.push(hatch(30, 310, 24));
+    var MX = 140, MY = 190, FR = 22, FXc = 200, FYc = 64;
+    function movingPulley() {
+      s.push(circle(MX, MY, FR, '#fff', '#6b7280', 2.6));
+      s.push(circle(MX, MY, 4, '#6b7280'));
+    }
+    function fixedPulley() {
+      s.push(ln(FXc, 24, FXc, FYc - FR, '#6b7280', 2.4));
+      s.push(circle(FXc, FYc, FR, '#fff', '#6b7280', 2.6));
+      s.push(circle(FXc, FYc, 4, '#6b7280'));
+    }
+    function box(x, y) {
+      s.push(ln(x, y - 12, x, y, '#1b2333', 2.2));
+      s.push('<rect x="' + (x - 30) + '" y="' + y + '" width="60" height="44" rx="6" fill="#e6f6f4" stroke="#0f9b8e" stroke-width="2.2"/>');
+      s.push(txt(x, y + 27, 'G', 13, '#0f9b8e', 'middle', 700));
+    }
+    if (variant === 'n2') {
+      movingPulley(); fixedPulley(); box(MX, 224);
+      s.push(ln(MX - FR, 24, MX - FR, MY, '#1b2333', 2.2));
+      s.push('<path d="M' + (MX - FR) + ' ' + MY + ' A' + FR + ' ' + FR + ' 0 0 0 ' + (MX + FR) + ' ' + MY + '" fill="none" stroke="#1b2333" stroke-width="2.2"/>');
+      s.push(ln(MX + FR, MY, FXc - FR, FYc, '#1b2333', 2.2));
+      s.push('<path d="M' + (FXc - FR) + ' ' + FYc + ' A' + FR + ' ' + FR + ' 0 0 1 ' + (FXc + FR) + ' ' + FYc + '" fill="none" stroke="#1b2333" stroke-width="2.2"/>');
+      s.push(arrow(FXc + FR, FYc, FXc + FR, 150, '#1b2333', 2.2));
+    } else if (variant === 'n3') {
+      movingPulley(); fixedPulley(); box(MX, 224);
+      /* 第三条绳的绳端系在动滑轮框架上：从圆顶点引一小段到「系绳环」，再从系绳环引到定滑轮；
+         绕过动滑轮的弧必须从底部过（sweep=1：右切点→底部→左切点）。 */
+      s.push(ln(MX - 12, MY - FR - 8, MX + 12, MY - FR - 8, '#6b7280', 2));
+      s.push(ln(MX, MY - FR, MX, MY - FR - 8, '#1b2333', 2.2));
+      s.push(circle(MX, MY - FR - 8, 3.5, '#fff', '#6b7280', 2));
+      s.push(txt(MX + 8, MY - FR - 3, '系', 9, '#6b7280', 'start'));
+      s.push(ln(MX, MY - FR - 8, FXc - FR, FYc, '#1b2333', 2.2));
+      s.push('<path d="M' + (FXc - FR) + ' ' + FYc + ' A' + FR + ' ' + FR + ' 0 0 1 ' + (FXc + FR) + ' ' + FYc + '" fill="none" stroke="#1b2333" stroke-width="2.2"/>');
+      s.push(ln(FXc + FR, FYc, MX + FR, MY, '#1b2333', 2.2));
+      s.push('<path d="M' + (MX + FR) + ' ' + MY + ' A' + FR + ' ' + FR + ' 0 0 1 ' + (MX - FR) + ' ' + MY + '" fill="none" stroke="#1b2333" stroke-width="2.2"/>');
+      s.push(arrow(MX - FR, MY, MX - FR, 40, '#1b2333', 2.2));
+    } else if (variant === 'n1a') {
+      movingPulley(); box(MX, 224);
+      s.push(ln(MX, MY - FR, MX, 24, '#1b2333', 2.2));
+    } else {
+      fixedPulley(); box(MX, 224);
+      s.push(ln(MX, 212, MX, 120, '#1b2333', 2.2));
+      s.push(ln(MX, 120, FXc - FR, FYc, '#1b2333', 2.2));
+      s.push('<path d="M' + (FXc - FR) + ' ' + FYc + ' A' + FR + ' ' + FR + ' 0 0 1 ' + (FXc + FR) + ' ' + FYc + '" fill="none" stroke="#1b2333" stroke-width="2.2"/>');
+      s.push(arrow(FXc + FR, FYc, FXc + FR, 150, '#1b2333', 2.2));
+    }
+    s.push(svgTail());
+    return s.join('');
+  }
+
+  function svgLever(f) {
+    var W = 340, H = 280, s = [svgHead(W, H, '杠杆示意图')];
+    var rodDeg = (f.rodDeg == null ? 20 : f.rodDeg) * Math.PI / 180;
+    var fDeg = (f.fDeg == null ? 115 : f.fDeg) * Math.PI / 180;
+    var O = { x: 62, y: 210 }, L = 232;
+    var B = { x: O.x + L * Math.cos(rodDeg), y: O.y - L * Math.sin(rodDeg) };
+    var A = { x: O.x + L * 0.55 * Math.cos(rodDeg), y: O.y - L * 0.55 * Math.sin(rodDeg) };
+    var dir = { x: Math.cos(fDeg), y: Math.sin(fDeg) };
+    s.push(ln(O.x, O.y, B.x, B.y, '#1b2333', 6));
+    s.push(circle(O.x, O.y, 7, '#fff', '#1b2333', 2.6));
+    s.push(txt(O.x - 14, O.y + 24, 'O', 13, '#1b2333', 'middle', 700));
+    s.push(txt(B.x + 12, B.y - 10, 'B', 12, '#1b2333', 'middle', 700));
+    s.push(txt(A.x - 14, A.y - 10, 'A', 12, '#1b2333', 'middle', 700));
+    s.push(arrow(A.x, A.y, A.x, A.y + 46, '#0f9b8e', 2.6));
+    s.push('<rect x="' + r1(A.x - 20) + '" y="' + r1(A.y + 46) + '" width="40" height="26" rx="4" fill="#e6f6f4" stroke="#0f9b8e" stroke-width="2"/>');
+    s.push(txt(A.x, A.y + 64, 'G', 12, '#0f9b8e', 'middle', 700));
+    var Fe = { x: B.x + dir.x * 56, y: B.y + dir.y * 56 };
+    s.push(arrow(B.x, B.y, Fe.x, Fe.y, '#d93025', 2.8));
+    s.push(txt(Fe.x + 10, Fe.y + 5, 'F', 13, '#d93025', 'middle', 700));
+    var lt = f.ltype || 'none';
+    if (lt !== 'none') {
+      var col = (lt === 'perp') ? '#0f9d58' : '#d93025';
+      if (lt === 'perp' || lt === 'wrongperp') {
+        var base = (lt === 'perp') ? B : A;
+        var d2 = (lt === 'perp') ? dir : { x: 0, y: 1 };
+        var L2 = 300;
+        s.push(ln(base.x - d2.x * L2, base.y - d2.y * L2, base.x + d2.x * L2, base.y + d2.y * L2, '#9aa3b5', 1.6, '6 5'));
+        var tt = (O.x - base.x) * d2.x + (O.y - base.y) * d2.y;
+        var P = { x: base.x + d2.x * tt, y: base.y + d2.y * tt };
+        s.push(ln(O.x, O.y, P.x, P.y, col, 2.8));
+        s.push(circle(P.x, P.y, 3.5, col));
+        var ux = (P.x - O.x), uy = (P.y - O.y), ul = Math.hypot(ux, uy) || 1;
+        ux /= ul; uy /= ul;
+        var m = 9;
+        s.push('<path d="M' + r1(P.x - ux * m) + ' ' + r1(P.y - uy * m) + ' L' + r1(P.x - ux * m + d2.x * m) + ' ' + r1(P.y - uy * m + d2.y * m) + ' L' + r1(P.x + d2.x * m) + ' ' + r1(P.y + d2.y * m) + '" fill="none" stroke="' + col + '" stroke-width="1.6"/>');
+        s.push(txt((O.x + P.x) / 2 - 6, (O.y + P.y) / 2 + 18, 'l', 14, col, 'middle', 700));
+      } else if (lt === 'point') {
+        s.push(ln(O.x, O.y, B.x, B.y, col, 2.8));
+        s.push(txt((O.x + B.x) / 2 + 6, (O.y + B.y) / 2 + 20, 'l', 14, col, 'middle', 700));
+      } else {
+        s.push(ln(O.x, O.y, A.x, A.y, col, 2.8));
+        s.push(txt((O.x + A.x) / 2 - 12, (O.y + A.y) / 2 + 18, 'l', 14, col, 'middle', 700));
+      }
+    }
+    s.push(svgTail());
+    return s.join('');
+  }
+
+  function svgCircuit(f) {
+    var W = 340, H = 240, s = [svgHead(W, H, '电路图')];
+    var kind = f.kind || 'parallel';
+    function wire(x1, y1, x2, y2) { s.push(ln(x1, y1, x2, y2, '#1b2333', 2.4)); }
+    function gapRect(x, y, w, h) { s.push('<rect x="' + r1(x - w / 2) + '" y="' + r1(y - h / 2) + '" width="' + w + '" height="' + h + '" fill="#fbfcff"/>'); }
+    function lamp(x, y, label) {
+      s.push(circle(x, y, 13, '#fff', '#1b2333', 2.4));
+      s.push(ln(x - 9, y - 9, x + 9, y + 9, '#1b2333', 2.2));
+      s.push(ln(x - 9, y + 9, x + 9, y - 9, '#1b2333', 2.2));
+      s.push(txt(x, y - 19, label, 12, '#1b2333', 'middle', 600));
+    }
+    function ammeter(x, y, label) {
+      s.push(circle(x, y, 14, '#fff', '#1b2333', 2.4));
+      s.push(txt(x, y + 5, 'A', 14, '#1b2333', 'middle', 700));
+      s.push(txt(x, y - 21, label, 11, '#6b7280', 'middle', 600));
+    }
+    function battery(x, y) {
+      gapRect(x, y, 44, 28);
+      s.push(ln(x - 26, y, x - 14, y, '#1b2333', 2.4));
+      s.push(ln(x - 14, y - 12, x - 14, y + 12, '#1b2333', 3));
+      s.push(ln(x + 4, y - 6, x + 4, y + 6, '#1b2333', 6));
+      s.push(ln(x + 4, y, x + 18, y, '#1b2333', 2.4));
+      s.push(txt(x - 18, y - 16, '+', 12, '#d93025', 'middle', 700));
+    }
+    function sw(x, y) {
+      gapRect(x, y, 46, 28);
+      s.push(ln(x - 26, y, x - 16, y, '#1b2333', 2.4));
+      s.push(circle(x - 16, y, 3, '#1b2333'));
+      s.push(circle(x + 16, y, 3, '#1b2333'));
+      s.push(ln(x - 16, y, x + 10, y - 12, '#1b2333', 2.4));
+      s.push(ln(x + 16, y, x + 26, y, '#1b2333', 2.4));
+      s.push(txt(x, y - 20, 'S', 11, '#6b7280', 'middle', 600));
+    }
+    function led(x, y) {
+      gapRect(x, y, 60, 34);
+      s.push(ln(x - 30, y, x - 10, y, '#1b2333', 2.4));
+      s.push('<path d="M' + r1(x - 10) + ' ' + r1(y - 9) + ' L' + r1(x - 10) + ' ' + r1(y + 9) + ' L' + r1(x + 8) + ' ' + r1(y) + ' Z" fill="#1b2333"/>');
+      s.push(ln(x + 8, y - 10, x + 8, y + 10, '#1b2333', 3));
+      s.push(ln(x + 8, y, x + 30, y, '#1b2333', 2.4));
+      s.push(arrow(x + 12, y - 12, x + 22, y - 22, '#e37400', 1.8));
+      s.push(arrow(x + 18, y - 8, x + 28, y - 18, '#e37400', 1.8));
+      s.push(txt(x - 16, y - 20, 'A', 12, '#d93025', 'middle', 700));
+      s.push(txt(x + 16, y - 20, 'B', 12, '#d93025', 'middle', 700));
+    }
+    if (kind === 'led-symbol') {
+      /* 只画 LED 符号本身、不画电池极性：避免「A 端接正极」被图直接剧透 */
+      led(170, 110);
+      s.push(txt(170, 172, '发光二极管（LED）符号：A 长脚（阳极），B 短脚（阴极）', 10, '#6b7280', 'middle'));
+    } else if (kind === 'led') {
+      wire(50, 70, 290, 70); wire(290, 70, 290, 190); wire(290, 190, 50, 190); wire(50, 190, 50, 70);
+      led(170, 70); battery(110, 190); sw(220, 190);
+    } else if (kind === 'series' || kind === 'connect-series') {
+      wire(50, 70, 290, 70); wire(290, 70, 290, 190); wire(290, 190, 50, 190); wire(50, 190, 50, 70);
+      lamp(140, 70, 'L₁'); lamp(230, 70, 'L₂'); battery(110, 190); sw(215, 190);
+    } else {
+      wire(50, 70, 290, 70); wire(50, 120, 290, 120); wire(50, 190, 290, 190);
+      wire(50, 70, 50, 190); wire(290, 70, 290, 190);
+      lamp(130, 70, 'L₁'); lamp(180, 120, 'L₂');
+      if (kind === 'parallel') {
+        ammeter(225, 70, 'A₁'); battery(110, 190); sw(196, 190); ammeter(258, 190, 'A₂');
+      } else if (kind === 'connect-parallel') {
+        battery(110, 190); sw(215, 190);
+      } else if (kind === 'connect-switchbranch') {
+        battery(110, 190); sw(225, 70);
+      } else if (kind === 'connect-short') {
+        battery(110, 190); sw(215, 190); wire(50, 155, 290, 155);
+      } else if (kind === 'connect-ammeterL1') {
+        battery(110, 190); sw(215, 190); ammeter(225, 70, 'A');
+      } else if (kind === 'connect-ammeterMain') {
+        battery(110, 190); sw(215, 190); ammeter(258, 190, 'A');
+      } else if (kind === 'connect-ammeterL2') {
+        battery(110, 190); sw(215, 190); ammeter(240, 120, 'A');
+      } else if (kind === 'connect-ammeterShort') {
+        battery(110, 190); sw(215, 190); wire(50, 155, 290, 155); ammeter(170, 155, 'A');
+      }
+    }
+    s.push(svgTail());
+    return s.join('');
+  }
+
+  function svgAmmeter(f) {
+    var W = 320, H = 285, s = [svgHead(W, H, '电流表表盘')];
+    var C = { x: 160, y: 205 }, R = 118, a0 = 210, a1 = -30;
+    function pt(frac, rad) {
+      var a = (a0 + (a1 - a0) * frac) * Math.PI / 180;
+      return { x: C.x + rad * Math.cos(a), y: C.y - rad * Math.sin(a) };
+    }
+    var d = [];
+    for (var i = 0; i <= 60; i++) { var p = pt(i / 60, R); d.push((i ? 'L' : 'M') + r1(p.x) + ' ' + r1(p.y)); }
+    s.push('<path d="' + d.join(' ') + '" fill="none" stroke="#1b2333" stroke-width="2.6"/>');
+    var div = 30;
+    for (var k = 0; k <= div; k++) {
+      var fr = k / div, major = (k % 5 === 0);
+      var p1 = pt(fr, R), p2 = pt(fr, R - (major ? 15 : 8));
+      s.push(ln(p1.x, p1.y, p2.x, p2.y, '#1b2333', major ? 2 : 1.2));
+    }
+    for (var j = 0; j <= 6; j++) { var pp = pt(j / 6, R - 30); s.push(txt(pp.x, pp.y + 4, String(j / 10), 10, '#0f9b8e', 'middle')); }
+    for (var j2 = 0; j2 <= 3; j2++) { var pp2 = pt(j2 / 3, R - 52); s.push(txt(pp2.x, pp2.y + 4, String(j2), 10, '#6b7280', 'middle')); }
+    var frac = f.range ? Math.max(0, Math.min(1, f.reading / f.range)) : 0;
+    var np = pt(frac, R - 22);
+    s.push(ln(C.x, C.y, np.x, np.y, '#d93025', 3));
+    s.push(circle(np.x, np.y, 4.5, '#d93025'));
+    s.push(circle(C.x, C.y, 7, '#1b2333'));
+    s.push(txt(C.x, C.y + 36, 'A', 16, '#1b2333', 'middle', 700));
+    s.push(svgTail());
+    return s.join('');
+  }
+
+  function svgThermometer(f) {
+    var W = 280, H = 330, s = [svgHead(W, H, '温度计')];
+    var lo = (f.lo == null ? -10 : f.lo), hi = (f.hi == null ? 110 : f.hi);
+    var y0 = 268, y1 = 40;
+    function yy(t) { return y0 - (t - lo) * (y0 - y1) / (hi - lo); }
+    s.push('<rect x="78" y="34" width="26" height="240" rx="10" fill="#fff" stroke="#6b7280" stroke-width="2"/>');
+    s.push(circle(91, 288, 20, '#fff', '#6b7280', 2));
+    var yr = yy(f.reading);
+    s.push('<rect x="84" y="' + r1(yr) + '" width="14" height="' + r1(288 - yr) + '" fill="#d93025"/>');
+    s.push(circle(91, 288, 15, '#d93025'));
+    for (var t = lo; t <= hi; t++) {
+      var major = (t % 10 === 0);
+      s.push(ln(104, yy(t), 104 + (major ? 14 : 7), yy(t), '#1b2333', major ? 1.8 : 1));
+      if (t % 20 === 0 || t === lo || t === hi) s.push(txt(126, yy(t) + 4, String(t), 10, '#1b2333', 'start'));
+    }
+    s.push(svgTail());
+    return s.join('');
+  }
+
+  function svgSpring(f) {
+    var W = 250, H = 330, s = [svgHead(W, H, '弹簧测力计')];
+    var max = f.max || 5, div = f.div || 0.2, reading = f.reading || 1;
+    var yTop = 70, yBot = 250;
+    function yy(v) { return yTop + (v / max) * (yBot - yTop); }
+    s.push(circle(120, 30, 11, 'none', '#6b7280', 2.6));
+    s.push(ln(120, 41, 120, 52, '#6b7280', 2.4));
+    s.push('<rect x="80" y="52" width="80" height="212" rx="9" fill="#fff" stroke="#6b7280" stroke-width="2.4"/>');
+    var steps = Math.round(max / div);
+    for (var k = 0; k <= steps; k++) {
+      var v = k * div, major = (k % 5 === 0);
+      s.push(ln(98, yy(v), 98 + (major ? 15 : 8), yy(v), '#1b2333', major ? 1.8 : 1));
+      if (major) s.push(txt(94, yy(v) + 4, String(Math.round(v * 10) / 10), 10, '#1b2333', 'end'));
+    }
+    var yp = yy(reading);
+    s.push(ln(96, yp, 154, yp, '#d93025', 2.6));
+    s.push('<path d="M96 ' + r1(yp) + ' l-8 -5 l0 10 z" fill="#d93025"/>');
+    s.push(ln(120, 264, 120, 286, '#6b7280', 2.6));
+    s.push('<path d="M120 286 q0 16 16 16 q12 0 12 -10" fill="none" stroke="#6b7280" stroke-width="2.6"/>');
+    s.push(svgTail());
+    return s.join('');
+  }
+
+  function svgFor(q) {
+    var f = q && q.fig;
+    if (!f) return '';
+    var body = '';
+    if (f.type === 'tension') body = svgTension(f);
+    else if (f.type === 'circuit') body = svgCircuit(f);
+    else if (f.type === 'stroke') body = svgStroke(f);
+    else if (f.type === 'pulley') body = svgPulley(f);
+    else if (f.type === 'lever') body = svgLever(f);
+    else if (f.type === 'charge') body = svgCharge(f);
+    else if (f.type === 'ammeter') body = svgAmmeter(f);
+    else if (f.type === 'thermometer') body = svgThermometer(f);
+    else if (f.type === 'spring') body = svgSpring(f);
+    return body;
+  }
+
+  /* ================= 认模型（6 类，全部 choice） ================= */
+  function genModelTension(r) {
+    var v = ri(r, 0, 2);
+    if (v === 0) {
+      var F = ri(r, 2, 6);
+      return {
+        id: 'model.tension', kind: 'tension', title: '测力计示数（两端拉）',
+        prompt: '弹簧测力计的两端各用 ' + F + ' N 的力沿相反方向拉，测力计静止。它的示数是（　）',
+        fields: [choiceField(r, F + ' N', [(F * 2) + ' N', '0 N', (F / 2) + ' N'])],
+        tip: '测力计示数 = 作用在挂钩上的拉力，不是两端拉力之和。',
+        explain: ['测力计显示的是作用在挂钩上的拉力 ' + F + ' N，另一端只是把它拉住。', '所以示数是 ' + F + ' N，不是 ' + (F * 2) + ' N。'],
+        fig: { type: 'tension', mode: 'two', F: F }, figBefore: true,
+        kp: ['弹簧测力计', '力的测量']
+      };
+    }
+    if (v === 1) {
+      var G = ri(r, 2, 8);
+      return {
+        id: 'model.tension', kind: 'tension', title: '定滑轮上测力计示数',
+        prompt: '如图，物体重 ' + G + ' N，跨过定滑轮的绳一端与它相连，另一端接弹簧测力计竖直向下拉，物体静止。测力计的示数是（　）',
+        fields: [choiceField(r, G + ' N', [(G * 2) + ' N', '0 N', Math.round(G / 2 * 10) / 10 + ' N'])],
+        tip: '定滑轮只改变力的方向，不省力；同一根绳上张力处处相等。',
+        explain: ['物体静止，绳的拉力等于物体重力 ' + G + ' N。', '同一根绳上张力处处相等，所以测力计示数也是 ' + G + ' N。'],
+        fig: { type: 'tension', mode: 'pulley', G: G }, figBefore: true,
+        kp: ['弹簧测力计', '定滑轮']
+      };
+    }
+    var G2 = ri(r, 2, 8);
+    return {
+      id: 'model.tension', kind: 'tension', title: '绳中测力计示数',
+      prompt: '如图，弹簧测力计串在一根绳中，绳的一端挂着 ' + G2 + ' N 的物体，另一端固定在天花板上，整个装置静止。测力计的示数是（　）',
+      fields: [choiceField(r, G2 + ' N', ['0 N', (G2 * 2) + ' N', Math.round(G2 / 2 * 10) / 10 + ' N'])],
+      tip: '同一根绳、静止：绳上各处张力都等于物体重力。',
+      explain: ['物体静止，绳对物体的拉力等于重力 ' + G2 + ' N。', '同一根绳上张力处处相等，所以测力计示数 = ' + G2 + ' N。'],
+      fig: { type: 'tension', mode: 'string', G: G2 }, figBefore: true,
+      kp: ['弹簧测力计', '绳的张力']
+    };
+  }
+
+  function genModelLed(r) {
+    var v = ri(r, 0, 1);
+    if (v === 0) {
+      return {
+        id: 'model.led', kind: 'led', title: 'LED 极性',
+        prompt: 'LED（发光二极管）的符号如图，A 端是长脚（阳极），B 端是短脚（阴极）。要使 LED 发光，电源的正极应接（　）',
+        fields: [choiceField(r, 'A 端（长脚）', ['B 端（短脚）', 'A 端或 B 端都可以', '接哪一端都不发光'])],
+        tip: '二极管单向导电：电流只能从长脚（阳极）流入、短脚流出。',
+        explain: ['LED 具有单向导电性，电流从长脚（阳极）流入、短脚（阴极）流出时才能发光。', '所以电源正极接 A 端（长脚），负极经开关接 B 端。'],
+        fig: { type: 'circuit', kind: 'led-symbol' }, figBefore: true,
+        kp: ['二极管', '电流方向']
+      };
+    }
+    return {
+      id: 'model.led', kind: 'led', title: 'LED 是否发光',
+      prompt: '如图，LED 的 A 端（长脚）接电源正极，B 端（短脚）经开关接电源负极。闭合开关后，LED（　）',
+      fields: [choiceField(r, '发光', ['不发光', '先亮后灭', '可能发光，也可能不发光'])],
+      tip: '长脚接正极 → 正向导通 → 发光。',
+      explain: ['电流从电源正极出发，经 LED 的 A 端（长脚、阳极）流入、B 端流出，是正向连接。', '二极管正向导通，所以 LED 发光。'],
+      fig: { type: 'circuit', kind: 'led' }, figBefore: true,
+      kp: ['二极管', '电流方向']
+    };
+  }
+
+  function genModelCharge(r) {
+    var v = ri(r, 0, 1);
+    if (v === 0) {
+      return {
+        id: 'model.charge', kind: 'charge', title: '接触后带电',
+        prompt: '用毛皮摩擦过的橡胶棒（带负电）去接触悬挂的轻质小球，小球被弹开。小球被弹开的原因是（　）',
+        fields: [choiceField(r, '接触后小球带上了与橡胶棒同种的负电荷，同种电荷相互排斥', ['异种电荷相互吸引', '小球本来带正电', '橡胶棒把小球推开了'])],
+        tip: '带电体接触不带电的轻小物体 → 电荷转移 → 两者带同种电荷 → 排斥。',
+        explain: ['橡胶棒带负电，接触小球时把部分负电荷转移给小球。', '小球与橡胶棒带同种电荷，同种电荷相互排斥，所以小球被弹开。'],
+        fig: { type: 'charge', mode: 'touch' }, figBefore: true,
+        kp: ['电荷', '接触带电']
+      };
+    }
+    return {
+      id: 'model.charge', kind: 'charge', title: '吸引的两种情况',
+      prompt: '两个用细线悬挂的轻质小球靠近时相互吸引。下列判断正确的是（　）',
+      fields: [choiceField(r, '两球可能带异种电荷，也可能只有一个带电', ['两球一定带同种电荷', '两球一定带异种电荷', '两球一定都不带电'])],
+      tip: '「吸引」有两种可能：带异种电荷，或一个带电一个不带电；「排斥」才一定带同种电荷。',
+      explain: ['同种电荷相互排斥，异种电荷相互吸引；带电体还能吸引不带电的轻小物体。', '所以相互吸引可能带异种电荷，也可能只有一个球带电。'],
+      fig: { type: 'charge', mode: 'attract' }, figBefore: true,
+      kp: ['电荷', '相互作用']
+    };
+  }
+
+  function genModelStroke(r) {
+    var S = pick(r, [
+      { key: 'intake', name: '吸气冲程', fact: '进气门打开、排气门关闭，活塞向下运动，吸入空气和汽油的混合气体。', energy: 2 },
+      { key: 'compress', name: '压缩冲程', fact: '两个气门都关闭，活塞向上运动，压缩气体做功，机械能转化为内能。', energy: 0 },
+      { key: 'power', name: '做功冲程', fact: '两个气门都关闭，火花塞点火，高温高压燃气推动活塞向下运动，内能转化为机械能。', energy: 1 },
+      { key: 'exhaust', name: '排气冲程', fact: '进气门关闭、排气门打开，活塞向上运动，把废气排出气缸。', energy: 2 }
+    ]);
+    var v = ri(r, 0, 1);
+    if (v === 0) {
+      return {
+        id: 'model.stroke', kind: 'stroke', title: '认冲程',
+        prompt: '如图是四冲程汽油机的某一个冲程，它是（　）',
+        fields: [choiceField(r, S.name, ['吸气冲程', '压缩冲程', '做功冲程', '排气冲程'])],
+        tip: '看两个气门的开闭和活塞运动方向：进气门开=吸气，排气门开=排气，都关闭看活塞向上（压缩）还是向下（做功）。',
+        explain: [S.fact],
+        fig: { type: 'stroke', stroke: S.key }, figBefore: true,
+        kp: ['四冲程', '内燃机']
+      };
+    }
+    var en = ['机械能转化为内能', '内能转化为机械能', '没有明显的能量转化', '化学能转化为内能'][S.energy];
+    return {
+      id: 'model.stroke', kind: 'stroke', title: '冲程的能量转化',
+      prompt: '如图是四冲程汽油机的「' + S.name + '」。这个冲程中主要的能量转化是（　）',
+      fields: [choiceField(r, en, ['机械能转化为内能', '内能转化为机械能', '没有明显的能量转化', '化学能转化为内能'])],
+      tip: '压缩冲程：机械能 → 内能；做功冲程：内能 → 机械能。',
+      explain: [S.fact],
+      fig: { type: 'stroke', stroke: S.key }, figBefore: true,
+      kp: ['四冲程', '能量转化']
+    };
+  }
+
+  function genModelCircuit(r) {
+    var v = ri(r, 0, 2);
+    if (v === 0) {
+      return {
+        id: 'model.circuit', kind: 'circuit', title: '串并联判断',
+        prompt: '如图电路，闭合开关 S 后两灯都发光。它们的连接方式是（　）',
+        fields: [choiceField(r, '并联', ['串联', '无法判断'])],
+        tip: '并联：电流从正极出发后分成几条支路；串联：只有一条路径。',
+        explain: ['电流从电源正极出发后，在左侧分成两条支路，分别经过 L₁、L₂，再在右侧汇合回到负极。', '所以两灯是并联。'],
+        fig: { type: 'circuit', kind: 'parallel' }, figBefore: true,
+        kp: ['电路', '串并联']
+      };
+    }
+    if (v === 1) {
+      return {
+        id: 'model.circuit', kind: 'circuit', title: '电流表测哪条支路',
+        prompt: '如图电路，闭合开关后，电流表 A₁ 测的是（　）',
+        fields: [choiceField(r, '通过 L₁ 的电流', ['通过 L₂ 的电流', '干路电流', '电源两端的电压'])],
+        tip: '电流表与被测用电器串联：串在支路里就测该支路电流，串在干路就测总电流。',
+        explain: ['A₁ 在 L₁ 所在的支路里，与 L₁ 串联，所以测通过 L₁ 的电流。', 'A₂ 在干路上，测的是干路总电流。'],
+        fig: { type: 'circuit', kind: 'parallel' }, figBefore: true,
+        kp: ['电路', '电流表']
+      };
+    }
+    return {
+      id: 'model.circuit', kind: 'circuit', title: '并联支路故障',
+      prompt: '如图电路，两灯并联，A₂ 接在干路上。闭合开关后两灯都发光。若 L₁ 的灯丝烧断，则（　）',
+      fields: [choiceField(r, 'L₂ 仍发光，A₂ 示数变小', ['L₂ 也熄灭，A₂ 示数为 0', 'L₂ 变得更亮，A₂ 示数变大', 'L₂ 仍发光，A₂ 示数不变'])],
+      tip: '并联各支路互不影响；干路电流等于各支路电流之和。',
+      explain: ['并联电路中各支路互不影响，L₁ 断路后 L₂ 仍能发光。', '少了一条支路，干路电流变小，所以 A₂ 示数变小。'],
+      fig: { type: 'circuit', kind: 'parallel' }, figBefore: true,
+      kp: ['电路', '并联', '故障']
+    };
+  }
+
+  function genModelPulley(r) {
+    var v = ri(r, 0, 1);
+    if (v === 0) {
+      var n = pick(r, [2, 3]);
+      return {
+        id: 'model.pulley', kind: 'pulley', title: '数绳子的段数',
+        prompt: '如图，用滑轮组匀速提升重物 G（不计摩擦、绳重和动滑轮重）。承担物重的绳子有 n 段，则 n =（　）',
+        fields: [choiceField(r, String(n), ['1', '2', '3', '4'])],
+        tip: '数 n：与动滑轮相连、向上拉着动滑轮的绳子有几段，n 就是几。',
+        explain: ['与动滑轮相连、向上拉它的绳子共有 ' + n + ' 段，所以 n = ' + n + '。', '此时拉力 F = G/n，绳端移动距离 s = nh。'],
+        fig: { type: 'pulley', n: n }, figBefore: true,
+        kp: ['滑轮组', 'n 段绳']
+      };
+    }
+    return {
+      id: 'model.pulley', kind: 'pulley', title: '力臂是哪个',
+      prompt: '如图，杠杆在力 F 的作用下绕支点 O 转动。F 的力臂是（　）',
+      fields: [choiceField(r, '从支点 O 到 F 作用线的垂线段', ['从支点 O 到 F 作用点的线段', '沿力 F 方向画的一段线段', '从支点 O 到杠杆另一端的线段'])],
+      tip: '力臂 = 支点到力的作用线的垂线段，不是支点到作用点的连线。',
+      explain: ['把 F 的作用线延长，从 O 向这条作用线作垂线，垂足到 O 的距离才是力臂。', 'O 到作用点 B 的连线只是作用点到支点的距离，不是力臂。'],
+      fig: { type: 'lever', mode: 'model', rodDeg: 22, fDeg: 118 }, figBefore: true,
+      kp: ['杠杆', '力臂']
+    };
+  }
+
+  /* ================= 认量（4 类：选公式 → 指认量 → 结果） ================= */
+  function genAmountHeat(r) {
+    var mWater = pick(r, [2, 3, 4, 5]);
+    var mPot = pick(r, [1, 2, 3]);
+    var t0 = 20, t1 = pick(r, [60, 70, 80, 88]);
+    var dt = t1 - t0, Q = 4200 * mWater * dt;
+    return {
+      id: 'amount.heatmass', kind: 'heatmass', title: '烧水题：m 取哪个',
+      prompt: '用不锈钢水壶装 ' + mWater + ' kg、' + t0 + '℃ 的水放在炉上加热，水温升到 ' + t1 + '℃。水壶的质量是 ' + mPot + ' kg。已知 c水 = 4.2×10³ J/(kg·℃)。不计水壶吸热，求水吸收的热量。',
+      fields: [
+        choiceField(r, 'Q = cmΔt', ['Q = mq', 'W = Fs', 'P = W/t'], '第 1 步 选公式：'),
+        { type: 'num', label: '第 2 步 指认量：公式里的 m =', ans: mWater, unit: 'kg' },
+        { type: 'num', label: 'Δt =', ans: dt, unit: '℃' },
+        { type: 'num', label: '第 3 步 代入：Q吸 =', ans: Q, unit: 'J' }
+      ],
+      tip: '烧水题的 m 一定取「被加热的水」的质量，不是水壶的、也不是总质量。',
+      explain: [
+        'Q吸 = cmΔt，m 取水的质量 ' + mWater + ' kg（水壶的 ' + mPot + ' kg 是干扰，水壶吸的热通常忽略）。',
+        'Δt = 末温 − 初温 = ' + t1 + ' − ' + t0 + ' = ' + dt + '℃。',
+        'Q吸 = 4.2×10³ × ' + mWater + ' × ' + dt + ' = ' + fmtNum(Q) + ' J。'
+      ],
+      kp: ['热量', '比热容', '认量']
+    };
+  }
+
+  function genAmountFuel(r) {
+    var mTotal = pick(r, [3, 3.5, 4, 5]);
+    var mBurn = pick(r, [0.2, 0.3, 0.4, 0.5]);
+    var mLeft = Math.round((mTotal - mBurn) * 10) / 10;
+    var fuel = pick(r, [{ n: '木炭', q: 3.4e7 }, { n: '焦炭', q: 3.0e7 }]);
+    var Q = mBurn * fuel.q;
+    return {
+      id: 'amount.fuelmass', kind: 'fuelmass', title: '热值题：总 − 剩',
+      prompt: '在炭炉中加入' + fuel.n + '，炉和' + fuel.n + '的总质量是 ' + mTotal + ' kg。燃烧一段时间后，吹去灰烬，测得炉和剩余的' + fuel.n + '总质量是 ' + mLeft + ' kg。已知' + fuel.n + '的热值 q = ' + fmtNum(fuel.q) + ' J/kg。',
+      fields: [
+        choiceField(r, 'Q放 = mq', ['Q吸 = cmΔt', 'W = Fs', 'η = W有/W总'], '第 1 步 选公式：'),
+        { type: 'num', label: '第 2 步 指认量：已燃烧的燃料质量 m =', ans: mBurn, unit: 'kg' },
+        { type: 'num', label: '第 3 步 代入：Q放 =', ans: Q, unit: 'J' }
+      ],
+      tip: '燃料质量要用「总 − 剩」，不是总质量，也不是剩下的质量。',
+      explain: [
+        '烧掉的燃料质量 m = ' + mTotal + ' − ' + mLeft + ' = ' + mBurn + ' kg。',
+        'Q放 = mq = ' + mBurn + ' × ' + fmtNum(fuel.q) + ' = ' + fmtNum(Q) + ' J。'
+      ],
+      kp: ['热值', '认量']
+    };
+  }
+
+  function genAmountPulley(r) {
+    var n = pick(r, [2, 3]);
+    var h = pick(r, [3, 4, 5, 6]);
+    var s = n * h;
+    return {
+      id: 'amount.pulleyamount', kind: 'pulleyamount', title: '滑轮组：n、h、s',
+      prompt: '用滑轮组提升井底的土石：承担物重的绳子有 n = ' + n + ' 段，土石上升的高度 h = ' + h + ' m。',
+      fields: [
+        choiceField(r, 's = nh', ['s = h/n', 's = n/h', 'W = Fs'], '第 1 步 选公式：'),
+        { type: 'num', label: '第 2 步 指认量：n =', ans: n },
+        { type: 'num', label: 'h =', ans: h, unit: 'm' },
+        { type: 'num', label: '第 3 步 代入：绳端移动距离 s =', ans: s, unit: 'm' }
+      ],
+      tip: 's 是绳端移动的距离，h 是物体上升的高度；s = nh。',
+      explain: [
+        '承担物重的绳子有 ' + n + ' 段，所以绳端移动距离是物体上升高度的 ' + n + ' 倍。',
+        's = nh = ' + n + ' × ' + h + ' = ' + s + ' m。'
+      ],
+      kp: ['滑轮组', '认量']
+    };
+  }
+
+  function genAmountEff(r) {
+    var G = pick(r, [300, 400, 500]);
+    var h = pick(r, [2, 3, 4]);
+    var n = pick(r, [2, 3]);
+    var s = n * h;
+    var extra = pick(r, [120, 240, 360, 480]);
+    var F = Math.ceil((G * h + extra) / s);
+    var Wyou = G * h, Wtotal = F * s;
+    var eta = Math.round(Wyou / Wtotal * 1000) / 10;
+    return {
+      id: 'amount.effamount', kind: 'effamount', title: '效率题：W有 / W总',
+      prompt: '用滑轮组把重 ' + G + ' N 的物体匀速提升 ' + h + ' m，绳端移动 ' + s + ' m，拉力 F = ' + F + ' N。',
+      fields: [
+        choiceField(r, 'η = W有/W总', ['η = W总/W有', 'η = Q吸/Q放', 'η = P有/P总'], '第 1 步 选公式：'),
+        { type: 'num', label: '第 2 步 指认量：有用功 W有 =', ans: Wyou, unit: 'J' },
+        { type: 'num', label: '第 3 步 指认量：总功 W总 =', ans: Wtotal, unit: 'J' },
+        { type: 'num', label: '第 4 步 代入：机械效率 η =', ans: eta, unit: '%', tol: 0.15 }
+      ],
+      tip: '有用功 W有 = Gh（把物体提上去）；总功 W总 = Fs（拉力做的功）；η = W有/W总。',
+      explain: [
+        'W有 = Gh = ' + G + ' × ' + h + ' = ' + Wyou + ' J。',
+        'W总 = Fs = ' + F + ' × ' + s + ' = ' + Wtotal + ' J。',
+        'η = W有/W总 = ' + Wyou + ' ÷ ' + Wtotal + ' ≈ ' + fmtNum(eta) + '%。'
+      ],
+      kp: ['机械效率', '认量']
+    };
+  }
+
+  /* ================= 算到底（6 类：选公式 → 指认量 → 结果） ================= */
+  function genCalcHeat(r) {
+    var sub = pick(r, [{ n: '水', c: 4200 }, { n: '煤油', c: 2100 }, { n: '铝', c: 880 }]);
+    var m = pick(r, [0.5, 1, 2, 3, 4, 5]);
+    var t0 = pick(r, [10, 20, 30]);
+    var dt = pick(r, [20, 30, 40, 50, 60]);
+    var t1 = t0 + dt;
+    var Q = sub.c * m * dt;
+    return {
+      id: 'calc.qheat', kind: 'qheat', title: 'Q = cmΔt',
+      prompt: '把质量为 ' + m + ' kg、初温 ' + t0 + '℃ 的' + sub.n + '加热到 ' + t1 + '℃。已知 c' + sub.n + ' = ' + fmtNum(sub.c) + ' J/(kg·℃)。求' + sub.n + '吸收的热量。',
+      fields: [
+        choiceField(r, 'Q = cmΔt', ['Q = mq', 'W = Fs', 'P = W/t'], '第 1 步 选公式：'),
+        { type: 'num', label: '第 2 步 指认量：m =', ans: m, unit: 'kg' },
+        { type: 'num', label: 'Δt =', ans: dt, unit: '℃' },
+        { type: 'num', label: '第 3 步 代入：Q =', ans: Q, unit: 'J' }
+      ],
+      tip: 'Q = cmΔt：c 用题目给的比热容，m 用被加热物体的质量，Δt = 末温 − 初温。',
+      explain: [
+        'Q吸 = cmΔt。',
+        'm = ' + m + ' kg，Δt = ' + t1 + ' − ' + t0 + ' = ' + dt + '℃。',
+        'Q = ' + fmtNum(sub.c) + ' × ' + m + ' × ' + dt + ' = ' + fmtNum(Q) + ' J。'
+      ],
+      kp: ['热量', '比热容']
+    };
+  }
+
+  function genCalcFuel(r) {
+    var fuel = pick(r, [{ n: '木炭', q: 3.4e7 }, { n: '汽油', q: 4.6e7 }, { n: '焦炭', q: 3.0e7 }]);
+    var m = pick(r, [0.2, 0.3, 0.4, 0.5, 1, 1.2, 2]);
+    var Q = m * fuel.q;
+    return {
+      id: 'calc.qfuel', kind: 'qfuel', title: 'Q = mq',
+      prompt: '完全燃烧 ' + m + ' kg 的' + fuel.n + '，已知' + fuel.n + '的热值 q = ' + fmtNum(fuel.q) + ' J/kg。求放出的热量。',
+      fields: [
+        choiceField(r, 'Q放 = mq', ['Q吸 = cmΔt', 'W = Fs', 'P = W/t'], '第 1 步 选公式：'),
+        { type: 'num', label: '第 2 步 指认量：m =', ans: m, unit: 'kg' },
+        { type: 'num', label: 'q =', ans: fuel.q, unit: 'J/kg' },
+        { type: 'num', label: '第 3 步 代入：Q放 =', ans: Q, unit: 'J' }
+      ],
+      tip: 'Q放 = mq：m 是完全燃烧的燃料质量，q 是热值。',
+      explain: [
+        'Q放 = mq。',
+        'm = ' + m + ' kg，q = ' + fmtNum(fuel.q) + ' J/kg。',
+        'Q放 = ' + m + ' × ' + fmtNum(fuel.q) + ' = ' + fmtNum(Q) + ' J。'
+      ],
+      kp: ['热值', '热量']
+    };
+  }
+
+  function genCalcEff(r) {
+    var mWater = pick(r, [2, 3, 5]);
+    var t1 = pick(r, [60, 70, 80, 88]);
+    var dt = t1 - 20;
+    var Qabs = 4200 * mWater * dt;
+    var mFuel = pick(r, [0.1, 0.2, 0.3]);
+    var Qrel = mFuel * 3.4e7;
+    var eta = Math.round(Qabs / Qrel * 1000) / 10;
+    return {
+      id: 'calc.qeff', kind: 'qeff', title: 'η = Q吸 / Q放',
+      prompt: '用炭炉把 ' + mWater + ' kg、20℃ 的水加热到 ' + t1 + '℃，共完全燃烧 ' + mFuel + ' kg 木炭。已知 c水 = 4.2×10³ J/(kg·℃)，木炭热值 q = 3.4×10⁷ J/kg。求加热效率。',
+      fields: [
+        choiceField(r, 'η = Q吸/Q放', ['η = Q放/Q吸', 'η = Q吸/(Q吸+Q放)', 'η = Q放/(Q吸+Q放)'], '第 1 步 选公式：'),
+        { type: 'num', label: '第 2 步 指认量：Q吸 =', ans: Qabs, unit: 'J' },
+        { type: 'num', label: 'Q放 =', ans: Qrel, unit: 'J' },
+        { type: 'num', label: '第 3 步 代入：η =', ans: eta, unit: '%', tol: 0.15 }
+      ],
+      tip: '加热效率 = 水吸收的热量 ÷ 燃料完全燃烧放出的热量。',
+      explain: [
+        'Q吸 = cmΔt = 4.2×10³ × ' + mWater + ' × ' + dt + ' = ' + fmtNum(Qabs) + ' J。',
+        'Q放 = mq = ' + mFuel + ' × 3.4×10⁷ = ' + fmtNum(Qrel) + ' J。',
+        'η = Q吸/Q放 = ' + fmtNum(Qabs) + ' ÷ ' + fmtNum(Qrel) + ' ≈ ' + fmtNum(eta) + '%。'
+      ],
+      kp: ['加热效率', '热量']
+    };
+  }
+
+  function genCalcWorkPower(r) {
+    var v = ri(r, 0, 1);
+    var F = pick(r, [50, 100, 150, 200]);
+    var s = pick(r, [2, 3, 4, 5]);
+    var W = F * s;
+    if (v === 0) {
+      return {
+        id: 'calc.workpower', kind: 'workpower', title: 'W = Fs',
+        prompt: '用 ' + F + ' N 的水平推力把箱子沿力的方向推动 ' + s + ' m。求推力做的功。',
+        fields: [
+          choiceField(r, 'W = Fs', ['W = F/s', 'W = mgh', 'P = W/t'], '第 1 步 选公式：'),
+          { type: 'num', label: '第 2 步 指认量：F =', ans: F, unit: 'N' },
+          { type: 'num', label: 's =', ans: s, unit: 'm' },
+          { type: 'num', label: '第 3 步 代入：W =', ans: W, unit: 'J' }
+        ],
+        tip: 'W = Fs：F 是沿力的方向上的力，s 是沿力的方向移动的距离。',
+        explain: ['W = Fs = ' + F + ' × ' + s + ' = ' + W + ' J。'],
+        kp: ['功', '计算']
+      };
+    }
+    var t = pick(r, [10, 20, 25, 50]);
+    var P = Math.round(W / t * 100) / 100;
+    return {
+      id: 'calc.workpower', kind: 'workpower', title: 'P = W/t',
+      prompt: '某机器在 ' + t + ' s 内做了 ' + W + ' J 的功。求它的功率。',
+      fields: [
+        choiceField(r, 'P = W/t', ['P = Wt', 'P = F/t', 'P = Wt²'], '第 1 步 选公式：'),
+        { type: 'num', label: '第 2 步 指认量：W =', ans: W, unit: 'J' },
+        { type: 'num', label: 't =', ans: t, unit: 's' },
+        { type: 'num', label: '第 3 步 代入：P =', ans: P, unit: 'W' }
+      ],
+      tip: 'P = W/t：功率是做功的快慢。',
+      explain: ['P = W/t = ' + W + ' ÷ ' + t + ' = ' + fmtNum(P) + ' W。'],
+      kp: ['功率', '计算']
+    };
+  }
+
+  function genCalcPulley(r) {
+    var v = ri(r, 0, 2);
+    if (v === 0) {
+      var n = pick(r, [2, 3]);
+      var h = pick(r, [3, 4, 5, 6]);
+      var s = n * h;
+      return {
+        id: 'calc.pulleycalc', kind: 'pulleycalc', title: '滑轮组 s = nh',
+        prompt: '用滑轮组匀速提升物体，承担物重的绳子有 n = ' + n + ' 段，物体上升 h = ' + h + ' m。求绳端移动的距离。',
+        fields: [
+          choiceField(r, 's = nh', ['s = h/n', 's = n/h', 'h = ns'], '第 1 步 选公式：'),
+          { type: 'num', label: '第 2 步 指认量：n =', ans: n },
+          { type: 'num', label: 'h =', ans: h, unit: 'm' },
+          { type: 'num', label: '第 3 步 代入：s =', ans: s, unit: 'm' }
+        ],
+        tip: '绳端移动距离是物体上升高度的 n 倍：s = nh。',
+        explain: ['s = nh = ' + n + ' × ' + h + ' = ' + s + ' m。'],
+        kp: ['滑轮组', '计算']
+      };
+    }
+    if (v === 1) {
+      var m = pick(r, [20, 30, 40, 50]);
+      var G = m * 10;
+      var h2 = pick(r, [2, 3, 4, 5]);
+      var Wy = G * h2;
+      return {
+        id: 'calc.pulleycalc', kind: 'pulleycalc', title: '滑轮组 W有 = Gh',
+        prompt: '用滑轮组把质量 ' + m + ' kg 的土石匀速提升 ' + h2 + ' m（g 取 10 N/kg）。求有用功。',
+        fields: [
+          choiceField(r, 'W有 = Gh', ['W有 = Fs', 'W总 = Gh', 'W有 = mh'], '第 1 步 选公式：'),
+          { type: 'num', label: '第 2 步 指认量：G = mg =', ans: G, unit: 'N' },
+          { type: 'num', label: 'h =', ans: h2, unit: 'm' },
+          { type: 'num', label: '第 3 步 代入：W有 =', ans: Wy, unit: 'J' }
+        ],
+        tip: '有用功是克服物重做的功：W有 = Gh = mgh。',
+        explain: ['G = mg = ' + m + ' × 10 = ' + G + ' N。', 'W有 = Gh = ' + G + ' × ' + h2 + ' = ' + Wy + ' J。'],
+        kp: ['滑轮组', '有用功']
+      };
+    }
+    var Wy2 = pick(r, [1200, 1500, 1800, 2000]);
+    var Wt = Wy2 + pick(r, [200, 300, 400, 540]);
+    var eta = Math.round(Wy2 / Wt * 1000) / 10;
+    return {
+      id: 'calc.pulleycalc', kind: 'pulleycalc', title: '滑轮组 η = W有/W总',
+      prompt: '用滑轮组提升重物时，有用功 W有 = ' + Wy2 + ' J，总功 W总 = ' + Wt + ' J。求机械效率。',
+      fields: [
+        choiceField(r, 'η = W有/W总', ['η = W总/W有', 'η = W有×W总', 'η = W总/W有×100%'], '第 1 步 选公式：'),
+        { type: 'num', label: '第 2 步 指认量：W有 =', ans: Wy2, unit: 'J' },
+        { type: 'num', label: 'W总 =', ans: Wt, unit: 'J' },
+        { type: 'num', label: '第 3 步 代入：η =', ans: eta, unit: '%', tol: 0.15 }
+      ],
+      tip: '机械效率 = 有用功 ÷ 总功，一定小于 1。',
+      explain: ['η = W有/W总 = ' + Wy2 + ' ÷ ' + Wt + ' ≈ ' + fmtNum(eta) + '%。'],
+      kp: ['机械效率', '计算']
+    };
+  }
+
+  function genCalcLever(r) {
+    var l1 = pick(r, [0.2, 0.4, 0.5, 0.8]);
+    /* 避开 F₁ 出现 3 位小数的组合（如 l₁=0.8、l₂=0.25 → 0.3125 倍），
+       学生按 2 位/1 位有效数字写 3.13/15.6 时不应被判错。 */
+    var l2 = pick(r, [0.1, 0.2, 0.25, 0.4].filter(function (x) {
+      return x !== l1 && !(l1 === 0.8 && x === 0.25);
+    }));
+    var F2 = pick(r, [10, 20, 30, 40, 50, 60]);
+    var F1 = F2 * l2 / l1;
+    return {
+      id: 'calc.lever', kind: 'lever', title: '杠杆 F₁l₁ = F₂l₂',
+      prompt: '杠杆平衡时，动力臂 l₁ = ' + l1 + ' m，阻力臂 l₂ = ' + l2 + ' m，阻力 F₂ = ' + F2 + ' N。求动力 F₁。',
+      fields: [
+        choiceField(r, 'F₁l₁ = F₂l₂', ['F₁l₁ = F₂/l₂', 'F₁ = F₂', 'F₁/l₁ = F₂l₂'], '第 1 步 选公式：'),
+        { type: 'num', label: '第 2 步 指认量：l₁ =', ans: l1, unit: 'm' },
+        { type: 'num', label: 'l₂ =', ans: l2, unit: 'm' },
+        { type: 'num', label: '第 3 步 代入：F₁ =', ans: F1, unit: 'N', tol: 0.05 }
+      ],
+      tip: '杠杆平衡条件：动力 × 动力臂 = 阻力 × 阻力臂。',
+      explain: ['F₁l₁ = F₂l₂ → F₁ = F₂l₂/l₁。', 'F₁ = ' + F2 + ' × ' + l2 + ' ÷ ' + l1 + ' = ' + fmtNum(F1) + ' N。'],
+      kp: ['杠杆', '平衡条件']
+    };
+  }
+
+  /* ================= 作图判断（固定 6 组图，四选一，轮换） ================= */
+  var DRAW = [
+    {
+      id: 'draw.lever.1', kind: 'lever', title: '力臂作垂线（斜向力）',
+      prompt: '杠杆 OA 可绕支点 O 转动，A 端挂重物 G，在 B 点施加力 F 使杠杆平衡。图中 l 表示 F 的力臂，画法正确的是（　）',
+      fields: [{
+        type: 'choice', label: '', options: ['甲', '乙', '丙', '丁'], ans: 1,
+        figs: [
+          { type: 'lever', mode: 'draw', ltype: 'point', rodDeg: 25, fDeg: 105 },
+          { type: 'lever', mode: 'draw', ltype: 'perp', rodDeg: 25, fDeg: 105 },
+          { type: 'lever', mode: 'draw', ltype: 'along', rodDeg: 25, fDeg: 105 },
+          { type: 'lever', mode: 'draw', ltype: 'wrongperp', rodDeg: 25, fDeg: 105 }
+        ]
+      }],
+      tip: '力臂是「支点到力的作用线的垂线段」，不是支点到作用点的连线。',
+      explain: ['甲：把 O 与 F 的作用点 B 直接连起来，这不是力臂。', '乙：从 O 向 F 的作用线作垂线，垂足到 O 的线段才是力臂 ✓。', '丙：画在杠杆上；丁：对错了力（画的是到 G 作用线的垂线）。'],
+      fig: { type: 'lever', mode: 'model', rodDeg: 25, fDeg: 105 }, figBefore: true,
+      kp: ['杠杆', '力臂']
+    },
+    {
+      id: 'draw.lever.2', kind: 'lever', title: '力臂作垂线（竖直力）',
+      prompt: '杠杆 OA 可绕支点 O 转动，A 端挂重物 G，在 B 点施加竖直向下的力 F。图中 l 表示 F 的力臂，画法正确的是（　）',
+      fields: [{
+        type: 'choice', label: '', options: ['甲', '乙', '丙', '丁'], ans: 3,
+        figs: [
+          { type: 'lever', mode: 'draw', ltype: 'along', rodDeg: 30, fDeg: 90 },
+          { type: 'lever', mode: 'draw', ltype: 'point', rodDeg: 30, fDeg: 90 },
+          { type: 'lever', mode: 'draw', ltype: 'wrongperp', rodDeg: 30, fDeg: 90 },
+          { type: 'lever', mode: 'draw', ltype: 'perp', rodDeg: 30, fDeg: 90 }
+        ]
+      }],
+      tip: '力臂不一定是杆上的一段：F 竖直向下时，力臂是 O 到竖直作用线的水平距离。',
+      explain: ['甲：把 O 到 A 的杆画成力臂；乙：把 O 到 B 的连线画成力臂；丙：对错了力。', '丁：从 O 向 F 的竖直作用线作垂线，垂线段才是力臂 ✓。'],
+      fig: { type: 'lever', mode: 'model', rodDeg: 30, fDeg: 90 }, figBefore: true,
+      kp: ['杠杆', '力臂']
+    },
+    {
+      id: 'draw.rope.1', kind: 'rope', title: '滑轮组绕绳 n = 2',
+      prompt: '用滑轮组提升重物 G，要求绳端向下拉、承担物重的绳子有 2 段（n = 2）。下列绕法中正确的是（　）',
+      fields: [{
+        type: 'choice', label: '', options: ['甲', '乙', '丙', '丁'], ans: 0,
+        figs: [
+          { type: 'pulley', variant: 'n2' },
+          { type: 'pulley', variant: 'n3' },
+          { type: 'pulley', variant: 'n1a' },
+          { type: 'pulley', variant: 'n1b' }
+        ]
+      }],
+      tip: '数 n：与动滑轮相连、向上拉着动滑轮的绳子有几段，n 就是几。',
+      explain: ['甲：绳一端固定在天花板，向下绕过动滑轮，再向上绕过定滑轮后向下拉——有 2 段绳承担物重 ✓。', '乙：n = 3；丙、丁：只有 1 段绳承担物重，不省力。'],
+      kp: ['滑轮组', '绕绳']
+    },
+    {
+      id: 'draw.rope.2', kind: 'rope', title: '滑轮组绕绳 n = 3',
+      prompt: '用滑轮组提升重物 G，要求绳端向上拉、承担物重的绳子有 3 段（n = 3）。下列绕法中正确的是（　）',
+      fields: [{
+        type: 'choice', label: '', options: ['甲', '乙', '丙', '丁'], ans: 1,
+        figs: [
+          { type: 'pulley', variant: 'n2' },
+          { type: 'pulley', variant: 'n3' },
+          { type: 'pulley', variant: 'n1b' },
+          { type: 'pulley', variant: 'n1a' }
+        ]
+      }],
+      tip: 'n = 3 时，绳的一端要系在动滑轮的挂钩上，最后自由端向上拉。',
+      explain: ['甲：n = 2；乙：绳端系在动滑轮上，绕过定滑轮、动滑轮后向上拉，n = 3 ✓。', '丙、丁：只有 1 段绳承担物重。'],
+      kp: ['滑轮组', '绕绳']
+    },
+    {
+      id: 'draw.wire.1', kind: 'wire', title: '并联电路连线',
+      prompt: '要求两灯并联，开关 S 接在干路上、能同时控制两盏灯。下列电路中正确的是（　）',
+      fields: [{
+        type: 'choice', label: '', options: ['甲', '乙', '丙', '丁'], ans: 0,
+        figs: [
+          { type: 'circuit', kind: 'connect-parallel' },
+          { type: 'circuit', kind: 'connect-series' },
+          { type: 'circuit', kind: 'connect-switchbranch' },
+          { type: 'circuit', kind: 'connect-short' }
+        ]
+      }],
+      tip: '并联：两灯各在一条支路；开关要接在干路上，才能同时控制两灯。',
+      explain: ['甲：两灯并联，开关在干路 ✓。', '乙：两灯串联；丙：开关只在 L₁ 支路，控制不了 L₂；丁：电源被导线直接短接，会短路。'],
+      kp: ['电路', '并联']
+    },
+    {
+      id: 'draw.wire.2', kind: 'wire', title: '电流表接法',
+      prompt: '要求电流表测通过 L₁ 的电流。下列接法中正确的是（　）',
+      fields: [{
+        type: 'choice', label: '', options: ['甲', '乙', '丙', '丁'], ans: 2,
+        figs: [
+          { type: 'circuit', kind: 'connect-ammeterMain' },
+          { type: 'circuit', kind: 'connect-ammeterShort' },
+          { type: 'circuit', kind: 'connect-ammeterL1' },
+          { type: 'circuit', kind: 'connect-ammeterL2' }
+        ]
+      }],
+      tip: '电流表要与被测用电器串联，不能直接接到电源两端。',
+      explain: ['甲：电流表在干路，测总电流；乙：电流表直接接在电源两端，会短路烧表；丙：电流表串在 L₁ 支路，测 L₁ 的电流 ✓；丁：接在 L₂ 支路，测的是 L₂ 的电流。'],
+      kp: ['电路', '电流表']
+    }
+  ];
+
+  /* ================= 读数（3 类：量程 / 分度值 / 读数） ================= */
+  function genReadAmmeter(r) {
+    var range = pick(r, [0.6, 3]);
+    var div = range === 0.6 ? 0.02 : 0.1;
+    var k = ri(r, 3, 28);
+    var reading = Math.round(k * div * 100) / 100;
+    var fmt = range === 0.6 ? '0~0.6 A' : '0~3 A';
+    return {
+      id: 'read.ammeter', kind: 'ammeter', title: '电流表读数',
+      prompt: '如图是电流表的表盘（表盘上有 0~0.6 A 和 0~3 A 两个量程的刻度）。现在使用的是 ' + fmt + ' 量程，指针位置如图。',
+      fields: [
+        { type: 'num', label: '量程 =', ans: range, unit: 'A' },
+        { type: 'num', label: '分度值 =', ans: div, unit: 'A' },
+        { type: 'num', label: '读数 =', ans: reading, unit: 'A' }
+      ],
+      tip: '分度值 = 量程 ÷ 大格数；读数 = 小格数 × 分度值。',
+      explain: ['使用的量程是 ' + fmt + '。', '0~' + range + ' A 一共 30 个小格，分度值 = ' + range + ' ÷ 30 = ' + fmtNum(div) + ' A。', '指针偏转 ' + k + ' 个小格，读数 = ' + k + ' × ' + fmtNum(div) + ' = ' + fmtNum(reading) + ' A。'],
+      fig: { type: 'ammeter', range: range, reading: reading }, figBefore: true,
+      kp: ['电流表', '读数']
+    };
+  }
+
+  function genReadThermometer(r) {
+    var lo = -10, hi = 110, div = 1;
+    var reading = ri(r, -8, 108);
+    return {
+      id: 'read.thermometer', kind: 'thermometer', title: '温度计读数',
+      prompt: '如图是温度计的刻度（单位 ℃）。把它放在被测液体中，液面位置如图。',
+      fields: [
+        { type: 'num', label: '量程上限 =', ans: hi, unit: '℃' },
+        { type: 'num', label: '分度值 =', ans: div, unit: '℃' },
+        { type: 'num', label: '读数 =', ans: reading, unit: '℃' }
+      ],
+      tip: '先看 0℃ 在哪，再往上看正数、往下看负数；分度值是最小一格代表的值。',
+      explain: ['这支温度计的最低刻度是 ' + lo + '℃，最高刻度是 ' + hi + '℃，量程上限是 ' + hi + '℃。', '每一小格代表 ' + div + '℃，分度值 = ' + div + '℃。', '液面在第 ' + (reading - lo) + ' 小格处，读数 = ' + reading + '℃。'],
+      fig: { type: 'thermometer', lo: lo, hi: hi, reading: reading }, figBefore: true,
+      kp: ['温度计', '读数']
+    };
+  }
+
+  function genReadSpring(r) {
+    var max = 5, div = 0.2;
+    var k = ri(r, 2, 24);
+    var reading = Math.round(k * div * 10) / 10;
+    return {
+      id: 'read.spring', kind: 'spring', title: '弹簧测力计读数',
+      prompt: '如图是弹簧测力计的刻度盘，指针位置如图。',
+      fields: [
+        { type: 'num', label: '量程 =', ans: max, unit: 'N' },
+        { type: 'num', label: '分度值 =', ans: div, unit: 'N' },
+        { type: 'num', label: '读数 =', ans: reading, unit: 'N' }
+      ],
+      tip: '量程看最大刻度，分度值看最小一格；读数 = 小格数 × 分度值。',
+      explain: ['最大刻度是 ' + max + ' N，所以量程是 0~' + max + ' N。', '0~' + max + ' N 共 ' + Math.round(max / div) + ' 个小格，分度值 = ' + max + ' ÷ ' + Math.round(max / div) + ' = ' + fmtNum(div) + ' N。', '指针指在第 ' + k + ' 小格，读数 = ' + k + ' × ' + fmtNum(div) + ' = ' + fmtNum(reading) + ' N。'],
+      fig: { type: 'spring', max: max, div: div, reading: reading }, figBefore: true,
+      kp: ['弹簧测力计', '读数']
+    };
+  }
+
+  /* ================= 模块注册表：顺序 = 每日顺序 = 页签顺序 ================= */
+  var MODULES = [
+    {
+      id: 'model', name: '认模型', icon: '🧭',
+      desc: '看图认模型：测力计串绳张力 / LED 极性 / 接触带电 / 四冲程 / 串并联与表位置 / 滑轮组 n 与力臂。',
+      kinds: [
+        { id: 'tension', name: '测力计串绳张力', gen: genModelTension },
+        { id: 'led', name: 'LED 定电源极性', gen: genModelLed },
+        { id: 'charge', name: '接触后带电', gen: genModelCharge },
+        { id: 'stroke', name: '四冲程识别', gen: genModelStroke },
+        { id: 'circuit', name: '串并联与表位置', gen: genModelCircuit },
+        { id: 'pulley', name: '滑轮组 n 与力臂', gen: genModelPulley }
+      ]
+    },
+    {
+      id: 'amount', name: '认量', icon: '🎯',
+      desc: '先认量再动笔：热量题的 m/Δt、热值题的「总−剩」、滑轮组的 s/h/n、效率题的 W有/W总。',
+      kinds: [
+        { id: 'heatmass', name: '热量题 m/Δt', gen: genAmountHeat },
+        { id: 'fuelmass', name: '热值题总−剩', gen: genAmountFuel },
+        { id: 'pulleyamount', name: '滑轮组 s/h/n', gen: genAmountPulley },
+        { id: 'effamount', name: '效率题 W有/W总', gen: genAmountEff }
+      ]
+    },
+    {
+      id: 'calc', name: '算到底', icon: '🧮',
+      desc: '选公式 → 指认量 → 代入算到底，每步单独判分，专治「写了公式就停」。',
+      kinds: [
+        { id: 'qheat', name: 'Q = cmΔt', gen: genCalcHeat },
+        { id: 'qfuel', name: 'Q = mq', gen: genCalcFuel },
+        { id: 'qeff', name: 'η = Q吸/Q放', gen: genCalcEff },
+        { id: 'workpower', name: 'W = Fs、P = W/t', gen: genCalcWorkPower },
+        { id: 'pulleycalc', name: '滑轮组 s=nh / W有 / η', gen: genCalcPulley },
+        { id: 'lever', name: '杠杆 F₁l₁ = F₂l₂', gen: genCalcLever }
+      ]
+    },
+    {
+      id: 'draw', name: '作图判断', icon: '✏️',
+      desc: '四选一选正确画法：力臂作垂线 / 滑轮组绕绳 n=2、n=3 / 并联电路连线。',
+      kinds: [
+        { id: 'lever', name: '力臂作垂线' },
+        { id: 'rope', name: '滑轮组绕绳' },
+        { id: 'wire', name: '并联电路连线' }
+      ],
+      items: DRAW
+    },
+    {
+      id: 'read', name: '读数', icon: '📏',
+      desc: '量程 / 分度值 / 读数三连：电流表、温度计、弹簧测力计表盘。',
+      kinds: [
+        { id: 'ammeter', name: '电流表读数', gen: genReadAmmeter },
+        { id: 'thermometer', name: '温度计读数', gen: genReadThermometer },
+        { id: 'spring', name: '弹簧测力计读数', gen: genReadSpring }
+      ]
+    }
+  ];
+
+  function moduleById(id) {
+    for (var i = 0; i < MODULES.length; i++) if (MODULES[i].id === id) return MODULES[i];
+    return null;
+  }
+
+  /* ================= 出题 ================= */
+  function gen(modId, kindId, seed) {
+    var m = moduleById(modId);
+    if (!m) throw new Error('未知模块 ' + modId);
+    var r = mulberry32((seed >>> 0) || 1);
+    if (m.items) {
+      /* 固定题（draw）：按 kind 过滤后再按 seed 取，保证「按题型练」不会抽到别的题型 */
+      var pool = kindId ? m.items.filter(function (it) { return it.kind === kindId; }) : m.items;
+      if (!pool.length) pool = m.items;
+      var it = pool[Math.floor(r() * pool.length)];
+      var copy = JSON.parse(JSON.stringify(it));
+      copy.mod = modId;
+      if (!copy.kind) copy.kind = kindId || 'item';
+      return copy;
+    }
+    var k = null;
+    for (var i = 0; i < m.kinds.length; i++) if (!kindId || m.kinds[i].id === kindId) { k = m.kinds[i]; break; }
+    if (!k) k = m.kinds[Math.floor(r() * m.kinds.length)];
+    var q = k.gen(r);
+    q.mod = modId;
+    if (!q.kind) q.kind = k.id;
+    return q;
+  }
+
+  /* ================= 自检：生成器 / 判分 / 图 / 边界 ================= */
+  function checkQuestion(q, tag, fails) {
+    if (!q || !q.prompt || /undefined|NaN/.test(q.prompt)) fails.push(tag + ' 题干异常');
+    if (!q.fields || !q.fields.length) { fails.push(tag + ' 无字段'); return; }
+    q.fields.forEach(function (f, i) {
+      if (f.type === 'num' && !isFinite(f.ans)) fails.push(tag + ' 第 ' + (i + 1) + ' 空答案非数字');
+      if (f.type === 'choice') {
+        if (!(f.ans >= 0 && f.ans < f.options.length)) fails.push(tag + ' 第 ' + (i + 1) + ' 空选项越界');
+        if (f.options.some(function (o) { return o == null || /undefined|NaN/.test(String(o)); })) fails.push(tag + ' 选项异常');
+      }
+      if (f.figs) {
+        if (f.figs.length !== f.options.length) fails.push(tag + ' 选项图数量不对');
+        f.figs.forEach(function (d, j) {
+          var sv = svgFor({ fig: d });
+          if (sv.indexOf('<svg') !== 0) fails.push(tag + ' 选项图 ' + (j + 1) + ' 为空');
+          else if (/NaN|undefined/.test(sv)) fails.push(tag + ' 选项图 ' + (j + 1) + ' 含 NaN');
+        });
+      }
+    });
+    if (q.fig) {
+      var svg = svgFor(q);
+      if (svg.indexOf('<svg') !== 0) fails.push(tag + ' 题图为空');
+      else if (/NaN|undefined/.test(svg)) fails.push(tag + ' 题图含 NaN');
+    }
+    /* 正确解必须判对 */
+    var right = q.fields.map(function (f) { return f.type === 'choice' ? f.ans : f.ans; });
+    if (!judge(q, right).ok) fails.push(tag + ' 正确解被判错');
+    /* 错误解必须判错 */
+    var wrong = q.fields.map(function (f) {
+      if (f.type === 'choice') return (f.ans + 1) % f.options.length;
+      if (f.tol != null) return f.ans + Math.abs(f.tol) * 2 + 1;
+      var rel = Math.max(Math.abs(f.ans) * 1e-3, 1e-9);
+      return f.ans + Math.max(1, rel * 2);
+    });
+    if (judge(q, wrong).ok) fails.push(tag + ' 错误解被判对');
+    /* 科学计数法输入（答案较大时）必须判对 */
+    q.fields.forEach(function (f, i) {
+      if (f.type !== 'num' || Math.abs(f.ans) < 1e4) return;
+      var v = [f.ans];
+      var sci = f.ans.toExponential();
+      var alt = q.fields.map(function (ff, j) { return j === i ? sci : (ff.type === 'choice' ? ff.ans : ff.ans); });
+      if (!judge(q, alt).ok) fails.push(tag + ' 第 ' + (i + 1) + ' 空科学计数法被判错');
+    });
+  }
+
+  function boundaryTests() {
+    var fails = [], n = 0;
+    function eq(desc, got, want) { n++; if (!(Math.abs(got - want) <= 1e-9)) fails.push(desc + '（得到 ' + got + '，应为 ' + want + '）'); }
+    function nan(desc, v) { n++; if (!isNaN(v)) fails.push(desc + ' 应解析失败，却得到 ' + v); }
+    eq('1428000', parseNum('1428000'), 1428000);
+    eq('1.428e6', parseNum('1.428e6'), 1428000);
+    eq('1.428E6', parseNum('1.428E6'), 1428000);
+    eq('1.428×10^6', parseNum('1.428×10^6'), 1428000);
+    eq('1.428x10^6', parseNum('1.428x10^6'), 1428000);
+    eq('1.428*10^6', parseNum('1.428*10^6'), 1428000);
+    eq('1.428×10⁶', parseNum('1.428×10⁶'), 1428000);
+    eq('全角 1.428×10⁶', parseNum('１.４２８×１０⁶'), 1428000);
+    eq('1 428 000', parseNum('1 428 000'), 1428000);
+    eq('−1.428e6', parseNum('−1.428e6'), -1428000);
+    eq('5×10⁻⁵', parseNum('5×10⁻⁵'), 5e-5);
+    eq('21%', parseNum('21%'), 21);
+    eq('30N', parseNum('30N'), 30);
+    eq('0.4m', parseNum('0.4m'), 0.4);
+    eq('1/2', parseNum('1/2'), 0.5);
+    nan('abc', parseNum('abc'));
+    nan('空', parseNum(''));
+    var pf = { type: 'num', ans: 21, unit: '%', tol: 0.8 };
+    n++; if (!judge({ fields: [pf] }, ['21']).ok) fails.push('百分比：21 应判对');
+    n++; if (!judge({ fields: [pf] }, ['21%']).ok) fails.push('百分比：21% 应判对');
+    n++; if (!judge({ fields: [pf] }, ['0.21']).ok) fails.push('百分比：0.21 应判对');
+    n++; if (judge({ fields: [pf] }, ['23.6']).ok) fails.push('百分比：23.6 不应判对');
+    var af = { type: 'num', ans: 100, tol: 1 };
+    n++; if (!judge({ fields: [af] }, ['100.9']).ok) fails.push('绝对容差：100.9 应判对');
+    n++; if (judge({ fields: [af] }, ['101.1']).ok) fails.push('绝对容差：101.1 不应判对');
+    var rf = { type: 'num', ans: 1428000 };
+    n++; if (!judge({ fields: [rf] }, ['1429000']).ok) fails.push('相对容差：1429000 应判对');
+    n++; if (judge({ fields: [rf] }, ['1430000']).ok) fails.push('相对容差：1430000 不应判对');
+    n++; if (fmtNum(1428000) !== '1.428×10⁶') fails.push('科学计数法显示：' + fmtNum(1428000));
+    n++; if (fmtNum(5e-5) !== '5×10⁻⁵') fails.push('科学计数法显示：' + fmtNum(5e-5));
+    return { n: n, fails: fails };
+  }
+
+  function selfTest(n) {
+    n = n || 200;
+    var fails = [], count = 0;
+    MODULES.forEach(function (m) {
+      var list;
+      if (m.items) {
+        list = m.items.map(function (it) { return { id: it.kind + ':' + it.id, fixed: it }; });
+      } else {
+        list = m.kinds.map(function (k) { return { id: k.id, gen: k.gen }; });
+      }
+      list.forEach(function (c) {
+        for (var s = 1; s <= n; s++) {
+          var q;
+          try {
+            q = c.fixed ? JSON.parse(JSON.stringify(c.fixed)) : c.gen(mulberry32(s * 7919 + 13));
+          } catch (e) { fails.push(c.id + ' 生成异常: ' + e.message); continue; }
+          count++;
+          checkQuestion(q, m.id + '.' + c.id + '#' + s, fails);
+        }
+      });
+    });
+    var b = boundaryTests();
+    b.fails.forEach(function (f) { fails.push('边界: ' + f); });
+    return { count: count, fails: fails, cases: b.n };
+  }
+
+  return {
+    VERSION: VERSION, DAY: DAY,
+    modules: MODULES, moduleById: moduleById,
+    gen: gen, judge: judge, ansText: ansText, svgFor: svgFor,
+    parseNum: parseNum, fmtNum: fmtNum, near: near, relTol: relTol,
+    selfTest: selfTest, drawItems: DRAW
+  };
+})();
+</script>
+
+<script id="ui">
+(function () {
+  'use strict';
+  var KEY = 'physTrain_v1';
+  var app = document.getElementById('app');
+  var tabs = document.getElementById('tabs');
+
+  /* ---------- 存储 ---------- */
+  function blankDB() { return { v: PT.VERSION, recs: [], wrong: {}, meta: { created: Date.now() } }; }
+  var DB = (function () {
+    try {
+      var raw = localStorage.getItem(KEY);
+      if (!raw) return blankDB();
+      var o = JSON.parse(raw);
+      if (!o || o.v !== PT.VERSION) return blankDB();
+      o.recs = o.recs || []; o.wrong = o.wrong || {}; o.meta = o.meta || {};
+      o.meta.lastRound = o.meta.lastRound || {};   /* 兼容旧记录：没有就不去重 */
+      return o;
+    } catch (e) { return blankDB(); }
+  })();
+  function save() {
+    try { localStorage.setItem(KEY, JSON.stringify(DB)); } catch (e) { }
+  }
+  function dayKey(ts) { var t = new Date(ts); return t.getFullYear() + '-' + (t.getMonth() + 1) + '-' + t.getDate(); }
+  function today() { return dayKey(Date.now()); }
+
+  /* ---------- 小工具 ---------- */
+  function h(tag, attrs) {
+    var e = document.createElement(tag);
+    if (attrs) for (var k in attrs) {
+      if (k === 'class') e.className = attrs[k];
+      else if (k === 'html') e.innerHTML = attrs[k];
+      else if (k.slice(0, 2) === 'on') e.addEventListener(k.slice(2), attrs[k]);
+      else if (k === 'value') e.value = attrs[k];
+      else e.setAttribute(k, attrs[k]);
+    }
+    for (var i = 2; i < arguments.length; i++) {
+      var kid = arguments[i];
+      if (kid == null || kid === false) continue;
+      if (Array.isArray(kid)) {
+        kid.forEach(function (x) {
+          if (x != null && x !== false) e.appendChild(typeof x === 'string' || typeof x === 'number' ? document.createTextNode(String(x)) : x);
+        });
+      } else e.appendChild(typeof kid === 'string' || typeof kid === 'number' ? document.createTextNode(String(kid)) : kid);
+    }
+    return e;
+  }
+  function clear(el) { while (el.firstChild) el.removeChild(el.firstChild); }
+  function pct(a, b) { return b ? Math.round(a / b * 100) : 0; }
+  function fmtSec(s) { s = Math.round(s); return s < 60 ? s + ' 秒' : Math.floor(s / 60) + ' 分 ' + (s % 60) + ' 秒'; }
+  function todayRecs() { var t = today(); return DB.recs.filter(function (r) { return dayKey(r.ts) === t; }); }
+  function figBlock(desc, cap) {
+    var svg = PT.svgFor({ fig: desc });
+    if (!svg) return null;
+    var box = h('div', { class: 'figbefore' });
+    if (cap) box.appendChild(h('div', { class: 'small muted', style: 'margin-bottom:2px' }, cap));
+    box.appendChild(h('div', { class: 'figbox', html: svg }));
+    return box;
+  }
+
+  /* ---------- 状态 ---------- */
+  var S = {
+    view: 'today', sess: null, q: null, res: null, answered: false,
+    choice: {}, hint: false, t0: 0, mode: 'new', draft: null, lastVals: null,
+    scratch: false, fix: null, example: false
+  };
+
+  /* ---------- 路由 ---------- */
+  var VIEWS = {
+    today: renderToday, model: renderModule, amount: renderModule, calc: renderModule,
+    draw: renderModule, read: renderModule, wrong: renderWrong, report: renderReport,
+    practice: renderPractice, summary: renderSummary
+  };
+  function go(view) { S.view = view; render(); try { window.scrollTo(0, 0); } catch (e) { } }
+  function render() {
+    clear(app);
+    var fn = VIEWS[S.view] || renderToday;
+    fn();
+    Array.prototype.forEach.call(tabs.children, function (b) {
+      b.classList.toggle('active', b.getAttribute('data-go') === S.view ||
+        (S.view === 'practice' && S.sess && b.getAttribute('data-go') === S.sess.mod));
+    });
+  }
+
+  /* ---------- 今日任务卡（约 17 分钟） ---------- */
+  function renderToday() {
+    var tr = todayRecs();
+    var META = {
+      calc: { n: 4, sub: '4 题 · 8 分钟 · 选公式 → 指认量 → 算到底' },
+      amount: { n: 4, sub: '4 题 · 3 分钟 · 先认量再动笔' },
+      model: { n: 3, sub: '3 题 · 3 分钟 · 看图认模型' },
+      draw: { n: 2, sub: '2 题 · 3 分钟 · 四选一选正确画法' },
+      read: { n: 2, sub: '2 题 · 3 分钟 · 量程 / 分度值 / 读数' }
+    };
+    var plan = [
+      { mod: 'calc', n: 4, label: '算到底', sub: META.calc.sub, go: 'calc' },
+      { mod: 'amount', n: 4, label: '认量', sub: META.amount.sub, go: 'amount' },
+      { mod: 'model', n: 3, label: '认模型', sub: META.model.sub, go: 'model' },
+      { mod: 'wrong', n: 1, label: '错题回炉', sub: '到期的错题 · 3 分钟', go: 'wrong' }
+    ];
+    var alt = (new Date().getDate() % 2 === 0) ? 'draw' : 'read';
+    plan.push({ mod: alt, n: 2, label: (alt === 'draw' ? '作图判断' : '读数'), sub: META[alt].sub + '（单双日轮换）', go: alt });
+
+    var done = {};
+    plan.forEach(function (p) { done[p.mod] = 0; });
+    tr.forEach(function (r) {
+      if (r.mode === 'wrong') done.wrong = (done.wrong || 0) + 1;
+      else if (done[r.mod] != null) done[r.mod]++;
+    });
+
+    var tasks = h('div', { class: 'card' });
+    tasks.appendChild(h('div', { class: 'row' },
+      h('h2', { style: 'margin:0;font-size:18px' }, '今日任务'),
+      h('span', { class: 'pill' }, '约 17 分钟')
+    ));
+    tasks.appendChild(h('div', { class: 'small muted', style: 'margin-top:4px' }, '顺序：算到底 → 认量 → 认模型 → 错题回炉 → 作图/读数（单双日轮换）。五个都做，不用等一个练熟。'));
+    tasks.appendChild(h('div', { class: 'small muted', style: 'margin-top:2px' }, '跳过几天不累计欠账，任务每天重置；每次开始都会换一批题（题型轮换 + 避开上一轮题面）。'));
+    plan.forEach(function (p, i) {
+      var isDone = done[p.mod] >= p.n;
+      tasks.appendChild(h('div', { class: 'task' + (isDone ? ' done' : '') },
+        h('div', { class: 'no' }, isDone ? '✓' : String(i + 1)),
+        h('div', { class: 'tt' }, h('b', null, p.label), h('span', null, p.sub)),
+        h('button', {
+          class: 'btn btn-sm ' + (isDone ? '' : 'btn-primary'), onclick: function () {
+            if (p.go === 'wrong') startWrong(); else startSession(p.go, null, p.n);
+          }
+        }, isDone ? '再来' : '开始')
+      ));
+    });
+    app.appendChild(tasks);
+
+    app.appendChild(h('div', { class: 'grid', style: 'margin-top:12px' },
+      statCard('今日题数', tr.length),
+      statCard('今日正确率', tr.length ? pct(tr.filter(function (r) { return r.ok; }).length, tr.length) + '%' : '—'),
+      statCard('错题待回炉', Object.keys(DB.wrong).length)
+    ));
+
+    var mods = h('div', { class: 'grid', style: 'margin-top:16px' });
+    PT.modules.forEach(function (m) {
+      var card = h('div', { class: 'module' },
+        h('div', { class: 'mh' }, h('span', null, m.icon), h('b', null, m.name)),
+        h('div', { class: 'desc' }, m.desc),
+        h('div', { class: 'kinds' }, (m.kinds || []).slice(0, 4).map(function (k) { return h('span', { class: 'kind' }, k.name); })),
+        h('div', { class: 'row', style: 'margin-top:auto' },
+          h('button', { class: 'btn btn-primary btn-sm', onclick: function () { startSession(m.id, null, m.id === 'draw' ? 4 : (m.id === 'read' ? 3 : 6)); } }, '开始'),
+          h('button', { class: 'btn btn-sm', onclick: function () { startExample(m.id, null); } }, '看例题')
+        )
+      );
+      mods.appendChild(card);
+    });
+    app.appendChild(mods);
+
+    app.appendChild(h('div', { class: 'card', style: 'margin-top:16px' },
+      h('div', { class: 'small' }, h('b', null, '怎么用')),
+      h('ul', { class: 'small muted', style: 'margin:6px 0 0;padding-left:20px' },
+        h('li', null, '每道题按「第 1 步 选公式 → 第 2 步 指认量 → 第 3 步 代入算结果」排，逐空判分。'),
+        h('li', null, '不会就点「提示」，提示不扣分但会记录。'),
+        h('li', null, '数值答错要订正：照着解析把正确答案再填一遍，对了才能下一题。'),
+        h('li', null, '直接打字：1428000、1.428e6、1.428×10^6、1.428×10⁶、21%、0.21 都认；单位不用打。'),
+        h('li', null, '单位默认不判；有效数字只提示不判错。'),
+        h('li', null, '打草稿点「草稿纸」；第一次做某类题先点「例题」。')
+      )
+    ));
+  }
+  function statCard(label, val) { return h('div', { class: 'stat' }, h('span', null, label), h('b', null, String(val))); }
+
+  /* ---------- 模块首页 ---------- */
+  function renderModule() {
+    var m = PT.moduleById(S.view);
+    if (!m) { go('today'); return; }
+    var head = h('div', { class: 'card' },
+      h('div', { class: 'row' }, h('h2', { style: 'margin:0;font-size:19px' }, m.icon + ' ' + m.name)),
+      h('p', { class: 'muted small', style: 'margin:6px 0 0' }, m.desc)
+    );
+    head.appendChild(h('div', { class: 'row', style: 'margin-top:12px' },
+      h('button', { class: 'btn btn-primary', onclick: function () { startSession(m.id, null, m.id === 'draw' ? 4 : 6); } }, '开始一轮'),
+      h('button', { class: 'btn', onclick: function () { startExample(m.id, null); } }, '先看例题')
+    ));
+    app.appendChild(head);
+    var list = h('div', { class: 'grid', style: 'margin-top:12px' });
+    (m.kinds || []).forEach(function (k) {
+      var st = kindStat('new', m.id, k.id);
+      list.appendChild(h('div', { class: 'module' },
+        h('div', { class: 'mh' }, h('b', null, k.name)),
+        h('div', { class: 'desc small muted' }, st.n ? '练过 ' + st.n + ' 题 · 正确率 ' + pct(st.ok, st.n) + '%' : '还没练过'),
+        h('div', { class: 'row', style: 'margin-top:auto' },
+          h('button', { class: 'btn btn-primary btn-sm', onclick: function () { startSession(m.id, k.id, m.id === 'draw' ? 4 : 6); } }, '练 6 题'),
+          h('button', { class: 'btn btn-sm', onclick: function () { startExample(m.id, k.id); } }, '看例题')
+        )
+      ));
+    });
+    app.appendChild(list);
+  }
+  function kindStat(mode, mod, kind) {
+    var rs = DB.recs.filter(function (r) { return r.mode === mode && r.mod === mod && r.kind === kind; });
+    return { n: rs.length, ok: rs.filter(function (r) { return r.ok; }).length };
+  }
+
+  /* ---------- 出题去重 / 题型轮换（跨轮避开上一轮题面） ---------- */
+  function sigOf(q) { return q.id + '|' + q.prompt; }
+  function shuffleArr(a) {
+    for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; }
+    return a;
+  }
+  function lastRoundOf(mod) {
+    var lr = DB.meta && DB.meta.lastRound, r = lr && lr[mod];
+    if (!r || !Array.isArray(r.sigs) || !Array.isArray(r.kinds)) return { at: 0, kinds: [], sigs: [] };
+    return r;
+  }
+  function beginRound(mod) {
+    DB.meta = DB.meta || {};
+    DB.meta.lastRound = DB.meta.lastRound || {};
+    var prev = lastRoundOf(mod);              /* 先把上一轮读走，再覆盖 */
+    var rec = { at: Date.now(), kinds: [], sigs: [] };
+    DB.meta.lastRound[mod] = rec;
+    save();
+    return { prev: prev, rec: rec };
+  }
+  function recordQuestion(rec, q, kindId) {
+    if (!rec) return;
+    rec.kinds.push(kindId || q.kind || '');
+    rec.sigs.push(sigOf(q));
+    save();
+  }
+  /* 同模块内最多试 40 个 seed，取第一个题面签名不在「已做过」集合里的题；都不行才接受重复 */
+  function pickQuestion(mod, kindId, seenSigs) {
+    var q = null;
+    for (var i = 0; i < 40; i++) {
+      q = PT.gen(mod, kindId, (Math.random() * 1e9) | 0);
+      if (seenSigs.indexOf(sigOf(q)) < 0) return q;
+    }
+    return q;
+  }
+  /* kind 队列：上一轮用过的 kind 排后、没用过的排前；一轮内 kind 不重复（用尽后才循环） */
+  function kindQueue(mod, n) {
+    var m = PT.moduleById(mod);
+    var all = (m && m.kinds ? m.kinds.map(function (k) { return k.id; }) : []);
+    if (!all.length) return null;
+    var prevKinds = lastRoundOf(mod).kinds || [];
+    var unused = shuffleArr(all.filter(function (k) { return prevKinds.indexOf(k) < 0; }));
+    var used = shuffleArr(all.filter(function (k) { return prevKinds.indexOf(k) >= 0; }));
+    var order = unused.concat(used), out = [];
+    for (var i = 0; i < n; i++) out.push(order[i % order.length]);
+    return out;
+  }
+
+  /* ---------- 练习 ---------- */
+  function startSession(mod, kind, count) {
+    S.mode = 'new'; S.example = false;
+    var n = count || 6;
+    var queue = kind ? null : kindQueue(mod, n);   /* 先按上一轮记录排 kind 队列 */
+    var rnd = beginRound(mod);                     /* 再开启本轮记录（旧记录已被读走） */
+    S.sess = {
+      mod: mod, kind: kind, total: n, done: 0, right: 0, t0: Date.now(),
+      prevSigs: rnd.prev.sigs, round: rnd.rec, kindQueue: queue
+    };
+    S.view = 'practice';
+    nextQuestion();
+  }
+  function startWrong() {
+    var now = Date.now();
+    var due = Object.keys(DB.wrong).map(function (k) { return DB.wrong[k]; }).filter(function (w) { return w.due <= now; });
+    if (!due.length) {
+      var all = Object.keys(DB.wrong).length;
+      alert(all ? '错题本里有 ' + all + ' 道，但还没到期（按 1/3/7/14 天回炉）。今天先练新的。' : '错题本是空的，先做几题吧。');
+      return;
+    }
+    S.mode = 'wrong';
+    S.sess = { mod: 'wrong', kind: null, total: Math.min(due.length, 5), done: 0, right: 0, t0: Date.now(), queue: due };
+    S.view = 'practice';
+    nextQuestion();
+  }
+  function startOneWrong(w) {
+    S.mode = 'wrong';
+    S.sess = { mod: 'wrong', kind: null, total: 1, done: 0, right: 0, t0: Date.now(), queue: [w] };
+    S.view = 'practice';
+    nextQuestion();
+  }
+  function nextQuestion() {
+    var s = S.sess;
+    if (s.done >= s.total) { S.view = 'summary'; render(); return; }
+    if (s.queue) {
+      S.q = s.queue[s.done];                 /* 错题回炉：刻意重复，不参与去重 */
+    } else {
+      var kindId = s.kindQueue ? s.kindQueue[s.done] : s.kind;
+      var seen = (s.prevSigs || []).concat(s.round ? s.round.sigs : []);
+      S.q = pickQuestion(s.mod, kindId, seen);
+      recordQuestion(s.round, S.q, kindId);
+    }
+    S.res = null; S.answered = false; S.choice = {}; S.hint = false;
+    S.draft = null; S.lastVals = null; S.t0 = Date.now(); S.fix = null;
+    render();
+  }
+
+  /* 例题：先看一个完整解答（题目 → 答案 → 怎么想 → 图），再开始练 */
+  function startExample(mod, kind) {
+    S.example = true;
+    S.sess = { mod: mod, kind: kind, total: 6, done: 0, right: 0, t0: Date.now() };
+    S.q = PT.gen(mod, kind, (Math.random() * 1e9) | 0);
+    S.view = 'practice';
+    render();
+  }
+  function renderExample() {
+    var q = S.q, s = S.sess;
+    app.appendChild(h('div', { class: 'row', style: 'margin-bottom:8px' },
+      h('span', { class: 'pill' }, '例题'),
+      h('span', { class: 'small muted' }, q.title || ''),
+      h('span', { class: 'grow' }),
+      h('span', { class: 'small muted' }, '先看懂，再开始练')
+    ));
+    var card = h('div', { class: 'card' });
+    card.appendChild(h('div', { class: 'qbody', html: q.prompt }));
+    if (q.fig) { var f0 = figBlock(q.fig, ''); if (f0) card.appendChild(f0); }
+    var ansBox = h('div', { class: 'fb good', style: 'margin-top:14px' });
+    ansBox.appendChild(h('div', { class: 'ftitle' }, '答案'));
+    var ul = h('ul');
+    q.fields.forEach(function (f, i) { ul.appendChild(h('li', null, (f.label ? f.label + ' ' : '') + PT.ansText(f))); });
+    ansBox.appendChild(ul);
+    card.appendChild(ansBox);
+    var exBox = h('div', { class: 'fb', style: 'margin-top:10px' });
+    exBox.appendChild(h('div', { class: 'ftitle' }, '怎么想'));
+    (q.explain || []).forEach(function (line) { exBox.appendChild(h('div', { class: 'small' }, line)); });
+    card.appendChild(exBox);
+    card.appendChild(h('div', { class: 'row', style: 'margin-top:14px' },
+      h('button', { class: 'btn btn-primary', onclick: function () { startSession(s.mod, s.kind, 6); } }, '看懂了，开始练'),
+      h('button', { class: 'btn', onclick: function () { startExample(s.mod, s.kind); } }, '换一道')
+    ));
+    app.appendChild(card);
+  }
+
+  function draftAt(i) {
+    var d = S.draft && S.draft[i];
+    return (typeof d === 'string') ? d : '';
+  }
+  function numInput(base, val, cls) {
+    return h('div', { class: 'fin ' + (cls || '') },
+      h('input', {
+        class: 'fone', id: base + '_n', value: val || '', inputmode: 'text',
+        autocomplete: 'off', spellcheck: 'false', placeholder: '数字'
+      })
+    );
+  }
+  /* 草稿纸：鼠标 / 手指 / 触控笔都能写，不识别，只当纸用 */
+  function scratchPad() {
+    var cv = h('canvas', { class: 'pad', width: 900, height: 420 });
+    var wrap = h('div', { class: 'padwrap' },
+      cv,
+      h('div', { class: 'row', style: 'margin-top:6px' },
+        h('button', { class: 'btn btn-sm', onclick: function () { cv._pen = !cv._pen; } }, '笔 / 橡皮'),
+        h('button', {
+          class: 'btn btn-sm', onclick: function () {
+            var g = cv.getContext && cv.getContext('2d');
+            if (g) g.clearRect(0, 0, cv.width, cv.height);
+          }
+        }, '清空')
+      )
+    );
+    setTimeout(function () { setupCanvas(cv); }, 0);
+    return wrap;
+  }
+  function setupCanvas(cv) {
+    if (!cv.getContext) return;
+    var g = cv.getContext('2d');
+    if (!g) return;
+    var drawing = false, last = null;
+    function pos(e) {
+      var r = cv.getBoundingClientRect();
+      var sx = cv.width / (r.width || 1), sy = cv.height / (r.height || 1);
+      return { x: (e.clientX - r.left) * sx, y: (e.clientY - r.top) * sy };
+    }
+    function pen() {
+      g.strokeStyle = cv._pen ? '#ffffff' : '#1b2333';
+      g.fillStyle = cv._pen ? '#ffffff' : '#1b2333';
+      g.lineWidth = cv._pen ? 16 : 3.5;
+      g.lineCap = 'round'; g.lineJoin = 'round';
+    }
+    cv.addEventListener('pointerdown', function (e) {
+      e.preventDefault(); drawing = true; last = pos(e); pen();
+      g.beginPath(); g.arc(last.x, last.y, cv._pen ? 8 : 1.7, 0, 6.3); g.fill();
+    });
+    cv.addEventListener('pointermove', function (e) {
+      if (!drawing) return;
+      e.preventDefault();
+      var p = pos(e);
+      g.beginPath(); g.moveTo(last.x, last.y); g.lineTo(p.x, p.y); g.stroke();
+      last = p;
+    });
+    ['pointerup', 'pointerleave', 'pointercancel'].forEach(function (ev) {
+      cv.addEventListener(ev, function () { drawing = false; });
+    });
+  }
+  function readDraft() {
+    return S.q.fields.map(function (f, i) {
+      if (f.type === 'choice') return '';
+      var el = document.getElementById('in' + i + '_n');
+      return el ? String(el.value || '') : '';
+    });
+  }
+  function rawAns(i) {
+    var f = S.q.fields[i], v = (S.lastVals || [])[i];
+    if (f.type === 'choice') return S.choice[i] == null ? '空' : String.fromCharCode(65 + S.choice[i]);
+    return (v == null || v === '') ? '空' : String(v);
+  }
+
+  function renderPractice() {
+    if (S.example) { renderExample(); return; }
+    var q = S.q, s = S.sess;
+    if (!q) { go('today'); return; }
+    var modName = S.mode === 'wrong' ? '错题回炉' : ((PT.moduleById(s.mod) || {}).name || '练习');
+    app.appendChild(h('div', { class: 'row', style: 'margin-bottom:8px' },
+      h('span', { class: 'pill' }, modName),
+      h('span', { class: 'small muted' }, q.title || ''),
+      h('span', { class: 'grow' }),
+      h('span', { class: 'small muted' }, (s.done + 1) + ' / ' + s.total)
+    ));
+    app.appendChild(h('div', { class: 'progress' }, h('i', { style: 'width:' + (s.done / s.total * 100) + '%' })));
+
+    var card = h('div', { class: 'card', style: 'margin-top:12px' });
+    card.appendChild(h('div', { class: 'qhead' },
+      h('span', { class: 'pill' }, q.kp ? q.kp[0] : '新题'),
+      q.kp ? h('span', { class: 'small muted' }, q.kp.join(' · ')) : null
+    ));
+    card.appendChild(h('div', { class: 'qbody', html: q.prompt }));
+    if (q.fig && q.figBefore) {
+      var fb0 = figBlock(q.fig, '看图作答');
+      if (fb0) card.appendChild(fb0);
+    }
+
+    q.fields.forEach(function (f, i) {
+      if (f.type === 'choice') {
+        if (f.label) card.appendChild(h('div', { class: 'small muted', style: 'margin-top:12px;font-weight:600' }, f.label));
+        var box = f.figs ? h('div', { class: 'optgrid' }) : null;
+        f.options.forEach(function (opt, oi) {
+          var cls = 'opt';
+          if (S.answered) { if (oi === f.ans) cls += ' ok'; else if (S.choice[i] === oi) cls += ' bad'; }
+          else if (S.choice[i] === oi) cls += ' sel';
+          var kids = [];
+          if (f.figs && f.figs[oi]) kids.push(h('div', { class: 'optfig', html: PT.svgFor({ fig: f.figs[oi] }) }));
+          kids.push(h('div', null, f.figs ? opt : (String.fromCharCode(65 + oi) + '. ' + opt)));
+          var btn = h('button', {
+            class: cls, onclick: (function (oi2) {
+              return function () { if (S.answered) return; S.choice[i] = oi2; render(); };
+            })(oi)
+          }, kids);
+          if (box) box.appendChild(btn); else card.appendChild(btn);
+        });
+        if (box) card.appendChild(box);
+      } else {
+        card.appendChild(h('div', { class: 'field' },
+          h('span', { class: 'lbl full' }, f.label),
+          numInput('in' + i, draftAt(i), S.answered ? (S.res.res[i].ok ? 'ok' : 'bad') : ''),
+          f.unit ? h('span', { class: 'unit' }, f.unit) : null
+        ));
+      }
+    });
+
+    if (!S.answered) {
+      card.appendChild(h('div', { class: 'row', style: 'margin-top:8px' },
+        h('button', { class: 'btn btn-ghost btn-sm', onclick: function () { S.scratch = !S.scratch; render(); } }, S.scratch ? '收起草稿' : '草稿纸'),
+        h('button', { class: 'btn btn-sm', onclick: function () { startExample(S.sess.mod, S.sess.kind); } }, '例题')
+      ));
+      card.appendChild(h('div', { class: 'small muted' }, '直接打字：整数、小数、1.428e6、1.428×10^6、21% 都认；单位不用打；回车提交。'));
+      if (S.scratch) card.appendChild(scratchPad());
+    }
+    if (q.tip && !S.answered && S.hint) card.appendChild(h('div', { class: 'tipbox' }, '提示：' + q.tip));
+
+    if (!S.answered) {
+      card.appendChild(h('div', { class: 'row', style: 'margin-top:16px' },
+        h('button', { class: 'btn btn-primary', onclick: submit }, '提交'),
+        h('button', { class: 'btn btn-ghost', onclick: function () { S.draft = readDraft(); S.hint = true; render(); } }, S.hint ? '提示已展开' : '看提示'),
+        h('span', { class: 'grow' }),
+        h('span', { class: 'small muted' }, '回车提交')
+      ));
+    } else {
+      /* 逐字段判分：每步 ✓/✗ + 「3 步对 2 步」 */
+      var fb = h('div', { class: 'fb ' + (S.res.ok ? 'good' : 'bad') });
+      var title = S.res.ok
+        ? (S.res.total > 1 ? '✓ ' + S.res.total + ' 步全对' : '✓ 全对')
+        : (S.res.total > 1 ? '✗ ' + S.res.total + ' 步对 ' + S.res.got + ' 步' : '✗ 不对');
+      fb.appendChild(h('div', { class: 'ftitle' }, title));
+      var ul = h('ul', { class: 'steps' });
+      q.fields.forEach(function (f, i) {
+        var r = S.res.res[i];
+        ul.appendChild(h('li', null,
+          h('span', { class: 'mk ' + (r.ok ? 'ok' : 'bad') }, r.ok ? '✓' : '✗'),
+          h('span', null,
+            h('span', { class: 'stepno' }, '第 ' + (i + 1) + ' 步 '),
+            (f.label ? f.label + ' ' : ''),
+            '正确答案：' + PT.ansText(f),
+            r.ok ? '' : ('（你填的是 ' + rawAns(i) + '）')
+          )
+        ));
+      });
+      fb.appendChild(ul);
+      (q.explain || []).forEach(function (line) {
+        fb.appendChild(h('div', { class: 'small', style: 'margin-top:4px' }, line));
+      });
+      /* 有效数字只提示、不判错 */
+      for (var si = 0; si < q.fields.length; si++) {
+        var sf = q.fields[si];
+        if (sf.type !== 'num' || !S.res.res[si].ok || sf.unit !== '%') continue;
+        var sraw = String((S.lastVals || [])[si] || '');
+        var sm = sraw.match(/\.(\d+)/);
+        if (sm && sm[1].length > 2) {
+          fb.appendChild(h('div', { class: 'small muted', style: 'margin-top:6px' }, '提示：有效数字偏多不判错，考试时百分数保留 1 位小数即可。'));
+          break;
+        }
+      }
+      q.fields.forEach(function (f, i) {
+        if (f.figs && f.figs[f.ans]) {
+          fb.appendChild(h('div', { class: 'figcap' }, '正确答案：' + String.fromCharCode(65 + f.ans) + '（' + f.options[f.ans] + '）'));
+          fb.appendChild(h('div', { class: 'figbox', html: PT.svgFor({ fig: f.figs[f.ans] }) }));
+        }
+      });
+      if (q.fig && !q.figBefore) {
+        var fb2 = figBlock(q.fig, '图');
+        if (fb2) fb.appendChild(fb2);
+      }
+      card.appendChild(fb);
+
+      /* 答错必须订正：数值字段重填正确答案，对了才出现「下一题」 */
+      if (S.fix && !S.fix.ok) {
+        var fxb = h('div', { class: 'fb', style: 'margin-top:10px' });
+        fxb.appendChild(h('div', { class: 'ftitle' }, '订正：照着上面的解析，把正确答案重新填一遍'));
+        S.fix.fields.forEach(function (i) {
+          var f = q.fields[i];
+          fxb.appendChild(h('div', { class: 'field' },
+            h('span', { class: 'lbl full' }, f.label),
+            h('input', { class: 'fone', id: 'fx' + i, placeholder: '数字' }),
+            f.unit ? h('span', { class: 'unit' }, f.unit) : null
+          ));
+        });
+        if (S.fix.tries) fxb.appendChild(h('div', { class: 'small', style: 'color:var(--bad)' }, '还不对（第 ' + S.fix.tries + ' 次），再对一下上面的解析。'));
+        fxb.appendChild(h('div', { class: 'row', style: 'margin-top:10px' },
+          h('button', { class: 'btn btn-primary btn-sm', onclick: submitFix }, '订正'),
+          h('span', { class: 'small muted' }, '订正对了才能下一题')
+        ));
+        card.appendChild(fxb);
+      } else if (S.fix && S.fix.ok) {
+        card.appendChild(h('div', { class: 'small', style: 'color:var(--ok);margin-top:8px' }, '✓ 已订正'));
+      }
+
+      if (S.res.ok || !S.fix || S.fix.ok) {
+        card.appendChild(h('div', { class: 'row', style: 'margin-top:14px' },
+          h('button', { class: 'btn btn-primary', onclick: next }, s.done >= s.total ? '看本轮总结' : '下一题 →')
+        ));
+      }
+    }
+    app.appendChild(card);
+
+    if (!S.answered) {
+      setTimeout(function () {
+        var el = document.querySelector ? document.querySelector('.fone') : null;
+        if (el && el.focus) { try { el.focus(); } catch (e) { } }
+      }, 30);
+    }
+  }
+
+  function submit() {
+    if (S.answered) return;
+    var q = S.q;
+    var draft = readDraft();
+    var vals = q.fields.map(function (f, i) {
+      if (f.type === 'choice') return S.choice[i] == null ? null : S.choice[i];
+      return PT.parseNum(draft[i]);
+    });
+    var res = PT.judge(q, vals);
+    S.lastVals = draft; S.draft = draft;
+    var fixIdx = [];
+    if (!res.ok) q.fields.forEach(function (f, i) { if (!res.res[i].ok && f.type !== 'choice') fixIdx.push(i); });
+    S.fix = fixIdx.length ? { fields: fixIdx, ok: false, tries: 0 } : null;
+    var sec = Math.max(1, Math.round((Date.now() - S.t0) / 1000));
+    S.res = res; S.answered = true;
+    var s = S.sess;
+    s.done++;
+    if (res.ok) s.right++;
+    DB.recs.push({
+      ts: Date.now(), mod: s.mod === 'wrong' ? (q.mod || 'model') : s.mod,
+      kind: q.kind, kn: q.title, ok: res.ok, got: res.got, total: res.total,
+      sec: sec, hint: S.hint, mode: S.mode, steps: res.total
+    });
+    if (!res.ok) addWrong(q);
+    else if (S.mode === 'wrong') removeWrong(q);
+    save();
+    render();
+  }
+  function submitFix() {
+    if (!S.fix || S.fix.ok) return;
+    var q = S.q, fields = [], vals = [];
+    S.fix.fields.forEach(function (i) {
+      var f = q.fields[i];
+      fields.push(f);
+      var el = document.getElementById('fx' + i);
+      vals.push(PT.parseNum(el ? el.value : ''));
+    });
+    var r = PT.judge({ fields: fields }, vals);
+    if (r.ok) {
+      S.fix.ok = true;
+      var last = DB.recs[DB.recs.length - 1];
+      if (last) last.fixed = true;
+      save();
+    } else {
+      S.fix.tries++;
+    }
+    render();
+  }
+  function next() {
+    if (S.sess.done >= S.sess.total) { S.view = 'summary'; render(); return; }
+    nextQuestion();
+  }
+
+  /* ---------- 错题本（1/3/7/14 天） ---------- */
+  function wrongKey(q) { return q.id + '|' + String(q.prompt).slice(0, 60); }
+  function addWrong(q) {
+    var k = wrongKey(q), w = DB.wrong[k], now = Date.now();
+    var n = w ? (w.n || 1) + 1 : 1;
+    var gap = n <= 1 ? 1 : (n === 2 ? 3 : (n === 3 ? 7 : 14));
+    DB.wrong[k] = {
+      id: q.id, mod: q.mod || S.sess.mod, kind: q.kind, title: q.title, prompt: q.prompt,
+      fields: q.fields, explain: q.explain, tip: q.tip, fig: q.fig, figBefore: q.figBefore,
+      ts: now, due: now + gap * PT.DAY, n: n
+    };
+  }
+  function removeWrong(q) { delete DB.wrong[wrongKey(q)]; }
+
+  function renderWrong() {
+    var ws = Object.keys(DB.wrong).map(function (k) { return DB.wrong[k]; }).sort(function (a, b) { return a.due - b.due; });
+    var head = h('div', { class: 'card' },
+      h('div', { class: 'row' }, h('h2', { style: 'margin:0;font-size:19px' }, '错题本'), h('span', { class: 'pill' }, ws.length + ' 道')),
+      h('p', { class: 'muted small', style: 'margin:6px 0 0' }, '答错的题自动进本；按 1 / 3 / 7 / 14 天到期回炉，回炉答对自动移出。')
+    );
+    head.appendChild(h('div', { class: 'row', style: 'margin-top:12px' },
+      h('button', { class: 'btn btn-primary', onclick: startWrong }, '回炉到期的'),
+      h('button', { class: 'btn', onclick: function () { go('report'); } }, '看报告')
+    ));
+    app.appendChild(head);
+    var card = h('div', { class: 'card' });
+    if (!ws.length) card.appendChild(h('div', { class: 'empty' }, '还没有错题。做几题吧。'));
+    ws.forEach(function (w) {
+      var dueTxt = w.due <= Date.now() ? '已到期' : ('还有 ' + Math.ceil((w.due - Date.now()) / PT.DAY) + ' 天');
+      card.appendChild(h('div', { class: 'wrongitem' },
+        h('div', { class: 'wt' }, String(w.prompt).replace(/<br\s*\/?>/g, ' ').slice(0, 90) + '…'),
+        h('div', { class: 'small muted' }, dueTxt + ' · 错过 ' + (w.n || 1) + ' 次'),
+        h('button', { class: 'btn btn-sm', onclick: (function (ww) { return function () { startOneWrong(ww); }; })(w) }, '重做')
+      ));
+    });
+    app.appendChild(card);
+  }
+
+  /* ---------- 本轮总结 ---------- */
+  function renderSummary() {
+    var s = S.sess;
+    var mins = Math.max(1, Math.round((Date.now() - s.t0) / 60000));
+    app.appendChild(h('div', { class: 'card', style: 'text-align:center;padding:28px 18px' },
+      h('div', { style: 'font-size:44px;line-height:1.1' }, s.right === s.total ? '🎉' : (s.right / s.total >= .6 ? '👍' : '💪')),
+      h('h2', { style: 'margin:8px 0 4px' }, s.right + ' / ' + s.total + ' 全对'),
+      h('p', { class: 'muted' }, '用时约 ' + mins + ' 分钟 · 正确率 ' + pct(s.right, s.total) + '%'),
+      h('div', { class: 'row', style: 'justify-content:center;margin-top:16px' },
+        h('button', { class: 'btn btn-primary', onclick: function () { if (s.mod === 'wrong') startWrong(); else startSession(s.mod, s.kind, s.total); } }, '再来一轮'),
+        h('button', { class: 'btn', onclick: function () { go('today'); } }, '回今日')
+      )
+    ));
+    var tips = [];
+    if (s.total && s.right / s.total < .6) tips.push('正确率偏低：先点「例题」看一遍完整解答，再独立做一遍。');
+    if (s.mod === 'calc' && s.right / s.total < .8) tips.push('「算到底」的目标是一次算对：选公式 → 指认量 → 代入，三步各写一行。');
+    if (s.mod === 'amount' && s.right / s.total < .8) tips.push('认量的关键是先圈出题目里的 m、Δt、h、s、n，再动笔。');
+    if (tips.length) app.appendChild(h('div', { class: 'card' }, h('b', null, '下一步'), tips.map(function (t) { return h('p', { class: 'small' }, '· ' + t); })));
+  }
+
+  /* ---------- 报告 ---------- */
+  function renderReport() {
+    var recs = DB.recs;
+    var ok = recs.filter(function (r) { return r.ok; }).length;
+    var secs = recs.reduce(function (a, r) { return a + (r.sec || 0); }, 0);
+    app.appendChild(h('div', { class: 'grid' },
+      statCard('累计题数', recs.length),
+      statCard('总正确率', recs.length ? pct(ok, recs.length) + '%' : '—'),
+      statCard('累计用时', recs.length ? fmtSec(secs) : '—'),
+      statCard('看提示做题', recs.filter(function (r) { return r.hint; }).length),
+      statCard('错题本', Object.keys(DB.wrong).length)
+    ));
+
+    /* 主视图：5 类断点命中率 */
+    var t = h('table', { class: 'tb' },
+      h('tr', null, h('th', null, '断点'), h('th', { class: 'n' }, '题数'), h('th', { class: 'n' }, '正确率'), h('th', { class: 'n' }, '平均用时')));
+    PT.modules.forEach(function (m) {
+      var rs = recs.filter(function (r) { return r.mod === m.id; });
+      var o = rs.filter(function (r) { return r.ok; }).length;
+      t.appendChild(h('tr', null,
+        h('td', null, m.icon + ' ' + m.name),
+        h('td', { class: 'n' }, rs.length || '—'),
+        h('td', { class: 'n' }, rs.length ? pct(o, rs.length) + '%' : '未练'),
+        h('td', { class: 'n' }, rs.length ? fmtSec(rs.reduce(function (a, r) { return a + r.sec; }, 0) / rs.length) : '—')
+      ));
+    });
+    app.appendChild(h('div', { class: 'card', style: 'margin-top:16px' }, h('h3', { style: 'margin-top:0' }, '5 类断点命中率'), t));
+
+    /* 按题型（≥5 题才显示） */
+    var byKind = {};
+    recs.forEach(function (r) { var k = r.kn || r.kind; (byKind[k] = byKind[k] || []).push(r); });
+    var rows = Object.keys(byKind).filter(function (k) { return byKind[k].length >= 5; })
+      .sort(function (a, b) { return byKind[a].length - byKind[b].length; });
+    var t2 = h('table', { class: 'tb' },
+      h('tr', null, h('th', null, '题型'), h('th', { class: 'n' }, '题数'), h('th', { class: 'n' }, '正确率')));
+    rows.forEach(function (k) {
+      var rs = byKind[k], o = rs.filter(function (r) { return r.ok; }).length;
+      t2.appendChild(h('tr', null, h('td', null, k), h('td', { class: 'n' }, rs.length), h('td', { class: 'n' }, pct(o, rs.length) + '%')));
+    });
+    if (!rows.length) t2.appendChild(h('tr', null, h('td', { colspan: 3, class: 'muted small' }, '每个题型练满 5 题后显示')));
+    app.appendChild(h('div', { class: 'card' }, h('h3', { style: 'margin-top:0' }, '按题型（弱项在前）'), t2));
+
+    /* 近 7 天 */
+    var days = [], maxN = 1;
+    for (var i = 6; i >= 0; i--) {
+      var t0 = new Date(Date.now() - i * PT.DAY);
+      var k = dayKey(t0.getTime());
+      var n = recs.filter(function (r) { return dayKey(r.ts) === k; }).length;
+      maxN = Math.max(maxN, n);
+      days.push({ label: (t0.getMonth() + 1) + '/' + t0.getDate(), n: n });
+    }
+    var spark = h('div', { class: 'spark' });
+    days.forEach(function (x) {
+      spark.appendChild(h('div', { class: 'col' },
+        h('i', { style: 'height:' + Math.max(2, Math.round(x.n / maxN * 52)) + 'px' }),
+        h('span', null, x.label)
+      ));
+    });
+    app.appendChild(h('div', { class: 'card' }, h('h3', { style: 'margin-top:0' }, '近 7 天题数'), spark));
+
+    /* 错题本最近 10 条 */
+    var ws = Object.keys(DB.wrong).map(function (k) { return DB.wrong[k]; })
+      .sort(function (a, b) { return b.ts - a.ts; }).slice(0, 10);
+    var wc = h('div', { class: 'card' }, h('h3', { style: 'margin-top:0' }, '错题本（最近 10 条）'));
+    if (!ws.length) wc.appendChild(h('div', { class: 'empty' }, '还没有错题'));
+    ws.forEach(function (w) {
+      var dueTxt = w.due <= Date.now() ? '已到期' : ('还有 ' + Math.ceil((w.due - Date.now()) / PT.DAY) + ' 天');
+      wc.appendChild(h('div', { class: 'wrongitem' },
+        h('div', { class: 'wt' }, String(w.prompt).replace(/<br\s*\/?>/g, ' ').slice(0, 80) + '…'),
+        h('div', { class: 'small muted' }, dueTxt)
+      ));
+    });
+    wc.appendChild(h('div', { class: 'row', style: 'margin-top:10px' },
+      h('button', { class: 'btn btn-primary btn-sm', onclick: startWrong }, '回炉到期的'),
+      h('button', { class: 'btn btn-sm', onclick: function () { go('wrong'); } }, '看全部错题')
+    ));
+    app.appendChild(wc);
+
+    /* 数据 */
+    app.appendChild(h('div', { class: 'card' },
+      h('h3', { style: 'margin-top:0' }, '数据'),
+      h('div', { class: 'row' },
+        h('button', { class: 'btn btn-sm', onclick: exportJSON }, '导出 JSON'),
+        h('button', { class: 'btn btn-sm', onclick: importJSON }, '导入 JSON'),
+        h('button', { class: 'btn btn-sm', onclick: selfCheck }, '自检（120 题 × 全部题类）'),
+        h('button', { class: 'btn btn-sm', style: 'color:#d93025', onclick: clearAll }, '清空记录')
+      ),
+      h('p', { class: 'small muted', style: 'margin-bottom:0' }, '记录只在本机浏览器（physTrain_v1）；清缓存 / 换设备前先导出，放进 学习记录/。')
+    ));
+  }
+
+  function exportJSON() {
+    var blob = new Blob([JSON.stringify(DB, null, 1)], { type: 'application/json' });
+    var a = document.createElement('a');
+    var t = new Date();
+    a.href = URL.createObjectURL(blob);
+    a.download = '物理训练记录-' + t.getFullYear() + '-' + String(t.getMonth() + 1).padStart(2, '0') + '-' + String(t.getDate()).padStart(2, '0') + '.json';
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function () { URL.revokeObjectURL(a.href); }, 3000);
+  }
+  function importJSON() {
+    var inp = document.createElement('input');
+    inp.type = 'file'; inp.accept = '.json,application/json';
+    inp.onchange = function () {
+      var f = inp.files && inp.files[0]; if (!f) return;
+      var fr = new FileReader();
+      fr.onload = function () {
+        try {
+          var o = JSON.parse(String(fr.result));
+          if (!o || o.v !== PT.VERSION || !Array.isArray(o.recs)) throw new Error('格式不对');
+          DB.recs = DB.recs.concat(o.recs);
+          Object.keys(o.wrong || {}).forEach(function (k) { DB.wrong[k] = o.wrong[k]; });
+          save(); render(); alert('已导入 ' + o.recs.length + ' 条记录');
+        } catch (e) { alert('导入失败：' + e.message); }
+      };
+      fr.readAsText(f);
+    };
+    inp.click();
+  }
+  function selfCheck() {
+    var t0 = Date.now();
+    var r = PT.selfTest(120);
+    alert('自检：' + r.count + ' 题 + ' + r.cases + ' 项边界用例，' +
+      (r.fails.length ? r.fails.length + ' 处失败\n' + r.fails.slice(0, 8).join('\n') : '全部通过') +
+      '\n用时 ' + (Date.now() - t0) + ' ms');
+  }
+  function clearAll() {
+    if (!confirm('清空所有记录和错题？建议先导出。')) return;
+    DB = blankDB(); save(); render();
+  }
+
+  /* ---------- 启动 ---------- */
+  Array.prototype.forEach.call(tabs.children, function (b) {
+    b.addEventListener('click', function () {
+      var v = b.getAttribute('data-go');
+      go(v);
+    });
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key !== 'Enter' || S.view !== 'practice') return;
+    e.preventDefault();
+    if (!S.answered) { submit(); return; }
+    if (S.fix && !S.fix.ok) { submitFix(); return; }
+    next();
+  });
+  (function boot() {
+    var m = (location.hash || '').match(/view=([a-z]+)/);
+    var v = m && m[1];
+    var allowed = { today: 1, model: 1, amount: 1, calc: 1, draw: 1, read: 1, wrong: 1, report: 1 };
+    go(allowed[v] ? v : 'today');
+  })();
+
+  /* 调试/自测钩子：不参与界面，供 node 里的 DOM 桩测试使用 */
+  window.__pt = {
+    S: S, db: function () { return DB; }, MT: PT, PT: PT,
+    startSession: startSession, startWrong: startWrong, startOneWrong: startOneWrong,
+    submit: submit, submitFix: submitFix, next: next, go: go, render: render,
+    exportJSON: exportJSON, selfCheck: selfCheck
+  };
+})();
+</script>
+</body>
+</html>

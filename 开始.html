@@ -46,6 +46,9 @@
   .task-go{flex:none;font-size:13px;color:var(--accent,#8a5a2b);font-weight:600;white-space:nowrap}
 
   .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(255px,1fr));gap:11px}
+  .subj-group{margin:0 0 22px}
+  .group-title{font-size:13px;font-weight:700;color:var(--sub);margin:0 0 8px;display:flex;align-items:center;gap:10px;letter-spacing:.3px}
+  .group-title::after{content:'';flex:1;height:1px;background:var(--line)}
   a.jump{
     display:block;padding:14px 15px;background:var(--card);border:1px solid var(--line);border-radius:13px;
     text-decoration:none;box-shadow:var(--sh);transition:transform .16s ease,border-color .16s ease;
@@ -118,7 +121,7 @@
 
   <section>
     <h2>各科入口 <span class="hint">点开就能练，离线可用</span></h2>
-    <div class="grid" id="subjects"></div>
+    <div id="subjects"></div>
   </section>
 
   <section class="file-only">
@@ -170,14 +173,18 @@
       file: '公式记背.html', quick: '#mode=recite&fs=today', quickText: '今日必背', wrong: '#mode=wrong', wrongText: '错题' },
     { key: 'physics',  name: '物理',        icon: '🔬', accent: '#0f9b8e', href: '物理/物理思维脚手架.html', desc: '五步引导 + 8 套周练 + 概念卡',
       file: '物理思维脚手架.html', quick: '#/guided', quickText: '五步引导', wrong: '#/wrong', wrongText: '错题回炉' },
+    { key: 'phystrain', name: '物理训练',   icon: '🧪', accent: '#0f9b8e', href: '物理/物理训练脚手架.html', desc: '认模型 · 认量 · 算到底 · 作图 · 读数',
+      file: '物理训练脚手架.html', quick: '#view=calc', quickText: '算到底', wrong: '#view=report', wrongText: '训练报告' },
     { key: 'chem',     name: '化学',        icon: '⚗',  accent: '#0e7490', href: '化学/化学思维脚手架.html', desc: '期中逐题诊断 + 六板块框架 + 25 题回炉',
       file: '化学思维脚手架.html', quick: '#view=drill', quickText: '错题回炉', wrong: '#view=drill&list=wrong', wrongText: '清错题' },
     { key: 'yuwen',    name: '语文',        icon: '📜', accent: '#3f6b57', href: '语文/语文思维脚手架.html', desc: '期中逐题诊断 + 九板块框架 + 作文逐段批改',
       file: '语文思维脚手架.html', quick: '#view=drill', quickText: '失分点闪练', wrong: '#view=drill&list=wrong', wrongText: '清错题' },
     { key: 'math',     name: '数学',        icon: '📐', accent: '#3b6fe0', href: '数学/函数思维脚手架.html', desc: '五步流程 + 闪练 + 整卷',
-      file: '函数思维脚手架.html', quick: '#view=task', quickText: '本次任务', wrong: '#view=report', wrongText: '训练报告' },
+      file: '函数思维脚手架', quick: '#view=task', quickText: '本次任务', wrong: '#view=report', wrongText: '训练报告' },
     { key: 'coord',    name: '坐标图象',    icon: '📍', accent: '#2f6fd0', href: '数学/坐标图象训练.html', desc: '五层闯关：找点 → 读点 → 直线 → 抛物线',
       file: '坐标图象训练.html', quick: '#lv=L1', quickText: '找点', wrong: '#lv=L5', wrongText: '综合' },
+    { key: 'train',    name: '数学训练',    icon: '🧭', accent: '#3b6fe0', href: '数学/数学训练脚手架.html', desc: '基础快练 · 写解析式 · 大题前两步',
+      file: '数学训练脚手架.html', quick: '#view=write', quickText: '写解析式', wrong: '#view=report', wrongText: '训练报告' },
     { key: 'english',  name: '英语过关',    icon: '📄', accent: '#7c5cd6', href: '英语/九上英语过关练习.html', desc: 'U1–U4 原卷 + 三段式讲解',
       file: '九上英语过关练习.html', quick: '#view=practice&mode=drill', quickText: '过关练习', wrong: '#view=review&tab=wrong', wrongText: '错题复盘' },
     { key: 'flash',    name: '语法闪练',    icon: '⚡', accent: '#7c5cd6', href: '英语/语法闪练.html', desc: '134 题点选闪练 · 错题自动重练',
@@ -192,15 +199,27 @@
       note: '考前 / 晚上临时抱佛脚用' }
   ];
 
+  // 卡片分组：以后加卡片，改 SUBJECTS + 这里加一行映射即可
+  var GROUP_OF = {
+    yuwen: '语文',
+    math: '数学', coord: '数学', train: '数学', firstaid: '数学',
+    english: '英语', flash: '英语', words: '英语',
+    physics: '物理', phystrain: '物理', chem: '化学', history: '历史', politics: '道德与法治',
+    formula: '公式记背'
+  };
+  var GROUP_ORDER = ['语文', '数学', '英语', '物理', '化学', '历史', '道德与法治', '公式记背'];
+
   var RECORD_KEYS = [
     { key: 'kss_v1_历史', subject: 'history' },
     { key: 'kss_v1_道德与法治', subject: 'politics' },
     { key: 'gs_v1_数学', subject: 'formula' },
     { key: 'physScaffold.v2', subject: 'physics' },
+    { key: 'physTrain_v1', subject: 'phystrain' },
     { key: 'chemScaffold.v1', subject: 'chem' },
     { key: 'ywScaffold.v1', subject: 'yuwen' },
     { key: 'fn_scaffold_v1', subject: 'math' },
     { key: 'mathcoord_v1', subject: 'coord' },
+    { key: 'mathtrain_v1', subject: 'train' },
     { key: 'jjb-jiuzhong-shang-v1', subject: 'firstaid' },
     { key: 'eng9a-practice-v1', subject: 'english' },
     { key: 'eng9a-flash-v1', subject: 'flash' }
@@ -334,6 +353,25 @@
       if (t) s.today = num(t.guided) + num(t.exam) + num(t.concept);
     })();
 
+    // 物理·训练脚手架（认模型 / 认量 / 算到底 / 作图 / 读数，逐次事件）
+    (function () {
+      var v = readJSON('physTrain_v1'); if (!v) return;
+      var s = bump('phystrain');
+      var recs = v.recs || [];
+      s.attempts += recs.length;
+      recs.forEach(function (r) { if (r && r.ok) s.correct += 1; });
+      Object.keys(v.wrong || {}).forEach(function () { s.wrong += 1; });
+      var dates = {};
+      recs.forEach(function (r) {
+        var d = dateFromStamp(r && r.ts);
+        if (d) {
+          if (!s.last || d > s.last) s.last = d;
+          dates[todayKey(d)] = true;
+        }
+      });
+      s.today = dates[todayKey()] ? 1 : 0;
+    })();
+
     // 化学（期中诊断 + 错题回炉）
     (function () {
       var v = readJSON('chemScaffold.v1'); if (!v) return;
@@ -391,6 +429,25 @@
       }
       bumpDays(v.days);
       var t = (v.days || {})[todayKey()]; if (t) s.today = num(t.n);
+    })();
+
+    // 数学·训练脚手架（基础快练 / 写解析式 / 大题前两步，逐次事件）
+    (function () {
+      var v = readJSON('mathtrain_v1'); if (!v) return;
+      var s = bump('train');
+      var recs = v.recs || [];
+      s.attempts += recs.length;
+      recs.forEach(function (r) { if (r && r.ok) s.correct += 1; });
+      Object.keys(v.wrong || {}).forEach(function () { s.wrong += 1; });
+      var dates = {};
+      recs.forEach(function (r) {
+        var d = dateFromStamp(r && r.ts);
+        if (d) {
+          if (!s.last || d > s.last) s.last = d;
+          dates[todayKey(d)] = true;
+        }
+      });
+      s.today = dates[todayKey()] ? 1 : 0;
     })();
 
     // 数学·急救包
@@ -494,7 +551,7 @@
     }
 
     var now = new Date();
-    ['history', 'politics', 'formula', 'physics', 'chem', 'yuwen', 'math', 'coord', 'english'].forEach(function (key) {
+    ['history', 'politics', 'formula', 'physics', 'phystrain', 'chem', 'yuwen', 'math', 'coord', 'train', 'english'].forEach(function (key) {
       var s = stats[key];
       if (!s) return;
       var gap = s.last ? daysBetween(s.last, now) : 30;
@@ -593,10 +650,10 @@
       list.appendChild(h('li', null, [a]));
     });
 
-    // 各科
+    // 各科：按学科分组，组内卡片自适应排列
     var grid = document.getElementById('subjects');
     grid.innerHTML = '';
-    SUBJECTS.forEach(function (meta) {
+    function subjectCard(meta) {
       var a = h('a', { class: 'jump', href: meta.href, style: '--accent:' + meta.accent });
       var head = h('div', { class: 'jump-head' });
       head.appendChild(h('span', { class: 'jump-ico', text: meta.icon }));
@@ -620,7 +677,23 @@
       } else {
         a.appendChild(h('div', { class: 'jump-note', text: '还没练过，点开就是第一题' }));
       }
-      grid.appendChild(a);
+      return a;
+    }
+
+    var byGroup = {};
+    SUBJECTS.forEach(function (meta) {
+      var g = GROUP_OF[meta.key] || '其他';
+      (byGroup[g] = byGroup[g] || []).push(meta);
+    });
+    var groupOrder = GROUP_ORDER.filter(function (g) { return byGroup[g]; });
+    Object.keys(byGroup).forEach(function (g) { if (groupOrder.indexOf(g) < 0) groupOrder.push(g); });
+    groupOrder.forEach(function (g) {
+      var sec = h('section', { class: 'subj-group' });
+      sec.appendChild(h('h3', { class: 'group-title', text: g }));
+      var gGrid = h('div', { class: 'grid' });
+      byGroup[g].forEach(function (meta) { gGrid.appendChild(subjectCard(meta)); });
+      sec.appendChild(gGrid);
+      grid.appendChild(sec);
     });
 
     // 记录摘要
