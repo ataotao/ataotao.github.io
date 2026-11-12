@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>开始 · 做题训练</title>
+<style>
+  :root{
+    --bg:#f7f5f0; --card:#fffdf9; --ink:#26221c; --sub:#7a7266; --line:#e4ddd0;
+    --brand:#8a5a2b; --ok:#2f7d4f; --warn:#b45309; --err:#b42318;
+    --sh:0 1px 2px rgba(38,34,28,.05), 0 10px 28px -18px rgba(38,34,28,.28);
+    --h:none;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:var(--bg); color:var(--ink); line-height:1.6;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+    -webkit-font-smoothing:antialiased;
+    padding:clamp(16px,3.5vw,40px) clamp(14px,3.5vw,28px) 56px;
+  }
+  .wrap{max-width:940px;margin:0 auto}
+  a{color:inherit}
+  header{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+  h1{font-size:clamp(21px,3.4vw,27px);margin:0;letter-spacing:.01em}
+  .sub{margin:4px 0 0;color:var(--sub);font-size:13px}
+  .today-date{font-size:12.5px;color:var(--sub);text-align:right}
+  .today-date b{display:block;font-size:15px;color:var(--ink);font-weight:600}
+
+  section{margin:0 0 26px}
+  h2{font-size:14px;margin:0 0 10px;display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+  h2 .hint{font-size:11.5px;color:var(--sub);font-weight:400}
+
+  .tasks{display:grid;grid-template-columns:1fr;gap:10px;margin:0;padding:0;list-style:none}
+  a.task{
+    display:flex;align-items:center;gap:12px;padding:13px 15px;background:var(--card);
+    border:1px solid var(--line);border-left:4px solid var(--accent,#8a5a2b);border-radius:13px;
+    text-decoration:none;box-shadow:var(--sh);transition:transform .16s ease,border-color .16s ease;
+  }
+  a.task:hover{transform:translateY(-2px);border-color:#d3c8b6}
+  .task-ico{flex:none;width:34px;height:34px;border-radius:10px;display:grid;place-items:center;font-size:17px;
+    background:color-mix(in srgb, var(--accent,#8a5a2b) 13%, transparent);color:var(--accent,#8a5a2b)}
+  .task-main{flex:1;min-width:0}
+  .task-title{font-size:14.5px;font-weight:600}
+  .task-reason{font-size:12px;color:var(--sub);margin-top:1px}
+  .task-go{flex:none;font-size:13px;color:var(--accent,#8a5a2b);font-weight:600;white-space:nowrap}
+
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(255px,1fr));gap:11px}
+  .subj-group{margin:0 0 22px}
+  .group-title{font-size:13px;font-weight:700;color:var(--sub);margin:0 0 8px;display:flex;align-items:center;gap:10px;letter-spacing:.3px}
+  .group-title::after{content:'';flex:1;height:1px;background:var(--line)}
+  a.jump{
+    display:block;padding:14px 15px;background:var(--card);border:1px solid var(--line);border-radius:13px;
+    text-decoration:none;box-shadow:var(--sh);transition:transform .16s ease,border-color .16s ease;
+  }
+  a.jump:hover{transform:translateY(-2px);border-color:#d3c8b6}
+  .jump-head{display:flex;align-items:center;gap:9px}
+  .jump-ico{flex:none;width:30px;height:30px;border-radius:9px;display:grid;place-items:center;font-size:16px;
+    background:color-mix(in srgb, var(--accent,#8a5a2b) 13%, transparent);color:var(--accent,#8a5a2b)}
+  .jump-name{font-size:14.5px;font-weight:600}
+  .jump-file{font-size:10.5px;color:var(--sub);font-family:ui-monospace,SFMono-Regular,Consolas,monospace;margin-top:1px;word-break:break-all}
+  .jump-stats{display:flex;flex-wrap:wrap;gap:4px 12px;margin-top:9px;font-size:11.5px;color:var(--sub)}
+  .jump-stats b{color:var(--ink);font-weight:600;font-variant-numeric:tabular-nums;margin-right:2px}
+  .jump-note{margin-top:8px;font-size:11.5px;color:var(--sub)}
+  .tag{display:inline-block;font-size:10.5px;padding:1px 7px;border-radius:999px;border:1px solid var(--line);color:var(--sub)}
+  .tag.ok{color:var(--ok);border-color:color-mix(in srgb,var(--ok) 40%, transparent)}
+
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:13px;padding:14px 16px;box-shadow:var(--sh)}
+  .panel-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .btn{
+    display:inline-flex;align-items:center;gap:6px;height:34px;padding:0 14px;border-radius:9px;
+    border:1px solid var(--line);background:#fff;color:var(--ink);font-size:13px;cursor:pointer;font-weight:500;
+  }
+  .btn.primary{background:var(--brand);border-color:var(--brand);color:#fff}
+  .btn:hover{border-color:#d3c8b6}
+  .btn:disabled{opacity:.55;cursor:default}
+  .panel p{margin:8px 0 0;font-size:12px;color:var(--sub);line-height:1.65}
+  .panel code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:11px;background:#f2ede3;padding:1px 5px;border-radius:5px}
+  .msg{margin-top:8px;font-size:12px;color:var(--ok)}
+  .msg.err{color:var(--err)}
+
+  details.help{margin-top:4px;font-size:12.5px;color:var(--sub)}
+  details.help summary{cursor:pointer;color:var(--ink);font-size:13px;font-weight:600;padding:4px 0}
+  details.help li{margin:3px 0}
+  details.help ul{padding-left:18px;margin:6px 0}
+
+  footer{margin-top:26px;padding-top:14px;border-top:1px solid var(--line);font-size:11.5px;color:var(--sub);
+    display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+  .webnote{display:none;margin:0 0 20px;padding:11px 14px;border:1px dashed var(--line);border-radius:11px;
+    font-size:12px;color:var(--sub);line-height:1.6}
+  body.web .webnote{display:block}
+  body.web .file-only{display:none!important}
+  @media (prefers-color-scheme: dark){
+    :root{--bg:#141311;--card:#1c1a17;--ink:#eee9e0;--sub:#a79f92;--line:#332f29;--brand:#d8a06a;
+      --sh:0 1px 2px rgba(0,0,0,.45), 0 12px 30px -18px rgba(0,0,0,.8)}
+    .panel code{background:#262320}
+    a.task:hover,a.jump:hover{border-color:#4a443b}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div>
+      <h1>做题训练 · 开始</h1>
+      <p class="sub">一个入口：今天练什么、各科在哪、记录怎么备份</p>
+    </div>
+    <div class="today-date"><b id="today-label">—</b><span id="streak-label">正在看你的记录…</span></div>
+  </header>
+
+  <p class="webnote">
+    网页版只做入口：进度存在<b>你自己设备</b>的浏览器里，网页读不到。要「今天做什么」和「一键备份」，
+    请在本机双击打开仓库根目录的 <b>开始.html</b>。
+  </p>
+
+  <section class="file-only">
+    <h2>今天做什么 <span class="hint" id="plan-hint">按你的练习记录算的，约 20 分钟</span></h2>
+    <ol class="tasks" id="tasks"></ol>
+  </section>
+
+  <section>
+    <h2>各科入口 <span class="hint">点开就能练，离线可用</span></h2>
+    <div id="subjects"></div>
+  </section>
+
+  <section class="file-only">
+    <h2>记录 <span class="hint">每周点一次备份，交给家长放进 <code>学习记录/</code></span></h2>
+    <div class="panel">
+      <div class="panel-row">
+        <button class="btn primary" id="backup">备份全部记录</button>
+        <span class="tag" id="record-summary">还没读到记录</span>
+      </div>
+      <p id="backup-note">
+        备份文件会下载到你的「下载」文件夹，名字像 <code>全部记录-2026-11-04.json</code>。
+        把它拖进仓库的 <code>学习记录/</code> 就行——家长的面板会统计正确率、薄弱点和连续天数。
+      </p>
+      <div class="msg" id="backup-msg"></div>
+    </div>
+  </section>
+
+  <details class="help">
+    <summary>怎么用（30 秒读完）</summary>
+    <ul>
+      <li><b>建议用 Chrome / Edge</b>：各科记录都存在同一个浏览器的本机存储里，换浏览器就看不到旧记录（但可以用备份文件恢复）。</li>
+      <li><b>把这一页收藏</b>：电脑上按 <code>Ctrl+D</code>；手机上「添加到主屏幕」。以后不用再翻文件夹。</li>
+      <li><b>顺序建议</b>：先做「今天做什么」里的三条，再去各科入口补弱项。不用每科都练。</li>
+      <li><b>每周备份</b>：点一次「备份全部记录」，把文件放进 <code>学习记录/</code>。清浏览器缓存前一定要备份。</li>
+      <li><b>手机上</b>：本站已发布到 <code>ataotao.github.io/1/</code>，随时可打开；英文单词 App 在站点首页。</li>
+    </ul>
+  </details>
+
+  <footer>
+    <span id="foot-note">做题思维训练 · 开始页</span>
+    <span><a href="https://ataotao.github.io/1/" target="_blank" rel="noopener">网页版</a></span>
+  </footer>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  var IS_FILE = location.protocol === 'file:';
+  if (!IS_FILE) document.body.classList.add('web');
+
+  // ---------- 科目定义（href 在本地与 /1/ 发布页都成立） ----------
+  var SUBJECTS = [
+    { key: 'history',  name: '历史',        icon: '🏛', accent: '#b4713a', href: '历史/核心考点训练.html', desc: '九上 254 个考点 + 2 份套卷（含期中卷）',
+      file: '核心考点训练.html', quick: '#mode=choice&fs=star', quickText: '★必背四选一', wrong: '#mode=wrong', wrongText: '错题强化' },
+    { key: 'politics', name: '道德与法治',  icon: '⚖',  accent: '#e05252', href: '道德与法治/核心考点训练.html', desc: '九上 128 个考点 + 期中套卷',
+      file: '核心考点训练.html', quick: '#mode=choice&fs=star', quickText: '★必背四选一', wrong: '#mode=wrong', wrongText: '错题强化' },
+    { key: 'formula',  name: '公式记背',    icon: '∑',  accent: '#c58a12', href: '公式记背/公式记背.html', desc: '24 条公式 + 12 步例题',
+      file: '公式记背.html', quick: '#mode=recite&fs=today', quickText: '今日必背', wrong: '#mode=wrong', wrongText: '错题' },
+    { key: 'physics',  name: '物理',        icon: '🔬', accent: '#0f9b8e', href: '物理/物理思维脚手架.html', desc: '五步引导 + 8 套周练 + 概念卡',
+      file: '物理思维脚手架.html', quick: '#/guided', quickText: '五步引导', wrong: '#/wrong', wrongText: '错题回炉' },
+    { key: 'phystrain', name: '物理训练',   icon: '🧪', accent: '#0f9b8e', href: '物理/物理训练脚手架.html', desc: '认模型 · 认量 · 算到底 · 作图 · 读数',
+      file: '物理训练脚手架.html', quick: '#view=calc', quickText: '算到底', wrong: '#view=report', wrongText: '训练报告' },
+    { key: 'chem',     name: '化学',        icon: '⚗',  accent: '#0e7490', href: '化学/化学思维脚手架.html', desc: '期中逐题诊断 + 六板块框架 + 25 题回炉',
+      file: '化学思维脚手架.html', quick: '#view=drill', quickText: '错题回炉', wrong: '#view=drill&list=wrong', wrongText: '清错题' },
+    { key: 'yuwen',    name: '语文',        icon: '📜', accent: '#3f6b57', href: '语文/语文思维脚手架.html', desc: '期中逐题诊断 + 九板块框架 + 作文逐段批改',
+      file: '语文思维脚手架.html', quick: '#view=drill', quickText: '失分点闪练', wrong: '#view=drill&list=wrong', wrongText: '清错题' },
+    { key: 'math',     name: '数学',        icon: '📐', accent: '#3b6fe0', href: '数学/函数思维脚手架.html', desc: '五步流程 + 闪练 + 整卷',
+      file: '函数思维脚手架', quick: '#view=task', quickText: '本次任务', wrong: '#view=report', wrongText: '训练报告' },
+    { key: 'coord',    name: '坐标图象',    icon: '📍', accent: '#2f6fd0', href: '数学/坐标图象训练.html', desc: '五层闯关：找点 → 读点 → 直线 → 抛物线',
+      file: '坐标图象训练.html', quick: '#lv=L1', quickText: '找点', wrong: '#lv=L5', wrongText: '综合' },
+    { key: 'train',    name: '数学训练',    icon: '🧭', accent: '#3b6fe0', href: '数学/数学训练脚手架.html', desc: '基础快练 · 写解析式 · 大题前两步',
+      file: '数学训练脚手架.html', quick: '#view=write', quickText: '写解析式', wrong: '#view=report', wrongText: '训练报告' },
+    { key: 'english',  name: '英语过关',    icon: '📄', accent: '#7c5cd6', href: '英语/九上英语过关练习.html', desc: 'U1–U4 原卷 + 三段式讲解',
+      file: '九上英语过关练习.html', quick: '#view=practice&mode=drill', quickText: '过关练习', wrong: '#view=review&tab=wrong', wrongText: '错题复盘' },
+    { key: 'flash',    name: '语法闪练',    icon: '⚡', accent: '#7c5cd6', href: '英语/语法闪练.html', desc: '134 题点选闪练 · 错题自动重练',
+      file: '语法闪练.html', quick: '', quickText: '', wrong: '', wrongText: '',
+      note: '考前突击：点一下就知道对错，做错的当晚重练到会' },
+    { key: 'words',    name: '英语单词',    icon: '📖', accent: '#1f7a56',
+      href: IS_FILE ? 'https://ataotao.github.io/' : '../index.html',
+      file: '站点首页', quick: '', quickText: '', wrong: '', wrongText: '',
+      note: IS_FILE ? '需联网打开（站点首页）' : '沪教广州版 · 按单元背词' },
+    { key: 'firstaid', name: '数学急救包',  icon: '🧰', accent: '#d9480f', href: '数学/今晚急救包.html',
+      file: '今晚急救包.html', quick: '', quickText: '', wrong: '', wrongText: '',
+      note: '考前 / 晚上临时抱佛脚用' }
+  ];
+
+  // 卡片分组：以后加卡片，改 SUBJECTS + 这里加一行映射即可
+  var GROUP_OF = {
+    yuwen: '语文',
+    math: '数学', coord: '数学', train: '数学', firstaid: '数学',
+    english: '英语', flash: '英语', words: '英语',
+    physics: '物理', phystrain: '物理', chem: '化学', history: '历史', politics: '道德与法治',
+    formula: '公式记背'
+  };
+  var GROUP_ORDER = ['语文', '数学', '英语', '物理', '化学', '历史', '道德与法治', '公式记背'];
+
+  var RECORD_KEYS = [
+    { key: 'kss_v1_历史', subject: 'history' },
+    { key: 'kss_v1_道德与法治', subject: 'politics' },
+    { key: 'gs_v1_数学', subject: 'formula' },
+    { key: 'physScaffold.v2', subject: 'physics' },
+    { key: 'physTrain_v1', subject: 'phystrain' },
+    { key: 'chemScaffold.v1', subject: 'chem' },
+    { key: 'ywScaffold.v1', subject: 'yuwen' },
+    { key: 'fn_scaffold_v1', subject: 'math' },
+    { key: 'mathcoord_v1', subject: 'coord' },
+    { key: 'mathtrain_v1', subject: 'train' },
+    { key: 'jjb-jiuzhong-shang-v1', subject: 'firstaid' },
+    { key: 'eng9a-practice-v1', subject: 'english' },
+    { key: 'eng9a-flash-v1', subject: 'flash' }
+  ];
+
+  // ---------- 工具 ----------
+  function readJSON(key) {
+    try {
+      var raw = localStorage.getItem(key);
+      if (!raw) return null;
+      return JSON.parse(raw);
+    } catch (e) { return null; }
+  }
+  function num(n) { n = Number(n); return isFinite(n) ? n : 0; }
+  function todayKey(d) {
+    d = d || new Date();
+    return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+  }
+  function dateFromStamp(stamp) {
+    if (!stamp) return null;
+    if (typeof stamp === 'number') return new Date(stamp);
+    var d = new Date(stamp);
+    return isNaN(d.getTime()) ? null : d;
+  }
+  function daysBetween(a, b) {
+    if (!a || !b) return null;
+    return Math.round((b - a) / 86400000);
+  }
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+  function h(tag, attrs, children) {
+    var el = document.createElement(tag);
+    if (attrs) for (var k in attrs) {
+      if (k === 'text') el.textContent = attrs[k];
+      else if (k === 'html') el.innerHTML = attrs[k];
+      else el.setAttribute(k, attrs[k]);
+    }
+    (children || []).forEach(function (c) { if (c) el.appendChild(c); });
+    return el;
+  }
+
+  // ---------- 各科记录 → 统一统计 ----------
+  function collect() {
+    var stats = {};
+    var days = {};
+    function bumpDays(map) {
+      if (!map || typeof map !== 'object') return;
+      for (var d in map) {
+        if (!/^\d{4}-\d{2}-\d{2}$/.test(d)) continue;
+        var v = map[d] || {};
+        var n = num(v.n) || num(v.guided) + num(v.exam) + num(v.concept);
+        var ok = num(v.ok);
+        if (!days[d]) days[d] = { n: 0, ok: 0 };
+        days[d].n += n; days[d].ok += ok;
+      }
+    }
+    function blank() { return { attempts: 0, correct: 0, wrong: 0, today: 0, last: null, extra: {} }; }
+    function bump(subject) { if (!stats[subject]) stats[subject] = blank(); return stats[subject]; }
+
+    // 历史 / 道法
+    [['kss_v1_历史', 'history'], ['kss_v1_道德与法治', 'politics']].forEach(function (pair) {
+      var v = readJSON(pair[0]); if (!v) return;
+      var s = bump(pair[1]);
+      var cards = v.cards || {};
+      for (var id in cards) {
+        var c = cards[id] || {};
+        s.attempts += num(c.seen); s.correct += num(c.ok); s.wrong += num(c.wrong);
+        var last = dateFromStamp(c.last); if (last && (!s.last || last > s.last)) s.last = last;
+      }
+      var paper = v.paper || {};
+      for (var q in paper) {
+        var p = paper[q] || {};
+        if (!p.self) {                     // 主观题没有对错，不计入正确率（题量由 days 统计）
+          s.attempts += num(p.seen); s.correct += num(p.ok); s.wrong += num(p.wrong);
+        }
+        var pl = dateFromStamp(p.last); if (pl && (!s.last || pl > s.last)) s.last = pl;
+      }
+      bumpDays(v.days);
+      var t = (v.days || {})[todayKey()]; if (t) s.today = num(t.n);
+    });
+
+    // 公式记背
+    (function () {
+      var v = readJSON('gs_v1_数学'); if (!v) return;
+      var s = bump('formula');
+      for (var id in (v.cards || {})) {
+        var c = v.cards[id] || {};
+        s.attempts += num(c.seen); s.correct += num(c.ok); s.wrong += num(c.wrong);
+        var last = dateFromStamp(c.last); if (last && (!s.last || last > s.last)) s.last = last;
+      }
+      bumpDays(v.days);
+      var t = (v.days || {})[todayKey()]; if (t) s.today = num(t.n);
+    })();
+
+    // 物理
+    (function () {
+      var v = readJSON('physScaffold.v2'); if (!v) return;
+      var s = bump('physics');
+      for (var q in (v.exam || {})) {
+        var pack = v.exam[q] || {};
+        for (var id in pack) {
+          var e = pack[id] || {};
+          s.attempts += num(e.tries); s.correct += num(e.okN); s.wrong += num(e.wrongN);
+          var last = dateFromStamp(e.at) || dateFromStamp(e.lastOkAt) || dateFromStamp(e.lastWrongAt);
+          if (last && (!s.last || last > s.last)) s.last = last;
+        }
+      }
+      for (var g in (v.guided || {})) {
+        var gd = v.guided[g] || {};
+        s.attempts += 1; if (gd.ok === true) s.correct += 1;
+        var gl = dateFromStamp(gd.at); if (gl && (!s.last || gl > s.last)) s.last = gl;
+      }
+      for (var c in (v.concept || {})) {
+        var cd = v.concept[c] || {};
+        s.attempts += num(cd.n); s.correct += Math.min(num(cd.n), num(cd.ok));
+        var cl = dateFromStamp(cd.lastAt); if (cl && (!s.last || cl > s.last)) s.last = cl;
+      }
+      // 到期复习
+      var today = todayKey();
+      var due = 0;
+      for (var c2 in (v.concept || {})) {
+        var cd2 = v.concept[c2] || {};
+        if (cd2.due && cd2.due <= today) due += 1;
+      }
+      s.extra.due = due;
+      bumpDays(v.days);
+      var t = (v.days || {})[today];
+      if (t) s.today = num(t.guided) + num(t.exam) + num(t.concept);
+    })();
+
+    // 物理·训练脚手架（认模型 / 认量 / 算到底 / 作图 / 读数，逐次事件）
+    (function () {
+      var v = readJSON('physTrain_v1'); if (!v) return;
+      var s = bump('phystrain');
+      var recs = v.recs || [];
+      s.attempts += recs.length;
+      recs.forEach(function (r) { if (r && r.ok) s.correct += 1; });
+      Object.keys(v.wrong || {}).forEach(function () { s.wrong += 1; });
+      var dates = {};
+      recs.forEach(function (r) {
+        var d = dateFromStamp(r && r.ts);
+        if (d) {
+          if (!s.last || d > s.last) s.last = d;
+          dates[todayKey(d)] = true;
+        }
+      });
+      s.today = dates[todayKey()] ? 1 : 0;
+    })();
+
+    // 化学（期中诊断 + 错题回炉）
+    (function () {
+      var v = readJSON('chemScaffold.v1'); if (!v) return;
+      var s = bump('chem');
+      for (var id in (v.stat || {})) {
+        var e = v.stat[id] || {};
+        s.attempts += num(e.att); s.correct += num(e.ok); s.wrong += num(e.wrong);
+        var last = dateFromStamp(e.at); if (last && (!s.last || last > s.last)) s.last = last;
+      }
+      bumpDays(v.days);
+      var t = (v.days || {})[todayKey()]; if (t) s.today = num(t.n);
+    })();
+
+    // 语文（期中诊断 + 失分点闪练 + 作文逐段批改）
+    (function () {
+      var v = readJSON('ywScaffold.v1'); if (!v) return;
+      var s = bump('yuwen');
+      for (var id in (v.stat || {})) {
+        var e = v.stat[id] || {};
+        s.attempts += num(e.att); s.correct += num(e.ok); s.wrong += num(e.wrong);
+        var last = dateFromStamp(e.at); if (last && (!s.last || last > s.last)) s.last = last;
+      }
+      bumpDays(v.days);
+      var t = (v.days || {})[todayKey()]; if (t) s.today = num(t.n);
+    })();
+
+    // 数学·函数脚手架（逐次事件，无 days）
+    (function () {
+      var v = readJSON('fn_scaffold_v1'); if (!v) return;
+      var s = bump('math');
+      var log = v.log || [];
+      s.attempts += log.length;
+      log.forEach(function (e) { if (e && e.ok) s.correct += 1; });
+      (v.drill || []).forEach(function (r) { s.attempts += num(r.total); s.correct += num(r.right); });
+      (v.paper || []).forEach(function (r) { s.attempts += 1; if (r && r.ok) s.correct += 1; });
+      var dates = {};
+      log.concat(v.paper || []).forEach(function (e) {
+        var d = dateFromStamp(e && e.ts);
+        if (d) {
+          if (!s.last || d > s.last) s.last = d;
+          dates[todayKey(d)] = true;
+        }
+      });
+      s.today = dates[todayKey()] ? 1 : 0;
+    })();
+
+    // 数学·坐标图象（五层闯关）
+    (function () {
+      var v = readJSON('mathcoord_v1'); if (!v) return;
+      var s = bump('coord');
+      for (var id in (v.stat || {})) {
+        var e = v.stat[id] || {};
+        s.attempts += num(e.att); s.correct += num(e.ok); s.wrong += num(e.wrong);
+        var last = dateFromStamp(e.at); if (last && (!s.last || last > s.last)) s.last = last;
+      }
+      bumpDays(v.days);
+      var t = (v.days || {})[todayKey()]; if (t) s.today = num(t.n);
+    })();
+
+    // 数学·训练脚手架（基础快练 / 写解析式 / 大题前两步，逐次事件）
+    (function () {
+      var v = readJSON('mathtrain_v1'); if (!v) return;
+      var s = bump('train');
+      var recs = v.recs || [];
+      s.attempts += recs.length;
+      recs.forEach(function (r) { if (r && r.ok) s.correct += 1; });
+      Object.keys(v.wrong || {}).forEach(function () { s.wrong += 1; });
+      var dates = {};
+      recs.forEach(function (r) {
+        var d = dateFromStamp(r && r.ts);
+        if (d) {
+          if (!s.last || d > s.last) s.last = d;
+          dates[todayKey(d)] = true;
+        }
+      });
+      s.today = dates[todayKey()] ? 1 : 0;
+    })();
+
+    // 数学·急救包
+    (function () {
+      var v = readJSON('jjb-jiuzhong-shang-v1'); if (!v) return;
+      var s = bump('firstaid');
+      for (var id in (v.log || {})) {
+        var r = v.log[id] || {};
+        s.attempts += num(r.n); s.correct += num(r.r); s.wrong += num(r.w);
+      }
+      var firstOk = 0; for (var k in (v.firstOk || {})) firstOk += 1;
+      s.extra.firstOk = firstOk;
+    })();
+
+    // 英语
+    (function () {
+      var v = readJSON('eng9a-practice-v1'); if (!v) return;
+      var s = bump('english');
+      for (var id in (v.stat || {})) {
+        var r = v.stat[id] || {};
+        s.attempts += num(r.att); s.correct += num(r.ok); s.wrong += num(r.wrong);
+      }
+      var today = todayKey();
+      var seenToday = 0;
+      var stamps = [];
+      for (var k in (v.atList || {})) (v.atList[k] || []).forEach(function (x) { stamps.push(x); });
+      for (var k2 in (v.at || {})) stamps.push(v.at[k2]);
+      stamps.forEach(function (stamp) {
+        var d = dateFromStamp(stamp);
+        if (!d) return;
+        if (!s.last || d > s.last) s.last = d;
+        if (todayKey(d) === today) seenToday += 1;
+      });
+      s.today = seenToday > 0 ? 1 : 0;
+    })();
+
+    // 英语语法闪练（eng9a-flash-v1：stat[id] = att/ok/wrong/peek/at，另有 rounds[]）
+    (function () {
+      var v = readJSON('eng9a-flash-v1'); if (!v) return;
+      var s = bump('flash');
+      var today = todayKey();
+      var seenToday = 0;
+      for (var id in (v.stat || {})) {
+        var r = v.stat[id] || {};
+        s.attempts += num(r.att); s.correct += num(r.ok); s.wrong += num(r.wrong);
+        var d = dateFromStamp(r.at);
+        if (!d) continue;
+        if (!s.last || d > s.last) s.last = d;
+        if (todayKey(d) === today) seenToday += 1;
+      }
+      (v.rounds || []).forEach(function (rd) {
+        var d = dateFromStamp(rd && rd.endAt);
+        if (!d) return;
+        if (!s.last || d > s.last) s.last = d;
+        if (todayKey(d) === today) seenToday += 1;
+      });
+      s.today = seenToday > 0 ? 1 : 0;
+    })();
+
+    return { stats: stats, days: days };
+  }
+
+  // ---------- 连续天数 ----------
+  function streakOf(days) {
+    var d = new Date();
+    var count = 0;
+    for (var i = 0; i < 400; i += 1) {
+      var key = todayKey(d);
+      if (!days[key] || !days[key].n) break;
+      count += 1;
+      d.setDate(d.getDate() - 1);
+    }
+    return count;
+  }
+
+  // ---------- 今日任务 ----------
+  function buildTasks(stats, days) {
+    var found = stats && Object.keys(stats).length > 0;
+    var tasks = [];
+    function push(subjectKey, opts) {
+      var meta = SUBJECTS.filter(function (s) { return s.key === subjectKey; })[0];
+      if (!meta) return;
+      tasks.push({
+        subject: subjectKey,
+        icon: meta.icon,
+        accent: meta.accent,
+        title: opts.title,
+        reason: opts.reason,
+        href: meta.href + opts.hash,
+        cta: opts.cta || '开始',
+        score: opts.score,
+        hour: opts.hour,
+      });
+    }
+
+    if (!found) {
+      push('math', { title: '数学 · 10 分钟基础快练', reason: '第一次用：先把这条流程走一遍', hash: '#view=task', score: 100, hour: 9 });
+      push('english', { title: '英语 · 5 分钟逐题', reason: '一次做 5 道，先熟悉玩法', hash: '#view=practice', score: 90, hour: 8 });
+      push('history', { title: '历史 · 5 分钟 ★必背', reason: '★ 的是必背，先刷这 97 条', hash: '#mode=choice&fs=star', score: 80, hour: 7 });
+      return tasks;
+    }
+
+    var now = new Date();
+    ['history', 'politics', 'formula', 'physics', 'phystrain', 'chem', 'yuwen', 'math', 'coord', 'train', 'english'].forEach(function (key) {
+      var s = stats[key];
+      if (!s) return;
+      var gap = s.last ? daysBetween(s.last, now) : 30;
+      var idle = (s.today || 0) === 0;
+      var score = (idle ? 600 : 0) + Math.min(240, num(s.wrong) * 4) + Math.min(120, gap * 10);
+      if (idle && s.attempts > 0) {
+        var meta = SUBJECTS.filter(function (m) { return m.key === key; })[0];
+        var hours = s.last ? Math.max(1, Math.round((now - s.last) / 3600000)) : 24;
+        push(key, {
+          title: meta.name + ' · 今天还没练',
+          reason: (hours >= 24 ? Math.round(hours / 24) + ' 天没动' : hours + ' 小时没动') + '，花 5 分钟过一轮' + (meta.quickText ? '（' + meta.quickText + '）' : ''),
+          hash: meta.quick || '',
+          score: score, hour: hours,
+        });
+      }
+    });
+
+    // 物理到期复习
+    if (stats.physics && stats.physics.extra && stats.physics.extra.due > 0) {
+      push('physics', {
+        title: '物理 · 今日到期复习',
+        reason: stats.physics.extra.due + ' 张概念卡到期，2 分钟一轮',
+        hash: '#/concept', score: 700,
+      });
+    }
+
+    // 错得最多的科目 → 错题
+    var worstKey = null, worst = 0;
+    Object.keys(stats).forEach(function (key) {
+      var s = stats[key];
+      if (s.attempts >= 8 && s.wrong > worst) { worst = s.wrong; worstKey = key; }
+    });
+    if (worstKey) {
+      var meta2 = SUBJECTS.filter(function (m) { return m.key === worstKey; })[0];
+      if (meta2 && meta2.wrong) {
+        push(worstKey, {
+          title: meta2.name + ' · ' + meta2.wrongText,
+          reason: '累计错 ' + worst + ' 次，先把错的清掉',
+          hash: meta2.wrong, cta: '清错题', score: 500 + Math.min(200, worst),
+        });
+      }
+    }
+
+    // 补足 3 条：记录少的时候也要给出可执行的短任务
+    var defaults = [
+      { key: 'math', title: '数学 · 10 分钟基础快练', reason: '保持手感，走一遍五步流程', hash: '#view=task' },
+      { key: 'coord', title: '坐标图象 · 5 分钟找点', reason: '先横后竖，练到不用想', hash: '#lv=L1' },
+      { key: 'english', title: '英语 · 5 分钟逐题', reason: '一次 5 道，换换脑子', hash: '#view=practice' },
+      { key: 'formula', title: '公式 · 3 分钟今日必背', reason: '每天必背的那几条', hash: '#mode=recite&fs=today' },
+      { key: 'chem', title: '化学 · 10 分钟错题回炉', reason: '期中卷的失分点，点选即判', hash: '#view=drill' },
+      { key: 'yuwen', title: '语文 · 10 分钟失分点闪练', reason: '文言翻译与赏析题，先按模板过一遍', hash: '#view=drill' },
+      { key: 'history', title: '历史 · 5 分钟 ★必背', reason: '★ 的是必背，刷四选一', hash: '#mode=choice&fs=star' }
+    ];
+    defaults.forEach(function (d) {
+      if (tasks.length >= 3) return;
+      if (tasks.some(function (t) { return t.subject === d.key; })) return;
+      push(d.key, { title: d.title, reason: d.reason, hash: d.hash, score: 10 });
+    });
+
+    // 科目去重，按分数取前 3
+    var seen = {};
+    return tasks
+      .sort(function (a, b) { return b.score - a.score; })
+      .filter(function (t) { if (seen[t.subject]) return false; seen[t.subject] = true; return true; })
+      .slice(0, 3);
+  }
+
+  // ---------- 渲染 ----------
+  function render() {
+    var today = new Date();
+    var week = ['日', '一', '二', '三', '四', '五', '六'];
+    document.getElementById('today-label').textContent =
+      today.getMonth() + 1 + ' 月 ' + today.getDate() + ' 日 · 周' + week[today.getDay()];
+
+    var data = collect();
+    var stats = data.stats;
+    var streak = streakOf(data.days);
+    var streakEl = document.getElementById('streak-label');
+    if (!Object.keys(stats).length) streakEl.textContent = '还没有记录，先做一题';
+    else streakEl.textContent = streak > 0 ? '已连续 ' + streak + ' 天' : '今天还没练';
+
+    // 任务
+    var list = document.getElementById('tasks');
+    list.innerHTML = '';
+    buildTasks(stats, data.days).forEach(function (task) {
+      var a = h('a', {
+        class: 'task', href: task.href,
+        style: '--accent:' + task.accent,
+      });
+      a.appendChild(h('span', { class: 'task-ico', text: task.icon }));
+      var main = h('div', { class: 'task-main' });
+      main.appendChild(h('div', { class: 'task-title', text: task.title }));
+      main.appendChild(h('div', { class: 'task-reason', text: task.reason }));
+      a.appendChild(main);
+      a.appendChild(h('span', { class: 'task-go', text: task.cta + ' →' }));
+      list.appendChild(h('li', null, [a]));
+    });
+
+    // 各科：按学科分组，组内卡片自适应排列
+    var grid = document.getElementById('subjects');
+    grid.innerHTML = '';
+    function subjectCard(meta) {
+      var a = h('a', { class: 'jump', href: meta.href, style: '--accent:' + meta.accent });
+      var head = h('div', { class: 'jump-head' });
+      head.appendChild(h('span', { class: 'jump-ico', text: meta.icon }));
+      var nm = h('div', null);
+      nm.appendChild(h('div', { class: 'jump-name', text: meta.name }));
+      nm.appendChild(h('div', { class: 'jump-file', text: meta.file }));
+      head.appendChild(nm);
+      a.appendChild(head);
+
+      var s = stats[meta.key];
+      if (!IS_FILE) {
+        a.appendChild(h('div', { class: 'jump-note', text: meta.desc || meta.note || '' }));
+      } else if (s && s.attempts > 0) {
+        var st = h('div', { class: 'jump-stats' });
+        st.appendChild(h('span', { html: '今天 <b>' + (s.today || 0) + '</b> 题' }));
+        st.appendChild(h('span', { html: '正确率 <b>' + Math.round((s.correct / s.attempts) * 100) + '%</b>' }));
+        if (s.wrong > 0) st.appendChild(h('span', { html: '错 <b>' + s.wrong + '</b> 次' }));
+        a.appendChild(st);
+      } else if (meta.note) {
+        a.appendChild(h('div', { class: 'jump-note', text: meta.note }));
+      } else {
+        a.appendChild(h('div', { class: 'jump-note', text: '还没练过，点开就是第一题' }));
+      }
+      return a;
+    }
+
+    var byGroup = {};
+    SUBJECTS.forEach(function (meta) {
+      var g = GROUP_OF[meta.key] || '其他';
+      (byGroup[g] = byGroup[g] || []).push(meta);
+    });
+    var groupOrder = GROUP_ORDER.filter(function (g) { return byGroup[g]; });
+    Object.keys(byGroup).forEach(function (g) { if (groupOrder.indexOf(g) < 0) groupOrder.push(g); });
+    groupOrder.forEach(function (g) {
+      var sec = h('section', { class: 'subj-group' });
+      sec.appendChild(h('h3', { class: 'group-title', text: g }));
+      var gGrid = h('div', { class: 'grid' });
+      byGroup[g].forEach(function (meta) { gGrid.appendChild(subjectCard(meta)); });
+      sec.appendChild(gGrid);
+      grid.appendChild(sec);
+    });
+
+    // 记录摘要
+    var summary = document.getElementById('record-summary');
+    var total = 0, keys = 0;
+    RECORD_KEYS.forEach(function (item) {
+      if (readJSON(item.key)) { keys += 1; }
+    });
+    Object.keys(stats).forEach(function (k) { total += stats[k].attempts || 0; });
+    summary.textContent = keys ? keys + ' 科有记录 · 累计 ' + total + ' 次作答' : '还没读到记录';
+  }
+
+  // ---------- 备份 ----------
+  function backup() {
+    var apps = {};
+    var count = 0;
+    RECORD_KEYS.forEach(function (item) {
+      var v = readJSON(item.key);
+      if (v) { apps[item.key] = v; count += 1; }
+    });
+    var msg = document.getElementById('backup-msg');
+    if (!count) {
+      msg.className = 'msg err';
+      msg.textContent = '还没读到任何记录，先去做几道题再备份。';
+      return;
+    }
+    var payload = {
+      schema: 'lt.practice-records/1',
+      kind: 'backup',
+      exportedAt: new Date().toISOString(),
+      apps: apps
+    };
+    var text = JSON.stringify(payload, null, 2);
+    var blob = new Blob([text], { type: 'application/json' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = '全部记录-' + todayKey() + '.json';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(function () { URL.revokeObjectURL(url); }, 3000);
+    msg.className = 'msg';
+    msg.textContent = '已备份 ' + count + ' 科记录（' + Math.round(text.length / 1024) + ' KB）。把下载的文件放进 学习记录/ 即可。';
+  }
+
+  var btn = document.getElementById('backup');
+  if (btn) btn.addEventListener('click', backup);
+
+  render();
+  // 如果别的页面开着练习，切回来时刷新统计
+  window.addEventListener('focus', function () { render(); });
+  document.addEventListener('visibilitychange', function () {
+    if (!document.hidden) render();
+  });
+})();
+</script>
+</body>
+</html>
