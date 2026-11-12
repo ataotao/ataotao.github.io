@@ -316,9 +316,12 @@ $Jobs = @(
         Items     = @(
             # 入口页：仓库根 开始.html → 站点 1/index.html（覆盖旧的手写索引）
             @{ Path = '开始.html'; As = 'index.html' }
+            # 各科页面里的「返回开始」写的是 ../开始.html，站点上也保留一份同名副本，避免线上死链
+            @{ Path = '开始.html'; As = '开始.html' }
             '道德与法治/核心考点训练.html'
             @{ Path = '道德与法治/images'; Filter = '*.webp' }
             '公式记背/公式记背.html'
+            '化学/化学思维脚手架.html'
             '历史/核心考点训练.html'
             @{ Path = '历史/images/试卷';   Filter = '*.webp' }
             '数学/函数思维脚手架.html'
@@ -331,6 +334,7 @@ $Jobs = @(
             '英语/九上英语过关练习.html'
             # 语法闪练：单文件（题库 + 说明文档都已内联），双击即用，不需要原卷图
             '英语/语法闪练.html'
+            '语文/语文思维脚手架.html'
         )
         GitPaths  = @('1')
         BuildHint = '在各自训练器目录里重新构建出 HTML；开始.html 是手写的静态页'
