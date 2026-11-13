@@ -966,7 +966,7 @@ var PT = (function () {
         choiceField(r, 'η = W有/W总', ['η = W总/W有', 'η = Q吸/Q放', 'η = P有/P总'], '第 1 步 选公式：'),
         { type: 'num', label: '第 2 步 指认量：有用功 W有 =', ans: Wyou, unit: 'J' },
         { type: 'num', label: '第 3 步 指认量：总功 W总 =', ans: Wtotal, unit: 'J' },
-        { type: 'num', label: '第 4 步 代入：机械效率 η =', ans: eta, unit: '%', tol: 0.15 }
+        { type: 'num', label: '第 4 步 代入：机械效率 η =', ans: eta, unit: '%', tol: 0.5 }
       ],
       tip: '有用功 W有 = Gh（把物体提上去）；总功 W总 = Fs（拉力做的功）；η = W有/W总。',
       explain: [
@@ -1043,7 +1043,7 @@ var PT = (function () {
         choiceField(r, 'η = Q吸/Q放', ['η = Q放/Q吸', 'η = Q吸/(Q吸+Q放)', 'η = Q放/(Q吸+Q放)'], '第 1 步 选公式：'),
         { type: 'num', label: '第 2 步 指认量：Q吸 =', ans: Qabs, unit: 'J' },
         { type: 'num', label: 'Q放 =', ans: Qrel, unit: 'J' },
-        { type: 'num', label: '第 3 步 代入：η =', ans: eta, unit: '%', tol: 0.15 }
+        { type: 'num', label: '第 3 步 代入：η =', ans: eta, unit: '%', tol: 0.5 }
       ],
       tip: '加热效率 = 水吸收的热量 ÷ 燃料完全燃烧放出的热量。',
       explain: [
@@ -1141,7 +1141,7 @@ var PT = (function () {
         choiceField(r, 'η = W有/W总', ['η = W总/W有', 'η = W有×W总', 'η = W总/W有×100%'], '第 1 步 选公式：'),
         { type: 'num', label: '第 2 步 指认量：W有 =', ans: Wy2, unit: 'J' },
         { type: 'num', label: 'W总 =', ans: Wt, unit: 'J' },
-        { type: 'num', label: '第 3 步 代入：η =', ans: eta, unit: '%', tol: 0.15 }
+        { type: 'num', label: '第 3 步 代入：η =', ans: eta, unit: '%', tol: 0.5 }
       ],
       tip: '机械效率 = 有用功 ÷ 总功，一定小于 1。',
       explain: ['η = W有/W总 = ' + Wy2 + ' ÷ ' + Wt + ' ≈ ' + fmtNum(eta) + '%。'],
@@ -1558,8 +1558,10 @@ var PT = (function () {
       return o;
     } catch (e) { return blankDB(); }
   })();
+  var SAVE_FAIL = false;
   function save() {
-    try { localStorage.setItem(KEY, JSON.stringify(DB)); } catch (e) { }
+    try { localStorage.setItem(KEY, JSON.stringify(DB)); SAVE_FAIL = false; }
+    catch (e) { SAVE_FAIL = true; }
   }
   function dayKey(ts) { var t = new Date(ts); return t.getFullYear() + '-' + (t.getMonth() + 1) + '-' + t.getDate(); }
   function today() { return dayKey(Date.now()); }
@@ -1616,9 +1618,13 @@ var PT = (function () {
     clear(app);
     var fn = VIEWS[S.view] || renderToday;
     fn();
+    if (SAVE_FAIL) {
+      app.appendChild(h('div', { class: 'fb bad', style: 'margin-top:10px' },
+        '⚠ 记录没能存进本机（隐私模式或空间满）：刷新后会丢，请先「报告 → 导出 JSON」。'));
+    }
     Array.prototype.forEach.call(tabs.children, function (b) {
       b.classList.toggle('active', b.getAttribute('data-go') === S.view ||
-        (S.view === 'practice' && S.sess && b.getAttribute('data-go') === S.sess.mod));
+        ((S.view === 'practice' || S.view === 'summary') && S.sess && b.getAttribute('data-go') === S.sess.mod));
     });
   }
 
@@ -1632,11 +1638,12 @@ var PT = (function () {
       draw: { n: 2, sub: '2 题 · 3 分钟 · 四选一选正确画法' },
       read: { n: 2, sub: '2 题 · 3 分钟 · 量程 / 分度值 / 读数' }
     };
+    var dueN = Object.keys(DB.wrong).filter(function (k) { return DB.wrong[k].due <= Date.now(); }).length;
     var plan = [
       { mod: 'calc', n: 4, label: '算到底', sub: META.calc.sub, go: 'calc' },
       { mod: 'amount', n: 4, label: '认量', sub: META.amount.sub, go: 'amount' },
       { mod: 'model', n: 3, label: '认模型', sub: META.model.sub, go: 'model' },
-      { mod: 'wrong', n: 1, label: '错题回炉', sub: '到期的错题 · 3 分钟', go: 'wrong' }
+      { mod: 'wrong', n: 1, label: '错题回炉', sub: (dueN ? '到期 ' + dueN + ' 题' : '暂无到期') + ' · 3 分钟', go: 'wrong' }
     ];
     var alt = (new Date().getDate() % 2 === 0) ? 'draw' : 'read';
     plan.push({ mod: alt, n: 2, label: (alt === 'draw' ? '作图判断' : '读数'), sub: META[alt].sub + '（单双日轮换）', go: alt });
@@ -1672,7 +1679,7 @@ var PT = (function () {
     app.appendChild(h('div', { class: 'grid', style: 'margin-top:12px' },
       statCard('今日题数', tr.length),
       statCard('今日正确率', tr.length ? pct(tr.filter(function (r) { return r.ok; }).length, tr.length) + '%' : '—'),
-      statCard('错题待回炉', Object.keys(DB.wrong).length)
+      statCard('错题待回炉', Object.keys(DB.wrong).filter(function (k) { return DB.wrong[k].due <= Date.now(); }).length)
     ));
 
     var mods = h('div', { class: 'grid', style: 'margin-top:16px' });
@@ -1683,7 +1690,7 @@ var PT = (function () {
         h('div', { class: 'kinds' }, (m.kinds || []).slice(0, 4).map(function (k) { return h('span', { class: 'kind' }, k.name); })),
         h('div', { class: 'row', style: 'margin-top:auto' },
           h('button', { class: 'btn btn-primary btn-sm', onclick: function () { startSession(m.id, null, m.id === 'draw' ? 4 : (m.id === 'read' ? 3 : 6)); } }, '开始'),
-          h('button', { class: 'btn btn-sm', onclick: function () { startExample(m.id, null); } }, '看例题')
+          h('button', { class: 'btn btn-sm', onclick: function () { startExample(m.id, lastKindOf(m.id)); } }, '看例题')
         )
       );
       mods.appendChild(card);
@@ -1714,7 +1721,7 @@ var PT = (function () {
     );
     head.appendChild(h('div', { class: 'row', style: 'margin-top:12px' },
       h('button', { class: 'btn btn-primary', onclick: function () { startSession(m.id, null, m.id === 'draw' ? 4 : 6); } }, '开始一轮'),
-      h('button', { class: 'btn', onclick: function () { startExample(m.id, null); } }, '先看例题')
+      h('button', { class: 'btn', onclick: function () { startExample(m.id, lastKindOf(m.id)); } }, '先看例题')
     ));
     app.appendChild(head);
     var list = h('div', { class: 'grid', style: 'margin-top:12px' });
@@ -1723,10 +1730,13 @@ var PT = (function () {
       list.appendChild(h('div', { class: 'module' },
         h('div', { class: 'mh' }, h('b', null, k.name)),
         h('div', { class: 'desc small muted' }, st.n ? '练过 ' + st.n + ' 题 · 正确率 ' + pct(st.ok, st.n) + '%' : '还没练过'),
-        h('div', { class: 'row', style: 'margin-top:auto' },
-          h('button', { class: 'btn btn-primary btn-sm', onclick: function () { startSession(m.id, k.id, m.id === 'draw' ? 4 : 6); } }, '练 6 题'),
-          h('button', { class: 'btn btn-sm', onclick: function () { startExample(m.id, k.id); } }, '看例题')
-        )
+        (function () {
+          var kn = Math.min(m.id === 'draw' ? 4 : 6, poolSize(m.id, k.id));
+          return h('div', { class: 'row', style: 'margin-top:auto' },
+            h('button', { class: 'btn btn-primary btn-sm', onclick: function () { startSession(m.id, k.id, kn); } }, '练 ' + kn + ' 题'),
+            h('button', { class: 'btn btn-sm', onclick: function () { startExample(m.id, k.id); } }, '看例题')
+          );
+        })()
       ));
     });
     app.appendChild(list);
@@ -1738,6 +1748,11 @@ var PT = (function () {
 
   /* ---------- 出题去重 / 题型轮换（跨轮避开上一轮题面） ---------- */
   function sigOf(q) { return q.id + '|' + q.prompt; }
+  /* 这个模块最近练过的题型（没有就返回 null，例题退化为随机） */
+  function lastKindOf(mod) {
+    var lk = DB.meta && DB.meta.lastKind;
+    return (lk && lk[mod]) || null;
+  }
   function shuffleArr(a) {
     for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; }
     return a;
@@ -1785,9 +1800,22 @@ var PT = (function () {
   }
 
   /* ---------- 练习 ---------- */
+  /* 一轮题量上限：draw 每个 kind 只有 2 道固定题；生成类模块受 kind 数限制（4.8：一轮内 kind 不重复） */
+  function poolSize(mod, kind) {
+    var m = PT.moduleById(mod);
+    if (!m) return 6;
+    var byKind = (m.kinds && m.kinds.length) ? m.kinds.length : 6;
+    if (kind) {
+      if (m.items) return Math.max(1, m.items.filter(function (x) { return x.kind === kind; }).length);
+      return 999;   /* 参数化生成：同一题型题量无限 */
+    }
+    if (m.items) return Math.max(1, Math.min(m.items.length, byKind));
+    return byKind;
+  }
   function startSession(mod, kind, count) {
-    S.mode = 'new'; S.example = false;
-    var n = count || 6;
+    if (mod === 'wrong') { startWrong(); return; }   /* 兜底：回炉走回炉入口 */
+    S.mode = 'new'; S.example = false; S.back = null;
+    var n = Math.max(1, Math.min(count || 6, poolSize(mod, kind)));
     var queue = kind ? null : kindQueue(mod, n);   /* 先按上一轮记录排 kind 队列 */
     var rnd = beginRound(mod);                     /* 再开启本轮记录（旧记录已被读走） */
     S.sess = {
@@ -1798,6 +1826,8 @@ var PT = (function () {
     nextQuestion();
   }
   function startWrong() {
+    S.example = false;
+    S.back = null;
     var now = Date.now();
     var due = Object.keys(DB.wrong).map(function (k) { return DB.wrong[k]; }).filter(function (w) { return w.due <= now; });
     if (!due.length) {
@@ -1811,6 +1841,8 @@ var PT = (function () {
     nextQuestion();
   }
   function startOneWrong(w) {
+    S.example = false;
+    S.back = null;
     S.mode = 'wrong';
     S.sess = { mod: 'wrong', kind: null, total: 1, done: 0, right: 0, t0: Date.now(), queue: [w] };
     S.view = 'practice';
@@ -1834,6 +1866,7 @@ var PT = (function () {
 
   /* 例题：先看一个完整解答（题目 → 答案 → 怎么想 → 图），再开始练 */
   function startExample(mod, kind) {
+    if (!PT.moduleById(mod)) return;   /* 兜底：未知模块不进入例题页 */
     S.example = true;
     S.sess = { mod: mod, kind: kind, total: 6, done: 0, right: 0, t0: Date.now() };
     S.q = PT.gen(mod, kind, (Math.random() * 1e9) | 0);
@@ -1851,6 +1884,18 @@ var PT = (function () {
     var card = h('div', { class: 'card' });
     card.appendChild(h('div', { class: 'qbody', html: q.prompt }));
     if (q.fig) { var f0 = figBlock(q.fig, ''); if (f0) card.appendChild(f0); }
+    /* 作图判断：例题页也要把四张选项图铺出来，正确那张标 ✓ */
+    q.fields.forEach(function (f) {
+      if (!f.figs) return;
+      if (f.label) card.appendChild(h('div', { class: 'small muted', style: 'margin-top:12px;font-weight:600' }, f.label));
+      var box = h('div', { class: 'optgrid' });
+      f.options.forEach(function (opt, oi) {
+        box.appendChild(h('button', { class: 'opt' + (oi === f.ans ? ' ok' : '') },
+          h('div', { class: 'optfig', html: PT.svgFor({ fig: f.figs[oi] }) }),
+          h('div', null, opt)));
+      });
+      card.appendChild(box);
+    });
     var ansBox = h('div', { class: 'fb good', style: 'margin-top:14px' });
     ansBox.appendChild(h('div', { class: 'ftitle' }, '答案'));
     var ul = h('ul');
@@ -1862,7 +1907,17 @@ var PT = (function () {
     (q.explain || []).forEach(function (line) { exBox.appendChild(h('div', { class: 'small' }, line)); });
     card.appendChild(exBox);
     card.appendChild(h('div', { class: 'row', style: 'margin-top:14px' },
-      h('button', { class: 'btn btn-primary', onclick: function () { startSession(s.mod, s.kind, 6); } }, '看懂了，开始练'),
+      h('button', { class: 'btn btn-primary', onclick: function () {
+        if (S.back) {
+          /* 从练习页点进来的：回到刚才那题，别把今日题单丢掉 */
+          var b = S.back; S.back = null;
+          S.q = b.q; S.sess = b.sess; S.draft = b.draft; S.choice = b.choice || {}; S.hint = !!b.hint;
+          S.res = null; S.answered = false; S.fix = null; S.example = false;
+          S.view = 'practice'; render();
+          return;
+        }
+        startSession(s.mod, s.kind, 6);
+      } }, S.back ? '看懂了，回到刚才那题' : '看懂了，开始练'),
       h('button', { class: 'btn', onclick: function () { startExample(s.mod, s.kind); } }, '换一道')
     ));
     app.appendChild(card);
@@ -1938,7 +1993,7 @@ var PT = (function () {
   }
   function rawAns(i) {
     var f = S.q.fields[i], v = (S.lastVals || [])[i];
-    if (f.type === 'choice') return S.choice[i] == null ? '空' : String.fromCharCode(65 + S.choice[i]);
+    if (f.type === 'choice') return S.choice[i] == null ? '空' : (f.figs ? '甲乙丙丁'.charAt(S.choice[i]) : String.fromCharCode(65 + S.choice[i]));
     return (v == null || v === '') ? '空' : String(v);
   }
 
@@ -1979,7 +2034,7 @@ var PT = (function () {
           kids.push(h('div', null, f.figs ? opt : (String.fromCharCode(65 + oi) + '. ' + opt)));
           var btn = h('button', {
             class: cls, onclick: (function (oi2) {
-              return function () { if (S.answered) return; S.choice[i] = oi2; render(); };
+              return function () { if (S.answered) return; S.choice[i] = oi2; S.draft = readDraft(); render(); };
             })(oi)
           }, kids);
           if (box) box.appendChild(btn); else card.appendChild(btn);
@@ -1996,8 +2051,14 @@ var PT = (function () {
 
     if (!S.answered) {
       card.appendChild(h('div', { class: 'row', style: 'margin-top:8px' },
-        h('button', { class: 'btn btn-ghost btn-sm', onclick: function () { S.scratch = !S.scratch; render(); } }, S.scratch ? '收起草稿' : '草稿纸'),
-        h('button', { class: 'btn btn-sm', onclick: function () { startExample(S.sess.mod, S.sess.kind); } }, '例题')
+        h('button', { class: 'btn btn-ghost btn-sm', onclick: function () { S.draft = readDraft(); S.scratch = !S.scratch; render(); } }, S.scratch ? '收起草稿' : '草稿纸'),
+        h('button', { class: 'btn btn-sm', onclick: function () {
+          /* 例题必须和当前这题同题型：今日任务/开始一轮的 sess.kind 是 null，要用当前题的 kind */
+          var mod = S.mode === 'wrong' ? ((S.q && S.q.mod) || 'model') : S.sess.mod;
+          var kind = (S.q && S.q.kind) || S.sess.kind || null;
+          S.back = { q: S.q, sess: S.sess, draft: readDraft(), choice: S.choice, hint: S.hint };
+          startExample(mod, kind);
+        } }, '例题')
       ));
       card.appendChild(h('div', { class: 'small muted' }, '直接打字：整数、小数、1.428e6、1.428×10^6、21% 都认；单位不用打；回车提交。'));
       if (S.scratch) card.appendChild(scratchPad());
@@ -2038,17 +2099,17 @@ var PT = (function () {
       /* 有效数字只提示、不判错 */
       for (var si = 0; si < q.fields.length; si++) {
         var sf = q.fields[si];
-        if (sf.type !== 'num' || !S.res.res[si].ok || sf.unit !== '%') continue;
+        if (sf.type !== 'num' || !S.res.res[si].ok) continue;
         var sraw = String((S.lastVals || [])[si] || '');
         var sm = sraw.match(/\.(\d+)/);
         if (sm && sm[1].length > 2) {
-          fb.appendChild(h('div', { class: 'small muted', style: 'margin-top:6px' }, '提示：有效数字偏多不判错，考试时百分数保留 1 位小数即可。'));
+          fb.appendChild(h('div', { class: 'small muted', style: 'margin-top:6px' }, '提示：小数位偏多不判错，考试时按题目要求保留位数即可。'));
           break;
         }
       }
       q.fields.forEach(function (f, i) {
         if (f.figs && f.figs[f.ans]) {
-          fb.appendChild(h('div', { class: 'figcap' }, '正确答案：' + String.fromCharCode(65 + f.ans) + '（' + f.options[f.ans] + '）'));
+          fb.appendChild(h('div', { class: 'figcap' }, '正确答案：' + (f.figs ? '甲乙丙丁'.charAt(f.ans) : String.fromCharCode(65 + f.ans)) + '（' + f.options[f.ans] + '）'));
           fb.appendChild(h('div', { class: 'figbox', html: PT.svgFor({ fig: f.figs[f.ans] }) }));
         }
       });
@@ -2066,7 +2127,7 @@ var PT = (function () {
           var f = q.fields[i];
           fxb.appendChild(h('div', { class: 'field' },
             h('span', { class: 'lbl full' }, f.label),
-            h('input', { class: 'fone', id: 'fx' + i, placeholder: '数字' }),
+            h('input', { class: 'fone', id: 'fx' + i, value: (S.fix.draft && S.fix.draft[i]) || '', placeholder: '数字' }),
             f.unit ? h('span', { class: 'unit' }, f.unit) : null
           ));
         });
@@ -2097,9 +2158,15 @@ var PT = (function () {
   }
 
   function submit() {
-    if (S.answered) return;
+    if (S.answered || S.example) return;
     var q = S.q;
     var draft = readDraft();
+    /* 一个空都没填（含选择题未选）时不判分、不记记录、不进错题本 */
+    var anyFilled = q.fields.some(function (f, i) {
+      if (f.type === 'choice') return S.choice[i] != null;
+      return String(draft[i] == null ? '' : draft[i]).trim() !== '';
+    });
+    if (!anyFilled) { alert('先填答案再提交'); return; }
     var vals = q.fields.map(function (f, i) {
       if (f.type === 'choice') return S.choice[i] == null ? null : S.choice[i];
       return PT.parseNum(draft[i]);
@@ -2110,15 +2177,18 @@ var PT = (function () {
     if (!res.ok) q.fields.forEach(function (f, i) { if (!res.res[i].ok && f.type !== 'choice') fixIdx.push(i); });
     S.fix = fixIdx.length ? { fields: fixIdx, ok: false, tries: 0 } : null;
     var sec = Math.max(1, Math.round((Date.now() - S.t0) / 1000));
-    S.res = res; S.answered = true;
+    S.res = res; S.answered = true; S.answeredAt = Date.now();
     var s = S.sess;
     s.done++;
     if (res.ok) s.right++;
+    var recMod = s.mod === 'wrong' ? (q.mod || 'model') : s.mod;
     DB.recs.push({
-      ts: Date.now(), mod: s.mod === 'wrong' ? (q.mod || 'model') : s.mod,
+      ts: Date.now(), mod: recMod,
       kind: q.kind, kn: q.title, ok: res.ok, got: res.got, total: res.total,
       sec: sec, hint: S.hint, mode: S.mode, steps: res.total
     });
+    /* 记住这个模块最近练的题型：模块页「先看例题」用它，别随机抽到别的题型 */
+    if (q.kind) { DB.meta.lastKind = DB.meta.lastKind || {}; DB.meta.lastKind[recMod] = q.kind; }
     if (!res.ok) addWrong(q);
     else if (S.mode === 'wrong') removeWrong(q);
     save();
@@ -2141,6 +2211,9 @@ var PT = (function () {
       save();
     } else {
       S.fix.tries++;
+      var keep = {};
+      S.fix.fields.forEach(function (i) { var el = document.getElementById('fx' + i); if (el) keep[i] = el.value; });
+      S.fix.draft = keep;
     }
     render();
   }
@@ -2150,14 +2223,20 @@ var PT = (function () {
   }
 
   /* ---------- 错题本（1/3/7/14 天） ---------- */
-  function wrongKey(q) { return q.id + '|' + String(q.prompt).slice(0, 60); }
+  /* 错题 key：题号 + 题干 + 图/选项图摘要（题面一样、只有图不同的题不能合并成一条） */
+  function figSig(q) {
+    var s = q.fig ? JSON.stringify(q.fig) : '';
+    (q.fields || []).forEach(function (f) { if (f.figs) s += '|' + JSON.stringify(f.figs); });
+    return s;
+  }
+  function wrongKey(q) { return q.id + '|' + String(q.prompt).slice(0, 60) + '|' + figSig(q); }
   function addWrong(q) {
     var k = wrongKey(q), w = DB.wrong[k], now = Date.now();
     var n = w ? (w.n || 1) + 1 : 1;
     var gap = n <= 1 ? 1 : (n === 2 ? 3 : (n === 3 ? 7 : 14));
     DB.wrong[k] = {
       id: q.id, mod: q.mod || S.sess.mod, kind: q.kind, title: q.title, prompt: q.prompt,
-      fields: q.fields, explain: q.explain, tip: q.tip, fig: q.fig, figBefore: q.figBefore,
+      fields: q.fields, explain: q.explain, tip: q.tip, kp: q.kp, fig: q.fig, figBefore: q.figBefore,
       ts: now, due: now + gap * PT.DAY, n: n
     };
   }
@@ -2239,7 +2318,11 @@ var PT = (function () {
     var byKind = {};
     recs.forEach(function (r) { var k = r.kn || r.kind; (byKind[k] = byKind[k] || []).push(r); });
     var rows = Object.keys(byKind).filter(function (k) { return byKind[k].length >= 5; })
-      .sort(function (a, b) { return byKind[a].length - byKind[b].length; });
+      .sort(function (a, b) {
+        var ra = byKind[a].filter(function (r) { return r.ok; }).length / byKind[a].length;
+        var rb = byKind[b].filter(function (r) { return r.ok; }).length / byKind[b].length;
+        return ra - rb;   /* 弱项（正确率低）排前面 */
+      });
     var t2 = h('table', { class: 'tb' },
       h('tr', null, h('th', null, '题型'), h('th', { class: 'n' }, '题数'), h('th', { class: 'n' }, '正确率')));
     rows.forEach(function (k) {
@@ -2317,9 +2400,22 @@ var PT = (function () {
         try {
           var o = JSON.parse(String(fr.result));
           if (!o || o.v !== PT.VERSION || !Array.isArray(o.recs)) throw new Error('格式不对');
-          DB.recs = DB.recs.concat(o.recs);
-          Object.keys(o.wrong || {}).forEach(function (k) { DB.wrong[k] = o.wrong[k]; });
-          save(); render(); alert('已导入 ' + o.recs.length + ' 条记录');
+          /* 去重：同一份 JSON 导入两次不会把统计翻倍 */
+          var seen = {};
+          DB.recs.forEach(function (r) { seen[r.ts + '|' + r.mod + '|' + r.kind] = 1; });
+          var added = 0;
+          o.recs.forEach(function (r) {
+            if (!r || typeof r.ts !== 'number') return;
+            var kk = r.ts + '|' + r.mod + '|' + r.kind;
+            if (seen[kk]) return;
+            seen[kk] = 1; DB.recs.push(r); added++;
+          });
+          Object.keys(o.wrong || {}).forEach(function (k) {
+            var w = o.wrong[k];
+            if (!w || !Array.isArray(w.fields) || !w.fields.length || typeof w.due !== 'number') return;   /* 结构坏的错题跳过 */
+            DB.wrong[k] = w;
+          });
+          save(); render(); alert('已导入 ' + added + ' 条记录（重复的已跳过）');
         } catch (e) { alert('导入失败：' + e.message); }
       };
       fr.readAsText(f);
@@ -2346,10 +2442,11 @@ var PT = (function () {
     });
   });
   document.addEventListener('keydown', function (e) {
-    if (e.key !== 'Enter' || S.view !== 'practice') return;
+    if (e.key !== 'Enter' || S.view !== 'practice' || S.example) return;
     e.preventDefault();
     if (!S.answered) { submit(); return; }
     if (S.fix && !S.fix.ok) { submitFix(); return; }
+    if (S.answeredAt && Date.now() - S.answeredAt < 600) return;   /* 刚提交，先让学生看解析 */
     next();
   });
   (function boot() {
@@ -2362,7 +2459,8 @@ var PT = (function () {
   /* 调试/自测钩子：不参与界面，供 node 里的 DOM 桩测试使用 */
   window.__pt = {
     S: S, db: function () { return DB; }, MT: PT, PT: PT,
-    startSession: startSession, startWrong: startWrong, startOneWrong: startOneWrong,
+    startSession: startSession, startWrong: startWrong, startOneWrong: startOneWrong, startExample: startExample,
+    importJSON: importJSON, clearAll: clearAll,
     submit: submit, submitFix: submitFix, next: next, go: go, render: render,
     exportJSON: exportJSON, selfCheck: selfCheck
   };

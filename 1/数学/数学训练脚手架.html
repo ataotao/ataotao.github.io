@@ -98,6 +98,15 @@ p{margin:8px 0}
 .fin{display:inline-flex;align-items:center;gap:8px}
 .fone{width:160px;border:1.5px solid var(--line);border-radius:9px;background:#fbfcff;text-align:center;font:inherit;font-size:16px;padding:9px 6px;outline:none;color:var(--ink)}
 .fone:focus{border-color:var(--brand);background:#fff}
+.exprline{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:6px;font-size:19px}
+.exprtxt{color:var(--muted);white-space:pre}
+.expr-slot{width:86px}
+.snapday{border-top:1px solid var(--line);padding:10px 0}
+.snapday:first-of-type{border-top:0;padding-top:0}
+.snaph{display:flex;gap:6px;align-items:baseline;margin-bottom:4px}
+.snapq{line-height:1.55}
+.snapq .ok{color:var(--ok)}
+.snapq .bad{color:var(--bad)}
 .fin.ok .fone{border-color:var(--ok);background:var(--ok-soft)}
 .fin.bad .fone{border-color:var(--bad);background:var(--bad-soft)}
 .padwrap{margin-top:10px}
@@ -246,14 +255,15 @@ var MT = (function () {
     return {
       id: 'write.vertex', kind: 'vertex', title: '顶点式求 a',
       prompt: '抛物线顶点为 (' + d(h) + ', ' + d(k) + ')，且经过点 (' + d(x0) + ', ' + d(y0) + ')。<br>' +
-        '它的解析式可写成 ' + base + '。',
+        '求它的解析式（用顶点式写）。',
       fields: [
-        { type: 'num', label: 'a =', ans: a },
+        { type: 'expr', form: 'vertex', tpl: 'y = {}(x − {})² + {}', label: '写出完整解析式', ans: [a, h, k] },
         { type: 'num', label: '当 x = ' + d(x1) + ' 时，y =', ans: y1 }
       ],
-      tip: '顶点式里 a 只影响开口，代一个点就能定 a。',
+      tip: '顶点式 y = a(x − h)² + k：h、k 就是顶点的横、纵坐标（h 带符号，顶点横坐标是 −2 就填 −2）；a 由代一个点定。',
       explain: [
-        '把 (' + d(x0) + ', ' + d(y0) + ') 代进 ' + base + '：' + d(y0) + ' = a·' + (dx * dx) + kterm(k) + '，得 a = ' + frac(a) + '。',
+        '设 ' + base + '，把 (' + d(x0) + ', ' + d(y0) + ') 代进去：' + d(y0) + ' = a·' + (dx * dx) + kterm(k) + '，得 a = ' + frac(a) + '。',
+        '所以解析式是 ' + exprText('vertex', [a, h, k]) + '。',
         '再代 x = ' + d(x1) + '：y = ' + frac(a) + '·' + ((x1 - h) * (x1 - h)) + kterm(k) + ' = ' + frac(y1) + '。'
       ],
       fig: { type: 'parabola', a: a, h: h, k: k, dots: [[h, k, '顶点'], [x0, y0, '已知点'], [x1, y1, 'x=' + x1]] },
@@ -261,6 +271,40 @@ var MT = (function () {
     };
   }
 
+  /* 交点式：给两个 x 轴交点 + 一点。先判断用哪种形式（选择题），再写全式 */
+  function genIntercept(r) {
+    var x1 = pick(r, [-4, -3, -2, -1, 1, 2, 3, 4]);
+    var x2 = x1 + pick(r, [-3, -2, -1, 1, 2, 3]);
+    if (x2 === x1) x2 = x1 + 2;
+    var a = pick(r, [-2, -1, -0.5, 0.5, 1, 2]);
+    var x0 = pick(r, [-3, -2, -1, 1, 2, 3]);
+    while (x0 === x1 || x0 === x2) x0++;
+    var y0 = a * (x0 - x1) * (x0 - x2);
+    var h = (x1 + x2) / 2, k = -a * (x2 - x1) * (x2 - x1) / 4;
+    return {
+      id: 'write.intercept', kind: 'intercept', title: '交点式写解析式',
+      prompt: '抛物线与 x 轴交于 (' + d(x1) + ', 0)、(' + d(x2) + ', 0)，且经过点 (' + d(x0) + ', ' + d(y0) + ')。<br>' +
+        '先选最省事的形式，再写出它的解析式。',
+      fields: [
+        (function () {
+          /* 选项顺序打乱，避免「永远选 B」被背下来 */
+          var opts = ['顶点式 y = a(x − h)² + k', '交点式 y = a(x − x₁)(x − x₂)', '一般式 y = ax² + bx + c'];
+          var right = opts[1];
+          for (var oi = opts.length - 1; oi > 0; oi--) { var oj = Math.floor(r() * (oi + 1)), tt = opts[oi]; opts[oi] = opts[oj]; opts[oj] = tt; }
+          return { type: 'choice', label: '先设哪种形式？', options: opts, ans: opts.indexOf(right) };
+        })(),
+        { type: 'expr', form: 'intercept', tpl: 'y = {}(x − {})(x − {})', label: '写出完整解析式', ans: [a, x1, x2], free: [1, 2] }
+      ],
+      tip: '给了两个 x 轴交点 → 直接设 y = a(x − x₁)(x − x₂)，再代一个点求 a。用一般式要解三元方程组，最慢。',
+      explain: [
+        '两个交点是 (' + d(x1) + ', 0)、(' + d(x2) + ', 0)，所以设 y = a(x − ' + d(x1) + ')(x − ' + d(x2) + ')。',
+        '代 (' + d(x0) + ', ' + d(y0) + ')：' + d(y0) + ' = a·(' + d(x0 - x1) + ')·(' + d(x0 - x2) + ')，得 a = ' + frac(a) + '。',
+        '所以解析式是 ' + exprText('intercept', [a, x1, x2]) + '。'
+      ],
+      fig: { type: 'parabola', a: a, h: h, k: k, dots: [[x1, 0, '交点'], [x2, 0, '交点'], [x0, y0, '已知点']] },
+      kp: ['二次函数', '交点式', '待定系数法']
+    };
+  }
   function genInverse(r) {
     var x0 = pick(r, [-4, -3, -2, -1, 1, 2, 3, 4]);
     var y0 = pick(r, [-3, -2, -1, 1, 2, 3]);
@@ -324,11 +368,10 @@ var MT = (function () {
       id: 'write.segment', kind: 'segment', title: '线段解析式',
       prompt: '某段图象是一条线段，经过点 (' + d(x1) + ', ' + d(y1) + ') 和 (' + d(x2) + ', ' + d(y2) + ')。',
       fields: [
-        { type: 'num', label: 'y = kx + b 中，k =', ans: k },
-        { type: 'num', label: 'b =', ans: b },
+        { type: 'expr', form: 'line', tpl: 'y = {}x + {}', label: '写出完整解析式', ans: [k, b] },
         { type: 'num', label: '当 x = ' + d(x3) + ' 时，y =', ans: k * x3 + b }
       ],
-      tip: '两点求一次函数：k = 纵坐标差 ÷ 横坐标差，再代一个点求 b。',
+      tip: '两点求一次函数：k = 纵坐标差 ÷ 横坐标差，再代一个点求 b（b 是负数就带负号填）。',
       explain: [
         'k = (' + d(y2) + ' − ' + d(y1) + ') ÷ (' + d(x2) + ' − ' + d(x1) + ') = ' + d(k) + '。',
         '把 (' + d(x1) + ', ' + d(y1) + ') 代进 y = kx + b：' + d(y1) + ' = ' + d(k) + '×(' + d(x1) + ') + b，得 b = ' + d(b) + '。',
@@ -385,6 +428,24 @@ var MT = (function () {
     };
   }
 
+  /* 因式分解（十字相乘）：x² + bx + c = (x + p)(x + q)，p、q 顺序不限 */
+  function genFactor(r) {
+    var p = pick(r, [-6, -5, -4, -3, -2, -1, 1, 2, 3, 4, 5, 6]);
+    var q = pick(r, [-6, -5, -4, -3, -2, -1, 1, 2, 3, 4, 5, 6]);
+    if (p === q) q = -q;
+    var b = p + q, c = p * q;
+    return {
+      id: 'drill.factor', kind: 'factor', title: '因式分解（十字相乘）',
+      prompt: '把 ' + poly2(1, b, c) + ' 分解成 (x + p)(x + q) 的形式。',
+      fields: [{ type: 'set', n: 2, label: 'p、q（顺序不限）', ans: [p, q], names: ['p', 'q'] }],
+      tip: '找两个数：和为 ' + d(b) + '、积为 ' + d(c) + '。',
+      explain: [
+        '要找 p、q，使 p + q = ' + d(b) + '，p × q = ' + d(c) + '。',
+        '试出 p = ' + d(p) + '，q = ' + d(q) + '，所以 ' + poly2(1, b, c) + ' = ' + binom(-p) + binom(-q) + '。'
+      ],
+      kp: ['一元二次方程', '因式分解']
+    };
+  }
   function genDisc(r) {
     var a = ri(r, 1, 3), b = ri(r, -8, 8), c = ri(r, -6, 6);
     var delta = b * b - 4 * a * c;
@@ -809,6 +870,7 @@ var MT = (function () {
       id: 'drill', name: '基础快练', icon: '⚡',
       desc: '解方程 / 判别式 / 韦达 / 顶点 / 反比例 / 旋转 / 对称图形 / 系数符号 / 代值 / 最短路径，限时一次就对。',
       kinds: [
+        { id: 'factor', name: '因式分解（十字相乘）', gen: genFactor },
         { id: 'eq', name: '解一元二次方程', gen: genEq },
         { id: 'disc', name: '判别式', gen: genDisc },
         { id: 'vieta', name: '韦达定理', gen: genVieta },
@@ -829,6 +891,7 @@ var MT = (function () {
       desc: '从条件写出解析式：设 → 代 → 求。补的是「会读图、不会写式」这一断点。',
       kinds: [
         { id: 'vertex', name: '顶点式求 a', gen: genVertex },
+        { id: 'intercept', name: '交点式写解析式', gen: genIntercept },
         { id: 'inverse', name: '反比例求 k', gen: genInverse },
         { id: 'profit', name: '利润建模', gen: genProfit },
         { id: 'segment', name: '线段解析式', gen: genSegment },
@@ -856,7 +919,7 @@ var MT = (function () {
       return copy;
     }
     var k = null;
-    for (var i = 0; i < m.kinds.length; i++) if (!kindId || m.kinds[i].id === kindId) { k = m.kinds[i]; break; }
+    if (kindId) for (var i = 0; i < m.kinds.length; i++) if (m.kinds[i].id === kindId) { k = m.kinds[i]; break; }
     if (!k) k = m.kinds[Math.floor(r() * m.kinds.length)];
     var q = k.gen(r);
     q.mod = modId;
@@ -864,15 +927,38 @@ var MT = (function () {
   }
 
   /* ---------- 判分 ---------- */
+  /* 全排列：只用于 expr 的可互换空位（长度 <= 3），给 judge 用 */
+  function permsOf(a) {
+    if (a.length <= 1) return [a.slice()];
+    var out = [];
+    for (var i = 0; i < a.length; i++) {
+      var rest = a.slice(0, i).concat(a.slice(i + 1));
+      permsOf(rest).forEach(function (p) { out.push([a[i]].concat(p)); });
+    }
+    return out;
+  }
+
   function judge(q, vals) {
     var res = q.fields.map(function (f, i) {
       var v = vals[i];
       if (f.type === 'choice') return { ok: v === f.ans };
       if (f.type === 'set') {
+        /* 无序：因式分解 p、q / 方程的两个根，顺序不限 */
         if (!Array.isArray(v) || v.some(function (x) { return !isFinite(x); })) return { ok: false };
-        var want = f.ans.slice().sort(function (a, b) { return a - b; });
-        var got = v.slice().sort(function (a, b) { return a - b; });
-        return { ok: want.length === got.length && want.every(function (w, j) { return near(got[j], w, f.tol || 1e-9); }) };
+        var wantS = f.ans.slice().sort(function (a, b) { return a - b; });
+        var gotS = v.slice().sort(function (a, b) { return a - b; });
+        return { ok: wantS.length === gotS.length && wantS.every(function (w, j) { return near(gotS[j], w, f.tol || 1e-9); }) };
+      }
+      if (f.type === 'expr') {
+        /* 有序：写全式按模板空位逐位比；f.free 列出的空位可互换（交点式的两个根） */
+        if (!Array.isArray(v) || v.length !== f.ans.length || v.some(function (x) { return !isFinite(x); })) return { ok: false };
+        var free = f.free || [], perms = permsOf(free), tol = f.tol || 1e-9;
+        for (var pi = 0; pi < perms.length; pi++) {
+          var exp = f.ans.slice();
+          for (var fk = 0; fk < free.length; fk++) exp[free[fk]] = f.ans[perms[pi][fk]];
+          if (exp.every(function (w, j) { return near(v[j], w, tol); })) return { ok: true };
+        }
+        return { ok: false };
       }
       return { ok: isFinite(v) && near(v, f.ans, f.tol || 1e-6) };
     });
@@ -882,8 +968,29 @@ var MT = (function () {
 
   function ansText(f) {
     if (f.type === 'choice') return f.options[f.ans];
-    if (f.type === 'set') return f.ans.map(function (x, i) { return 'x' + (i + 1) + ' = ' + frac(x); }).join('，');
+    if (f.type === 'set') {
+      var nm = f.names || ['x1', 'x2'];
+      return f.ans.map(function (x, i) { return (nm[i] || ('x' + (i + 1))) + ' = ' + frac(x); }).join('，');
+    }
+    if (f.type === 'expr') return exprText(f.form, f.ans);
     return nice(f.ans, f.unit || '');
+  }
+  /* 把 expr 的若干个数拼回完整式子（反馈里显示用） */
+  function exprText(form, v) {
+    if (form === 'vertex') {
+      var h = v[1], k = v[2];
+      return 'y = ' + frac(v[0]) + '(x ' + (h >= 0 ? '− ' + frac(h) : '+ ' + frac(-h)) + ')² ' + (k >= 0 ? '+ ' + frac(k) : '− ' + frac(-k));
+    }
+    if (form === 'line') {
+      var kk = v[0], bb = v[1];
+      return 'y = ' + (kk === 1 ? '' : (kk === -1 ? '−' : frac(kk))) + 'x ' + (bb >= 0 ? '+ ' + frac(bb) : '− ' + frac(-bb));
+    }
+    if (form === 'intercept') {
+      return 'y = ' + frac(v[0]) +
+        '(x ' + (v[1] >= 0 ? '− ' + frac(v[1]) : '+ ' + frac(-v[1])) + ')' +
+        '(x ' + (v[2] >= 0 ? '− ' + frac(v[2]) : '+ ' + frac(-v[2])) + ')';
+    }
+    return 'y = ' + v.map(frac).join(' , ');
   }
 
   /* ---------- 图象：答完后画出来，做「式子 ↔ 图」的验证 ---------- */
@@ -1049,26 +1156,138 @@ var MT = (function () {
             if (f.type === 'num' && !isFinite(f.ans)) fails.push(tag + ' 答案非数字');
             if (f.type === 'choice' && !(f.ans >= 0 && f.ans < f.options.length)) fails.push(tag + ' 选项越界');
             if (f.type === 'set' && !Array.isArray(f.ans)) fails.push(tag + ' set 答案异常');
+            if (f.type === 'expr') {
+              if (!Array.isArray(f.ans)) fails.push(tag + ' expr 答案异常');
+              else if (!f.tpl || f.tpl.split('{}').length - 1 !== f.ans.length) fails.push(tag + ' expr 模板与空数不一致');
+            }
           });
           var right = q.fields.map(function (f) {
-            return f.type === 'choice' ? f.ans : (f.type === 'set' ? f.ans.slice() : f.ans);
+            return f.type === 'choice' ? f.ans : ((f.type === 'set' || f.type === 'expr') ? f.ans.slice() : f.ans);
           });
           if (!judge(q, right).ok) fails.push(tag + ' 正确解被判错');
           var wrong = q.fields.map(function (f) {
             if (f.type === 'choice') return (f.ans + 1) % f.options.length;
-            if (f.type === 'set') return f.ans.map(function (x) { return x + 1; });
+            if (f.type === 'set' || f.type === 'expr') return f.ans.map(function (x) { return x + 1; });
             return f.ans + 1;
           });
           if (judge(q, wrong).ok) fails.push(tag + ' 错误解被判对');
+          /* expr 必须按空位顺序判分：前两个空互换后，只有「与所有允许排列数值上都不同」时才断言判错 */
+          q.fields.forEach(function (f, fi) {
+            if (f.type !== 'expr' || f.ans.length < 2) return;
+            var free = f.free || [];
+            if (free.indexOf(0) >= 0 && free.indexOf(1) >= 0) return;
+            var perm = right.slice();
+            perm[fi] = f.ans.slice();
+            perm[fi][0] = f.ans[1]; perm[fi][1] = f.ans[0];
+            var allowed = [f.ans.slice()];
+            if (free.length) {
+              allowed = permsOf(free).map(function (pp) {
+                var arr = f.ans.slice();
+                for (var z = 0; z < free.length; z++) arr[free[z]] = f.ans[pp[z]];
+                return arr;
+              });
+            }
+            var same = allowed.some(function (arr) { return arr.every(function (w, j) { return near(perm[fi][j], w, 1e-9); }); });
+            if (!same && judge(q, perm).ok) fails.push(tag + ' expr 空位互换仍判对（应判错）');
+          });
         }
       });
     });
     return { count: count, fails: fails };
   }
 
+  /* =====================================================================
+     今日任务：规则 + 当天固定题单（纯函数，可在 node 里单测）
+     规则（页面「今日任务的规则」同步显示）：
+     ① 一天一套：题由「日期种子」生成，同一天打开几次都是同一套，换天才换。
+     ② 固定配比：基础快练 6 = 因式分解 2 + 解方程 2 + 轮换 2；
+        写解析式 8 = 顶点式 2 + 主力 4 + 次主力 2；大题前两步 3；错题回炉按到期。
+     ③ 主力轮换：6 类（顶点式→交点式→反比例→线段→分段→利润）按日期轮，6 天一轮全覆盖。
+     ④ 弱项覆盖：最近 8 条写解析式记录里有错题，主力换成错题那一类。
+     ⑤ 难度顺序：先易后难（因式分解 → 方程 → 轮换；顶点式 → 主力 → 次主力）。
+     ⑥ 同一套内题干不重复。
+     ===================================================================== */
+  var WRITE_ROT = ['vertex', 'intercept', 'inverse', 'segment', 'piece', 'profit'];
+  function daySeed(key) {
+    var h = 2166136261, k = String(key);
+    for (var i = 0; i < k.length; i++) { h ^= k.charCodeAt(i); h = Math.imul(h, 16777619); }
+    return h >>> 0;
+  }
+  function kindsOf(modId) {
+    var m = moduleById(modId);
+    return (m && m.kinds) ? m.kinds.map(function (x) { return x.id; }) : [];
+  }
+  function kindName(modId, id) {
+    var m = moduleById(modId);
+    if (m && m.kinds) for (var i = 0; i < m.kinds.length; i++) if (m.kinds[i].id === id) return m.kinds[i].name;
+    return id;
+  }
+  function dayIndex(key) {
+    var p = String(key).split('-');
+    return Math.floor(Date.UTC(+p[0], (+p[1]) - 1, +p[2]) / 86400000);
+  }
+  /* 把 kinds 数组按「首次出现顺序」汇总成「因式分解 2 · 解方程 2 · 判别式 2」 */
+  function mixText(modId, kinds) {
+    var seen = [], cnt = {};
+    kinds.forEach(function (id) { if (cnt[id] == null) { cnt[id] = 0; seen.push(id); } cnt[id]++; });
+    return seen.map(function (id) { return kindName(modId, id) + ' ' + cnt[id]; }).join(' · ');
+  }
+  function planForDay(key, weakKind) {
+    var seed = daySeed(key);
+    /* 轮换顺序以 WRITE_ROT 为准（页面文案写的也是这个顺序），不是模块注册顺序 */
+    var rot = WRITE_ROT.filter(function (id) { return kindsOf('write').indexOf(id) >= 0; });
+    if (!rot.length) rot = kindsOf('write');
+    var di = dayIndex(key);
+    var main = (weakKind && rot.indexOf(weakKind) >= 0) ? weakKind : rot[((di % rot.length) + rot.length) % rot.length];
+    var second = rot[(rot.indexOf(main) + 1) % rot.length];
+    var dk = kindsOf('drill').filter(function (id) { return id !== 'factor' && id !== 'eq'; });
+    var extra = dk.length ? dk[seed % dk.length] : 'eq';
+    var drillKinds = ['factor', 'factor', 'eq', 'eq', extra, extra];
+    var writeKinds = ['vertex', 'vertex', main, main, main, main, second, second];
+    var drillNote = mixText('drill', drillKinds), writeNote = mixText('write', writeKinds);
+    return {
+      day: key, seed: seed, main: main, second: second, weak: !!(weakKind && rot.indexOf(weakKind) >= 0),
+      drill: { n: 6, kinds: drillKinds, note: drillNote },
+      write: { n: 8, kinds: writeKinds, note: writeNote },
+      entry: { n: 3, kinds: [] },
+      wrong: { n: 1 },
+      note: '基础快练 6：' + drillNote + '；写解析式 8：' + writeNote + '；大题前两步 3；错题回炉按到期。'
+    };
+  }
+  /* 同一套内的去重键：题干 + 选项（选择题题干固定，靠选项区分） */
+  function qKey(q) {
+    return q.prompt + '|' + JSON.stringify(q.fields);
+  }
+  /* 当天固定题单：同 key 同 plan 必然同一套；同一套内题干不重复 */
+  function dailyQueue(modId, plan) {
+    var p = plan[modId] || plan.write;
+    var out = [];
+    if (modId === 'entry') {
+      var items = moduleById('entry').items.map(function (x) { return JSON.parse(JSON.stringify(x)); });
+      var r = mulberry32(plan.seed ^ 0x5bf03635);
+      items = items.map(function (x) { return { x: x, k: r() }; })
+        .sort(function (a, b) { return a.k - b.k; })
+        .map(function (o) { return o.x; });
+      return items.slice(0, p.n);
+    }
+    var used = {};
+    for (var i = 0; i < p.n; i++) {
+      var kindId = p.kinds[i] || p.kinds[0];
+      var q = null, guard = 0;
+      do {
+        q = gen(modId, kindId, (plan.seed + i * 7919 + guard * 104729) >>> 0);
+        guard++;
+      } while (used[qKey(q)] && guard < 12);
+      used[qKey(q)] = 1;
+      out.push(q);
+    }
+    return out;
+  }
+
   return {
     VERSION: VERSION, DAY: DAY,
     modules: MODULES, moduleById: moduleById,
+    planForDay: planForDay, dailyQueue: dailyQueue, daySeed: daySeed, kindName: kindName,
     gen: gen, judge: judge, ansText: ansText, svgFor: svgFor,
     parseNum: parseNum, near: near, frac: frac, nice: nice,
     selfTest: selfTest
@@ -1084,22 +1303,40 @@ var MT = (function () {
   var tabs = document.getElementById('tabs');
 
   /* ---------- 存储 ---------- */
-  function blankDB() { return { v: MT.VERSION, recs: [], wrong: {}, meta: { created: Date.now() } }; }
+  function blankDB() { return { v: MT.VERSION, recs: [], wrong: {}, days: {}, meta: { created: Date.now() } }; }
   var DB = (function () {
     try {
       var raw = localStorage.getItem(KEY);
       if (!raw) return blankDB();
       var o = JSON.parse(raw);
-      if (!o || o.v !== MT.VERSION) return blankDB();
-      o.recs = o.recs || []; o.wrong = o.wrong || {}; o.meta = o.meta || {};
+      if (!o || o.v !== MT.VERSION) {
+        try { localStorage.setItem(KEY + '.bak', raw); } catch (e2) { }   /* 旧版本先留备份，再重置 */
+        return blankDB();
+      }
+      o.recs = o.recs || []; o.wrong = o.wrong || {}; o.days = o.days || {}; o.meta = o.meta || {};
       return o;
     } catch (e) { return blankDB(); }
   })();
+  var SAVE_FAIL = false;
   function save() {
-    try { localStorage.setItem(KEY, JSON.stringify(DB)); } catch (e) { }
+    try { localStorage.setItem(KEY, JSON.stringify(DB)); SAVE_FAIL = false; }
+    catch (e) { SAVE_FAIL = true; }
+  }
+  /* 当天题单固化：同一天打开几次都是同一套；弱项只在换天后影响主力 */
+  function dayPlan() {
+    var d = today(), p = DB.meta && DB.meta.dayPlan;
+    if (p && p.day === d && p.plan) return p.plan;
+    var plan = MT.planForDay(d, weakKind());
+    DB.meta = DB.meta || {};
+    DB.meta.dayPlan = { day: d, plan: plan };
+    save();
+    return plan;
   }
   function dayKey(ts) { var t = new Date(ts); return t.getFullYear() + '-' + (t.getMonth() + 1) + '-' + t.getDate(); }
   function today() { return dayKey(Date.now()); }
+  /* 日期键是 YYYY-M-D（不补零）：字符串排序会把 11-9 排到 11-10 后面，这里按真实日期比较 */
+  function dayOrd(k) { var p = String(k).split('-'); return Date.UTC(+p[0], (+p[1]) - 1, +p[2]); }
+  function dayKeys() { return Object.keys(DB.days).sort(function (a, b) { return dayOrd(a) - dayOrd(b); }); }
 
   /* ---------- 小工具 ---------- */
   function h(tag, attrs) {
@@ -1134,6 +1371,10 @@ var MT = (function () {
     clear(app);
     var fn = VIEWS[S.view] || renderToday;
     fn();
+    if (SAVE_FAIL) {
+      app.appendChild(h('div', { class: 'fb bad', style: 'margin-top:10px' },
+        '⚠ 记录没能存进本机（隐私模式或空间满）：刷新后会丢，请先「报告 → 导出 JSON」。'));
+    }
     Array.prototype.forEach.call(tabs.children, function (b) {
       b.classList.toggle('active', b.getAttribute('data-go') === S.view || (S.view === 'practice' && b.getAttribute('data-go') === S.sess.mod));
     });
@@ -1142,32 +1383,39 @@ var MT = (function () {
   /* ---------- 今日 ---------- */
   function renderToday() {
     var tr = todayRecs();
+    var plan = dayPlan();
     var META = {
-      drill: { n: 6, sub: '6 题 · 5 分钟 · 热身：解方程 / 判别式' },
-      write: { n: 8, sub: '8 题 · 10 分钟 · 最重要：补「会看图但写不出式子」' },
-      entry: { n: 3, sub: '3 题 · 8 分钟 · 补「大题空白，第一问都不写」' }
+      drill: { n: 6, sub: '6 题 · 5 分钟 · ' + plan.drill.note },
+      write: { n: 8, sub: '8 题 · 10 分钟 · ' + plan.write.note },
+      entry: { n: 3, sub: '3 题 · 8 分钟 · 12 个得分点里按今天这套取 3 个' }
     };
     /* 顺序由 MT.modules 决定，这里只配题量与说明 */
-    var plan = MT.modules.map(function (m) {
+    var tasks_plan = MT.modules.map(function (m) {
       var x = META[m.id] || { n: 6, sub: '' };
       return { mod: m.id, n: x.n, label: m.name, sub: x.sub, go: m.id };
     });
-    plan.push({ mod: 'wrong', n: 1, label: '错题回炉', sub: '到期的错题 · 2 分钟', go: 'wrong' });
+    var dueN = Object.keys(DB.wrong).filter(function (k) { return DB.wrong[k].due <= Date.now(); }).length;
+    tasks_plan.push({ mod: 'wrong', n: 1, label: '错题回炉', sub: (dueN ? '到期 ' + dueN + ' 题' : '暂无到期') + ' · 2 分钟', go: 'wrong' });
     var done = {};
-    plan.forEach(function (p) { done[p.mod] = 0; });
-    tr.forEach(function (r) { if (r.mode === 'wrong') done.wrong++; else if (done[r.mod] != null) done[r.mod]++; });
+    tasks_plan.forEach(function (p) { done[p.mod] = 0; });
+    tr.forEach(function (r) {
+      if (r.mode === 'wrong') done.wrong++;
+      else if (r.daily && done[r.mod] != null) done[r.mod]++;   /* 只有「今日题单」的题才算完成，专项 10 题不算 */
+    });
 
     var tasks = h('div', { class: 'card' });
-    tasks.appendChild(h('div', { class: 'row' }, h('h2', { style: 'margin:0;font-size:18px' }, '今日任务'), h('span', { class: 'pill' }, '约 25 分钟')));
+    tasks.appendChild(h('div', { class: 'row' }, h('h2', { style: 'margin:0;font-size:18px' }, '今日任务'),
+      h('span', { class: 'pill' }, '约 25 分钟'),
+      h('span', { class: 'pill' + (plan.weak ? ' warn' : '') }, plan.weak ? '弱项覆盖' : '今天这一套')));
     tasks.appendChild(h('div', { class: 'small muted', style: 'margin-top:4px' }, '顺序：热身 → 写式 → 入口 → 错题。四个都做，不用等一个练熟。'));
-    plan.forEach(function (p, i) {
+    tasks_plan.forEach(function (p, i) {
       var isDone = done[p.mod] >= p.n;
       var row = h('div', { class: 'task' + (isDone ? ' done' : '') },
         h('div', { class: 'no' }, isDone ? '✓' : String(i + 1)),
         h('div', { class: 'tt' }, h('b', null, p.label), h('span', null, p.sub)),
         h('button', {
           class: 'btn btn-sm ' + (isDone ? '' : 'btn-primary'), onclick: function () {
-            if (p.go === 'wrong') startWrong(); else startSession(p.go, null, p.n);
+            if (p.go === 'wrong') startWrong(); else startDaily(p.go);
           }
         }, isDone ? '再来' : '开始')
       );
@@ -1175,10 +1423,22 @@ var MT = (function () {
     });
     app.appendChild(tasks);
 
+    /* 今日任务的规则：写在页面上，不藏在代码里 */
+    app.appendChild(h('div', { class: 'card', style: 'margin-top:12px' },
+      h('div', { class: 'small' }, h('b', null, '今日任务的规则')),
+      h('ul', { class: 'small muted', style: 'margin:6px 0 0;padding-left:20px' },
+        h('li', null, '一天一套：题目由「日期种子」生成，同一天打开几次都是同一套，换天才换。'),
+        h('li', null, '今天的配比：' + plan.note),
+        h('li', null, '主力题型按 6 类轮换（顶点式 → 交点式 → 反比例 → 线段 → 分段 → 利润），6 天一轮全覆盖；最近一轮有错题时，主力换成错的那一类（弱项优先）。'),
+        h('li', null, '难度顺序：因式分解 → 解方程 → 轮换题；写解析式先顶点式（要写全式），再主力，再次主力。'),
+        h('li', null, '同一套内题干不重复；错题回炉按 1/3/7/14 天到期；跳过几天不累计欠账。')
+      )
+    ));
+
     var stats = h('div', { class: 'grid', style: 'margin-top:12px' },
       statCard('今日题数', tr.length),
       statCard('今日正确率', tr.length ? pct(tr.filter(function (r) { return r.ok; }).length, tr.length) + '%' : '—'),
-      statCard('错题待回炉', Object.keys(DB.wrong).length)
+      statCard('错题待回炉', Object.keys(DB.wrong).filter(function (k) { return DB.wrong[k].due <= Date.now(); }).length)
     );
     app.appendChild(stats);
 
@@ -1190,7 +1450,7 @@ var MT = (function () {
         h('div', { class: 'kinds' }, (m.kinds || m.items.map(function (x) { return { name: x.title }; })).slice(0, 5).map(function (k) { return h('span', { class: 'kind' }, k.name); })),
         h('div', { class: 'row', style: 'margin-top:auto' },
           h('button', { class: 'btn btn-primary btn-sm', onclick: function () { startSession(m.id, null, m.id === 'entry' ? 3 : 8); } }, '开始'),
-          h('button', { class: 'btn btn-sm', onclick: function () { startExample(m.id, null); } }, '看例题')
+          h('button', { class: 'btn btn-sm', onclick: function () { startExample(m.id, lastKindOf(m.id)); } }, '看例题')
         )
       );
       mods.appendChild(card);
@@ -1224,8 +1484,9 @@ var MT = (function () {
     app.appendChild(head);
     head.appendChild(h('div', { class: 'row', style: 'margin-top:12px' },
       h('button', { class: 'btn btn-primary', onclick: function () { startSession(m.id, null, m.id === 'entry' ? 3 : 8); } }, '开始一轮'),
-      h('button', { class: 'btn', onclick: function () { startExample(m.id, null); } }, '先看例题')
+      h('button', { class: 'btn', onclick: function () { startExample(m.id, lastKindOf(m.id)); } }, '先看例题')
     ));
+    head.appendChild(h('div', { class: 'small muted', style: 'margin-top:8px' }, '「开始一轮」按题型混抽（每次不同）；下面每个题型可以单独连做 10 题（专项）。'));
     var list = h('div', { class: 'grid', style: 'margin-top:12px' });
     if (m.kinds) {
       m.kinds.forEach(function (k) {
@@ -1234,7 +1495,7 @@ var MT = (function () {
           h('div', { class: 'mh' }, h('b', null, k.name)),
           h('div', { class: 'desc small muted' }, st.n ? '练过 ' + st.n + ' 题 · 正确率 ' + pct(st.ok, st.n) + '%' : '还没练过'),
           h('div', { class: 'row', style: 'margin-top:auto' },
-            h('button', { class: 'btn btn-primary btn-sm', onclick: function () { startSession(m.id, k.id, 8); } }, '练 8 题'),
+            h('button', { class: 'btn btn-primary btn-sm', onclick: function () { startSession(m.id, k.id, 10); } }, '专项 10 题'),
             h('button', { class: 'btn btn-sm', onclick: function () { startExample(m.id, k.id); } }, '看例题')
           )
         ));
@@ -1251,6 +1512,11 @@ var MT = (function () {
     }
     app.appendChild(list);
   }
+  /* 这个模块最近练过的题型（没有就返回 null，例题退化为随机） */
+  function lastKindOf(mod) {
+    var lk = DB.meta && DB.meta.lastKind;
+    return (lk && lk[mod]) || null;
+  }
   function kindStat(mode, mod, kind) {
     var rs = DB.recs.filter(function (r) { return r.mode === mode && r.mod === mod && r.kind === kind; });
     return { n: rs.length, ok: rs.filter(function (r) { return r.ok; }).length };
@@ -1262,8 +1528,10 @@ var MT = (function () {
     return a;
   }
   function startSession(mod, kind, count) {
+    if (mod === 'wrong') { startWrong(); return; }   /* 兜底：回炉走回炉入口 */
     S.mode = 'new';
     S.example = false;
+    S.back = null;
     var n = count || 8;
     var sess = { mod: mod, kind: kind, total: n, done: 0, right: 0, t0: Date.now() };
     if (mod === 'entry') {
@@ -1277,7 +1545,26 @@ var MT = (function () {
     S.view = 'practice';
     nextQuestion();
   }
+  /* 今日任务：用当天固定题单开一轮（不是现场随机） */
+  function startDaily(modId) {
+    S.back = null;
+    var plan = dayPlan();
+    var qs = MT.dailyQueue(modId, plan);
+    S.mode = 'new';
+    S.example = false;
+    S.sess = { mod: modId, kind: null, total: qs.length, done: 0, right: 0, t0: Date.now(), queue: qs, daily: true };
+    S.view = 'practice';
+    nextQuestion();
+  }
+  /* 弱项：最近 8 条写解析式记录里，最后一次错的题型 */
+  function weakKind() {
+    var ws = DB.recs.filter(function (r) { return r.mod === 'write'; }).slice(-8);
+    for (var i = ws.length - 1; i >= 0; i--) if (!ws[i].ok) return ws[i].kind;
+    return null;
+  }
   function startWrong() {
+    S.example = false;   /* 例题页残留标记必须清掉，否则回炉会显示例题 */
+    S.back = null;
     var now = Date.now();
     var due = Object.keys(DB.wrong).map(function (k) { return DB.wrong[k]; }).filter(function (w) { return w.due <= now; });
     if (!due.length) {
@@ -1301,15 +1588,20 @@ var MT = (function () {
       S.q = MT.gen(s.mod, s.kind, (Math.random() * 1e9) | 0);
     }
     S.res = null; S.answered = false; S.choice = {}; S.hint = false; S.draft = null; S.lastVals = null; S.t0 = Date.now();
+    S.scratch = false;
     S.fix = null;
     render();
   }
 
   /* 例题：先看一个完整解答（题目 → 答案 → 怎么想 → 图），再开始练 */
   function startExample(mod, kind) {
+    if (!MT.moduleById(mod)) mod = 'drill';   /* 兜底：未知模块用基础快练，不抛错 */
     S.example = true;
+    S.mode = 'new';
     S.sess = { mod: mod, kind: kind, total: 8, done: 0, right: 0, t0: Date.now() };
     S.q = MT.gen(mod, kind, (Math.random() * 1e9) | 0);
+    S.res = null; S.answered = false; S.choice = {}; S.hint = false;
+    S.fix = null; S.draft = null; S.lastVals = null; S.t0 = Date.now();
     S.view = 'practice';
     render();
   }
@@ -1340,7 +1632,17 @@ var MT = (function () {
       card.appendChild(h('div', { class: 'figbox', html: MT.svgFor(q) }));
     }
     card.appendChild(h('div', { class: 'row', style: 'margin-top:14px' },
-      h('button', { class: 'btn btn-primary', onclick: function () { startSession(s.mod, s.kind, s.mod === 'entry' ? 3 : 8); } }, '看懂了，开始练'),
+      h('button', { class: 'btn btn-primary', onclick: function () {
+        if (S.back) {
+          /* 从练习页点进来的：回到刚才那题，别把今日题单丢掉 */
+          var b = S.back; S.back = null;
+          S.q = b.q; S.sess = b.sess; S.draft = b.draft; S.choice = b.choice || {}; S.hint = !!b.hint;
+          S.res = null; S.answered = false; S.fix = null; S.example = false;
+          S.view = 'practice'; render();
+          return;
+        }
+        startSession(s.mod, s.kind, s.mod === 'entry' ? 3 : 8);
+      } }, S.back ? '看懂了，回到刚才那题' : '看懂了，开始练'),
       h('button', { class: 'btn', onclick: function () { startExample(s.mod, s.kind); } }, '换一道')
     ));
     app.appendChild(card);
@@ -1354,7 +1656,7 @@ var MT = (function () {
       h('span', { class: 'pill' }, S.mode === 'wrong' ? '错题回炉' : (MT.moduleById(s.mod).name)),
       h('span', { class: 'small muted' }, (q.title || '')),
       h('span', { class: 'grow' }),
-      h('span', { class: 'small muted' }, (s.done + 1) + ' / ' + s.total)
+      h('span', { class: 'small muted' }, Math.min(s.done + (S.answered ? 0 : 1), s.total) + ' / ' + s.total)
     );
     app.appendChild(head);
     var prog = h('div', { class: 'progress' }, h('i', { style: 'width:' + (s.done / s.total * 100) + '%' }));
@@ -1376,13 +1678,29 @@ var MT = (function () {
           card.appendChild(h('button', {
             class: cls, onclick: function () {
               if (S.answered) return;
-              S.choice[i] = oi; render();
+              S.choice[i] = oi;
+              S.draft = readDraft();   /* 重渲染前先存草稿，已填数字不丢 */
+              render();
             }
           }, String.fromCharCode(65 + oi) + '. ' + opt));
         });
+      } else if (f.type === 'expr') {
+        var ewrap = h('div', { class: 'field' }, h('span', { class: 'lbl' }, f.label + '：'));
+        var erow = h('div', { class: 'exprline' });
+        var eparts = String(f.tpl || 'y = {}').split('{}');
+        eparts.forEach(function (seg, si) {
+          if (si > 0) erow.appendChild(h('input', {
+            class: 'fone expr-slot', id: 'in' + i + '_' + (si - 1) + '_n', value: draftAt(i, si - 1),
+            inputmode: 'text', autocomplete: 'off', spellcheck: 'false', placeholder: '?'
+          }));
+          if (seg) erow.appendChild(h('span', { class: 'exprtxt' }, seg));
+        });
+        ewrap.appendChild(erow);
+        if (S.answered) ewrap.appendChild(h('span', { class: 'unit', style: 'color:' + (S.res.res[i].ok ? 'var(--ok)' : 'var(--bad)') }, S.res.res[i].ok ? '✓' : '✗'));
+        card.appendChild(ewrap);
       } else if (f.type === 'set') {
         var wrap = h('div', { class: 'field' }, h('span', { class: 'lbl' }, f.label + '：'));
-        for (var j = 0; j < f.n; j++) {
+        for (var j = 0; j < nSlots(f); j++) {
           wrap.appendChild(numInput('in' + i + '_' + j, draftAt(i, j), S.answered ? (S.res.res[i].ok ? 'ok' : 'bad') : ''));
         }
         card.appendChild(wrap);
@@ -1397,8 +1715,14 @@ var MT = (function () {
 
     if (!S.answered) {
       card.appendChild(h('div', { class: 'row', style: 'margin-top:8px' },
-        h('button', { class: 'btn btn-ghost btn-sm', onclick: function () { S.scratch = !S.scratch; render(); } }, S.scratch ? '收起草稿' : '草稿纸'),
-        h('button', { class: 'btn btn-sm', onclick: function () { startExample(S.sess.mod, S.sess.kind); } }, '例题')
+        h('button', { class: 'btn btn-ghost btn-sm', onclick: function () { S.draft = readDraft(); S.scratch = !S.scratch; render(); } }, S.scratch ? '收起草稿' : '草稿纸'),
+        h('button', { class: 'btn btn-sm', onclick: function () {
+          /* 例题必须和当前这题同题型：今日任务/开始一轮的 sess.kind 是 null，要用当前题的 kind */
+          var mod = S.sess.mod === 'wrong' ? ((S.q && S.q.mod) || 'drill') : S.sess.mod;
+          var kind = (S.q && S.q.kind) || S.sess.kind || null;
+          S.back = { q: S.q, sess: S.sess, draft: readDraft(), choice: S.choice, hint: S.hint };
+          startExample(mod, kind);
+        } }, '例题')
       ));
       card.appendChild(h('div', { class: 'small muted' }, '负号写哪儿都算对；回车提交。'));
       if (S.scratch) card.appendChild(scratchPad());
@@ -1437,9 +1761,18 @@ var MT = (function () {
         fxb.appendChild(h('div', { class: 'ftitle' }, '订正：照着上面的解析，把正确答案重新填一遍'));
         S.fix.fields.forEach(function (i) {
           var f = q.fields[i];
-          if (f.type === 'set') {
+          if (f.type === 'expr') {
+            var ew = h('div', { class: 'field' }, h('span', { class: 'lbl' }, f.label + '：'));
+            var er = h('div', { class: 'exprline' });
+            String(f.tpl || 'y = {}').split('{}').forEach(function (seg, si) {
+              if (si > 0) er.appendChild(h('input', { class: 'fone expr-slot', id: 'fx' + i + '_' + (si - 1), placeholder: '?' }));
+              if (seg) er.appendChild(h('span', { class: 'exprtxt' }, seg));
+            });
+            ew.appendChild(er);
+            fxb.appendChild(ew);
+          } else if (f.type === 'set') {
             var w = h('div', { class: 'field' }, h('span', { class: 'lbl' }, f.label + '：'));
-            for (var j = 0; j < f.n; j++) w.appendChild(h('input', { class: 'fone', id: 'fx' + i + '_' + j, placeholder: '数字' }));
+            for (var j = 0; j < nSlots(f); j++) w.appendChild(h('input', { class: 'fone', id: 'fx' + i + '_' + j, placeholder: '数字' }));
             fxb.appendChild(w);
           } else {
             fxb.appendChild(h('div', { class: 'field' },
@@ -1475,6 +1808,8 @@ var MT = (function () {
       }, 30);
     }
   }
+  /* 一个字段要填几个数：expr 看模板空数，set 看 n */
+  function nSlots(f) { return f.type === 'expr' ? (f.ans || []).length : f.n; }
   function draftAt(i, j) {
     var d = S.draft && S.draft[i];
     if (d == null) return '';
@@ -1497,7 +1832,7 @@ var MT = (function () {
     var wrap = h('div', { class: 'padwrap' },
       cv,
       h('div', { class: 'row', style: 'margin-top:6px' },
-        h('button', { class: 'btn btn-sm', onclick: function () { cv._pen = !cv._pen; } }, '笔 / 橡皮'),
+        h('button', { class: 'btn btn-sm', onclick: function (e) { cv._pen = !cv._pen; e.currentTarget.textContent = cv._pen ? '工具：橡皮' : '工具：笔'; } }, '工具：笔'),
         h('button', {
           class: 'btn btn-sm', onclick: function () {
             var g = cv.getContext && cv.getContext('2d');
@@ -1563,9 +1898,9 @@ var MT = (function () {
     var out = [];
     S.q.fields.forEach(function (f, i) {
       if (f.type === 'choice') { out.push(''); return; }
-      if (f.type === 'set') {
+      if (f.type === 'set' || f.type === 'expr') {
         var arr = [];
-        for (var j = 0; j < f.n; j++) arr.push(readFracObj('in' + i + '_' + j));
+        for (var j = 0; j < nSlots(f); j++) arr.push(readFracObj('in' + i + '_' + j));
         out.push(arr);
       } else out.push(readFracObj('in' + i));
     });
@@ -1574,19 +1909,41 @@ var MT = (function () {
   function rawAns(i) {
     var f = S.q.fields[i], v = (S.lastVals || [])[i];
     if (f.type === 'choice') return S.choice[i] == null ? '空' : String.fromCharCode(65 + S.choice[i]);
-    if (f.type === 'set') {
+    if (f.type === 'set' || f.type === 'expr') {
       return (v || []).map(function (o) { return o ? String(o) : '空'; }).join('、');
     }
     return v ? String(v) : '空';
   }
 
+  /* ---------- 当日题单快照：那天到底做了哪几题（复盘用，只留最近 14 天） ---------- */
+  var SNAP_DAYS = 14;
+  function snapAdd(mod, q, res, sec) {
+    var k = today();
+    var d = DB.days[k] || (DB.days[k] = { qs: [] });
+    d.qs.push({
+      mod: mod, kind: q.kind || '', kn: q.title || '',
+      p: String(q.prompt || '').replace(/<br>/g, ' ').slice(0, 160),
+      a: (q.fields || []).map(function (f) { return MT.ansText(f); }).join('；').slice(0, 140),
+      ok: !!res.ok, sec: sec, t: Date.now()
+    });
+    var keys = dayKeys();
+    while (keys.length > SNAP_DAYS) delete DB.days[keys.shift()];
+  }
+
   function submit() {
-    if (S.answered) return;
+    if (S.answered || S.example) return;
     var q = S.q;
     var draft = readDraft();
+    /* 一个空都没填（含选择题未选）时不判分、不记记录、不进错题本 */
+    var anyFilled = q.fields.some(function (f, i) {
+      if (f.type === 'choice') return S.choice[i] != null;
+      var d = draft[i];
+      return Array.isArray(d) ? d.some(function (x) { return String(x).trim() !== ''; }) : String(d == null ? '' : d).trim() !== '';
+    });
+    if (!anyFilled) { alert('先填答案再提交'); return; }
     var vals = q.fields.map(function (f, i) {
       if (f.type === 'choice') return S.choice[i] == null ? null : S.choice[i];
-      if (f.type === 'set') return draft[i].map(fracVal);
+      if (f.type === 'set' || f.type === 'expr') return draft[i].map(fracVal);
       return fracVal(draft[i]);
     });
     var res = MT.judge(q, vals);
@@ -1602,9 +1959,13 @@ var MT = (function () {
     var s = S.sess;
     s.done++;
     if (res.ok) s.right++;
-    DB.recs.push({ ts: Date.now(), mod: s.mod === 'wrong' ? (S.q.mod || 'drill') : s.mod, kind: q.kind, kn: q.title, ok: res.ok, got: res.got, total: res.total, sec: sec, hint: S.hint, mode: S.mode });
+    var recMod = s.mod === 'wrong' ? (S.q.mod || 'drill') : s.mod;
+    DB.recs.push({ ts: Date.now(), mod: recMod, kind: q.kind, kn: q.title, ok: res.ok, got: res.got, total: res.total, sec: sec, hint: S.hint, mode: S.mode, daily: !!s.daily });
+    /* 记住这个模块最近练的题型：模块页「先看例题」用它，别随机抽到别的题型 */
+    if (q.kind) { DB.meta.lastKind = DB.meta.lastKind || {}; DB.meta.lastKind[recMod] = q.kind; }
+    snapAdd(s.mod === 'wrong' ? (S.q.mod || 'drill') : s.mod, q, res, sec);
     if (!res.ok) addWrong(q);
-    else if (S.mode === 'wrong') removeWrong(q);
+    else removeWrong(q);   /* 任何模式答对都移出错题本（11-12 卡判据：答对自动移出） */
     save();
     render();
   }
@@ -1614,9 +1975,9 @@ var MT = (function () {
     S.fix.fields.forEach(function (i) {
       var f = q.fields[i];
       fields.push(f);
-      if (f.type === 'set') {
+      if (f.type === 'set' || f.type === 'expr') {
         var arr = [];
-        for (var j = 0; j < f.n; j++) {
+        for (var j = 0; j < nSlots(f); j++) {
           var el = document.getElementById('fx' + i + '_' + j);
           arr.push(MT.parseNum(el ? el.value : ''));
         }
@@ -1653,7 +2014,7 @@ var MT = (function () {
     var gap = n <= 1 ? 1 : (n === 2 ? 3 : (n === 3 ? 7 : 14));
     DB.wrong[k] = {
       id: q.id, mod: q.mod || S.sess.mod, kind: q.kind, title: q.title, prompt: q.prompt,
-      fields: q.fields, explain: q.explain, tip: q.tip, no: q.no,
+      fields: q.fields, explain: q.explain, tip: q.tip, no: q.no, fig: q.fig,
       ts: now, due: now + gap * MT.DAY, n: n
     };
   }
@@ -1668,7 +2029,7 @@ var MT = (function () {
       h('h2', { style: 'margin:8px 0 4px' }, s.right + ' / ' + s.total + ' 全对'),
       h('p', { class: 'muted' }, '用时约 ' + mins + ' 分钟 · 正确率 ' + pct(s.right, s.total) + '%'),
       h('div', { class: 'row', style: 'justify-content:center;margin-top:16px' },
-        h('button', { class: 'btn btn-primary', onclick: function () { if (s.mod === 'wrong') startWrong(); else startSession(s.mod, s.kind, s.total); } }, '再来一轮'),
+        h('button', { class: 'btn btn-primary', onclick: function () { if (s.mod === 'wrong') startWrong(); else if (s.daily) startDaily(s.mod); else startSession(s.mod, s.kind, s.total); } }, '再来一轮'),
         h('button', { class: 'btn', onclick: function () { go('today'); } }, '回今日')
       )
     ));
@@ -1748,13 +2109,36 @@ var MT = (function () {
     ));
     app.appendChild(wc);
 
+    /* 当日题单快照（最近 14 天，按天倒序） */
+    var dkeys = dayKeys().reverse();
+    var dc = h('div', { class: 'card' },
+      h('h3', { style: 'margin-top:0' }, '题单快照（最近 14 天）'),
+      h('p', { class: 'small muted', style: 'margin:0 0 8px' }, '每天做过的题逐条留档：题干、答案、对错、用时；导出 JSON 会一起带走。'));
+    if (!dkeys.length) dc.appendChild(h('div', { class: 'empty' }, '还没有记录'));
+    dkeys.forEach(function (k) {
+      var d = DB.days[k];
+      var qs = d.qs || [];
+      var okN = qs.filter(function (x) { return x.ok; }).length;
+      var sum = qs.reduce(function (a, x) { return a + (x.sec || 0); }, 0);
+      dc.appendChild(h('div', { class: 'snapday' },
+        h('div', { class: 'snaph' }, h('b', null, k),
+          h('span', { class: 'small muted' }, ' · ' + qs.length + ' 题 · 对 ' + okN + ' · ' + fmtSec(sum))),
+        h('div', null, qs.map(function (x) {
+          return h('div', { class: 'snapq small' },
+            h('span', { class: x.ok ? 'ok' : 'bad' }, x.ok ? '✓ ' : '✗ '),
+            h('span', null, (x.kn ? '[' + x.kn + '] ' : '') + x.p + ' → ' + x.a));
+        }))
+      ));
+    });
+    app.appendChild(dc);
+
     /* 数据 */
     var data = h('div', { class: 'card' },
       h('h3', { style: 'margin-top:0' }, '数据'),
       h('div', { class: 'row' },
         h('button', { class: 'btn btn-sm', onclick: exportJSON }, '导出 JSON'),
         h('button', { class: 'btn btn-sm', onclick: importJSON }, '导入 JSON'),
-        h('button', { class: 'btn btn-sm', onclick: selfCheck }, '自检（120 题 × 10 类）'),
+        h('button', { class: 'btn btn-sm', onclick: selfCheck }, '自检（每组 120 题）'),
         h('button', { class: 'btn btn-sm', style: 'color:#d93025', onclick: clearAll }, '清空记录')
       ),
       h('p', { class: 'small muted', style: 'margin-bottom:0' }, '记录只在本机浏览器；清缓存 / 换设备前先导出，放进 学习记录/。')
@@ -1781,9 +2165,28 @@ var MT = (function () {
         try {
           var o = JSON.parse(String(fr.result));
           if (!o || o.v !== MT.VERSION || !Array.isArray(o.recs)) throw new Error('格式不对');
-          DB.recs = DB.recs.concat(o.recs);
-          Object.keys(o.wrong || {}).forEach(function (k) { DB.wrong[k] = o.wrong[k]; });
-          save(); render(); alert('已导入 ' + o.recs.length + ' 条记录');
+          /* 去重：同一份 JSON 导入两次不会把统计翻倍 */
+          var seen = {};
+          DB.recs.forEach(function (r) { seen[r.ts + '|' + r.mod + '|' + r.kind] = 1; });
+          var added = 0;
+          o.recs.forEach(function (r) {
+            if (!r || typeof r.ts !== 'number') return;
+            var kk = r.ts + '|' + r.mod + '|' + r.kind;
+            if (seen[kk]) return;
+            seen[kk] = 1; DB.recs.push(r); added++;
+          });
+          Object.keys(o.wrong || {}).forEach(function (k) {
+            var w = o.wrong[k];
+            if (!w || !Array.isArray(w.fields) || typeof w.due !== 'number') return;   /* 结构坏的错题跳过 */
+            DB.wrong[k] = w;
+          });
+          Object.keys(o.days || {}).forEach(function (k) {
+            var src = o.days[k];
+            if (!src || !Array.isArray(src.qs)) return;
+            var dst = DB.days[k] || (DB.days[k] = { qs: [] });
+            dst.qs = dst.qs.concat(src.qs);
+          });
+          save(); render(); alert('已导入 ' + added + ' 条记录（重复的已跳过）');
         } catch (e) { alert('导入失败：' + e.message); }
       };
       fr.readAsText(f);
@@ -1810,7 +2213,7 @@ var MT = (function () {
     });
   });
   document.addEventListener('keydown', function (e) {
-    if (e.key !== 'Enter' || S.view !== 'practice') return;
+    if (e.key !== 'Enter' || S.view !== 'practice' || S.example) return;
     e.preventDefault();
     if (!S.answered) { submit(); return; }
     if (S.fix && !S.fix.ok) { submitFix(); return; }
@@ -1827,7 +2230,8 @@ var MT = (function () {
   /* 调试/自测钩子：不参与界面，供 node 里的 DOM 桩测试使用 */
   window.__mt = {
     S: S, db: function () { return DB; },
-    startSession: startSession, startWrong: startWrong,
+    startSession: startSession, startWrong: startWrong, startDaily: startDaily, startExample: startExample,
+    plan: function () { return dayPlan(); },
     submit: submit, submitFix: submitFix, next: next, go: go, render: render
   };
 })();
