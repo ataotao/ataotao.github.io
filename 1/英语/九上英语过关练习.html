@@ -83,7 +83,7 @@
     vertical-align:baseline;height:1.1em}
   /* 语篇填空：短文 + 行内输入框 + 逐空讲评 */
   .passage-card .passage-text{font-size:17px;line-height:2.15;color:var(--ink);background:#fcf9f1;
-    border:1px solid var(--line-2);border-radius:10px;padding:14px 16px;
+    border:1px solid var(--line-2);border-radius:10px;padding:14px 16px;white-space:pre-wrap;
     font-family:Georgia,"Times New Roman","Songti SC","Noto Serif SC",serif;word-break:break-word}
   .inline-blank-wrap{display:inline-flex;align-items:baseline;gap:3px;margin:0 3px;vertical-align:baseline}
   .blank-no{font-size:11px;color:var(--brand);font-family:system-ui,sans-serif;position:relative;top:-.4em}
@@ -96,6 +96,7 @@
   .item-passage[open]>summary::before{content:"▾ "}
   .item-passage .passage-text{border:0;border-top:1px solid var(--line-2);border-radius:0;background:transparent;
     font-size:16.5px;line-height:2.05;color:var(--ink);padding:12px 16px;max-height:44vh;overflow:auto;
+    white-space:pre-wrap;
     font-family:Georgia,"Times New Roman","Songti SC","Noto Serif SC",serif;word-break:break-word}
   .field.inline-blank{width:7.2em;min-width:88px;padding:3px 8px;font-size:16.5px;line-height:1.5;
     border-radius:7px;border-bottom-width:2px;margin:0 1px;text-align:center}
@@ -149,6 +150,7 @@
   .verdict{display:flex;align-items:center;gap:10px;margin:14px 0 0;font-size:15px;font-weight:600}
   .verdict .mark{font-family:"KaiTi","Kaiti SC",serif;font-size:26px;line-height:1}
   .verdict[data-ok="1"]{color:var(--ok)} .verdict[data-ok="0"]{color:var(--bad)}
+  .verdict[data-ok="x"]{color:var(--warn)}
   .verify{margin-top:10px;border-left:3px solid var(--brand);background:#fdf6f2;border-radius:0 10px 10px 0;
     padding:12px 14px;display:grid;grid-template-columns:52px 1fr;gap:6px 10px;font-size:14px;line-height:1.75}
   .verify .vlab{color:var(--brand);font-size:12px;letter-spacing:1px;padding-top:2px}
@@ -277,7 +279,24 @@
     .qtools{font-size:13px}
   }
 
+  /* 悬停词义：英文里命中词表的词/短语包一层 .zw，悬停（触屏点按）出 #zh-tip。
+     下划线刻意做得很淡——短文一屏上百个词，划重了就满篇花；关掉「词义」后整块不显示。 */
+  .zw{cursor:help;border-bottom:1px dotted rgba(93,80,58,.30);border-radius:2px;
+    transition:background .1s,color .1s}
+  .zw:hover,.zw.is-hot{background:#fbf0cf;border-bottom-color:transparent;color:#7a4a00}
+  body.no-gloss .zw{border-bottom:0;cursor:auto}
+  body.no-gloss .zw:hover{background:transparent;color:inherit}
+  #zh-tip{position:fixed;left:0;top:0;z-index:85;max-width:min(74vw,340px);transform:translateX(-50%);
+    display:none;flex-direction:column;gap:1px;padding:7px 11px;border-radius:9px;text-align:center;
+    background:rgba(30,28,40,.96);color:#fff;pointer-events:none;
+    box-shadow:0 12px 28px -12px rgba(20,20,40,.75)}
+  #zh-tip.show{display:flex}
+  #zh-tip .zt-zh{font-size:14px;line-height:1.45;font-weight:600}
+  #zh-tip .zt-en{font-size:11px;line-height:1.3;color:rgba(255,255,255,.62);font-family:Georgia,serif}
+
   @media print{
+    .zw{border-bottom:0}
+    #zh-tip{display:none!important}
     .topbar,.bottombar,.qtools,footer,#cardsheet,.settle-acts,.mcard .mlink,.rtabs,.bar{display:none!important}
     body{background:#fff}
     .app{max-width:none;padding:0}
@@ -318,6 +337,7 @@
 </div>
 
 <div id="toast"></div>
+<div id="zh-tip" aria-hidden="true"></div>
 
 <script>window.__ID_MIGRATION = {
  "U3-1": "U3-r1",
@@ -969,8 +989,7 @@ window.QUIZ_DATA = {
      "1": {
       "answer": "true",
       "alt": [
-       "a fact",
-       "fact"
+       "a fact"
       ],
       "topic": "It is true that 句型",
       "why": "It is true that… 为常用句型；若按名词补 a fact 亦可，空内若只填一词则应为 true，故标为待核对。",
@@ -1064,9 +1083,7 @@ window.QUIZ_DATA = {
      "14": {
       "answer": "need to be watered",
       "alt": [
-       "need watering",
-       "need to be watered",
-       "need watering every day"
+       "need watering"
       ],
       "topic": "need to be done",
       "why": "主语 these vegetables 是浇水的对象，用 need to be done 表「需要被浇水」。",
@@ -1085,8 +1102,7 @@ window.QUIZ_DATA = {
      "16": {
       "answer": "her talent",
       "alt": [
-       "having a talent",
-       "being talented"
+       "having a talent"
       ],
       "topic": "a talent for",
       "why": "空后已印 for playing，用 her talent for doing；having a talent 亦可。",
@@ -1967,10 +1983,7 @@ window.QUIZ_DATA = {
      },
      "m4": {
       "answer": "displaced",
-      "alt": [
-       "disappeared",
-       "disappearing"
-      ],
+      "alt": [],
       "topic": "被动语态词形",
       "why": "「被新方法取代」用 displaced by；学生手写疑似 disappearing，参考答案存疑。",
       "doubt": true,
@@ -2122,8 +2135,7 @@ window.QUIZ_DATA = {
      "g10": {
       "answer": "Have / heard",
       "alt": [
-       "Have / heard",
-       "Have / heard of"
+       "Have / heard"
       ],
       "topic": "hear about",
       "why": "「听说过」用 hear about/of，现在完成时疑问句为 Have you ever heard about…。",
@@ -4419,7 +4431,7 @@ window.QUIZ_DATA = {
      "no": 29,
      "section": "阅读理解 (B)",
      "kind": "mc",
-     "stem": "What can we learn from Shen Chao's words in Paragraph 9?",
+     "stem": "What can we learn from Shen Chao's words in Paragraph 7?",
      "cn": null,
      "options": [
       {
@@ -4648,7 +4660,7 @@ window.QUIZ_DATA = {
      ],
      "marked": "B",
      "handwriting": null,
-     "note": "阅读填空第 36 空；A–E 为 36–40 共用选项（有一项多余）",
+     "note": "阅读填空第 36 空；A–E 为 36–40 共用选项，五个选项全部会用到",
      "passage": "阅读填空"
     },
     {
@@ -4681,7 +4693,7 @@ window.QUIZ_DATA = {
      ],
      "marked": "E",
      "handwriting": null,
-     "note": "阅读填空第 37 空；A–E 为 36–40 共用选项（有一项多余）",
+     "note": "阅读填空第 37 空；A–E 为 36–40 共用选项，五个选项全部会用到",
      "passage": "阅读填空"
     },
     {
@@ -4714,7 +4726,7 @@ window.QUIZ_DATA = {
      ],
      "marked": "D",
      "handwriting": null,
-     "note": "阅读填空第 38 空；A–E 为 36–40 共用选项（有一项多余）",
+     "note": "阅读填空第 38 空；A–E 为 36–40 共用选项，五个选项全部会用到",
      "passage": "阅读填空"
     },
     {
@@ -4747,7 +4759,7 @@ window.QUIZ_DATA = {
      ],
      "marked": "A",
      "handwriting": null,
-     "note": "阅读填空第 39 空；A–E 为 36–40 共用选项（有一项多余）",
+     "note": "阅读填空第 39 空；A–E 为 36–40 共用选项，五个选项全部会用到",
      "passage": "阅读填空"
     },
     {
@@ -4780,7 +4792,7 @@ window.QUIZ_DATA = {
      ],
      "marked": "C",
      "handwriting": null,
-     "note": "阅读填空第 40 空；A–E 为 36–40 共用选项（有一项多余）",
+     "note": "阅读填空第 40 空；A–E 为 36–40 共用选项，五个选项全部会用到",
      "passage": "阅读填空"
     },
     {
@@ -5308,11 +5320,11 @@ window.QUIZ_DATA = {
      },
      "11": {
       "answer": "D",
-      "topic": "动词辨析 forced"
+      "topic": "动词辨析 stopped"
      },
      "12": {
       "answer": "B",
-      "topic": "pay attention to"
+      "topic": "call for 呼吁"
      },
      "13": {
       "answer": "C",
@@ -5522,7 +5534,7 @@ window.QUIZ_DATA = {
      "63": {
       "answer": "sharpened",
       "alt": [
-       "improved"
+       "strengthened"
       ],
       "topic": "被动语态"
      },
@@ -5939,9 +5951,2288 @@ window.QUIZ_DATA = {
      "trap": "中文直译；先写「谁 + 做什么」的主谓骨架，再补时态情态，最后逐句检查有没有谓语。"
     }
    }
+  },
+  {
+   "unit": "U6",
+   "title": "九上 中考卷练习（2026-11-13）",
+   "header": {
+    "class": null,
+    "name": null,
+    "id": "099"
+   },
+   "note": "2026-11-13「中考试卷练习」（周一至周五按题型分页的训练卷），共 8 页 10 个大题。原卷在 OneDrive 题库、未入库；卷面手写与红笔批改大量重叠（尤其第 1 页选择题页边），故未录作答痕迹。",
+   "passages": {
+    "语法选择": "Have you ever heard of Colour Walk? It is {{1}} new and relaxing way to enjoy a walk around your city. In early 2026, this activity quickly became popular among young people. They call it a \"colour treasure hunt\".\n\nHere's how it works. Before you go out, choose a colour that you like, such as red, blue or yellow. Then, during your walk, try to find and record everything {{2}} your colour. It could be a painted wall, a flower, a drink package, or even the sky. You don't need a difficult plan. Just go downstairs and start your walk. It is much {{3}} than you think. You can spot {{4}} objects from shops, plants and buildings.\n\nYou can do it alone {{5}} with friends. Walking alone gives you a peaceful feeling, while walking with others brings you different ideas about the same street. Many young people say this activity {{6}} make them feel happy and relaxed. \"When I focus on finding red things, I forget all my worries,\" said one Colour Walk lover.\n\nLast weekend, my friend Li Ming and I {{7}} to try Colour Walk. We chose the colour yellow. As we walked down the street, a yellow taxi caught our eyes. Then, we noticed a beautiful sunflower facing the sun. We {{8}} took photos of these yellow objects before going home and shared the photos online. Soon, our photos were liked by many people. Even {{9}} you only spend thirty minutes outside, you will get great fun from this small activity.\n\nIf you feel stressed, why not give Colour Walk a try? Just look around! {{10}} beautiful the world is! Enjoy your time!",
+    "完形填空": "Chang An is a Chinese animated (动画的) movie. And the movie was named after the ancient name for Xi'an in Shaanxi Province.\n\nThe city had been the capital of the Tang dynasty for over 280 years. The movie used a different view to draw people's {{1}} from the start. Through this movie, Tang poems, a(n) {{2}} traditional culture of China, made the world know more about \"the universe of Chinese poems\".\n\nMany parents took their children to watch the movie at the cinemas so that they could {{3}} these literary masterpieces (文学经典). Many children even wanted to read the poems alongside the poets on screen when they watched the movie. The {{4}} between the poet Li Bai and his friend Gao Shi also caught many people's eye {{5}}. Besides, the movie offered people a chance to know what happened in the Tang dynasty. It is often seen as a golden {{6}} in Chinese history because of its economic (经济的) and cultural development.\n\nForty-eight Tang poems were {{7}} in the movie. People could see the panorama (全景) of the most excellent poets of that time as well as their dreams. There is no {{8}} that the movie was a great work showing the excellent Chinese culture to the world.\n\nIn China, we usually regard poets and their works as {{9}}. These poems describe not only the historical changes of a dynasty but also people's understanding of the world.\n\nAnd it is {{10}} but meaningful for people to feel the poets' minds better through their poems. This is the reason why so many people wanted to watch the movie and loved the movie.",
+    "阅读理解 (A)": "Twenty-two years after a youth version of the Kunqu Opera masterpiece The Peony Pavilion was first performed in Taipei, a special \"campus youth\" version was staged in Taiwan for the first time on 15 January, 2026.\n\nThis campus version is an abridged (删节) performance of the nine-hour youth version. It came from a project started in 2024 to encourage young people to join in protecting Kunqu.\n\nThe project chose 50 students from 29 universities and colleges. The students, with little training in Kunqu, practised for nearly nine months before bringing the campus version of The Peony Pavilion to the stage in Suzhou, the birthplace of Kunqu, in April 2025.\n\nKunqu Opera is one of the oldest and most beautiful forms of traditional Chinese opera. In 2001, it was added to UNESCO's list of World Intangible Cultural Heritage. As one of its most famous works, The Peony Pavilion was written in 1598 by Tang Xianzu. It tells the story of Du Liniang, a young woman from a wealthy family. Her father was a high-ranking official, and her family lived in a large house with a beautiful garden. She dies for love after dreaming of a romantic encounter with the scholar (书生) Liu Mengmei. She comes back to life when he finds her.\n\nYoung people have always been the main audience for the youth version of The Peony Pavilion. Since its first show, it has been performed at more than a dozen universities. \"Our goal is to help college students appreciate the beauty of Kunqu, so they can feel closer to traditional Chinese culture,\" said 88-year-old Pai Hsien-yung, who has served as the art director in this project.\n\n\"For more than 20 years, the love for Kunqu among the people of Taiwan has remained unchanged,\" Pai said in an interview. \"I am pleasantly surprised to see that many high school students also enjoy the performance very much.\"",
+    "阅读理解 (B)": "There was a man who played the piano in a small bar. There were not too many customers, but because he was a good piano player, some people still came in every night just to hear him play. But one night, a patron told him he didn't want to hear him play but to sing a song.\n\nThe man said, \"I have never done that before in public. I think I'm better at playing the piano.\"\n\nBut the customer insisted. He told the waiter, \"I'm tired of listening to the piano day after day. I want to hear something new and I want that guy to sing.\"\n\nThe waiter shouted across the room, \"Hey, buddy! If you want to get paid, sing a song. The patrons are asking you to sing!\"\n\nSo in order to bring some money home that night, the piano player who had never sung in public did so for the very first time. And nobody had ever heard the song Mona Lisa sung before until that night by Nat King Cole, and it surprised all, including the singer himself!\n\nHe had a talent he was sitting on! He may have lived the rest of his life as an unknown piano player in a common bar, but because he had to sing, he went on to become one of the best-known entertainers in America.\n\nYou, too, have skills and abilities. You may not feel as if your \"talent\" is particularly great, but it may be better than you think! And with persistence (坚持), most skills can be improved. Besides, you may as well have no ability at all if you sit on whatever talent you have! The question is not \"What useful ability do I have?\" but rather \"How will I use whatever ability I have?\"",
+    "阅读填空": "Stand-up comedy is becoming popular among the young in China. One person, man or woman, stands on stage and tells funny stories that happened to him or her. The performers will try their best to make people laugh.\n\n{{1}} An actor usually has a script (剧本) to fall back on and a team of other actors to rely on. Unlike an actor, a stand-up performer is showing himself or herself but not creating characters. {{2}} It usually takes days or even weeks of hard work to make people laugh for a few minutes. That's why stand-up comedy has often been described as one of the hardest acts to complete successfully.\n\n{{3}} It can include a monologue (长篇独白) on funny things that may form a story. It can simply be a series of jokes. It can also be performed almost anywhere—clubs, bars or parties.\n\nStand-up comedy has come a long way in the West, but it is a new art form in China. A very popular stand-up comedy show in China is Rock & Roast (《脱口秀大会》). {{4}} When the third season came out, it took the internet by storm and became one of the hottest TV shows in China. {{5}} More and more young people have begun watching stand-up comedy, and some even start doing it part-time. They say it's a great way to relax.",
+    "回答问题": "The Wandering Earth 2, directed by Guo Fan, came out in January 2023 as the prequel to the first Wandering Earth movie. It is adapted from Liu Cixin's famous science-fiction novel and marks a new high point of Chinese sci-fi film industry.\n\nIn the story, scientists discover the Sun will expand into a red giant and swallow the Solar System in hundreds of years. To save human civilization, the United Earth Government carries out the Moving Mountain Project: building 10,000 huge fusion engines to push Earth away to the nearest solar system. However, conflicts break out. Some people support the Digital Life Project, which uploads human minds into computers, while others stick to saving the real planet. A serious crisis happens when the Moon's orbit becomes unstable and crashes toward Earth. Global people send thousands of nuclear bombs to blow up the Moon, risking their lives together.\n\nTwo touching lead lines impress audiences deeply. Liu Peiqiang trains to be a space station astronaut, preparing for the long wandering journey. Engineer Tu Hengyu tries to save his dead daughter Yaya by uploading her consciousness into quantum computers, showing the love between father and daughter.\n\nThis 173-minute film has more than 3,000 visual effect shots made by Chinese teams. It earned 4.029 billion yuan at the box office and got an 8.3 score on Douban, winning praise worldwide. Different from Western sci-fi that gives up Earth, it carries a warm Chinese belief: people will stick to their home and move forward hand in hand. It tells us unity, responsibility and family love are forever powerful strength in face of great disasters.",
+    "语篇填词": "Three contestants were sitting at their desks on the stage and waiting. Lester Li ran out onto the stage. The quiz show began. It covered v{{1}} kinds of questions, such as history, geography and pop culture. The whole contest was quite c{{2}}, but Angela was well prepared. She seemed relaxed and did really well. She was soon ahead of the other two contestants. Twenty-five minutes later, Angela just had to answer six more questions to b{{3}} the other contestants. Soon there was just a single question between Angela and v{{4}}. \"And finally, where's Big Ben?\" asked Lester. \"In England,\" replied Angela. \"Correct!\" shouted Lester. \"You're tonight's lucky winner. You've won tonight's prize—a trip to Paris!\" Angela g{{5}} great joy and courage from this unforgettable experience, and she hoped to join more similar activities in the future.",
+    "语法填空": "Young people nowadays have a wide variety of leisure activities. Most people should have heard of {{1}}(surf), but have you heard of stand-up paddleboarding (SUP, 水上桨板运动)? SUP {{2}}(become) more and more popular in the last two years. It is an interesting sport with special {{3}}(feature). The paddleboard is relatively wide and provides good buoyancy (浮力), helping people easily stand upright on it. This sport can be played on both calm lakes and stormy seas. People can stand, sit, or lie on the board, enjoying themselves on the water and feeling much {{4}}(close) to nature.\n\n{{5}} it requires a little patience and practice to master it, once you start, you'll find it hard to stop. Spending time on the water this way is really relaxing.",
+    "书面表达": "学校英语报社正在向学生征稿，以 \"My favourite film\" 为题写一篇电影的影评。假如你是李华，请你根据以下提示，写一篇英语短文向报社投稿，谈谈你最喜欢的电影。\n\nWhich film is your favourite film?\nWhat is the film about?\nWhat do you like most about the film?\nWhat do you think of the film?\n\n注意：1. 词数 80 词左右；2. 不得透露学校、姓名等个人信息，否则不予评分。"
+   },
+   "scan": null,
+   "items": [
+    {
+     "id": "ca1",
+     "no": 1,
+     "section": "语法选择",
+     "kind": "mc",
+     "stem": "It is ______ new and relaxing way to enjoy a walk around your city.",
+     "cn": null,
+     "options": [
+      {
+       "k": "A",
+       "t": "a"
+      },
+      {
+       "k": "B",
+       "t": "an"
+      },
+      {
+       "k": "C",
+       "t": "the"
+      },
+      {
+       "k": "D",
+       "t": "/"
+      }
+     ],
+     "marked": null,
+     "handwriting": null,
+     "passage": "语法选择",
+     "note": "way 是可数名词单数、首次提及，故用不定冠词；new 以辅音音素开头。"
+    },
+    {
+     "id": "ca2",
+     "no": 2,
+     "section": "语法选择",
+     "kind": "mc",
+     "stem": "Then, during your walk, try to find and record everything ______ your colour.",
+     "cn": null,
+     "options": [
+      {
+       "k": "A",
+       "t": "under"
+      },
+      {
+       "k": "B",
+       "t": "at"
+      },
+      {
+       "k": "C",
+       "t": "to"
+      },
+      {
+       "k": "D",
+       "t": "in"
+      }
+     ],
+     "marked": null,
+     "handwriting": null,
+     "passage": "语法选择",
+     "note": "in + 颜色 = 「……颜色的」。"
+    },
+    {
+     "id": "ca3",
+     "no": 3,
+     "section": "语法选择",
+     "kind": "mc",
+     "stem": "It is much ______ than you think.",
+     "cn": null,
+     "options": [
+      {
+       "k": "A",
+       "t": "easy"
+      },
+      {
+       "k": "B",
+       "t": "easier"
+      },
+      {
+       "k": "C",
+       "t": "easiest"
+      },
+      {
+       "k": "D",
+       "t": "the easiest"
+      }
+     ],
+     "marked": null,
+     "handwriting": null,
+     "passage": "语法选择",
+     "note": "than 提示比较级；much 修饰比较级。"
+    },
+    {
+     "id": "ca4",
+     "no": 4,
+     "section": "语法选择",
+     "kind": "mc",
+     "stem": "You can spot ______ objects from shops, plants and buildings.",
+     "cn": null,
+     "options": [
+      {
+       "k": "A",
+       "t": "very"
+      },
+      {
+       "k": "B",
+       "t": "various"
+      },
+      {
+       "k": "C",
+       "t": "variously"
+      },
+      {
+       "k": "D",
+       "t": "variety"
+      }
+     ],
+     "marked": null,
+     "handwriting": null,
+     "passage": "语法选择",
+     "note": "空格修饰名词 objects，需形容词。"
+    },
+    {
+     "id": "ca5",
+     "no": 5,
+     "section": "语法选择",
+     "kind": "mc",
+     "stem": "You can do it alone ______ with friends.",
+     "cn": null,
+     "options": [
+      {
+       "k": "A",
+       "t": "and"
+      },
+      {
+       "k": "B",
+       "t": "but"
+      },
+      {
+       "k": "C",
+       "t": "or"
+      },
+      {
+       "k": "D",
+       "t": "so"
+      }
+     ],
+     "marked": null,
+     "handwriting": null,
+     "passage": "语法选择",
+     "note": "alone 与 with friends 是两种可选方式，用 or。"
+    },
+    {
+     "id": "ca6",
+     "no": 6,
+     "section": "语法选择",
+     "kind": "mc",
+     "stem": "Many young people say this activity ______ make them feel happy and relaxed.",
+     "cn": null,
+     "options": [
+      {
+       "k": "A",
+       "t": "can"
+      },
+      {
+       "k": "B",
+       "t": "may"
+      },
+      {
+       "k": "C",
+       "t": "must"
+      },
+      {
+       "k": "D",
+       "t": "should"
+      }
+     ],
+     "marked": null,
+     "handwriting": null,
+     "passage": "语法选择",
+     "note": "情态动词后接动词原形 make；此处表「能够」。"
+    },
+    {
+     "id": "ca7",
+     "no": 7,
+     "section": "语法选择",
+     "kind": "mc",
+     "stem": "Last weekend, my friend Li Ming and I ______ to try Colour Walk.",
+     "cn": null,
+     "options": [
+      {
+       "k": "A",
+       "t": "decide"
+      },
+      {
+       "k": "B",
+       "t": "will decide"
+      },
+      {
+       "k": "C",
+       "t": "have decided"
+      },
+      {
+       "k": "D",
+       "t": "decided"
+      }
+     ],
+     "marked": null,
+     "handwriting": null,
+     "passage": "语法选择",
+     "note": "Last weekend 是明确的过去时间状语。"
+    },
+    {
+     "id": "ca8",
+     "no": 8,
+     "section": "语法选择",
+     "kind": "mc",
+     "stem": "We ______ took photos of these yellow objects before going home and shared the photos online.",
+     "cn": null,
+     "options": [
+      {
+       "k": "A",
+       "t": "happy"
+      },
+      {
+       "k": "B",
+       "t": "happily"
+      },
+      {
+       "k": "C",
+       "t": "happiness"
+      },
+      {
+       "k": "D",
+       "t": "happier"
+      }
+     ],
+     "marked": null,
+     "handwriting": null,
+     "passage": "语法选择",
+     "note": "空格修饰动词 took，需副词。"
+    },
+    {
+     "id": "ca9",
+     "no": 9,
+     "section": "语法选择",
+     "kind": "mc",
+     "stem": "Even ______ you only spend thirty minutes outside, you will get great fun from this small activity.",
+     "cn": null,
+     "options": [
+      {
+       "k": "A",
+       "t": "when"
+      },
+      {
+       "k": "B",
+       "t": "since"
+      },
+      {
+       "k": "C",
+       "t": "if"
+      },
+      {
+       "k": "D",
+       "t": "although"
+      }
+     ],
+     "marked": null,
+     "handwriting": null,
+     "passage": "语法选择",
+     "note": "Even if = 即使，引导让步状语从句。"
+    },
+    {
+     "id": "ca10",
+     "no": 10,
+     "section": "语法选择",
+     "kind": "mc",
+     "stem": "Just look around! ______ beautiful the world is!",
+     "cn": null,
+     "options": [
+      {
+       "k": "A",
+       "t": "How"
+      },
+      {
+       "k": "B",
+       "t": "What"
+      },
+      {
+       "k": "C",
+       "t": "What a"
+      },
+      {
+       "k": "D",
+       "t": "How a"
+      }
+     ],
+     "marked": null,
+     "handwriting": null,
+     "passage": "语法选择",
+     "note": "感叹句：how + 形容词 + 主语 + 谓语。"
+    },
+    {
+     "id": "cb1",
+     "no": 1,
+     "section": "完形填空",
+     "kind": "mc",
+     "stem": "The movie used a different view to draw people's ______ from the start.",
+     "cn": null,
+     "options": [
+      {
+       "k": "A",
+       "t": "attention"
+      },
+      {
+       "k": "B",
+       "t": "course"
+      },
+      {
+       "k": "C",
+       "t": "business"
+      },
+      {
+       "k": "D",
+       "t": "goal"
+      }
+     ],
+     "marked": null,
+     "handwriting": null,
+     "passage": "完形填空",
+     "note": "draw one's attention 吸引某人注意。"
+    },
+    {
+     "id": "cb2",
+     "no": 2,
+     "section": "完形填空",
+     "kind": "mc",
+     "stem": "Through this movie, Tang poems, a(n) ______ traditional culture of China, made the world know more about \"the universe of Chinese poems\".",
+     "cn": null,
+     "options": [
+      {
+       "k": "A",
+       "t": "common"
+      },
+      {
+       "k": "B",
+       "t": "difficult"
+      },
+      {
+       "k": "C",
+       "t": "excellent"
+      },
+      {
+       "k": "D",
+       "t": "simple"
+      }
+     ],
+     "marked": null,
+     "handwriting": null,
+     "passage": "完形填空",
+     "note": "修饰「中国传统文化」应取褒义「优秀的」。"
+    },
+    {
+     "id": "cb3",
+     "no": 3,
+     "section": "完形填空",
+     "kind": "mc",
+     "stem": "Many parents took their children to watch the movie at the cinemas so that they could ______ these literary masterpieces.",
+     "cn": null,
+     "options": [
+      {
+       "k": "A",
+       "t": "ask for"
+      },
+      {
+       "k": "B",
+       "t": "cut out"
+      },
+      {
+       "k": "C",
+       "t": "take down"
+      },
+      {
+       "k": "D",
+       "t": "learn about"
+      }
+     ],
+     "marked": null,
+     "handwriting": null,
+     "passage": "完形填空",
+     "note": "带孩子看电影的目的是了解文学经典。"
+    },
+    {
+     "id": "cb4",
+     "no": 4,
+     "section": "完形填空",
+     "kind": "mc",
+     "stem": "The ______ between the poet Li Bai and his friend Gao Shi also caught many people's eye.",
+     "cn": null,
+     "options": [
+      {
+       "k": "A",
+       "t": "dream"
+      },
+      {
+       "k": "B",
+       "t": "friendship"
+      },
+      {
+       "k": "C",
+       "t": "trade"
+      },
+      {
+       "k": "D",
+       "t": "expression"
+      }
+     ],
+     "marked": null,
+     "handwriting": null,
+     "passage": "完形填空",
+     "note": "原句第 4、5 空同句，此处止于 eye 以便单独作答。"
+    },
+    {
+     "id": "cb5",
+     "no": 5,
+     "section": "完形填空",
+     "kind": "mc",
+     "stem": "The friendship between the poet Li Bai and his friend Gao Shi also caught many people's eye ______.",
+     "cn": null,
+     "options": [
+      {
+       "k": "A",
+       "t": "quietly"
+      },
+      {
+       "k": "B",
+       "t": "politely"
+      },
+      {
+       "k": "C",
+       "t": "deeply"
+      },
+      {
+       "k": "D",
+       "t": "seriously"
+      }
+     ],
+     "marked": null,
+     "handwriting": null,
+     "passage": "完形填空",
+     "note": "第 4 空已补出 friendship，本题只考副词。"
+    },
+    {
+     "id": "cb6",
+     "no": 6,
+     "section": "完形填空",
+     "kind": "mc",
+     "stem": "It is often seen as a golden ______ in Chinese history because of its economic and cultural development.",
+     "cn": null,
+     "options": [
+      {
+       "k": "A",
+       "t": "season"
+      },
+      {
+       "k": "B",
+       "t": "age"
+      },
+      {
+       "k": "C",
+       "t": "month"
+      },
+      {
+       "k": "D",
+       "t": "year"
+      }
+     ],
+     "marked": null,
+     "handwriting": null,
+     "passage": "完形填空",
+     "note": "a golden age 黄金时代。"
+    },
+    {
+     "id": "cb7",
+     "no": 7,
+     "section": "完形填空",
+     "kind": "mc",
+     "stem": "Forty-eight Tang poems were ______ in the movie.",
+     "cn": null,
+     "options": [
+      {
+       "k": "A",
+       "t": "followed"
+      },
+      {
+       "k": "B",
+       "t": "sent"
+      },
+      {
+       "k": "C",
+       "t": "returned"
+      },
+      {
+       "k": "D",
+       "t": "shown"
+      }
+     ],
+     "marked": null,
+     "handwriting": null,
+     "passage": "完形填空",
+     "note": "诗句被「呈现」在电影里。"
+    },
+    {
+     "id": "cb8",
+     "no": 8,
+     "section": "完形填空",
+     "kind": "mc",
+     "stem": "There is no ______ that the movie was a great work showing the excellent Chinese culture to the world.",
+     "cn": null,
+     "options": [
+      {
+       "k": "A",
+       "t": "doubt"
+      },
+      {
+       "k": "B",
+       "t": "praise"
+      },
+      {
+       "k": "C",
+       "t": "tradition"
+      },
+      {
+       "k": "D",
+       "t": "process"
+      }
+     ],
+     "marked": null,
+     "handwriting": null,
+     "passage": "完形填空",
+     "note": "There is no doubt that… 毫无疑问。"
+    },
+    {
+     "id": "cb9",
+     "no": 9,
+     "section": "完形填空",
+     "kind": "mc",
+     "stem": "In China, we usually regard poets and their works as ______.",
+     "cn": null,
+     "options": [
+      {
+       "k": "A",
+       "t": "models"
+      },
+      {
+       "k": "B",
+       "t": "treasures"
+      },
+      {
+       "k": "C",
+       "t": "promises"
+      },
+      {
+       "k": "D",
+       "t": "suggestions"
+      }
+     ],
+     "marked": null,
+     "handwriting": null,
+     "passage": "完形填空",
+     "note": "视为「珍宝」。"
+    },
+    {
+     "id": "cb10",
+     "no": 10,
+     "section": "完形填空",
+     "kind": "mc",
+     "stem": "And it is ______ but meaningful for people to feel the poets' minds better through their poems.",
+     "cn": null,
+     "options": [
+      {
+       "k": "A",
+       "t": "challenging"
+      },
+      {
+       "k": "B",
+       "t": "terrible"
+      },
+      {
+       "k": "C",
+       "t": "brave"
+      },
+      {
+       "k": "D",
+       "t": "popular"
+      }
+     ],
+     "marked": null,
+     "handwriting": null,
+     "passage": "完形填空",
+     "note": "but 前后语义相对：有难度但有意义。"
+    },
+    {
+     "id": "ra1",
+     "no": 1,
+     "section": "阅读理解 (A)",
+     "kind": "mc",
+     "stem": "When was the youth version of The Peony Pavilion first performed?",
+     "cn": null,
+     "options": [
+      {
+       "k": "A",
+       "t": "In 2001."
+      },
+      {
+       "k": "B",
+       "t": "In 2004."
+      },
+      {
+       "k": "C",
+       "t": "In 2024."
+      },
+      {
+       "k": "D",
+       "t": "In 2026."
+      }
+     ],
+     "marked": null,
+     "handwriting": null,
+     "passage": "阅读理解 (A)",
+     "note": "首段 Twenty-two years after… on 15 January, 2026。"
+    },
+    {
+     "id": "ra2",
+     "no": 2,
+     "section": "阅读理解 (A)",
+     "kind": "mc",
+     "stem": "What can we learn about the students who performed the campus version?",
+     "cn": null,
+     "options": [
+      {
+       "k": "A",
+       "t": "They were all good at Kunqu."
+      },
+      {
+       "k": "B",
+       "t": "They practised for more than a year."
+      },
+      {
+       "k": "C",
+       "t": "They came from the same university."
+      },
+      {
+       "k": "D",
+       "t": "They had little training before the project."
+      }
+     ],
+     "marked": null,
+     "handwriting": null,
+     "passage": "阅读理解 (A)",
+     "note": "第三段 50 students from 29 universities… with little training in Kunqu。"
+    },
+    {
+     "id": "ra3",
+     "no": 3,
+     "section": "阅读理解 (A)",
+     "kind": "mc",
+     "stem": "What does the underlined word \"wealthy\" mean in Paragraph 4?",
+     "cn": null,
+     "options": [
+      {
+       "k": "A",
+       "t": "Having a lot of money."
+      },
+      {
+       "k": "B",
+       "t": "Having little education."
+      },
+      {
+       "k": "C",
+       "t": "Living far from the city."
+      },
+      {
+       "k": "D",
+       "t": "Being famous for writing."
+      }
+     ],
+     "marked": null,
+     "handwriting": null,
+     "passage": "阅读理解 (A)",
+     "note": "wealthy = 富有的；下文 her father was a high-ranking official 可佐证。"
+    },
+    {
+     "id": "ra4",
+     "no": 4,
+     "section": "阅读理解 (A)",
+     "kind": "mc",
+     "stem": "What can we learn from Pai's words?",
+     "cn": null,
+     "options": [
+      {
+       "k": "A",
+       "t": "He spends most of his time in Taiwan."
+      },
+      {
+       "k": "B",
+       "t": "The audience of Kunqu Opera are getting younger."
+      },
+      {
+       "k": "C",
+       "t": "Kunqu will become more popular all over the world."
+      },
+      {
+       "k": "D",
+       "t": "Kunqu has always been the most popular opera in Taiwan."
+      }
+     ],
+     "marked": null,
+     "handwriting": null,
+     "passage": "阅读理解 (A)",
+     "note": "末段 pleasantly surprised to see that many high school students also enjoy…。"
+    },
+    {
+     "id": "ra5",
+     "no": 5,
+     "section": "阅读理解 (A)",
+     "kind": "mc",
+     "stem": "What is the main purpose of this passage?",
+     "cn": null,
+     "options": [
+      {
+       "k": "A",
+       "t": "To explain why Kunqu is so popular."
+      },
+      {
+       "k": "B",
+       "t": "To tell the history of Kunqu Opera in Taiwan."
+      },
+      {
+       "k": "C",
+       "t": "To compare different versions of The Peony Pavilion."
+      },
+      {
+       "k": "D",
+       "t": "To introduce a youth project for Kunqu preservation."
+      }
+     ],
+     "marked": null,
+     "handwriting": null,
+     "passage": "阅读理解 (A)",
+     "note": "全文围绕「校园青春版」项目展开。"
+    },
+    {
+     "id": "rb1",
+     "no": 1,
+     "section": "阅读理解 (B)",
+     "kind": "mc",
+     "stem": "What does the underlined word \"patron\" in Paragraph 1 mean?",
+     "cn": null,
+     "options": [
+      {
+       "k": "A",
+       "t": "The boss."
+      },
+      {
+       "k": "B",
+       "t": "The manager."
+      },
+      {
+       "k": "C",
+       "t": "A new customer."
+      },
+      {
+       "k": "D",
+       "t": "A regular customer."
+      }
+     ],
+     "marked": null,
+     "handwriting": null,
+     "passage": "阅读理解 (B)",
+     "note": "patron = 顾客；下文 the customer insisted 同义复现。"
+    },
+    {
+     "id": "rb2",
+     "no": 2,
+     "section": "阅读理解 (B)",
+     "kind": "mc",
+     "stem": "Why did Nat King Cole finally agree to sing a song that night?",
+     "cn": null,
+     "options": [
+      {
+       "k": "A",
+       "t": "He needed money."
+      },
+      {
+       "k": "B",
+       "t": "He thought he was a good singer."
+      },
+      {
+       "k": "C",
+       "t": "He didn't want to play the piano that night."
+      },
+      {
+       "k": "D",
+       "t": "He was afraid that he would lose his job."
+      }
+     ],
+     "marked": null,
+     "handwriting": null,
+     "passage": "阅读理解 (B)",
+     "note": "in order to bring some money home that night。"
+    },
+    {
+     "id": "rb3",
+     "no": 3,
+     "section": "阅读理解 (B)",
+     "kind": "mc",
+     "stem": "What surprised everyone that night?",
+     "cn": null,
+     "options": [
+      {
+       "k": "A",
+       "t": "The bar had so many visitors suddenly."
+      },
+      {
+       "k": "B",
+       "t": "The man sang the song beautifully."
+      },
+      {
+       "k": "C",
+       "t": "The waiter spoke impolitely to the piano player."
+      },
+      {
+       "k": "D",
+       "t": "The man was much better at singing than playing the piano."
+      }
+     ],
+     "marked": null,
+     "handwriting": null,
+     "passage": "阅读理解 (B)",
+     "note": "it surprised all, including the singer himself —— 惊讶的是歌声。"
+    },
+    {
+     "id": "rb4",
+     "no": 4,
+     "section": "阅读理解 (B)",
+     "kind": "mc",
+     "stem": "What would happen if the man refused to sing that night according to the passage?",
+     "cn": null,
+     "options": [
+      {
+       "k": "A",
+       "t": "He would become a well-known singer soon."
+      },
+      {
+       "k": "B",
+       "t": "He would earn more by playing piano."
+      },
+      {
+       "k": "C",
+       "t": "He would leave the bar and find another job."
+      },
+      {
+       "k": "D",
+       "t": "He might stay a nobody playing piano in a small bar."
+      }
+     ],
+     "marked": null,
+     "handwriting": null,
+     "passage": "阅读理解 (B)",
+     "note": "He may have lived the rest of his life as an unknown piano player…。"
+    },
+    {
+     "id": "rb5",
+     "no": 5,
+     "section": "阅读理解 (B)",
+     "kind": "mc",
+     "stem": "What is the main lesson of the story?",
+     "cn": null,
+     "options": [
+      {
+       "k": "A",
+       "t": "We should learn to say \"no\" to others."
+      },
+      {
+       "k": "B",
+       "t": "We should use whatever ability we have."
+      },
+      {
+       "k": "C",
+       "t": "We should learn how to communicate with troublesome people."
+      },
+      {
+       "k": "D",
+       "t": "We should be brave enough to take on new challenges any time."
+      }
+     ],
+     "marked": null,
+     "handwriting": null,
+     "passage": "阅读理解 (B)",
+     "note": "末段 How will I use whatever ability I have?"
+    },
+    {
+     "id": "qx1",
+     "no": 1,
+     "section": "阅读填空",
+     "kind": "mc",
+     "stem": "第 1 空：Stand-up comedy is becoming popular among the young in China. One person, man or woman, stands on stage and tells funny stories that happened to him or her. The performers will try their best to make people laugh. ______",
+     "cn": null,
+     "options": [
+      {
+       "k": "A",
+       "t": "Stand-up comedy can take many forms."
+      },
+      {
+       "k": "B",
+       "t": "Stand-up needs plenty of practice."
+      },
+      {
+       "k": "C",
+       "t": "Stand-up comedy is different from other forms of acting."
+      },
+      {
+       "k": "D",
+       "t": "All of its five seasons were popular, especially the third season."
+      },
+      {
+       "k": "E",
+       "t": "A stand-up performer fails or succeeds depending on his or her own talent."
+      },
+      {
+       "k": "F",
+       "t": "Some famous stand-up artists often share their performance experience online."
+      },
+      {
+       "k": "G",
+       "t": "The show is such a big success that it has opened a new door to the golden age of stand-up comedy."
+      }
+     ],
+     "marked": null,
+     "handwriting": null,
+     "passage": "阅读填空",
+     "note": "七选五：A–G 为第 1–5 空共用选项，其中两项多余。"
+    },
+    {
+     "id": "qx2",
+     "no": 2,
+     "section": "阅读填空",
+     "kind": "mc",
+     "stem": "第 2 空：Unlike an actor, a stand-up performer is showing himself or herself but not creating characters. ______ It usually takes days or even weeks of hard work to make people laugh for a few minutes.",
+     "cn": null,
+     "options": [
+      {
+       "k": "A",
+       "t": "Stand-up comedy can take many forms."
+      },
+      {
+       "k": "B",
+       "t": "Stand-up needs plenty of practice."
+      },
+      {
+       "k": "C",
+       "t": "Stand-up comedy is different from other forms of acting."
+      },
+      {
+       "k": "D",
+       "t": "All of its five seasons were popular, especially the third season."
+      },
+      {
+       "k": "E",
+       "t": "A stand-up performer fails or succeeds depending on his or her own talent."
+      },
+      {
+       "k": "F",
+       "t": "Some famous stand-up artists often share their performance experience online."
+      },
+      {
+       "k": "G",
+       "t": "The show is such a big success that it has opened a new door to the golden age of stand-up comedy."
+      }
+     ],
+     "marked": null,
+     "handwriting": null,
+     "passage": "阅读填空",
+     "note": null
+    },
+    {
+     "id": "qx3",
+     "no": 3,
+     "section": "阅读填空",
+     "kind": "mc",
+     "stem": "第 3 空：______ It can include a monologue (长篇独白) on funny things that may form a story. It can simply be a series of jokes.",
+     "cn": null,
+     "options": [
+      {
+       "k": "A",
+       "t": "Stand-up comedy can take many forms."
+      },
+      {
+       "k": "B",
+       "t": "Stand-up needs plenty of practice."
+      },
+      {
+       "k": "C",
+       "t": "Stand-up comedy is different from other forms of acting."
+      },
+      {
+       "k": "D",
+       "t": "All of its five seasons were popular, especially the third season."
+      },
+      {
+       "k": "E",
+       "t": "A stand-up performer fails or succeeds depending on his or her own talent."
+      },
+      {
+       "k": "F",
+       "t": "Some famous stand-up artists often share their performance experience online."
+      },
+      {
+       "k": "G",
+       "t": "The show is such a big success that it has opened a new door to the golden age of stand-up comedy."
+      }
+     ],
+     "marked": null,
+     "handwriting": null,
+     "passage": "阅读填空",
+     "note": null
+    },
+    {
+     "id": "qx4",
+     "no": 4,
+     "section": "阅读填空",
+     "kind": "mc",
+     "stem": "第 4 空：A very popular stand-up comedy show in China is Rock & Roast (《脱口秀大会》). ______ When the third season came out, it took the internet by storm.",
+     "cn": null,
+     "options": [
+      {
+       "k": "A",
+       "t": "Stand-up comedy can take many forms."
+      },
+      {
+       "k": "B",
+       "t": "Stand-up needs plenty of practice."
+      },
+      {
+       "k": "C",
+       "t": "Stand-up comedy is different from other forms of acting."
+      },
+      {
+       "k": "D",
+       "t": "All of its five seasons were popular, especially the third season."
+      },
+      {
+       "k": "E",
+       "t": "A stand-up performer fails or succeeds depending on his or her own talent."
+      },
+      {
+       "k": "F",
+       "t": "Some famous stand-up artists often share their performance experience online."
+      },
+      {
+       "k": "G",
+       "t": "The show is such a big success that it has opened a new door to the golden age of stand-up comedy."
+      }
+     ],
+     "marked": null,
+     "handwriting": null,
+     "passage": "阅读填空",
+     "note": null
+    },
+    {
+     "id": "qx5",
+     "no": 5,
+     "section": "阅读填空",
+     "kind": "mc",
+     "stem": "第 5 空：______ More and more young people have begun watching stand-up comedy, and some even start doing it part-time.",
+     "cn": null,
+     "options": [
+      {
+       "k": "A",
+       "t": "Stand-up comedy can take many forms."
+      },
+      {
+       "k": "B",
+       "t": "Stand-up needs plenty of practice."
+      },
+      {
+       "k": "C",
+       "t": "Stand-up comedy is different from other forms of acting."
+      },
+      {
+       "k": "D",
+       "t": "All of its five seasons were popular, especially the third season."
+      },
+      {
+       "k": "E",
+       "t": "A stand-up performer fails or succeeds depending on his or her own talent."
+      },
+      {
+       "k": "F",
+       "t": "Some famous stand-up artists often share their performance experience online."
+      },
+      {
+       "k": "G",
+       "t": "The show is such a big success that it has opened a new door to the golden age of stand-up comedy."
+      }
+     ],
+     "marked": null,
+     "handwriting": null,
+     "passage": "阅读填空",
+     "note": null
+    },
+    {
+     "id": "mt1",
+     "no": 1,
+     "section": "匹配阅读",
+     "kind": "mc",
+     "stem": "This film tells the story of a young wizard who discovers he has magical powers on his 11th birthday.",
+     "cn": null,
+     "options": [
+      {
+       "k": "A",
+       "t": "Harry Potter and the Sorcerer's Stone—A fantasy film about a young wizard who begins his education at Hogwarts School of Witchcraft and Wizardry and discovers his destiny."
+      },
+      {
+       "k": "B",
+       "t": "The Avengers—A superhero film featuring a team of Marvel heroes including Iron Man, Captain America, Thor, and the Hulk, who join forces to save Earth from destruction."
+      },
+      {
+       "k": "C",
+       "t": "Titanic—A film was directed by James Cameron, starring Leonardo and Kate, based on the real sinking of the RMS Titanic in 1912."
+      },
+      {
+       "k": "D",
+       "t": "The Lord of the Rings—A fantasy adventure film about a hobbit named Frodo who started a dangerous journey to destroy a powerful ring and save Middle-earth."
+      },
+      {
+       "k": "E",
+       "t": "Charlie and the Chocolate Factory—A musical fantasy film about a poor boy named Charlie Bucket who wins a tour of the mysterious chocolate factory owned by Willy Wonka."
+      },
+      {
+       "k": "F",
+       "t": "Toy Story—A computer-animated comedy film about toys that secretly come to life. It follows Woody the cowboy and Buzz the space ranger as they learn to work together."
+      },
+      {
+       "k": "G",
+       "t": "The King's Speech—A historical drama film about King George VI of Britain, who struggles with a speech disorder and works with an unorthodox speech therapist."
+      }
+     ],
+     "marked": null,
+     "handwriting": null,
+     "note": "匹配题：A–G 为第 1–5 题共用选项，其中两项多余（原卷右栏简介没有统一 passage）。"
+    },
+    {
+     "id": "mt2",
+     "no": 2,
+     "section": "匹配阅读",
+     "kind": "mc",
+     "stem": "This is a romantic (浪漫的) disaster film about a wealthy young woman and a poor artist who fall in love on a famous ship. The ship hits an iceberg and sinks, leading to a tragic but unforgettable ending.",
+     "cn": null,
+     "options": [
+      {
+       "k": "A",
+       "t": "Harry Potter and the Sorcerer's Stone—A fantasy film about a young wizard who begins his education at Hogwarts School of Witchcraft and Wizardry and discovers his destiny."
+      },
+      {
+       "k": "B",
+       "t": "The Avengers—A superhero film featuring a team of Marvel heroes including Iron Man, Captain America, Thor, and the Hulk, who join forces to save Earth from destruction."
+      },
+      {
+       "k": "C",
+       "t": "Titanic—A film was directed by James Cameron, starring Leonardo and Kate, based on the real sinking of the RMS Titanic in 1912."
+      },
+      {
+       "k": "D",
+       "t": "The Lord of the Rings—A fantasy adventure film about a hobbit named Frodo who started a dangerous journey to destroy a powerful ring and save Middle-earth."
+      },
+      {
+       "k": "E",
+       "t": "Charlie and the Chocolate Factory—A musical fantasy film about a poor boy named Charlie Bucket who wins a tour of the mysterious chocolate factory owned by Willy Wonka."
+      },
+      {
+       "k": "F",
+       "t": "Toy Story—A computer-animated comedy film about toys that secretly come to life. It follows Woody the cowboy and Buzz the space ranger as they learn to work together."
+      },
+      {
+       "k": "G",
+       "t": "The King's Speech—A historical drama film about King George VI of Britain, who struggles with a speech disorder and works with an unorthodox speech therapist."
+      }
+     ],
+     "marked": null,
+     "handwriting": null,
+     "note": null
+    },
+    {
+     "id": "mt3",
+     "no": 3,
+     "section": "匹配阅读",
+     "kind": "mc",
+     "stem": "This animated (动画的) film follows a group of toys that come to life when humans are not around.",
+     "cn": null,
+     "options": [
+      {
+       "k": "A",
+       "t": "Harry Potter and the Sorcerer's Stone—A fantasy film about a young wizard who begins his education at Hogwarts School of Witchcraft and Wizardry and discovers his destiny."
+      },
+      {
+       "k": "B",
+       "t": "The Avengers—A superhero film featuring a team of Marvel heroes including Iron Man, Captain America, Thor, and the Hulk, who join forces to save Earth from destruction."
+      },
+      {
+       "k": "C",
+       "t": "Titanic—A film was directed by James Cameron, starring Leonardo and Kate, based on the real sinking of the RMS Titanic in 1912."
+      },
+      {
+       "k": "D",
+       "t": "The Lord of the Rings—A fantasy adventure film about a hobbit named Frodo who started a dangerous journey to destroy a powerful ring and save Middle-earth."
+      },
+      {
+       "k": "E",
+       "t": "Charlie and the Chocolate Factory—A musical fantasy film about a poor boy named Charlie Bucket who wins a tour of the mysterious chocolate factory owned by Willy Wonka."
+      },
+      {
+       "k": "F",
+       "t": "Toy Story—A computer-animated comedy film about toys that secretly come to life. It follows Woody the cowboy and Buzz the space ranger as they learn to work together."
+      },
+      {
+       "k": "G",
+       "t": "The King's Speech—A historical drama film about King George VI of Britain, who struggles with a speech disorder and works with an unorthodox speech therapist."
+      }
+     ],
+     "marked": null,
+     "handwriting": null,
+     "note": null
+    },
+    {
+     "id": "mt4",
+     "no": 4,
+     "section": "匹配阅读",
+     "kind": "mc",
+     "stem": "This film is about a young boy who finds a golden ticket and visits a magical chocolate factory owned by a strange and wonderful candy maker.",
+     "cn": null,
+     "options": [
+      {
+       "k": "A",
+       "t": "Harry Potter and the Sorcerer's Stone—A fantasy film about a young wizard who begins his education at Hogwarts School of Witchcraft and Wizardry and discovers his destiny."
+      },
+      {
+       "k": "B",
+       "t": "The Avengers—A superhero film featuring a team of Marvel heroes including Iron Man, Captain America, Thor, and the Hulk, who join forces to save Earth from destruction."
+      },
+      {
+       "k": "C",
+       "t": "Titanic—A film was directed by James Cameron, starring Leonardo and Kate, based on the real sinking of the RMS Titanic in 1912."
+      },
+      {
+       "k": "D",
+       "t": "The Lord of the Rings—A fantasy adventure film about a hobbit named Frodo who started a dangerous journey to destroy a powerful ring and save Middle-earth."
+      },
+      {
+       "k": "E",
+       "t": "Charlie and the Chocolate Factory—A musical fantasy film about a poor boy named Charlie Bucket who wins a tour of the mysterious chocolate factory owned by Willy Wonka."
+      },
+      {
+       "k": "F",
+       "t": "Toy Story—A computer-animated comedy film about toys that secretly come to life. It follows Woody the cowboy and Buzz the space ranger as they learn to work together."
+      },
+      {
+       "k": "G",
+       "t": "The King's Speech—A historical drama film about King George VI of Britain, who struggles with a speech disorder and works with an unorthodox speech therapist."
+      }
+     ],
+     "marked": null,
+     "handwriting": null,
+     "note": null
+    },
+    {
+     "id": "mt5",
+     "no": 5,
+     "section": "匹配阅读",
+     "kind": "mc",
+     "stem": "This science fiction film tells the story of a group of superheroes who try to save the world from an alien invasion.",
+     "cn": null,
+     "options": [
+      {
+       "k": "A",
+       "t": "Harry Potter and the Sorcerer's Stone—A fantasy film about a young wizard who begins his education at Hogwarts School of Witchcraft and Wizardry and discovers his destiny."
+      },
+      {
+       "k": "B",
+       "t": "The Avengers—A superhero film featuring a team of Marvel heroes including Iron Man, Captain America, Thor, and the Hulk, who join forces to save Earth from destruction."
+      },
+      {
+       "k": "C",
+       "t": "Titanic—A film was directed by James Cameron, starring Leonardo and Kate, based on the real sinking of the RMS Titanic in 1912."
+      },
+      {
+       "k": "D",
+       "t": "The Lord of the Rings—A fantasy adventure film about a hobbit named Frodo who started a dangerous journey to destroy a powerful ring and save Middle-earth."
+      },
+      {
+       "k": "E",
+       "t": "Charlie and the Chocolate Factory—A musical fantasy film about a poor boy named Charlie Bucket who wins a tour of the mysterious chocolate factory owned by Willy Wonka."
+      },
+      {
+       "k": "F",
+       "t": "Toy Story—A computer-animated comedy film about toys that secretly come to life. It follows Woody the cowboy and Buzz the space ranger as they learn to work together."
+      },
+      {
+       "k": "G",
+       "t": "The King's Speech—A historical drama film about King George VI of Britain, who struggles with a speech disorder and works with an unorthodox speech therapist."
+      }
+     ],
+     "marked": null,
+     "handwriting": null,
+     "note": null
+    },
+    {
+     "id": "qa1",
+     "no": 1,
+     "section": "回答问题",
+     "kind": "fill",
+     "stem": "What kind of movie is The Wandering Earth 2?",
+     "cn": null,
+     "options": null,
+     "marked": null,
+     "handwriting": null,
+     "fields": 1,
+     "passage": "回答问题",
+     "note": "答案可写 A science-fiction film / It is a science-fiction film."
+    },
+    {
+     "id": "qa2",
+     "no": 2,
+     "section": "回答问题",
+     "kind": "fill",
+     "stem": "How do humans deal with the crashing Moon crisis in the movie?",
+     "cn": null,
+     "options": null,
+     "marked": null,
+     "handwriting": null,
+     "fields": 1,
+     "passage": "回答问题",
+     "note": "第二段末：send thousands of nuclear bombs to blow up the Moon。"
+    },
+    {
+     "id": "qa3",
+     "no": 3,
+     "section": "回答问题",
+     "kind": "fill",
+     "stem": "Which two main emotional storylines are mentioned in the passage?",
+     "cn": null,
+     "options": null,
+     "marked": null,
+     "handwriting": null,
+     "fields": 1,
+     "passage": "回答问题",
+     "note": "第三段：刘培强 + 图恒宇 两条线。"
+    },
+    {
+     "id": "qa4",
+     "no": 4,
+     "section": "回答问题",
+     "kind": "fill",
+     "stem": "How many visual effect shots does the film have?",
+     "cn": null,
+     "options": null,
+     "marked": null,
+     "handwriting": null,
+     "fields": 1,
+     "passage": "回答问题",
+     "note": "第四段 more than 3,000。"
+    },
+    {
+     "id": "qa5",
+     "no": 5,
+     "section": "回答问题",
+     "kind": "fill",
+     "stem": "What does the film tell us about facing great disasters?",
+     "cn": null,
+     "options": null,
+     "marked": null,
+     "handwriting": null,
+     "fields": 1,
+     "passage": "回答问题",
+     "note": "末句 unity, responsibility and family love…。"
+    },
+    {
+     "id": "wf1",
+     "no": 1,
+     "section": "语篇填词",
+     "kind": "fill",
+     "stem": "The quiz show began. It covered v______ kinds of questions, such as history, geography and pop culture.",
+     "cn": null,
+     "options": null,
+     "marked": null,
+     "handwriting": null,
+     "fields": 1,
+     "passage": "语篇填词",
+     "note": "首字母 v；修饰 kinds，填形容词 various。"
+    },
+    {
+     "id": "wf2",
+     "no": 2,
+     "section": "语篇填词",
+     "kind": "fill",
+     "stem": "The whole contest was quite c______, but Angela was well prepared.",
+     "cn": null,
+     "options": null,
+     "marked": null,
+     "handwriting": null,
+     "fields": 1,
+     "passage": "语篇填词",
+     "note": "首字母 c；but 转折提示「有挑战性」。"
+    },
+    {
+     "id": "wf3",
+     "no": 3,
+     "section": "语篇填词",
+     "kind": "fill",
+     "stem": "Twenty-five minutes later, Angela just had to answer six more questions to b______ the other contestants.",
+     "cn": null,
+     "options": null,
+     "marked": null,
+     "handwriting": null,
+     "fields": 1,
+     "passage": "语篇填词",
+     "note": "首字母 b；to 后接动词原形 beat。"
+    },
+    {
+     "id": "wf4",
+     "no": 4,
+     "section": "语篇填词",
+     "kind": "fill",
+     "stem": "Soon there was just a single question between Angela and v______.",
+     "cn": null,
+     "options": null,
+     "marked": null,
+     "handwriting": null,
+     "fields": 1,
+     "passage": "语篇填词",
+     "note": "首字母 v；between A and B，此处 B 为抽象名词 victory。"
+    },
+    {
+     "id": "wf5",
+     "no": 5,
+     "section": "语篇填词",
+     "kind": "fill",
+     "stem": "Angela g______ great joy and courage from this unforgettable experience, and she hoped to join more similar activities in the future.",
+     "cn": null,
+     "options": null,
+     "marked": null,
+     "handwriting": null,
+     "fields": 1,
+     "passage": "语篇填词",
+     "note": "首字母 g；全文为过去时，填 gained（got 亦通）。"
+    },
+    {
+     "id": "gf1",
+     "no": 1,
+     "section": "语法填空",
+     "kind": "fill",
+     "stem": "Most people should have heard of ______(surf), but have you heard of stand-up paddleboarding (SUP, 水上桨板运动)?",
+     "cn": null,
+     "options": null,
+     "marked": null,
+     "handwriting": null,
+     "fields": 1,
+     "passage": "语法填空",
+     "note": "heard of 后接动名词。"
+    },
+    {
+     "id": "gf2",
+     "no": 2,
+     "section": "语法填空",
+     "kind": "fill",
+     "stem": "SUP ______(become) more and more popular in the last two years.",
+     "cn": null,
+     "options": null,
+     "marked": null,
+     "handwriting": null,
+     "fields": 1,
+     "passage": "语法填空",
+     "note": "in the last two years → 现在完成时，主语 SUP 视为单数。"
+    },
+    {
+     "id": "gf3",
+     "no": 3,
+     "section": "语法填空",
+     "kind": "fill",
+     "stem": "It is an interesting sport with special ______(feature).",
+     "cn": null,
+     "options": null,
+     "marked": null,
+     "handwriting": null,
+     "fields": 1,
+     "passage": "语法填空",
+     "note": "feature 可数，泛指多个特点用复数。"
+    },
+    {
+     "id": "gf4",
+     "no": 4,
+     "section": "语法填空",
+     "kind": "fill",
+     "stem": "People can stand, sit, or lie on the board, enjoying themselves on the water and feeling much ______(close) to nature.",
+     "cn": null,
+     "options": null,
+     "marked": null,
+     "handwriting": null,
+     "fields": 1,
+     "passage": "语法填空",
+     "note": "much 修饰比较级；close → closer。"
+    },
+    {
+     "id": "gf5",
+     "no": 5,
+     "section": "语法填空",
+     "kind": "fill",
+     "stem": "______ it requires a little patience and practice to master it, once you start, you'll find it hard to stop.",
+     "cn": null,
+     "options": null,
+     "marked": null,
+     "handwriting": null,
+     "fields": 1,
+     "passage": "语法填空",
+     "note": "无提示词；前后为让步关系，填 Although / Though。"
+    },
+    {
+     "id": "wr1",
+     "no": 1,
+     "section": "书面表达",
+     "kind": "other",
+     "stem": "以 \"My favourite film\" 为题写一篇影评，按提示依次谈：最喜欢的电影、影片内容、最喜欢的部分、你的评价。词数 80 左右；不得透露学校、姓名等个人信息。",
+     "cn": null,
+     "options": null,
+     "marked": null,
+     "handwriting": null,
+     "fields": 1,
+     "passage": "书面表达",
+     "note": "书面表达，无标准答案；评分看要点齐全、时态一致与语言准确。"
+    }
+   ],
+   "key": {
+    "unit": "U6",
+    "items": {
+     "ca1": {
+      "answer": "A",
+      "topic": "不定冠词",
+      "why": "way 是可数名词单数且首次提及，用不定冠词；new 以辅音音素开头，故用 a。",
+      "doubt": false
+     },
+     "ca2": {
+      "answer": "D",
+      "topic": "介词 in",
+      "why": "in + 颜色表示「……颜色的」，everything in your colour 即「一切属于你选定颜色的东西」。",
+      "doubt": false
+     },
+     "ca3": {
+      "answer": "B",
+      "topic": "much + 比较级",
+      "why": "句中有 than，须用比较级 easier；much 只能修饰比较级，不能修饰原级。",
+      "doubt": false
+     },
+     "ca4": {
+      "answer": "B",
+      "topic": "形容词修饰名词",
+      "why": "空格修饰名词 objects，要用形容词 various；vary 是动词，variously 是副词，variety 是名词。",
+      "doubt": false
+     },
+     "ca5": {
+      "answer": "C",
+      "topic": "并列连词",
+      "why": "alone 与 with friends 是两种可选方式，二选一用 or，不能用表并列的 and。",
+      "doubt": false
+     },
+     "ca6": {
+      "answer": "A",
+      "topic": "情态动词",
+      "why": "此处说这种活动「能」让人开心放松，表能力/可能性用 can；must、should 语气不符。",
+      "doubt": false
+     },
+     "ca7": {
+      "answer": "D",
+      "topic": "一般过去时",
+      "why": "Last weekend 是明确的过去时间状语，谓语用一般过去时 decided。",
+      "doubt": false
+     },
+     "ca8": {
+      "answer": "B",
+      "topic": "副词修饰动词",
+      "why": "空格修饰动词 took，须用副词 happily；happy 是形容词，happiness 是名词。",
+      "doubt": false
+     },
+     "ca9": {
+      "answer": "C",
+      "topic": "让步状语从句",
+      "why": "Even if 意为「即使」，引导让步状语从句，与后半句「你也会得到很多乐趣」构成让步关系。",
+      "doubt": false
+     },
+     "ca10": {
+      "answer": "A",
+      "topic": "感叹句",
+      "why": "beautiful 是形容词且后接主语 the world，感叹句用 How + 形容词 + 主语 + 谓语。",
+      "doubt": false
+     },
+     "cb1": {
+      "answer": "A",
+      "topic": "draw one's attention",
+      "why": "draw one's attention 是固定搭配「吸引某人注意」，符合电影一开头就抓住观众的意思。",
+      "doubt": false
+     },
+     "cb2": {
+      "answer": "C",
+      "topic": "形容词辨析",
+      "why": "修饰「中国传统文化」应取褒义 excellent「优秀的」；common、simple 语气太平，difficult 与语境相反。",
+      "doubt": false
+     },
+     "cb3": {
+      "answer": "D",
+      "topic": "短语动词",
+      "why": "家长带孩子看电影是为了「了解」文学经典，learn about 符合；ask for 是请求，cut out 是剪下，take down 是记下。",
+      "doubt": false
+     },
+     "cb4": {
+      "answer": "B",
+      "topic": "名词辨析",
+      "why": "李白与高适之间是「友谊」，后文两人交往的情节也印证 friendship。",
+      "doubt": false
+     },
+     "cb5": {
+      "answer": "C",
+      "topic": "副词辨析",
+      "why": "catch one's eye deeply 表示「深深吸引目光」，deeply 表程度；quietly、politely 与「吸引目光」不搭。",
+      "doubt": false
+     },
+     "cb6": {
+      "answer": "B",
+      "topic": "golden age",
+      "why": "a golden age 是固定表达「黄金时代」，指唐朝经济文化鼎盛期。",
+      "doubt": false
+     },
+     "cb7": {
+      "answer": "D",
+      "topic": "被动语态（过去）",
+      "why": "诗句是被「呈现」给观众的，用 were shown；follow 是跟随，与诗句不符。",
+      "doubt": false
+     },
+     "cb8": {
+      "answer": "A",
+      "topic": "There is no doubt",
+      "why": "There is no doubt that… 是固定句型「毫无疑问」，后接同位语从句。",
+      "doubt": false
+     },
+     "cb9": {
+      "answer": "B",
+      "topic": "名词辨析",
+      "why": "中国人把诗人及其作品视为「珍宝」treasures；models 是模范，promises 是承诺，均不合。",
+      "doubt": false
+     },
+     "cb10": {
+      "answer": "A",
+      "topic": "形容词辨析",
+      "why": "but 前后语义相对，meaningful 是褒义，前面应是有难度的 challenging「有挑战性的」。",
+      "doubt": false
+     },
+     "ra1": {
+      "answer": "B",
+      "topic": "细节计算",
+      "why": "首段说 2026 年 1 月 15 日首演的「校园版」是在青春版首演 22 年之后，2026−22=2004。",
+      "doubt": false
+     },
+     "ra2": {
+      "answer": "D",
+      "topic": "细节理解",
+      "why": "第三段写明学生来自 29 所高校、此前几乎没有昆曲基础（with little training），只训练了九个月。",
+      "doubt": false
+     },
+     "ra3": {
+      "answer": "A",
+      "topic": "词义猜测",
+      "why": "wealthy 意为「富有的」，下文说她父亲是高官、家住带花园的大宅，正是「有钱」的佐证。",
+      "doubt": false
+     },
+     "ra4": {
+      "answer": "B",
+      "topic": "推理判断",
+      "why": "白先勇说「惊喜地看到许多高中生也很喜欢」，说明观众群正在年轻化。",
+      "doubt": false
+     },
+     "ra5": {
+      "answer": "D",
+      "topic": "主旨大意",
+      "why": "全文围绕「校园青春版」这一保护昆曲的青年项目展开，介绍其由来、排练与意义。",
+      "doubt": false
+     },
+     "rb1": {
+      "answer": "D",
+      "topic": "词义猜测",
+      "why": "patron 指「顾客」，下文直接用 the customer 复指，且说是常来听琴的客人。",
+      "doubt": false
+     },
+     "rb2": {
+      "answer": "A",
+      "topic": "细节理解",
+      "why": "in order to bring some money home that night 说明他答唱是为了挣点钱回家。",
+      "doubt": false
+     },
+     "rb3": {
+      "answer": "B",
+      "topic": "细节理解",
+      "why": "it surprised all, including the singer himself 指他第一次开口就唱得极好，让所有人吃惊。",
+      "doubt": false
+     },
+     "rb4": {
+      "answer": "D",
+      "topic": "推理判断",
+      "why": "作者设想他若没被逼着唱，可能一辈子只是小酒吧里无人知晓的琴师。",
+      "doubt": false
+     },
+     "rb5": {
+      "answer": "B",
+      "topic": "主旨大意",
+      "why": "末段点题：关键不在「我有什么能力」，而在「我怎样用已有的能力」。",
+      "doubt": false
+     },
+     "qx1": {
+      "answer": "C",
+      "topic": "七选五·总起句",
+      "why": "后文用演员有剧本、有搭档来对比，说明本段主题是「单口喜剧不同于其他表演形式」。",
+      "doubt": false
+     },
+     "qx2": {
+      "answer": "B",
+      "topic": "七选五·承上启下",
+      "why": "后一句讲「要花几天甚至几周才能逗笑观众几分钟」，正是强调练习，选 B。",
+      "doubt": false
+     },
+     "qx3": {
+      "answer": "A",
+      "topic": "七选五·段落主题",
+      "why": "后文连用 It can include… / It can also be performed… 列举多种形式，主题句是「形式多样」。",
+      "doubt": false
+     },
+     "qx4": {
+      "answer": "D",
+      "topic": "七选五·举例支撑",
+      "why": "后一句紧接「第三季播出时」爆火，前面必须先提「五季都受欢迎，尤其第三季」。",
+      "doubt": false
+     },
+     "qx5": {
+      "answer": "G",
+      "topic": "七选五·总结句",
+      "why": "后文讲越来越多年轻人开始看甚至兼职讲脱口秀，正是节目成功带来的影响，选 G。",
+      "doubt": false
+     },
+     "mt1": {
+      "answer": "A",
+      "topic": "匹配·抓关键词",
+      "why": "young wizard、11th birthday、magical powers 与《哈利·波特与魔法石》简介一一对应。",
+      "doubt": false
+     },
+     "mt2": {
+      "answer": "C",
+      "topic": "匹配·抓关键词",
+      "why": "wealthy young woman、poor artist、ship hits an iceberg 与《泰坦尼克号》简介对应。",
+      "doubt": false
+     },
+     "mt3": {
+      "answer": "F",
+      "topic": "匹配·抓关键词",
+      "why": "animated、group of toys、come to life when humans are not around 与《玩具总动员》对应。",
+      "doubt": false
+     },
+     "mt4": {
+      "answer": "E",
+      "topic": "匹配·抓关键词",
+      "why": "golden ticket、chocolate factory、candy maker 与《查理和巧克力工厂》对应。",
+      "doubt": false
+     },
+     "mt5": {
+      "answer": "B",
+      "topic": "匹配·抓关键词",
+      "why": "superheroes、save the world、alien invasion 与《复仇者联盟》简介对应。",
+      "doubt": false
+     },
+     "qa1": {
+      "answer": "A science-fiction film.",
+      "alt": [
+       "It is a science-fiction film.",
+       "A science fiction film.",
+       "Science fiction."
+      ],
+      "topic": "回答问题·事实",
+      "why": "第一段 It is adapted from Liu Cixin's famous science-fiction novel，可知是科幻片。",
+      "manual": true,
+      "doubt": false
+     },
+     "qa2": {
+      "answer": "They send thousands of nuclear bombs to blow up the Moon.",
+      "alt": [
+       "By sending thousands of nuclear bombs to blow up the Moon.",
+       "Global people send thousands of nuclear bombs to blow up the Moon."
+      ],
+      "topic": "回答问题·做法",
+      "why": "第二段末句写明：全球民众发射数千枚核弹炸毁月球。",
+      "manual": true,
+      "doubt": false
+     },
+     "qa3": {
+      "answer": "Liu Peiqiang's training as a space station astronaut and Tu Hengyu's effort to save his dead daughter Yaya.",
+      "alt": [
+       "Liu Peiqiang trains to be a space station astronaut and Tu Hengyu tries to save his dead daughter Yaya.",
+       "Liu Peiqiang's and Tu Hengyu's stories."
+      ],
+      "topic": "回答问题·概括",
+      "why": "第三段两条线索：刘培强苦训成为空间站航天员、图恒宇把女儿丫丫的意识上传量子计算机。",
+      "manual": true,
+      "doubt": false
+     },
+     "qa4": {
+      "answer": "More than 3,000.",
+      "alt": [
+       "Over 3,000.",
+       "It has more than 3,000 visual effect shots."
+      ],
+      "topic": "回答问题·数字",
+      "why": "第四段 has more than 3,000 visual effect shots。",
+      "manual": true,
+      "doubt": false
+     },
+     "qa5": {
+      "answer": "It tells us that unity, responsibility and family love are forever powerful strength in face of great disasters.",
+      "alt": [
+       "That unity, responsibility and family love are forever powerful strength in face of great disasters.",
+       "People will stick to their home and move forward hand in hand."
+      ],
+      "topic": "回答问题·主旨",
+      "why": "末句明示：团结、责任与亲情是面对巨大灾难时永远的力量。",
+      "manual": true,
+      "doubt": false
+     },
+     "wf1": {
+      "answer": "various",
+      "topic": "语篇填词·形容词",
+      "why": "修饰 kinds 需形容词，首字母 v，填 various「各种各样的」。",
+      "doubt": false
+     },
+     "wf2": {
+      "answer": "challenging",
+      "alt": [
+       "competitive"
+      ],
+      "topic": "语篇填词·形容词",
+      "why": "but 转折：比赛有难度，但 Angela 准备充分，填 challenging（competitive 亦可通）。",
+      "doubt": false
+     },
+     "wf3": {
+      "answer": "beat",
+      "topic": "语篇填词·动词原形",
+      "why": "to 后接动词原形，beat the other contestants 意为「打败其他选手」。",
+      "doubt": false
+     },
+     "wf4": {
+      "answer": "victory",
+      "topic": "语篇填词·抽象名词",
+      "why": "between Angela and victory 意为「Angela 与胜利之间只差一题」。",
+      "doubt": false
+     },
+     "wf5": {
+      "answer": "gained",
+      "alt": [
+       "got"
+      ],
+      "topic": "语篇填词·过去式",
+      "why": "全文为过去时，gain great joy and courage 搭配自然，填 gained。",
+      "doubt": false
+     },
+     "gf1": {
+      "answer": "surfing",
+      "topic": "动名词作宾语",
+      "why": "hear of 中的 of 是介词，后接动名词 surfing。",
+      "doubt": false
+     },
+     "gf2": {
+      "answer": "has become",
+      "topic": "现在完成时",
+      "why": "in the last two years 是现在完成时标志；SUP 作主语视为单数，用 has become。",
+      "doubt": false
+     },
+     "gf3": {
+      "answer": "features",
+      "topic": "名词复数",
+      "why": "feature 可数，泛指「多个特点」且无冠词限定，用复数 features。",
+      "doubt": false
+     },
+     "gf4": {
+      "answer": "closer",
+      "topic": "比较级",
+      "why": "much 修饰比较级，feel closer to nature 意为「更贴近自然」。",
+      "doubt": false
+     },
+     "gf5": {
+      "answer": "Although",
+      "alt": [
+       "Though"
+      ],
+      "topic": "让步状语从句",
+      "why": "前半句「需要一点耐心和练习」与后半句「一旦开始就停不下来」是让步关系，填 Although / Though。",
+      "doubt": false
+     },
+     "wr1": {
+      "answer": "（无标准答案）",
+      "topic": "书面表达",
+      "why": "开放性写作：四个提示各写一句，时态以一般现在时为主，评价部分可用 I think… 收尾。",
+      "manual": true,
+      "doubt": false
+     }
+    }
+   },
+   "explain": {
+    "ca1": {
+     "topic": "不定冠词 a/an",
+     "point": "可数名词单数首次出现、泛指「一个」时用不定冠词；a 用于辅音音素前，an 用于元音音素前。",
+     "why": "way 是可数名词单数，此处泛指「一种新的放松方式」，故用 a。B 的 an 要看后面单词的首音，new 读 /njuː/，是辅音音素 /n/，不能用 an；C 的 the 指双方已知的特定事物，此处并非特指；D 零冠词用于不可数名词或复数泛指，way 是单数可数，不行。",
+     "trap": "别被拼写字母骗了：判断 a/an 看读音，不看首字母。an hour、a useful book 都是反例。"
+    },
+    "ca2": {
+     "topic": "介词 in + 颜色",
+     "point": "in + 颜色/服装表示「穿着……颜色的」「属于……颜色的」；in red 就是「红色的」。",
+     "why": "句意是「记录下一切是你选定颜色的东西」，用 in your colour。A under 表方位「在……下面」；B at 表点状位置；C to 表方向或对象，三者都无法表达「颜色属性」。同理 the girl in red 是「穿红衣服的女孩」。",
+     "trap": "中文「你的颜色」会诱使学生直译成 of your colour 或 your colour 直接后置；表「颜色/衣着」的固定介词是 in。"
+    },
+    "ca3": {
+     "topic": "much + 比较级",
+     "point": "有 than 就要用比较级；much、a lot、even、far 只能修饰比较级，不能修饰原级。",
+     "why": "句中有 than you think，必须用比较级 easier，故选 B。A easy 是原级，与 than 冲突；C easiest 是最高级，用于三者以上比较，且不与 than 连用；D the easiest 加了 the，是最高级形式，同样不能接 than。",
+     "trap": "看到 much 就以为后面是原级（much beautiful 是典型错句）。记：much/even/far/a lot + 比较级。"
+    },
+    "ca4": {
+     "topic": "形容词修饰名词",
+     "point": "修饰名词用形容词；vary（动词）、variously（副词）、variety（名词）同根不同词性，靠空格位置判断。",
+     "why": "空格在名词 objects 前，须用形容词 various「各种各样的」。A very 是副词，不能直接修饰名词；C variously 是副词，只能修饰动词或形容词；D variety 是名词，不能作定语修饰 objects（a variety of objects 才行）。",
+     "trap": "同根词看位置：名词前填形容词，动词前后填副词。variety 只能用于 a variety of 结构。"
+    },
+    "ca5": {
+     "topic": "并列连词 or",
+     "point": "or 表选择「或者」，and 表并列「和」，but 表转折，so 表结果。",
+     "why": "「你可以一个人走，也可以和朋友一起走」是两种可选方式，用 or。A and 会把两种情况并列成同时发生；B but 表转折，句意并不对立；D so 表因果，此处无因果关系。",
+     "trap": "否定句和选择疑问句中也常用 or；先判断两个成分是「并存」还是「二选一」。"
+    },
+    "ca6": {
+     "topic": "情态动词 can",
+     "point": "情态动词后接动词原形，表能力、可能或许可；can 表「能够」，must 表「必须」，should 表「应该」。",
+     "why": "句意「年轻人说这项活动能让他们感到快乐放松」，表能力/效果用 can。B may 表「也许」，语气不确定；C must 表「必须」，把「能让人开心」说成义务，不合逻辑；D should 表建议「应该」，与「年轻人说」的转述语气不符。",
+     "trap": "先看空格后是不是动词原形 make——四个选项都符合语法，所以这题考的是语义，不能只靠语法排除。"
+    },
+    "ca7": {
+     "topic": "一般过去时",
+     "point": "句中出现 yesterday、last week/weekend、in 2023、ago 等明确过去时间状语时，谓语用一般过去时。",
+     "why": "Last weekend 把动作定位在过去，用 decided。A decide 是一般现在时，与过去时间矛盾；B will decide 是将来时；C have decided 是现在完成时，强调对现在的影响，不能与 last weekend 这种具体过去时间连用。",
+     "trap": "现在完成时不能和 last weekend、yesterday 这类具体过去时间连用，这是最高频的时态扣分点。"
+    },
+    "ca8": {
+     "topic": "副词修饰动词",
+     "point": "修饰动词、形容词或其他副词用副词；形容词只修饰名词或作表语。",
+     "why": "空格修饰动词 took（拍照），要用副词 happily。A happy 是形容词，不能修饰动词；C happiness 是名词；D happier 是比较级形容词，句中也没有 than 比较对象。",
+     "trap": "中文「我们开心地拍照」容易写成 We happy took photos。记住：动词前面的修饰语一定是副词。"
+    },
+    "ca9": {
+     "topic": "让步状语从句 even if",
+     "point": "even if / even though 意为「即使、尽管」，引导让步状语从句，主句常用 will 表结果。",
+     "why": "「即使你只在户外待三十分钟，也能从中得到很多乐趣」，前后是让步关系，用 even if。A when 表时间；B since 表「自从/既然」；D although 不能与 even 直接连用（even although 不成立）。",
+     "trap": "even if 与 even though 都可，但 even although 是错的；另外 if 单独用时表条件，不表让步。"
+    },
+    "ca10": {
+     "topic": "感叹句 How",
+     "point": "感叹句两种基本句型：How + 形容词/副词 + 主语 + 谓语！ What + (a/an) + 形容词 + 名词 + 主语 + 谓语！",
+     "why": "空格后是形容词 beautiful，再往后是主语 the world 和谓语 is，符合 How 句型。B What 后须接名词；C What a 后须接「a + 形容词 + 可数名词单数」，此处没有名词；D How a 本身不成立。",
+     "trap": "先找空格后的第一个词：是形容词/副词选 How，是名词（短语）选 What。别凭语感乱填。"
+    },
+    "cb1": {
+     "topic": "draw one's attention",
+     "point": "draw / attract / catch one's attention 都是「吸引某人注意」的固定搭配。",
+     "why": "句意「电影从开头就用不同视角吸引观众注意」，用 attention。B course 是课程/过程（in the course of）；C business 是生意（on business）；D goal 是目标，三者都不能与 draw one's 构成「吸引注意」的意思。",
+     "trap": "四个词都能和 draw 搭配（draw a course、do business、set a goal），所以要按句意选，别只背搭配。"
+    },
+    "cb2": {
+     "topic": "形容词辨析（褒贬）",
+     "point": "修饰「中国传统文化」这类正面事物，应选褒义形容词；common 中性偏「普通」，difficult 偏负面。",
+     "why": "句意是「唐诗这一优秀的中国传统文化让世界更了解中国诗词的宇宙」，用 excellent。A common 意为「常见的」，会削弱文化价值；B difficult 说文化「难」，与「让世界了解」的目的相反；D simple 说文化「简单」，也不符合赞颂语气。",
+     "trap": "完形填空先定感情色彩：句中有 made the world know more 这种正面表述，就要选褒义词。"
+    },
+    "cb3": {
+     "topic": "短语动词 learn about",
+     "point": "learn about 意为「了解、学习关于……的知识」；ask for 请求，cut out 剪下/删除，take down 记下/取下。",
+     "why": "「家长带孩子去电影院，是为了让他们了解这些文学经典」，用 learn about。A ask for 是「要求得到」，宾语不能是「经典」；B cut out 是「剪下」，与看电影无关；C take down 是「记下」，看电影不是做笔记。",
+     "trap": "四个都是常见短语动词，考的正是「哪个能接抽象宾语」。learn about 后面常接文化、历史、人物这类抽象名词。"
+    },
+    "cb4": {
+     "topic": "名词辨析 friendship",
+     "point": "根据上下文线索确定名词：此处讲李白与高适两位诗人之间的情感，是「友谊」。",
+     "why": "李白与高适是好友，两人之间的情感是 friendship。A dream 梦想，C trade 贸易，D expression 表达/表情，都不能描述两位诗人之间的情感关系，也无法与 between…and… 搭配出「情谊」。",
+     "trap": "电影里确实有「梦想」这条线，容易误选 dream；但空格要填的是「李白与高适之间」的东西，只有 friendship 说得通。"
+    },
+    "cb5": {
+     "topic": "副词辨析 deeply",
+     "point": "deeply 表程度「深深地」，常与 attract、move、impress 这类动词连用。",
+     "why": "catch one's eye deeply 意为「深深吸引住目光」，与前面 also 强调的「同样」呼应。A quietly 安静地，B politely 有礼貌地，D seriously 严肃地，三个都描述方式，而这里需要的是程度副词。",
+     "trap": "四个都是 -ly 副词，语法上都成立，只能靠语义。看到「吸引目光」这类程度性动词，优先想 deeply。"
+    },
+    "cb6": {
+     "topic": "a golden age",
+     "point": "a golden age 是固定表达「黄金时代」，指某事物最兴盛的时期。",
+     "why": "唐朝因经济文化发达被视为中国历史的「黄金时代」，用 age。A season 指季节或赛季，C month 月份，D year 年份，都不能与 golden 构成「鼎盛时期」的固定说法。",
+     "trap": "golden 后面四个词都能搭（golden season 金秋、golden year），但只有 golden age 是「黄金时代」的固定搭配。"
+    },
+    "cb7": {
+     "topic": "被动语态（一般过去时）",
+     "point": "主语是动作的承受者时用被动：was/were + 过去分词。诗句是「被呈现」的，不是自己「呈现」。",
+     "why": "Forty-eight Tang poems 是 show 的承受者，电影是 2023 年的过去事件，故用 were shown。A followed 意为「被跟随」，诗句不会「被跟随」；B sent 是「被寄送」；C returned 是「被归还」，都不符合「在电影里呈现」的意思。",
+     "trap": "先判断主被动：主语是「诗」、动作是「呈现」，诗不能自己呈现，必须用被动。"
+    },
+    "cb8": {
+     "topic": "There is no doubt that",
+     "point": "There is no doubt that + 从句 = 「毫无疑问……」，that 引导同位语从句，说明 doubt 的内容。",
+     "why": "句意「毫无疑问，这部电影是向世界展示中国优秀文化的佳作」，用 doubt。B praise 赞美（There is no praise that 不成立）；C tradition 传统；D process 过程，三者都无法构成这个固定句型。",
+     "trap": "这是送分句型，但要防「语义反向」：no doubt 是「毫无疑问」，别理解成「没有疑问所以不确定」。"
+    },
+    "cb9": {
+     "topic": "名词辨析 treasures",
+     "point": "regard A as B 意为「把 A 看作 B」，B 要与 A 的价值相匹配。",
+     "why": "中国人把诗人及其作品视为「珍宝」，用 treasures。A models 是「模范」，指人可，指作品不妥；C promises 承诺、D suggestions 建议，都与「经典作品」的价值不匹配。",
+     "trap": "regard…as… 的 as 后接名词或形容词。先想「我们会把李白杜甫的作品叫什么」——国宝级珍品，treasures。"
+    },
+    "cb10": {
+     "topic": "形容词辨析（but 转折）",
+     "point": "but 连接两个语义相对的成分，一边是 meaningful（有意义），另一边应是有难度、有挑战。",
+     "why": "「通过诗句体会诗人的心境，是有挑战但有意义的」，用 challenging。B terrible 可怕的、C brave 勇敢的（形容人）、D popular 受欢迎的，都不能与 meaningful 形成「先难后值」的对照。",
+     "trap": "注意 but 前后的词性要一致（都是形容词），语义要相反。meaningful 的反面不是 terrible，而是「难」。"
+    },
+    "ra1": {
+     "topic": "细节计算（年份）",
+     "point": "时间类细节题要在原文找到两个时间点，再做加减；不要直接选文中出现的数字。",
+     "why": "首段说「青春版首演 22 年后」，2026 年 1 月 15 日上演的是「校园版」，故青春版首演 = 2026−22 = 2004 年，选 B。A 2001 是昆曲入选非遗的年份；C 2024 是项目启动年份；D 2026 是校园版首演年份，三个都是文中出现过的「干扰数字」。",
+     "trap": "这类题的错误项往往就是原文里其他年份。看到四个年份都眼熟，必须先确认每个数字各自指什么事件。"
+    },
+    "ra2": {
+     "topic": "细节理解（学生情况）",
+     "point": "细节题要逐项回原文核对，特别注意数量、时长、范围这类限定词。",
+     "why": "第三段说学生来自 29 所高校、with little training in Kunqu（此前几乎没有训练），只练了九个月，故选 D。A 与「几乎没基础」矛盾；B 说练了一年多，原文是 nearly nine months；C 说来自同一所大学，原文是 29 所。",
+     "trap": "B 是典型的「改数字」干扰项：nine months 改成 more than a year。核对时要盯住数字和比较词。"
+    },
+    "ra3": {
+     "topic": "词义猜测 wealthy",
+     "point": "猜词题不能只靠背单词，要用上下文（同位语、解释句、并列句）验证。",
+     "why": "wealthy 意为「富有的」，选 A。后文 her father was a high-ranking official, and her family lived in a large house with a beautiful garden 正是「有钱」的证据。B 说「受教育少」、C 说「住得远离城市」、D 说「因写作出名」，都与「高官父亲 + 大宅花园」无关。",
+     "trap": "四个选项都描述「人物身份」，要选能被下文具体细节支持的那一个，不能凭印象。"
+    },
+    "ra4": {
+     "topic": "推理判断（言外之意）",
+     "point": "人物话语题要抓「态度词」和「对比对象」：surprised、also 往往暗示超出预期。",
+     "why": "白先勇说「惊喜地看到许多高中生也很喜欢」，说明昆曲观众不再只是老一辈，正在年轻化，选 B。A 文中只说他在中国台湾推动项目，没有「大部分时间」的信息；C「全世界更流行」是过度推断；D「一直是最受欢迎的戏曲」文中无此说法，且 most popular 过于绝对。",
+     "trap": "推理题最忌「合理但文中没说」。A、C、D 都是听起来不错、却找不到原文依据的选项。"
+    },
+    "ra5": {
+     "topic": "主旨大意",
+     "point": "主旨题看首段和反复出现的关键词：本文反复出现 campus version、project、students、protect Kunqu。",
+     "why": "全文介绍的是「校园青春版《牡丹亭》」这一保护昆曲的青年项目：由来、排练、演出与意义，选 D。A 只解释了昆曲为何流行，是第四段的一小部分；B 讲昆曲在中国台湾的历史，文中没有；C 比较不同版本，文中只提到青春版与校园版的前后关系，没有比较。",
+     "trap": "主旨题选项若只覆盖某一段（A）或超出范围（B、C），都不能选。学会用「能否概括全文」来筛。"
+    },
+    "rb1": {
+     "topic": "词义猜测 patron",
+     "point": "猜词优先找「同义复现」：后文用另一个词重述同一概念时，那个词就是答案。",
+     "why": "patron 指「顾客」，选 D。第三段 the customer insisted 与第一段 a patron told him 指同一人，可见 patron = customer；又因他每晚都来听琴，故为「常客」。A 老板、B 经理，文中另有 the waiter，身份不符；C「新顾客」与「每晚都来」矛盾。",
+     "trap": "patron 还有「赞助人」之意，但在酒吧语境里就是「顾客」。别拿词典第一义硬套。"
+    },
+    "rb2": {
+     "topic": "细节理解（原因）",
+     "point": "原因题找 because、so、in order to、for 等标志；答案常在动作句的前一句或同一句的目的状语里。",
+     "why": "「So in order to bring some money home that night, the piano player… did so for the very first time」，说明他答唱是为了挣钱回家，选 A。B 与原文相反（他说 I think I'm better at playing the piano）；C 文中没有他不想弹琴的信息；D「怕丢工作」是过度推断，原文只说「想拿到报酬」。",
+     "trap": "D 是最容易误选的「合理推断」——不给钱≈丢工作。但原文的落点是「带钱回家」，不是「保住工作」。"
+    },
+    "rb3": {
+     "topic": "细节理解（惊讶点）",
+     "point": "注意 surprised、amazing 这类情绪词前后的内容，那就是「让人意外的事」。",
+     "why": "「nobody had ever heard the song Mona Lisa sung before until that night by Nat King Cole, and it surprised all, including the singer himself」，让人吃惊的是他唱得极好，选 B。A 说酒吧突然来了很多客人，原文说客人并不多；C 说服务员无礼，那是情节不是「惊讶点」；D 说他更擅长唱歌而非弹琴，原文没做这种比较，他本人也一直认为自己更会弹琴。",
+     "trap": "D 把「唱得好」偷换成「唱得比弹得好」。原文没有任何两者水平的比较。"
+    },
+    "rb4": {
+     "topic": "推理判断（假设后果）",
+     "point": "虚拟假设题要找原文的对照句：作者常用「如果没……就会……」来凸显转折。",
+     "why": "「He may have lived the rest of his life as an unknown piano player in a common bar」，即若没被逼着唱，他可能一辈子只是小酒吧里无人知晓的琴师，选 D。A 与原文相反（成名正是因为唱了）；B 说他弹琴能赚更多，文中反而说他需要钱；C 说他会辞职，文中无据。",
+     "trap": "题干问的是「如果他拒绝会怎样」，方向是「没有发生的那条路」，不要选已经发生的事实（A）。"
+    },
+    "rb5": {
+     "topic": "主旨大意（启示）",
+     "point": "寓言类文章的主旨在末段议论句，常以 The question is not… but rather… 这类对比句收尾。",
+     "why": "末段点题：「问题不在于我有什么能力，而在于我怎样使用我拥有的能力」，选 B。A 说学会拒绝别人，与文章「被逼一把反而成功」的意思相反；C 说学会与难缠的人沟通，把重点放在人际技巧上；D 说勇于接受新挑战，只覆盖「唱歌」这一件事，没有触及「用好已有能力」的核心。",
+     "trap": "D 看起来很正能量，但它是「局部」而非「主旨」。选启示时问自己：这句话能否概括整篇？"
+    },
+    "qx1": {
+     "topic": "七选五·总起句",
+     "point": "空后出现 An actor usually has… Unlike an actor… 这类对比结构时，空前应是本段主题句。",
+     "why": "本段拿「演员」和「单口喜剧演员」对比：演员有剧本、有搭档，单口演员只能展示自己。因此主题句是「单口喜剧不同于其他表演形式」，选 C。A 讲形式多样，是第三段的内容；B 讲需要练习，对应第 2 空；D、G 讲某档节目，对应第四段。",
+     "trap": "先看空后第一句的主语（An actor），再找能与它构成对照的选项。七选五的答案往往由「下一句」决定。"
+    },
+    "qx2": {
+     "topic": "七选五·承上启下",
+     "point": "空后紧跟 It usually takes days or even weeks of hard work… 时，空前应是「需要大量练习」这类判断。",
+     "why": "后句讲「要花几天甚至几周苦练，才能逗笑观众几分钟」，是「练习」的具体展开，故选 B。E 说成败取决于天赋，与「苦练」相反；A、C 已用于第 1、3 空；F 讲艺术家分享经验，与「苦练」不衔接。",
+     "trap": "E（靠天赋）是最诱人的干扰项，因为语义也通；但下一句讲的是 hard work，前后必须同向。"
+    },
+    "qx3": {
+     "topic": "七选五·段落主题",
+     "point": "段落中连续出现 It can include… / It can simply be… / It can also be… 的排比，说明主题是「形式多样」。",
+     "why": "后文用三个 It can 列举：可以是独白式故事、可以是一串笑话、可以在任何场合表演，故主题句选 A。B 讲练习、C 讲与其他表演的区别，都属于前两段；D、G 讲节目，属于第四段。",
+     "trap": "看到 It can… It can also… 就找含 forms / kinds / types 的选项。这是七选五里最稳定的信号。"
+    },
+    "qx4": {
+     "topic": "七选五·举例支撑",
+     "point": "空后是 When the third season came out… 这类具体季数，空前必须先提到「季」或「整体成绩」。",
+     "why": "后句专讲「第三季播出时」爆火，前句应总说「五季都受欢迎，尤其第三季」，选 D。选项中的 five seasons 与后句 the third season 形成总分关系。A、B、C 已在前面用过；E、F 与本段「节目」话题无关。",
+     "trap": "后句出现 the third season 这种带定冠词的序数，说明前文一定提过「季」，这是最直接的线索。"
+    },
+    "qx5": {
+     "topic": "七选五·总结句",
+     "point": "空后是 More and more young people have begun… 这类「影响/结果」，空前应是「节目取得巨大成功」。",
+     "why": "《脱口秀大会》爆火之后，越来越多年轻人开始看、甚至兼职讲脱口秀，这正是节目成功带来的影响，选 G。E 讲个人天赋、F 讲艺术家分享经验，都不是「节目成功→带动年轻人」的逻辑；A、B、C、D 已用过。",
+     "trap": "七选五最后一空常是「承上总结 + 引出下文结果」。先看空后讲的是「影响」，再回去找「成功」。"
+    },
+    "mt1": {
+     "topic": "匹配·抓关键词",
+     "point": "匹配题不要通读全篇，先圈出题干里的「独一无二信息」：人物身份、数字、专有名词。",
+     "why": "题干关键词：young wizard、magical powers、11th birthday，与 A 项 Hogwarts、young wizard、discovers his destiny 完全吻合。B 是超级英雄，C 是沉船爱情，D 是霍比特人，E 是巧克力工厂，F 是玩具，G 是英国国王，都无「11 岁生日」这一细节。",
+     "trap": "D 的 fantasy adventure 与 A 的 fantasy 容易混。要抓「wizard / 11th birthday」这种不可替代的细节。"
+    },
+    "mt2": {
+     "topic": "匹配·抓关键词",
+     "point": "把题干拆成 3–4 个关键词，逐一在选项中找同义复现，全部命中才是答案。",
+     "why": "题干关键词：romantic disaster film、wealthy young woman and poor artist、ship hits an iceberg。C 项 Titanic 以 1912 年真实沉船为背景，正是这三点。A、B、D、E、F、G 都没有「船 + 冰山 + 穷画家」。",
+     "trap": "注意 C 项原文有一处语法瑕疵（A film was directed by…），不要因此怀疑选项本身——匹配看信息，不看语法。"
+    },
+    "mt3": {
+     "topic": "匹配·抓关键词",
+     "point": "动画 + 玩具 + 人类不在时才活过来，三个特征同时出现才能锁定。",
+     "why": "题干关键词：animated、a group of toys、come to life when humans are not around，与 F 项 Toy Story 的 toys that secretly come to life、Woody and Buzz 对应。E 的巧克力工厂、A 的魔法学校都不涉及「玩具」。",
+     "trap": "E、F 都带 fantasy/comedy，先靠「toys」这个核心名词筛掉 E，再看是否提到「人类不在场」。"
+    },
+    "mt4": {
+     "topic": "匹配·抓关键词",
+     "point": "golden ticket、chocolate factory、candy maker 三个名词短语是本题的唯一标识。",
+     "why": "题干讲男孩得到金奖券、参观巧克力工厂，与 E 项 Charlie and the Chocolate Factory 的 a poor boy named Charlie Bucket、wins a tour、chocolate factory 完全对应。A 的魔法学校、D 的魔戒都不涉及巧克力。",
+     "trap": "E 与 F 都写「a poor boy / 男孩主角」吗？F 没有。抓「golden ticket」这种只在 E 出现的词最稳。"
+    },
+    "mt5": {
+     "topic": "匹配·抓关键词",
+     "point": "science fiction + superheroes + alien invasion，三者同现才选《复仇者联盟》。",
+     "why": "题干关键词：science fiction、a group of superheroes、save the world from an alien invasion，对应 B 项 The Avengers 的 a team of Marvel heroes、join forces to save Earth。D 是 fantasy（奇幻），不是科幻；G 是历史剧情片。",
+     "trap": "科幻（science fiction）与奇幻（fantasy）是中考高频区分点：有外星人、超级英雄的是科幻/超级英雄片，有魔法、魔戒的是奇幻。"
+    },
+    "qa1": {
+     "topic": "回答问题·事实",
+     "point": "问 What kind of movie 用「A/An + 类型 + film」简答即可，不必抄整句。",
+     "why": "第一段 It is adapted from Liu Cixin's famous science-fiction novel，说明它是科幻片，答 A science-fiction film。若写整句可用 It is a science-fiction film.",
+     "trap": "别把「改编自科幻小说」原文整段抄上去；问 kind 只要给出类型词，多写反而容易出语法错。"
+    },
+    "qa2": {
+     "topic": "回答问题·做法",
+     "point": "问 How do…deal with… 用动词原形开头或 By doing 结构回答。",
+     "why": "第二段末 Global people send thousands of nuclear bombs to blow up the Moon，答 They send thousands of nuclear bombs to blow up the Moon.",
+     "trap": "抄原文时注意主语：原文是 Global people，问句主语是 humans，用 they 指代即可，不要把两处混成一句。"
+    },
+    "qa3": {
+     "topic": "回答问题·概括",
+     "point": "问 Which two… 必须给出「两条」，且要用并列结构（and / 分号）分开。",
+     "why": "第三段两条线索：Liu Peiqiang trains to be a space station astronaut（刘培强苦训）、Tu Hengyu tries to save his dead daughter Yaya（图恒宇救女儿）。答 Liu Peiqiang's training as a space station astronaut and Tu Hengyu's effort to save his dead daughter Yaya.",
+     "trap": "只写一条会扣分。用名词短语并列最省事，避免两句时态不一致。"
+    },
+    "qa4": {
+     "topic": "回答问题·数字",
+     "point": "问 How many 直接答数量，注意原文的 more than / over 不能丢。",
+     "why": "第四段 more than 3,000 visual effect shots，答 More than 3,000.",
+     "trap": "漏掉 more than 就变成「恰好 3000」，与原文不符；数字写 3,000 或 3000 都可。"
+    },
+    "qa5": {
+     "topic": "回答问题·主旨",
+     "point": "问 What does the film tell us… 用 It tells us that + 从句，直接引用文末结论句。",
+     "why": "末句 It tells us unity, responsibility and family love are forever powerful strength in face of great disasters，照此作答即可。",
+     "trap": "这类题答案就是文章最后一句，别自己改写观点；改写容易漏掉 unity / responsibility / family love 三个要点。"
+    },
+    "wf1": {
+     "topic": "语篇填词·形容词",
+     "point": "首字母填空先定词性：空格在 kinds 前，必须是形容词。",
+     "why": "v 开头、修饰 kinds、表「各种各样的」，填 various。such as history, geography and pop culture 正是「多种」的例证。",
+     "trap": "别填 variety——它是名词，要用也只能写 a variety of；此处空格直接修饰 kinds，只能填形容词。"
+    },
+    "wf2": {
+     "topic": "语篇填词·形容词",
+     "point": "but 提示前后对比：后面 Angela 准备充分、表现好，前面应是「有难度」。",
+     "why": "c 开头、作表语、与 well prepared 形成转折，填 challenging（有挑战性的）；competitive（竞争激烈的）也说得通。",
+     "trap": "看到 but 先定「反义方向」，再想 c 开头的形容词：challenging / competitive / close 都可能，靠语义取最贴合「有难度」的。"
+    },
+    "wf3": {
+     "topic": "语篇填词·动词原形",
+     "point": "to 引导目的状语时后接动词原形；先定形式，再定词义。",
+     "why": "to ____ the other contestants 意为「为了打败其他选手」，b 开头、动词原形，填 beat。前文 she was soon ahead of the other two contestants 也是提示。",
+     "trap": "beat 的过去式还是 beat，别写成 beated；这里 to 后要原形，正好不受时态干扰。"
+    },
+    "wf4": {
+     "topic": "语篇填词·抽象名词",
+     "point": "between A and B 中的 B 可以是抽象名词，表「与……之间只差一步」。",
+     "why": "v 开头、作介词宾语，与 Angela 相对，指「胜利」，填 victory：她与胜利之间只差一道题。",
+     "trap": "容易想成 contestants（选手）——但 both contestants 已在前文出现，且此处是「只差一题」的抽象距离，用 victory。"
+    },
+    "wf5": {
+     "topic": "语篇填词·过去式",
+     "point": "首字母填空也要看全文时态：本篇讲已结束的比赛，谓语用过去式。",
+     "why": "全文为一般过去时（ran、began、seemed、replied），g 开头、与 great joy and courage 搭配，填 gained（gain great joy 获得快乐）；got 亦可。",
+     "trap": "别填 gets/gains 这类现在时——时态错在语篇填词里同样扣分。先通读定基调时态，再逐空变形。"
+    },
+    "gf1": {
+     "topic": "动名词作宾语",
+     "point": "介词后接动名词；hear of / think of / be used to 中的 of、to 都是介词。",
+     "why": "heard of 的 of 是介词，后接动名词 surfing。填 surf 会违反「介词后不接动词原形」，填 surfed 则把主动的「冲浪」说成被动。",
+     "trap": "括号给动词时，先看它前面是不是介词或及物动词的固定搭配：hear of doing、be good at doing、look forward to doing。"
+    },
+    "gf2": {
+     "topic": "现在完成时",
+     "point": "in the last / past + 时间段 是现在完成时的标志；主语为第三人称单数用 has + 过去分词。",
+     "why": "in the last two years 表示「过去两年到现在」，用 has become。若填 became 就与「到现在仍持续」的意思不符，且 in the last two years 不与一般过去时连用。",
+     "trap": "SUP 是缩写，看着像复数，其实指「这项运动」，作主语视为单数，用 has 不用 have。"
+    },
+    "gf3": {
+     "topic": "名词复数",
+     "point": "可数名词泛指多个、前面没有 a/the 限定时用复数；special 修饰复数名词。",
+     "why": "feature 是可数名词，「有多个特别之处」且未特指，用 features。填 feature 则成了单数泛指，与 special（不止一个特点）冲突。",
+     "trap": "括号给名词时只做两件事：判断可数还是不可数、判断单数还是复数。feature 可数、此处表多个，加 -s。"
+    },
+    "gf4": {
+     "topic": "比较级",
+     "point": "much / even / far / a lot 修饰比较级；close 的比较级是 closer。",
+     "why": "feel much closer to nature 意为「感觉离自然更近」，much 提示比较级，故填 closer。填 close 则 much 修饰原级，不合语法；填 closest 是最高级，需要 in/of 范围，句中也没有。",
+     "trap": "close 既可作动词「关闭」也可作形容词「近的」，这里在 feel 后作表语，是形容词比较级 closer。"
+    },
+    "gf5": {
+     "topic": "让步状语从句",
+     "point": "无提示词的空先判断从句类型：前后语义相反（需要耐心 ↔ 停不下来）就是让步，填 Although / Though。",
+     "why": "「虽然掌握它需要一点耐心和练习，但一旦开始你就会发现很难停下来」，前后让步，填 Although（大写，句首）。Because、If、So 都会让逻辑断裂。",
+     "trap": "Although 与 but 不能同时出现：本句主句前没有 but，所以可以放心填 Although。看到已有 but 就不能再填 Although。"
+    },
+    "wr1": {
+     "topic": "书面表达·影评",
+     "point": "影评四要素：片名 + 内容简介 + 最打动你的地方 + 你的评价；以一般现在时为主，评价可用 I think / It is worth watching。",
+     "why": "四个提示对应四句话即可成篇：My favourite film is… It is about… What I like most is… I think it is… 首尾各加一句总起与推荐，80 词不难写满。",
+     "trap": "常见失分：全篇用过去时讲故事（讲剧情用现在时即可）、只写剧情不写评价、忘记「不得透露学校姓名」的要求。"
+    }
+   }
   }
  ]
 };
+window.PRACTICE_GLOSS = {"words":{"abilities":"n. 能力，能耐","ability":"n. 能力，能耐","able":"adj. 能","abridged":"删节版的","access":"访问；使用权","accident":"n. 事故","according":"according to 根据","accurate":"准确的","achieve":"实现；取得","achievements":"成就","achieves":"实现；取得","achieving":"实现；取得","across":"prep. 穿过；adv. 横过","acting":"表演；行动","activities":"活动","activity":"活动","actor":"演员","actors":"演员","acts":"表演；行动","actually":"实际上","adapted":"改编；适应","added":"n. 加法，加法运算；vi. 加","addicted":"上瘾的","addictive":"让人上瘾的","addition":"增加；in addition 另外","addresses":"n. 地址；vt. 演说","adds":"n. 加法，加法运算；vi. 加","adventure":"冒险","advice":"建议","advisor":"顾问","affect":"影响","afraid":"adj. 害怕的","african":"非洲的","after":"在……之后","after-school":"课外的；放学后的","against":"prep. 反对，违反；adj. 不利的","age":"年龄；时代","aged":"年龄；时代","agony":"极度痛苦；Agony Aunt 知心姐姐","agree":"vi. vi. 同意，意见一致；vt. 同意，赞成","agrees":"vi. vi. 同意，意见一致；vt. 同意，赞成","ahead":"在前面；ahead of 领先","ai":"人工智能（AI）","aichi-nagoya":"爱知—名古屋（日本）","air":"n. 空气，大气；vt. 使通风，晾干","alice":"爱丽丝（人名）","alien":"外星人；外星的","allowed":"vi. 容许；vt. 允许","allows":"vi. 容许；vt. 允许","almost":"adv. 差不多，几乎","alone":"adj. 独自的；adv. 独自地","alongside":"与……一起","already":"adv. 已经，早已","always":"adv. 永远，一直","amazed":"vt. 使吃惊","amazing":"adj. 令人惊异的","ambitions":"志向；抱负","america":"美国","among":"prep. 在…中间","amy":"艾米（人名）","ancient":"n. 古代人；adj. 古代的","angel":"n. 天使；vt. 出钱支持","angela":"安吉拉（人名）","anger":"愤怒","animated":"动画的","annoying":"令人恼火的","answer":"n. 回答；vt. 回答","anxious":"焦虑的","anymore":"（不）再","anyone":"pron. 任何人","anything":"pron. 任何事","anywhere":"n. 任何地方；adv. 在任何地方","app":"手机应用","appear":"vi. 出现","appears":"vi. 出现","apply":"申请；应用","appreciate":"欣赏；感激","apps":"手机应用","april":"n. 四月","archimedes":"阿基米德（古希腊科学家）","area":"地区；领域","argue":"争论；主张","around":"在……周围","arrived":"vi. 到达","art":"n. 艺术；adj. 艺术的","article":"n. 文章；vt. 订约将…收为学徒或见习生","artist":"n. 艺术家","artists":"n. 艺术家","ashamed":"羞愧的","asian":"亚洲的","ask":"问","asked":"问","asking":"问","asks":"问","asleep":"adj. 睡着的；adv. 熟睡地","aspects":"方面","astronaut":"宇航员","ate":"vt. 吃，喝；vi. 进食","atlantic":"大西洋（the Atlantic）","atmosphere":"大气；气氛","attacked":"n. 攻击；vt. 攻击","attackers":"攻击者","attacks":"n. 攻击；vt. 攻击","attend":"参加；出席","attended":"参加；出席","attending":"参加；出席","attention":"注意力","attitude":"态度","attract":"vt. 吸引；vi. 吸引","attracted":"vt. 吸引；vi. 吸引","audience":"n. 观众","audiences":"n. 观众","august":"n. 八月（简写为Aug）；adj. 威严的","aunt":"n. 阿姨","australia":"n. 澳大利亚，澳洲","author":"作者","author's":"作者","avengers":"《复仇者联盟》","avoid":"vt. 避免","awareness":"意识","away":"离开","awkward":"尴尬的","back":"后面；回来","bad":"n. 坏事；adj. 坏的","bai":"李白（Li Bai）","bake":"烘烤","baked":"烘烤","baker":"n. 面包师","bakeries":"面包店","baking":"烘烤","balanced":"均衡的","ban":"禁止","banned":"禁止","banning":"禁止","bans":"禁止","bar":"条；块","barely":"几乎不","barriers":"障碍","bars":"条；块","based":"基础；以……为基础","basic":"n. 基础；adj. 基本的","basketball":"n. 篮球","bathing":"洗澡","beaches":"n. 海滩；vt. 将…拖上岸","beat":"n. 拍子；adj. 筋疲力尽的","beautiful":"adj. 美丽的","beautifully":"adj. 美丽的","beauty":"美；美景","became":"成为","become":"成为","becomes":"成为","becoming":"成为","bed":"n. 床；vt. 使睡觉","bedroom":"n. 卧室；adj. 两性关系的","before":"在……之前","began":"vi. 开始；vt. 开始","begins":"vi. 开始；vt. 开始","begun":"vi. 开始；vt. 开始","behind":"prep. 落后于；n. 屁股","belief":"信念；信仰","believe":"相信","believed":"相信","believes":"相信","believing":"相信","ben":"本（Big Ben 大本钟）","benefit":"好处；受益","besides":"prep. 在旁边","best":"n. 最好的人，最好的事物；adj. 最好的","best-known":"最著名的","better":"更好的","between":"在……之间","bicycles":"自行车","big":"大的","bigger":"大的","billion":"n. um. 十亿；adj. 十亿的","birth":"出生","birthday":"生日","birthplace":"出生地","blog":"博客","blow":"n. 吹；vt. 风吹","blue":"adj. 蓝色的；n. 蓝色","boa":"博阿（Boa Vista 博阿维斯塔岛）","board":"n. 董事会；vt. 上（飞机、车、船等）","boat":"n. 小船；vi. 划船","bodies":"n. 身体；vt. 赋以形体","bombs":"炸弹；轰炸","book":"n. 书籍；vt. 预订","books":"n. 书籍；vt. 预订","bored":"感到无聊的","boring":"n. 钻孔；adj. 无聊的","born":"adj. 天生的","boss":"n. 老板；vt. 指挥，调遣","bottle":"n. 瓶子；vt. 控制","bottom":"n. 底部；adj. 底部的","box":"n. 箱，盒子；vt. 拳击","boy":"男孩","brave":"n. 勇士；adj. 勇敢的","break":"vi. 打破；vt. （使）破","breaks":"vi. 打破；vt. （使）破","breathing":"n. 呼吸，气息","bring":"带来","bringing":"带来","brings":"带来","britain":"n. 英国","broke":"vi. 打破；vt. （使）破","broken":"adj. 破碎的","brother":"n. 兄弟；int. 我的老兄！","brought":"带来","brt":"快速公交系统（BRT）","bucket":"桶（Charlie Bucket 人名）","buddy":"伙伴","build":"n. 构造；vi. 建筑","building":"n. 建筑","buildings":"n. 建筑","built":"n. 构造；vi. 建筑","buoyancy":"浮力","burning":"n. 灼伤，烧伤；vt. 燃烧","bus":"n. 公共汽车","business":"n. 商业","busy":"adj. 忙碌的；vt. 使忙于","butter":"n. 黄油；vt. 涂黄油于","buzz":"嗡嗡声（Buzz 巴斯，人名）","cabo":"佛得角（Cabo Verde）","cafeteria":"自助餐厅","cake":"n. 蛋糕；vt. 使结块","calculations":"计算","call":"n. 电话；vi. 呼叫","calling":"n. 电话；vi. 呼叫","calm":"平静的","came":"来","cameron":"卡梅隆（导演 James Cameron）","campaign":"活动；运动","campus":"校园","can't":"不能（cannot）","candles":"n. 蜡烛；vt. 对着光检查","candy":"糖果","cape":"佛得角（Cape Verde）","capital":"n. 首都，省会；adj. 首都的","captain":"n. 队长，首领；vt. 指挥","card":"n. 卡片；vt. 记于卡片上","career":"职业","careers":"职业","careful":"adj. 仔细的，小心的","carefully":"adv. 小心地","caring":"n. 汽车","carries":"n. 运载；vi. 能达到","case":"情况；案例","cattle":"牛","caught":"抓住","cause":"n. 原因；vt. 引起","celebrate":"vt. 庆祝；vi. 庆祝","center":"n. 分","centimeters":"厘米","century":"n. 世纪，百年","certain":"确定的；某些","chair":"n. 椅子；vt. 担任（会议的）主席","challenge":"n. 挑战；vt. 向…挑战","challenges":"n. 挑战；vt. 向…挑战","challenging":"n. 挑战；vt. 向…挑战","chance":"n. 机会，际遇；vt. 偶然发生","chances":"n. 机会，际遇；vt. 偶然发生","chang":"长安（电影 Chang'an）","change":"改变","changed":"长安（电影 Chang'an）","changes":"长安（电影 Chang'an）","changing":"长安（电影 Chang'an）","chao":"沈超（教练 Shen Chao）","chao's":"沈超（教练 Shen Chao）","characters":"人物；性格","charlie":"查理（Charlie Bucket）","chatting":"聊天","cheaters":"作弊者","check":"n. <美>支票；vi. 核实，查核","chen":"陈（陈校长）","child":"n. 儿童，小孩，孩子","childhood":"童年","children":"n. 孩子们（child的复数）","china":"中国","china's":"中国","chinese":"n. 中文，汉语；adj. 中国的，中国人的","chocolate":"巧克力","choose":"选择","chose":"选择","chosen":"选择","cinemas":"n. 电影","city":"n. 城市，都市；adj. 城市的","civilization":"文明","cixin's":"刘慈欣（Liu Cixin）","class":"n. 阶级；adj. 极好的","classes":"n. 阶级；adj. 极好的","classmates":"n. 同班同学","classrooms":"n. 教室","climate":"气候","close":"n. 结束；adj. 紧密的","closely":"n. 结束；adj. 紧密的","closer":"n. 结束；adj. 紧密的","club":"俱乐部","clubs":"俱乐部","clue":"线索","clues":"线索","coaches":"n. 教练；vt. 训练","coding":"n. 代码，密码；vt. 编码","coffee":"n. 咖啡","cold":"n. 寒冷；adj. 寒冷的","cole":"科尔（Nat King Cole）","college":"n. 大学","colleges":"n. 大学","colour":"颜色","column":"专栏；栏目","come":"来","comedy":"喜剧","comes":"来","coming":"来","common":"n. 普通；adj. 共同的","commonly":"n. 普通；adj. 共同的","communicate":"交流","companies":"n. 公司；vt. 陪伴","compare":"vi. 相比，匹敌；vt. 比拟，喻为","competitions":"n. 竞争","complete":"adj. 完整的；vt. 完成","completed":"adj. 完整的；vt. 完成","completely":"adj. 完整的；vt. 完成","complex":"复杂的","complicated":"复杂的","compromise":"妥协","computer":"n. 计算机","computer-animated":"电脑动画的","computers":"n. 计算机","concentrate":"集中（注意力）","concentrated":"集中（注意力）","concern":"担忧；关切","condition":"n. 条件；vt. 决定","conferences":"n. 会议；vi. 举行或参加（系列）会议","conflicts":"冲突","confused":"困惑的","consciousness":"意识","considered":"vi. 考虑；vt. 考虑","considers":"vi. 考虑；vt. 考虑","contact":"联系","contest":"比赛","contestants":"参赛者","continent":"大陆；洲","continued":"vt. 继续说…；vi. 继续，延续","contributions":"n. 贡献","control":"n. 控制；vt. 控制","convenience":"便利","conversation":"n. 交谈，会话","convinced":"确信的","cooker":"n. 厨师，厨子；vt. 烹调，煮","cookie":"n. 饼干","cooks":"n. 厨师，厨子；vt. 烹调，煮","cool":"n. 凉爽；adj. 凉爽的","coolest":"n. 凉爽；adj. 凉爽的","corner":"n. 角落，拐角处；vt. 垄断","correct":"adj. 正确的；vt. 改正","couldn't":"不能（cannot 的过去式）","countless":"无数的","countries":"n. 国家，国土；adj. 祖国的，故乡的","country's":"n. 国家，国土；adj. 祖国的，故乡的","courage":"n. 勇气","course":"n. 科目；vt. 追赶","covered":"n. 封面，封皮；vt. 包括","cow":"n. 奶牛，母牛；vt. 威胁，恐吓","cowboy":"牛仔","cows":"n. 奶牛，母牛；vt. 威胁，恐吓","cp":"荧幕情侣（couple 的缩写）","crashes":"n. 撞碎；vi. 摔碎","crashing":"n. 撞碎；vi. 摔碎","crazy":"adj. 疯狂的","create":"vt. 创造，创作","creating":"vt. 创造，创作","creative":"有创造力的","creole":"克里奥尔语","criminals":"罪犯；犯罪的","crisis":"危机","crown":"王冠","cultural":"文化的","culture":"文化","cup":"杯子","curie":"居里（Marie Curie 居里夫人）","curious":"好奇的","customer":"顾客","customers":"顾客","customs":"海关；习俗","cut":"n. 伤口；adj. 割下的","cyber":"网络的","cyber-attack":"网络攻击","cybercrime":"网络犯罪","cybercrimes":"网络犯罪","cybercriminals":"网络罪犯","cybersecurity":"网络安全","daily":"每天的","damage":"损害；破坏","damaged":"损害；破坏","danger":"n. 危险","dangerous":"adj. 危险的","darkest":"n. 黑暗；adj. 黑暗的，深色的","data":"数据","daughter":"n. 女儿；adj. 女儿的","day":"天","days":"天","daytime":"n. 日间，白天","dead":"n. 死者；adj. 无生命的","deal":"n. 交易；vi. 处理","dean":"迪恩（人名）","dear":"亲爱的","debated":"辩论","decide":"决定","decided":"决定","decision":"n. 决定，决心","deeper":"n. 深处；adj. 深的","deeply":"n. 深处；adj. 深的","degree":"n. 程度，等级","deleted":"删除","depending":"vi. 依赖，依靠","depth":"深度","describe":"vt. 描述，形容","described":"vt. 描述，形容","describing":"vt. 描述，形容","design":"设计","designed":"设计","designer":"设计师","designing":"设计","desks":"n. 办公桌；adj. 书桌的","desserts":"甜点","destination":"目的地","destiny":"命运","destroy":"摧毁","destruction":"破坏","details":"细节","detective":"n. 侦探；adj. 侦探的","detectives":"n. 侦探；adj. 侦探的","determination":"决心","determined":"坚定的","develop":"vi. 发育；vt. 开发","developed":"vi. 发育；vt. 开发","development":"n. 发展","devices":"设备；装置","diameter":"直径","didn't":"没有（did not）","die":"n. 冲模，钢模；vi. 死亡","died":"n. 冲模，钢模；vi. 死亡","dies":"n. 冲模，钢模；vi. 死亡","difference":"n. 差异","different":"不同的","difficult":"困难的","difficulties":"困难","digging":"n. 戳，刺；vi. 挖掘","digital":"数字的","directed":"导演；直接的","direction":"n. 方向","director":"n. 主任，主管","disagree":"不同意","disappear":"vi. 消失；vt. 使…不存在","disaster":"灾难","disasters":"灾难","discover":"发现","discovered":"发现","discovers":"发现","discuss":"vt. 讨论","disease":"n. 病，[医] 疾病；vt. 传染","disneyland":"迪士尼乐园","disorder":"混乱；失调","distracted":"分心的","doctors":"vt. 修理；n. 医生","doesn't":"不（does not）","doing":"做","doll":"洋娃娃","dolls":"洋娃娃","don't":"不（do not）","donation":"捐赠","door":"n. 门","dosage":"剂量","douban":"豆瓣（影评网站）","doubt":"n. 怀疑","doubtful":"怀疑的","downstairs":"n. 楼下；adj. 楼下的","dozen":"n. 十二个，一打；adj. 一打的","dr":"博士；医生（Dr）","dragon":"龙","drama":"戏剧","draw":"n. 平局；vi. 拉","drawn":"n. 平局；vi. 拉","dream":"n. 梦想，愿望；adj. 梦的","dreamed":"n. 梦想，愿望；adj. 梦的","dreaming":"n. 梦想，愿望；adj. 梦的","dreams":"n. 梦想，愿望；adj. 梦的","drifting":"漂流","drink":"n. 酒，饮料；vt. 喝，饮","drive":"n. 驱动器；vi. 开车","drives":"n. 驱动器；vi. 开车","dry":"n. 干涸；adj. 干的","du":"杜（杜丽娘 Du Liniang）","due":"到期的；due to 由于","during":"在……期间","dynasty":"朝代","earlier":"adj. 早的；adv. 早地","earliest":"最早的","early":"adj. 早期的；adv. 提早","earn":"赚得；赢得","earned":"赚得；赢得","earth":"地球","easier":"adj. 容易的；vt. 发出停划命令","easiest":"adj. 容易的；vt. 发出停划命令","easily":"adj. 容易的；vt. 发出停划命令","easternmost":"最东端的","easy":"adj. 容易的；vt. 发出停划命令","eclipse":"（日/月）食","eclipses":"（日/月）食","economic":"经济的","economics":"经济的","education":"教育","educator":"教育工作者","educators":"教育工作者","effect":"效果；影响","efficient":"高效的","effort":"n. 努力","efforts":"n. 努力","egg":"n. 蛋；vt. 煽动","eggs":"n. 蛋；vt. 煽动","elders":"长辈；年长的","else":"adj. 别的；adv. 其他","email":"电子邮件","emergencies":"紧急情况","emotional":"情感的","encounter":"偶遇；遭遇","encourage":"vt. 鼓励，怂恿","encouraged":"vt. 鼓励，怂恿","end":"n. 结束；vi. 结束，终止","ending":"n. 结束；vi. 结束，终止","enforce":"执行；强制","engineer":"n. 工程师；vt. 设计","engines":"发动机","england":"n. 英格兰","english":"英语","enjoy":"vt. 欣赏，享受","enjoying":"vt. 欣赏，享受","enjoys":"vt. 欣赏，享受","enough":"n. 很多；adj. 充足的","entertainers":"表演者","entertainment":"娱乐","environment":"n. 环境，外界","erin":"艾琳（人名）","especially":"尤其","ethical":"合乎道德的","eureka":"尤里卡（Eureka 科学剧场）","europeans":"欧洲人","even":"甚至","event":"n. 事件，大事","events":"n. 事件，大事","ever":"曾经","everyday":"日常的","everyone":"n. 每个人；pron. 每个人","everyone's":"n. 每个人；pron. 每个人","everything":"pron. 每件事物","everywhere":"n. 每个地方；adv. 到处","exactly":"adv. 恰好地","examine":"vt. 检查；vi. 检查","example":"n. 例子；vt. 作为…的例子","examples":"n. 例子；vt. 作为…的例子","exams":"n. 考试","excellent":"优秀的","except":"conj. 除了；prep. 除…之外","excitement":"vt. 激起；vi. 激动","excuses":"n. 借口；vt. 原谅","exercises":"锻炼；练习","expand":"扩大；扩展","expect":"vi. 期待；vt. 期望","expected":"vi. 期待；vt. 期望","expensive":"adj. 昂贵的","experience":"经验；经历","experienced":"经验；经历","experiments":"实验","expert":"n. 专家；adj. 熟练的","experts":"n. 专家；adj. 熟练的","explain":"v. 说明；解释","explaining":"v. 说明；解释","explains":"v. 说明；解释","explore":"vi. 探索；vt. 探索","explorers":"n. 探险家","expression":"表达；表情","extra":"额外的","extra-long":"超长的","eye":"眼睛","eyes":"眼睛","face":"n. 脸；vi. 向","facing":"n. 脸；vi. 向","factories":"工厂","factory":"工厂","fails":"n. 不及格；vi. 失败，不及格","fair":"公平的；展览会","fall":"n. 下降；adj. 秋天的","family":"家庭","famous":"著名的","fan":"n. 迷；vt. 煽动","fans":"n. 迷；vt. 煽动","fantasy":"幻想；奇幻作品","far":"远的","farmer":"n. 农夫，农民","farmers":"n. 农夫，农民","farming":"n. 农业，耕作","fast":"n. 斋戒；adj. 快速的，迅速的","faster":"n. 斋戒；adj. 快速的，迅速的","father":"父亲","favourite":"n. 特别喜爱的人（或物）；adj. 特别受喜爱的","feature":"特点；以……为特色","features":"特点；以……为特色","featuring":"特点；以……为特色","feel":"感觉","feeling":"n. 感觉，触觉；adj. 有感觉的","feels":"感觉","felt":"感觉","festival":"节日","fevers":"n. 发烧，发热；vt. 使发烧","fiction":"虚构作品；小说","field":"n. 领域；adj. 扫描场","fields":"n. 领域；adj. 扫描场","fifa":"国际足联（FIFA）","fifth":"n. um. 第五；adj. 第五的","fight":"n. 打架；vi. 打架","files":"文件","fill":"n. 满足；vt. 装满，使充满","filled":"n. 满足；vt. 装满，使充满","film":"电影","final":"n. 决赛；adj. 最终的","finally":"最后","find":"找到","finding":"找到","finds":"找到","finish":"n. 结束；vt. 完成","firmly":"坚定地","first":"第一","fish":"n. 鱼，鱼类；vt. 钓鱼，捕鱼","fitting":"n. 合身；adj. 健康的","five":"五","fix":"n. 困境；vt. 使固定","fixing":"n. 困境；vt. 使固定","flag":"旗","flour":"面粉","flower":"n. 花；vt. 使开花","focus":"集中；焦点","follow":"n. 跟随；vi. 跟随","followed":"n. 跟随；vi. 跟随","following":"n. 跟随；vi. 跟随","follows":"n. 跟随；vi. 跟随","food":"食物","fooled":"愚弄；傻瓜","foolish":"愚蠢的","foot":"n. 脚；vt. 支付","forced":"n. 力量；vt. 促使，推动","forces":"n. 力量；vt. 促使，推动","forensics":"法医鉴定；取证","forever":"adv. 永远","forget":"vi. 忘记；vt. 忘记","forgetting":"vi. 忘记；vt. 忘记","forgot":"vi. 忘记；vt. 忘记","form":"形式","forms":"形式","forty-eight":"四十八","forward":"n. 前锋；adj. 向前的","found":"vt. 创立，建立","founded":"vt. 创立，建立","four":"n. um. 四；adj. 四的","france":"n. 法国","free":"adj. 免费的；vt. 使自由，解放","fresh":"新鲜的","friend":"朋友","friends":"朋友","friendship":"n. 友谊","frightened":"adj. 害怕的","frodo":"佛罗多（《指环王》人物）","front":"n. 前面；adj. 前面的","fruits":"n. 水果；vt. 使……结果实","full":"满的；完整的","fun":"n. 乐趣；adj. 供娱乐用的","fund":"基金；资金","funny":"n. 滑稽人物；adj. 有趣的，好笑的，滑稽的","fusion":"融合","future":"n. 未来；adj. 将来的，未来的","game":"游戏；比赛","gameboy":"游戏男孩（笔名）","games":"游戏；比赛","gaming":"游戏；比赛","gao":"高适（唐代诗人 Gao Shi）","garden":"n. 花园；vt. 栽培花木","gave":"给","gender":"性别","genius":"天才","geography":"n. 地理","george":"乔治（George VI 乔治六世）","get":"得到；变得","getting":"得到；变得","giant":"巨大的；巨人","gift":"礼物","gifts":"礼物","girl":"女孩","girls":"女孩","give":"给","given":"给","gives":"给","giving":"给","glad":"adj. 高兴的；vt. 使高兴","glass":"n. 玻璃；vt. 反映","glasses":"n. 玻璃；vt. 反映","global":"全球的","go":"去","goal":"目标","going":"去","gold":"黄金","golden":"金色的","good":"好的","got":"得到；变得","government":"n. 政府","gradually":"逐渐地","grammar":"n. 语法","grandma":"奶奶","grapes":"n. 葡萄","grass":"草","grasses":"草","gray":"灰色的","great":"伟大的；很棒的","green":"n. 绿色；adj. 绿色的","grew":"vi. 发展；vt. 使生长","group":"小组","guangzhou":"广州","guard":"n. 守卫；vi. 警惕","guide":"n. 指南；vt. 引导","gunman":"持枪歹徒","guo":"郭帆（导演 Guo Fan）","guy":"家伙；人","hacker":"黑客","hackers":"黑客","hair":"n. 头发；adj. 毛发的","half":"n. 一半；adj. 一半的","hall":"n. 过道，门厅，走廊","hallways":"走廊","hand":"n. 手，手艺；vt. 传递，交给","hands-on":"动手实践的","happen":"vi. 发生","happened":"vi. 发生","happens":"vi. 发生","happier":"adj. 幸福的","happiest":"adj. 幸福的","happily":"adv. 快乐地","happiness":"幸福；快乐","happy":"adj. 幸福的","hard":"困难的；努力地","harder":"困难的；努力地","hardest":"困难的；努力地","harm":"n. 伤害；vt. 伤害","harmless":"无害的","harry":"哈利（Harry Potter）","hasn't":"还没有（has not）","heads":"n. 头；adj. 头的","health":"n. 健康","healthy":"adj. 健康的，健全的","hear":"听见","heard":"听见","hearing":"听见","heart":"n. 心脏；vt. 鼓励","heat":"热；加热","heaven":"n. 天堂","heavy":"n. 重物；adj. 沉重的","held":"n. 控制；vi. 支持","helen":"海伦（人名）","help":"帮助","helped":"帮助","helping":"帮助","helps":"帮助","hengyu":"图恒宇（《流浪地球2》人物）","here's":"n. 这里；adv. 在这里","heritage":"遗产","heroes":"英雄","herself":"pron. 她自己（she的反身代词）","hesitant":"犹豫的","hey":"嘿","hidden":"n. 躲藏；vt. 隐藏","high":"n. 高水平；adj. 高的","high-quality":"高质量的","high-ranking":"高级别的","higher":"n. 高水平；adj. 高的","highest":"n. 高水平；adj. 高的","himself":"pron. 他自己","hire":"雇用","historical":"历史的","history":"历史","hits":"n. 打；vt. 打击","hobbies":"n. 嗜好","hobbit":"霍比特人","hogwarts":"霍格沃茨（魔法学校）","holidays":"n. 假日；vi. 外出度假","home":"n. 家，住宅；adj. 国内的，家庭的","hometown":"n. 家乡","homework":"n. 家庭作业，课外作业","hope":"n. 希望；vi. 希望","hoped":"n. 希望；vi. 希望","hopes":"n. 希望；vi. 希望","hospital":"n. 医院","hospital's":"n. 医院","hot":"热的","hottest":"热的","house":"n. 住宅；vt. 覆盖","however":"然而","hsien-yung":"白先勇（作家 Pai Hsien-yung）","hua":"李华（Li Hua）","huge":"adj. 巨大的","hulk":"绿巨人（Hulk）","human":"n. 人；adj. 人的","humans":"n. 人；adj. 人的","hundreds":"n. um. 百；adj. 一百的","hungry":"adj. 饥饿的","hunt":"打猎；搜寻","hurt":"n. 痛苦；vt. 使受伤","i'm":"我是（I am）","iceberg":"n. [地理] 冰山","idea":"想法","ideas":"想法","identity":"身份","impolitely":"不礼貌地","importance":"重要性","important":"重要的","impress":"给……留下深刻印象","improve":"vt. 改善，增进；vi. 增加","improved":"vt. 改善，增进；vi. 增加","improvement":"vt. 改善，增进；vi. 增加","include":"包括","including":"包括","industry":"工业；行业","information":"信息","innermost":"最深处的","inside":"prep. 少于；n. 里面","insisted":"vi. 坚持，强调；vt. 坚持，强调","inspired":"激励；启发","instead":"代替","intangible":"非物质的","interest":"n. 兴趣，爱好；vt. 使……感兴趣","interested":"adj. 感兴趣的","interesting":"adj. 有趣的","interestingly":"adj. 有趣的","internet":"n. 因特网","interview":"n. 接见，采访；vt. 采访","interviews":"n. 接见，采访；vt. 采访","introduce":"vt. 介绍","introduced":"vt. 介绍","invasion":"入侵","invention":"发明","inventions":"发明","inventors":"n. 发明家","investigator":"调查员","investigators":"调查员","invisible":"看不见的","io":"间接宾语（IO）","ip":"IP 地址","iron":"n. 熨斗；adj. 铁的","island":"岛","islands":"岛","it's":"pron. 它","itself":"它自己","james":"詹姆斯（James Cameron）","january":"n. 一月","japan":"n. 日本（东亚国家名）","job":"n. 工作；vt. 承包","jobs":"n. 工作；vt. 承包","jody":"乔迪（人名）","join":"加入","joined":"加入","jokes":"n. 玩笑，笑话；vt. 开…的玩笑","journey":"旅程","joy":"n. 欢乐，快乐；vi. 欣喜，欢喜","judge":"判断；裁判","juice":"n. （水果）汁，液","kate":"凯特（Kate 女演员）","keep":"保持","keeps":"保持","kevin":"凯文（人名）","kind":"n. 种类；adj. 和蔼的","kinds":"n. 种类；adj. 和蔼的","king":"金（Nat King Cole）；国王","king's":"金（Nat King Cole）；国王","kitchen":"n. 厨房","knew":"知道","know":"知道","knowledge":"n. 知识，学问","known":"知道","knows":"知道","kriolu":"克里奥尔语（Kriolu）","kunqu":"昆曲","lakes":"湖","language":"语言","languages":"语言","laptops":"笔记本电脑","large":"adj. 大的；adv. 大大地","last":"最后的","late":"adj. 晚的；adv. 晚","lateness":"adj. 晚的；adv. 晚","later":"adv. 后来；adj. 更迟的","latest":"最新的","laugh":"n. 笑；vi. 笑","laughed":"n. 笑；vi. 笑","laureate":"获奖者","laying":"vt. 躺下；adj. 世俗的","lead":"n. 领导；vt. 领导","leaders":"领导者","leading":"n. 领导；vt. 领导","leads":"n. 领导；vt. 领导","learn":"学习","learning":"学习","leave":"vt. 离开；vi. 离开，出发","lecture":"讲座","left":"adj. 左边的；adv. 在左面","legally":"合法地","leisure":"闲暇","leonardo":"莱昂纳多（Leonardo 男演员）","less":"adv. 较少地；adj. 较少的","lesson":"n. 教训；vt. 教训","lester":"莱斯特（Lester Li）","let":"vt. 允许，让；vi. 出租","let's":"vt. 允许，让；vi. 出租","letters":"n. 信；vt. 写字母于","li":"李（Li Bai 李白 / Li Hua 李华）","library":"n. 图书馆，藏书室","lie":"vi. 躺；vt. 谎骗","life":"生活；生命","lifetime":"n. 一生；adj. 一生的","light":"n. 光；adj. 轻的","lights":"n. 光；adj. 轻的","lihao":"盛李豪（射击运动员）","like":"喜欢；像","liked":"喜欢；像","likely":"喜欢；像","lily":"莉莉（人名）","linda":"琳达（人名）","linda's":"琳达（人名）","lines":"n. 路线，航线；vt. 排成一行","liniang":"杜丽娘（《牡丹亭》女主角）","lisa":"丽莎（Mona Lisa 蒙娜丽莎）","list":"n. [计] 列表；vi. 列于表上","listen":"听","listening":"听","literary":"文学的","little":"小的；几乎没有","liu":"柳（柳梦梅 Liu Mengmei）","lived":"adj. 活的；vt. 经历","lives":"adj. 活的；vt. 经历","living":"adj. 活的；vt. 经历","local":"当地的；本地的","locally":"当地的；本地的","located":"位于；定位","lock":"vt. 锁，锁上；vi. 锁","lockers":"储物柜","login":"登录","logs":"日志；记录","london":"n. 伦敦","lonely":"adj. 寂寞的；n. 孤独者","long":"长的","look":"看","looked":"看","looking":"看","looks":"看","lord":"《指环王》（The Lord of the Rings）","lose":"vt. 浪费；vi. 失败","lot":"n. 份额；adv. （与形容词和副词连用）很，非常","lots":"n. 份额；adv. （与形容词和副词连用）很，非常","louder":"大声的","love":"爱","loved":"爱","lovely":"adj. 可爱的；n. 美女","lover":"爱","lower":"降低；较低的","lowering":"降低；较低的","lowers":"降低；较低的","lucky":"adj. 幸运的","lucy":"露西（人名）","lunar":"月球的；农历的","lunch":"n. 午餐；vt. 吃午餐","machines":"n. 机械，机器；vt. 用机器制造","made":"制作；使得","magical":"adj. 魔术的","main":"主要的","mainly":"主要的","major":"主要的；重大的","make":"制作；使得","maker":"制作；使得","makes":"制作；使得","making":"制作；使得","malala":"马拉拉（Malala 诺贝尔和平奖得主）","malala's":"马拉拉（Malala 诺贝尔和平奖得主）","male":"男性的；雄性","mall":"购物中心","man":"男人","managed":"vt. 管理；vi. 处理","management":"vt. 管理；vi. 处理","manager":"n. 经理","marie":"玛丽（Marie Curie 居里夫人）","marks":"n. 标志；vi. 作记号","marvel":"漫威","mary":"玛丽（人名）","master":"vt. 控制；n. 硕士","mastering":"vt. 控制；n. 硕士","masterpiece":"杰作","masterpieces":"杰作","matched":"vt. 使比赛；vi. 比赛","math":"数学","maths":"n. 数学（等于mathematics）","matter":"n. 物质；vi. 有关系","matters":"n. 物质；vi. 有关系","mean":"adj. 平均的；vt. 意味","meaningful":"有意义的","means":"adj. 平均的；vt. 意味","measure":"测量；措施","medal":"奖牌","medals":"奖牌","medicine":"n. 药；vt. 用药物治疗","meeting":"n. 会议","members":"成员","mengmei":"柳梦梅（《牡丹亭》男主角）","mention":"vt. 提到，谈到；n. 提及，说起","mentioned":"vt. 提到，谈到；n. 提及，说起","message":"n. 消息；vi. 报信，报告","meter":"米；仪表","meters":"米；仪表","methods":"n. 方法；adj. 使用体验派表演方法的","middle":"adj. 中间的，中部的；n. 中间，中央","middle-earth":"中土世界","milestone":"里程碑","milk":"n. 牛奶；vt. 榨取","millimeter":"毫米","millimeters":"毫米","millions":"n. 百万；adj. 百万的","mind":"头脑；介意","minds":"头脑；介意","ming":"李明（Li Ming）","minute":"分钟","minutes":"分钟","miss":"n. 女士，小姐，年轻未婚女子；vt. 错过，想念，缺（勤）","mistake":"n. 错误；vt. 弄错","mistakes":"n. 错误；vt. 弄错","mixes":"混合","model":"n. 模型；vt. 模拟","models":"n. 模型；vt. 模拟","moment":"n. 片刻，瞬间，时刻","moments":"n. 片刻，瞬间，时刻","mona":"蒙娜（Mona Lisa 蒙娜丽莎）","money":"n. 钱","monitor":"n. 监视器；vt. 监控","monologue":"独白","month":"月","months":"月","moon":"n. 月亮；vi. 闲荡","moon's":"n. 月亮；vi. 闲荡","morning":"n. 早晨","mother":"n. 母亲；vt. 生下","mountain":"n. 山","move":"移动","movie":"电影","movies":"电影","moving":"adj. 移动的","mr":"先生（Mr）","ms":"女士（Ms）","mum":"adj. 沉默的；n. 妈妈（口语）","music":"n. 音乐，乐曲","musical":"音乐的；音乐剧","musician":"音乐家","myself":"pron. 我自己","mysterious":"神秘的","mystery":"谜；神秘事物","name":"名字；命名","named":"名字；命名","nancy":"南希（人名）","nat":"纳特（Nat King Cole）","nation":"国家；民族","national":"adj. 国家的；n. 国民","nature":"n. 自然","nearest":"adj. 近的；adv. 近","nearly":"adv. 差不多，几乎","necessary":"adj. 必要的；n. 必需品","need":"需要","needed":"需要","needs":"需要","nervous":"adj. 神经的","never":"从不","never-received":"从未收到的","new":"新的","news":"n. 新闻，消息","next":"adv. 然后；adj. 下一个的","night":"夜晚","nine":"n. 九，九个；adj. 九的，九个的","nine-hour":"九小时的","nobel":"诺贝尔","nobody":"pron. 无人，没有人；n. 无名小卒","noise":"n. [环境] 噪音；vt. 谣传","northern":"adj. 北部的；n. 北部方言","nothing":"n. eg. 没什么；adv. 毫不","notice":"n. 通知，布告；vt. 通知","noticed":"n. 通知，布告；vt. 通知","notification":"通知","novel":"adj. 新奇的；n. 小说","nowadays":"如今","nuclear":"核的","nutritious":"有营养的","o'neill":"奥尼尔（Erin O'Neill）","objective":"目标；客观的","objects":"n. 目标；vt. 提出…作为反对的理由","ocean":"n. 海洋","offered":"vt. 提供；n. 提议","office":"n. 办公室","official":"官方的；正式的","officially":"官方的；正式的","often":"经常","old":"adj. 陈旧的，古老的；n. 古时","oldest":"adj. 陈旧的，古老的；n. 古时","once":"一次；曾经","one-chi-long":"一尺长的","one-minute":"一分钟的","ones":"adv. 向前地；prep. 向，朝……","online":"在线的","only":"只有","opened":"打开；开放的","opening":"打开；开放的","opera":"歌剧","operate":"操作；运转","opinions":"看法；意见","opposed":"反对","opposite":"adj. 相反的；n. 对立面","orbit":"轨道；环绕","order":"n. 命令；vt. 命令","others":"其他的","ourselves":"pron. 我们自己","outside":"adj. 外面的，外部的；n. 外部","outsmart":"智取；比……更聪明","oven":"烤箱","overnight":"一夜之间","own":"自己的；拥有","owned":"自己的；拥有","owner":"n. [经] 所有者","oxford":"牛津（大学）","package":"n. 包，包裹；adj. 一揽子的","paddleboard":"桨板","paddleboarding":"桨板运动","pai":"白先勇（Pai Hsien-yung）","pai's":"白先勇（Pai Hsien-yung）","paid":"n. 工资，薪水；vt. 支付，付","painful":"adj. 痛苦的","painted":"vt. 油漆；vi. 油漆","painting":"n. 绘画","pair":"n. 一对，一双，一副；vt. 把…组成一对","pairing":"n. 一对，一双，一副；vt. 把…组成一对","pakistan":"巴基斯坦","panorama":"全景","paper":"n. 纸；adj. 纸做的","paragraph":"段落","parents":"父母","paris":"巴黎","park":"n. 公园；vt. 停放","part":"n. 部分；adj. 部分的","part-time":"adj. 兼职的；adv. 兼职地","particularly":"尤其","parties":"n. 政党，党派；vi. 参加社交聚会","parts":"n. 部分；adj. 部分的","party":"n. 政党，党派；vi. 参加社交聚会","passage":"n. 一段（文章）","passed":"n. 及格；vt. 通过","passwords":"密码","past":"n. 过去；prep. 越过","path":"n. 道路","patience":"耐心","patient":"n. 病人；adj. 有耐心的，能容忍的","patron":"资助人；老主顾","patrons":"资助人；老主顾","pavilion":"亭；《牡丹亭》（The Peony Pavilion）","pay":"n. 工资，薪水；vt. 支付，付","paying":"n. 工资，薪水；vt. 支付，付","payment":"n. 工资，薪水；vt. 支付，付","peace":"n. 和平","peaceful":"平静的","peers":"同龄人；同辈","peiqiang":"刘培强（《流浪地球2》人物）","pen":"n. 钢笔；vt. 写","peony":"牡丹（The Peony Pavilion）","people":"人们；人民","people's":"人们；人民","perfect":"n. 完成式；adj. 完美的","performance":"表演","performed":"表演；执行","performer":"表演者","performers":"表演者","period":"n. 周期，期间；adj. 某一时代的","persistence":"坚持","person":"人","peter":"n. 宠物；adj. 宠爱的","phishing":"网络钓鱼","phone":"电话","phone-free":"禁用手机的","phones":"电话","photos":"照片","phrase":"短语","physics":"n. 物理学","pianist":"钢琴家","piano":"钢琴","picked":"n. 选择；vi. 挑选","piece":"n. 块；vt. 修补","plan":"n. 计划；vt. 计划","plane":"n. 飞机；adj. 平的","planet":"n. 行星","plant":"n. 工厂，车间；vt. 种植","plants":"n. 工厂，车间；vt. 种植","play":"玩；播放","played":"玩；播放","player":"n. 运动员，比赛者","playing":"玩；播放","pleasantly":"adj. 令人愉快的，舒适的","please":"int. 请（礼貌用语）；vt. 使喜欢","pleased":"adj. 高兴的","plenty":"n. 丰富，大量；adj. 足够的，很多的","poems":"诗","poet":"诗人","poets":"诗人","point":"n. 要点；vt. 指向","points":"n. 要点；vt. 指向","polar":"极地的","politely":"adv. 有礼貌地","poor":"贫穷的","pop":"abbr. 卖点广告（Point of Purchase）","popular":"受欢迎的","population":"n. 人口","portuguese":"葡萄牙语；葡萄牙的","positive":"积极的；正面的","possible":"n. 可能性；adj. 可能的","potter":"波特（Harry Potter）","power":"力量；电力","powered":"由……驱动的","powerful":"强大的","powers":"力量；电力","practical":"实际的；实用的","practice":"练习；实践","practices":"练习；实践","practised":"练习（英式动词）","practises":"练习（英式动词）","praia":"普拉亚（佛得角首都）","praise":"n. 赞扬；vt. 赞美，歌颂","precious":"珍贵的","prefers":"vt. 更喜欢；vi. 喜欢","prepared":"vt. 准备；vi. 预备","preparing":"vt. 准备；vi. 预备","prequel":"前传","present":"n. 现在；adj. 现在的","preservation":"保护；保存","pressure":"压力","pride":"n. 自豪；vt. 使得意，以…自豪","primary":"n. 原色；adj. 主要的","principal":"校长；主要的","private":"n. 列兵；adj. 私人的","prize":"n. 奖品；adj. 获奖的","probably":"adv. 大概","problem":"问题","problems":"问题","process":"过程；处理","professional":"专业的；职业选手","progress":"n. 进步，发展；vi. 前进，进步","project":"项目；工程","promise":"n. 许诺，允诺；vt. 允诺，许诺","promised":"n. 许诺，允诺；vt. 允诺，许诺","promises":"n. 许诺，允诺；vt. 允诺，许诺","protect":"vt. 保护，防卫","protecting":"vt. 保护，防卫","prove":"vi. 证明是；vt. 证明","proves":"vi. 证明是；vt. 证明","provides":"vt. 提供；vi. 规定","province":"n. 省","public":"n. 公众；adj. 公众的","pulls":"n. 拉，拉绳；vt. 拉","punished":"vt. 惩罚；vi. 惩罚","purpose":"n. 目的；vt. 决心","push":"n. 推，决心；vi. 推进","put":"n. 掷；adj. 固定不动的","puzzle":"谜；使困惑","quality":"质量；品质","quantum":"量子","question":"问题","questions":"问题","quick":"n. 核心；adj. 快的","quickly":"n. 核心；adj. 快的","quietly":"adv. 安静地","quite":"adv. 很","quiz":"测验","rain":"n. 雨；vt. 大量地给","rainy":"adj. 下雨的","raise":"n. 高地；vt. 提高","raises":"n. 高地；vt. 提高","raising":"n. 高地；vt. 提高","ran":"n. 奔跑；vt. 管理，经营","range":"范围；系列","ranger":"护林员；巡逻员","rarely":"很少","rather":"adv. 宁可，宁愿；int. 当然啦（回答问题时用）","reach":"到达","read":"n. 阅读；adj. 有学问的","readers":"读者","reading":"n. 阅读；adj. 有学问的","ready":"n. 现款；adj. 准备好","real":"真实的","real-life":"现实生活中的","realized":"vt. 实现","really":"真正地","reason":"n. 理由；vt. 说服","receive":"vt. 收到；vi. 接收","received":"vt. 收到；vi. 接收","recently":"adj. 最近的","record":"记录","recording":"记录","records":"记录","recover":"恢复；康复","recovering":"恢复；康复","recovery":"恢复","red":"红色的","refused":"n. 垃圾；vi. 拒绝","regard":"n. 注意；vi. 注意，注重","regions":"地区","regular":"定期的；规则的","regularly":"定期地","relatively":"n. 亲戚；adj. 相对的","relax":"vi. 放松，休息；vt. 放松","relaxed":"vi. 放松，休息；vt. 放松","relaxing":"vi. 放松，休息；vt. 放松","rely":"vi. 依靠","remained":"n. 遗迹；vi. 保持","remaining":"n. 遗迹；vi. 保持","remembered":"vi. 记得，记起；vt. 记得","reminder":"提醒；提示","reminds":"提醒","removed":"移除","replied":"n. 回答；vt. 回答","represents":"代表；象征","republic":"共和国","requires":"vt. 需要","researcher":"研究者","researchers":"研究者","researching":"n. 研究；vt. 研究","responsibility":"责任","responsibly":"负责任地","rest":"n. 休息，静止；vt. 使休息，使轻松","results":"n. 结果；vi. 结果","returned":"vi. 返回；adj. 报答的","rice":"n. 稻；vt. 把…捣成米糊状","riding":"n. 骑；vi. 骑马","rifle":"步枪","right":"n. 正确；adj. 正确的","rights":"n. 正确；adj. 正确的","ring":"戒指；铃声","rings":"戒指；铃声","rising":"n. 上升；vt. 使…飞起","risking":"n. 风险；vt. 冒…的危险","rita":"丽塔（人名）","rita's":"丽塔（人名）","rms":"皇家邮轮（RMS Titanic）","roast":"烤；Rock Roast 摇滚烧烤","robot":"n. 机器人","robotics":"机器人技术","rock":"n. 岩石；vt. 摇动","romantic":"浪漫的","room":"n. 房间；vt. 为…提供住处","ruining":"毁坏","rule":"n. 统治；vt. 统治","rules":"n. 统治；vt. 统治","rumour":"谣言","running":"n. 奔跑；vt. 管理，经营","sad":"adj. 难过的","sadder":"adj. 难过的","sadly":"adv. 悲哀地","sadness":"adj. 难过的","safe":"安全的","safety":"n. 安全","said":"说","salad":"n. 色拉","sam":"萨姆（人名）","same":"adj. 相同的；adv. 同样地（通常与the连用）","sang":"唱","saturday":"n. 星期六","save":"救；节省","saving":"节省；savings 积蓄","savings":"节省；savings 积蓄","saw":"看见","say":"说","says":"说","scams":"诈骗","scene":"场景","scholar":"学者","school":"学校","schools":"学校","schoolwork":"学业；功课","sci-fi":"科幻","science":"科学","science-fiction":"科幻小说","scientific":"科学的","scientist":"科学家","scientist's":"科学家","scientists":"科学家","score":"n. 分数；vt. 获得","scores":"n. 分数；vt. 获得","scoring":"n. 分数；vt. 获得","screen":"n. 屏，幕；vt. 筛","script":"剧本；脚本","seas":"n. 海","season":"季节","seasons":"季节","seat":"n. 座位；vt. 使…坐下","second":"n. um. 第二；adj. 第二的","secondary":"中学的；次要的","secret":"n. 秘密；adj. 秘密的","secretly":"n. 秘密；adj. 秘密的","section":"部分；板块","secure":"安全的；获得","security":"安全","see":"看见","seed":"看见","seeing":"看见","seem":"vi. 似乎","seemed":"vi. 似乎","seems":"vi. 似乎","seen":"看见","self-control":"自我控制","semester":"学期","send":"n. 上升运动；vi. 派人","sense":"n. 感觉，功能；vt. 感觉到","sensors":"传感器","sent":"n. 上升运动；vi. 派人","sentence":"n. [语][计] 句子，命题；vt. 判决，宣判","separated":"n. .分开；adj. 单独的","september":"n. 九月","series":"系列；连续剧","serious":"adj. 严肃的，严重的","seriously":"adj. 严肃的，严重的","serve":"n. 发球，轮到发球；vi. 服役，服务","served":"n. 发球，轮到发球；vi. 服役，服务","server":"n. 发球，轮到发球；vi. 服役，服务","set":"n. [数] 集合；adj. 固定的","several":"adj. 几个的；pron. 几个","shaanxi":"陕西","shame":"n. 羞耻，羞愧；vt. 使丢脸，使羞愧","shameful":"可耻的","shamefully":"可耻的","shanghai":"上海","share":"分享","shared":"分享","sharing":"分享","sharpening":"削尖；提高","shen":"沈（Shen Chao 沈超）","sheng":"盛（Sheng Lihao 盛李豪）","shi":"高适（Gao Shi）","shining":"vt. 照射，擦亮；vi. 发出光","ship":"n. 船；vt. 运送，乘船","shooter":"射手","shooters":"射手","shooting":"n. 射击；vt. 射击，射中","shop":"n. 商店；vt. 购物","shopping":"n. 购物，买东西","shops":"n. 商店；vt. 购物","short":"短的","shot":"n. 发射；adj. 用尽的","shots":"n. 发射；adj. 用尽的","shouted":"n. 呼喊；vi. 呼喊","show":"展示；节目","showed":"展示；节目","showing":"展示；节目","shown":"展示；节目","shows":"展示；节目","sign":"n. 迹象；vt. 签署","signed":"n. 迹象；vt. 签署","silent":"n. 无声电影；adj. 沉默的","similar":"n. 类似物；adj. 相似的","simple":"简单的","simply":"仅仅；简单地","sing":"唱","singer":"n. 歌手，歌唱家","singing":"唱","single":"n. 一个；adj. 单一的","sinking":"n. 水槽；vi. 下沉","sinks":"n. 水槽；vi. 下沉","sit":"vi. 坐；vt. 使就座","sitting":"vi. 坐；vt. 使就座","six":"n. um. 六，六个","sixties":"六十","sixtieth":"第六十","sixty":"六十","skilfully":"熟练的","skill":"技能","skillful":"熟练的","skills":"技能","sky":"n. 天空；vt. 把…投向空中","sleep":"n. 睡眠；vi. 睡，睡觉","slight":"轻微的","slowly":"adv. 缓慢地，慢慢地","small":"小的","smart":"adj. 聪明的","smartphones":"智能手机","smelled":"n. 气味，嗅觉；vt. 嗅，闻","smile":"n. 微笑；vt. 微笑着表示","so-called":"adj. 所谓的","soccer":"n. 英式足球，足球","society":"n. 社会","software":"n. 软件","soil":"n. 土地；vt. 弄脏","solar":"太阳的","solution":"解决办法","solutions":"解决办法","solve":"解决","something":"某事","sometimes":"adv. 有时，间或","song":"n. 歌曲","songs":"n. 歌曲","soon":"很快","sophia":"索菲娅（人名）","sorcerer's":"魔法师（Sorcerer's Stone 魔法石）","sorry":"adj. 遗憾的；int. 对不起，抱歉（表示委婉的拒绝等）","sort":"n. 种类；vt. 将…分类","sounds":"n. 声音，语音；adj. 健全的，健康的","space":"空间；太空","spain":"西班牙","spare":"n. 剩余；vt. 节约，吝惜","speak":"vi. 说话；vt. 讲话","speaker":"n. 演讲者","speaks":"vi. 说话；vt. 讲话","special":"特别的","specially":"特别的","speech":"演讲","speeches":"演讲","spend":"n. 预算；vt. 度过，消磨（时光）","spending":"n. 预算；vt. 度过，消磨（时光）","spends":"n. 预算；vt. 度过，消磨（时光）","spent":"n. 预算；vt. 度过，消磨（时光）","spirit":"n. 精神；vt. 鼓励","spirits":"n. 精神；vt. 鼓励","spoke":"vi. 说话；vt. 讲话","spoken":"vi. 说话；vt. 讲话","sport":"运动","sports":"运动","spot":"发现；地点","sprout":"发芽；嫩芽","stage":"舞台；阶段","staged":"上演","stand":"站；忍受","stand-up":"站立的（stand-up paddleboarding 桨板…","stands":"站；忍受","starring":"n. 星，恒星；adj. 明星的，主角的","stars":"n. 星，恒星；adj. 明星的，主角的","start":"开始","started":"开始","starting":"开始","statement":"n. 国家；adj. 国家的","station":"n. 车站；vt. 配置","stay":"停留","stayed":"停留","stays":"停留","steal":"n. 偷窃；vt. 剽窃","stepped":"n. 步，脚步；vt. 走，迈步","steps":"n. 步，脚步；vt. 走，迈步","stick":"n. 棍；vi. 坚持","still":"仍然","stone":"石头（Sorcerer's Stone 魔法石）","stop":"n. 停止；vi. 停止","stopped":"n. 停止；vi. 停止","stopping":"n. 停止；vi. 停止","store":"n. 商店；vt. 贮藏，储存","stories":"故事","storm":"n. 暴风雨；vt. 猛攻","stormy":"暴风雨的","story":"故事","storylines":"故事情节","strange":"adj. 奇怪的；adv. 奇怪地","street":"n. 街道；adj. 街道的","strength":"力量；长处","strengthen":"加强","stress":"压力；强调","stressed":"有压力的","strong":"adj. 坚强的；adv. 强劲地","strongly":"adj. 坚强的；adv. 强劲地","struggles":"挣扎；奋斗","struggling":"挣扎；奋斗","student":"学生","students":"学生","studies":"学习；研究","study":"学习；研究","stuff":"东西；材料","succeeds":"vi. 成功；vt. 继承","success":"成功","successful":"adj. 成功的","successfully":"adv. 成功地","such":"这样的","suddenly":"突然","suggest":"vt. 提议，建议","suggestions":"n. 建议","suggests":"vt. 提议，建议","sun":"n. 太阳；vt. 使晒","sunflower":"向日葵","sung":"唱","sup":"SUP＝stand-up paddleboarding 桨板","super":"超级的","superhero":"超级英雄","superheroes":"超级英雄","supermarket":"n. 超级市场","superpower":"超能力","superpowers":"超能力","support":"支持","supported":"支持","supportive":"支持的","supports":"支持","sure":"adj. 确信的；adv. 当然","surf":"vi. 作冲浪运动；vt. 在…冲浪","surprise":"n. 惊奇，诧异；adj. 令人惊讶的","surprised":"n. 惊奇，诧异；adj. 令人惊讶的","surprising":"n. 惊奇，诧异；adj. 令人惊讶的","survived":"幸存","suzhou":"苏州（昆曲发源地）","swagbot":"放牧机器人（SwagBot）","swallow":"吞下；燕子","switched-off":"关机的","symbolize":"象征","system":"系统；体系","systems":"系统；体系","table":"n. 桌子；vt. 制表","taipei":"台北","taiwan":"中国台湾","take":"拿；花费","takes":"拿；花费","taking":"拿；花费","talent":"天赋；人才","talented":"有天赋的","talk":"谈话","tang":"唐（唐朝 the Tang dynasty）","target":"目标；瞄准","tarts":"果馅饼","task":"n. 工作，作业；vt. 分派任务","taught":"vt. 教；vi. 教授","taxi":"n. 出租汽车；vt. 使滑行","teach":"vt. 教；vi. 教授","teacher":"n. 教师","teachers":"n. 教师","teaches":"vt. 教；vi. 教授","teaching":"vt. 教；vi. 教授","team":"队","teams":"队","tear":"vi. 流泪, 撕破；n. 眼泪, （撕破的）洞或裂缝, 撕…","tears":"vi. 流泪, 撕破；n. 眼泪, （撕破的）洞或裂缝, 撕…","technological":"技术的","technology":"n. 技术","teenagers":"青少年","tell":"告诉","tells":"告诉","temperature":"温度","temperatures":"温度","ten":"n. um. 十个，十","tense":"紧张的；时态","terrible":"adj. 可怕的；adv. 很，非常","terrorists":"恐怖分子","test":"n. 试验；vt. 试验","testing":"n. 试验；vt. 试验","text":"文本；发短信","that's":"conj. 因为；adj. 那","themselves":"pron. 他们自己","therapist":"治疗师","thermometer":"温度计","thing":"东西；事情","things":"东西；事情","think":"想；认为","third":"第三","third-smallest":"第三小的","thirty":"n. um. 三十；adj. 三十个的","thor":"雷神（Thor）","thought":"n. 思想","thousands":"n. 一千；adj. 成千的","threats":"威胁","through":"通过","ticket":"vt. 加标签于","tightly":"紧紧地","time":"时间；次数","times":"时间；次数","timestamp":"时间戳","tiny":"adj. 微小的","tips":"建议；小费","tired":"累的","titanic":"adj. 巨大的；n. 泰坦尼克号","title":"标题；头衔","today":"n. 今天；adv. 今天","together":"一起","told":"告诉","tomorrow":"n. 明天；adv. 明天","tonight's":"n. 今晚；adv. 在今晚","tony":"托尼（人名）","took":"拿；花费","tool":"n. 工具，用具；vt. 用工具给……加工","tools":"n. 工具，用具；vt. 用工具给……加工","top":"n. 顶部，顶端；adj. 最高的，顶上的","topics":"话题","torres":"托雷斯（Mr Torres）","totally":"n. 总数，合计；adj. 全部的","touch":"n. 接触；vt. 接触","touching":"n. 接触；vt. 接触","tour":"n. 旅游，旅行；vt. 旅行，在……旅游","toward":"朝向；对于","towards":"prep. 朝，向","toy":"玩具","toys":"玩具","trace":"追踪；痕迹","track":"n. 轨道；vt. 追踪","trade":"n. 贸易，交易；vt. 用…进行交换","tradition":"传统","traditional":"传统的","traditions":"传统","traffic":"n. 交通；vt. 用…作交换","tragic":"悲惨的","trained":"n. 火车","training":"n. 训练","trains":"n. 火车","translates":"vt. 翻译；vi. 翻译","travels":"n. 旅行；vt. 经过","treasure":"n. 财富，财产；vt. 珍爱","treasures":"n. 财富，财产；vt. 珍爱","treatment":"n. 治疗，疗法","tried":"尝试","tries":"尝试","trip":"n. 旅行；vt. 绊倒","trouble":"n. 麻烦；vt. 麻烦","troublesome":"麻烦的","truly":"真正地","try":"尝试","trying":"尝试","tu":"图（Tu Hengyu 图恒宇）","turn":"n. 转弯；vi. 转向","turned":"n. 转弯；vi. 转向","turns":"n. 转弯；vi. 转向","turtles":"乌龟","tutorials":"教程","tv":"电视","twenty-five":"二十五","twenty-two":"二十二","twice":"adv. 两次","type":"n. 类型，品种；vt. 打字","uk":"n. 英国；abbr. 联合王国（United Kingdo…","unbroken":"未被打断的","unchanged":"未改变的","underlined":"画了下划线的","understand":"vi. 理解；vt. 理解","understanding":"vi. 理解；vt. 理解","unesco's":"联合国教科文组织（UNESCO）","unexpected":"意外的","unexpectedly":"出人意料地","unfair":"不公平的","unfamiliar":"不熟悉的","unforgettable":"难忘的","uninterested":"不感兴趣的","united":"n. 单位，单元","unity":"团结","universe":"n. 宇宙","universities":"n. 大学","university":"n. 大学","unknown":"未知的","unlike":"prep. 和…不同，不像；adj. 不同的，不相似的","unlock":"解锁","unnecessary":"不必要的","unorthodox":"非正统的","unsafe":"不安全的","unstable":"不稳定的","unsure":"不确定的","untrained":"未受训练的","uploading":"上传","uploads":"上传","upright":"直立的","upset":"难过的；使心烦","use":"使用","used":"adj. 习惯的","useful":"有用的","useless":"无用的","uses":"pron. 我们","using":"pron. 我们","usually":"通常","variety":"多样性；种类","various":"各种各样的","variously":"各种各样的","vegetables":"n. 蔬菜；adj. 蔬菜的","verde":"佛得角（Cabo Verde）","verde's":"佛得角（Cabo Verde）","verdean":"佛得角的（Cape Verdean）","version":"版本","versions":"版本","vi":"六（George VI 乔治六世）","video":"n. [电子] 视频；adj. 视频的","videos":"n. [电子] 视频；adj. 视频的","view":"看法；景色","visitors":"n. 访问者，参观者","visits":"n. 访问；vt. 访问","vista":"维斯塔（Boa Vista 博阿维斯塔）","visual":"视觉的","voice":"n. 声音；vt. 表达","waited":"n. 等待；vi. 等待","waiter":"n. 服务员，侍者","waiting":"n. 等待；vi. 等待","walk":"走路；散步","walked":"走路；散步","walking":"走路；散步","wall":"n. 墙壁，围墙；adj. 墙壁的","wandering":"漫游的（片名《流浪地球》）","wang":"王（Wang Zhenyi 王贞仪）","want":"想要","wanted":"想要","wants":"想要","warm":"温暖的","wasn't":"不是（was not）","waste":"n. 浪费；adj. 废弃的","watch":"观看；手表","watched":"观看；手表","watching":"观看；手表","water":"n. 水；vt. 使湿","way":"方式；路","ways":"方式；路","we're":"我们是（we are）","weak":"adj. [经] 疲软的","weaknesses":"弱点","wealthy":"富有的","website":"n. 网站（全球资讯网的主机站）","websites":"n. 网站（全球资讯网的主机站）","weekend":"n. 周末，周末休假；adj. 周末的，周末用的","weekends":"n. 周末，周末休假；adj. 周末的，周末用的","weeks":"n. 周，星期","weight":"n. 重量，重力；vt. 加重量于，使变重","welcome":"n. 欢迎；vt. 欢迎","well":"好；健康的","well-known":"著名的","went":"去","west":"n. 西；adj. 西方的","western":"n. 西方人；adj. 西方的，西部的","whatever":"conj. 无论什么；adj. 不管什么样的","wheels":"n. 车轮；vt. 转动","where's":"conj. 在…的地方；n. 地点","whether":"是否","white":"n. 白色；adj. 白色的","whole":"n. 整体；adj. 完整的","wide":"n. 大千世界；adj. 广泛的","willy":"威利（Willy Wonka）","win":"n. 赢；vt. 赢得","winner":"n. 胜利者","winning":"n. 赢；vt. 赢得","wins":"n. 赢；vt. 赢得","winter":"n. 冬季；adj. 冬天的","wise":"adj. 明智的；vt. 使知道","wish":"n. 希望；vt. 祝愿","witchcraft":"魔法","without":"prep. 没有；n. 外部","wizard":"巫师","wizardry":"巫术","woman":"妇女","women":"妇女","won":"n. 赢；vt. 赢得","wonderful":"adj. 极好的，精彩的，绝妙的","wonka":"旺卡（Willy Wonka）","wood":"n. 木材；vt. 植林于","woody":"胡迪（《玩具总动员》人物）","word":"单词","words":"单词","work":"工作；作品","worked":"工作；作品","works":"工作；作品","workshop":"工作坊；车间","world":"世界","world's":"世界","worldwide":"全世界的","worried":"adj. 担心的","worries":"担心","worry":"担心","worrying":"担心","worse":"n. 更坏的事；adj. 更坏的","wouldn't":"不会（would not）","write":"写","writing":"写","written":"写","wrong":"n. 坏事；adj. 错误的","wrote":"写","xi'an":"西安","xianzu":"汤显祖（Tang Xianzu）","yang":"杨（Ms Yang 杨老师）","yaya":"丫丫（图恒宇的女儿）","year":"年","year-old":"……岁的","years":"年","yellow":"黄色的","yes":"是的","yesterday":"n. 昨天；adv. 昨天","yet":"conj. 但是；adv. 还","you'll":"你将会（you will）","you're":"你是（you are）","you've":"你已经（you have）","young":"年轻的","younger":"更年轻的","youngest-ever":"史上最年轻的","yours":"pron. 你（们）的东西；adj. 你（们）的（东西）","yourself":"pron. 你自己","yousafzai":"优素福扎伊（Malala 的姓）","youth":"青年；青春","yuan":"元（人民币）","zhang":"张（Mr Zhang 张先生）","zhenyi":"王贞仪（清代女科学家）","zhuangzi":"《庄子》","zone":"地带；区域","zongzi":"粽子"},"phrases":{"all over the world":"遍及全世界","for the first time":"第一次","as long as":"只要","as well as":"和…一样","be able to":"能够","come to life":"苏醒过来","come up with":"想出(一个主意或计划)","day after day":"天天","hand in hand":"手拉手","in front of":"在…的前面","in order to":"为了","in the future":"今后","in the past":"在过去","more and more":"越来越…","no matter how":"不管怎样","pay attention to":"注意","play the piano":"弹钢琴","sing a song":"唱歌","stay away from":"回避","would like to":"将乐意","year after year":"年复一年","a few":"几个","a little":"一点","according to":"根据","after all":"毕竟","agree to":"承认(提议","all day":"一天到晚","all over":"满；n. 全花织物","as if":"彷佛","as well":"也","ask for":"要(价)","at night":"在黄昏时候","because of":"因","break into":"闯进","break out":"起","communicate with":"联络","deal with":"办理","die of":"因…而死","due to":"亏","end up":"结束","even if":"即使…也","fight for":"争取","find out":"查出","for example":"例如","get together":"聚集","give up":"放弃","go out":"出去","hand in":"交进","have to":"必须","hear about":"得知；听到关于","how far":"(离…)多远","how long":"多长时间","how many":"多少","how often":"多长时间一次","how soon":"多久","hundreds of":"好几百","in addition":"加之","in english":"用英语","in order":"整整齐齐","in public":"公然","instead of":"代替","join in":"参加","just now":"刚才","kind of":"有点儿","lead to":"通向","learn about":"得知关于；学习关于","listen to":"听","look around":"看起来好像","look at":"看","lose weight":"体重减轻","lots of":"许多","make it":"赶到","millions of":"数百万","more than":"…以上","most of":"大多数","on foot":"步行","on weekends":"在周末","or so":"与其说…不如说…；大约","plenty of":"很多的","rely on":"依靠；信赖","so that":"因此","stand for":"〈口〉忍耐","stick to":"忠于","take away":"买回去的","talk about":"讲(某事)","think about":"思考","think of":"想起","too much":"太过份","write down":"记下来"}};
 </script>
 <script>
 (function () {
@@ -5951,6 +8242,7 @@ window.QUIZ_DATA = {
   var DATA = window.QUIZ_DATA || { units: [] };
   var STORE_KEY = "eng9a-practice-v1";
   var VIEW_KEY = "eng9a-view-v1";
+  var GLOSS_KEY = "eng9a-gloss-v1";
   var AT_KEEP = 10;
   var HIST_KEEP = 5;
   var ID_MIGRATION = window.__ID_MIGRATION || {};
@@ -5973,6 +8265,117 @@ window.QUIZ_DATA = {
     return String(s == null ? "" : s)
       .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
       .replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+  }
+
+  /* ══ 悬停词义 ══════════════════════════════════════
+     数据：window.PRACTICE_GLOSS（build.mjs 注入）= 词形 → 中文释义。构建期已经把
+     -s/-ed/-ing/-er/-est/-ly、不规则动词、名词复数都展开成具体词形，所以这里只做精确查表，
+     不再在前端跑一套词形还原。
+     题干 / 选项 / 短文里命中词表的词包一层 .zw，悬停（触屏点按）出 #zh-tip；
+     解析不处理——那是中文讲解，不需要再翻。
+     短语优先于单词，按词数从长到短匹配，look forward to 才不会被拆成 look + forward。 */
+  function normEn(s) { return String(s == null ? "" : s).toLowerCase().replace(/\u2019/g, "'"); }
+  var GLOSS = (function () {
+    var raw = window.PRACTICE_GLOSS && typeof window.PRACTICE_GLOSS === "object" ? window.PRACTICE_GLOSS : {};
+    var words = {}, phrases = [];
+    Object.keys(raw.words || {}).forEach(function (k) {
+      var v = raw.words[k];
+      if (typeof v === "string" && v) words[normEn(k)] = v;
+    });
+    Object.keys(raw.phrases || {}).forEach(function (k) {
+      var v = raw.phrases[k], ws = normEn(k).split(/\s+/).filter(Boolean);
+      if (typeof v === "string" && v && ws.length > 1) phrases.push({ ws: ws, zh: v });
+    });
+    phrases.sort(function (a, b) { return b.ws.length - a.ws.length; });
+    return { words: words, phrases: phrases, size: Object.keys(words).length };
+  })();
+  var WORD_RE = /[A-Za-z](?:[A-Za-z'\u2019-]*[A-Za-z])?/g;
+  /* 英文 → HTML：命中词表的词/短语包 .zw（data-zh），其余原样转义。
+     与 esc() 等价，只是多包了这一层，所以渲染英文时一律用它替换 esc()。 */
+  function enHTML(text) {
+    var s = String(text == null ? "" : text);
+    if (!GLOSS.size) return esc(s);
+    var words = [], m;
+    WORD_RE.lastIndex = 0;
+    while ((m = WORD_RE.exec(s))) words.push({ lo: normEn(m[0]), s: m.index, e: m.index + m[0].length });
+    var out = "", cursor = 0, i = 0;
+    while (i < words.length) {
+      var hit = null, p, j;
+      for (p = 0; p < GLOSS.phrases.length; p++) {
+        var ph = GLOSS.phrases[p];
+        if (i + ph.ws.length > words.length) continue;
+        var same = true;
+        for (j = 0; j < ph.ws.length; j++) if (words[i + j].lo !== ph.ws[j]) { same = false; break; }
+        if (!same) continue;
+        /* 中间不许夹别的字符（空格、撇号、连字符除外），免得跨过空位拼出短语 */
+        if (!/^[A-Za-z'\u2019\-\s]+$/.test(s.slice(words[i].s, words[i + ph.ws.length - 1].e))) continue;
+        hit = { zh: ph.zh, last: i + ph.ws.length - 1, s: words[i].s, e: words[i + ph.ws.length - 1].e };
+        break;
+      }
+      if (!hit && Object.prototype.hasOwnProperty.call(GLOSS.words, words[i].lo)) {
+        hit = { zh: GLOSS.words[words[i].lo], last: i, s: words[i].s, e: words[i].e };
+      }
+      if (hit) {
+        out += esc(s.slice(cursor, hit.s));
+        out += '<span class="zw" data-zh="' + esc(hit.zh) + '">' + esc(s.slice(hit.s, hit.e)) + "</span>";
+        cursor = hit.e;
+        i = hit.last + 1;
+      } else i++;
+    }
+    return out + esc(s.slice(cursor));
+  }
+  var tipEl = null;
+  function tipNode() {
+    if (!tipEl || !tipEl.parentNode) tipEl = document.getElementById("zh-tip");
+    return tipEl;
+  }
+  function showTip(el) {
+    var zh = el && el.getAttribute ? el.getAttribute("data-zh") : "";
+    var t = tipNode();
+    if (!zh || !t || document.body.classList.contains("no-gloss")) return;
+    t.innerHTML = '<span class="zt-zh"></span><span class="zt-en"></span>';
+    t.querySelector(".zt-zh").textContent = zh;
+    t.querySelector(".zt-en").textContent = (el.textContent || "").replace(/\s+/g, " ").trim();
+    t.classList.add("show");
+    t.setAttribute("aria-hidden", "false");
+    var r = el.getBoundingClientRect();
+    var tw = t.offsetWidth, th = t.offsetHeight, vw = window.innerWidth;
+    var cx = r.left + r.width / 2;
+    var left = Math.min(Math.max(8 + tw / 2, cx), vw - 8 - tw / 2);
+    var top = r.top - th - 7, below = false;
+    if (top < 6) { top = r.bottom + 7; below = true; }
+    t.style.left = left + "px";
+    t.style.top = top + "px";
+    t.classList.toggle("below", below);
+  }
+  function hideTip() {
+    var t = tipNode();
+    if (t) { t.classList.remove("show"); t.setAttribute("aria-hidden", "true"); }
+    var hot = document.querySelector(".zw.is-hot");
+    if (hot) hot.classList.remove("is-hot");
+  }
+  /* 鼠标划过看词义；触屏点一下也出（点别处收起）。用事件委托，重绘后不用重新绑定 */
+  function initZhHover() {
+    document.addEventListener("pointerover", function (e) {
+      var el = e.target && e.target.closest ? e.target.closest(".zw") : null;
+      if (el) showTip(el);
+    });
+    document.addEventListener("pointerout", function (e) {
+      var el = e.target && e.target.closest ? e.target.closest(".zw") : null;
+      if (el) hideTip();
+    });
+    document.addEventListener("pointerdown", function (e) {
+      var el = e.target && e.target.closest ? e.target.closest(".zw") : null;
+      hideTip();
+      if (!el) return;
+      el.classList.add("is-hot");
+      showTip(el);
+    });
+    document.addEventListener("scroll", hideTip, true);
+    window.addEventListener("resize", hideTip);
+  }
+  function applyGlossPref() {
+    document.body.classList.toggle("no-gloss", S.gloss === false);
   }
   function pad(n) { return n < 10 ? "0" + n : String(n); }
   function fmtAt(iso) {
@@ -6040,6 +8443,13 @@ window.QUIZ_DATA = {
   function acceptedList(it) {
     return [it.answerRaw].concat(it.alt || []).map(norm).filter(Boolean);
   }
+  /* 无参考答案 / 占位答案（「（无标准答案）」、原卷涂改遮挡）的题：只记「做过」，不判对错、不进错题。
+     典型：U2 被涂改带盖住的空、U5/U6 的书面表达。 */
+  function isUngraded(it) {
+    if (!it || it.kind === "mc") return false;
+    var a = String(it.answerRaw || "");
+    return !a || /^[（(]/.test(a);
+  }
   function scanHref(it) {
     /* 单元可用 scan 指定原卷图（题库内文件名）；显式 null = 该单元没有收录原卷 */
     var u = UNIT_BY[it.unit];
@@ -6086,9 +8496,11 @@ window.QUIZ_DATA = {
   function isAnswered(it) { return it.kind === "mc" ? !!pickOf(it) : !!fillOf(it); }
   function statOf(it) { return store.stat[it.id] || null; }
   function isRight(it) { return judge(it, it.kind === "mc" ? pickOf(it) : fillOf(it)); }
-  /* 判分只有这一处：选择题比字母，填空题整串归一化后比（等价写法按 alt） */
+  /* 判分只有这一处：选择题比字母，填空题整串归一化后比（等价写法按 alt）。
+     返回 true / false / null——null = 这道题没有可判的答案（见 isUngraded），调用方必须当「不计分」处理 */
   function judge(it, sel) {
     if (it.kind === "mc") return sel === it.answer;
+    if (isUngraded(it)) return null;
     var v = Array.isArray(sel) ? sel.join(" / ") : String(sel == null ? "" : sel);
     return acceptedList(it).indexOf(norm(v)) >= 0;
   }
@@ -6111,9 +8523,10 @@ window.QUIZ_DATA = {
     else store.fills[it.id] = Array.isArray(shown) ? shown.map(function (x) { return String(x || "").trim(); }) : [String(shown || "").trim()];
     var st = store.stat[it.id] || (store.stat[it.id] = { att: 0, ok: 0, wrong: 0 });
     st.att++;
-    if (ok) { st.ok = (st.ok || 0) + 1; } else { st.wrong = (st.wrong || 0) + 1; delete store.cleared[it.id]; }
+    if (ok === null) { /* 无标准答案：只记做过，不计对错 */ }
+    else if (ok) { st.ok = (st.ok || 0) + 1; } else { st.wrong = (st.wrong || 0) + 1; delete store.cleared[it.id]; }
     var h = Array.isArray(store.hist[it.id]) ? store.hist[it.id] : [];
-    h.unshift({ a: it.kind === "mc" ? shown : Array.isArray(shown) ? shown.join(" / ") : String(shown || ""), ok: !!ok, at: iso });
+    h.unshift({ a: it.kind === "mc" ? shown : Array.isArray(shown) ? shown.join(" / ") : String(shown || ""), ok: ok === null ? null : !!ok, at: iso });
     store.hist[it.id] = h.slice(0, HIST_KEEP);
     saveStore();
   }
@@ -6149,12 +8562,17 @@ window.QUIZ_DATA = {
     exam: null,
     settle: false,
     onlyFills: false,
+    gloss: true,
     reviewTab: "wrong",
     reviewUnit: "all"
   };
   try {
     var vp = JSON.parse(localStorage.getItem(VIEW_KEY) || "{}");
     if (vp && vp.mode === "exam") S.mode = "exam";
+  } catch (e) {}
+  try {
+    var gp = localStorage.getItem(GLOSS_KEY);
+    if (gp === "0") S.gloss = false;
   } catch (e) {}
 
   function unit() { return UNIT_BY[S.unit] || UNITS[0]; }
@@ -6180,7 +8598,7 @@ window.QUIZ_DATA = {
     if (text == null || text === "") return "";
     var body = String(text).replace(/\{\{(\d+)\}\}/g, function (_m, n) { return "______(" + n + ")"; });
     return '<details class="item-passage" open><summary>' + esc(it.passage) + " · 本大题原文</summary>" +
-      '<div class="passage-text">' + esc(body) + "</div></details>";
+      '<div class="passage-text">' + enHTML(body) + "</div></details>";
   }
   /* 短文里的 {{n}} 按「题号」取题，不能按数组下标（大题题号不一定从 1 开始） */
   function pickBlank(list, no) {
@@ -6223,7 +8641,9 @@ window.QUIZ_DATA = {
   }
   function stepState(step) {
     if (step.items.every(function (it) { return shownState(it); })) {
-      return step.items.every(function (it) { return isRight(it); }) ? "right" : "wrong";
+      var rs = step.items.map(function (it) { return isRight(it); });
+      if (rs.indexOf(false) >= 0) return "wrong";
+      return rs.indexOf(null) >= 0 ? "picked" : "right";   // null = 不计分的题，不算对也不算错
     }
     var any = step.items.some(function (it) {
       var sel = currentSelection(it);
@@ -6297,6 +8717,10 @@ window.QUIZ_DATA = {
     html += "</div>";
     html += '<button class="btn sm" data-act="cards">答题卡</button>';
     html += '<button class="btn sm ghost" data-act="only-fills" aria-pressed="' + (S.onlyFills ? "true" : "false") + '">只看填空</button>';
+    if (GLOSS.size) {
+      html += '<button class="btn sm ghost" data-act="gloss" aria-pressed="' + (S.gloss ? "true" : "false") +
+        '" title="鼠标划过英文单词显示中文（触屏点一下也行）">词义' + (S.gloss ? "·开" : "·关") + "</button>";
+    }
     if (!ONLINE && scanHref(it)) html += '<a class="btn sm ghost" href="' + esc(scanHref(it)) + '" target="_blank" rel="noopener">原卷</a>';
     html += '<span class="spacer"></span>';
     html += '<span class="hint">' + esc(u.unit) + " · " + esc(u.title) + "</span>";
@@ -6326,14 +8750,14 @@ window.QUIZ_DATA = {
       (S.marks[it.id] ? ' data-marked="1"' : "") + ">";
     html += '<div class="qhead">';
     html += '<span class="ref">' + esc(itemRef(it)) + "</span>";
-    html += '<span class="type">' + (it.kind === "mc" ? "选择" : "填空") + "</span>";
+    html += '<span class="type">' + (it.kind === "mc" ? "选择" : it.kind === "other" ? "写作" : "填空") + "</span>";
     if (S.marks[it.id]) html += '<span class="mark-badge">已标记</span>';
     html += '<span class="unit">' + esc(u.title) + " · " + (isExam() ? "模拟考" : "过关") + "</span>";
     html += "</div>";
 
     html += itemPassageHTML(it);
     html += '<div class="stem">' + (it.cn ? '<span class="cn" lang="zh">' + esc(it.cn) + "</span>" : "") +
-      esc(it.stem).replace(/_{3,}/g, '<span class="blank"></span>') + "</div>";
+      enHTML(it.stem).replace(/_{3,}/g, '<span class="blank"></span>') + "</div>";
 
     if (it.kind === "mc") html += optionsHTML(it);
     else html += fieldsHTML(it);
@@ -6361,7 +8785,7 @@ window.QUIZ_DATA = {
     var hist = store.hist[it.id];
     if (Array.isArray(hist) && hist.length) {
       var h0 = hist[0] || {};
-      html += '<span>最近一次作答：' + esc(h0.a || "—") + "（" + (h0.ok ? "对" : "错") + "）" +
+      html += '<span>最近一次作答：' + esc(h0.a || "—") + "（" + (h0.ok === null ? "待核对" : h0.ok ? "对" : "错") + "）" +
         (h0.at ? " · " + fmtAt(h0.at) : "") + (hist.length > 1 ? " · 共 " + hist.length + " 次留档" : "") + "</span><br>";
     }
     if (S.reveals[it.id] || (isExam() && S.exam && S.exam.done)) {
@@ -6391,7 +8815,7 @@ window.QUIZ_DATA = {
     var text = String(u.passages[step.section] || "");
     html += '<div class="passage-text">';
     text.split(/\{\{(\d+)\}\}/).forEach(function (seg, i) {
-      if (i % 2 === 0) { html += esc(seg); return; }
+      if (i % 2 === 0) { html += enHTML(seg); return; }
       var it = pickBlank(list, +seg);
       if (it) html += inlineBlankHTML(it);
     });
@@ -6414,7 +8838,7 @@ window.QUIZ_DATA = {
     var parts = answerParts(it);
     var judged = S.reveals[it.id];
     var st = "";
-    if (judged) st = !it.answerRaw ? "unknown" : norm(v) === norm(parts[0]) ? "right" : "wrong";
+    if (judged) st = isUngraded(it) ? "unknown" : norm(v) === norm(parts[0]) ? "right" : "wrong";
     return '<span class="inline-blank-wrap">' +
       '<span class="blank-no">' + esc(it.no) + "</span>" +
       '<input class="field inline-blank" data-id="' + esc(it.id) + '" data-i="0" type="text" ' +
@@ -6430,7 +8854,7 @@ window.QUIZ_DATA = {
       var parts = answerParts(it);
       var vals = fillOf(it) || [];
       var mine = vals[0] || "";
-      var noAnswer = !it.answerRaw;
+      var noAnswer = isUngraded(it);
       var ok = !noAnswer && !!mine && norm(mine) === norm(parts[0]);
       html += '<details class="blank-row" ' + (ok ? "" : "open") + ">";
       html += '<summary><span class="bn">第 ' + esc(it.no) + " 空</span>" +
@@ -6454,7 +8878,10 @@ window.QUIZ_DATA = {
     return n;
   }
   function cardState(it) {
-    if (S.reveals[it.id]) return isRight(it) ? "right" : "wrong";
+    if (S.reveals[it.id]) {
+      var r = isRight(it);
+      return r === null ? "picked" : r ? "right" : "wrong";
+    }
     var sel = currentSelection(it);
     if (sel !== undefined && sel !== null && !(Array.isArray(sel) && !sel.some(function (x) { return String(x || "").trim(); }))) return "picked";
     return "unanswered";
@@ -6470,7 +8897,7 @@ window.QUIZ_DATA = {
       } else if (sel === o.k) st = "picked";
       html += '<button class="opt" data-k="' + esc(o.k) + '" data-state="' + st + '"' +
         (S.reveals[it.id] ? " disabled" : "") + ' aria-pressed="' + (sel === o.k ? "true" : "false") + '">' +
-        '<span class="k">' + esc(o.k) + "</span><span>" + esc(o.t) + "</span></button>";
+        '<span class="k">' + esc(o.k) + "</span><span>" + enHTML(o.t) + "</span></button>";
     });
     html += "</div>";
     return html;
@@ -6481,10 +8908,15 @@ window.QUIZ_DATA = {
     var parts = answerParts(it);
     var judged = S.reveals[it.id];
     var isLong = it.fields === 1;
+    /* 整题按「拼起来」判（judge 的口径）；只看单空对错会给「✓ 答对了 + 两个空都标红」的矛盾画面，
+       所以整题对就全绿，整题不对才逐空标红指出差在哪 */
+    var allOk = judged && judge(it, vals) === true;
     var html = '<div class="fields">';
     for (var i = 0; i < it.fields; i++) {
       var st = "";
-      if (judged && parts.length === it.fields) st = norm(vals[i]) === norm(parts[i]) ? "right" : "wrong";
+      if (judged && isUngraded(it)) st = "unknown";
+      else if (allOk) st = "right";
+      else if (judged && parts.length === it.fields) st = norm(vals[i]) === norm(parts[i]) ? "right" : "wrong";
       html += '<span class="fieldwrap' + (isLong ? " sentence" : "") + '">' +
         (it.fields > 1 ? '<span class="idx">' + (i + 1) + "</span>" : "") +
         '<input class="field" data-i="' + i + '" type="text" autocomplete="off" spellcheck="false" ' +
@@ -6494,7 +8926,7 @@ window.QUIZ_DATA = {
         "</span>";
     }
     html += "</div>";
-    if (judged && parts.length === it.fields && it.fields > 1) {
+    if (judged && !allOk && parts.length === it.fields && it.fields > 1) {
       var rightN = 0;
       for (var j = 0; j < it.fields; j++) if (norm(vals[j]) === norm(parts[j])) rightN++;
       html += '<div class="hint" style="margin-top:8px">' + it.fields + " 空里对 " + rightN + " 空（整题全对才算对）</div>";
@@ -6502,11 +8934,12 @@ window.QUIZ_DATA = {
     return html;
   }
   function verdictHTML(it) {
-    var ok = isRight(it);
-    var html = '<div class="verdict" data-ok="' + (ok ? "1" : "0") + '"><span class="mark">' + (ok ? "✓" : "✗") + "</span>" +
-      (ok ? "答对了" : "答错了") + "</div>";
-    if (!it.answer && !it.manual) {
-      html += '<div class="verify"><div class="vlab">提示</div><div class="vtxt">这道题没有参考答案（原卷涂改/遮挡），请对照原卷核对。</div></div>';
+    var r = isRight(it);
+    var ok = r === true;
+    var html = '<div class="verdict" data-ok="' + (r === null ? "x" : ok ? "1" : "0") + '"><span class="mark">' +
+      (r === null ? "·" : ok ? "✓" : "✗") + "</span>" + (r === null ? "本题不计分" : ok ? "答对了" : "答错了") + "</div>";
+    if (isUngraded(it)) {
+      html += '<div class="verify"><div class="vlab">提示</div><div class="vtxt">这道题没有可判的答案（原卷涂改/遮挡，或书面表达），按原卷与解析自行核对；不计入正确率。</div></div>';
       return html;
     }
     html += '<div class="verify">';
@@ -6584,6 +9017,14 @@ window.QUIZ_DATA = {
 
   function bindPractice() {
     var root = document.getElementById("view-practice");
+    var gbtn = root.querySelector('[data-act="gloss"]');
+    if (gbtn) gbtn.addEventListener("click", function () {
+      S.gloss = !S.gloss;
+      try { localStorage.setItem(GLOSS_KEY, S.gloss ? "1" : "0"); } catch (e) {}
+      applyGlossPref();
+      hideTip();
+      renderPractice();
+    });
     root.querySelectorAll("[data-unit]").forEach(function (b) {
       b.addEventListener("click", function () {
         S.unit = b.dataset.unit; store.unit = S.unit; saveStore();
@@ -6705,7 +9146,8 @@ window.QUIZ_DATA = {
     delete S.picked[it.id];
     updateBadge();
     renderPractice();
-    if (!ok) toast("错了，看下面的解析");
+    if (ok === null) toast("这题没有标准答案，自己对照解析核对");
+    else if (!ok) toast("错了，看下面的解析");
   }
 
   /* 语篇填空：一次提交，按空判分；没填的空也标出来（不记作答次数） */
@@ -6718,7 +9160,7 @@ window.QUIZ_DATA = {
       if (!has) { S.reveals[it.id] = true; return; }
       filled++;
       var ok = judge(it, sel);
-      if (!ok) wrongN++;
+      if (ok === false) wrongN++;
       recordAnswer(it, sel, ok);
       S.reveals[it.id] = true;
     });
@@ -6741,7 +9183,7 @@ window.QUIZ_DATA = {
       if (it.kind === "fill" && (!Array.isArray(sel) || !sel.some(function (x) { return String(x || "").trim(); }))) return;
       answered++;
       var ok = judge(it, sel);
-      if (ok) right++; else wrongIds.push(it.id);
+      if (ok === true) right++; else if (ok === false) wrongIds.push(it.id);
       recordAnswer(it, sel, ok);
       S.reveals[it.id] = true;
     });
@@ -6768,7 +9210,10 @@ window.QUIZ_DATA = {
   function cellState(it) {
     var s = cardState(it);
     /* 本次会话没判过、但记录里有作答：答题卡按记录显示对/错，免得刷新后像「没做过」 */
-    if (s === "unanswered" && isAnswered(it)) return isRight(it) ? "right" : "wrong";
+    if (s === "unanswered" && isAnswered(it)) {
+      var r = isRight(it);
+      return r === null ? "answered" : r ? "right" : "wrong";
+    }
     return s === "picked" ? "answered" : s;
   }
   function answeredCount() {
@@ -6887,7 +9332,7 @@ window.QUIZ_DATA = {
     html += '<div class="mhead"><span class="ref">' + esc(it.unit + " · " + itemRef(it)) + '</span><span class="topic">' + esc(it.topic) + "</span>";
     html += '<span class="cnt">累计错 ' + ((st && st.wrong) || 0) + " 次</span></div>";
     html += '<p class="mstem">' + (it.cn ? '<span class="cn">' + esc(it.cn) + "</span>" : "") +
-      esc(it.stem).replace(/_{3,}/g, "____") + "</p>";
+      enHTML(it.stem).replace(/_{3,}/g, "____") + "</p>";
     html += '<div class="meta" style="margin:0 0 8px">';
     html += "<span>你的作答：<b>" + esc(answerText(it) || "（未作答）") + "</b></span> · ";
     html += '<span class="orig">原卷：' + esc(paperAnswer(it)) + "</span> · ";
@@ -6910,7 +9355,7 @@ window.QUIZ_DATA = {
       return it.marked === it.answer ? "right" : "wrong";
     }
     var hw = paperAnswer(it);
-    if (!it.answer && !it.manual) return "close";
+    if (isUngraded(it)) return "unknown";   // 无标准答案：对卷页显示「未判」，不当错
     if (!hw || hw.indexOf("未作答") >= 0 || hw.indexOf("看不清") >= 0) return "unknown";
     var acc = acceptedList(it);
     if (acc.indexOf(norm(hw.replace(/\s*\/\s*/g, " / "))) >= 0) return "right";
@@ -7105,6 +9550,8 @@ window.QUIZ_DATA = {
     document.getElementById("view-practice").innerHTML =
       '<div class="empty">没找到题库数据：请确认 data/bundle.js 由 build.mjs 生成。</div>';
   } else {
+    applyGlossPref();
+    initZhHover();
     applyHash();
     switchView(S.view);
     updateBadge();
