@@ -12,7 +12,7 @@
 //   B. 今日任务规则（planForDay / dailyQueue）：断言
 //      ① 同一天两次：seed 相同、题单逐字相同（一天一套、可复现）；
 //      ② 7 天 seed 互不相同；③ 题量 6/8/3；④ 同一套题干不重复；
-//      ⑤ 题型与 plan 一致；⑥ 连续 5 天主力 5 类全覆盖；
+//      ⑤ 题型与 plan 一致；⑥ 连续 6 天主力 6 类全覆盖；
 //      ⑦ 弱项覆盖：传 weakKind 后主力换成该类且占 4 题。
 import { readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';

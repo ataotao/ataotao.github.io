@@ -497,12 +497,44 @@ function runUI() {
     pt.go('today');
   });
 
+  /* 审查后回归（2026-11-13）：例题/回炉/空提交/题池 */
+  step('审查后回归', () => {
+    // 例题页 submit 不能写记录
+    pt.startExample('calc', 'qheat');
+    const n0 = pt.db().recs.length;
+    pt.submit();
+    if (pt.db().recs.length !== n0) throw new Error('例题页提交写入了记录');
+    if (pt.S.example !== true) throw new Error('例题标记被清掉');
+
+    // 回炉里用错模块开例题不抛错、不留脏状态
+    pt.db().wrong['test|1'] = {
+      id: 'test', mod: 'calc', kind: 'qheat', title: '测试', prompt: '测试题',
+      fields: [{ type: 'num', ans: 1, label: 'x' }], ts: Date.now(), due: Date.now() - 1000, n: 1,
+    };
+    pt.startWrong();
+    if (pt.S.mode !== 'wrong') throw new Error('回炉没进入 wrong 模式');
+    pt.startExample('wrong', null); // 兜底应直接 return
+    if (pt.S.example !== false) throw new Error('未知模块开例题留下了脏 example 标记');
+
+    // 空提交不写记录、不进错题本
+    pt.startSession('calc', null, 1);
+    const n1 = pt.db().recs.length, w1 = Object.keys(pt.db().wrong).length;
+    pt.submit();
+    if (pt.db().recs.length !== n1) throw new Error('空提交写入了记录');
+    if (Object.keys(pt.db().wrong).length !== w1) throw new Error('空提交进了错题本');
+
+    // draw 按题型练题量受题池限制（每 kind 只有 2 道固定题）
+    pt.startSession('draw', 'lever', 4);
+    if (pt.S.sess.total !== 2) throw new Error('draw 按题型练题量应为 2，实际 ' + pt.S.sess.total);
+    pt.go('today');
+  });
+
   const okN = steps.filter(Boolean).length;
-  if (okN !== steps.length || steps.length !== 11) {
+  if (okN !== steps.length || steps.length !== 12) {
     console.error('✗ --ui ' + okN + '/' + steps.length + ' 项通过');
     process.exit(1);
   }
-  console.log('✓ --ui 11 项全部通过');
+  console.log('✓ --ui 12 项全部通过');
 }
 
 if (UI_MODE) runUI(); else runCore();

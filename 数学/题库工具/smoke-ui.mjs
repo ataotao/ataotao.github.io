@@ -118,7 +118,7 @@ const iq1 = M.S.q;
 ok(iq1.kind === 'intercept', '专项交点式没出交点式');
 ok(iq1.fields[0].type === 'choice', '交点式第一空不是形式选择');
 ok(iq1.fields[1].type === 'expr' && iq1.fields[1].ans.length === 3, '交点式 expr 不是三个空');
-M.S.choice[0] = 0; // 故意选错形式
+M.S.choice[0] = (iq1.fields[0].ans + 1) % iq1.fields[0].options.length; // 故意选错形式
 const e2 = iq1.fields[1].ans;
 fill('in1_0_n', e2[0]); fill('in1_1_n', e2[1]); fill('in1_2_n', e2[2]);
 M.submit();
@@ -126,7 +126,7 @@ ok(M.S.res.ok === false, '选错形式竟然判对');
 
 M.startSession('write', 'intercept', 1);
 const iq2 = M.S.q;
-M.S.choice[0] = 1; // 交点式
+M.S.choice[0] = iq2.fields[0].ans; // 交点式（选项已打乱，不能写死 1）
 const e3 = iq2.fields[1].ans;
 fill('in1_0_n', e3[0]); fill('in1_1_n', e3[1]); fill('in1_2_n', e3[2]);
 M.submit();
@@ -140,9 +140,59 @@ M.go('write');
 ok(textOf(app).includes('专项 10 题'), '模块页没有「专项 10 题」');
 ok(textOf(app).includes('按题型混抽'), '模块页没有混抽说明');
 
+/* ---------- 7. 审查后回归（B01/B03/B05/B06/B08） ---------- */
+// B01：expr 必须按模板空位顺序判分 —— 把 a/h 互换应判错
+{
+  let checked = 0;
+  for (let s = 1; s <= 60 && checked < 3; s++) {
+    const q = ctx.MT.gen('write', 'vertex', s * 7919);
+    const [a, h, k] = q.fields[0].ans;
+    if (a === h) continue; // 数值相同，互换后本来就等价
+    checked++;
+    ok(ctx.MT.judge(q, [q.fields[0].ans.slice(), q.fields[1].ans]).ok === true, 'expr 正确答案被判错');
+    ok(ctx.MT.judge(q, [[h, a, k], q.fields[1].ans]).ok === false, 'expr 空位互换仍判对（B01 回归）');
+  }
+  ok(checked > 0, '没取到可用于 expr 顺序断言的题');
+}
+
+// B03：例题页调 submit 不能写记录
+{
+  M.startExample('drill', 'factor');
+  const n = M.db().recs.length;
+  M.submit();
+  ok(M.db().recs.length === n, '例题页提交写入了记录（B03 回归）');
+}
+
+// B05：空输入提交不写记录、不进错题本
+{
+  M.startSession('drill', 'factor', 1);
+  const n = M.db().recs.length, w = Object.keys(M.db().wrong).length;
+  M.submit();
+  ok(M.db().recs.length === n, '空提交写入了记录（B05 回归）');
+  ok(Object.keys(M.db().wrong).length === w, '空提交进了错题本（B05 回归）');
+}
+
+// B06：当天题单固化 —— 中途答错不换题
+{
+  const p1 = JSON.stringify(M.plan());
+  M.db().recs.push({ ts: Date.now(), mod: 'write', kind: 'profit', ok: false, got: 0, total: 1, sec: 1 });
+  ok(JSON.stringify(M.plan()) === p1, '当天题单因中途答错而变（B06 回归）');
+}
+
+// B08：配比文案里的题数 == 实际队列题数
+{
+  const plan = M.plan();
+  const wq = ctx.MT.dailyQueue('write', plan);
+  const cnt = {};
+  wq.forEach((q) => { cnt[q.kind] = (cnt[q.kind] || 0) + 1; });
+  const noteNums = (plan.write.note.match(/\d+/g) || []).map(Number).sort((a, b) => a - b);
+  const realNums = Object.values(cnt).sort((a, b) => a - b);
+  ok(JSON.stringify(noteNums) === JSON.stringify(realNums), '配比文案题数与实际队列不一致（B08 回归）：' + plan.write.note);
+}
+
 if (fails.length) {
   console.error('✗ UI 冒烟失败 ' + fails.length + ' 处：');
   fails.forEach((f) => console.error('  - ' + f));
   process.exit(1);
 }
-console.log('✓ UI 冒烟通过（今日渲染 / 题单一致 / expr 判分 / 报告 / 专项）');
+console.log('✓ UI 冒烟通过（今日渲染 / 题单一致 / expr 判分 / 报告 / 专项 / 回归：expr 顺序、例题提交、空提交、当天题单、配比文案）');
