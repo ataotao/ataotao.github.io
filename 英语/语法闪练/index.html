@@ -464,8 +464,8 @@ table.rt-table .rate{font-weight:700}
   "use strict";
 
   var STORE_KEY = "eng9a-flash-v1";
-  var BLOCK_TITLES = { 1: "从句与句子类型", 2: "动词三件套", 3: "词法速记", 4: "不规则动词闪刷", 5: "广州卷真题同款" };
-  var EXPECTED_BLOCKS = 5;   // 数据里最多出现到 Block 5；多了会自动扩展
+  var BLOCK_TITLES = { 1: "从句与句子类型", 2: "动词三件套", 3: "词法速记", 4: "不规则动词闪刷", 5: "广州卷真题同款", 6: "中考卷真题同款" };
+  var EXPECTED_BLOCKS = 6;   // 数据里最多出现到 Block 6；多了会自动扩展
   var LETTERS = "ABCD";
 
   var $ = function (sel, root) { return (root || document).querySelector(sel); };
@@ -1065,10 +1065,11 @@ table.rt-table .rate{font-weight:700}
     if (R && R.spot) R.spot.order[item.id] = cands.slice();
     return cands;
   }
-  /* 选题池：block 1/2/3/5 按题库顺序交错排成一条固定序列（跳过 block 4 纯背不规则动词）。
-     一组 10 题 = 顺着这条序列往下取，走完 110 题再从头。不是随机：同一天重开拿到的是同一组。 */
+  /* 选题池：除 block 4（纯背不规则动词）以外，所有 block 按题库顺序交错排成一条固定序列。
+     一组 10 题 = 顺着这条序列往下取，走完一轮再从头。不是随机：同一天重开拿到的是同一组。 */
   function spotPool() {
-    var rot = [1, 2, 3, 5], qs = {}, out = [], i, max = 0;
+    var rot = blocks.map(function (b) { return b.block; }).filter(function (no) { return no !== 4; });
+    var qs = {}, out = [], i, max = 0;
     rot.forEach(function (no) {
       var b = blockByNo[no];
       qs[no] = b ? b.items.slice() : [];

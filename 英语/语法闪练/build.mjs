@@ -32,11 +32,17 @@ const TOPICS = {
     "名词单复数", "量词", "词形转换", "词义辨析", "短语动词",
   ],
   gz: ["广州卷·语法选择", "广州卷·语法填空", "广州卷·语篇填词"],
+  // zk（Block 6「中考卷真题同款」）：不设专属考点，沿用上面 1–3 组的受控词，
+  // 这样同一考点在 B1/B2/B3 与 B6 里能被一起聚合正确率（与 gz 同一套做法）。
+  zk: [],
   verbform: ["不规则动词·过去式", "不规则动词·过去分词"],
 };
 const ALL_TOPICS = new Set(Object.values(TOPICS).flat());
-const GROUP_PREFIX = { clause: "cl", verb: "vb", word: "wd", gz: "gz", verbform: "vf" };
-const SPEC = { clause: [1, "从句与句子类型"], verb: [2, "动词三件套"], word: [3, "词法速记"], gz: [null, null], verbform: [4, "不规则动词闪刷"] };
+const GROUP_PREFIX = { clause: "cl", verb: "vb", word: "wd", gz: "gz", zk: "zk", verbform: "vf" };
+const SPEC = {
+  clause: [1, "从句与句子类型"], verb: [2, "动词三件套"], word: [3, "词法速记"],
+  gz: [null, null], zk: [6, "中考卷真题同款"], verbform: [4, "不规则动词闪刷"],
+};
 
 const problems = [];
 const warnings = [];

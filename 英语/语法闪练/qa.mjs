@@ -210,7 +210,18 @@ await shot("qa-00-home");
 
 /* ── 2. 做题与即时判分 ───────────────────────── */
 group("做题与即时判分");
-const smallest = S.blocks.slice().sort((a, b) => a.n - b.n)[0];
+/* 「最小 block」= 题数最少、且首题考点在该 block 里恰好出现 2 次的那个。
+   题数最少只是为了跑得快；后面 5.5/5.6 两组用例要拿「同考点的第 2 题」做对比
+   （peek 掉 1 题 + 答对 1 题 = 1/1），所以「一考点一题」的卷子（如 Block 6）要跳过。 */
+const smallestNo = await $(`(() => {
+  const bs = (window.FLASH_DATA.blocks || []).slice().sort((a, b) => a.items.length - b.items.length);
+  const hit = bs.filter((b) => {
+    const t = b.items[0] && b.items[0].topic;
+    return t && b.items.filter((i) => i.topic === t).length === 2;
+  });
+  return (hit[0] || bs[0] || { block: 0 }).block;
+})()`);
+const smallest = S.blocks.filter((b) => b.block === smallestNo)[0] || S.blocks[0];
 ok("找到最小 block 用于测试", !!smallest, smallest && JSON.stringify(smallest));
 await click(`.bcard[data-block="${smallest.block}"]`);
 await sleep(420);

@@ -185,6 +185,8 @@
       file: '坐标图象训练.html', quick: '#lv=L1', quickText: '找点', wrong: '#lv=L5', wrongText: '综合' },
     { key: 'train',    name: '数学训练',    icon: '🧭', accent: '#3b6fe0', href: '数学/数学训练脚手架.html', desc: '基础快练 · 写解析式 · 大题前两步',
       file: '数学训练脚手架.html', quick: '#view=write', quickText: '写解析式', wrong: '#view=report', wrongText: '训练报告' },
+    { key: 'wrong',    name: '数学错题',    icon: '📕', accent: '#d9480f', href: '数学/错题本.html', desc: '11 道错题 · 原图 + 详细解析 + 到期复习',
+      file: '错题本.html', quick: '#view=practice', quickText: '今日复习', wrong: '#view=practice&list=wrong', wrongText: '清错题' },
     { key: 'english',  name: '英语过关',    icon: '📄', accent: '#7c5cd6', href: '英语/九上英语过关练习.html', desc: 'U1–U4 原卷 + 三段式讲解',
       file: '九上英语过关练习.html', quick: '#view=practice&mode=drill', quickText: '过关练习', wrong: '#view=review&tab=wrong', wrongText: '错题复盘' },
     { key: 'flash',    name: '语法闪练',    icon: '⚡', accent: '#7c5cd6', href: '英语/语法闪练.html', desc: '134 题点选闪练 · 错题自动重练',
@@ -202,7 +204,7 @@
   // 卡片分组：以后加卡片，改 SUBJECTS + 这里加一行映射即可
   var GROUP_OF = {
     yuwen: '语文',
-    math: '数学', coord: '数学', train: '数学', firstaid: '数学',
+    math: '数学', coord: '数学', train: '数学', firstaid: '数学', wrong: '数学',
     english: '英语', flash: '英语', words: '英语',
     physics: '物理', phystrain: '物理', chem: '化学', history: '历史', politics: '道德与法治',
     formula: '公式记背'
@@ -220,6 +222,7 @@
     { key: 'fn_scaffold_v1', subject: 'math' },
     { key: 'mathcoord_v1', subject: 'coord' },
     { key: 'mathtrain_v1', subject: 'train' },
+    { key: 'mathwrong_v1', subject: 'wrong' },
     { key: 'jjb-jiuzhong-shang-v1', subject: 'firstaid' },
     { key: 'eng9a-practice-v1', subject: 'english' },
     { key: 'eng9a-flash-v1', subject: 'flash' }
@@ -450,6 +453,28 @@
       s.today = dates[todayKey()] ? 1 : 0;
     })();
 
+    // 数学·错题本（mathwrong_v1：recs[] + wrong{}，与 mathtrain 同构）
+    (function () {
+      var v = readJSON('mathwrong_v1'); if (!v) return;
+      var s = bump('wrong');
+      var recs = v.recs || [];
+      s.attempts += recs.length;
+      recs.forEach(function (r) { if (r && r.result === 'ok') s.correct += 1; });
+      Object.keys(v.wrong || {}).forEach(function (id) {
+        var w = v.wrong[id] || {};
+        if (w.lastResult !== 'ok' || (w.streak || 0) < 2) s.wrong += 1;
+      });
+      var dates = {};
+      recs.forEach(function (r) {
+        var d = dateFromStamp(r && r.ts);
+        if (d) {
+          if (!s.last || d > s.last) s.last = d;
+          dates[todayKey(d)] = true;
+        }
+      });
+      s.today = dates[todayKey()] ? 1 : 0;
+    })();
+
     // 数学·急救包
     (function () {
       var v = readJSON('jjb-jiuzhong-shang-v1'); if (!v) return;
@@ -551,7 +576,7 @@
     }
 
     var now = new Date();
-    ['history', 'politics', 'formula', 'physics', 'phystrain', 'chem', 'yuwen', 'math', 'coord', 'train', 'english'].forEach(function (key) {
+    ['history', 'politics', 'formula', 'physics', 'phystrain', 'chem', 'yuwen', 'math', 'coord', 'train', 'wrong', 'english'].forEach(function (key) {
       var s = stats[key];
       if (!s) return;
       var gap = s.last ? daysBetween(s.last, now) : 30;

@@ -83,7 +83,7 @@
     vertical-align:baseline;height:1.1em}
   /* 语篇填空：短文 + 行内输入框 + 逐空讲评 */
   .passage-card .passage-text{font-size:17px;line-height:2.15;color:var(--ink);background:#fcf9f1;
-    border:1px solid var(--line-2);border-radius:10px;padding:14px 16px;
+    border:1px solid var(--line-2);border-radius:10px;padding:14px 16px;white-space:pre-wrap;
     font-family:Georgia,"Times New Roman","Songti SC","Noto Serif SC",serif;word-break:break-word}
   .inline-blank-wrap{display:inline-flex;align-items:baseline;gap:3px;margin:0 3px;vertical-align:baseline}
   .blank-no{font-size:11px;color:var(--brand);font-family:system-ui,sans-serif;position:relative;top:-.4em}
@@ -96,6 +96,7 @@
   .item-passage[open]>summary::before{content:"▾ "}
   .item-passage .passage-text{border:0;border-top:1px solid var(--line-2);border-radius:0;background:transparent;
     font-size:16.5px;line-height:2.05;color:var(--ink);padding:12px 16px;max-height:44vh;overflow:auto;
+    white-space:pre-wrap;
     font-family:Georgia,"Times New Roman","Songti SC","Noto Serif SC",serif;word-break:break-word}
   .field.inline-blank{width:7.2em;min-width:88px;padding:3px 8px;font-size:16.5px;line-height:1.5;
     border-radius:7px;border-bottom-width:2px;margin:0 1px;text-align:center}
@@ -149,6 +150,7 @@
   .verdict{display:flex;align-items:center;gap:10px;margin:14px 0 0;font-size:15px;font-weight:600}
   .verdict .mark{font-family:"KaiTi","Kaiti SC",serif;font-size:26px;line-height:1}
   .verdict[data-ok="1"]{color:var(--ok)} .verdict[data-ok="0"]{color:var(--bad)}
+  .verdict[data-ok="x"]{color:var(--warn)}
   .verify{margin-top:10px;border-left:3px solid var(--brand);background:#fdf6f2;border-radius:0 10px 10px 0;
     padding:12px 14px;display:grid;grid-template-columns:52px 1fr;gap:6px 10px;font-size:14px;line-height:1.75}
   .verify .vlab{color:var(--brand);font-size:12px;letter-spacing:1px;padding-top:2px}
@@ -277,7 +279,24 @@
     .qtools{font-size:13px}
   }
 
+  /* 悬停词义：英文里命中词表的词/短语包一层 .zw，悬停（触屏点按）出 #zh-tip。
+     下划线刻意做得很淡——短文一屏上百个词，划重了就满篇花；关掉「词义」后整块不显示。 */
+  .zw{cursor:help;border-bottom:1px dotted rgba(93,80,58,.30);border-radius:2px;
+    transition:background .1s,color .1s}
+  .zw:hover,.zw.is-hot{background:#fbf0cf;border-bottom-color:transparent;color:#7a4a00}
+  body.no-gloss .zw{border-bottom:0;cursor:auto}
+  body.no-gloss .zw:hover{background:transparent;color:inherit}
+  #zh-tip{position:fixed;left:0;top:0;z-index:85;max-width:min(74vw,340px);transform:translateX(-50%);
+    display:none;flex-direction:column;gap:1px;padding:7px 11px;border-radius:9px;text-align:center;
+    background:rgba(30,28,40,.96);color:#fff;pointer-events:none;
+    box-shadow:0 12px 28px -12px rgba(20,20,40,.75)}
+  #zh-tip.show{display:flex}
+  #zh-tip .zt-zh{font-size:14px;line-height:1.45;font-weight:600}
+  #zh-tip .zt-en{font-size:11px;line-height:1.3;color:rgba(255,255,255,.62);font-family:Georgia,serif}
+
   @media print{
+    .zw{border-bottom:0}
+    #zh-tip{display:none!important}
     .topbar,.bottombar,.qtools,footer,#cardsheet,.settle-acts,.mcard .mlink,.rtabs,.bar{display:none!important}
     body{background:#fff}
     .app{max-width:none;padding:0}
@@ -318,6 +337,7 @@
 </div>
 
 <div id="toast"></div>
+<div id="zh-tip" aria-hidden="true"></div>
 
 <script src="data/bundle.js"></script>
 <script>
@@ -328,6 +348,7 @@
   var DATA = window.QUIZ_DATA || { units: [] };
   var STORE_KEY = "eng9a-practice-v1";
   var VIEW_KEY = "eng9a-view-v1";
+  var GLOSS_KEY = "eng9a-gloss-v1";
   var AT_KEEP = 10;
   var HIST_KEEP = 5;
   var ID_MIGRATION = window.__ID_MIGRATION || {};
@@ -350,6 +371,117 @@
     return String(s == null ? "" : s)
       .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
       .replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+  }
+
+  /* ══ 悬停词义 ══════════════════════════════════════
+     数据：window.PRACTICE_GLOSS（build.mjs 注入）= 词形 → 中文释义。构建期已经把
+     -s/-ed/-ing/-er/-est/-ly、不规则动词、名词复数都展开成具体词形，所以这里只做精确查表，
+     不再在前端跑一套词形还原。
+     题干 / 选项 / 短文里命中词表的词包一层 .zw，悬停（触屏点按）出 #zh-tip；
+     解析不处理——那是中文讲解，不需要再翻。
+     短语优先于单词，按词数从长到短匹配，look forward to 才不会被拆成 look + forward。 */
+  function normEn(s) { return String(s == null ? "" : s).toLowerCase().replace(/\u2019/g, "'"); }
+  var GLOSS = (function () {
+    var raw = window.PRACTICE_GLOSS && typeof window.PRACTICE_GLOSS === "object" ? window.PRACTICE_GLOSS : {};
+    var words = {}, phrases = [];
+    Object.keys(raw.words || {}).forEach(function (k) {
+      var v = raw.words[k];
+      if (typeof v === "string" && v) words[normEn(k)] = v;
+    });
+    Object.keys(raw.phrases || {}).forEach(function (k) {
+      var v = raw.phrases[k], ws = normEn(k).split(/\s+/).filter(Boolean);
+      if (typeof v === "string" && v && ws.length > 1) phrases.push({ ws: ws, zh: v });
+    });
+    phrases.sort(function (a, b) { return b.ws.length - a.ws.length; });
+    return { words: words, phrases: phrases, size: Object.keys(words).length };
+  })();
+  var WORD_RE = /[A-Za-z](?:[A-Za-z'\u2019-]*[A-Za-z])?/g;
+  /* 英文 → HTML：命中词表的词/短语包 .zw（data-zh），其余原样转义。
+     与 esc() 等价，只是多包了这一层，所以渲染英文时一律用它替换 esc()。 */
+  function enHTML(text) {
+    var s = String(text == null ? "" : text);
+    if (!GLOSS.size) return esc(s);
+    var words = [], m;
+    WORD_RE.lastIndex = 0;
+    while ((m = WORD_RE.exec(s))) words.push({ lo: normEn(m[0]), s: m.index, e: m.index + m[0].length });
+    var out = "", cursor = 0, i = 0;
+    while (i < words.length) {
+      var hit = null, p, j;
+      for (p = 0; p < GLOSS.phrases.length; p++) {
+        var ph = GLOSS.phrases[p];
+        if (i + ph.ws.length > words.length) continue;
+        var same = true;
+        for (j = 0; j < ph.ws.length; j++) if (words[i + j].lo !== ph.ws[j]) { same = false; break; }
+        if (!same) continue;
+        /* 中间不许夹别的字符（空格、撇号、连字符除外），免得跨过空位拼出短语 */
+        if (!/^[A-Za-z'\u2019\-\s]+$/.test(s.slice(words[i].s, words[i + ph.ws.length - 1].e))) continue;
+        hit = { zh: ph.zh, last: i + ph.ws.length - 1, s: words[i].s, e: words[i + ph.ws.length - 1].e };
+        break;
+      }
+      if (!hit && Object.prototype.hasOwnProperty.call(GLOSS.words, words[i].lo)) {
+        hit = { zh: GLOSS.words[words[i].lo], last: i, s: words[i].s, e: words[i].e };
+      }
+      if (hit) {
+        out += esc(s.slice(cursor, hit.s));
+        out += '<span class="zw" data-zh="' + esc(hit.zh) + '">' + esc(s.slice(hit.s, hit.e)) + "</span>";
+        cursor = hit.e;
+        i = hit.last + 1;
+      } else i++;
+    }
+    return out + esc(s.slice(cursor));
+  }
+  var tipEl = null;
+  function tipNode() {
+    if (!tipEl || !tipEl.parentNode) tipEl = document.getElementById("zh-tip");
+    return tipEl;
+  }
+  function showTip(el) {
+    var zh = el && el.getAttribute ? el.getAttribute("data-zh") : "";
+    var t = tipNode();
+    if (!zh || !t || document.body.classList.contains("no-gloss")) return;
+    t.innerHTML = '<span class="zt-zh"></span><span class="zt-en"></span>';
+    t.querySelector(".zt-zh").textContent = zh;
+    t.querySelector(".zt-en").textContent = (el.textContent || "").replace(/\s+/g, " ").trim();
+    t.classList.add("show");
+    t.setAttribute("aria-hidden", "false");
+    var r = el.getBoundingClientRect();
+    var tw = t.offsetWidth, th = t.offsetHeight, vw = window.innerWidth;
+    var cx = r.left + r.width / 2;
+    var left = Math.min(Math.max(8 + tw / 2, cx), vw - 8 - tw / 2);
+    var top = r.top - th - 7, below = false;
+    if (top < 6) { top = r.bottom + 7; below = true; }
+    t.style.left = left + "px";
+    t.style.top = top + "px";
+    t.classList.toggle("below", below);
+  }
+  function hideTip() {
+    var t = tipNode();
+    if (t) { t.classList.remove("show"); t.setAttribute("aria-hidden", "true"); }
+    var hot = document.querySelector(".zw.is-hot");
+    if (hot) hot.classList.remove("is-hot");
+  }
+  /* 鼠标划过看词义；触屏点一下也出（点别处收起）。用事件委托，重绘后不用重新绑定 */
+  function initZhHover() {
+    document.addEventListener("pointerover", function (e) {
+      var el = e.target && e.target.closest ? e.target.closest(".zw") : null;
+      if (el) showTip(el);
+    });
+    document.addEventListener("pointerout", function (e) {
+      var el = e.target && e.target.closest ? e.target.closest(".zw") : null;
+      if (el) hideTip();
+    });
+    document.addEventListener("pointerdown", function (e) {
+      var el = e.target && e.target.closest ? e.target.closest(".zw") : null;
+      hideTip();
+      if (!el) return;
+      el.classList.add("is-hot");
+      showTip(el);
+    });
+    document.addEventListener("scroll", hideTip, true);
+    window.addEventListener("resize", hideTip);
+  }
+  function applyGlossPref() {
+    document.body.classList.toggle("no-gloss", S.gloss === false);
   }
   function pad(n) { return n < 10 ? "0" + n : String(n); }
   function fmtAt(iso) {
@@ -417,6 +549,13 @@
   function acceptedList(it) {
     return [it.answerRaw].concat(it.alt || []).map(norm).filter(Boolean);
   }
+  /* 无参考答案 / 占位答案（「（无标准答案）」、原卷涂改遮挡）的题：只记「做过」，不判对错、不进错题。
+     典型：U2 被涂改带盖住的空、U5/U6 的书面表达。 */
+  function isUngraded(it) {
+    if (!it || it.kind === "mc") return false;
+    var a = String(it.answerRaw || "");
+    return !a || /^[（(]/.test(a);
+  }
   function scanHref(it) {
     /* 单元可用 scan 指定原卷图（题库内文件名）；显式 null = 该单元没有收录原卷 */
     var u = UNIT_BY[it.unit];
@@ -463,9 +602,11 @@
   function isAnswered(it) { return it.kind === "mc" ? !!pickOf(it) : !!fillOf(it); }
   function statOf(it) { return store.stat[it.id] || null; }
   function isRight(it) { return judge(it, it.kind === "mc" ? pickOf(it) : fillOf(it)); }
-  /* 判分只有这一处：选择题比字母，填空题整串归一化后比（等价写法按 alt） */
+  /* 判分只有这一处：选择题比字母，填空题整串归一化后比（等价写法按 alt）。
+     返回 true / false / null——null = 这道题没有可判的答案（见 isUngraded），调用方必须当「不计分」处理 */
   function judge(it, sel) {
     if (it.kind === "mc") return sel === it.answer;
+    if (isUngraded(it)) return null;
     var v = Array.isArray(sel) ? sel.join(" / ") : String(sel == null ? "" : sel);
     return acceptedList(it).indexOf(norm(v)) >= 0;
   }
@@ -488,9 +629,10 @@
     else store.fills[it.id] = Array.isArray(shown) ? shown.map(function (x) { return String(x || "").trim(); }) : [String(shown || "").trim()];
     var st = store.stat[it.id] || (store.stat[it.id] = { att: 0, ok: 0, wrong: 0 });
     st.att++;
-    if (ok) { st.ok = (st.ok || 0) + 1; } else { st.wrong = (st.wrong || 0) + 1; delete store.cleared[it.id]; }
+    if (ok === null) { /* 无标准答案：只记做过，不计对错 */ }
+    else if (ok) { st.ok = (st.ok || 0) + 1; } else { st.wrong = (st.wrong || 0) + 1; delete store.cleared[it.id]; }
     var h = Array.isArray(store.hist[it.id]) ? store.hist[it.id] : [];
-    h.unshift({ a: it.kind === "mc" ? shown : Array.isArray(shown) ? shown.join(" / ") : String(shown || ""), ok: !!ok, at: iso });
+    h.unshift({ a: it.kind === "mc" ? shown : Array.isArray(shown) ? shown.join(" / ") : String(shown || ""), ok: ok === null ? null : !!ok, at: iso });
     store.hist[it.id] = h.slice(0, HIST_KEEP);
     saveStore();
   }
@@ -526,12 +668,17 @@
     exam: null,
     settle: false,
     onlyFills: false,
+    gloss: true,
     reviewTab: "wrong",
     reviewUnit: "all"
   };
   try {
     var vp = JSON.parse(localStorage.getItem(VIEW_KEY) || "{}");
     if (vp && vp.mode === "exam") S.mode = "exam";
+  } catch (e) {}
+  try {
+    var gp = localStorage.getItem(GLOSS_KEY);
+    if (gp === "0") S.gloss = false;
   } catch (e) {}
 
   function unit() { return UNIT_BY[S.unit] || UNITS[0]; }
@@ -557,7 +704,7 @@
     if (text == null || text === "") return "";
     var body = String(text).replace(/\{\{(\d+)\}\}/g, function (_m, n) { return "______(" + n + ")"; });
     return '<details class="item-passage" open><summary>' + esc(it.passage) + " · 本大题原文</summary>" +
-      '<div class="passage-text">' + esc(body) + "</div></details>";
+      '<div class="passage-text">' + enHTML(body) + "</div></details>";
   }
   /* 短文里的 {{n}} 按「题号」取题，不能按数组下标（大题题号不一定从 1 开始） */
   function pickBlank(list, no) {
@@ -600,7 +747,9 @@
   }
   function stepState(step) {
     if (step.items.every(function (it) { return shownState(it); })) {
-      return step.items.every(function (it) { return isRight(it); }) ? "right" : "wrong";
+      var rs = step.items.map(function (it) { return isRight(it); });
+      if (rs.indexOf(false) >= 0) return "wrong";
+      return rs.indexOf(null) >= 0 ? "picked" : "right";   // null = 不计分的题，不算对也不算错
     }
     var any = step.items.some(function (it) {
       var sel = currentSelection(it);
@@ -674,6 +823,10 @@
     html += "</div>";
     html += '<button class="btn sm" data-act="cards">答题卡</button>';
     html += '<button class="btn sm ghost" data-act="only-fills" aria-pressed="' + (S.onlyFills ? "true" : "false") + '">只看填空</button>';
+    if (GLOSS.size) {
+      html += '<button class="btn sm ghost" data-act="gloss" aria-pressed="' + (S.gloss ? "true" : "false") +
+        '" title="鼠标划过英文单词显示中文（触屏点一下也行）">词义' + (S.gloss ? "·开" : "·关") + "</button>";
+    }
     if (!ONLINE && scanHref(it)) html += '<a class="btn sm ghost" href="' + esc(scanHref(it)) + '" target="_blank" rel="noopener">原卷</a>';
     html += '<span class="spacer"></span>';
     html += '<span class="hint">' + esc(u.unit) + " · " + esc(u.title) + "</span>";
@@ -703,14 +856,14 @@
       (S.marks[it.id] ? ' data-marked="1"' : "") + ">";
     html += '<div class="qhead">';
     html += '<span class="ref">' + esc(itemRef(it)) + "</span>";
-    html += '<span class="type">' + (it.kind === "mc" ? "选择" : "填空") + "</span>";
+    html += '<span class="type">' + (it.kind === "mc" ? "选择" : it.kind === "other" ? "写作" : "填空") + "</span>";
     if (S.marks[it.id]) html += '<span class="mark-badge">已标记</span>';
     html += '<span class="unit">' + esc(u.title) + " · " + (isExam() ? "模拟考" : "过关") + "</span>";
     html += "</div>";
 
     html += itemPassageHTML(it);
     html += '<div class="stem">' + (it.cn ? '<span class="cn" lang="zh">' + esc(it.cn) + "</span>" : "") +
-      esc(it.stem).replace(/_{3,}/g, '<span class="blank"></span>') + "</div>";
+      enHTML(it.stem).replace(/_{3,}/g, '<span class="blank"></span>') + "</div>";
 
     if (it.kind === "mc") html += optionsHTML(it);
     else html += fieldsHTML(it);
@@ -738,7 +891,7 @@
     var hist = store.hist[it.id];
     if (Array.isArray(hist) && hist.length) {
       var h0 = hist[0] || {};
-      html += '<span>最近一次作答：' + esc(h0.a || "—") + "（" + (h0.ok ? "对" : "错") + "）" +
+      html += '<span>最近一次作答：' + esc(h0.a || "—") + "（" + (h0.ok === null ? "待核对" : h0.ok ? "对" : "错") + "）" +
         (h0.at ? " · " + fmtAt(h0.at) : "") + (hist.length > 1 ? " · 共 " + hist.length + " 次留档" : "") + "</span><br>";
     }
     if (S.reveals[it.id] || (isExam() && S.exam && S.exam.done)) {
@@ -768,7 +921,7 @@
     var text = String(u.passages[step.section] || "");
     html += '<div class="passage-text">';
     text.split(/\{\{(\d+)\}\}/).forEach(function (seg, i) {
-      if (i % 2 === 0) { html += esc(seg); return; }
+      if (i % 2 === 0) { html += enHTML(seg); return; }
       var it = pickBlank(list, +seg);
       if (it) html += inlineBlankHTML(it);
     });
@@ -791,7 +944,7 @@
     var parts = answerParts(it);
     var judged = S.reveals[it.id];
     var st = "";
-    if (judged) st = !it.answerRaw ? "unknown" : norm(v) === norm(parts[0]) ? "right" : "wrong";
+    if (judged) st = isUngraded(it) ? "unknown" : norm(v) === norm(parts[0]) ? "right" : "wrong";
     return '<span class="inline-blank-wrap">' +
       '<span class="blank-no">' + esc(it.no) + "</span>" +
       '<input class="field inline-blank" data-id="' + esc(it.id) + '" data-i="0" type="text" ' +
@@ -807,7 +960,7 @@
       var parts = answerParts(it);
       var vals = fillOf(it) || [];
       var mine = vals[0] || "";
-      var noAnswer = !it.answerRaw;
+      var noAnswer = isUngraded(it);
       var ok = !noAnswer && !!mine && norm(mine) === norm(parts[0]);
       html += '<details class="blank-row" ' + (ok ? "" : "open") + ">";
       html += '<summary><span class="bn">第 ' + esc(it.no) + " 空</span>" +
@@ -831,7 +984,10 @@
     return n;
   }
   function cardState(it) {
-    if (S.reveals[it.id]) return isRight(it) ? "right" : "wrong";
+    if (S.reveals[it.id]) {
+      var r = isRight(it);
+      return r === null ? "picked" : r ? "right" : "wrong";
+    }
     var sel = currentSelection(it);
     if (sel !== undefined && sel !== null && !(Array.isArray(sel) && !sel.some(function (x) { return String(x || "").trim(); }))) return "picked";
     return "unanswered";
@@ -847,7 +1003,7 @@
       } else if (sel === o.k) st = "picked";
       html += '<button class="opt" data-k="' + esc(o.k) + '" data-state="' + st + '"' +
         (S.reveals[it.id] ? " disabled" : "") + ' aria-pressed="' + (sel === o.k ? "true" : "false") + '">' +
-        '<span class="k">' + esc(o.k) + "</span><span>" + esc(o.t) + "</span></button>";
+        '<span class="k">' + esc(o.k) + "</span><span>" + enHTML(o.t) + "</span></button>";
     });
     html += "</div>";
     return html;
@@ -858,10 +1014,15 @@
     var parts = answerParts(it);
     var judged = S.reveals[it.id];
     var isLong = it.fields === 1;
+    /* 整题按「拼起来」判（judge 的口径）；只看单空对错会给「✓ 答对了 + 两个空都标红」的矛盾画面，
+       所以整题对就全绿，整题不对才逐空标红指出差在哪 */
+    var allOk = judged && judge(it, vals) === true;
     var html = '<div class="fields">';
     for (var i = 0; i < it.fields; i++) {
       var st = "";
-      if (judged && parts.length === it.fields) st = norm(vals[i]) === norm(parts[i]) ? "right" : "wrong";
+      if (judged && isUngraded(it)) st = "unknown";
+      else if (allOk) st = "right";
+      else if (judged && parts.length === it.fields) st = norm(vals[i]) === norm(parts[i]) ? "right" : "wrong";
       html += '<span class="fieldwrap' + (isLong ? " sentence" : "") + '">' +
         (it.fields > 1 ? '<span class="idx">' + (i + 1) + "</span>" : "") +
         '<input class="field" data-i="' + i + '" type="text" autocomplete="off" spellcheck="false" ' +
@@ -871,7 +1032,7 @@
         "</span>";
     }
     html += "</div>";
-    if (judged && parts.length === it.fields && it.fields > 1) {
+    if (judged && !allOk && parts.length === it.fields && it.fields > 1) {
       var rightN = 0;
       for (var j = 0; j < it.fields; j++) if (norm(vals[j]) === norm(parts[j])) rightN++;
       html += '<div class="hint" style="margin-top:8px">' + it.fields + " 空里对 " + rightN + " 空（整题全对才算对）</div>";
@@ -879,11 +1040,12 @@
     return html;
   }
   function verdictHTML(it) {
-    var ok = isRight(it);
-    var html = '<div class="verdict" data-ok="' + (ok ? "1" : "0") + '"><span class="mark">' + (ok ? "✓" : "✗") + "</span>" +
-      (ok ? "答对了" : "答错了") + "</div>";
-    if (!it.answer && !it.manual) {
-      html += '<div class="verify"><div class="vlab">提示</div><div class="vtxt">这道题没有参考答案（原卷涂改/遮挡），请对照原卷核对。</div></div>';
+    var r = isRight(it);
+    var ok = r === true;
+    var html = '<div class="verdict" data-ok="' + (r === null ? "x" : ok ? "1" : "0") + '"><span class="mark">' +
+      (r === null ? "·" : ok ? "✓" : "✗") + "</span>" + (r === null ? "本题不计分" : ok ? "答对了" : "答错了") + "</div>";
+    if (isUngraded(it)) {
+      html += '<div class="verify"><div class="vlab">提示</div><div class="vtxt">这道题没有可判的答案（原卷涂改/遮挡，或书面表达），按原卷与解析自行核对；不计入正确率。</div></div>';
       return html;
     }
     html += '<div class="verify">';
@@ -961,6 +1123,14 @@
 
   function bindPractice() {
     var root = document.getElementById("view-practice");
+    var gbtn = root.querySelector('[data-act="gloss"]');
+    if (gbtn) gbtn.addEventListener("click", function () {
+      S.gloss = !S.gloss;
+      try { localStorage.setItem(GLOSS_KEY, S.gloss ? "1" : "0"); } catch (e) {}
+      applyGlossPref();
+      hideTip();
+      renderPractice();
+    });
     root.querySelectorAll("[data-unit]").forEach(function (b) {
       b.addEventListener("click", function () {
         S.unit = b.dataset.unit; store.unit = S.unit; saveStore();
@@ -1082,7 +1252,8 @@
     delete S.picked[it.id];
     updateBadge();
     renderPractice();
-    if (!ok) toast("错了，看下面的解析");
+    if (ok === null) toast("这题没有标准答案，自己对照解析核对");
+    else if (!ok) toast("错了，看下面的解析");
   }
 
   /* 语篇填空：一次提交，按空判分；没填的空也标出来（不记作答次数） */
@@ -1095,7 +1266,7 @@
       if (!has) { S.reveals[it.id] = true; return; }
       filled++;
       var ok = judge(it, sel);
-      if (!ok) wrongN++;
+      if (ok === false) wrongN++;
       recordAnswer(it, sel, ok);
       S.reveals[it.id] = true;
     });
@@ -1118,7 +1289,7 @@
       if (it.kind === "fill" && (!Array.isArray(sel) || !sel.some(function (x) { return String(x || "").trim(); }))) return;
       answered++;
       var ok = judge(it, sel);
-      if (ok) right++; else wrongIds.push(it.id);
+      if (ok === true) right++; else if (ok === false) wrongIds.push(it.id);
       recordAnswer(it, sel, ok);
       S.reveals[it.id] = true;
     });
@@ -1145,7 +1316,10 @@
   function cellState(it) {
     var s = cardState(it);
     /* 本次会话没判过、但记录里有作答：答题卡按记录显示对/错，免得刷新后像「没做过」 */
-    if (s === "unanswered" && isAnswered(it)) return isRight(it) ? "right" : "wrong";
+    if (s === "unanswered" && isAnswered(it)) {
+      var r = isRight(it);
+      return r === null ? "answered" : r ? "right" : "wrong";
+    }
     return s === "picked" ? "answered" : s;
   }
   function answeredCount() {
@@ -1264,7 +1438,7 @@
     html += '<div class="mhead"><span class="ref">' + esc(it.unit + " · " + itemRef(it)) + '</span><span class="topic">' + esc(it.topic) + "</span>";
     html += '<span class="cnt">累计错 ' + ((st && st.wrong) || 0) + " 次</span></div>";
     html += '<p class="mstem">' + (it.cn ? '<span class="cn">' + esc(it.cn) + "</span>" : "") +
-      esc(it.stem).replace(/_{3,}/g, "____") + "</p>";
+      enHTML(it.stem).replace(/_{3,}/g, "____") + "</p>";
     html += '<div class="meta" style="margin:0 0 8px">';
     html += "<span>你的作答：<b>" + esc(answerText(it) || "（未作答）") + "</b></span> · ";
     html += '<span class="orig">原卷：' + esc(paperAnswer(it)) + "</span> · ";
@@ -1287,7 +1461,7 @@
       return it.marked === it.answer ? "right" : "wrong";
     }
     var hw = paperAnswer(it);
-    if (!it.answer && !it.manual) return "close";
+    if (isUngraded(it)) return "unknown";   // 无标准答案：对卷页显示「未判」，不当错
     if (!hw || hw.indexOf("未作答") >= 0 || hw.indexOf("看不清") >= 0) return "unknown";
     var acc = acceptedList(it);
     if (acc.indexOf(norm(hw.replace(/\s*\/\s*/g, " / "))) >= 0) return "right";
@@ -1482,6 +1656,8 @@
     document.getElementById("view-practice").innerHTML =
       '<div class="empty">没找到题库数据：请确认 data/bundle.js 由 build.mjs 生成。</div>';
   } else {
+    applyGlossPref();
+    initZhHover();
     applyHash();
     switchView(S.view);
     updateBadge();

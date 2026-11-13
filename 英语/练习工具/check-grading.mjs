@@ -1,6 +1,6 @@
 // 离线核对：按 app 相同规则给「原卷手写」判分，打印清单，便于人工复核
 // 用法：node check-grading.mjs [--only-wrong]
-import { readFileSync } from "node:fs";
+import { readFileSync, readdirSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -39,7 +39,15 @@ const counts = { right: 0, wrong: 0, close: 0, unknown: 0 };
 const mcWrong = [];
 const fieldIssues = [];
 
-for (const n of [1, 2, 3, 4]) {
+// 单元列表从 data/ 自动发现（原来写死 [1,2,3,4]，U5/U6 那 122 题从来没被这条离线核对覆盖过）
+const unitNums = readdirSync(join(here, "data"))
+  .map((f) => /^u(\d+)\.json$/.exec(f))
+  .filter(Boolean)
+  .map((m) => Number(m[1]))
+  .sort((a, b) => a - b);
+if (!unitNums.length) { console.error("data/ 下没有 u<N>.json"); process.exit(1); }
+
+for (const n of unitNums) {
   const data = load(`u${n}.json`);
   const key = load(`u${n}.key.json`);
   console.log(`\n══ ${data.unit || "U" + n} ══  ${data.title || ""}`);
@@ -63,7 +71,8 @@ for (const n of [1, 2, 3, 4]) {
     const hw = hwFull(it);
     const accepted = [k.answer, ...(k.alt || [])].map(norm).filter(Boolean);
     let g = "unknown";
-    if (!k.manual && k.answer && hw && !hw.includes("看不清")) {
+    const ungraded = !k.answer || /^[（(]/.test(String(k.answer));   // 与 app 的 isUngraded 同一口径
+    if (!ungraded && hw && !hw.includes("看不清")) {
       if (accepted.includes(norm(hw))) g = "right";
       else g = isSentence(k.answer) ? "close" : "wrong";
     }

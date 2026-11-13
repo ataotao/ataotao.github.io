@@ -1,0 +1,277 @@
+{
+  "group": "zk",
+  "title": "中考卷真题同款",
+  "block": 6,
+  "items": [
+    {
+      "id": "zk-001",
+      "topic": "让步状语从句",
+      "level": 2,
+      "stem": "______ it was raining heavily, the whole class still finished the five-kilometre walk.",
+      "cn": "尽管雨下得很大，全班同学还是走完了五公里。",
+      "options": [
+        "Although",
+        "Because",
+        "If",
+        "So"
+      ],
+      "answer": "A",
+      "rule": "前后语义相反（下雨 ↔ 走完）时用 although 引导让步状语从句。",
+      "trap": "主句已有 still，绝不能再加 but；although 与 but 不共存。",
+      "src": "2026-11-13 中考卷 · 语法选择",
+      "verified": true
+    },
+    {
+      "id": "zk-002",
+      "topic": "感叹句",
+      "level": 2,
+      "stem": "______ beautiful the world becomes when you look at it through a camera!",
+      "cn": "当你透过相机看世界时，世界变得多么美啊！",
+      "options": [
+        "How",
+        "What",
+        "What a",
+        "How a"
+      ],
+      "answer": "A",
+      "rule": "空格后是形容词 beautiful，感叹句用 How + 形容词 + 主语 + 谓语。",
+      "trap": "What 后须接名词；What a 还要求有「a + 形容词 + 单数名词」。",
+      "src": "2026-11-13 中考卷 · 语法选择",
+      "verified": true
+    },
+    {
+      "id": "zk-003",
+      "topic": "情态动词",
+      "level": 1,
+      "stem": "A short colour walk after dinner ______ make you feel much more relaxed.",
+      "cn": "晚饭后一次短暂的色彩漫步能让你感到放松得多。",
+      "options": [
+        "can",
+        "must",
+        "need",
+        "dare"
+      ],
+      "answer": "A",
+      "rule": "表「能够、可以」用 can，后接动词原形 make。",
+      "trap": "must 表「必须」，说「散步必须让你放松」不合逻辑。",
+      "src": "2026-11-13 中考卷 · 语法选择",
+      "verified": true
+    },
+    {
+      "id": "zk-004",
+      "topic": "一般过去时",
+      "level": 1,
+      "stem": "Last weekend, Li Ming and I ______ to try the colour walk in our neighbourhood.",
+      "cn": "上周末，我和李明决定在小区里试试色彩漫步。",
+      "options": [
+        "decide",
+        "have decided",
+        "will decide",
+        "decided"
+      ],
+      "answer": "D",
+      "rule": "Last weekend 是明确的过去时间状语，谓语用一般过去时。",
+      "trap": "现在完成时不能与 last weekend 这类具体过去时间连用。",
+      "src": "2026-11-13 中考卷 · 语法选择",
+      "verified": true
+    },
+    {
+      "id": "zk-005",
+      "topic": "冠词",
+      "level": 1,
+      "stem": "Colour walk is ______ new and relaxing way to enjoy a walk around your city.",
+      "cn": "色彩漫步是一种全新、放松的逛城方式。",
+      "options": [
+        "a",
+        "an",
+        "the",
+        "/"
+      ],
+      "answer": "A",
+      "rule": "way 是可数名词单数且首次提及，用不定冠词 a。",
+      "trap": "a/an 看读音不看字母：new 以辅音音素 /n/ 开头，用 a。",
+      "src": "2026-11-13 中考卷 · 语法选择",
+      "verified": true
+    },
+    {
+      "id": "zk-006",
+      "topic": "介词",
+      "level": 1,
+      "stem": "During the walk, try to record everything ______ your chosen colour.",
+      "cn": "散步时，试着记录下一切属于你选定颜色的东西。",
+      "options": [
+        "under",
+        "at",
+        "to",
+        "in"
+      ],
+      "answer": "D",
+      "rule": "in + 颜色表示「……颜色的」，如 the girl in red 是穿红衣的女孩。",
+      "trap": "中文「你的颜色」易直译成 of；表颜色归属的介词是 in。",
+      "src": "2026-11-13 中考卷 · 语法选择",
+      "verified": true
+    },
+    {
+      "id": "zk-007",
+      "topic": "比较级",
+      "level": 1,
+      "stem": "The activity is much ______ than you think when you first hear of it.",
+      "cn": "这项活动比你刚听说时想的要容易得多。",
+      "options": [
+        "easy",
+        "easier",
+        "easiest",
+        "the easiest"
+      ],
+      "answer": "B",
+      "rule": "句中有 than 要用比较级；much 只能修饰比较级。",
+      "trap": "much + 原级（much easy）是典型错句，应写 much easier。",
+      "src": "2026-11-13 中考卷 · 语法选择",
+      "verified": true
+    },
+    {
+      "id": "zk-008",
+      "topic": "词形转换",
+      "level": 2,
+      "stem": "You can spot ______ objects on the street, from painted walls to flowers.",
+      "cn": "你可以在街上发现各种各样的东西，从彩绘墙到花朵。",
+      "options": [
+        "vary",
+        "various",
+        "variously",
+        "variety"
+      ],
+      "answer": "B",
+      "rule": "空格修饰名词 objects，须用形容词 various「各种各样的」。",
+      "trap": "vary 是动词、variously 是副词、variety 是名词，看位置定词性。",
+      "src": "2026-11-13 中考卷 · 语法选择",
+      "verified": true
+    },
+    {
+      "id": "zk-009",
+      "topic": "并列连词",
+      "level": 1,
+      "stem": "You can do it alone ______ with a group of friends after school.",
+      "cn": "放学后你可以独自做，也可以和一群朋友一起做。",
+      "options": [
+        "and",
+        "but",
+        "or",
+        "so"
+      ],
+      "answer": "C",
+      "rule": "两种情况二选一用 or，只有同时并存才用 and。",
+      "trap": "and 会把「独自」与「和朋友」并成同时发生，句意矛盾。",
+      "src": "2026-11-13 中考卷 · 语法选择",
+      "verified": true
+    },
+    {
+      "id": "zk-010",
+      "topic": "形容词副词",
+      "level": 1,
+      "stem": "The children ______ shared the photos of the yellow objects online.",
+      "cn": "孩子们开心地把这些黄色物品的照片分享到网上。",
+      "options": [
+        "happy",
+        "happily",
+        "happiness",
+        "happier"
+      ],
+      "answer": "B",
+      "rule": "空格修饰动词 shared，须用副词 happily。",
+      "trap": "形容词不能修饰动词；中文「开心地」就是在提示用 -ly。",
+      "src": "2026-11-13 中考卷 · 语法选择",
+      "verified": true
+    },
+    {
+      "id": "zk-011",
+      "topic": "现在完成时",
+      "level": 2,
+      "stem": "Stand-up paddleboarding ______ more and more popular in the last two years.",
+      "cn": "桨板运动在最近两年里越来越受欢迎。",
+      "options": [
+        "becomes",
+        "became",
+        "has become",
+        "is becoming"
+      ],
+      "answer": "C",
+      "rule": "in the last two years 是现在完成时标志；主语视为单数用 has。",
+      "trap": "看到 two years 别误用过去时，in the last… 强调持续到现在。",
+      "src": "2026-11-13 中考卷 · 语法填空",
+      "verified": true
+    },
+    {
+      "id": "zk-012",
+      "topic": "动名词",
+      "level": 1,
+      "stem": "Most people have heard of ______, but few of them have ever tried it.",
+      "cn": "大多数人都听说过冲浪，但很少有人真正试过。",
+      "options": [
+        "surf",
+        "surfing",
+        "to surf",
+        "surfed"
+      ],
+      "answer": "B",
+      "rule": "hear of 的 of 是介词，介词后接动名词 surfing。",
+      "trap": "介词后不能用动词原形，也不能用过去分词表主动。",
+      "src": "2026-11-13 中考卷 · 语法填空",
+      "verified": true
+    },
+    {
+      "id": "zk-013",
+      "topic": "名词单复数",
+      "level": 1,
+      "stem": "The paddleboard has several special ______ that make it easy to stand on.",
+      "cn": "这块桨板有几个特别之处，让人容易站稳。",
+      "options": [
+        "feature",
+        "features",
+        "featured",
+        "featuring"
+      ],
+      "answer": "B",
+      "rule": "several 后接可数名词复数，故用 features。",
+      "trap": "featured / featuring 是分词，不能作 has 的宾语。",
+      "src": "2026-11-13 中考卷 · 语法填空",
+      "verified": true
+    },
+    {
+      "id": "zk-014",
+      "topic": "名词性从句",
+      "level": 2,
+      "stem": "There is no doubt ______ colour walk can make people feel calm and relaxed.",
+      "cn": "毫无疑问，色彩漫步能让人感到平静放松。",
+      "options": [
+        "that",
+        "if",
+        "whether",
+        "what"
+      ],
+      "answer": "A",
+      "rule": "There is no doubt that… 是固定句型，that 引导同位语从句、不作成分。",
+      "trap": "doubt 只有在肯定句里才用 whether/if；否定与疑问用 that。",
+      "src": "2026-11-13 中考卷 · 完形填空",
+      "verified": true
+    },
+    {
+      "id": "zk-015",
+      "topic": "形容词辨析",
+      "level": 2,
+      "stem": "Learning Tang poems by heart is ______ but meaningful for young students.",
+      "cn": "背诵唐诗对青少年来说有挑战但有意义。",
+      "options": [
+        "challenging",
+        "terrible",
+        "brave",
+        "popular"
+      ],
+      "answer": "A",
+      "rule": "but 前后语义相对：有意义 ↔ 有难度，选 challenging。",
+      "trap": "meaningful 的反面是「难」，不是 terrible「糟糕」。",
+      "src": "2026-11-13 中考卷 · 完形填空",
+      "verified": true
+    }
+  ]
+}
