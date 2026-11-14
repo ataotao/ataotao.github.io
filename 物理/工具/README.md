@@ -9,7 +9,7 @@
 |---|---|---|---|
 | **node ≥ 18** | 必需 | 构建、校验、生成核验清单 | 装 Node.js 后 `node -v`；没进 PATH 可用 `-NodeExe` 指定 |
 | powershell 7（`pwsh`） | 必需 | 跑 `weekly.ps1` / `check.ps1` / `shot.ps1` | Windows 自带 PowerShell 5.1 也能跑 `check.ps1`、`trim.ps1` |
-| **Python 3 + python-docx** | 建议 | 答案体检（读 docx 文末答案表）、完整性审计 | `python -V`；`python -m pip install python-docx` |
+| **Python 3 + python-docx + pymupdf** | 建议 | 答案体检（读 docx / PDF 文末答案表）、完整性审计 | `python -V`；`python -m pip install python-docx pymupdf` |
 | **Microsoft Word**（COM） | 仅"加新卷/重裁图"时需要 | docx → XPS → 页面图 | 装 Office 即可；没有 Word 也能用已有图片和题包 |
 | Chrome / Edge | 仅截图自检时需要 | 无头截图 | 常见安装位置即可，或设环境变量 `CHROME_PATH` |
 | powershell.exe 5.1 | 仅裁图时需要 | Word COM / WPF 渲染必须在 5.1 -STA 里跑 | Windows 自带 |
@@ -109,6 +109,7 @@ powershell.exe ... -File 物理\工具\extract.ps1 -Stage raw
 ## 5. 加一套新卷（人工 4 步，不用 weekly.ps1 时）
 
 1. docx 丢进 `物理/题库/`，跑第 3 节脚本裁图（`-Docx <路径> -PackId pk-wN`）。
+   PDF 原卷（如 `第11周周练.pdf`）：把 PDF 放进 `物理/题库/`，用 pymupdf 渲染 3× 后按题块裁图（参考 `pack-w11` 的 `q10_1/q10_2`、`q14_1/q14_2` 跨页拆图），再跑 `trim.ps1` 去白边；答案体检会按 `pack.source` 的扩展名走 PDF 分支。
 2. 照 `题库/pack-模板.json` 写 `题库/pack-wN.json`（规范见 `源/SPEC.md` 第 2 节、`源/内容作者必读.md`）。
 3. `node 物理\工具\build.mjs` 重建页面（或 `pwsh -File 物理\工具\check.ps1` 一把跑完所有闸门）。
 4. 截图抽查两题；也可以把 JSON 拿到页面「题库管理」里导入（导入版存在浏览器里，优先级高于内置）。
@@ -117,7 +118,7 @@ powershell.exe ... -File 物理\工具\extract.ps1 -Stage raw
 
 | 脚本 | 作用 |
 |---|---|
-| `工具/check_answers.py` | 把每个题包的选择题答案与 docx 文末答案表逐题比对，报 MISMATCH（交付前跑一次，必须 0 条） |
+| `工具/check_answers.py` | 把每个题包的选择题答案与原卷（docx / PDF）文末答案表逐题比对，报 MISMATCH（交付前跑一次，必须 0 条） |
 | `工具/audit_packs.py` | 每题是否有原题图 / 答案（ansImg 或 solution）、每套题数与图片体积 |
 | `工具/show_packs.py` | 打印全部题目的答案/字段/tags，快速通读 |
 | `工具/trim.ps1` | 裁图后处理：去掉四周纯白边（`-DryRun` 先看效果）。裁图后建议跑一次，可把"内容只占上半截"的长图收紧 |
@@ -152,7 +153,7 @@ _recon/      中间产物（不进交付，可整个删掉；raw/ 和 geom/ 建�
 | 场景 | 需要装什么 | 命令 |
 |---|---|---|
 | 只给孩子用 | 无（浏览器即可） | 双击 `物理/物理思维脚手架.html` |
-| 加新卷 / 重裁图 | node + Word + Python+python-docx | `pwsh -File 物理\工具\weekly.ps1 -Docx "<卷子>\第10周.docx"` |
+| 加新卷 / 重裁图 | node + Word + Python+python-docx（PDF 原卷另需 pymupdf） | `pwsh -File 物理\工具\weekly.ps1 -Docx "<卷子>\第10周.docx"` |
 | 只改题包/解析 | node | 改 `题库/pack-wN.json` → `pwsh -File 物理\工具\check.ps1` |
 | 只改界面 | node | 改 `源/js/*.js` 或 `源/css/style.css` → `check.ps1` |
 

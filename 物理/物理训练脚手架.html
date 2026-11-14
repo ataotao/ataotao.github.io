@@ -766,7 +766,7 @@ var PT = (function () {
     return body;
   }
 
-  /* ================= 认模型（6 类，全部 choice） ================= */
+  /* ================= 认模型（10 类，全部 choice） ================= */
   function genModelTension(r) {
     var v = ri(r, 0, 2);
     if (v === 0) {
@@ -1026,7 +1026,7 @@ var PT = (function () {
         prompt: '如图，在金属夹 A、B 间接入下列物品，能使小灯泡发光的是（　）',
         fields: [choiceField(r, c0, bad0)],
         tip: '接导体灯亮，接绝缘体灯不亮。',
-        explain: [c0 + ' 是导体，接进电路后电路闭合，小灯泡发光。', '橡皮、塑料、油等都是绝缘体，接进去电路断开，灯不亮。'],
+        explain: [c0 + ' 是导体，接进电路后电路闭合，小灯泡发光。', bad0.join('、') + ' 都是绝缘体，接进去电路断开，灯不亮。'],
         fig: { type: 'circuit', kind: 'clip-gap' }, figBefore: true,
         kp: ['导体', '绝缘体']
       };
@@ -1048,7 +1048,7 @@ var PT = (function () {
       prompt: '下列物品中，属于绝缘体的是（　）',
       fields: [choiceField(r, c1, bad1)],
       tip: '导体：铅笔芯、金属、人体、大地、盐水；绝缘体：橡皮、塑料、油、玻璃、陶瓷。',
-      explain: [c1 + ' 不容易导电，是绝缘体。', '其余三样都是导体。'],
+      explain: [c1 + ' 不容易导电，是绝缘体。', bad1.join('、') + ' 都是导体。'],
       kp: ['导体', '绝缘体']
     };
   }
@@ -1926,7 +1926,7 @@ var PT = (function () {
       var card = h('div', { class: 'module' },
         h('div', { class: 'mh' }, h('span', null, m.icon), h('b', null, m.name)),
         h('div', { class: 'desc' }, m.desc),
-        h('div', { class: 'kinds' }, (m.kinds || []).slice(0, 6).map(function (k) { return h('span', { class: 'kind' }, k.name); })),
+        h('div', { class: 'kinds' }, (m.kinds || []).slice(0, 4).map(function (k) { return h('span', { class: 'kind' }, k.name); })),
         h('div', { class: 'row', style: 'margin-top:auto' },
           h('button', { class: 'btn btn-primary btn-sm', onclick: function () { startSession(m.id, null, m.id === 'draw' ? 4 : (m.id === 'read' ? 3 : 6)); } }, '开始'),
           h('button', { class: 'btn btn-sm', onclick: function () { startExample(m.id, lastKindOf(m.id)); } }, '看例题')

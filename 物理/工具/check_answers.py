@@ -10,13 +10,6 @@ sys.stdout.reconfigure(encoding='utf-8')
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))   # 物理/
 QDIR = os.path.join(ROOT, '题库')
 
-# 旧题包没有 source 字段时按文件名猜（保留兼容）
-MAP = {
-    'pk-w1': '第1周', 'pk-w2': '第2周', 'pk-w4': '第4周', 'pk-w5a': '第5周_1',
-    'pk-w5b': '第5周_2', 'pk-w6': '第6周', 'pk-w8': '第8周', 'pk-w9': '第9周',
-    'pk-w11': '第11周周练',
-}
-
 
 def answer_tables_docx(docx_path):
     """从 docx 表格里找「题号 / 答案」两行，返回 {题号: 'A'/'BC'}"""
@@ -74,24 +67,22 @@ def answer_tables_pdf(pdf_path):
         nums = [c for c in cells_at(row_y['题号']) if re.fullmatch(r'\d{1,2}', c)]
         letters = [c.upper() for c in cells_at(row_y['答案'])
                    if re.fullmatch(r'[A-D]{1,4}', c.upper())]
-        if nums and letters:
+        if nums and len(nums) == len(letters):
             for n, a in zip(nums, letters):
                 best[n] = a
+        elif nums:
+            print('⚠ PDF 答案表解析异常：题号 %d 个、答案 %d 个（%s）' % (len(nums), len(letters), pdf_path))
+    doc.close()
     return best
 
 
 def find_source(pack):
-    """优先用 pack.source（相对 物理/）；旧题包没有 source 时按 MAP 猜 docx。"""
+    """用 pack.source（相对 物理/）；路径不存在或没写 source 就报 NO_SOURCE。"""
     src = pack.get('source')
-    if src:
-        p = os.path.join(ROOT, src.replace('/', os.sep))
-        if os.path.exists(p):
-            return p
-    guess = MAP.get(pack.get('id', ''), '###')
-    for f in os.listdir(QDIR):
-        if f.startswith(guess) and f.lower().endswith(('.docx', '.pdf')) and not f.startswith('~$'):
-            return os.path.join(QDIR, f)
-    return None
+    if not src:
+        return None
+    p = os.path.join(ROOT, src.replace('/', os.sep))
+    return p if os.path.exists(p) else None
 
 
 rows, total_bad, no_key, skipped = [], 0, 0, 0
@@ -136,11 +127,9 @@ for r in rows:
 print('')
 if no_key:
     print('⚠ 有 %d 题在答案表里找不到对应题号（答案表解析可能失败，或题号对不上）' % no_key)
+ok = (total_bad == 0 and no_key == 0 and skipped == 0)
 if skipped:
-    print('⚠ 有 %d 套 PDF 题包跳过答案体检（缺 pymupdf：python -m pip install pymupdf）' % skipped)
-ok = (total_bad == 0 and no_key == 0)
-if ok and skipped:
-    print('结论：已检查的题包全部一致 ✓；%d 套 PDF 未检查（缺 pymupdf）' % skipped)
+    print('✗ 有 %d 套 PDF 题包未体检（缺 pymupdf）。安装后重跑：python -m pip install pymupdf' % skipped)
 elif ok:
     print('结论：全部一致 ✓')
 else:
