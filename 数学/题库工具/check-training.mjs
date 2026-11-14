@@ -109,11 +109,16 @@ for (let i = 0; i < days.length; i++) {
   if (p.write.kinds.filter((x) => x === 'vertex').length < 2) pf.push(k + ' 顶点式少于 2 题');
 }
 
-// ⑥ 连续 6 天主力全覆盖
-const mains = plans.slice(0, 6).map((p) => p.main);
-if (new Set(mains).size !== 6) pf.push('连续 6 天主力未覆盖 6 类：' + mains.join(','));
+// ⑥ 主力轮换：连续「轮换池长度」天要覆盖全部主力题型（池子有 8 类就查 8 天）
+//    轮换池以 MT 的 WRITE_ROT 为准（planForDay 里过滤掉不存在的题型），这里按 kinds 数量推天数
+const ROT = MT.moduleById('write').kinds.map((k) => k.id);
+const rotDays = [];
+for (let i = 0; i < ROT.length; i++) rotDays.push(dayKey(new Date(2026, 10, 13 + i)));
+const rotPlans = rotDays.map((k) => MT.planForDay(k, null));
+const mains = rotPlans.map((p) => p.main);
+if (new Set(mains).size !== ROT.length) pf.push('连续 ' + ROT.length + ' 天主力未覆盖全部题型：' + mains.join(','));
 if (!MT.moduleById('write').kinds.some((k) => k.id === 'intercept')) pf.push('写解析式没有交点式题型');
-if (mains.indexOf('intercept') < 0) pf.push('6 天轮换里没有轮到交点式');
+if (mains.indexOf('intercept') < 0) pf.push(ROT.length + ' 天轮换里没有轮到交点式');
 
 // ⑦ 弱项覆盖
 const pw = MT.planForDay(days[0], 'profit');

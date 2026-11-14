@@ -332,12 +332,37 @@ var MT = (function () {
   function genProfit(r) {
     var cost = ri(r, 20, 60);
     var price = cost + ri(r, 10, 40);
-    var n = ri(r, 10, 50);
+    var n = ri(r, 20, 60);
     var dd = pick(r, [2, 4, 5]);
-    var m = ri(r, 1, 5);
+    var m = ri(r, 1, 4);
     var b = m / dd;
     var a = price - cost;
-    var x0 = dd * ri(r, 1, 4);
+    /* 两个方向都要练：涨价（销量减少、售价有上限）与降价（销量增加、不能亏本） */
+    var up = r() < 0.5;
+    var step = ri(r, 1, 4);
+    var x0 = dd * step;
+    if (up) {
+      var cap = Math.floor((n - 5) / b);                  /* 销量别被减成 0 或负数 */
+      if (x0 > dd * Math.floor(cap / dd)) x0 = dd * Math.max(1, Math.floor(cap / dd));
+      var Wup = (a + x0) * (n - b * x0);
+      return {
+        id: 'write.profit', kind: 'profit', title: '利润建模',
+        prompt: '某店每件商品进价 ' + cost + ' 元、售价 ' + price + ' 元，每天可卖 ' + n + ' 件。<br>' +
+          '每涨价 ' + dd + ' 元，每天就少卖 ' + m + ' 件。设每件涨价 x 元。',
+        fields: [
+          { type: 'num', label: '每件盈利 = a + x，a =', ans: a },
+          { type: 'num', label: '每天销量 = ' + n + ' − b·x，b =', ans: b },
+          { type: 'num', label: '涨价 ' + x0 + ' 元时，日盈利 W =', ans: Wup, unit: '元' }
+        ],
+        tip: '涨价 x 元 → 每件多赚 x 元；"每涨 d 元少卖 m 件" → 少卖 (m/d)·x 件，所以销量是减。',
+        explain: [
+          '每件盈利 = 售价 − 进价 + 涨价 = ' + a + ' + x，所以 a = ' + a + '。',
+          '每涨 ' + dd + ' 元少卖 ' + m + ' 件，涨 x 元就少卖 (' + m + '/' + dd + ')x = ' + frac(b) + 'x，所以 b = ' + frac(b) + '。',
+          'W = (' + a + ' + ' + x0 + ')(' + n + ' − ' + frac(b) + '×' + x0 + ') = ' + (a + x0) + ' × ' + (n - b * x0) + ' = ' + frac(Wup) + '（元）。'
+        ],
+        kp: ['二次函数', '建模', '利润']
+      };
+    }
     if (x0 >= a) x0 = dd * Math.max(1, Math.floor((a - 1) / dd));
     var W = (a - x0) * (n + b * x0);
     return {
@@ -356,6 +381,70 @@ var MT = (function () {
         'W = (' + a + ' − ' + x0 + ')(' + n + ' + ' + frac(b) + '×' + x0 + ') = ' + (a - x0) + ' × ' + (n + b * x0) + ' = ' + frac(W) + '（元）。'
       ],
       kp: ['二次函数', '建模', '利润']
+    };
+  }
+
+  /* 拱桥/隧道建模：顶点在 y 轴上 → 设 y = ax² + k（第 11 周周练卷 15(1) 就是这一型） */
+  function genArch(r) {
+    var b = pick(r, [5, 10, 20]);                    /* 水面半宽 */
+    var ks = b === 20 ? [8, 10] : (b === 5 ? [2] : [4, 5]);   /* 拱高约为半宽的 1/3–1/2，别画成扁平拱 */
+    var k = pick(r, ks);                             /* 拱顶距水面 */
+    var a = -k / (b * b);
+    var x1 = pick(r, [-6, -4, -3, 2, 3, 4, 6]);
+    if (Math.abs(x1) >= b) x1 = Math.round(b / 2);
+    var y1 = a * x1 * x1 + k;
+    var opts = ['y = ax² + k（顶点在 y 轴上）', 'y = a(x − h)² + k（顶点不在 y 轴上）', 'y = ax² + bx + c（一般式）'];
+    var right = opts[0];
+    for (var oi = opts.length - 1; oi > 0; oi--) { var oj = Math.floor(r() * (oi + 1)), tt = opts[oi]; opts[oi] = opts[oj]; opts[oj] = tt; }
+    return {
+      id: 'write.arch', kind: 'arch', title: '拱桥建模',
+      prompt: '一座抛物线形拱桥，水面宽 ' + (2 * b) + ' m，拱顶距水面 ' + k + ' m。<br>' +
+        '以水面为 x 轴、拱顶所在竖直线为 y 轴建系，求抛物线的解析式。',
+      fields: [
+        { type: 'choice', label: '先设哪种形式最省事？', options: opts, ans: opts.indexOf(right) },
+        { type: 'num', label: '解析式 y = ax² + k 中，a =（可填分数）', ans: a },
+        { type: 'num', label: '离桥中心 ' + d(Math.abs(x1)) + ' m 处的拱高 =', ans: y1, unit: 'm' }
+      ],
+      tip: '顶点在 y 轴上 → 设 y = ax² + k，k 就是拱高；再把 (±半宽, 0) 代进去求 a。',
+      explain: [
+        '顶点在 y 轴上，设 y = ax² + k，拱顶 (' + 0 + ', ' + k + ') 给出 k = ' + k + '。',
+        '水面宽 ' + (2 * b) + ' m → 抛物线过 (' + d(-b) + ', 0) 和 (' + d(b) + ', 0)：0 = a×' + (b * b) + ' + ' + k + '，所以 a = ' + frac(a) + '。',
+        '解析式：y = ' + frac(a) + 'x² + ' + k + '。',
+        '再代 x = ' + d(x1) + '：y = ' + frac(a) + '×' + (x1 * x1) + ' + ' + k + ' = ' + frac(y1) + '（m）。'
+      ],
+      fig: { type: 'parabola', a: a, h: 0, k: k, xr: [-b - 0.6, b + 0.6], dots: [[0, k, '拱顶'], [-b, 0, '水面'], [b, 0, '水面'], [x1, y1, 'x=' + d(x1)]] },
+      kp: ['二次函数', '建模', '待定系数法']
+    };
+  }
+
+  /* 对称轴 + 一点求一般式：b 由对称轴定，c 由代点定（第 11 周周练卷附加题 (1)） */
+  function genAxis(r) {
+    var a = pick(r, [-2, -1, 1, 2]);
+    var h = ri(r, -3, 3);
+    var x0 = h + pick(r, [-3, -2, -1, 1, 2, 3]);
+    if (x0 > 5) x0 = h + 2;
+    if (x0 < -5) x0 = h - 2;
+    var c = ri(r, -4, 4);
+    var b = -2 * a * h;
+    var y0 = a * x0 * x0 + b * x0 + c;
+    var k = c - a * h * h;
+    var atxt = (a === 1 ? '' : (a === -1 ? '−' : d(a)));
+    return {
+      id: 'write.axis', kind: 'axis', title: '对称轴求一般式',
+      prompt: '已知抛物线 y = ' + atxt + 'x² + bx + c 的对称轴是直线 x = ' + d(h) + '，且经过点 A(' + d(x0) + ', ' + d(y0) + ')。<br>' +
+        '求 b 和 c。',
+      fields: [
+        { type: 'num', label: 'b =', ans: b },
+        { type: 'num', label: 'c =', ans: c }
+      ],
+      tip: '对称轴 x = −b/(2a)：a 已知、轴已知 → 先定 b；再把 A 代进去定 c。',
+      explain: [
+        '对称轴 −b/(2a) = ' + d(h) + '，a = ' + d(a) + '，所以 b = −2a·h = −2×(' + d(a) + ')×' + d(h) + ' = ' + d(b) + '。',
+        '把 A(' + d(x0) + ', ' + d(y0) + ') 代入 y = ' + atxt + 'x² + ' + d(b) + 'x + c：' + d(y0) + ' = ' + d(a * x0 * x0) + (b * x0 >= 0 ? ' + ' + d(b * x0) : ' − ' + d(-b * x0)) + ' + c，得 c = ' + d(c) + '。',
+        '所以 y = ' + poly2(a, b, c) + '，顶点 (' + d(h) + ', ' + d(k) + ')。'
+      ],
+      fig: { type: 'parabola', a: a, h: h, k: k, dots: [[h, k, '顶点'], [x0, y0, 'A']] },
+      kp: ['二次函数', '待定系数法']
     };
   }
 
@@ -1062,6 +1151,98 @@ var MT = (function () {
       tip: '把 x = 2 代进去，看 y 等不等于 −6。',
       explain: ['x = 2 时 y = −7 ≠ −6，所以点 (2, −6) 不在图象上。'],
       kp: ['二次函数', '含参']
+    },
+    /* ---- 第 11 周周练卷（11.11）的解答题前两步 ---- */
+    {
+      id: 'entry.13.1', no: '13', title: '13(1) 对称轴与顶点',
+      prompt: '已知二次函数 y₁ = −x² + 2x + 3。<br><span class="muted small">求对称轴和顶点——这是 13 题的第一个得分点（4 分里先拿 2 分）。</span>',
+      fields: [
+        { type: 'num', label: '对称轴 直线 x =', ans: 1 },
+        { type: 'num', label: '顶点的纵坐标 =', ans: 4 }
+      ],
+      tip: '对称轴 x = −b/(2a)；顶点把横坐标代回去算 y。',
+      explain: ['a = −1、b = 2：x = −b/(2a) = −2/(−2) = 1。', '代 x = 1：y = −1 + 2 + 3 = 4，顶点 (1, 4)。'],
+      fig: { type: 'parabola', a: -1, h: 1, k: 4, dots: [[1, 4, '顶点']] },
+      kp: ['二次函数', '顶点']
+    },
+    {
+      id: 'entry.13.3', no: '13', title: '13(3) 平移后解析式',
+      prompt: '把抛物线 y = −x² + 2x + 3 向下平移 3 个单位，再向左平移 2 个单位。<br>写出平移后的解析式（13(3) 的 3 分）。',
+      fields: [{ type: 'expr', form: 'general', tpl: 'y = {}x² + {}x', label: '平移后的解析式', ans: [-1, -2] }],
+      tip: '「上加下减」改常数项，「左加右减」把 x 换成 (x + 2)。',
+      explain: ['先向下 3 个：y = −x² + 2x + 3 − 3 = −x² + 2x。', '再向左 2 个（x 换成 x + 2）：y = −(x + 2)² + 2(x + 2) = −x² − 2x。'],
+      kp: ['二次函数', '平移']
+    },
+    {
+      id: 'entry.13.5', no: '13', title: '13(5) 面积怎么设',
+      prompt: 'A(0, 3)、B(3, 0)，P 在线段 AB 上方的抛物线上。设 P(t, −t² + 2t + 3)，过 P 作 PQ ∥ y 轴交 AB 于 Q。<br><span class="muted small">先写出 PQ 的长度——这是 13(5) 的关键一步。</span>',
+      fields: [{
+        type: 'choice', label: 'PQ =', ans: 0,
+        options: ['−t² + 3t', 't² − 3t', '−t² + 3t + 6', '−t² + t']
+      }],
+      tip: 'Q 和 P 横坐标相同；Q 在直线 AB 上，而 AB 的解析式是 y = −x + 3。',
+      explain: ['Q(t, −t + 3)，P(t, −t² + 2t + 3)。', 'PQ = y_P − y_Q = (−t² + 2t + 3) − (−t + 3) = −t² + 3t。'],
+      kp: ['二次函数', '面积最值']
+    },
+    {
+      id: 'entry.14.1', no: '14', title: '14 第一步：平行得角',
+      prompt: 'AB 为 ⊙O 的直径，∠BOC = 80°，AD ∥ OC。<br><span class="muted small">第一步：∠DAB 是多少度？依据是哪条？</span>',
+      fields: [
+        { type: 'num', label: '∠DAB =', ans: 80, unit: '°' },
+        {
+          type: 'choice', label: '依据', ans: 0,
+          options: ['AD ∥ OC，两直线平行、同位角相等', '同弧所对的圆周角等于圆心角的一半', 'OA = OD，等边对等角', '直径所对的圆周角是直角']
+        }
+      ],
+      tip: 'AD ∥ OC，AB 是截线 → ∠DAB 与 ∠BOC 是同位角。',
+      explain: ['AD ∥ OC，AB 截两条平行线，∠DAB 与 ∠BOC 是同位角，所以 ∠DAB = ∠BOC = 80°。', '接下来由 OA = OD 得 ∠D = ∠DAB = 80°。'],
+      kp: ['圆的基本性质', '平行线与角']
+    },
+    {
+      id: 'entry.15.1', no: '15', title: '15(1) 建系设式求 a',
+      prompt: '三孔桥：以水面为 x 轴、大孔抛物线对称轴为 y 轴。大孔水面宽 20 m，顶点距水面 8 m。<br>设 y = ax² + k，求 k 和 a。',
+      fields: [
+        { type: 'num', label: 'k =', ans: 8 },
+        { type: 'num', label: 'a =（可填分数）', ans: -0.08 }
+      ],
+      tip: '顶点在 y 轴上 → k 就是拱高；水面宽 20 m 意味着过 (±10, 0)。',
+      explain: ['顶点 (0, 8)，所以 k = 8。', '过 (10, 0)：0 = a×100 + 8，a = −8/100 = −2/25。', '解析式 y = −2/25 x² + 8。'],
+      fig: { type: 'parabola', a: -0.08, h: 0, k: 8, xr: [-10.6, 10.6], dots: [[0, 8, '拱顶'], [-10, 0, '水面'], [10, 0, '水面']] },
+      kp: ['二次函数', '建模', '待定系数法']
+    },
+    {
+      id: 'entry.16.1', no: '16', title: '16(1) 销量用 x 表示',
+      prompt: '进价 40 元、售价 50 元，每月可卖 150 件；每涨价 2 元就少卖 5 件。设每件涨价 x 元。<br>每月可卖 = 150 − b·x。',
+      fields: [
+        { type: 'num', label: 'b =', ans: 2.5 },
+        { type: 'num', label: '涨价 4 元时，每月可卖 =', ans: 140, unit: '件' }
+      ],
+      tip: '「每涨 2 元少卖 5 件」→ 涨 1 元少卖 5/2 件。',
+      explain: ['每涨 2 元少卖 5 件，涨 x 元少卖 (5/2)x = 2.5x 件，所以 b = 2.5。', 'x = 4：150 − 2.5×4 = 140（件）。'],
+      kp: ['二次函数', '建模']
+    },
+    {
+      id: 'entry.16.2', no: '16', title: '16(2) 取值范围',
+      prompt: '某商品售价 50 元，每件涨价 x 元（x 为偶数），售价不能超过 70 元。<br>自变量 x 的取值范围是？',
+      fields: [{
+        type: 'choice', label: '', ans: 0,
+        options: ['0 ≤ x ≤ 20 且 x 为偶数', '0 ≤ x ≤ 20', '0 ≤ x ≤ 25 且 x 为偶数', '0 ≤ x ≤ 30 且 x 为偶数']
+      }],
+      tip: '两条约束：x ≥ 0（只能涨不能降，题目说"上涨"）、售价 50 + x ≤ 70；别忘了"x 为偶数"。',
+      explain: ['售价 50 + x ≤ 70 ⟹ x ≤ 20。', '又 x ≥ 0 且 x 为偶数，所以 0 ≤ x ≤ 20 且 x 为偶数。', '坑：漏掉"偶数"（选 B），或把 70 当成涨价幅度（选 C/D）。'],
+      kp: ['二次函数', '取值范围']
+    },
+    {
+      id: 'entry.17.1', no: '附加', title: '附加(1) 对称轴求 b、c',
+      prompt: '抛物线 y = −x² + bx + c 的对称轴是直线 x = 1，且经过点 A(−1, 0)。<br>求 b 和 c（附加题第一个得分点）。',
+      fields: [
+        { type: 'num', label: 'b =', ans: 2 },
+        { type: 'num', label: 'c =', ans: 3 }
+      ],
+      tip: '对称轴 x = −b/(2a) 先定 b；再把 A 代进去定 c。',
+      explain: ['−b/(2×(−1)) = 1 ⟹ b = 2。', '代 A(−1, 0)：−1 − 2 + c = 0 ⟹ c = 3。', '所以 y = −x² + 2x + 3。'],
+      fig: { type: 'parabola', a: -1, h: 1, k: 4, dots: [[1, 4, '顶点'], [-1, 0, 'A']] },
+      kp: ['二次函数', '待定系数法']
     }
   ];
 
@@ -1098,14 +1279,16 @@ var MT = (function () {
     },
     {
       id: 'write', name: '写解析式', icon: '✍️',
-      desc: '从条件写出解析式：设 → 代 → 求。补的是「会读图、不会写式」这一断点。',
+      desc: '从条件写出解析式：设 → 代 → 求。补的是「会读图、不会写式」这一断点；含拱桥建模与「对称轴 + 一点」求一般式。',
       kinds: [
         { id: 'vertex', name: '顶点式求 a', gen: genVertex },
         { id: 'intercept', name: '交点式写解析式', gen: genIntercept },
         { id: 'inverse', name: '反比例求 k', gen: genInverse },
-        { id: 'profit', name: '利润建模', gen: genProfit },
+        { id: 'profit', name: '利润建模（涨/降价）', gen: genProfit },
         { id: 'segment', name: '线段解析式', gen: genSegment },
-        { id: 'piece', name: '分段函数', gen: genPiece }
+        { id: 'piece', name: '分段函数', gen: genPiece },
+        { id: 'arch', name: '拱桥建模', gen: genArch },
+        { id: 'axis', name: '对称轴求一般式', gen: genAxis }
       ]
     },
     {
@@ -1440,7 +1623,7 @@ var MT = (function () {
      ⑤ 难度顺序：先易后难（因式分解 → 方程 → 轮换；顶点式 → 主力 → 次主力）。
      ⑥ 同一套内题干不重复。
      ===================================================================== */
-  var WRITE_ROT = ['vertex', 'intercept', 'inverse', 'segment', 'piece', 'profit'];
+  var WRITE_ROT = ['vertex', 'intercept', 'inverse', 'segment', 'piece', 'profit', 'arch', 'axis'];
   function daySeed(key) {
     var h = 2166136261, k = String(key);
     for (var i = 0; i < k.length; i++) { h ^= k.charCodeAt(i); h = Math.imul(h, 16777619); }
@@ -1590,6 +1773,11 @@ var MT = (function () {
     return e;
   }
   function clear(el) { while (el.firstChild) el.removeChild(el.firstChild); }
+  /* 题号标签：数字 →「第 5 题」；非数字（附加题的「附加」）→「附加题」 */
+  function qnoLabel(no, fallback) {
+    var s = (no == null || no === '') ? (fallback == null ? '?' : String(fallback)) : String(no);
+    return /^\d+$/.test(s) ? ('第 ' + s + ' 题') : (s + '题');
+  }
   function pct(a, b) { return b ? Math.round(a / b * 100) : 0; }
   function fmtSec(s) { s = Math.round(s); return s < 60 ? s + ' 秒' : Math.floor(s / 60) + ' 分 ' + (s % 60) + ' 秒'; }
   function todayRecs() { var t = today(); return DB.recs.filter(function (r) { return dayKey(r.ts) === t; }); }
@@ -1620,7 +1808,7 @@ var MT = (function () {
     var META = {
       drill: { n: 6, sub: '6 题 · 5 分钟 · ' + plan.drill.note },
       write: { n: 8, sub: '8 题 · 10 分钟 · ' + plan.write.note },
-      entry: { n: 3, sub: '3 题 · 8 分钟 · 12 个得分点里按今天这套取 3 个' }
+      entry: { n: 3, sub: '3 题 · 8 分钟 · 20 个得分点里按今天这套取 3 个' }
     };
     /* 顺序由 MT.modules 决定，这里只配题量与说明 */
     var tasks_plan = MT.modules.map(function (m) {
@@ -1662,7 +1850,7 @@ var MT = (function () {
       h('ul', { class: 'small muted', style: 'margin:6px 0 0;padding-left:20px' },
         h('li', null, '一天一套：题目由「日期种子」生成，同一天打开几次都是同一套，换天才换。'),
         h('li', null, '今天的配比：' + plan.note),
-        h('li', null, '主力题型按 6 类轮换（顶点式 → 交点式 → 反比例 → 线段 → 分段 → 利润），6 天一轮全覆盖；最近一轮有错题时，主力换成错的那一类（弱项优先）。'),
+        h('li', null, '主力题型按 8 类轮换（顶点式 → 交点式 → 反比例 → 线段 → 分段 → 利润 → 拱桥 → 对称轴），8 天一轮全覆盖；最近一轮有错题时，主力换成错的那一类（弱项优先）。'),
         h('li', null, '难度顺序：因式分解 → 解方程 → 轮换题；写解析式先顶点式（要写全式），再主力，再次主力。'),
         h('li', null, '同一套内题干不重复；错题回炉按 1/3/7/14 天到期；跳过几天不累计欠账。')
       )
@@ -1897,7 +2085,7 @@ var MT = (function () {
 
     var card = h('div', { class: 'card', style: 'margin-top:12px' });
     card.appendChild(h('div', { class: 'qhead' },
-      h('span', { class: 'pill' }, q.kind === 'entry' || q.no ? ('第 ' + (q.no || '') + ' 题') : '新题'),
+      h('span', { class: 'pill' }, q.kind === 'entry' || q.no ? qnoLabel(q.no) : '新题'),
       q.kp ? h('span', { class: 'small muted' }, q.kp.join(' · ')) : null
     ));
     card.appendChild(h('div', { class: 'qbody', html: fracify(q.prompt) }));
