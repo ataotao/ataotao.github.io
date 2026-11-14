@@ -7,7 +7,7 @@
  * 学习记录解析器能认出各科真实导出格式并聚合出正确率。改扫描逻辑后先跑这个。
  */
 import assert from 'node:assert/strict'
-import { mkdtempSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
+import { existsSync, mkdtempSync, mkdirSync, readFileSync, rmSync, utimesSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { buildReport, TODO_RANK, AUDITS } from './index.js'
@@ -37,7 +37,11 @@ function eq(actual, expected, message) {
 // ---------------------------------------------------------------- Host 扫描
 const report = buildReport(fakeCtx, {})
 ok(report.ok === true, '仓库根目录应能解析')
-ok(report.root.toLowerCase().endsWith('learning-training'), `解析到的根目录不对：${report.root}`)
+// 目录名会随使用场景改（现在叫「做题思维训练」），所以认标记文件，不认名字。
+ok(
+  existsSync(join(report.root, '开始.html')) && existsSync(join(report.root, 'AGENTS.md')),
+  `解析到的根目录不对：${report.root}`,
+)
 // 插件以链接装进 profile，必须能从自身位置找到仓库，不能只依赖 workspace 默认目录。
 const selfLocated = buildReport({ get: () => undefined }, {})
 ok(selfLocated.ok === true, '只靠插件自身位置也应能解析仓库根目录')
@@ -93,8 +97,13 @@ const fixture = mkdtempSync(join(tmpdir(), 'ltw-records-'))
 try {
   const dir = join(fixture, '学习记录')
   mkdirSync(dir, { recursive: true })
-  const write = (name, value) => writeFileSync(join(dir, name), JSON.stringify(value))
   const at = '2026-11-04T06:27:11.000Z'
+  // 解析器对没有导出时间的记录会退回文件 mtime；夹具是刚写的，不固定就会永远排在最前。
+  const write = (name, value) => {
+    const file = join(dir, name)
+    writeFileSync(file, JSON.stringify(value))
+    utimesSync(file, new Date(at), new Date(at))
+  }
 
   // 历史：{subject, exported, data:{cards, days, paper}}
   write('历史-练习记录-2026-11-04.json', {

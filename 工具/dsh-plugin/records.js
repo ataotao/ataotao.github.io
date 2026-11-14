@@ -124,7 +124,12 @@ export function scanRecords(root) {
   result.subjects = aggregate(snapshots)
   result.recent = snapshots
     .slice()
-    .sort((a, b) => (a.at < b.at ? 1 : -1))
+    // 没有导出时间的记录（物理/今晚急救包的裸 state）排最后，否则 null 会被当成最大值顶到第一行。
+    .sort((a, b) => {
+      const left = a.at || ''
+      const right = b.at || ''
+      return left < right ? 1 : left > right ? -1 : 0
+    })
     .slice(0, RECENT_LIMIT)
     .map((record) => ({
       subject: record.subject,
