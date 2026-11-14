@@ -61,6 +61,10 @@ p{margin:8px 0}
 .pill.bad{background:var(--bad-soft);color:var(--bad)}
 .pill.warn{background:var(--warn-soft);color:var(--warn)}
 .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.gsec{display:flex;align-items:baseline;gap:8px;margin:18px 2px 10px;padding-left:10px;border-left:3px solid var(--brand)}
+.gsec b{font-size:15px}
+.gsec span{font-size:12px;color:var(--muted)}
+.gsec:first-child{margin-top:4px}
 .stat{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px}
 .stat b{display:block;font-size:24px;line-height:1.2;margin-top:2px}
 .stat span{font-size:13px;color:var(--muted)}
@@ -861,7 +865,10 @@ var MT = (function () {
     { s: '不在同一直线上的三点确定一个圆', why: '两边的中垂线交于唯一一点，那个点就是圆心' },
     { s: '同圆或等圆的半径相等', why: '同一个圆里所有半径都等于 r；等圆半径也相等' },
     { s: '弦的两端都在圆上', why: '弦的定义：圆上任意两点间的线段' },
-    { s: '等弧的长度相等', why: '等弧能完全重合，长度自然相等（反过来不成立）' }
+    { s: '等弧的长度相等', why: '等弧能完全重合，长度自然相等（反过来不成立）' },
+    { s: '直径所对的圆周角是直角', why: '直径的两端和圆上任一点构成直角三角形，斜边是直径' },
+    { s: '半圆所对的圆周角是 90°', why: '就是「直径所对的圆周角是直角」，半圆的两端连起来就是直径' },
+    { s: '圆内接四边形的对角互补', why: '一组对角所对的两段弧合起来是整个圆，两角和 = 360° ÷ 2 = 180°' }
   ];
   var CIRCLE_WRONG = [
     { s: '弧是半圆，半圆是弧', why: '半圆是弧，但弧不一定是半圆——还有优弧、劣弧' },
@@ -873,7 +880,11 @@ var MT = (function () {
     { s: '弦是直径', why: '弦不一定过圆心，所以不一定是直径' },
     { s: '直径是圆中最短的弦', why: '反了：直径是最长的弦' },
     { s: '同圆中，弦越长，它到圆心的距离越大', why: '反了：弦越长离圆心越近，直径（最长）到圆心距离为 0' },
-    { s: '圆上任意两点间的线段叫弧', why: '两点间的线段叫弦，两点间的「部分」才叫弧' }
+    { s: '圆上任意两点间的线段叫弧', why: '两点间的线段叫弦，两点间的「部分」才叫弧' },
+    { s: '圆内接四边形的邻角互补', why: '互补的是对角（∠A + ∠C、∠B + ∠D），邻角不一定；这是最常见的记混' },
+    { s: '圆内接四边形的对角相等', why: '对角是互补（和 180°），不是相等；只有矩形这种特殊情况才相等' },
+    { s: '同一条弦所对的圆周角都相等', why: '要「同弧」所对的圆周角才相等；弦的两侧所对的圆周角互补' },
+    { s: '直径所对的圆周角是 180°', why: '是 90°：直径当斜边，直角在圆上那一点' }
   ];
   var ABSURD_CASES = [
     { concl: '一个三角形中不能有两个角是直角', ans: '三角形中有两个角是直角',
@@ -954,6 +965,133 @@ var MT = (function () {
         '90° 的圆周角对着直径，所以斜边就是外接圆的直径，半径 = ' + c + ' ÷ 2 = ' + frac(c / 2) + '。',
         '坑：把两条直角边的平均数当半径，或者把斜边直接当半径。'],
       kp: ['圆的基本性质', '三角形外接圆']
+    };
+  }
+
+  /* ---------- 圆的「三条辅助线 + 两个易忘推论」专项（2026-11-14 老师反馈） ----------
+     老师原话：①连半径得等腰 ②见弦作弦心距 + 连半径用垂径 ③见直径得 90° 圆周角；
+     两个推论容易忘：直径得 90° 圆周角、圆内接四边形对角互补。
+     这里的每一题都强制带一个「依据」选择：孩子漏结论，是因为下笔时不写依据——
+     先选依据、再算值，把「漏写」变成「选错就判错」。 */
+  var CIRCLE_BASIS = {
+    radius: 'OA = OB（同圆半径相等），等边对等角',
+    perp: '垂直于弦的直径平分这条弦（垂径定理）',
+    diam: '直径所对的圆周角是直角',
+    cyc: '圆内接四边形对角互补'
+  };
+  /* 每个考点的干扰项单独列：只放「明显不是这条依据」的，
+     别放「能推出它的上位定理」（把「圆周角＝圆心角一半」当 90° 的错项，学生有理由争）。 */
+  var CIRCLE_BASIS_BAD = {
+    radius: ['同弧所对的圆周角等于圆心角的一半', '直径所对的圆周角是直角', '圆内接四边形对角互补', '垂直于弦的直径平分这条弦（垂径定理）'],
+    perp: ['同弧所对的圆周角等于圆心角的一半', '直径所对的圆周角是直角', '圆内接四边形对角互补', '等腰三角形的两底角相等'],
+    diam: ['圆内接四边形对角互补', '等腰三角形的两底角相等', '垂直于弦的直径平分这条弦（垂径定理）', '等弧所对的弦相等'],
+    cyc: ['圆内接四边形邻角互补（∠A + ∠B = 180°）', '圆内接四边形的对角相等', '直径所对的圆周角是直角', '垂直于弦的直径平分这条弦（垂径定理）']
+  };
+  /* 依据选择：正确项 + 3 个干扰项，位置随机 */
+  function basisField(r, key, label) {
+    var right = CIRCLE_BASIS[key];
+    var bad = CIRCLE_BASIS_BAD[key];
+    var picked = [right], guard = 0;
+    while (picked.length < 4 && guard++ < 60) {
+      var w = pick(r, bad);
+      if (picked.indexOf(w) < 0) picked.push(w);
+    }
+    var opts = shuffle(r, picked);
+    return { type: 'choice', label: label || '依据', ans: opts.indexOf(right), options: opts };
+  }
+
+  /* ① 连半径得等腰：同圆的两条半径相等 ⟹ 等腰 ⟹ 两底角相等 */
+  function genRadiusIso(r) {
+    var theta = 2 * ri(r, 20, 60);        /* 圆心角取偶数，底角一定是整数 */
+    var half = (180 - theta) / 2;
+    var askTheta = r() < 0.4;             /* 四成的题反过来：给底角求圆心角 */
+    return {
+      id: 'drill.radiusiso', kind: 'radiusiso', title: '连半径得等腰',
+      prompt: askTheta
+        ? '⊙O 中，A、B 在圆上，∠OAB = ' + half + '°。<br><span class="muted small">先连半径，再求圆心角 ∠AOB。</span>'
+        : '⊙O 中，A、B 在圆上，∠AOB = ' + theta + '°。<br><span class="muted small">连半径 OA、OB 后，∠OAB 是多少？</span>',
+      fields: [
+        basisField(r, 'radius', '依据'),
+        { type: 'num', label: askTheta ? '∠AOB =' : '∠OAB =', ans: askTheta ? theta : half, unit: '°' }
+      ],
+      tip: '圆里见到两条半径，先写「OA = OB」：同圆半径相等 ⟹ △OAB 是等腰三角形 ⟹ 两个底角相等，再接三角形内角和。',
+      explain: ['OA = OB（同圆半径相等）⟹ △OAB 是等腰三角形，∠OAB = ∠OBA。',
+        askTheta
+          ? '∠OAB = ∠OBA = ' + half + '°，所以 ∠AOB = 180° − 2×' + half + '° = ' + theta + '°。'
+          : '∠OAB = (180° − ' + theta + '°) ÷ 2 = ' + half + '°。',
+        '「连半径」这条辅助线唯一的作用：把「半径相等」变成「等腰三角形」，后面的角和线段才有地方接。'],
+      kp: ['圆的基本性质', '连半径得等腰']
+    };
+  }
+
+  /* ② 见弦作弦心距 + 连半径，用垂径定理：弦长、弦心距、半径三者知二求一 */
+  var CHORD_TRI = [[3, 4, 5], [6, 8, 10], [5, 12, 13], [9, 12, 15], [8, 15, 17], [12, 16, 20]];
+  function genPerpChord(r) {
+    var t = pick(r, CHORD_TRI);           /* [半弦, 弦心距, 半径]，已经满足勾股 */
+    var half = t[0], dist = t[1], rad = t[2];
+    var ask = ri(r, 0, 2);                /* 0 求半径 / 1 求弦长 / 2 求弦心距 */
+    var prompt, label, ans, chain;
+    if (ask === 0) {
+      prompt = '⊙O 的弦 AB = ' + (2 * half) + '，圆心 O 到 AB 的距离 OM = ' + dist + '。求 ⊙O 的半径。';
+      label = '半径 OA ='; ans = rad;
+      chain = 'OA = √(' + dist + '² + ' + half + '²) = √' + (rad * rad) + ' = ' + rad + '。';
+    } else if (ask === 1) {
+      prompt = '⊙O 的半径是 ' + rad + '，圆心 O 到弦 AB 的距离 OM = ' + dist + '。求弦 AB 的长。';
+      label = 'AB ='; ans = 2 * half;
+      chain = 'AM = √(' + rad + '² − ' + dist + '²) = √' + (half * half) + ' = ' + half + '，AB = 2AM = ' + (2 * half) + '。';
+    } else {
+      prompt = '⊙O 的半径是 ' + rad + '，弦 AB = ' + (2 * half) + '。求圆心 O 到 AB 的距离。';
+      label = 'OM ='; ans = dist;
+      chain = 'AM = ½AB = ' + half + '，OM = √(' + rad + '² − ' + half + '²) = √' + (dist * dist) + ' = ' + dist + '。';
+    }
+    return {
+      id: 'drill.perpchord', kind: 'perpchord', title: '垂径定理',
+      prompt: prompt,
+      fields: [basisField(r, 'perp', '依据'), { type: 'num', label: label, ans: ans }],
+      tip: '见弦 → 先作弦心距 OM ⊥ AB，再连 OA：垂径定理给 AM = ½AB，勾股给 OA² = OM² + AM²。',
+      explain: ['OM ⊥ AB ⟹ AM = MB = ½AB（垂径定理），连 OA 得到 Rt△OAM。',
+        chain,
+        '套路：弦长、弦心距、半径三个量，知二求一；漏了「连半径」就没有直角三角形，漏了「弦心距」就没有直角。'],
+      kp: ['圆的基本性质', '垂径定理']
+    };
+  }
+
+  /* ③ 见直径得 90° 圆周角：AB 是直径 ⟹ ∠ACB = 90°，再算另一个锐角 */
+  function genDiam90(r) {
+    var a = ri(r, 25, 65);
+    var b = 90 - a;
+    return {
+      id: 'drill.diam90', kind: 'diam90', title: '直径所对圆周角',
+      prompt: 'AB 是 ⊙O 的直径，点 C 在 ⊙O 上，∠CAB = ' + a + '°。<br><span class="muted small">先由「AB 是直径」得 ∠ACB，再求 ∠ABC。</span>',
+      fields: [
+        basisField(r, 'diam', '∠ACB = 90° 的依据'),
+        { type: 'num', label: '∠ACB =', ans: 90, unit: '°' },
+        { type: 'num', label: '∠ABC =', ans: b, unit: '°' }
+      ],
+      tip: '见直径，先在图上标一个 90°：直径所对的圆周角是直角。再在直角三角形里用两锐角互余。',
+      explain: ['AB 是直径，点 C 在圆上 ⟹ ∠ACB = 90°（直径所对的圆周角是直角）。',
+        'Rt△ABC 中两锐角互余：∠ABC = 90° − ' + a + '° = ' + b + '°。',
+        '坑：一看到圆就去算圆周角＝圆心角的一半，忘了直径这个 90° 是免费的。'],
+      kp: ['圆的基本性质', '直径所对的圆周角']
+    };
+  }
+
+  /* ④ 圆内接四边形对角互补：∠A + ∠C = 180°，∠B + ∠D = 180°（不是邻角互补） */
+  function genCycQuad(r) {
+    var A = ri(r, 45, 135), B = ri(r, 45, 135);
+    return {
+      id: 'drill.cycquad', kind: 'cycquad', title: '圆内接四边形',
+      prompt: '四边形 ABCD 内接于 ⊙O，∠A = ' + A + '°，∠B = ' + B + '°。<br><span class="muted small">求 ∠C 和 ∠D。</span>',
+      fields: [
+        basisField(r, 'cyc', '依据'),
+        { type: 'num', label: '∠C =', ans: 180 - A, unit: '°' },
+        { type: 'num', label: '∠D =', ans: 180 - B, unit: '°' }
+      ],
+      tip: '圆内接四边形：对角互补（∠A + ∠C = 180°，∠B + ∠D = 180°），不是邻角互补。',
+      explain: ['四边形 ABCD 内接于 ⊙O ⟹ 对角互补：∠A + ∠C = 180°，∠B + ∠D = 180°。',
+        '∠C = 180° − ' + A + '° = ' + (180 - A) + '°；∠D = 180° − ' + B + '° = ' + (180 - B) + '°。',
+        '坑：记成「邻角互补」就会拿 ∠A + ∠B 去凑 180°；对角是隔着一条对角线的那两个角。'],
+      kp: ['圆的基本性质', '圆内接四边形']
     };
   }
 
@@ -1332,38 +1470,80 @@ var MT = (function () {
       tip: '∠DAE=45° 且 DE⊥AB ⟹ △ADE 是等腰直角三角形，AE=DE。',
       explain: ['DE⊥AB、∠DAE=45° ⟹ △ADE 等腰直角，AE=DE=2√2。', 'AD=√2·AE=√2×2√2=4；由 AE=2EB 得 EB=√2。', '下一步才是旋转：AE′=AE、AF′=AF、∠F′AE′=45°。'],
       kp: ['几何综合', '等腰直角三角形']
+    },
+    /* ---- 2026-11-14 老师反馈补的两道「第一步」：圆内接四边形对角互补、弦心距 + 连半径 ---- */
+    {
+      id: 'entry.t12', title: '圆内接四边形 · 对角互补第一步',
+      prompt: '四边形 ABCD 内接于 ⊙O，∠A = 70°，∠B = 95°。<br><span class="muted small">第一步：先写哪条结论，再算 ∠C。</span>',
+      fields: [
+        {
+          type: 'choice', label: '依据', ans: 0,
+          options: ['圆内接四边形对角互补：∠A + ∠C = 180°', '圆内接四边形邻角互补：∠A + ∠B = 180°', '同弧所对的圆周角相等', '直径所对的圆周角是直角']
+        },
+        { type: 'num', label: '∠C =', ans: 110, unit: '°' }
+      ],
+      tip: '圆内接四边形：对角互补（∠A + ∠C、∠B + ∠D），不是邻角互补——这是最容易记混的一条。',
+      explain: ['四边形 ABCD 内接于 ⊙O ⟹ 对角互补：∠A + ∠C = 180°。', '∠C = 180° − 70° = 110°。', '下一步同理：∠D = 180° − ∠B = 85°。'],
+      kp: ['圆的基本性质', '圆内接四边形']
+    },
+    {
+      id: 'entry.t13', title: '弦心距 + 连半径 · 垂径第一步',
+      prompt: 'AB 是 ⊙O 的弦，AB = 16，圆心 O 到 AB 的距离 OM = 6。<br><span class="muted small">第一步：作什么辅助线？先求哪条线段？</span>',
+      fields: [
+        {
+          type: 'choice', label: '第一步辅助线', ans: 0,
+          options: ['过 O 作 OM ⊥ AB 于 M（弦心距），再连 OA', '连 OA、OB 构造等边三角形', '过 A 作 AB 的垂线', '延长 OM 交圆于 C，得直径']
+        },
+        { type: 'num', label: 'AM =', ans: 8 },
+        { type: 'num', label: '半径 OA =', ans: 10 }
+      ],
+      tip: '见弦 → 作弦心距 + 连半径，凑出直角三角形：OA² = OM² + AM²。',
+      explain: ['OM ⊥ AB ⟹ AM = MB = ½AB = 8（垂径定理）。', '连 OA 得 Rt△OAM：OA = √(6² + 8²) = 10。', '套路：弦长、弦心距、半径三个量，知二求一。'],
+      kp: ['圆的基本性质', '垂径定理']
     }
   ];
 
   /* ---------- 模块注册表：加新训练 = 加一个模块 ----------
      数组顺序 = 每天的练习顺序 = 页签顺序 = 卡片顺序：基础快练（热身）→ 写解析式 → 大题前两步。
-     改顺序只改这里；不要在别处硬编码顺序。 */
+     改顺序只改这里；不要在别处硬编码顺序。
+     题型上的 group 只影响模块页的分组标题（同 group 的卡片排在一起）；不写 group 就不分组。 */
   var MODULES = [
     {
       id: 'drill', name: '基础快练', icon: '⚡',
-      desc: '解方程 / 判别式 / 韦达 / 顶点 / 反比例 / 旋转 / 对称图形 / 系数符号 / 代值 / 最短路径 / 圆的位置关系 / 弦弧直径 / 外接圆 / 反证法 / 最值 / 平移，限时一次就对。',
+      desc: '六个板块、25 个题型，限时一次就对：方程与代数 / 二次函数 / 反比例函数 / 圆 / 图形与变换 / 推理与证明。',
       kinds: [
-        { id: 'factor', name: '因式分解（十字相乘）', gen: genFactor },
-        { id: 'eq', name: '解一元二次方程', gen: genEq },
-        { id: 'disc', name: '判别式', gen: genDisc },
-        { id: 'vieta', name: '韦达定理', gen: genVieta },
-        { id: 'vertexprop', name: '二次函数顶点', gen: genVertexProp },
-        { id: 'invprop', name: '反比例·性质', gen: genInvProp },
-        { id: 'invarea', name: '反比例·面积', gen: genInvArea },
-        { id: 'rot', name: '旋转后坐标', gen: genRot },
-        { id: 'symshape', name: '对称图形判断', gen: genSymShape },
-        { id: 'coef', name: '二次函数系数', gen: genCoef },
-        { id: 'plug', name: '二次函数代值', gen: genPlug },
-        { id: 'eqdef', name: '一元二次方程识别', gen: genEqDef },
-        { id: 'path', name: '最短路径', gen: genPath },
-        { id: 'sym', name: '中心对称点', gen: genSym },
-        { id: 'ptcirc', name: '点与圆的位置关系', gen: genPtCirc },
-        { id: 'circledef', name: '圆的基本概念', gen: genCircleDef },
-        { id: 'circum', name: '直角三角形外接圆', gen: genCircum },
-        { id: 'absurd', name: '反证法第一步', gen: genAbsurd },
-        { id: 'vertexmax', name: '顶点式最值', gen: genVertexMax },
-        { id: 'shift', name: '抛物线平移', gen: genShift },
-        { id: 'rangemax', name: '闭区间最值', gen: genRangeMax }
+        /* group 只决定模块页怎么分组显示；数组顺序 = 「开始一轮」的混抽顺序 = 今日轮换顺序 */
+        /* —— 方程与代数 —— */
+        { id: 'factor', name: '因式分解（十字相乘）', group: '方程与代数', gen: genFactor },
+        { id: 'eq', name: '解一元二次方程', group: '方程与代数', gen: genEq },
+        { id: 'eqdef', name: '一元二次方程识别', group: '方程与代数', gen: genEqDef },
+        { id: 'disc', name: '判别式', group: '方程与代数', gen: genDisc },
+        { id: 'vieta', name: '韦达定理', group: '方程与代数', gen: genVieta },
+        /* —— 二次函数 —— */
+        { id: 'vertexprop', name: '二次函数顶点', group: '二次函数', gen: genVertexProp },
+        { id: 'vertexmax', name: '顶点式最值', group: '二次函数', gen: genVertexMax },
+        { id: 'coef', name: '二次函数系数', group: '二次函数', gen: genCoef },
+        { id: 'plug', name: '二次函数代值', group: '二次函数', gen: genPlug },
+        { id: 'shift', name: '抛物线平移', group: '二次函数', gen: genShift },
+        { id: 'rangemax', name: '闭区间最值', group: '二次函数', gen: genRangeMax },
+        /* —— 反比例函数 —— */
+        { id: 'invprop', name: '反比例·性质', group: '反比例函数', gen: genInvProp },
+        { id: 'invarea', name: '反比例·面积', group: '反比例函数', gen: genInvArea },
+        /* —— 圆：概念 → 三条辅助线 → 两个易忘推论 —— */
+        { id: 'circledef', name: '圆的基本概念', group: '圆', gen: genCircleDef },
+        { id: 'ptcirc', name: '点与圆的位置关系', group: '圆', gen: genPtCirc },
+        { id: 'circum', name: '直角三角形外接圆', group: '圆', gen: genCircum },
+        { id: 'radiusiso', name: '连半径得等腰', group: '圆', gen: genRadiusIso },
+        { id: 'perpchord', name: '垂径定理', group: '圆', gen: genPerpChord },
+        { id: 'diam90', name: '直径所对圆周角', group: '圆', gen: genDiam90 },
+        { id: 'cycquad', name: '圆内接四边形', group: '圆', gen: genCycQuad },
+        /* —— 图形与变换 —— */
+        { id: 'rot', name: '旋转后坐标', group: '图形与变换', gen: genRot },
+        { id: 'sym', name: '中心对称点', group: '图形与变换', gen: genSym },
+        { id: 'symshape', name: '对称图形判断', group: '图形与变换', gen: genSymShape },
+        { id: 'path', name: '最短路径', group: '图形与变换', gen: genPath },
+        /* —— 推理与证明 —— */
+        { id: 'absurd', name: '反证法第一步', group: '推理与证明', gen: genAbsurd }
       ]
     },
     {
@@ -1996,29 +2176,42 @@ var MT = (function () {
       h('button', { class: 'btn btn-primary', onclick: function () { startSession(m.id, null, m.id === 'entry' ? 3 : 8); } }, '开始一轮'),
       h('button', { class: 'btn', onclick: function () { startExample(m.id, lastKindOf(m.id)); } }, '先看例题')
     ));
-    head.appendChild(h('div', { class: 'small muted', style: 'margin-top:8px' }, '「开始一轮」按题型混抽（每次不同）；下面每个题型可以单独连做 10 题（专项）。'));
-    var list = h('div', { class: 'grid', style: 'margin-top:12px' });
+    head.appendChild(h('div', { class: 'small muted', style: 'margin-top:8px' }, '「开始一轮」按题型混抽（每次不同）；下面按板块分组，每个题型可以单独连做 10 题（专项）。'));
+    /* 分组：按 group 首次出现的顺序，同 group 的卡片排在一起；没有 group 就不出标题 */
+    var groups = [], byGroup = {};
+    if (m.kinds) m.kinds.forEach(function (k) {
+      var g = k.group || '';
+      if (!byGroup[g]) { byGroup[g] = []; groups.push(g); }
+      byGroup[g].push(k);
+    });
+    var showGroupHead = groups.length > 1 || (groups.length === 1 && groups[0] !== '');
+    var list = h('div', { style: 'margin-top:4px' });
     if (m.kinds) {
-      m.kinds.forEach(function (k) {
-        var st = kindStat('new', m.id, k.id);
-        list.appendChild(h('div', { class: 'module' },
-          h('div', { class: 'mh' }, h('b', null, k.name)),
-          h('div', { class: 'desc small muted' }, st.n ? '练过 ' + st.n + ' 题 · 正确率 ' + pct(st.ok, st.n) + '%' : '还没练过'),
-          h('div', { class: 'row', style: 'margin-top:auto' },
-            h('button', { class: 'btn btn-primary btn-sm', onclick: function () { startSession(m.id, k.id, 10); } }, '专项 10 题'),
-            h('button', { class: 'btn btn-sm', onclick: function () { startExample(m.id, k.id); } }, '看例题')
-          )
-        ));
+      groups.forEach(function (g) {
+        if (showGroupHead && g) list.appendChild(h('div', { class: 'gsec' }, h('b', null, g), h('span', null, byGroup[g].length + ' 个题型')));
+        var grid = h('div', { class: 'grid' });
+        byGroup[g].forEach(function (k) {
+          var st = kindStat('new', m.id, k.id);
+          grid.appendChild(h('div', { class: 'module' },
+            h('div', { class: 'mh' }, h('b', null, k.name)),
+            h('div', { class: 'desc small muted' }, st.n ? '练过 ' + st.n + ' 题 · 正确率 ' + pct(st.ok, st.n) + '%' : '还没练过'),
+            h('div', { class: 'row', style: 'margin-top:auto' },
+              h('button', { class: 'btn btn-primary btn-sm', onclick: function () { startSession(m.id, k.id, 10); } }, '专项 10 题'),
+              h('button', { class: 'btn btn-sm', onclick: function () { startExample(m.id, k.id); } }, '看例题')
+            )
+          ));
+        });
+        list.appendChild(grid);
       });
     } else {
-      list.appendChild(h('div', { class: 'module' },
+      list.appendChild(h('div', { class: 'grid' }, h('div', { class: 'module' },
         h('div', { class: 'mh' }, h('b', null, '全部得分点混排')),
         h('div', { class: 'desc small muted' }, '共 ' + m.items.length + ' 个得分点，每次随机 3 个'),
         h('div', { class: 'row', style: 'margin-top:auto' },
           h('button', { class: 'btn btn-primary btn-sm', onclick: function () { startSession(m.id, null, 3); } }, '练 3 题'),
           h('button', { class: 'btn btn-sm', onclick: function () { startExample(m.id, null); } }, '看例题')
         )
-      ));
+      )));
     }
     app.appendChild(list);
   }
