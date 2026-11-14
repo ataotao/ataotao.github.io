@@ -1243,6 +1243,95 @@ var MT = (function () {
       explain: ['−b/(2×(−1)) = 1 ⟹ b = 2。', '代 A(−1, 0)：−1 − 2 + c = 0 ⟹ c = 3。', '所以 y = −x² + 2x + 3。'],
       fig: { type: 'parabola', a: -1, h: 1, k: 4, dots: [[1, 4, '顶点'], [-1, 0, 'A']] },
       kp: ['二次函数', '待定系数法']
+    },
+    /* ---- 错题本（数学/错题本.html）里那批错题的「第一步」----
+       只收「第一步就是下笔障碍」的：辅助线 / 等半径 / 垂径定理 / 建模 / 待定系数。
+       纯概念选择（点与圆的位置关系、k 的几何意义、三次方程）已经有基础快练的题型覆盖，不在这里重复。 */
+    {
+      id: 'entry.t01', title: '错题本 p01 · 垂径定理第一步',
+      prompt: 'CD 是 ⊙O 的直径，AB 是 ⊙O 的弦，AB⊥CD 于 M。若 AB=8，OM∶OC=3∶5。<br><span class="muted small">第一步：垂径定理得 AM，再设 k 求半径。</span>',
+      fields: [
+        { type: 'num', label: 'AM =', ans: 4 },
+        { type: 'num', label: '设 OM=3k、OC=5k，则 k =', ans: 1 }
+      ],
+      tip: '直径垂直于弦 → 平分弦；半径 OA=OC=5k，在 Rt△AOM 里列勾股。',
+      explain: ['CD 过圆心且 AB⊥CD ⟹ AM=BM=½AB=4。', 'OM=3k、OC=5k ⟹ OA=5k；Rt△AOM：25k²=9k²+16 ⟹ k=1（OM=3、半径 5）。'],
+      kp: ['圆的基本性质', '垂径定理']
+    },
+    {
+      id: 'entry.t02', title: '错题本 p02 · 半圆里的角度链',
+      prompt: '以 △ABC 的边 AB 为直径作半圆 O，分别交 AC、BC 于 D、E。若 AC=BC，∠C=70°。<br><span class="muted small">第一步：先求 ∠A，再求 ∠CAE。</span>',
+      fields: [
+        { type: 'num', label: '∠A =', ans: 55, unit: '°' },
+        { type: 'num', label: '∠CAE =', ans: 20, unit: '°' }
+      ],
+      tip: '等腰三角形先算 ∠A；AB 是直径 ⟹ ∠AEB=90°，再在 Rt△ACE 里算 ∠CAE。',
+      explain: ['AC=BC、∠C=70° ⟹ ∠A=∠B=(180°−70°)/2=55°。', 'AB 为直径 ⟹ ∠AEB=90°；Rt△ACE 中 ∠CAE=90°−∠C=20°。', '再往下一步：∠DOE=2∠DAE=40°。'],
+      kp: ['圆的基本性质', '直径所对的圆周角']
+    },
+    {
+      id: 'entry.t03', title: '错题本 p03 · 扇形里的等腰直角',
+      prompt: '扇形 AOB 中 ∠AOB=90°，P 为弧 AB 上一点，PC⊥OA 于 C，交 AB 于 D，PD=3，CD=2。求半径。<br><span class="muted small">第一步：先判断 △ACD 的形状。</span>',
+      fields: [
+        { type: 'choice', label: '△ACD 是', ans: 0, options: ['等腰直角三角形', '等边三角形', '含 30° 的直角三角形', '普通直角三角形'] },
+        { type: 'num', label: 'AC =', ans: 2 }
+      ],
+      tip: 'OA=OB、∠AOB=90° ⟹ ∠OAB=45°；PC⊥OA ⟹ ∠ACD=90°，所以 △ACD 也是等腰直角。',
+      explain: ['OA=OB、∠AOB=90° ⟹ ∠OAB=45°。', 'PC⊥OA ⟹ ∠ACD=90°，∠CAD=45° ⟹ △ACD 等腰直角，AC=CD=2。', '于是 PC=PD+DC=5、OC=R−2，在 Rt△OCP 列勾股：R²=(R−2)²+25 ⟹ R=29/4。'],
+      kp: ['圆的基本性质', '等腰直角三角形']
+    },
+    {
+      id: 'entry.t05', title: '错题本 p05 · 圆内证角平分线',
+      prompt: 'AB 是 ⊙O 的直径，C、D 在 ⊙O 上，BC∥OD。求证：BD 平分 ∠ABC。<br><span class="muted small">第一步：两条依据先写出来。</span>',
+      fields: [
+        {
+          type: 'choice', label: '∠ODB = ∠OBD 的依据', ans: 0,
+          options: ['OD = OB，等边对等角', '同弧所对的圆周角相等', '直径所对的圆周角是直角', '平行线的同位角相等']
+        },
+        {
+          type: 'choice', label: '∠ODB = ∠CBD 的依据', ans: 0,
+          options: ['BC ∥ OD，内错角相等', 'BC ∥ OD，同位角相等', '同弧所对的圆周角相等', '等边对等角']
+        }
+      ],
+      tip: '先抓半径相等（等腰），再用平行线的内错角把角接起来。',
+      explain: ['OD=OB ⟹ ∠ODB=∠OBD。', 'BC∥OD ⟹ ∠ODB=∠CBD（内错角）。', '所以 ∠OBD=∠CBD；O 在 AB 上，∠OBD 就是 ∠ABD，所以 BD 平分 ∠ABC。'],
+      kp: ['圆的基本性质', '平行线与角']
+    },
+    {
+      id: 'entry.t06', title: '错题本 p06 · 灯罩轴截面建模',
+      prompt: '球形灯罩的轴截面：HF 过圆心且垂直底座 CD 于 F，AC=BD=1，CD=12，HF=31。<br><span class="muted small">第一步：垂径定理求 CF，再写 R 与 OF 的关系。</span>',
+      fields: [
+        { type: 'num', label: 'CF =', ans: 6 },
+        {
+          type: 'choice', label: '设半径 R、OF=d，则', ans: 0,
+          options: ['R + d = 31', 'R − d = 31', '2R + d = 31', 'R + 2d = 31']
+        }
+      ],
+      tip: 'HF 过圆心且垂直 CD → 垂径定理平分 CD；注意 HF 不是直径，是 R + d。',
+      explain: ['垂径定理：CF=FD=½×12=6。', 'H、O、F 共线，HF=HO+OF=R+d=31。', '下一步：以 F 为原点，A(−6, 1)、O(0, d)，6²+(d−1)²=R²，代 d=31−R 得 R=15.6。'],
+      kp: ['圆的基本性质', '垂径定理', '建模']
+    },
+    {
+      id: 'entry.t08', title: '错题本 p08 · 反比例 + 一次函数',
+      prompt: '双曲线 y=k/x（x>0）上有一点 A(1, 5)，过 A 的直线 y=−mx+n 与该双曲线交于点 B，且 B 的纵坐标为 1。<br><span class="muted small">第一步：求 k 和 B 的坐标。</span>',
+      fields: [
+        { type: 'num', label: 'k =', ans: 5 },
+        { type: 'num', label: 'B 的横坐标 =', ans: 5 }
+      ],
+      tip: '点在图象上就代入；先求 k，再用 y=1 反求 B 的横坐标。',
+      explain: ['A(1, 5) 在 y=k/x 上 ⟹ k=5，即 y=5/x。', 'B 的纵坐标为 1：1=5/x ⟹ x=5，B(5, 1)。', '下一步：代 A、B 求 m、n，得 y=−x+6。'],
+      kp: ['反比例函数', '待定系数法']
+    },
+    {
+      id: 'entry.t11', title: '错题本 p11 · 旋转题的等腰直角',
+      prompt: '平行四边形 ABCD 中 ∠DAB=45°，DE⊥AB 于 E，DE=2√2，AE=2EB。<br><span class="muted small">第一步：先看 △ADE 是什么三角形。</span>',
+      fields: [
+        { type: 'choice', label: 'AE =', ans: 0, options: ['2√2', '2', '4', '2√3'] },
+        { type: 'num', label: 'AD =', ans: 4 }
+      ],
+      tip: '∠DAE=45° 且 DE⊥AB ⟹ △ADE 是等腰直角三角形，AE=DE。',
+      explain: ['DE⊥AB、∠DAE=45° ⟹ △ADE 等腰直角，AE=DE=2√2。', 'AD=√2·AE=√2×2√2=4；由 AE=2EB 得 EB=√2。', '下一步才是旋转：AE′=AE、AF′=AF、∠F′AE′=45°。'],
+      kp: ['几何综合', '等腰直角三角形']
     }
   ];
 
@@ -1293,7 +1382,7 @@ var MT = (function () {
     },
     {
       id: 'entry', name: '大题前两步', icon: '🚪',
-      desc: '只写每道大题的前 1–2 个得分点，不求解。补的是「大题空白」这一断点。',
+      desc: '只写每道大题的前 1–2 个得分点，不求解。补的是「大题空白」这一断点；来源：期中卷 20–25、第 11 周卷 13–16/附加、错题本里的大题第一步。',
       items: ENTRY
     }
   ];
@@ -1808,7 +1897,7 @@ var MT = (function () {
     var META = {
       drill: { n: 6, sub: '6 题 · 5 分钟 · ' + plan.drill.note },
       write: { n: 8, sub: '8 题 · 10 分钟 · ' + plan.write.note },
-      entry: { n: 3, sub: '3 题 · 8 分钟 · 20 个得分点里按今天这套取 3 个' }
+      entry: { n: 3, sub: '3 题 · 8 分钟 · 27 个得分点里按今天这套取 3 个' }
     };
     /* 顺序由 MT.modules 决定，这里只配题量与说明 */
     var tasks_plan = MT.modules.map(function (m) {
@@ -2085,7 +2174,7 @@ var MT = (function () {
 
     var card = h('div', { class: 'card', style: 'margin-top:12px' });
     card.appendChild(h('div', { class: 'qhead' },
-      h('span', { class: 'pill' }, q.kind === 'entry' || q.no ? qnoLabel(q.no) : '新题'),
+      h('span', { class: 'pill' }, q.no ? qnoLabel(q.no) : (q.mod === 'entry' ? '得分点' : '新题')),
       q.kp ? h('span', { class: 'small muted' }, q.kp.join(' · ')) : null
     ));
     card.appendChild(h('div', { class: 'qbody', html: fracify(q.prompt) }));
