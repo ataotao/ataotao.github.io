@@ -125,6 +125,12 @@ for (const p of packs) {
         if (/NaN|undefined|<script/i.test(clean)) bad(tag, 'fig.svg 含 NaN / undefined / script');
       }
     }
+    if (q.hand) {
+      /* 答卷手写附图：{w, h, svg:'<image href="data:image/webp;base64,…"/>'} */
+      if (!(q.hand.w > 0 && q.hand.h > 0)) bad(tag, 'hand 的 w/h 不是正数');
+      if (typeof q.hand.svg !== 'string' || !/<image\b/i.test(q.hand.svg)) bad(tag, 'hand.svg 里没有 <image>');
+      else if (!/href="data:image\//.test(q.hand.svg)) bad(tag, 'hand.svg 的 <image> 没有内联图片（href="data:image/…"）');
+    }
   }
   console.log('  ' + tag0.padEnd(18) + ' ' + p.questions.length + ' 题' +
     (scored ? '，满分 ' + total + ' 分（' + scored + ' 题有分值）' : '，分值未录'));

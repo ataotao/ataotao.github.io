@@ -9,6 +9,8 @@
 题库工具/
   qb.py                  主工具（只需 Python 3 + 标准库；sheets 子命令需要 Pillow）
   figs.py                原卷插图生成器（只需标准库；--preview 需要 Pillow）
+  hand.py                答卷手写附图生成器（裁图 + 嵌进题包的 hand 字段；需要 PyMuPDF + Pillow）
+  check-pack.mjs         读 HTML 里已注入的 PACKS 做结构自检（node，无依赖）
   sync.ps1               受限环境下的落盘脚本（qb.py 暂存到 %TEMP%\qb_stage 后运行）
   answers/               每套卷一份"答卷答案"文本（唯一需要手填的东西）
     反比例函数单元测-第8周.txt
@@ -125,6 +127,31 @@ python 题库工具\figs.py --preview %TEMP%\fig.png                            
 ```
 
 `figs.py` 的约定：SVG 坐标（y 向下）、字号 16（数字/单位 15）、墨色 `#1b2430`、`line/quad/poly/text/dot/hatch` 几个小函数；要加新图就写一个 `fig_xxx()` 并登记到 `FIGS`（键 = 题包里的**题目 id**，比如 `w11q5`；`write_pack` 按 id 匹配，所以一个 `FIGS` 可以同时服务多套卷）。第 11 周周练卷的 6 张图（`fig_w11q5 / w11q7 / w11q12 / w11q14 / w11q15 / w11q17`）用了两个小工具：`_para_pts()`（把 y = a(x−h)²+k 采样成折线）和 `_axes()`（带箭头的坐标轴）。
+
+## 答卷手写附图（`hand` 字段 + `hand.py`）
+
+有的卷子答案是**老师批改过的学生手写答卷**（扫描 PDF，没有文字层）。这种卷子除了录标准解析，还给每题配一张「原卷 + 手写」的裁切图，显示在**解析**里（答题前不显示，不会剧透）：
+
+```json
+"hand": { "w": 900, "h": 209, "svg": "<image x=\"0\" y=\"0\" width=\"900\" height=\"209\" href=\"data:image/webp;base64,…\"/>" }
+```
+
+- 和 `fig` 的分工：`fig` 是**题目**配图（答题前就显示），`hand` 是**答案**附图（只在解析里）；
+- 页面里点图能放大（手机看手写必须放大），点任意处或 Esc 关闭；
+- 图是 WebP、每张几十 KB，**内联进题包 JSON**，所以 build 之后单文件 HTML 仍然离线可用（代价是 HTML 大几百 KB）。
+
+由 `hand.py` 生成，裁切框写在脚本的 `CROPS`（键 = 题包 id，坐标是 dpi 渲染后的像素）：
+
+```powershell
+# 从答卷 PDF 重新裁图 + 写回 hand（需要 PyMuPDF + Pillow）
+python 题库工具\hand.py --pdf "C:\path\第11周-数学周练卷-函数+圆【答案】.pdf" --pack 题库\pack-第11周周练-函数与圆.json --write
+# 已经裁好（题库/<卷名>- 答卷附图/*.webp 在），只把图嵌回题包
+python 题库工具\hand.py --pack 题库\pack-第11周周练-函数与圆.json --write
+python 题库工具\qb.py build
+node 题库工具\check-pack.mjs pk-week11-1111     # 会检查 hand 的 w/h 与 <image href="data:image/…">
+```
+
+裁好的图放 `题库/<卷名>- 答卷附图/q<题号>.webp`（也入库，是唯一可复现的源——答卷 PDF 本身不入库）。**裁切按题的行带走，边缘可能带上相邻题的一两笔**，属于预期。
 
 ## 闪练题库（`题库/drills.json`）
 
