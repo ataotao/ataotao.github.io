@@ -7,9 +7,16 @@
   template <pack.json>            生成答卷答案录入模板（带题号与字段类型提示）
   check    <pack.json> <ans.txt>  对比答卷答案与题库答案，输出差异表（不写文件）
   apply    <pack.json> <ans.txt>  把答卷答案写回 pack（可选 --dry-run），并自动 build
-  build                           合并 题库/pack-*.json -> pack-全部.json，并注入 HTML
-  verify                          校验 JSON 可解析、HTML 内嵌脚本语法、数据一致性
+  build                           合并 题库/pack-*.json -> pack-全部.json + 题库/packs/*.js 分片
+  bundle                          打包成单文件 HTML（把分片内联回去，发手机用）
+  verify                          校验 JSON 可解析、分片与源一致、HTML 内嵌脚本语法
   sheets   <答卷图片>              按网格切页 + 自动分栏 + 放大，输出便于阅读的切片
+
+分片约定（2026-11-14 起）：
+  函数思维脚手架.html 只放引擎（约 300 KB）；每套卷的题目数据在 题库/packs/<题包id>.js，
+  由页面用 <script src> 按顺序同步加载（classic script，file:// 下也能用；ES module 不行）。
+  HTML 里 `<!-- PACKS:BEGIN -->` … `<!-- PACKS:END -->` 之间是 build 生成的 script 标签，
+  别手改。加卷/改题照旧只动 题库/pack-*.json，然后 build。
 
 答案文件（answers/*.txt）格式：
   # 注释行
@@ -38,9 +45,33 @@ BASE = os.path.dirname(HERE)                       # learning-training
 TDIR = os.path.join(BASE, '题库')
 ALL_JSON = os.path.join(TDIR, 'pack-全部.json')
 DRILLS_JSON = os.path.join(TDIR, 'drills.json')
+PACKS_DIR = os.path.join(TDIR, 'packs')        # 每套卷一个 .js 分片（build 生成，勿手改）
 HTML = os.path.join(BASE, '函数思维脚手架.html')
 SKIP = {'pack-全部.json', 'pack-模板.json'}
 LETTERS = 'ABCD'
+
+# 分片在 HTML 里的落点：build 只改这两个标记之间的内容
+PMARK_B = '<!-- PACKS:BEGIN'
+PMARK_E = '<!-- PACKS:END -->'
+CHUNK_SOFT = 700 * 1024      # 单个分片超过这个大小就提示拆卷（提交闸门 800 KB 会警告）
+
+
+def chunk_name(pid):
+    """题包 id -> 分片文件名。只留安全字符，保证 id 与文件名一一对应。"""
+    return re.sub(r'[^\w.\-]+', '_', str(pid)) + '.js'
+
+
+def chunk_text(pack):
+    """分片文件内容：把一整套卷 push 进 window.__PACKS__。
+    用 classic script（不是 ES module），这样 file:// 直接双击也能加载。"""
+    body = json.dumps(pack, ensure_ascii=False, indent=2)
+    # U+2028/U+2029 在 JSON 里合法、在老 JS 字符串里非法，顺手转义掉
+    body = body.replace('\u2028', '\\u2028').replace('\u2029', '\\u2029').replace('\n', '\r\n')
+    return ('/* 自动生成：python 题库工具/qb.py build 从 题库/pack-*.json 生成，勿手改 */\r\n'
+            '/* 卷：%s（%d 题） */\r\n'
+            '(window.__PACKS__ = window.__PACKS__ || []).push(%s);\r\n'
+            % (pack.get('name', ''), len(pack.get('questions') or []), body))
+
 
 
 def ts():
@@ -525,19 +556,52 @@ def cmd_build(args, override=None):
     dblock = '\r\nvar DRILLS = ' + json.dumps(drills, ensure_ascii=False, indent=2).replace('\n', '\r\n') + ';\r\n'
     html = html[:bs] + dblock + html[be:]
 
-    # 2) 试卷题包（替换到 DRILLS:BEGIN 之前，避免吃掉标记）
-    if html.count('var PACKS = [') != 1 or html.count('var DRILLS = [') != 1:
-        die('HTML 里 PACKS/DRILLS 标记数量异常，拒绝改写')
-    s = html.index('var PACKS = [')
-    e = html.index(bmark, s)
-    block = 'var PACKS = ' + json.dumps(packs, ensure_ascii=False, indent=2).replace('\n', '\r\n') + ';\r\n'
-    html = html[:s] + block + html[e:]
+    # 2) 试卷题包：每套卷一个 .js 分片 + HTML 里只留 <script src> 清单
+    if html.count(PMARK_B) != 1 or html.count(PMARK_E) != 1:
+        die('HTML 里 PACKS:BEGIN / PACKS:END 标记数量异常，拒绝改写')
+    ps = html.index(PMARK_B)
+    pe = html.index(PMARK_E) + len(PMARK_E)
+    if pe < ps:
+        die('HTML 里 PACKS:BEGIN / PACKS:END 顺序颠倒，拒绝改写')
+
+    try:
+        os.makedirs(PACKS_DIR, exist_ok=True)
+    except OSError:
+        pass      # 受限环境：分片走暂存区，由 sync.ps1 建目录后落盘
+    names, chunks = [], []
+    for p in packs:
+        n = chunk_name(p.get('id'))
+        txt = chunk_text(p)
+        names.append(n)
+        chunks.append((n, txt))
+        write_text(os.path.join(PACKS_DIR, n), txt)
+    # 清掉已经不对应任何题包的旧分片（改了 id 或者删了卷）
+    for old in sorted(glob.glob(os.path.join(PACKS_DIR, '*.js'))):
+        if os.path.basename(old) not in names:
+            try:
+                os.remove(old)
+                if not getattr(args, 'quiet', False):
+                    print('· 删掉过期分片 %s' % os.path.basename(old))
+            except OSError:
+                pass
+
+    lines = ['<!-- PACKS:BEGIN 由 qb.py build 生成：每套卷一个分片，勿手改 -->',
+             '<script>window.__PACKS__ = window.__PACKS__ || [];</script>']
+    for n in names:
+        lines.append('<script src="题库/packs/%s"></script>' % n)
+    lines.append(PMARK_E)
+    html = html[:ps] + '\r\n'.join(lines) + '\r\n' + html[pe:]
     backup(HTML)
     write_text(HTML, html)
     qn = sum(len(p['questions']) for p in packs)
     if not getattr(args, 'quiet', False):
-        print('✓ build 完成：%d 套卷 / %d 题 ＋ 闪练 %d 题 -> pack-全部.json + HTML' % (len(packs), qn, len(drills)))
+        print('✓ build 完成：%d 套卷 / %d 题 ＋ 闪练 %d 题 -> pack-全部.json + 题库/packs/*.js + HTML'
+              % (len(packs), qn, len(drills)))
         print('  ' + ', '.join('%s(%d题)' % (p['id'], len(p['questions'])) for p in packs))
+        for n, txt in chunks:
+            kb = len(txt.encode('utf-8'))
+            flag = '  ← 偏大，建议把这一套拆成两卷' if kb > CHUNK_SOFT else ''
+            print('  分片 %-26s %5d KB%s' % (n, kb // 1024, flag))
 
 
 def find_node():
@@ -824,6 +888,54 @@ def cmd_verify(args):
     except Exception as ex:
         ok = False
         print('✗ pack-全部.json 校验失败：%s' % ex)
+    # 分片：存在、和 pack-全部.json 对得上、HTML 里的 <script src> 清单也一致
+    try:
+        html = open(HTML, 'rb').read().decode('utf-8')
+        if html.count(PMARK_B) != 1 or html.count(PMARK_E) != 1:
+            ok = False
+            print('✗ HTML 里 PACKS:BEGIN / PACKS:END 标记数量不是 1（结构被改坏了？）')
+        else:
+            blk = html[html.index(PMARK_B):html.index(PMARK_E)]
+            listed = re.findall(r'<script src="题库/packs/([^"]+)"', blk)
+            want = [chunk_name(pid) for pid in allp]
+            if listed != want:
+                ok = False
+                print('✗ HTML 里的分片清单与 pack-全部.json 不一致（缺 %s / 多 %s），请运行 build'
+                      % ([x for x in want if x not in listed] or '—',
+                         [x for x in listed if x not in want] or '—'))
+            stale = [os.path.basename(f) for f in glob.glob(os.path.join(PACKS_DIR, '*.js'))
+                     if os.path.basename(f) not in want]
+            if stale:
+                ok = False
+                print('✗ 题库/packs 里有对不上任何题包的分片：%s，请运行 build' % ', '.join(stale))
+            bad, big = [], []
+            for pid in allp:
+                path = os.path.join(PACKS_DIR, chunk_name(pid))
+                if not os.path.exists(path):
+                    bad.append(pid)
+                    continue
+                txt = open(path, 'rb').read().decode('utf-8')
+                m = re.search(r'\.push\((.*)\);\s*$', txt, re.S)
+                try:
+                    got = json.loads(m.group(1)) if m else None
+                except Exception:
+                    got = None
+                if got != allp[pid]:
+                    bad.append(pid)
+                if len(txt.encode('utf-8')) > CHUNK_SOFT:
+                    big.append((pid, len(txt.encode('utf-8'))))
+            if bad:
+                ok = False
+                print('✗ 分片内容与 pack-全部.json 不一致（%s），请运行 build' % ', '.join(bad))
+            for pid, n in big:
+                print('· %s 的分片有 %d KB，超过 %d KB；考虑把这一套拆成两卷'
+                      % (pid, n // 1024, CHUNK_SOFT // 1024))
+            if not bad and listed == want and not stale:
+                print('✓ 题库/packs 分片与 pack-全部.json 一致（%d 个，最大 %d KB）'
+                      % (len(want), max([os.path.getsize(os.path.join(PACKS_DIR, n)) for n in want] or [0]) // 1024))
+    except Exception as ex:
+        ok = False
+        print('✗ 分片校验失败：%s' % ex)
     # HTML 语法
     node = find_node()
     if node:
@@ -844,6 +956,43 @@ def cmd_verify(args):
         print('· 未找到 node，跳过 HTML 语法检查（可设 QB_NODE 指定 node 路径）')
     print('全部通过 ✓' if ok else '存在问题 ✗')
     return 0 if ok else 1
+
+
+def cmd_bundle(args):
+    """把分片内联回主文件，产出一个可以单独发走的单文件 HTML。
+    主包（数学/函数思维脚手架.html）靠 题库/packs/*.js 加载，必须整个文件夹一起拷；
+    发手机/发给同学时用这个命令，产物在 数学/_单文件/ 下（不进版本库）。"""
+    if not os.path.exists(HTML):
+        die('找不到 %s' % HTML)
+    html = open(HTML, 'rb').read().decode('utf-8')
+    if html.count(PMARK_B) != 1 or html.count(PMARK_E) != 1:
+        die('HTML 里 PACKS:BEGIN / PACKS:END 标记数量异常')
+    ps = html.index(PMARK_B)
+    pe = html.index(PMARK_E) + len(PMARK_E)
+    blk = html[ps:pe]
+    names = re.findall(r'<script src="题库/packs/([^"]+)"', blk)
+    if not names:
+        die('HTML 里没有分片引用，先跑 build')
+    parts = ['<!-- 单文件版：分片已内联，来自 题库/packs/*.js；由 qb.py bundle 生成，勿手改 -->',
+             '<script>window.__PACKS__ = window.__PACKS__ || [];</script>']
+    for n in names:
+        path = os.path.join(PACKS_DIR, n)
+        if not os.path.exists(path):
+            die('缺少分片 %s，先跑 build' % n)
+        code = open(path, 'rb').read().decode('utf-8').strip()
+        # 内联进 <script> 里，字符串中一旦出现 </script 就会被 HTML 解析器提前截断
+        code = code.replace('</script', r'<\/script')
+        parts.append('<script>' + code + '</script>')
+    out_html = html[:ps] + '\r\n'.join(parts) + '\r\n' + html[pe:]
+
+    out = args.out or os.path.join(BASE, '_单文件', '函数思维脚手架.单文件.html')
+    os.makedirs(os.path.dirname(out), exist_ok=True)
+    with open(out, 'w', encoding='utf-8', newline='') as f:
+        f.write(out_html)
+    print('✓ 单文件版 -> %s（%d 个分片内联，%.2f MB）'
+          % (out, len(names), os.path.getsize(out) / 1048576.0))
+    print('  发手机/发给同学用这个；日常开发用主包 + 题库/packs（不用每次重新打包）')
+    return 0
 
 
 def cmd_sheets(args):
@@ -954,10 +1103,14 @@ def main():
     p.add_argument('--no-build', action='store_true')
     p.set_defaults(func=cmd_apply)
 
-    p = sub.add_parser('build', help='合并单卷到 pack-全部.json 并注入 HTML')
+    p = sub.add_parser('build', help='合并单卷到 pack-全部.json，生成 题库/packs/*.js 分片并更新 HTML')
     p.set_defaults(func=cmd_build)
 
-    p = sub.add_parser('verify', help='校验 JSON / HTML / 一致性')
+    p = sub.add_parser('bundle', help='把分片内联回主文件，产出单文件 HTML（发手机用）')
+    p.add_argument('--out', help='输出路径，默认 数学/_单文件/函数思维脚手架.单文件.html')
+    p.set_defaults(func=cmd_bundle)
+
+    p = sub.add_parser('verify', help='校验 JSON / 分片 / HTML / 一致性')
     p.set_defaults(func=cmd_verify)
 
     p = sub.add_parser('sheets', help='答卷图片切片')

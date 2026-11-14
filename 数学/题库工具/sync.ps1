@@ -23,6 +23,11 @@ foreach ($b in @($items.backups)) {
 }
 $nf = 0
 foreach ($f in @($items.files)) {
+    # 目标目录可能还不存在（第一次 build 时 题库/packs/ 是新目录）
+    $dir = Split-Path -Parent $f.target
+    if ($dir -and !(Test-Path -LiteralPath $dir)) {
+        New-Item -ItemType Directory -Path $dir -Force | Out-Null
+    }
     Copy-Item -LiteralPath $f.staged -Destination $f.target -Force
     $nf++
 }

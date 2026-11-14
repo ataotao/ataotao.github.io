@@ -206,3 +206,10 @@ node 工具/parity.mjs --keep    # 不还原（= 一次全量重建）
 `qb.py` 注入（B 类），改 UI 就是改产物本身，parity 对它没有意义。它的 `qb.py`
 每次 build 前自动 `.bak`，这是它现有的防呆方式。
 
+> 2026-11-14 起，数学的「数据区间」已经不只是 `DRILLS`：试卷题包搬到了
+> `数学/题库/packs/*.js`（每套卷一个分片），主包只留 `<!-- PACKS:BEGIN -->` …
+> `END` 之间的 `<script src>` 清单。所以 `qb.py` 的 build 会同时写
+> `题库/packs/` 和 HTML，`verify` 会比对分片与 `pack-全部.json`；
+> `node 数学/题库工具/check-pack.mjs` 改成读分片（不再解析 HTML）。
+> 发布时 `publish.ps1` 的 training 清单必须带上 `数学/题库/packs`。
+

@@ -1,35 +1,51 @@
 #!/usr/bin/env node
-// 数学 · 题包结构自检（读的是 HTML 里**已经注入**的 PACKS，不是题库 JSON）
+// 数学 · 题包结构自检（读的是 题库/packs/*.js **分片产物**，不是题库 JSON）
 //
 // 用法：node 数学/题库工具/check-pack.mjs [packId]
-//   packId 省略 = 检查 HTML 里的全部题包。
+//   packId 省略 = 检查全部题包。
 // 期望：末尾打印「✓ 全部通过」，退出码 0。
 //
 // 它和 `python 数学/题库工具/qb.py verify` 的分工：
 //   qb.py verify 读题库 JSON，查「源」的形状与一致性；
-//   本脚本读 函数思维脚手架.html 里注入的 PACKS，查「产物」——能抓到「改了 JSON 忘了 build」
-//   这类源/产物漂移（此时 HTML 里还是旧数据），以及选项越界、占位符与答案个数不符等
+//   本脚本读 题库/packs/*.js（页面真正加载的产物），查「产物」——能抓到「改了 JSON 忘了 build」
+//   这类源/产物漂移（此时分片里还是旧数据），以及选项越界、占位符与答案个数不符等
 //   会让页面判分失效的问题。
-import { readFileSync } from 'node:fs';
+import { readFileSync, readdirSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
-const FILE = join(ROOT, '数学', '函数思维脚手架.html');
+const PACKS_DIR = join(ROOT, '数学', '题库', 'packs');
 const WANT = process.argv[2] || '';
 
-const html = readFileSync(FILE, 'utf8');
-const s = html.indexOf('var PACKS = [');
-const e = html.indexOf('/* DRILLS:BEGIN */', s);
-if (s < 0 || e < 0) {
-  console.error('✗ HTML 里找不到 `var PACKS = [` 或 `/* DRILLS:BEGIN */`，结构被改坏了？');
+let files;
+try {
+  files = readdirSync(PACKS_DIR).filter((n) => n.endsWith('.js')).sort();
+} catch {
+  console.error('✗ 找不到分片目录 数学/题库/packs，先跑 `python 数学/题库工具/qb.py build`');
   process.exit(1);
 }
+if (!files.length) {
+  console.error('✗ 数学/题库/packs 里没有 .js 分片，先跑 `python 数学/题库工具/qb.py build`');
+  process.exit(1);
+}
+
+/* 分片是 classic script：`(window.__PACKS__ = … ).push({…});`
+   在一个假 window 里跑一遍就能拿到数据，不必解析 HTML。 */
+const fakeWindow = {};
 let PACKS;
 try {
-  PACKS = new Function(html.slice(s, e) + '; return PACKS;')();
+  for (const n of files) {
+    const code = readFileSync(join(PACKS_DIR, n), 'utf8');
+    new Function('window', code)(fakeWindow);
+  }
+  PACKS = fakeWindow.__PACKS__ || [];
 } catch (err) {
-  console.error('✗ PACKS 块无法求值：' + err.message);
+  console.error('✗ 分片无法求值：' + err.message);
+  process.exit(1);
+}
+if (!PACKS.length) {
+  console.error('✗ 分片里没有题包（window.__PACKS__ 为空）');
   process.exit(1);
 }
 

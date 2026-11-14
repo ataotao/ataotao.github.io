@@ -97,6 +97,11 @@ const mathBody = `
   log('试卷错题本显示的是否按最新记录', '否（按历史 false 记录，累计不过滤）');
 `;
 
+/* 数学主包的题包数据在 数学/题库/packs/*.js（2026-11-14 起分片），探针文件落在 _verify/，
+   相对路径会断，所以把 src 前缀改成 ../数学/。 */
+const toVerify = (html) => html.replace(/src="题库\/packs\//g, 'src="../数学/题库/packs/');
+
 writeFileSync(join(root, '_verify', 'probe-en.html'), build('英语/九上英语过关练习.html', enBody));
-writeFileSync(join(root, '_verify', 'probe-math.html'), build('数学/函数思维脚手架.html', mathBody.replace('FIND_PACK()', '((window.PACKS && PACKS[0]) || (DB.packs && DB.packs[0]) || null)')));
+writeFileSync(join(root, '_verify', 'probe-math.html'),
+  toVerify(build('数学/函数思维脚手架.html', mathBody.replace('FIND_PACK()', '((window.PACKS && PACKS[0]) || (DB.packs && DB.packs[0]) || null)'))));
 console.log('written');

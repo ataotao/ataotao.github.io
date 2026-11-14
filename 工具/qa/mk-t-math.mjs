@@ -56,5 +56,7 @@ const TEST = `
 <\/script>
 `;
 
-writeFileSync(join(root, '_verify', 't-math.html'), html.replace('</body>', TEST + '</body>'));
+/* 题包数据在 数学/题库/packs/*.js（2026-11-14 起分片）；探针落在 _verify/，相对路径要改前缀 */
+writeFileSync(join(root, '_verify', 't-math.html'),
+  html.replace(/src="题库\/packs\//g, 'src="../数学/题库/packs/').replace('</body>', TEST + '</body>'));
 console.log('written');

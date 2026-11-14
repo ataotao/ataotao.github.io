@@ -2,9 +2,9 @@
 """
 答卷手写附图（题包里的 hand 字段）生成工具
 
-背景：第 11 周周练卷的答案是一份**老师批改过的学生手写答卷**（扫描 PDF，没有文字层）。
-光有题库里的「标准解析」不够——孩子要看的是老师到底怎么批、怎么写的，所以每题配一张
-「原卷 + 手写」的截图，显示在解析下面（`hand` 字段）。
+背景：答案卷是**老师批改过的学生手写答卷**——第 11 周周练是一份扫描 PDF（没有文字层），
+10 月 14 日练习卷是一张 4 页竖排的长图 PNG。光有题库里的「标准解析」不够——孩子要看的是
+老师到底怎么批、怎么写的，所以每题配一张「原卷 + 手写」的截图，显示在解析下面（`hand` 字段）。
 
 数据流：
 
@@ -14,16 +14,23 @@
                                                       |
                                           qb.py build --> 函数思维脚手架.html（解析里显示）
 
+    答卷长图.png  --(本工具，按 CROPS 里的坐标)-->  内存里的 webp --(同一个 --pack)--> 题包 JSON 的 hand
+
 用法：
 
     # 1) 从答卷 PDF 重新裁图（需要 PyMuPDF + Pillow；裁切框变了就重跑这一步）
     python 题库工具\\hand.py --pdf "C:\\path\\答案.pdf" --pack 题库\\pack-第11周周练-函数与圆.json
 
-    # 2) 只把已经裁好的 webp 嵌回题包（换机器、没有 PDF 时也能用）
+    # 2) 答卷是长图（CROPS 里写了 image）时不用 --pdf，直接按坐标裁（不落盘，直接内联进题包）
+    python 题库工具\\hand.py --pack 题库\\pack-数学练习卷-1014.json --write
+
+    # 3) 只把已经裁好的 webp 嵌回题包（换机器、没有原图时也能用）
     python 题库工具\\hand.py --pack 题库\\pack-第11周周练-函数与圆.json --write
 
 约定：
-- 裁切框是**渲染后像素坐标**（dpi 见 CROPS 里的 dpi），不是 PDF 的 pt；
+- PDF 的裁切框是**渲染后像素坐标**（dpi 见 CROPS 里的 dpi），不是 PDF 的 pt；
+- 长图（image）的裁切框是原图像素坐标，五元组 (题号, x0, y0, x1, y1)；长图本身已入库，
+  裁切结果只内联进题包、不落盘（页面不读那些 webp）；
 - 每张图缩到 maxw 宽、WebP 质量 quality，控制在几十 KB，避免把单文件 HTML 撑爆；
 - hand 的 w/h 就是图的实际像素宽高（页面按 viewBox 等比显示，不放大）。
 """
@@ -37,8 +44,33 @@ import sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 TDIR = os.path.join(os.path.dirname(HERE), '题库')
 
-# 每套卷的裁切表：题号 -> (页号, x0, y0, x1, y1)，坐标是 dpi 渲染后的像素
+# 每套卷的裁切表
+#   PDF 答卷：boxes = (题号, 页号, x0, y0, x1, y1)，坐标是 dpi 渲染后的像素
+#   长图答卷：spec 里写 'image'（题库/ 下的文件名），boxes = (题号, x0, y0, x1, y1)，原图像素
 CROPS = {
+    'pk-hanshu-1014': {
+        'image': '数学函数练习卷【答卷】.png',   # 815x4272，4 页竖排（第 1-8 / 9-13 / 14-15 / 16 题）
+        'maxw': 815,
+        'quality': 62,
+        'boxes': [
+            ('1', 0, 100, 815, 160),
+            ('2', 0, 162, 815, 218),
+            ('3', 0, 219, 815, 296),
+            ('4', 0, 296, 815, 386),
+            ('5', 0, 389, 815, 510),
+            ('6', 0, 510, 815, 595),
+            ('7', 0, 595, 815, 748),
+            ('8', 0, 748, 815, 1054),
+            ('9', 0, 1172, 815, 1210),
+            ('10', 0, 1210, 815, 1278),
+            ('11', 0, 1278, 815, 1468),
+            ('12', 0, 1468, 815, 1714),
+            ('13', 0, 1728, 815, 2086),
+            ('14', 0, 2139, 815, 2585),
+            ('15', 0, 2585, 815, 3162),
+            ('16', 0, 3285, 815, 4272),
+        ]
+    },
     'pk-week11-1111': {
         'dir': '第11周周练- 答卷附图',
         'dpi': 150,
@@ -102,11 +134,35 @@ def crop_pdf(pdf_path, spec):
     return out
 
 
+def crop_image(img_path, spec):
+    """按 boxes 把一张答卷长图（PNG）裁成 webp，返回 {题号: (w, h, webp 字节)}。
+
+    不落盘：长图本身已入库（题库/数学函数练习卷【答卷】.png），裁切结果只是内联进题包，
+    页面运行时并不读这些 webp，按「读就入库、不读就留档」的规矩没必要再存一份。
+    """
+    from PIL import Image
+    import io
+
+    src = Image.open(img_path).convert('RGB')
+    out = {}
+    for no, x0, y0, x1, y1 in spec['boxes']:
+        im = src.crop((x0, y0, x1, y1))
+        if im.width > spec['maxw']:
+            im = im.resize((spec['maxw'], round(im.height * spec['maxw'] / im.width)), Image.LANCZOS)
+        buf = io.BytesIO()
+        im.save(buf, 'WEBP', quality=spec['quality'], method=6)
+        raw = buf.getvalue()
+        out[no] = (im.width, im.height, raw)
+        print('  q%-3s %4dx%-4d %5.1f KB' % (no, im.width, im.height, len(raw) / 1024.0))
+    return out
+
+
 def find_files(spec):
-    """没有 PDF 时，用已经裁好的 webp。"""
+    """没有原图时，用已经裁好的 webp。"""
     outdir = os.path.join(TDIR, spec['dir'])
     out = {}
-    for no, _, _, _, _, _ in spec['boxes']:
+    for box in spec['boxes']:
+        no = box[0]
         p = os.path.join(outdir, 'q%s.webp' % no)
         if not os.path.exists(p):
             sys.exit('✗ 缺少答卷附图：%s（先用 --pdf 重新裁）' % p)
@@ -114,13 +170,17 @@ def find_files(spec):
     return out
 
 
-def svg_for(path):
-    """webp -> 一段内层 SVG（<image> + base64），返回 (w, h, svg)。"""
-    from PIL import Image
-    im = Image.open(path)
-    w, h = im.size
-    with open(path, 'rb') as f:
-        b64 = base64.b64encode(f.read()).decode('ascii')
+def svg_for(src):
+    """webp（文件路径，或 (w, h, 字节)）-> 一段内层 SVG，返回 (w, h, svg)。"""
+    if isinstance(src, (tuple, list)):
+        w, h, raw = src
+    else:
+        from PIL import Image
+        im = Image.open(src)
+        w, h = im.size
+        with open(src, 'rb') as f:
+            raw = f.read()
+    b64 = base64.b64encode(raw).decode('ascii')
     svg = ('<image x="0" y="0" width="%d" height="%d" preserveAspectRatio="xMidYMid meet" '
            'href="data:image/webp;base64,%s"/>' % (w, h, b64))
     return w, h, svg
@@ -174,6 +234,12 @@ def main():
     if a.pdf:
         print('从 PDF 裁图：%s' % a.pdf)
         files = crop_pdf(a.pdf, spec)
+    elif spec.get('image'):
+        img = os.path.join(TDIR, spec['image'])
+        if not os.path.exists(img):
+            sys.exit('✗ 找不到答卷长图：%s' % img)
+        print('从答卷长图裁图：%s' % img)
+        files = crop_image(img, spec)
     else:
         files = find_files(spec)
     if not a.write:

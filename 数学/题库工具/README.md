@@ -10,7 +10,7 @@
   qb.py                  主工具（只需 Python 3 + 标准库；sheets 子命令需要 Pillow）
   figs.py                原卷插图生成器（只需标准库；--preview 需要 Pillow）
   hand.py                答卷手写附图生成器（裁图 + 嵌进题包的 hand 字段；需要 PyMuPDF + Pillow）
-  check-pack.mjs         读 HTML 里已注入的 PACKS 做结构自检（node，无依赖）
+  check-pack.mjs         读 题库/packs/*.js 分片产物做结构自检（node，无依赖）
   sync.ps1               受限环境下的落盘脚本（qb.py 暂存到 %TEMP%\qb_stage 后运行）
   answers/               每套卷一份"答卷答案"文本（唯一需要手填的东西）
     反比例函数单元测-第8周.txt
@@ -25,11 +25,31 @@
 ```
 题库/pack-<每套卷>.json   ← 唯一真源（核对/改动都在这里）
         │  qb.py build
-        ├─→ 题库/pack-全部.json   （自动合并，供导出/备份）
-        └─→ 函数思维脚手架.html    （自动把 PACKS 注入页面）
+        ├─→ 题库/pack-全部.json     （自动合并，供导出/备份）
+        ├─→ 题库/packs/<id>.js      （每套卷一个分片，页面真正加载的就是它）
+        └─→ 函数思维脚手架.html      （只改 `<!-- PACKS:BEGIN -->` … `END` 之间的 <script src> 清单）
+                                        │
+                                        └─ qb.py bundle → 数学/_单文件/….单文件.html（发手机用，不入库）
 ```
 
-以后**不要再手改** `pack-全部.json` 和 HTML 里的题包数据——改单卷 JSON，然后 `build`。
+以后**不要再手改** `pack-全部.json`、`题库/packs/*.js` 和 HTML 里的题包数据——改单卷 JSON，然后 `build`。
+
+## 主包 / 分片（2026-11-14 拆分）
+
+`函数思维脚手架.html` 从 1.92 MB 降到约 300 KB，试卷数据搬到了 `题库/packs/`：
+
+| 文件 | 内容 | 谁维护 |
+|---|---|---|
+| `函数思维脚手架.html` | 引擎、样式、五步母题（BANK）、闪练（DRILLS）、分片清单 | 手改引擎；分片清单由 build 生成 |
+| `题库/packs/<题包id>.js` | 一整套卷（题目/选项/解析/图/手写图） | `qb.py build` 生成，**勿手改** |
+| `题库/pack-*.json` | 同上，唯一真源 | 手改 / `qb.py apply` 写回 |
+
+- 加载方式：**classic `<script src>`**，按顺序同步执行，每个分片 `push` 进 `window.__PACKS__`。
+  必须是 classic script——`file://` 下 ES module 会被 CORS 拦掉，页面就成空题库了。
+- 所以**主包必须和 `题库/packs/` 一起拷**；只拷 HTML 会看到"题库里一套卷也没有"。
+- 发手机 / 发给同学：`python 题库工具/qb.py bundle`，产物在 `数学/_单文件/`（gitignore，不占仓库）。
+- 加卷只多一个分片文件，主包只多一行 `<script src>`；主包大小不再随题量增长。
+- 单个分片超过 700 KB 时 `build` 会提示——那时把这一套拆成两卷（或者先把 `hand` 手写图压小）。
 
 ## 标准流程（录入一套新卷）
 
@@ -78,9 +98,10 @@ python 题库工具\qb.py verify
 
 | 命令 | 作用 |
 |---|---|
-| `qb.py build` | 合并 `题库/pack-*.json` → `pack-全部.json` + 注入 HTML（自动备份） |
-| `qb.py verify` | 校验：每个 JSON 可解析、题包 id 不重复、`全部.json` 与单卷一致、**分值/知识点/分步字段形状**、HTML 内嵌脚本 `node --check` |
-| `node check-pack.mjs [packId]` | **读 HTML 里已注入的 PACKS** 做结构自检（选项越界/重复、`coef` 占位符数、`pt` 合计、`fig` 是否坏），能抓到「改了 JSON 忘了 build」 |
+| `qb.py build` | 合并 `题库/pack-*.json` → `pack-全部.json` + `题库/packs/*.js` 分片 + 更新 HTML 里的分片清单（自动备份，清掉过期分片） |
+| `qb.py bundle` | 把分片内联回主文件，产出 `数学/_单文件/函数思维脚手架.单文件.html`（约 1.8 MB，发手机/发给同学用） |
+| `qb.py verify` | 校验：每个 JSON 可解析、题包 id 不重复、`全部.json` 与单卷一致、**分片与 `全部.json` 一致且清单对齐**、**分值/知识点/分步字段形状**、HTML 内嵌脚本 `node --check` |
+| `node check-pack.mjs [packId]` | **读 `题库/packs/*.js` 分片产物**做结构自检（选项越界/重复、`coef` 占位符数、`pt` 合计、`fig` 是否坏），能抓到「改了 JSON 忘了 build」 |
 | `qb.py checkall` | 批量核对：自动找 `answers/` 里对应的答案文件，汇总每套卷的一致/不一致数 |
 | `qb.py apply --dry-run` | 只看会改哪些答案，不落盘 |
 | `qb.py check --report r.json` | 差异表另存 JSON，便于批量统计 |
@@ -187,16 +208,25 @@ python 题库工具\qb.py check 题库\pack-xxx.json 题库工具\answers\xxx.tx
 python 题库工具\qb.py apply 题库\pack-xxx.json 题库工具\answers\xxx.txt
 pwsh -File 题库工具\sync.ps1 -StageDir "$env:TEMP\qb_stage"   # 仅"无权直接写"时需要
 python 题库工具\qb.py verify
+node 题库工具\check-pack.mjs                                   # 读分片产物再查一遍
+
+# 5. 要发手机 / 发给同学时，打一个单文件版（平时不用）
+python 题库工具\qb.py bundle
 ```
 
 ## 注意
 
 - **解析文字写错、方法写错**时，工具不会自动改（它只对答案字段）。直接改单卷 JSON 里的
   `solution`，然后 `qb.py build`。
-- 页面里"题库管理"导入过的题包会覆盖 HTML 内置数据（localStorage）。改完源码后：**分值、知识点、图示（fig）、解析（solution）、提示（tip）会在页面启动时自动用内置版刷新**（`mergePackMeta()`）；只有**改了题目数量 / 选项结构 / 题型**这类结构变更时，才需要重新导入同 id 的 JSON（或删掉该题包）再刷新。
+- **主包和 `题库/packs/` 是一体的**：只拷 `函数思维脚手架.html` 会看到空题库。要一个文件走天下，
+  用 `qb.py bundle`。发布站点时 `ataotao.github.io\tools\publish.ps1` 的 training 清单里也要有
+  `数学/题库/packs`（`@{ Path = '数学/题库/packs'; Filter = '*.js' }`），否则线上同样空题库。
+- 页面里"题库管理"导入过的题包会覆盖内置分片数据（localStorage）。改完源码后：**分值、知识点、图示（fig）、解析（solution）、提示（tip）会在页面启动时自动用内置版刷新**（`mergePackMeta()`）；只有**改了题目数量 / 选项结构 / 题型**这类结构变更时，才需要重新导入同 id 的 JSON（或删掉该题包）再刷新。
 - 备份文件为 `*.bak-<时间戳>`，可随时回滚。
 - 如果当前环境里 python 子进程无权写仓库目录（DSH 沙箱常见），`qb.py` 会自动把结果写到
   `%TEMP%\qb_stage`，此时再跑一次 `pwsh -File 题库工具\sync.ps1` 就会备份+落盘。普通终端里
   一般可以直接写入，不需要这一步。
 - DSH 里运行 python 需要指定解释器，例如：
   `& "C:\Users\Tao\.dsh\dsh-runtimes\dsh-primary-runtime\dependencies\python\python.exe" 题库工具\qb.py check ...`
+- 中文 Windows 控制台是 GBK，`qb.py` 打印 `✓` 会 `UnicodeEncodeError`。先设
+  `$env:PYTHONIOENCODING='utf-8'; $env:PYTHONUTF8='1'`，或 `chcp 65001`。
