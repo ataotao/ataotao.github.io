@@ -248,6 +248,7 @@ code{font-family:ui-monospace,Consolas,monospace;background:#f2efe8;padding:1px 
 .sol li{margin:7px 0}
 .sol .key{background:#f7f5f0;border-radius:9px;padding:10px 13px;font-size:13.5px;margin-top:12px;border-left:3px solid var(--brand)}
 .sol .handcap{display:flex;gap:8px;align-items:baseline;flex-wrap:wrap;margin:16px 0 6px;font-size:13.5px}
+.handjump{margin:2px 0 10px}
 .handzoom{cursor:zoom-in}
 .lightbox{position:fixed;inset:0;z-index:9999;background:#0f141e;overflow:auto;padding:12px;cursor:zoom-out}
 .lightbox svg{display:block;margin:0 auto;background:#fff;border-radius:8px}
@@ -10250,8 +10251,11 @@ function packMetaGap(id){
   var b = builtinPack(id), l = localPack(id);
   if(!b || !l) return null;
   var bn = scoredCount(b), ln = scoredCount(l);
-  if(bn <= ln) return null;
-  return {builtin:b, local:l, builtinScored:bn, localScored:ln};
+  /* 本地导入包缺「原卷手写图」也算旧版（hand 是后加的字段，老导入包不会有） */
+  var missHand = (b.questions || []).some(function(q){ return !!q.hand; }) &&
+                 !(l.questions || []).some(function(q){ return !!q.hand; });
+  if(bn <= ln && !missHand) return null;
+  return {builtin:b, local:l, builtinScored:bn, localScored:ln, missHand:missHand};
 }
 /* 启动时把内置版的分值/知识点/插图/解析补进同 id 的本地导入包
    （题库/pack-*.json 是唯一真源：解析、提示、插图都以内置版为准；本地只保留做题记录） */
@@ -10273,6 +10277,7 @@ function mergePackMeta(){
         changed++;                                                     /* 分步给分（pt）也按内置版刷新 */
       }
       if(!q.fig && b.fig){ q.fig = b.fig; delete q.plot; changed++; }   /* 旧导入包缺原卷插图时补上 */
+      if(!q.hand && b.hand){ q.hand = b.hand; changed++; }             /* 旧导入包缺「原卷手写图」时补上 */
       if(b.solution && JSON.stringify(q.solution || []) !== JSON.stringify(b.solution)){
         q.solution = b.solution.slice(); changed++;                     /* 解析按内置版刷新 */
       }
@@ -10378,8 +10383,9 @@ function viewPaper(){
     if(p.note) h.push('<div class="tiny muted" style="margin-top:4px">' + esc(p.note) + '</div>');
     var gap = packMetaGap(p.id);
     if(gap){
-      h.push('<div class="small" style="margin-top:6px;color:var(--warn)">本地导入的是旧版（' + gap.localScored + ' 题有分值），' +
-             '内置版有 ' + gap.builtinScored + ' 题：' +
+      h.push('<div class="small" style="margin-top:6px;color:var(--warn)">' +
+             (gap.missHand ? '本地导入的这套卷缺「原卷 · 老师手写」图'
+                           : ('本地导入的是旧版（' + gap.localScored + ' 题有分值），内置版有 ' + gap.builtinScored + ' 题')) + '：' +
              '<button class="btn-mini" data-act="usebuiltin" data-pack="' + esc(p.id) + '">用内置版本覆盖</button></div>');
     }
     var pm = packMax(p);
@@ -10414,13 +10420,15 @@ function viewPack(){
            '<span class="pmark">' + mark + '</span>' +
            '<span class="ptxt">' + esc((q.ask || '').split('\n')[0].slice(0, 42)) + (q.ask && q.ask.length > 42 ? '…' : '') + '</span>' +
            '<span class="pmeta">' + (qScore(q) ? qScore(q) + ' 分 · ' : '') + esc(q.group || '') + ' · ' + focusTag(q.focus) +
+           (q.hand ? ' · <span title="解析里有原卷老师手写">📷</span>' : '') +
            (rec && rec.got != null && rec.score != null ? '<br>得 ' + rec.got + ' / ' + rec.score : '') + '</span></button>');
   });
   h.push('</div>');
   var pm = packMax(p), gap = packMetaGap(p.id);
   if(gap){
-    h.push('<div class="small" style="margin-top:8px;color:var(--warn)">本地导入的是旧版（' + gap.localScored + ' 题有分值），' +
-           '内置版有 ' + gap.builtinScored + ' 题：' +
+    h.push('<div class="small" style="margin-top:8px;color:var(--warn)">' +
+           (gap.missHand ? '本地导入的这套卷缺「原卷 · 老师手写」图'
+                         : ('本地导入的是旧版（' + gap.localScored + ' 题有分值），内置版有 ' + gap.builtinScored + ' 题')) + '：' +
            '<button class="btn-mini" data-act="usebuiltin" data-pack="' + esc(p.id) + '">用内置版本覆盖</button></div>');
   }
   h.push('<div class="tools" style="margin-top:12px"><button class="btn" data-act="papers">← 返回试卷列表</button>' +
@@ -10586,6 +10594,7 @@ function viewPaperQ(){
         stepsOf(q).forEach(function(s){ h.push('<li><b>' + esc(s.fd.label) + '</b> ' + esc(answerText(s.fd)) + '　<span class="tiny muted">' + s.pt + ' 分</span></li>'); });
       }
       h.push('</ul><hr class="sep">');
+      if(q.hand) h.push('<button class="btn-mini handjump" data-act="jumphand">📷 原卷 · 老师手写（往下翻）↓</button>');
     }
     h.push('<div style="font-size:15px;font-weight:600;margin-bottom:6px">解析</div><ol>');
     (q.solution || []).forEach(function(s){ h.push('<li>' + esc(s) + '</li>'); });
@@ -10593,7 +10602,7 @@ function viewPaperQ(){
     if(q.tip) h.push('<div class="key"><b>这一步的关键：</b>' + esc(q.tip) + '</div>');
     /* 原卷老师手写（答卷扫描）：和上面「我的解析」对照着看，批改痕迹、跳步、扣分点都在里面 */
     if(q.hand){
-      h.push('<div class="handcap"><b>原卷 · 老师手写</b>' +
+      h.push('<div class="handcap" id="handimg"><b>原卷 · 老师手写</b>' +
              '<span class="tiny muted">答卷扫描件，按题裁切；点图可放大</span></div>');
       h.push('<div class="handzoom" data-zoom="1">' + figBox(q.hand) + '</div>');
     }
@@ -11302,6 +11311,11 @@ function paperNext(){
 
 function handleAct(el){
   var act = el.getAttribute('data-act');
+  if(act === 'jumphand'){
+    var hb = document.getElementById('handimg');
+    if(hb && hb.scrollIntoView) hb.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    return;
+  }
   if(act === 'home'){ S.screen = 'home'; render(); return; }
   if(act === 'library'){ S.screen = 'library'; render(); return; }
   if(act === 'libnext'){
