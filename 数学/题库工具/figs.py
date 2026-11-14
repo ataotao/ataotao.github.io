@@ -19,6 +19,7 @@ viewBox 原样显示，所以和卷面截图一致，而且放大不虚。
 """
 import argparse
 import json
+import math
 import os
 import sys
 
@@ -291,7 +292,6 @@ def fig_m4():
 
     自建坐标：BC 水平 110 px，A 由 tan40° 定；A′ 是 A 绕 B 转 40° 后的位置。
     """
-    import math
     W, H = 250, 240
     B = (58.0, 206.0)
     C = (168.0, 206.0)
@@ -422,8 +422,228 @@ def fig_a14():
     return f
 
 
+# =====================================================================
+#  第 11 周周练（函数 + 圆，11.11）的原卷插图
+#  坐标统一用「数学坐标 -> 屏幕坐标」的 P(x, y) 小函数，y 轴向上为正。
+# =====================================================================
+def _para_pts(P, a, h, k, x0, x1, n=64):
+    """抛物线 y = a(x-h)² + k 在 [x0, x1] 上的屏幕坐标点列。"""
+    pts = []
+    for i in range(n + 1):
+        x = x0 + (x1 - x0) * i / n
+        pts.append(P(x, a * (x - h) * (x - h) + k))
+    return pts
+
+
+def _axes(f, P, x0, x1, y0, y1, lab_x=True, lab_y=True, lab_o=True):
+    """画带箭头的 x、y 轴（范围用数学坐标给）。"""
+    f.line(P(x0, 0)[0], P(x0, 0)[1], P(x1, 0)[0], P(x1, 0)[1], w=1.3, arrow=True)
+    f.line(P(0, y0)[0], P(0, y0)[1], P(0, y1)[0], P(0, y1)[1], w=1.3, arrow=True)
+    if lab_x:
+        f.text(P(x1, 0)[0] - 2, P(x1, 0)[1] + 17, [('x', True)], size=15)
+    if lab_y:
+        f.text(P(0, y1)[0] + 12, P(0, y1)[1] + 6, [('y', True)], size=15)
+    if lab_o:
+        f.text(P(0, 0)[0] - 12, P(0, 0)[1] + 14, 'O')
+
+
+def fig_w5():
+    """第 5 题：开口向下的抛物线与一条下降的直线，两交点横坐标 −4 与 1。
+
+    按原卷描图：抛物线顶点在 y 轴左侧，左侧交点在 x 轴上方（x = −4），
+    右侧交点在 x 轴下方（x = 1）；直线过 x 轴于 O 左侧一点。
+    取抛物线 y = −(x+2)² + 7.5、直线 y = −x − 0.5（交点恰好 x = −4、1）。
+    """
+    W, H = 320, 230
+    u, v = 27.0, 11.1
+    ox, oy = 213.6, 131.5
+
+    def P(x, y):
+        return (ox + x * u, oy - y * v)
+
+    f = Fig(W, H)
+    _axes(f, P, -6.8, 2.6, -6.5, 9.5)
+    f.poly(_para_pts(P, -1.0, -2.0, 7.5, -5.4, 1.4), w=1.8)
+
+    def L(x):                                   # 直线 y = −x − 0.5
+        return P(x, -x - 0.5)
+
+    f.line(L(-6.8)[0], L(-6.8)[1], L(2.6)[0], L(2.6)[1], w=1.6)
+    # 两条竖直虚线：标出两个交点的横坐标
+    f.line(P(-4, 0)[0], P(-4, 0)[1], P(-4, 3.5)[0], P(-4, 3.5)[1], w=1.2, dash='5 4')
+    f.line(P(1, 0)[0], P(1, 0)[1], P(1, -1.5)[0], P(1, -1.5)[1], w=1.2, dash='5 4')
+    f.text(P(-4, 0)[0] + 4, P(-4, 0)[1] + 17, '−4', size=15)
+    f.text(P(1, 0)[0] + 13, P(1, 0)[1] + 17, '1', size=15)
+    return f
+
+
+def fig_w7():
+    """第 7 题：一面靠墙的矩形场地，墙对面留 1 m 宽的门。
+
+    原卷只有图形没有字母：上面两道粗线是墙（比矩形长一截），
+    左右两条竖线是宽，下面那条边中间断开一截（= 1 m 的门）。
+    """
+    W, H = 320, 190
+    f = Fig(W, H)
+    f.line(28, 44, 292, 44, w=2.0)            # 墙上沿
+    f.line(38, 52, 282, 52, w=2.0)            # 墙下沿（= 矩形上边）
+    f.line(62, 52, 62, 158, w=1.5)            # 左边（宽）
+    f.line(254, 52, 254, 158, w=1.5)          # 右边（宽）
+    f.line(62, 158, 147, 158, w=1.5)          # 下边左段
+    f.line(169, 158, 254, 158, w=1.5)         # 下边右段（中间 22 px 是 1 m 的门）
+    return f
+
+
+def fig_w12():
+    """第 12 题：y = ax² + bx + c 的图象，对称轴 x = 1，虚线标出。
+
+    按原卷：开口向下，左交点在 O 左侧一点、右交点在 x = 1 右侧；
+    取 y = −(x − 1)² + 2.25（两根 −0.5、2.5，y 轴截距 1.25）。
+    """
+    W, H = 300, 200
+    u, v = 32.0, 20.0
+    ox, oy = 121.0, 105.0
+
+    def P(x, y):
+        return (ox + x * u, oy - y * v)
+
+    f = Fig(W, H)
+    _axes(f, P, -3.2, 4.4, -2.6, 3.9)
+    f.poly(_para_pts(P, -1.0, 1.0, 2.25, -1.15, 3.15), w=1.8)
+    # 对称轴（虚线）：只画到 x 轴下方一点，标签写在它下面，避免压线
+    f.line(P(1, -0.35)[0], P(1, -0.35)[1], P(1, 2.7)[0], P(1, 2.7)[1], w=1.2, dash='5 4')
+    f.text(P(1, 0)[0], P(1, -1.15)[1], [('x', True), ('=1', False)], size=14)
+    return f
+
+
+def fig_w14():
+    """第 14 题：⊙O 中 AB 为直径，C、D 在圆上，∠BOC = 80°，AD ∥ OC。
+
+    A 在 180°、B 在 0°、C 在 80°；由 AD ∥ OC 得 D 在 160°
+    （弦 AD 的方向角 = 80°），此时 ∠COD = 80°。
+    """
+    W, H = 260, 210
+    cx, cy, r = 130.0, 100.0, 85.0
+
+    def P(deg, rr=r):
+        t = math.radians(deg)
+        return (cx + rr * math.cos(t), cy - rr * math.sin(t))
+
+    f = Fig(W, H)
+    # 圆
+    f.poly([P(360.0 * i / 96) for i in range(97)], w=1.5)
+    A, B, C, D = P(180), P(0), P(80), P(160)
+    f.line(A[0], A[1], B[0], B[1], w=1.5)          # 直径 AB
+    f.line(cx, cy, C[0], C[1], w=1.5)              # 半径 OC
+    f.line(cx, cy, D[0], D[1], w=1.5)              # 半径 OD
+    f.line(A[0], A[1], D[0], D[1], w=1.5)          # 弦 AD
+    # ∠BOC 的弧与度数
+    f.poly([P(80.0 * i / 16, 26) for i in range(17)], w=1.1)
+    f.text(P(40, 40)[0], P(40, 40)[1] + 5, '80°', size=13)
+    f.text(A[0] - 11, A[1] + 5, 'A')
+    f.text(B[0] + 11, B[1] + 5, 'B')
+    f.text(C[0] + 2, C[1] - 9, 'C')
+    f.text(D[0] - 4, D[1] - 9, 'D')
+    f.text(cx + 3, cy + 17, 'O')
+    return f
+
+
+def fig_w15():
+    """第 15 题：三孔桥横截面（中间大孔 + 两侧小孔，都是抛物线形）。
+
+    原卷是砖墙 + 水面：墙底就是水面，三个孔从水面向上拱起。
+    大孔高 8 m、小孔高 5 m（图上按 80 px / 50 px 画），大孔水面宽 20 m（100 px）。
+    砖缝必须绕开三个孔（孔是「挖掉」的，不是画在墙上），所以按抛物线算出
+    每个高度上的孔宽，再把砖缝切成若干段画。
+    """
+    W, H = 320, 180
+    x0, x1, ytop, ywater = 20, 300, 28, 142
+    arches = [(160, 50, 62), (80, 20, 92), (240, 20, 92)]   # (中心 x, 半宽, 顶点 y)
+
+    def holes(y):
+        """高度 y 处三个孔的 x 区间（抛物线 x = 中心 ± 半宽·√((y−顶点)/(水面−顶点))）。"""
+        out = []
+        for xc, b, ya in arches:
+            if y >= ywater or y <= ya:
+                continue
+            w = b * math.sqrt((y - ya) / float(ywater - ya))
+            out.append((xc - w, xc + w))
+        return sorted(out)
+
+    def cut(a, b, hs):
+        """把线段 [a, b] 去掉若干孔区间，返回剩下的段。"""
+        segs = [(a, b)]
+        for h0, h1 in hs:
+            nxt = []
+            for s0, s1 in segs:
+                if h1 <= s0 or h0 >= s1:
+                    nxt.append((s0, s1))
+                else:
+                    if s0 < h0:
+                        nxt.append((s0, h0))
+                    if h1 < s1:
+                        nxt.append((h1, s1))
+            segs = nxt
+        return segs
+
+    f = Fig(W, H)
+    # 水面：整幅宽的一条实线（就是题目里 x 轴所在的位置）+ 两道虚线示意水体
+    f.line(0, ywater, W, ywater, w=1.4)
+    for wy in (ywater + 10, ywater + 20):
+        f.line(6, wy, W - 6, wy, w=0.8, dash='6 5')
+    # 墙体轮廓
+    f.line(x0, ytop, x1, ytop, w=1.8)
+    f.line(x0, ytop, x0, ywater, w=1.8)
+    f.line(x1, ytop, x1, ywater, w=1.8)
+    # 砖缝：横缝按孔切开，竖缝落在孔里就跳过
+    y = ytop + 9
+    row = 0
+    while y < ywater - 2:
+        for a, b in cut(x0 + 2, x1 - 2, holes(y)):
+            f.line(a, y, b, y, w=0.7)
+        xs = x0 + (10 if row % 2 == 0 else 24)
+        while xs < x1 - 4:
+            if not any(h0 - 1 <= xs <= h1 + 1 for h0, h1 in holes(y - 4.5)):
+                f.line(xs, y - 9, xs, y, w=0.7)
+            xs += 28
+        y += 9
+        row += 1
+    # 三个抛物线孔：大孔 110–210（宽 100 px = 20 m）、高 80 px（8 m）；
+    # 小孔各宽 40 px、高 50 px（5 m）；quad 的控制点 = 2×顶点 − 端点平均
+    f.quad((110, ywater), (160, 2 * 62 - ywater), (210, ywater))
+    f.quad((60, ywater), (80, 2 * 92 - ywater), (100, ywater))
+    f.quad((220, ywater), (240, 2 * 92 - ywater), (260, ywater))
+    return f
+
+
+def fig_w17():
+    """附加题：y = −x² + 2x + 3（对称轴 x = 1，过 A(−1, 0)）。
+
+    原卷两幅小图：A 在 x 轴左、B 是 y 轴截距、C 是顶点、D 在 x 轴右、P 在右支上。
+    """
+    W, H = 300, 210
+    u, v = 33.0, 17.0
+    ox, oy = 112.5, 110.0
+
+    def P(x, y):
+        return (ox + x * u, oy - y * v)
+
+    f = Fig(W, H)
+    _axes(f, P, -2.6, 4.6, -3.6, 5.3)
+    f.poly(_para_pts(P, -1.0, 1.0, 4.0, -1.7, 3.7), w=1.8)
+    pts = [(-1.0, 0.0, 'A'), (0.0, 3.0, 'B'), (1.0, 4.0, 'C'), (3.0, 0.0, 'D'), (2.5, 1.75, 'P')]
+    for x, y, lab in pts:
+        sx, sy = P(x, y)
+        f.dot(sx, sy, r=2.8)
+        dx, dy = {'A': (-13, 4), 'B': (-13, -6), 'C': (1, -10), 'D': (10, 4), 'P': (10, 4)}[lab]
+        f.text(sx + dx, sy + dy, lab)
+    return f
+
+
 FIGS = {'m20': fig_q20, 'm21': fig_q21, 'm22': fig_q22,
-        'm4': fig_m4, 'm13': fig_m13, 'a11': fig_a11, 'a14': fig_a14}
+        'm4': fig_m4, 'm13': fig_m13, 'a11': fig_a11, 'a14': fig_a14,
+        'w11q5': fig_w5, 'w11q7': fig_w7, 'w11q12': fig_w12,
+        'w11q14': fig_w14, 'w11q15': fig_w15, 'w11q17': fig_w17}
 
 
 def build_figs():

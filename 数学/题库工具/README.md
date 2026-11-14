@@ -15,6 +15,7 @@
     数学练习卷-1014.txt
     九上数学期中模拟练习.txt
     2026-2027第一学期期中.txt   ← 官方《答案卷及评分标准》转录（2026-11-09 核对；18(2) 官方印「5」与正解 3√2 的分歧见 pack note）
+    第11周周练-函数与圆.txt      ← 老师批改后的手写答卷转录（2026-11-14 逐题复算核对，17 题全一致）
 ```
 
 ## 数据流（单一真源）
@@ -122,7 +123,7 @@ python 题库工具\qb.py verify                                                
 python 题库工具\figs.py --preview %TEMP%\fig.png                               # 只出 PNG 预览（Pillow）
 ```
 
-`figs.py` 的约定：SVG 坐标（y 向下）、字号 16（数字/单位 15）、墨色 `#1b2430`、`line/quad/poly/text/dot/hatch` 几个小函数；要加新图就写一个 `fig_q??()` 并登记到 `FIGS`。
+`figs.py` 的约定：SVG 坐标（y 向下）、字号 16（数字/单位 15）、墨色 `#1b2430`、`line/quad/poly/text/dot/hatch` 几个小函数；要加新图就写一个 `fig_xxx()` 并登记到 `FIGS`（键 = 题包里的**题目 id**，比如 `w11q5`；`write_pack` 按 id 匹配，所以一个 `FIGS` 可以同时服务多套卷）。第 11 周周练卷的 6 张图（`fig_w5/w7/w12/w14/w15/w17`）用了两个小工具：`_para_pts()`（把 y = a(x−h)²+k 采样成折线）和 `_axes()`（带箭头的坐标轴）。
 
 ## 闪练题库（`题库/drills.json`）
 
