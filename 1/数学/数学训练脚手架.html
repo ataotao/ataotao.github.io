@@ -242,6 +242,7 @@ var MT = (function () {
   }
   function binom(h) { return h === 0 ? 'x' : (h > 0 ? '(x − ' + h + ')' : '(x + ' + (-h) + ')'); }
   function kterm(k) { return k === 0 ? '' : (k > 0 ? ' + ' + k : ' − ' + (-k)); }
+  function leadCoef(a) { return a === 1 ? '' : (a === -1 ? '−' : d(a)); }
 
   /* ---------- 题生成器 ---------- */
   function genVertex(r) {
@@ -331,12 +332,37 @@ var MT = (function () {
   function genProfit(r) {
     var cost = ri(r, 20, 60);
     var price = cost + ri(r, 10, 40);
-    var n = ri(r, 10, 50);
+    var n = ri(r, 20, 60);
     var dd = pick(r, [2, 4, 5]);
-    var m = ri(r, 1, 5);
+    var m = ri(r, 1, 4);
     var b = m / dd;
     var a = price - cost;
-    var x0 = dd * ri(r, 1, 4);
+    /* 两个方向都要练：涨价（销量减少、售价有上限）与降价（销量增加、不能亏本） */
+    var up = r() < 0.5;
+    var step = ri(r, 1, 4);
+    var x0 = dd * step;
+    if (up) {
+      var cap = Math.floor((n - 5) / b);                  /* 销量别被减成 0 或负数 */
+      if (x0 > dd * Math.floor(cap / dd)) x0 = dd * Math.max(1, Math.floor(cap / dd));
+      var Wup = (a + x0) * (n - b * x0);
+      return {
+        id: 'write.profit', kind: 'profit', title: '利润建模',
+        prompt: '某店每件商品进价 ' + cost + ' 元、售价 ' + price + ' 元，每天可卖 ' + n + ' 件。<br>' +
+          '每涨价 ' + dd + ' 元，每天就少卖 ' + m + ' 件。设每件涨价 x 元。',
+        fields: [
+          { type: 'num', label: '每件盈利 = a + x，a =', ans: a },
+          { type: 'num', label: '每天销量 = ' + n + ' − b·x，b =', ans: b },
+          { type: 'num', label: '涨价 ' + x0 + ' 元时，日盈利 W =', ans: Wup, unit: '元' }
+        ],
+        tip: '涨价 x 元 → 每件多赚 x 元；"每涨 d 元少卖 m 件" → 少卖 (m/d)·x 件，所以销量是减。',
+        explain: [
+          '每件盈利 = 售价 − 进价 + 涨价 = ' + a + ' + x，所以 a = ' + a + '。',
+          '每涨 ' + dd + ' 元少卖 ' + m + ' 件，涨 x 元就少卖 (' + m + '/' + dd + ')x = ' + frac(b) + 'x，所以 b = ' + frac(b) + '。',
+          'W = (' + a + ' + ' + x0 + ')(' + n + ' − ' + frac(b) + '×' + x0 + ') = ' + (a + x0) + ' × ' + (n - b * x0) + ' = ' + frac(Wup) + '（元）。'
+        ],
+        kp: ['二次函数', '建模', '利润']
+      };
+    }
     if (x0 >= a) x0 = dd * Math.max(1, Math.floor((a - 1) / dd));
     var W = (a - x0) * (n + b * x0);
     return {
@@ -355,6 +381,70 @@ var MT = (function () {
         'W = (' + a + ' − ' + x0 + ')(' + n + ' + ' + frac(b) + '×' + x0 + ') = ' + (a - x0) + ' × ' + (n + b * x0) + ' = ' + frac(W) + '（元）。'
       ],
       kp: ['二次函数', '建模', '利润']
+    };
+  }
+
+  /* 拱桥/隧道建模：顶点在 y 轴上 → 设 y = ax² + k（第 11 周周练卷 15(1) 就是这一型） */
+  function genArch(r) {
+    var b = pick(r, [5, 10, 20]);                    /* 水面半宽 */
+    var ks = b === 20 ? [8, 10] : (b === 5 ? [2] : [4, 5]);   /* 拱高约为半宽的 1/3–1/2，别画成扁平拱 */
+    var k = pick(r, ks);                             /* 拱顶距水面 */
+    var a = -k / (b * b);
+    var x1 = pick(r, [-6, -4, -3, 2, 3, 4, 6]);
+    if (Math.abs(x1) >= b) x1 = Math.round(b / 2);
+    var y1 = a * x1 * x1 + k;
+    var opts = ['y = ax² + k（顶点在 y 轴上）', 'y = a(x − h)² + k（顶点不在 y 轴上）', 'y = ax² + bx + c（一般式）'];
+    var right = opts[0];
+    for (var oi = opts.length - 1; oi > 0; oi--) { var oj = Math.floor(r() * (oi + 1)), tt = opts[oi]; opts[oi] = opts[oj]; opts[oj] = tt; }
+    return {
+      id: 'write.arch', kind: 'arch', title: '拱桥建模',
+      prompt: '一座抛物线形拱桥，水面宽 ' + (2 * b) + ' m，拱顶距水面 ' + k + ' m。<br>' +
+        '以水面为 x 轴、拱顶所在竖直线为 y 轴建系，求抛物线的解析式。',
+      fields: [
+        { type: 'choice', label: '先设哪种形式最省事？', options: opts, ans: opts.indexOf(right) },
+        { type: 'num', label: '解析式 y = ax² + k 中，a =（可填分数）', ans: a },
+        { type: 'num', label: '离桥中心 ' + d(Math.abs(x1)) + ' m 处的拱高 =', ans: y1, unit: 'm' }
+      ],
+      tip: '顶点在 y 轴上 → 设 y = ax² + k，k 就是拱高；再把 (±半宽, 0) 代进去求 a。',
+      explain: [
+        '顶点在 y 轴上，设 y = ax² + k，拱顶 (' + 0 + ', ' + k + ') 给出 k = ' + k + '。',
+        '水面宽 ' + (2 * b) + ' m → 抛物线过 (' + d(-b) + ', 0) 和 (' + d(b) + ', 0)：0 = a×' + (b * b) + ' + ' + k + '，所以 a = ' + frac(a) + '。',
+        '解析式：y = ' + frac(a) + 'x² + ' + k + '。',
+        '再代 x = ' + d(x1) + '：y = ' + frac(a) + '×' + (x1 * x1) + ' + ' + k + ' = ' + frac(y1) + '（m）。'
+      ],
+      fig: { type: 'parabola', a: a, h: 0, k: k, xr: [-b - 0.6, b + 0.6], dots: [[0, k, '拱顶'], [-b, 0, '水面'], [b, 0, '水面'], [x1, y1, 'x=' + d(x1)]] },
+      kp: ['二次函数', '建模', '待定系数法']
+    };
+  }
+
+  /* 对称轴 + 一点求一般式：b 由对称轴定，c 由代点定（第 11 周周练卷附加题 (1)） */
+  function genAxis(r) {
+    var a = pick(r, [-2, -1, 1, 2]);
+    var h = ri(r, -3, 3);
+    var x0 = h + pick(r, [-3, -2, -1, 1, 2, 3]);
+    if (x0 > 5) x0 = h + 2;
+    if (x0 < -5) x0 = h - 2;
+    var c = ri(r, -4, 4);
+    var b = -2 * a * h;
+    var y0 = a * x0 * x0 + b * x0 + c;
+    var k = c - a * h * h;
+    var atxt = (a === 1 ? '' : (a === -1 ? '−' : d(a)));
+    return {
+      id: 'write.axis', kind: 'axis', title: '对称轴求一般式',
+      prompt: '已知抛物线 y = ' + atxt + 'x² + bx + c 的对称轴是直线 x = ' + d(h) + '，且经过点 A(' + d(x0) + ', ' + d(y0) + ')。<br>' +
+        '求 b 和 c。',
+      fields: [
+        { type: 'num', label: 'b =', ans: b },
+        { type: 'num', label: 'c =', ans: c }
+      ],
+      tip: '对称轴 x = −b/(2a)：a 已知、轴已知 → 先定 b；再把 A 代进去定 c。',
+      explain: [
+        '对称轴 −b/(2a) = ' + d(h) + '，a = ' + d(a) + '，所以 b = −2a·h = −2×(' + d(a) + ')×' + d(h) + ' = ' + d(b) + '。',
+        '把 A(' + d(x0) + ', ' + d(y0) + ') 代入 y = ' + atxt + 'x² + ' + d(b) + 'x + c：' + d(y0) + ' = ' + d(a * x0 * x0) + (b * x0 >= 0 ? ' + ' + d(b * x0) : ' − ' + d(-b * x0)) + ' + c，得 c = ' + d(c) + '。',
+        '所以 y = ' + poly2(a, b, c) + '，顶点 (' + d(h) + ', ' + d(k) + ')。'
+      ],
+      fig: { type: 'parabola', a: a, h: h, k: k, dots: [[h, k, '顶点'], [x0, y0, 'A']] },
+      kp: ['二次函数', '待定系数法']
     };
   }
 
@@ -759,6 +849,208 @@ var MT = (function () {
     };
   }
 
+  /* ---------- 圆与二次函数的「基础考点」（取自第 11 周周练卷 11.11 的选择 1/3/6/10 与填空 9/12、解答 13） ----------
+     这些题只考一条定义或一条公式，正好补「概念记混」这一档：点与圆的位置关系、
+     弦/弧/直径、直角三角形外接圆、反证法第一步、顶点式最值、平移、闭区间最值。 */
+  /* 每条判断都带一句「为什么对/为什么错」，解析里只讲这道题真正出现的四句话 */
+  var CIRCLE_RIGHT = [
+    { s: '直径是弦，弦不一定是直径', why: '直径过圆心，当然属于弦；弦不一定过圆心，所以不一定是直径' },
+    { s: '圆中最长的弦是直径', why: '任何弦 ≤ 直径（2r），等号只在弦过圆心时成立' },
+    { s: '过圆心的弦是直径', why: '这就是直径的定义（还要两端都在圆上，弦本身就满足）' },
+    { s: '半圆是弧', why: '直径把圆分成两段弧，每段就叫半圆' },
+    { s: '不在同一直线上的三点确定一个圆', why: '两边的中垂线交于唯一一点，那个点就是圆心' },
+    { s: '同圆或等圆的半径相等', why: '同一个圆里所有半径都等于 r；等圆半径也相等' },
+    { s: '弦的两端都在圆上', why: '弦的定义：圆上任意两点间的线段' },
+    { s: '等弧的长度相等', why: '等弧能完全重合，长度自然相等（反过来不成立）' }
+  ];
+  var CIRCLE_WRONG = [
+    { s: '弧是半圆，半圆是弧', why: '半圆是弧，但弧不一定是半圆——还有优弧、劣弧' },
+    { s: '长度相等的弧是等弧', why: '等弧要求「能完全重合」，只在同圆或等圆中才谈；长度相等不够' },
+    { s: '圆的任意一条弦都等于直径的一半', why: '弦长最大才是直径，一般弦比直径短，不是等于半径' },
+    { s: '过圆心的线段是直径', why: '直径要求两端都在圆上，光过圆心不够' },
+    { s: '半圆是弧，所以弧都是半圆', why: '前半句对、后半句错，弧还有优弧和劣弧' },
+    { s: '三点确定一个圆', why: '要「不在同一直线上」的三点才确定一个圆' },
+    { s: '弦是直径', why: '弦不一定过圆心，所以不一定是直径' },
+    { s: '直径是圆中最短的弦', why: '反了：直径是最长的弦' },
+    { s: '同圆中，弦越长，它到圆心的距离越大', why: '反了：弦越长离圆心越近，直径（最长）到圆心距离为 0' },
+    { s: '圆上任意两点间的线段叫弧', why: '两点间的线段叫弦，两点间的「部分」才叫弧' }
+  ];
+  var ABSURD_CASES = [
+    { concl: '一个三角形中不能有两个角是直角', ans: '三角形中有两个角是直角',
+      bad: ['三角形中三个角都是直角', '三角形中没有直角', '三角形中只有一个直角'] },
+    { concl: '在一个三角形中，至少有一个内角小于或等于 60°', ans: '三角形的三个内角都大于 60°',
+      bad: ['三角形的三个内角都小于 60°', '三角形中有一个内角大于 60°', '三角形的三个内角都等于 60°'] },
+    { concl: '若 a ≠ 0，则一元二次方程 ax² + bx + c = 0 至多有两个实数根', ans: '方程有三个或更多个实数根',
+      bad: ['方程没有实数根', '方程恰好有两个实数根', '方程只有一个实数根'] },
+    { concl: '两条直线被第三条直线所截，若同位角相等，则两直线平行', ans: '两直线不平行（相交）',
+      bad: ['两直线平行', '同位角不相等', '两直线重合'] },
+    { concl: '若 x² + y² = 0，则 x = y = 0', ans: 'x、y 不全为 0',
+      bad: ['x = y = 0', 'x、y 都不为 0', 'x = 0 且 y ≠ 0'] },
+    { concl: '一个数不是正数就是负数', ans: '一个数既不是正数也不是负数',
+      bad: ['一个数是正数', '一个数是负数', '一个数既是正数又是负数'] }
+  ];
+  var RIGHT_TRI = [[3, 4, 5], [6, 8, 10], [5, 12, 13], [9, 12, 15], [8, 15, 17],
+    [7, 24, 25], [12, 16, 20], [20, 21, 29], [9, 40, 41], [10, 24, 26]];
+
+  function shuffle(r, arr) {
+    var a = arr.slice();
+    for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(r() * (i + 1)), t = a[i]; a[i] = a[j]; a[j] = t; }
+    return a;
+  }
+
+  /* 点与圆的位置关系：d 和 r 比大小 */
+  function genPtCirc(r) {
+    var rad = ri(r, 2, 9);
+    var kind = ri(r, 0, 2);                 /* 0 圆内 / 1 圆上 / 2 圆外 */
+    var dist = kind === 0 ? Math.max(1, rad - ri(r, 1, rad - 1))
+      : (kind === 1 ? rad : rad + ri(r, 1, 5));
+    var word = ['在 ⊙O 内', '在 ⊙O 上', '在 ⊙O 外'][kind];
+    var cmp = kind === 0 ? 'd < r' : (kind === 1 ? 'd = r' : 'd > r');
+    return {
+      id: 'drill.ptcirc', kind: 'ptcirc', title: '点与圆的位置关系',
+      prompt: '⊙O 的半径为 ' + rad + '，点 P 到圆心 O 的距离为 ' + dist + '，则点 P（　）',
+      fields: [{ type: 'choice', label: '', ans: kind, options: ['在 ⊙O 内', '在 ⊙O 上', '在 ⊙O 外'] }],
+      tip: '只比一个量：点到圆心的距离 d 与半径 r。d 小在内、d 大在外、相等在圆上。',
+      explain: ['d = ' + dist + '，r = ' + rad + '，所以 ' + cmp + '，点 P ' + word + '。',
+        '注意：比的是半径 r，不是直径 2r = ' + (2 * rad) + '。'],
+      kp: ['圆的基本性质', '点与圆的位置关系']
+    };
+  }
+
+  /* 圆的基本概念：一句话判断对错 */
+  function genCircleDef(r) {
+    var right = pick(r, CIRCLE_RIGHT);
+    var picked = [right], guard = 0;
+    while (picked.length < 4 && guard++ < 100) {
+      var w = pick(r, CIRCLE_WRONG);
+      if (picked.indexOf(w) < 0) picked.push(w);
+    }
+    var opts = shuffle(r, picked.map(function (o) { return o.s; }));
+    return {
+      id: 'drill.circledef', kind: 'circledef', title: '圆的基本概念',
+      prompt: '下列说法中，正确的是（　）',
+      fields: [{ type: 'choice', label: '', ans: opts.indexOf(right.s), options: opts }],
+      tip: '逐条卡定义：弦要「两端在圆上」，直径要「再过圆心」，等弧要「能完全重合」，三点定圆要「不共线」。',
+      explain: [right.s + '：对，' + right.why + '。'].concat(
+        picked.slice(1).map(function (w) { return w.s + '：错，' + w.why + '。'; })),
+      kp: ['圆的基本性质', '弦·弧·直径']
+    };
+  }
+
+  /* 直角三角形外接圆：斜边就是直径 */
+  function genCircum(r) {
+    var t = pick(r, RIGHT_TRI);
+    var swap = r() < 0.5;
+    var a = swap ? t[1] : t[0], b = swap ? t[0] : t[1], c = t[2];
+    return {
+      id: 'drill.circum', kind: 'circum', title: '直角三角形外接圆',
+      prompt: '直角三角形的两条直角边分别是 ' + a + ' 和 ' + b + '，它的斜边和外接圆半径分别是多少？',
+      fields: [
+        { type: 'num', label: '斜边 =', ans: c },
+        { type: 'num', label: '外接圆半径 =', ans: c / 2 }
+      ],
+      tip: '直角三角形的外接圆以斜边为直径 ⟹ 半径 = 斜边 ÷ 2。',
+      explain: ['斜边 = √(' + a + '² + ' + b + '²) = √' + (a * a + b * b) + ' = ' + c + '。',
+        '90° 的圆周角对着直径，所以斜边就是外接圆的直径，半径 = ' + c + ' ÷ 2 = ' + frac(c / 2) + '。',
+        '坑：把两条直角边的平均数当半径，或者把斜边直接当半径。'],
+      kp: ['圆的基本性质', '三角形外接圆']
+    };
+  }
+
+  /* 反证法第一步：假设结论的反面 */
+  function genAbsurd(r) {
+    var it = pick(r, ABSURD_CASES);
+    var opts = shuffle(r, [it.ans].concat(it.bad));
+    return {
+      id: 'drill.absurd', kind: 'absurd', title: '反证法第一步',
+      prompt: '用反证法证明「' + it.concl + '」时，第一步应假设（　）',
+      fields: [{ type: 'choice', label: '', ans: opts.indexOf(it.ans), options: opts }],
+      tip: '反证法第一步 = 假设结论的反面成立：只否定结论本身，不加强、不减弱。',
+      explain: ['结论「' + it.concl + '」的反面是「' + it.ans + '」，所以第一步假设它成立。',
+        '坑：把「加强版」（更极端的说法）或「减弱版」当反面——反证法只认结论的精确否定。'],
+      kp: ['推理与证明', '反证法']
+    };
+  }
+
+  /* 顶点式最值：a 的符号定最大还是最小，最值是 k */
+  function genVertexMax(r) {
+    var a = pick(r, [-2, -1, 1, 2]);
+    var h = ri(r, -4, 4), k = ri(r, -6, 6);
+    var hasMin = a > 0;
+    var coef = leadCoef(a);
+    return {
+      id: 'drill.vertexmax', kind: 'vertexmax', title: '顶点式最值',
+      prompt: '二次函数 y = ' + coef + binom(h) + '²' + kterm(k) + ' 有最大值还是最小值？最值是多少？',
+      fields: [
+        { type: 'choice', label: '有', ans: hasMin ? 0 : 1, options: ['最小值', '最大值'] },
+        { type: 'num', label: '最值 =', ans: k }
+      ],
+      tip: '顶点式 y = a(x − h)² + k：a > 0 开口向上有最小值，a < 0 开口向下有最大值，最值就是 k。',
+      explain: ['a = ' + d(a) + (hasMin ? ' > 0，开口向上，所以有最小值' : ' < 0，开口向下，所以有最大值')
+        + '，等于顶点的纵坐标 ' + d(k) + '。',
+        '顶点是 (' + d(h) + ', ' + d(k) + ')：横坐标 ' + d(h) + ' 不是最值，别填错。'],
+      fig: { type: 'parabola', a: a, h: h, k: k, dots: [[h, k, '顶点']] },
+      kp: ['二次函数', '最值']
+    };
+  }
+
+  /* 平移：左加右减、上加下减 */
+  function genShift(r) {
+    var a = pick(r, [-2, -1, 1, 2]);
+    var h = ri(r, -3, 3), k = ri(r, -3, 3);
+    var dirX = r() < 0.5 ? -1 : 1, dx = ri(r, 1, 3);
+    var dirY = r() < 0.5 ? -1 : 1, dy = ri(r, 1, 3);
+    var h2 = h + dirX * dx, k2 = k + dirY * dy;
+    var b = -2 * a * h, c = a * h * h + k;
+    var b2 = -2 * a * h2, c2 = a * h2 * h2 + k2;
+    return {
+      id: 'drill.shift', kind: 'shift', title: '抛物线平移',
+      prompt: '把抛物线 y = ' + poly2(a, b, c) + ' 先' + (dirY < 0 ? '向下' : '向上') + '平移 ' + dy +
+        ' 个单位，再' + (dirX < 0 ? '向左' : '向右') + '平移 ' + dx + ' 个单位。平移后的解析式是？',
+      fields: [{ type: 'expr', form: 'general', tpl: 'y = {}x² + {}x + {}', label: '平移后的解析式', ans: [a, b2, c2] }],
+      tip: '平移只动顶点，a 不变：左加右减（动横坐标）、上加下减（动纵坐标）。',
+      explain: ['先配方找原顶点：y = ' + poly2(a, b, c) + ' = ' + leadCoef(a) + binom(h) + '²' + kterm(k) + '，顶点 (' + d(h) + ', ' + d(k) + ')。',
+        '顶点平移后是 (' + d(h2) + ', ' + d(k2) + ')，开口不变，所以新解析式 y = ' + leadCoef(a) + binom(h2) + '²' + kterm(k2) + '。',
+        '展开成一般式：y = ' + poly2(a, b2, c2) + '。缺哪一项就填 0。'],
+      fig: { type: 'parabola', a: a, h: h2, k: k2, dots: [[h, k, '原顶点'], [h2, k2, '新顶点']], ghost: [{ a: a, h: h, k: k }] },
+      kp: ['二次函数', '平移']
+    };
+  }
+
+  /* 闭区间最值：先看顶点在不在区间里 */
+  function genRangeMax(r) {
+    var a = pick(r, [-2, -1, 1, 2]);
+    var h = ri(r, -2, 2), k = ri(r, -3, 3);
+    var mode = ri(r, 0, 2);
+    var p, q;
+    if (mode === 0) { p = h - ri(r, 1, 4); q = h + ri(r, 1, 4); }
+    else if (mode === 1) { p = h + ri(r, 1, 3); q = p + ri(r, 1, 3); }
+    else { q = h - ri(r, 1, 3); p = q - ri(r, 1, 3); }
+    function val(x) { return a * (x - h) * (x - h) + k; }
+    var yp = val(p), yq = val(q);
+    var cand = [yp, yq];
+    if (mode === 0) cand.push(k);
+    var lo = Math.min.apply(null, cand), hi = Math.max.apply(null, cand);
+    var inside = mode === 0;
+    return {
+      id: 'drill.rangemax', kind: 'rangemax', title: '闭区间最值',
+      prompt: '二次函数 y = ' + poly2(a, -2 * a * h, a * h * h + k) + '，当 ' + d(p) + ' ≤ x ≤ ' + d(q) +
+        ' 时，它的最小值和最大值分别是多少？',
+      fields: [
+        { type: 'num', label: '最小值 =', ans: lo },
+        { type: 'num', label: '最大值 =', ans: hi }
+      ],
+      tip: '先看顶点横坐标在不在区间里：在，就有一个最值在顶点取；不在，两个最值都在端点取。',
+      explain: ['对称轴 x = ' + d(h) + (inside ? '，落在区间 [' + d(p) + ', ' + d(q) + '] 内，所以顶点是其中一个最值：y(' + d(h) + ') = ' + d(k) + '。'
+        : '，不在区间 [' + d(p) + ', ' + d(q) + '] 内，所以这段图象是单调的，两个最值都在端点取。'),
+        '两个端点：y(' + d(p) + ') = ' + d(yp) + '，y(' + d(q) + ') = ' + d(yq) + '。',
+        '比一比得：最小值 ' + d(lo) + '，最大值 ' + d(hi) + '。',
+        '坑：不看顶点在不在区间里，直接写「最小值 = 顶点纵坐标」。'],
+      fig: { type: 'parabola', a: a, h: h, k: k, dots: [[p, yp, 'x=' + d(p)], [q, yq, 'x=' + d(q)], [h, k, '顶点']] },
+      kp: ['二次函数', '区间最值']
+    };
+  }
+
   /* ---------- 大题前两步：固定题（来自 2026-11 期中卷 20–25 的得分点） ---------- */
   var ENTRY = [
     {
@@ -859,6 +1151,187 @@ var MT = (function () {
       tip: '把 x = 2 代进去，看 y 等不等于 −6。',
       explain: ['x = 2 时 y = −7 ≠ −6，所以点 (2, −6) 不在图象上。'],
       kp: ['二次函数', '含参']
+    },
+    /* ---- 第 11 周周练卷（11.11）的解答题前两步 ---- */
+    {
+      id: 'entry.13.1', no: '13', title: '13(1) 对称轴与顶点',
+      prompt: '已知二次函数 y₁ = −x² + 2x + 3。<br><span class="muted small">求对称轴和顶点——这是 13 题的第一个得分点（4 分里先拿 2 分）。</span>',
+      fields: [
+        { type: 'num', label: '对称轴 直线 x =', ans: 1 },
+        { type: 'num', label: '顶点的纵坐标 =', ans: 4 }
+      ],
+      tip: '对称轴 x = −b/(2a)；顶点把横坐标代回去算 y。',
+      explain: ['a = −1、b = 2：x = −b/(2a) = −2/(−2) = 1。', '代 x = 1：y = −1 + 2 + 3 = 4，顶点 (1, 4)。'],
+      fig: { type: 'parabola', a: -1, h: 1, k: 4, dots: [[1, 4, '顶点']] },
+      kp: ['二次函数', '顶点']
+    },
+    {
+      id: 'entry.13.3', no: '13', title: '13(3) 平移后解析式',
+      prompt: '把抛物线 y = −x² + 2x + 3 向下平移 3 个单位，再向左平移 2 个单位。<br>写出平移后的解析式（13(3) 的 3 分）。',
+      fields: [{ type: 'expr', form: 'general', tpl: 'y = {}x² + {}x', label: '平移后的解析式', ans: [-1, -2] }],
+      tip: '「上加下减」改常数项，「左加右减」把 x 换成 (x + 2)。',
+      explain: ['先向下 3 个：y = −x² + 2x + 3 − 3 = −x² + 2x。', '再向左 2 个（x 换成 x + 2）：y = −(x + 2)² + 2(x + 2) = −x² − 2x。'],
+      kp: ['二次函数', '平移']
+    },
+    {
+      id: 'entry.13.5', no: '13', title: '13(5) 面积怎么设',
+      prompt: 'A(0, 3)、B(3, 0)，P 在线段 AB 上方的抛物线上。设 P(t, −t² + 2t + 3)，过 P 作 PQ ∥ y 轴交 AB 于 Q。<br><span class="muted small">先写出 PQ 的长度——这是 13(5) 的关键一步。</span>',
+      fields: [{
+        type: 'choice', label: 'PQ =', ans: 0,
+        options: ['−t² + 3t', 't² − 3t', '−t² + 3t + 6', '−t² + t']
+      }],
+      tip: 'Q 和 P 横坐标相同；Q 在直线 AB 上，而 AB 的解析式是 y = −x + 3。',
+      explain: ['Q(t, −t + 3)，P(t, −t² + 2t + 3)。', 'PQ = y_P − y_Q = (−t² + 2t + 3) − (−t + 3) = −t² + 3t。'],
+      kp: ['二次函数', '面积最值']
+    },
+    {
+      id: 'entry.14.1', no: '14', title: '14 第一步：平行得角',
+      prompt: 'AB 为 ⊙O 的直径，∠BOC = 80°，AD ∥ OC。<br><span class="muted small">第一步：∠DAB 是多少度？依据是哪条？</span>',
+      fields: [
+        { type: 'num', label: '∠DAB =', ans: 80, unit: '°' },
+        {
+          type: 'choice', label: '依据', ans: 0,
+          options: ['AD ∥ OC，两直线平行、同位角相等', '同弧所对的圆周角等于圆心角的一半', 'OA = OD，等边对等角', '直径所对的圆周角是直角']
+        }
+      ],
+      tip: 'AD ∥ OC，AB 是截线 → ∠DAB 与 ∠BOC 是同位角。',
+      explain: ['AD ∥ OC，AB 截两条平行线，∠DAB 与 ∠BOC 是同位角，所以 ∠DAB = ∠BOC = 80°。', '接下来由 OA = OD 得 ∠D = ∠DAB = 80°。'],
+      kp: ['圆的基本性质', '平行线与角']
+    },
+    {
+      id: 'entry.15.1', no: '15', title: '15(1) 建系设式求 a',
+      prompt: '三孔桥：以水面为 x 轴、大孔抛物线对称轴为 y 轴。大孔水面宽 20 m，顶点距水面 8 m。<br>设 y = ax² + k，求 k 和 a。',
+      fields: [
+        { type: 'num', label: 'k =', ans: 8 },
+        { type: 'num', label: 'a =（可填分数）', ans: -0.08 }
+      ],
+      tip: '顶点在 y 轴上 → k 就是拱高；水面宽 20 m 意味着过 (±10, 0)。',
+      explain: ['顶点 (0, 8)，所以 k = 8。', '过 (10, 0)：0 = a×100 + 8，a = −8/100 = −2/25。', '解析式 y = −2/25 x² + 8。'],
+      fig: { type: 'parabola', a: -0.08, h: 0, k: 8, xr: [-10.6, 10.6], dots: [[0, 8, '拱顶'], [-10, 0, '水面'], [10, 0, '水面']] },
+      kp: ['二次函数', '建模', '待定系数法']
+    },
+    {
+      id: 'entry.16.1', no: '16', title: '16(1) 销量用 x 表示',
+      prompt: '进价 40 元、售价 50 元，每月可卖 150 件；每涨价 2 元就少卖 5 件。设每件涨价 x 元。<br>每月可卖 = 150 − b·x。',
+      fields: [
+        { type: 'num', label: 'b =', ans: 2.5 },
+        { type: 'num', label: '涨价 4 元时，每月可卖 =', ans: 140, unit: '件' }
+      ],
+      tip: '「每涨 2 元少卖 5 件」→ 涨 1 元少卖 5/2 件。',
+      explain: ['每涨 2 元少卖 5 件，涨 x 元少卖 (5/2)x = 2.5x 件，所以 b = 2.5。', 'x = 4：150 − 2.5×4 = 140（件）。'],
+      kp: ['二次函数', '建模']
+    },
+    {
+      id: 'entry.16.2', no: '16', title: '16(2) 取值范围',
+      prompt: '某商品售价 50 元，每件涨价 x 元（x 为偶数），售价不能超过 70 元。<br>自变量 x 的取值范围是？',
+      fields: [{
+        type: 'choice', label: '', ans: 0,
+        options: ['0 ≤ x ≤ 20 且 x 为偶数', '0 ≤ x ≤ 20', '0 ≤ x ≤ 25 且 x 为偶数', '0 ≤ x ≤ 30 且 x 为偶数']
+      }],
+      tip: '两条约束：x ≥ 0（只能涨不能降，题目说"上涨"）、售价 50 + x ≤ 70；别忘了"x 为偶数"。',
+      explain: ['售价 50 + x ≤ 70 ⟹ x ≤ 20。', '又 x ≥ 0 且 x 为偶数，所以 0 ≤ x ≤ 20 且 x 为偶数。', '坑：漏掉"偶数"（选 B），或把 70 当成涨价幅度（选 C/D）。'],
+      kp: ['二次函数', '取值范围']
+    },
+    {
+      id: 'entry.17.1', no: '附加', title: '附加(1) 对称轴求 b、c',
+      prompt: '抛物线 y = −x² + bx + c 的对称轴是直线 x = 1，且经过点 A(−1, 0)。<br>求 b 和 c（附加题第一个得分点）。',
+      fields: [
+        { type: 'num', label: 'b =', ans: 2 },
+        { type: 'num', label: 'c =', ans: 3 }
+      ],
+      tip: '对称轴 x = −b/(2a) 先定 b；再把 A 代进去定 c。',
+      explain: ['−b/(2×(−1)) = 1 ⟹ b = 2。', '代 A(−1, 0)：−1 − 2 + c = 0 ⟹ c = 3。', '所以 y = −x² + 2x + 3。'],
+      fig: { type: 'parabola', a: -1, h: 1, k: 4, dots: [[1, 4, '顶点'], [-1, 0, 'A']] },
+      kp: ['二次函数', '待定系数法']
+    },
+    /* ---- 错题本（数学/错题本.html）里那批错题的「第一步」----
+       只收「第一步就是下笔障碍」的：辅助线 / 等半径 / 垂径定理 / 建模 / 待定系数。
+       纯概念选择（点与圆的位置关系、k 的几何意义、三次方程）已经有基础快练的题型覆盖，不在这里重复。 */
+    {
+      id: 'entry.t01', title: '错题本 p01 · 垂径定理第一步',
+      prompt: 'CD 是 ⊙O 的直径，AB 是 ⊙O 的弦，AB⊥CD 于 M。若 AB=8，OM∶OC=3∶5。<br><span class="muted small">第一步：垂径定理得 AM，再设 k 求半径。</span>',
+      fields: [
+        { type: 'num', label: 'AM =', ans: 4 },
+        { type: 'num', label: '设 OM=3k、OC=5k，则 k =', ans: 1 }
+      ],
+      tip: '直径垂直于弦 → 平分弦；半径 OA=OC=5k，在 Rt△AOM 里列勾股。',
+      explain: ['CD 过圆心且 AB⊥CD ⟹ AM=BM=½AB=4。', 'OM=3k、OC=5k ⟹ OA=5k；Rt△AOM：25k²=9k²+16 ⟹ k=1（OM=3、半径 5）。'],
+      kp: ['圆的基本性质', '垂径定理']
+    },
+    {
+      id: 'entry.t02', title: '错题本 p02 · 半圆里的角度链',
+      prompt: '以 △ABC 的边 AB 为直径作半圆 O，分别交 AC、BC 于 D、E。若 AC=BC，∠C=70°。<br><span class="muted small">第一步：先求 ∠A，再求 ∠CAE。</span>',
+      fields: [
+        { type: 'num', label: '∠A =', ans: 55, unit: '°' },
+        { type: 'num', label: '∠CAE =', ans: 20, unit: '°' }
+      ],
+      tip: '等腰三角形先算 ∠A；AB 是直径 ⟹ ∠AEB=90°，再在 Rt△ACE 里算 ∠CAE。',
+      explain: ['AC=BC、∠C=70° ⟹ ∠A=∠B=(180°−70°)/2=55°。', 'AB 为直径 ⟹ ∠AEB=90°；Rt△ACE 中 ∠CAE=90°−∠C=20°。', '再往下一步：∠DOE=2∠DAE=40°。'],
+      kp: ['圆的基本性质', '直径所对的圆周角']
+    },
+    {
+      id: 'entry.t03', title: '错题本 p03 · 扇形里的等腰直角',
+      prompt: '扇形 AOB 中 ∠AOB=90°，P 为弧 AB 上一点，PC⊥OA 于 C，交 AB 于 D，PD=3，CD=2。求半径。<br><span class="muted small">第一步：先判断 △ACD 的形状。</span>',
+      fields: [
+        { type: 'choice', label: '△ACD 是', ans: 0, options: ['等腰直角三角形', '等边三角形', '含 30° 的直角三角形', '普通直角三角形'] },
+        { type: 'num', label: 'AC =', ans: 2 }
+      ],
+      tip: 'OA=OB、∠AOB=90° ⟹ ∠OAB=45°；PC⊥OA ⟹ ∠ACD=90°，所以 △ACD 也是等腰直角。',
+      explain: ['OA=OB、∠AOB=90° ⟹ ∠OAB=45°。', 'PC⊥OA ⟹ ∠ACD=90°，∠CAD=45° ⟹ △ACD 等腰直角，AC=CD=2。', '于是 PC=PD+DC=5、OC=R−2，在 Rt△OCP 列勾股：R²=(R−2)²+25 ⟹ R=29/4。'],
+      kp: ['圆的基本性质', '等腰直角三角形']
+    },
+    {
+      id: 'entry.t05', title: '错题本 p05 · 圆内证角平分线',
+      prompt: 'AB 是 ⊙O 的直径，C、D 在 ⊙O 上，BC∥OD。求证：BD 平分 ∠ABC。<br><span class="muted small">第一步：两条依据先写出来。</span>',
+      fields: [
+        {
+          type: 'choice', label: '∠ODB = ∠OBD 的依据', ans: 0,
+          options: ['OD = OB，等边对等角', '同弧所对的圆周角相等', '直径所对的圆周角是直角', '平行线的同位角相等']
+        },
+        {
+          type: 'choice', label: '∠ODB = ∠CBD 的依据', ans: 0,
+          options: ['BC ∥ OD，内错角相等', 'BC ∥ OD，同位角相等', '同弧所对的圆周角相等', '等边对等角']
+        }
+      ],
+      tip: '先抓半径相等（等腰），再用平行线的内错角把角接起来。',
+      explain: ['OD=OB ⟹ ∠ODB=∠OBD。', 'BC∥OD ⟹ ∠ODB=∠CBD（内错角）。', '所以 ∠OBD=∠CBD；O 在 AB 上，∠OBD 就是 ∠ABD，所以 BD 平分 ∠ABC。'],
+      kp: ['圆的基本性质', '平行线与角']
+    },
+    {
+      id: 'entry.t06', title: '错题本 p06 · 灯罩轴截面建模',
+      prompt: '球形灯罩的轴截面：HF 过圆心且垂直底座 CD 于 F，AC=BD=1，CD=12，HF=31。<br><span class="muted small">第一步：垂径定理求 CF，再写 R 与 OF 的关系。</span>',
+      fields: [
+        { type: 'num', label: 'CF =', ans: 6 },
+        {
+          type: 'choice', label: '设半径 R、OF=d，则', ans: 0,
+          options: ['R + d = 31', 'R − d = 31', '2R + d = 31', 'R + 2d = 31']
+        }
+      ],
+      tip: 'HF 过圆心且垂直 CD → 垂径定理平分 CD；注意 HF 不是直径，是 R + d。',
+      explain: ['垂径定理：CF=FD=½×12=6。', 'H、O、F 共线，HF=HO+OF=R+d=31。', '下一步：以 F 为原点，A(−6, 1)、O(0, d)，6²+(d−1)²=R²，代 d=31−R 得 R=15.6。'],
+      kp: ['圆的基本性质', '垂径定理', '建模']
+    },
+    {
+      id: 'entry.t08', title: '错题本 p08 · 反比例 + 一次函数',
+      prompt: '双曲线 y=k/x（x>0）上有一点 A(1, 5)，过 A 的直线 y=−mx+n 与该双曲线交于点 B，且 B 的纵坐标为 1。<br><span class="muted small">第一步：求 k 和 B 的坐标。</span>',
+      fields: [
+        { type: 'num', label: 'k =', ans: 5 },
+        { type: 'num', label: 'B 的横坐标 =', ans: 5 }
+      ],
+      tip: '点在图象上就代入；先求 k，再用 y=1 反求 B 的横坐标。',
+      explain: ['A(1, 5) 在 y=k/x 上 ⟹ k=5，即 y=5/x。', 'B 的纵坐标为 1：1=5/x ⟹ x=5，B(5, 1)。', '下一步：代 A、B 求 m、n，得 y=−x+6。'],
+      kp: ['反比例函数', '待定系数法']
+    },
+    {
+      id: 'entry.t11', title: '错题本 p11 · 旋转题的等腰直角',
+      prompt: '平行四边形 ABCD 中 ∠DAB=45°，DE⊥AB 于 E，DE=2√2，AE=2EB。<br><span class="muted small">第一步：先看 △ADE 是什么三角形。</span>',
+      fields: [
+        { type: 'choice', label: 'AE =', ans: 0, options: ['2√2', '2', '4', '2√3'] },
+        { type: 'num', label: 'AD =', ans: 4 }
+      ],
+      tip: '∠DAE=45° 且 DE⊥AB ⟹ △ADE 是等腰直角三角形，AE=DE。',
+      explain: ['DE⊥AB、∠DAE=45° ⟹ △ADE 等腰直角，AE=DE=2√2。', 'AD=√2·AE=√2×2√2=4；由 AE=2EB 得 EB=√2。', '下一步才是旋转：AE′=AE、AF′=AF、∠F′AE′=45°。'],
+      kp: ['几何综合', '等腰直角三角形']
     }
   ];
 
@@ -868,7 +1341,7 @@ var MT = (function () {
   var MODULES = [
     {
       id: 'drill', name: '基础快练', icon: '⚡',
-      desc: '解方程 / 判别式 / 韦达 / 顶点 / 反比例 / 旋转 / 对称图形 / 系数符号 / 代值 / 最短路径，限时一次就对。',
+      desc: '解方程 / 判别式 / 韦达 / 顶点 / 反比例 / 旋转 / 对称图形 / 系数符号 / 代值 / 最短路径 / 圆的位置关系 / 弦弧直径 / 外接圆 / 反证法 / 最值 / 平移，限时一次就对。',
       kinds: [
         { id: 'factor', name: '因式分解（十字相乘）', gen: genFactor },
         { id: 'eq', name: '解一元二次方程', gen: genEq },
@@ -883,24 +1356,33 @@ var MT = (function () {
         { id: 'plug', name: '二次函数代值', gen: genPlug },
         { id: 'eqdef', name: '一元二次方程识别', gen: genEqDef },
         { id: 'path', name: '最短路径', gen: genPath },
-        { id: 'sym', name: '中心对称点', gen: genSym }
+        { id: 'sym', name: '中心对称点', gen: genSym },
+        { id: 'ptcirc', name: '点与圆的位置关系', gen: genPtCirc },
+        { id: 'circledef', name: '圆的基本概念', gen: genCircleDef },
+        { id: 'circum', name: '直角三角形外接圆', gen: genCircum },
+        { id: 'absurd', name: '反证法第一步', gen: genAbsurd },
+        { id: 'vertexmax', name: '顶点式最值', gen: genVertexMax },
+        { id: 'shift', name: '抛物线平移', gen: genShift },
+        { id: 'rangemax', name: '闭区间最值', gen: genRangeMax }
       ]
     },
     {
       id: 'write', name: '写解析式', icon: '✍️',
-      desc: '从条件写出解析式：设 → 代 → 求。补的是「会读图、不会写式」这一断点。',
+      desc: '从条件写出解析式：设 → 代 → 求。补的是「会读图、不会写式」这一断点；含拱桥建模与「对称轴 + 一点」求一般式。',
       kinds: [
         { id: 'vertex', name: '顶点式求 a', gen: genVertex },
         { id: 'intercept', name: '交点式写解析式', gen: genIntercept },
         { id: 'inverse', name: '反比例求 k', gen: genInverse },
-        { id: 'profit', name: '利润建模', gen: genProfit },
+        { id: 'profit', name: '利润建模（涨/降价）', gen: genProfit },
         { id: 'segment', name: '线段解析式', gen: genSegment },
-        { id: 'piece', name: '分段函数', gen: genPiece }
+        { id: 'piece', name: '分段函数', gen: genPiece },
+        { id: 'arch', name: '拱桥建模', gen: genArch },
+        { id: 'axis', name: '对称轴求一般式', gen: genAxis }
       ]
     },
     {
       id: 'entry', name: '大题前两步', icon: '🚪',
-      desc: '只写每道大题的前 1–2 个得分点，不求解。补的是「大题空白」这一断点。',
+      desc: '只写每道大题的前 1–2 个得分点，不求解。补的是「大题空白」这一断点；来源：期中卷 20–25、第 11 周卷 13–16/附加、错题本里的大题第一步。',
       items: ENTRY
     }
   ];
@@ -990,6 +1472,9 @@ var MT = (function () {
         '(x ' + (v[1] >= 0 ? '− ' + frac(v[1]) : '+ ' + frac(-v[1])) + ')' +
         '(x ' + (v[2] >= 0 ? '− ' + frac(v[2]) : '+ ' + frac(-v[2])) + ')';
     }
+    if (form === 'general') {
+      return 'y = ' + poly2(v[0], v[1], v[2]);
+    }
     return 'y = ' + v.map(frac).join(' , ');
   }
 
@@ -1013,6 +1498,22 @@ var MT = (function () {
       paths.push(arr);
       arr.forEach(function (p) { all.push({ x: p[0], y: p[1] }); });
     }
+    /* f.ghost：平移/变换题里「原来的那条抛物线」，画成浅灰虚线垫在下面 */
+    var ghosts = [];
+    function paraPts(g) {
+      var sp = Math.min(4.2, Math.sqrt(9 / Math.abs(g.a)) || 3);
+      var out = [];
+      for (var i = 0; i <= 120; i++) {
+        var x = g.h - sp + 2 * sp * i / 120;
+        out.push([x, g.a * (x - g.h) * (x - g.h) + g.k]);
+      }
+      return out;
+    }
+    (f.ghost || []).forEach(function (g) {
+      var arr = paraPts(g);
+      ghosts.push(arr);
+      arr.forEach(function (p) { all.push({ x: p[0], y: p[1] }); });
+    });
 
     if (f.type === 'parabola') {
       var a = f.a, h = f.h, k = f.k;
@@ -1098,6 +1599,10 @@ var MT = (function () {
       s.push('<text x="' + (num(y0) - 6) + '" y="' + (num(sy(gy)) + 3) + '" font-size="9" fill="#9aa3b5" text-anchor="end">' + num(gy) + '</text>');
     }
 
+    ghosts.forEach(function (arr) {
+      var d = arr.map(function (p, i) { return (i ? 'L' : 'M') + num(sx(p[0])) + ' ' + num(sy(p[1])); }).join(' ');
+      s.push('<path d="' + d + '" fill="none" stroke="#b9c0cf" stroke-width="1.8" stroke-dasharray="6 4" stroke-linecap="round"/>');
+    });
     paths.forEach(function (arr) {
       var d = arr.map(function (p, i) { return (i ? 'L' : 'M') + num(sx(p[0])) + ' ' + num(sy(p[1])); }).join(' ');
       s.push('<path d="' + d + '" fill="none" stroke="#3b6fe0" stroke-width="2.2" stroke-linecap="round"/>');
@@ -1207,7 +1712,7 @@ var MT = (function () {
      ⑤ 难度顺序：先易后难（因式分解 → 方程 → 轮换；顶点式 → 主力 → 次主力）。
      ⑥ 同一套内题干不重复。
      ===================================================================== */
-  var WRITE_ROT = ['vertex', 'intercept', 'inverse', 'segment', 'piece', 'profit'];
+  var WRITE_ROT = ['vertex', 'intercept', 'inverse', 'segment', 'piece', 'profit', 'arch', 'axis'];
   function daySeed(key) {
     var h = 2166136261, k = String(key);
     for (var i = 0; i < k.length; i++) { h ^= k.charCodeAt(i); h = Math.imul(h, 16777619); }
@@ -1357,6 +1862,11 @@ var MT = (function () {
     return e;
   }
   function clear(el) { while (el.firstChild) el.removeChild(el.firstChild); }
+  /* 题号标签：数字 →「第 5 题」；非数字（附加题的「附加」）→「附加题」 */
+  function qnoLabel(no, fallback) {
+    var s = (no == null || no === '') ? (fallback == null ? '?' : String(fallback)) : String(no);
+    return /^\d+$/.test(s) ? ('第 ' + s + ' 题') : (s + '题');
+  }
   function pct(a, b) { return b ? Math.round(a / b * 100) : 0; }
   function fmtSec(s) { s = Math.round(s); return s < 60 ? s + ' 秒' : Math.floor(s / 60) + ' 分 ' + (s % 60) + ' 秒'; }
   function todayRecs() { var t = today(); return DB.recs.filter(function (r) { return dayKey(r.ts) === t; }); }
@@ -1387,7 +1897,7 @@ var MT = (function () {
     var META = {
       drill: { n: 6, sub: '6 题 · 5 分钟 · ' + plan.drill.note },
       write: { n: 8, sub: '8 题 · 10 分钟 · ' + plan.write.note },
-      entry: { n: 3, sub: '3 题 · 8 分钟 · 12 个得分点里按今天这套取 3 个' }
+      entry: { n: 3, sub: '3 题 · 8 分钟 · 27 个得分点里按今天这套取 3 个' }
     };
     /* 顺序由 MT.modules 决定，这里只配题量与说明 */
     var tasks_plan = MT.modules.map(function (m) {
@@ -1429,7 +1939,7 @@ var MT = (function () {
       h('ul', { class: 'small muted', style: 'margin:6px 0 0;padding-left:20px' },
         h('li', null, '一天一套：题目由「日期种子」生成，同一天打开几次都是同一套，换天才换。'),
         h('li', null, '今天的配比：' + plan.note),
-        h('li', null, '主力题型按 6 类轮换（顶点式 → 交点式 → 反比例 → 线段 → 分段 → 利润），6 天一轮全覆盖；最近一轮有错题时，主力换成错的那一类（弱项优先）。'),
+        h('li', null, '主力题型按 8 类轮换（顶点式 → 交点式 → 反比例 → 线段 → 分段 → 利润 → 拱桥 → 对称轴），8 天一轮全覆盖；最近一轮有错题时，主力换成错的那一类（弱项优先）。'),
         h('li', null, '难度顺序：因式分解 → 解方程 → 轮换题；写解析式先顶点式（要写全式），再主力，再次主力。'),
         h('li', null, '同一套内题干不重复；错题回炉按 1/3/7/14 天到期；跳过几天不累计欠账。')
       )
@@ -1664,7 +2174,7 @@ var MT = (function () {
 
     var card = h('div', { class: 'card', style: 'margin-top:12px' });
     card.appendChild(h('div', { class: 'qhead' },
-      h('span', { class: 'pill' }, q.kind === 'entry' || q.no ? ('第 ' + (q.no || '') + ' 题') : '新题'),
+      h('span', { class: 'pill' }, q.no ? qnoLabel(q.no) : (q.mod === 'entry' ? '得分点' : '新题')),
       q.kp ? h('span', { class: 'small muted' }, q.kp.join(' · ')) : null
     ));
     card.appendChild(h('div', { class: 'qbody', html: fracify(q.prompt) }));

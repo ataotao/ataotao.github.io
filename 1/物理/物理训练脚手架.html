@@ -590,12 +590,26 @@ var PT = (function () {
     } else if (kind === 'series' || kind === 'connect-series') {
       wire(50, 70, 290, 70); wire(290, 70, 290, 190); wire(290, 190, 50, 190); wire(50, 190, 50, 70);
       lamp(140, 70, 'L₁'); lamp(230, 70, 'L₂'); battery(110, 190); sw(215, 190);
+    } else if (kind === 'clip-gap') {
+      /* 金属夹 A、B 之间留缺口：接导体灯亮，接绝缘体灯不亮 */
+      wire(60, 70, 290, 70); wire(290, 70, 290, 190); wire(290, 190, 60, 190);
+      lamp(170, 70, 'L');
+      battery(170, 190);
+      wire(60, 70, 60, 110); wire(60, 150, 60, 190);
+      s.push(circle(60, 110, 4, '#1b2333'));
+      s.push(circle(60, 150, 4, '#1b2333'));
+      s.push(txt(46, 106, 'A', 12, '#d93025', 'end', 700));
+      s.push(txt(46, 158, 'B', 12, '#d93025', 'end', 700));
+      s.push('<line x1="60" y1="116" x2="60" y2="144" stroke="#8aa2bd" stroke-width="2" stroke-dasharray="5 5"/>');
+      s.push(txt(86, 137, '接入物品', 11, '#6b7280', 'start'));
     } else {
       wire(50, 70, 290, 70); wire(50, 120, 290, 120); wire(50, 190, 290, 190);
       wire(50, 70, 50, 190); wire(290, 70, 290, 190);
       lamp(130, 70, 'L₁'); lamp(180, 120, 'L₂');
       if (kind === 'parallel') {
         ammeter(225, 70, 'A₁'); battery(110, 190); sw(196, 190); ammeter(258, 190, 'A₂');
+      } else if (kind === 'parallel-plain') {
+        battery(110, 190); sw(196, 190);
       } else if (kind === 'connect-parallel') {
         battery(110, 190); sw(215, 190);
       } else if (kind === 'connect-switchbranch') {
@@ -611,6 +625,54 @@ var PT = (function () {
       } else if (kind === 'connect-ammeterShort') {
         battery(110, 190); sw(215, 190); wire(50, 155, 290, 155); ammeter(170, 155, 'A');
       }
+    }
+    s.push(svgTail());
+    return s.join('');
+  }
+
+  /* 干电池组：n 节串联，左端 +、右端 − */
+  function svgBattery(f) {
+    var n = (f && f.n) || 2;
+    var W = 380, H = 200, s = [svgHead(W, H, '干电池组')];
+    var cellW = 58, gap = 10, total = n * cellW + (n - 1) * gap;
+    var x0 = (W - total) / 2, top = 46, bot = 138;
+    s.push('<rect x="' + r1(x0 - 16) + '" y="' + bot + '" width="' + r1(total + 32) + '" height="18" rx="4" fill="#c9d8ea" stroke="#8aa2bd" stroke-width="1.5"/>');
+    for (var i = 0; i < n; i++) {
+      var x = x0 + i * (cellW + gap);
+      s.push('<rect x="' + r1(x) + '" y="' + top + '" width="' + cellW + '" height="' + (bot - top) + '" rx="7" fill="#2f4f73" stroke="#1b2333" stroke-width="1.4"/>');
+      s.push('<rect x="' + r1(x + 8) + '" y="' + (top + 8) + '" width="' + (cellW - 16) + '" height="12" fill="#d9b26a" opacity="0.9"/>');
+      s.push('<rect x="' + r1(x + cellW / 2 - 7) + '" y="' + (top - 6) + '" width="14" height="7" rx="2" fill="#8aa2bd" stroke="#1b2333" stroke-width="1"/>');
+      if (i < n - 1) {
+        var xn = x0 + (i + 1) * (cellW + gap);
+        s.push('<path d="M' + r1(x + cellW) + ' ' + (top + 18) + ' Q' + r1((x + cellW + xn) / 2) + ' ' + (top - 8) + ' ' + r1(xn) + ' ' + (top + 18) + '" fill="none" stroke="#1b2333" stroke-width="1.8"/>');
+      }
+    }
+    s.push(txt(x0 - 28, top + 18, '+', 20, '#d93025', 'middle', 700));
+    s.push(txt(x0 + total + 28, top + 18, '−', 20, '#1b2333', 'middle', 700));
+    s.push(txt(W / 2, 180, n + ' 节干电池串联', 12, '#6b7280', 'middle'));
+    s.push(svgTail());
+    return s.join('');
+  }
+
+  /* 金属丝规格表（控制变量题） */
+  function svgWireTable(f) {
+    var rows = (f && f.rows) || [];
+    var W = 400, H = 32 + (rows.length + 1) * 32 + 14;
+    var s = [svgHead(W, H, '金属丝规格表')];
+    var x0 = 10, y0 = 12, cols = [58, 126, 78, 118];
+    var head = ['编号', '材料', '长度/m', '横截面积/mm²'];
+    function cell(x, y, w, t, bold) {
+      s.push('<rect x="' + r1(x) + '" y="' + r1(y) + '" width="' + r1(w) + '" height="32" fill="#fff" stroke="#8aa2bd" stroke-width="1"/>');
+      s.push(txt(x + w / 2, y + 21, t, 11, '#1b2333', 'middle', bold ? 700 : 400));
+    }
+    var x = x0, y = y0;
+    for (var c = 0; c < 4; c++) { cell(x, y, cols[c], head[c], true); x += cols[c]; }
+    y += 32;
+    for (var i = 0; i < rows.length; i++) {
+      x = x0;
+      var vals = [rows[i].no, rows[i].mat, Number(rows[i].len).toFixed(1), Number(rows[i].area).toFixed(1)];
+      for (var j = 0; j < 4; j++) { cell(x, y, cols[j], vals[j], false); x += cols[j]; }
+      y += 32;
     }
     s.push(svgTail());
     return s.join('');
@@ -692,6 +754,8 @@ var PT = (function () {
     var body = '';
     if (f.type === 'tension') body = svgTension(f);
     else if (f.type === 'circuit') body = svgCircuit(f);
+    else if (f.type === 'battery') body = svgBattery(f);
+    else if (f.type === 'wiretable') body = svgWireTable(f);
     else if (f.type === 'stroke') body = svgStroke(f);
     else if (f.type === 'pulley') body = svgPulley(f);
     else if (f.type === 'lever') body = svgLever(f);
@@ -702,7 +766,7 @@ var PT = (function () {
     return body;
   }
 
-  /* ================= 认模型（6 类，全部 choice） ================= */
+  /* ================= 认模型（10 类，全部 choice） ================= */
   function genModelTension(r) {
     var v = ri(r, 0, 2);
     if (v === 0) {
@@ -852,6 +916,177 @@ var PT = (function () {
       explain: ['并联电路中各支路互不影响，L₁ 断路后 L₂ 仍能发光。', '少了一条支路，干路电流变小，所以 A₂ 示数变小。'],
       fig: { type: 'circuit', kind: 'parallel' }, figBefore: true,
       kp: ['电路', '并联', '故障']
+    };
+  }
+
+  /* ---------- 电学基础（第11周周练考点：电压 / 电阻 / 导体绝缘体 / 串并联） ---------- */
+  function genModelVoltage(r) {
+    var v = ri(r, 0, 2);
+    if (v === 0) {
+      var n = ri(r, 2, 4), U = 1.5 * n;
+      return {
+        id: 'model.voltage', kind: 'voltage', title: '干电池组电压',
+        prompt: '如图，由 ' + n + ' 节干电池串联组成的电源，电压是（　）',
+        fields: [choiceField(r, fmtNum(U) + ' V', ['1.5 V', (2 * n) + ' V', (3 * n) + ' V'])],
+        tip: '一节干电池 1.5 V，n 节串联就是 1.5n V；并联不升压。',
+        explain: ['一节干电池的电压是 1.5 V。', n + ' 节串联，电压相加：1.5 × ' + n + ' = ' + fmtNum(U) + ' V。'],
+        fig: { type: 'battery', n: n }, figBefore: true,
+        kp: ['电压', '电池组']
+      };
+    }
+    if (v === 1) {
+      return {
+        id: 'model.voltage', kind: 'voltage', title: '电压与电流的条件',
+        prompt: '关于电压，下列说法正确的是（　）',
+        fields: [choiceField(r, '电压是形成电流的条件之一，还要电路闭合', ['有电压就一定有电流', '电压就是电的压力', '有电源就一定有电流'])],
+        tip: '有电压不一定有电流；电路闭合才有电流。',
+        explain: ['电压是使自由电荷定向移动、形成电流的原因。', '形成持续电流要两个条件：有电压 + 电路闭合。'],
+        kp: ['电压', '电流条件']
+      };
+    }
+    return {
+      id: 'model.voltage', kind: 'voltage', title: '常见电压值',
+      prompt: '一节铅蓄电池的电压是（　）',
+      fields: [choiceField(r, '2 V', ['1.5 V', '3 V', '36 V'])],
+      tip: '干电池 1.5 V、铅蓄电池 2 V、家庭电路 220 V、人体安全电压不高于 36 V。',
+      explain: ['一节铅蓄电池的电压是 2 V。', '别和干电池的 1.5 V 混。'],
+      kp: ['电压', '常见电压']
+    };
+  }
+
+  function genModelResistance(r) {
+    var v = ri(r, 0, 2);
+    if (v === 0) {
+      var mats = ['锰铜丝', '镍铬合金丝', '铜丝'];
+      var mA = pick(r, mats);
+      var mB = pick(r, mats.filter(function (x) { return x !== mA; }));
+      var lens = [0.5, 1.0, 1.5];
+      var lA = pick(r, lens);
+      var lC = pick(r, lens.filter(function (x) { return x !== lA; }));
+      var areas = [0.2, 0.4, 0.6];
+      var sA = pick(r, areas);
+      var sD = pick(r, areas.filter(function (x) { return x !== sA; }));
+      var wires = shuffled(r, [
+        { role: 'A', mat: mA, len: lA, area: sA },
+        { role: 'B', mat: mB, len: lA, area: sA },
+        { role: 'C', mat: mA, len: lC, area: sA },
+        { role: 'D', mat: mA, len: lA, area: sD }
+      ]);
+      var lab = {};
+      for (var i = 0; i < wires.length; i++) { wires[i].no = '①②③④'.charAt(i); lab[wires[i].role] = wires[i].no; }
+      var right = lab.A + '和' + lab.B;
+      return {
+        id: 'model.resistance', kind: 'resistance', title: '控制变量选金属丝',
+        prompt: '四根金属丝的规格如下表。要探究电阻的大小是否跟导体的材料有关，应选择（　）',
+        fields: [choiceField(r, right, [lab.A + '和' + lab.C, lab.A + '和' + lab.D, lab.B + '和' + lab.C])],
+        tip: '只让材料不同：长度、横截面积都必须相同。',
+        explain: [
+          '要探究材料的影响，只能让材料不同，长度和横截面积都要相同。',
+          right + ' 的长度和横截面积都相同，只有材料不同，所以选它。',
+          lab.A + '和' + lab.C + ' 只差长度，研究的是长度；' + lab.A + '和' + lab.D + ' 只差横截面积，研究的是横截面积；' + lab.B + '和' + lab.C + ' 有两个因素不同，不能确定是哪个因素。'
+        ],
+        fig: {
+          type: 'wiretable', rows: wires.map(function (w) {
+            return { no: w.no, mat: w.mat, len: w.len, area: w.area };
+          })
+        },
+        figBefore: true,
+        kp: ['电阻', '控制变量']
+      };
+    }
+    if (v === 1) {
+      return {
+        id: 'model.resistance', kind: 'resistance', title: '电阻与哪个因素无关',
+        prompt: '导体的电阻大小与下列哪个因素无关？（　）',
+        fields: [choiceField(r, '导体两端的电压', ['导体的材料', '导体的长度', '导体的横截面积'])],
+        tip: '电阻由导体本身决定：材料、长度、横截面积、温度；与 U、I 无关。',
+        explain: ['电阻是导体本身的性质。', '它由材料、长度、横截面积和温度决定，与两端电压、通过的电流无关。'],
+        kp: ['电阻', '决定因素']
+      };
+    }
+    return {
+      id: 'model.resistance', kind: 'resistance', title: 'R = U/I 的含义',
+      prompt: '关于公式 R = U/I，下列说法正确的是（　）',
+      fields: [choiceField(r, '电阻由导体本身决定，与 U、I 无关', ['电阻跟导体两端电压成正比', '电阻跟通过导体的电流成反比', '导体两端电压为零时，电阻也为零'])],
+      tip: 'R = U/I 是测量式；电阻不随 U、I 变。',
+      explain: ['R = U/I 只说明可以用电压和电流的比值算电阻。', '电阻是导体本身的性质，U = 0 时电阻仍然存在。'],
+      kp: ['电阻', 'R=U/I']
+    };
+  }
+
+  function genModelConductor(r) {
+    var v = ri(r, 0, 2);
+    var conds = ['铅笔芯', '铜丝', '钢尺', '铁钉', '盐水'];
+    var ins = ['橡皮', '塑料尺', '油', '玻璃', '陶瓷', '干木棒'];
+    if (v === 0) {
+      var c0 = pick(r, conds);
+      var bad0 = shuffled(r, ins).slice(0, 3);
+      return {
+        id: 'model.conductor', kind: 'conductor', title: '接什么灯会亮',
+        prompt: '如图，在金属夹 A、B 间接入下列物品，能使小灯泡发光的是（　）',
+        fields: [choiceField(r, c0, bad0)],
+        tip: '接导体灯亮，接绝缘体灯不亮。',
+        explain: [c0 + ' 是导体，接进电路后电路闭合，小灯泡发光。', bad0.join('、') + ' 都是绝缘体，接进去电路断开，灯不亮。'],
+        fig: { type: 'circuit', kind: 'clip-gap' }, figBefore: true,
+        kp: ['导体', '绝缘体']
+      };
+    }
+    if (v === 1) {
+      return {
+        id: 'model.conductor', kind: 'conductor', title: '绝缘体为什么不导电',
+        prompt: '绝缘体不容易导电，原因是（　）',
+        fields: [choiceField(r, '绝缘体内部的电荷不能自由移动', ['绝缘体内部没有电荷', '绝缘体内部没有电子', '绝缘体两端没有电压'])],
+        tip: '绝缘体里也有电荷，只是不能自由移动。',
+        explain: ['导体容易导电，是因为内部有大量可以自由移动的电荷。', '绝缘体内部电荷被束缚，不能自由移动，所以不容易导电。'],
+        kp: ['导体', '绝缘体']
+      };
+    }
+    var c1 = pick(r, ins);
+    var bad1 = shuffled(r, conds).slice(0, 3);
+    return {
+      id: 'model.conductor', kind: 'conductor', title: '哪个是绝缘体',
+      prompt: '下列物品中，属于绝缘体的是（　）',
+      fields: [choiceField(r, c1, bad1)],
+      tip: '导体：铅笔芯、金属、人体、大地、盐水；绝缘体：橡皮、塑料、油、玻璃、陶瓷。',
+      explain: [c1 + ' 不容易导电，是绝缘体。', bad1.join('、') + ' 都是导体。'],
+      kp: ['导体', '绝缘体']
+    };
+  }
+
+  function genModelConnection(r) {
+    var v = ri(r, 0, 2);
+    if (v === 0) {
+      var isSeries = r() < 0.5;
+      var right = isSeries ? '串联' : '并联';
+      return {
+        id: 'model.connection', kind: 'connection', title: '串并联识别',
+        prompt: '如图电路，闭合开关 S 后两灯都发光。它们的连接方式是（　）',
+        fields: [choiceField(r, right, [isSeries ? '并联' : '串联', '短路', '无法判断'])],
+        tip: '一条路 = 串联；有分支、有汇合 = 并联。',
+        explain: [isSeries ? '电流从电源正极出发只有一条路，依次经过 L₁、L₂，所以是串联。' : '电流从电源正极出发后分成两条支路，分别经过 L₁、L₂，再汇合回负极，所以是并联。'],
+        fig: { type: 'circuit', kind: isSeries ? 'series' : 'parallel-plain' }, figBefore: true,
+        kp: ['电路', '串并联']
+      };
+    }
+    if (v === 1) {
+      return {
+        id: 'model.connection', kind: 'connection', title: '并联支路互不影响',
+        prompt: '如图，两灯并联。若 L₁ 的灯丝烧断，则（　）',
+        fields: [choiceField(r, 'L₂ 仍发光', ['L₂ 也熄灭', 'L₂ 变得更亮', '电源被短路'])],
+        tip: '并联各支路互不影响，一条支路断了，另一条照常工作。',
+        explain: ['并联电路中，L₁、L₂ 各在一条支路，互不影响。', 'L₁ 断路后，L₂ 所在支路仍是通路，所以 L₂ 仍发光。'],
+        fig: { type: 'circuit', kind: 'parallel-plain' }, figBefore: true,
+        kp: ['电路', '并联', '故障']
+      };
+    }
+    return {
+      id: 'model.connection', kind: 'connection', title: '串联一断全断',
+      prompt: '如图，两灯串联。若 L₁ 的灯丝烧断，则（　）',
+      fields: [choiceField(r, 'L₂ 也熄灭', ['L₂ 仍发光', 'L₂ 变得更亮', 'L₂ 亮度不变'])],
+      tip: '串联只有一条路，任何一处断开，整个电路都没有电流。',
+      explain: ['串联电路只有一条电流路径。', 'L₁ 灯丝烧断后电路断开，L₂ 也没有电流，所以两灯都熄灭。'],
+      fig: { type: 'circuit', kind: 'series' }, figBefore: true,
+      kp: ['电路', '串联', '故障']
     };
   }
 
@@ -1338,8 +1573,12 @@ var PT = (function () {
   var MODULES = [
     {
       id: 'model', name: '认模型', icon: '🧭',
-      desc: '看图认模型：测力计串绳张力 / LED 极性 / 接触带电 / 四冲程 / 串并联与表位置 / 滑轮组 n 与力臂。',
+      desc: '看图认模型：电压与电池组 / 电阻与材料 / 导体绝缘体 / 串并联 / 测力计张力 / LED / 电荷 / 四冲程 / 表位置 / 滑轮组。',
       kinds: [
+        { id: 'voltage', name: '电压与电池组', gen: genModelVoltage },
+        { id: 'resistance', name: '电阻与材料', gen: genModelResistance },
+        { id: 'conductor', name: '导体与绝缘体', gen: genModelConductor },
+        { id: 'connection', name: '串并联识别', gen: genModelConnection },
         { id: 'tension', name: '测力计串绳张力', gen: genModelTension },
         { id: 'led', name: 'LED 定电源极性', gen: genModelLed },
         { id: 'charge', name: '接触后带电', gen: genModelCharge },
