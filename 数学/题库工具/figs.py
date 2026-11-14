@@ -440,14 +440,14 @@ def _axes(f, P, x0, x1, y0, y1, lab_x=True, lab_y=True, lab_o=True):
     f.line(P(x0, 0)[0], P(x0, 0)[1], P(x1, 0)[0], P(x1, 0)[1], w=1.3, arrow=True)
     f.line(P(0, y0)[0], P(0, y0)[1], P(0, y1)[0], P(0, y1)[1], w=1.3, arrow=True)
     if lab_x:
-        f.text(P(x1, 0)[0] - 2, P(x1, 0)[1] + 17, [('x', True)], size=15)
+        f.text(P(x1, 0)[0] - 2, P(x1, 0)[1] + 17, [('x', True)])
     if lab_y:
-        f.text(P(0, y1)[0] + 12, P(0, y1)[1] + 6, [('y', True)], size=15)
+        f.text(P(0, y1)[0] + 12, P(0, y1)[1] + 6, [('y', True)])
     if lab_o:
         f.text(P(0, 0)[0] - 12, P(0, 0)[1] + 14, 'O')
 
 
-def fig_w5():
+def fig_w11q5():
     """第 5 题：开口向下的抛物线与一条下降的直线，两交点横坐标 −4 与 1。
 
     按原卷描图：抛物线顶点在 y 轴左侧，左侧交点在 x 轴上方（x = −4），
@@ -477,7 +477,7 @@ def fig_w5():
     return f
 
 
-def fig_w7():
+def fig_w11q7():
     """第 7 题：一面靠墙的矩形场地，墙对面留 1 m 宽的门。
 
     原卷只有图形没有字母：上面两道粗线是墙（比矩形长一截），
@@ -494,7 +494,7 @@ def fig_w7():
     return f
 
 
-def fig_w12():
+def fig_w11q12():
     """第 12 题：y = ax² + bx + c 的图象，对称轴 x = 1，虚线标出。
 
     按原卷：开口向下，左交点在 O 左侧一点、右交点在 x = 1 右侧；
@@ -512,11 +512,11 @@ def fig_w12():
     f.poly(_para_pts(P, -1.0, 1.0, 2.25, -1.15, 3.15), w=1.8)
     # 对称轴（虚线）：只画到 x 轴下方一点，标签写在它下面，避免压线
     f.line(P(1, -0.35)[0], P(1, -0.35)[1], P(1, 2.7)[0], P(1, 2.7)[1], w=1.2, dash='5 4')
-    f.text(P(1, 0)[0], P(1, -1.15)[1], [('x', True), ('=1', False)], size=14)
+    f.text(P(1, 0)[0], P(1, -1.15)[1], [('x', True), ('=1', False)], size=16)
     return f
 
 
-def fig_w14():
+def fig_w11q14():
     """第 14 题：⊙O 中 AB 为直径，C、D 在圆上，∠BOC = 80°，AD ∥ OC。
 
     A 在 180°、B 在 0°、C 在 80°；由 AD ∥ OC 得 D 在 160°
@@ -525,21 +525,21 @@ def fig_w14():
     W, H = 260, 210
     cx, cy, r = 130.0, 100.0, 85.0
 
-    def P(deg, rr=r):
+    def pt(deg, rr=r):
         t = math.radians(deg)
         return (cx + rr * math.cos(t), cy - rr * math.sin(t))
 
     f = Fig(W, H)
     # 圆
-    f.poly([P(360.0 * i / 96) for i in range(97)], w=1.5)
-    A, B, C, D = P(180), P(0), P(80), P(160)
+    f.poly([pt(360.0 * i / 96) for i in range(97)], w=1.5)
+    A, B, C, D = pt(180), pt(0), pt(80), pt(160)
     f.line(A[0], A[1], B[0], B[1], w=1.5)          # 直径 AB
     f.line(cx, cy, C[0], C[1], w=1.5)              # 半径 OC
     f.line(cx, cy, D[0], D[1], w=1.5)              # 半径 OD
     f.line(A[0], A[1], D[0], D[1], w=1.5)          # 弦 AD
     # ∠BOC 的弧与度数
-    f.poly([P(80.0 * i / 16, 26) for i in range(17)], w=1.1)
-    f.text(P(40, 40)[0], P(40, 40)[1] + 5, '80°', size=13)
+    f.poly([pt(80.0 * i / 16, 26) for i in range(17)], w=1.1)
+    f.text(pt(40, 40)[0], pt(40, 40)[1] + 5, '80°', size=15)
     f.text(A[0] - 11, A[1] + 5, 'A')
     f.text(B[0] + 11, B[1] + 5, 'B')
     f.text(C[0] + 2, C[1] - 9, 'C')
@@ -548,7 +548,7 @@ def fig_w14():
     return f
 
 
-def fig_w15():
+def fig_w11q15():
     """第 15 题：三孔桥横截面（中间大孔 + 两侧小孔，都是抛物线形）。
 
     原卷是砖墙 + 水面：墙底就是水面，三个孔从水面向上拱起。
@@ -616,7 +616,7 @@ def fig_w15():
     return f
 
 
-def fig_w17():
+def fig_w11q17():
     """附加题：y = −x² + 2x + 3（对称轴 x = 1，过 A(−1, 0)）。
 
     原卷两幅小图：A 在 x 轴左、B 是 y 轴截距、C 是顶点、D 在 x 轴右、P 在右支上。
@@ -642,8 +642,8 @@ def fig_w17():
 
 FIGS = {'m20': fig_q20, 'm21': fig_q21, 'm22': fig_q22,
         'm4': fig_m4, 'm13': fig_m13, 'a11': fig_a11, 'a14': fig_a14,
-        'w11q5': fig_w5, 'w11q7': fig_w7, 'w11q12': fig_w12,
-        'w11q14': fig_w14, 'w11q15': fig_w15, 'w11q17': fig_w17}
+        'w11q5': fig_w11q5, 'w11q7': fig_w11q7, 'w11q12': fig_w11q12,
+        'w11q14': fig_w11q14, 'w11q15': fig_w11q15, 'w11q17': fig_w11q17}
 
 
 def build_figs():

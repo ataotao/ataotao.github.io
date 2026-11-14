@@ -78,6 +78,7 @@ python 题库工具\qb.py verify
 |---|---|
 | `qb.py build` | 合并 `题库/pack-*.json` → `pack-全部.json` + 注入 HTML（自动备份） |
 | `qb.py verify` | 校验：每个 JSON 可解析、题包 id 不重复、`全部.json` 与单卷一致、**分值/知识点/分步字段形状**、HTML 内嵌脚本 `node --check` |
+| `node check-pack.mjs [packId]` | **读 HTML 里已注入的 PACKS** 做结构自检（选项越界/重复、`coef` 占位符数、`pt` 合计、`fig` 是否坏），能抓到「改了 JSON 忘了 build」 |
 | `qb.py checkall` | 批量核对：自动找 `answers/` 里对应的答案文件，汇总每套卷的一致/不一致数 |
 | `qb.py apply --dry-run` | 只看会改哪些答案，不落盘 |
 | `qb.py check --report r.json` | 差异表另存 JSON，便于批量统计 |
@@ -123,7 +124,7 @@ python 题库工具\qb.py verify                                                
 python 题库工具\figs.py --preview %TEMP%\fig.png                               # 只出 PNG 预览（Pillow）
 ```
 
-`figs.py` 的约定：SVG 坐标（y 向下）、字号 16（数字/单位 15）、墨色 `#1b2430`、`line/quad/poly/text/dot/hatch` 几个小函数；要加新图就写一个 `fig_xxx()` 并登记到 `FIGS`（键 = 题包里的**题目 id**，比如 `w11q5`；`write_pack` 按 id 匹配，所以一个 `FIGS` 可以同时服务多套卷）。第 11 周周练卷的 6 张图（`fig_w5/w7/w12/w14/w15/w17`）用了两个小工具：`_para_pts()`（把 y = a(x−h)²+k 采样成折线）和 `_axes()`（带箭头的坐标轴）。
+`figs.py` 的约定：SVG 坐标（y 向下）、字号 16（数字/单位 15）、墨色 `#1b2430`、`line/quad/poly/text/dot/hatch` 几个小函数；要加新图就写一个 `fig_xxx()` 并登记到 `FIGS`（键 = 题包里的**题目 id**，比如 `w11q5`；`write_pack` 按 id 匹配，所以一个 `FIGS` 可以同时服务多套卷）。第 11 周周练卷的 6 张图（`fig_w11q5 / w11q7 / w11q12 / w11q14 / w11q15 / w11q17`）用了两个小工具：`_para_pts()`（把 y = a(x−h)²+k 采样成折线）和 `_axes()`（带箭头的坐标轴）。
 
 ## 闪练题库（`题库/drills.json`）
 

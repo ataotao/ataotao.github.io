@@ -763,29 +763,30 @@ var MT = (function () {
   /* ---------- 圆与二次函数的「基础考点」（取自第 11 周周练卷 11.11 的选择 1/3/6/10 与填空 9/12、解答 13） ----------
      这些题只考一条定义或一条公式，正好补「概念记混」这一档：点与圆的位置关系、
      弦/弧/直径、直角三角形外接圆、反证法第一步、顶点式最值、平移、闭区间最值。 */
+  /* 每条判断都带一句「为什么对/为什么错」，解析里只讲这道题真正出现的四句话 */
   var CIRCLE_RIGHT = [
-    '直径是弦，弦不一定是直径',
-    '圆中最长的弦是直径',
-    '过圆心的弦是直径',
-    '半圆是弧',
-    '不在同一直线上的三点确定一个圆',
-    '同圆或等圆的半径相等',
-    '弦的两端都在圆上',
-    '等弧的长度相等'
+    { s: '直径是弦，弦不一定是直径', why: '直径过圆心，当然属于弦；弦不一定过圆心，所以不一定是直径' },
+    { s: '圆中最长的弦是直径', why: '任何弦 ≤ 直径（2r），等号只在弦过圆心时成立' },
+    { s: '过圆心的弦是直径', why: '这就是直径的定义（还要两端都在圆上，弦本身就满足）' },
+    { s: '半圆是弧', why: '直径把圆分成两段弧，每段就叫半圆' },
+    { s: '不在同一直线上的三点确定一个圆', why: '两边的中垂线交于唯一一点，那个点就是圆心' },
+    { s: '同圆或等圆的半径相等', why: '同一个圆里所有半径都等于 r；等圆半径也相等' },
+    { s: '弦的两端都在圆上', why: '弦的定义：圆上任意两点间的线段' },
+    { s: '等弧的长度相等', why: '等弧能完全重合，长度自然相等（反过来不成立）' }
   ];
   var CIRCLE_WRONG = [
-    '弧是半圆，半圆是弧',
-    '长度相等的弧是等弧',
-    '圆的任意一条弦都等于直径的一半',
-    '过圆心的线段是直径',
-    '半圆是弧，所以弧都是半圆',
-    '三点确定一个圆',
-    '弦是直径',
-    '直径是圆中最短的弦',
-    '同圆中，弦越长，它到圆心的距离越大',
-    '圆上任意两点间的线段叫弧'
+    { s: '弧是半圆，半圆是弧', why: '半圆是弧，但弧不一定是半圆——还有优弧、劣弧' },
+    { s: '长度相等的弧是等弧', why: '等弧要求「能完全重合」，只在同圆或等圆中才谈；长度相等不够' },
+    { s: '圆的任意一条弦都等于直径的一半', why: '弦长最大才是直径，一般弦比直径短，不是等于半径' },
+    { s: '过圆心的线段是直径', why: '直径要求两端都在圆上，光过圆心不够' },
+    { s: '半圆是弧，所以弧都是半圆', why: '前半句对、后半句错，弧还有优弧和劣弧' },
+    { s: '三点确定一个圆', why: '要「不在同一直线上」的三点才确定一个圆' },
+    { s: '弦是直径', why: '弦不一定过圆心，所以不一定是直径' },
+    { s: '直径是圆中最短的弦', why: '反了：直径是最长的弦' },
+    { s: '同圆中，弦越长，它到圆心的距离越大', why: '反了：弦越长离圆心越近，直径（最长）到圆心距离为 0' },
+    { s: '圆上任意两点间的线段叫弧', why: '两点间的线段叫弦，两点间的「部分」才叫弧' }
   ];
-  var ABSURD = [
+  var ABSURD_CASES = [
     { concl: '一个三角形中不能有两个角是直角', ans: '三角形中有两个角是直角',
       bad: ['三角形中三个角都是直角', '三角形中没有直角', '三角形中只有一个直角'] },
     { concl: '在一个三角形中，至少有一个内角小于或等于 60°', ans: '三角形的三个内角都大于 60°',
@@ -799,7 +800,7 @@ var MT = (function () {
     { concl: '一个数不是正数就是负数', ans: '一个数既不是正数也不是负数',
       bad: ['一个数是正数', '一个数是负数', '一个数既是正数又是负数'] }
   ];
-  var TRI = [[3, 4, 5], [6, 8, 10], [5, 12, 13], [9, 12, 15], [8, 15, 17],
+  var RIGHT_TRI = [[3, 4, 5], [6, 8, 10], [5, 12, 13], [9, 12, 15], [8, 15, 17],
     [7, 24, 25], [12, 16, 20], [20, 21, 29], [9, 40, 41], [10, 24, 26]];
 
   function shuffle(r, arr) {
@@ -830,27 +831,26 @@ var MT = (function () {
   /* 圆的基本概念：一句话判断对错 */
   function genCircleDef(r) {
     var right = pick(r, CIRCLE_RIGHT);
-    var opts = [right], guard = 0;
-    while (opts.length < 4 && guard++ < 100) {
+    var picked = [right], guard = 0;
+    while (picked.length < 4 && guard++ < 100) {
       var w = pick(r, CIRCLE_WRONG);
-      if (opts.indexOf(w) < 0) opts.push(w);
+      if (picked.indexOf(w) < 0) picked.push(w);
     }
-    opts = shuffle(r, opts);
+    var opts = shuffle(r, picked.map(function (o) { return o.s; }));
     return {
       id: 'drill.circledef', kind: 'circledef', title: '圆的基本概念',
       prompt: '下列说法中，正确的是（　）',
-      fields: [{ type: 'choice', label: '', ans: opts.indexOf(right), options: opts }],
+      fields: [{ type: 'choice', label: '', ans: opts.indexOf(right.s), options: opts }],
       tip: '逐条卡定义：弦要「两端在圆上」，直径要「再过圆心」，等弧要「能完全重合」，三点定圆要「不共线」。',
-      explain: [right + '：这句话符合定义。',
-        '其余三句都是常见错说法——「弧是半圆」把范围弄反了；「长度相等的弧是等弧」少了「同圆或等圆 + 能重合」；'
-        + '「弦等于直径的一半」把弦和半径搞混；「过圆心的线段是直径」漏了「两端在圆上」；「三点确定一个圆」漏了「不共线」。'],
+      explain: [right.s + '：对，' + right.why + '。'].concat(
+        picked.slice(1).map(function (w) { return w.s + '：错，' + w.why + '。'; })),
       kp: ['圆的基本性质', '弦·弧·直径']
     };
   }
 
   /* 直角三角形外接圆：斜边就是直径 */
   function genCircum(r) {
-    var t = pick(r, TRI);
+    var t = pick(r, RIGHT_TRI);
     var swap = r() < 0.5;
     var a = swap ? t[1] : t[0], b = swap ? t[0] : t[1], c = t[2];
     return {
@@ -870,7 +870,7 @@ var MT = (function () {
 
   /* 反证法第一步：假设结论的反面 */
   function genAbsurd(r) {
-    var it = pick(r, ABSURD);
+    var it = pick(r, ABSURD_CASES);
     var opts = shuffle(r, [it.ans].concat(it.bad));
     return {
       id: 'drill.absurd', kind: 'absurd', title: '反证法第一步',
@@ -884,13 +884,13 @@ var MT = (function () {
   }
 
   /* 顶点式最值：a 的符号定最大还是最小，最值是 k */
-  function genAxVal(r) {
+  function genVertexMax(r) {
     var a = pick(r, [-2, -1, 1, 2]);
     var h = ri(r, -4, 4), k = ri(r, -6, 6);
     var hasMin = a > 0;
     var coef = leadCoef(a);
     return {
-      id: 'drill.axval', kind: 'axval', title: '顶点式最值',
+      id: 'drill.vertexmax', kind: 'vertexmax', title: '顶点式最值',
       prompt: '二次函数 y = ' + coef + binom(h) + '²' + kterm(k) + ' 有最大值还是最小值？最值是多少？',
       fields: [
         { type: 'choice', label: '有', ans: hasMin ? 0 : 1, options: ['最小值', '最大值'] },
@@ -1091,7 +1091,7 @@ var MT = (function () {
         { id: 'circledef', name: '圆的基本概念', gen: genCircleDef },
         { id: 'circum', name: '直角三角形外接圆', gen: genCircum },
         { id: 'absurd', name: '反证法第一步', gen: genAbsurd },
-        { id: 'axval', name: '顶点式最值', gen: genAxVal },
+        { id: 'vertexmax', name: '顶点式最值', gen: genVertexMax },
         { id: 'shift', name: '抛物线平移', gen: genShift },
         { id: 'rangemax', name: '闭区间最值', gen: genRangeMax }
       ]
