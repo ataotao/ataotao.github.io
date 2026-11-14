@@ -6,7 +6,7 @@
   自动探测 node / python，不写死任何机器路径（换电脑、多人协作用）。
   检查项：
     ① build.mjs       结构与数据校验 + 生成页面（必须过）
-    ② check_answers.py 选择题答案 vs docx 文末答案表（必须「全部一致」）
+    ② check_answers.py 选择题答案 vs 原卷文末答案表（docx / PDF，必须「全部一致」）
     ③ audit_packs.py  每题是否有原题图/答案（必须无 problem）
     ④ 核验报告.mjs     重新生成 物理/核验清单.md
 #>
@@ -38,6 +38,11 @@ $PY = Find-Exe 'python' $PythonExe @(
   "$env:ProgramFiles\Python313\python.exe",
   "$env:USERPROFILE\.dsh\dsh-runtimes\dsh-primary-runtime\dependencies\python\python.exe"
 )
+$PY_CANDIDATES = @(
+  "$env:LOCALAPPDATA\Programs\Python\Python313\python.exe",
+  "$env:ProgramFiles\Python313\python.exe",
+  "$env:USERPROFILE\.dsh\dsh-runtimes\dsh-primary-runtime\dependencies\python\python.exe"
+)
 # Windows 自带的 WindowsApps\python.exe 常是「应用商店占位符」：一跑就失败，会被误判成数据有问题。
 # 先换一个非 WindowsApps 的 python；换不到就实测一次，跑不起来就当没装（跳过 python 检查）。
 if ($PY -and $PY -like '*WindowsApps*') {
@@ -48,6 +53,19 @@ if ($PY -and $PY -like '*WindowsApps*') {
 if ($PY) {
   & $PY -c "import sys" 2>$null | Out-Null
   if ($LASTEXITCODE -ne 0) { $PY = $null }
+}
+# PDF 原卷的答案体检需要 pymupdf：当前 python 缺它时，优先换一个 docx + pymupdf 都齐的。
+# 显式传了 -PythonExe 就尊重用户选择，不自动换。
+if ($PY -and -not $PythonExe) {
+  & $PY -c "import docx, pymupdf" 2>$null | Out-Null
+  if ($LASTEXITCODE -ne 0) {
+    foreach ($c in $PY_CANDIDATES) {
+      if ($c -and (Test-Path $c)) {
+        & $c -c "import docx, pymupdf" 2>$null | Out-Null
+        if ($LASTEXITCODE -eq 0) { $PY = $c; break }
+      }
+    }
+  }
 }
 
 $fail = 0

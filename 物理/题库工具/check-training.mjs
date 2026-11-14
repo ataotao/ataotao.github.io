@@ -65,8 +65,8 @@ function runCore() {
     process.exit(1);
   }
 
-  /* 模块注册表：顺序 = model/amount/calc/draw/read，类数 6/4/6/3/3 */
-  const want = [['model', 6], ['amount', 4], ['calc', 6], ['draw', 3], ['read', 3]];
+  /* 模块注册表：顺序 = model/amount/calc/draw/read，类数 10/4/6/3/3 */
+  const want = [['model', 10], ['amount', 4], ['calc', 6], ['draw', 3], ['read', 3]];
   const got = PT.modules.map((m) => [m.id, (m.kinds || []).length]);
   const bad = want.filter((w, i) => !got[i] || got[i][0] !== w[0] || got[i][1] !== w[1]);
   if (got.length !== want.length || bad.length) {

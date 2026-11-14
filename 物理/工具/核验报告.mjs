@@ -78,7 +78,7 @@ p('');
 p('| 项 | 数量 |');
 p('|---|---|');
 p('| 题包 / 题目 | ' + packs.length + ' 套 / ' + total + ' 题 |');
-p('| 选择题（答案取自 docx 文末答案表） | ' + choiceN + ' |');
+p('| 选择题（答案取自原卷文末答案表，docx / PDF 均可） | ' + choiceN + ' |');
 p('| 填空/解答/实验（答案取自原卷答案图） | ' + fillN + ' |');
 p('| 自评题（画图/说理，不判分） | ' + selfN + ' |');
 p('| **非选择题有原卷答案图可对照** | **' + withAnsImg + ' / ' + (fillN + selfN) + ' 题（' + Math.round(withAnsImg * 100 / Math.max(1, fillN + selfN)) + '%）** |');
