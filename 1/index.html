@@ -175,8 +175,10 @@
       file: '物理思维脚手架.html', quick: '#/guided', quickText: '五步引导', wrong: '#/wrong', wrongText: '错题回炉' },
     { key: 'phystrain', name: '物理训练',   icon: '🧪', accent: '#0f9b8e', href: '物理/物理训练脚手架.html', desc: '认模型 · 认量 · 算到底 · 作图 · 读数',
       file: '物理训练脚手架.html', quick: '#view=calc', quickText: '算到底', wrong: '#view=report', wrongText: '训练报告' },
-    { key: 'chem',     name: '化学',        icon: '⚗',  accent: '#0e7490', href: '化学/化学思维脚手架.html', desc: '期中逐题诊断 + 六板块框架 + 25 题回炉',
+    { key: 'chem',     name: '化学',        icon: '⚗',  accent: '#0e7490', href: '化学/化学思维脚手架.html', desc: '期中逐题诊断 + 六板块框架 + 25 题回炉 + 原卷重做',
       file: '化学思维脚手架.html', quick: '#view=drill', quickText: '错题回炉', wrong: '#view=drill&list=wrong', wrongText: '清错题' },
+    { key: 'chemflash', name: '化学闪练',   icon: '⚡',  accent: '#0e7490', href: '化学/化学闪练卡.html', desc: '人教版初三 12 单元 · 随机生成 · 解析讲考点难点',
+      file: '化学闪练卡.html', quick: '#view=today', quickText: '全考点闪练', wrong: '#view=wrong', wrongText: '清错题' },
     { key: 'yuwen',    name: '语文',        icon: '📜', accent: '#3f6b57', href: '语文/语文思维脚手架.html', desc: '期中逐题诊断 + 九板块框架 + 作文逐段批改',
       file: '语文思维脚手架.html', quick: '#view=drill', quickText: '失分点闪练', wrong: '#view=drill&list=wrong', wrongText: '清错题' },
     { key: 'math',     name: '数学',        icon: '📐', accent: '#3b6fe0', href: '数学/函数思维脚手架.html', desc: '五步流程 + 闪练 + 整卷',
@@ -206,7 +208,7 @@
     yuwen: '语文',
     math: '数学', coord: '数学', train: '数学', firstaid: '数学', wrong: '数学',
     english: '英语', flash: '英语', words: '英语',
-    physics: '物理', phystrain: '物理', chem: '化学', history: '历史', politics: '道德与法治',
+    physics: '物理', phystrain: '物理', chem: '化学', chemflash: '化学', history: '历史', politics: '道德与法治',
     formula: '公式记背'
   };
   var GROUP_ORDER = ['语文', '数学', '英语', '物理', '化学', '历史', '道德与法治', '公式记背'];
@@ -218,6 +220,7 @@
     { key: 'physScaffold.v2', subject: 'physics' },
     { key: 'physTrain_v1', subject: 'phystrain' },
     { key: 'chemScaffold.v1', subject: 'chem' },
+    { key: 'chemflash_v1', subject: 'chemflash' },
     { key: 'ywScaffold.v1', subject: 'yuwen' },
     { key: 'fn_scaffold_v1', subject: 'math' },
     { key: 'mathcoord_v1', subject: 'coord' },
@@ -371,6 +374,22 @@
           if (!s.last || d > s.last) s.last = d;
           dates[todayKey(d)] = true;
         }
+      });
+      s.today = dates[todayKey()] ? 1 : 0;
+    })();
+
+    // 化学闪练卡（12 单元随机出题，逐次事件 + 错题库）
+    (function () {
+      var v = readJSON('chemflash_v1'); if (!v) return;
+      var s = bump('chemflash');
+      var recs = v.recs || [];
+      s.attempts += recs.length;
+      recs.forEach(function (r) { if (r && r.ok) s.correct += 1; });
+      Object.keys(v.wrong || {}).forEach(function () { s.wrong += 1; });
+      var dates = {};
+      recs.forEach(function (r) {
+        var d = dateFromStamp(r && r.ts);
+        if (d) { if (!s.last || d > s.last) s.last = d; dates[todayKey(d)] = true; }
       });
       s.today = dates[todayKey()] ? 1 : 0;
     })();
@@ -576,7 +595,7 @@
     }
 
     var now = new Date();
-    ['history', 'politics', 'formula', 'physics', 'phystrain', 'chem', 'yuwen', 'math', 'coord', 'train', 'wrong', 'english'].forEach(function (key) {
+    ['history', 'politics', 'formula', 'physics', 'phystrain', 'chem', 'chemflash', 'yuwen', 'math', 'coord', 'train', 'wrong', 'english'].forEach(function (key) {
       var s = stats[key];
       if (!s) return;
       var gap = s.last ? daysBetween(s.last, now) : 30;
@@ -627,6 +646,7 @@
       { key: 'english', title: '英语 · 5 分钟逐题', reason: '一次 5 道，换换脑子', hash: '#view=practice' },
       { key: 'formula', title: '公式 · 3 分钟今日必背', reason: '每天必背的那几条', hash: '#mode=recite&fs=today' },
       { key: 'chem', title: '化学 · 10 分钟错题回炉', reason: '期中卷的失分点，点选即判', hash: '#view=drill' },
+      { key: 'chemflash', title: '化学闪练 · 随机 10 题', reason: '初三全考点，答案解析讲考点难点', hash: '#view=today' },
       { key: 'yuwen', title: '语文 · 10 分钟失分点闪练', reason: '文言翻译与赏析题，先按模板过一遍', hash: '#view=drill' },
       { key: 'history', title: '历史 · 5 分钟 ★必背', reason: '★ 的是必背，刷四选一', hash: '#mode=choice&fs=star' }
     ];
