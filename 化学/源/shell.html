@@ -151,6 +151,66 @@ td.ans{width:64px;font-weight:700;letter-spacing:1px}
 .empty{color:var(--mut);font-size:14px;padding:10px 0}
 kbd{background:#f1eee8;border:1px solid var(--line);border-radius:5px;padding:1px 6px;font-size:12.5px;font-family:inherit}
 hr.sep{border:0;border-top:1px dashed var(--line);margin:18px 0}
+
+/* ⑥ 原卷重做 */
+.paper-head{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.paper-head h3{margin:0}
+.paper-meta{font-size:13px;color:var(--mut)}
+.thumbs{display:grid;grid-template-columns:repeat(auto-fill,minmax(148px,1fr));gap:10px;margin-top:12px}
+.thumb{border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#faf8f4;cursor:zoom-in;transition:transform .12s,border-color .12s}
+.thumb:hover{transform:translateY(-2px);border-color:var(--acc)}
+.thumb img{display:block;width:100%;height:168px;object-fit:cover;object-position:top center}
+.thumb .cap{font-size:12.5px;color:var(--mut);padding:6px 8px;text-align:center;background:var(--card)}
+.btnrow{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.btn{border:0;border-radius:8px;background:var(--acc);color:#fff;padding:8px 14px;font:inherit;font-size:13.5px;cursor:pointer}
+.btn.ghost{background:var(--card);color:var(--acc2);border:1px solid var(--line)}
+.btn:hover{filter:brightness(1.06)}
+.lightbox{position:fixed;inset:0;background:rgba(22,20,18,.92);display:none;align-items:center;justify-content:center;z-index:99;gap:12px;padding:16px}
+.lightbox.on{display:flex}
+.lightbox img{max-width:88vw;max-height:86vh;object-fit:contain;background:#fff}
+.lbbtn{appearance:none;border:0;background:rgba(255,255,255,.14);color:#fff;font-size:24px;width:42px;height:42px;border-radius:50%;cursor:pointer;flex:none}
+.lbbtn:hover{background:rgba(255,255,255,.28)}
+.lbclose{position:fixed;top:14px;right:18px;font-size:14px;width:auto;height:auto;padding:6px 12px}
+/* 逐题练习 */
+.practice-bar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.practice-bar .grow{flex:1}
+.qnav{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 14px}
+.qnav button{width:34px;height:34px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--mut);font:inherit;font-size:13px;cursor:pointer}
+.qnav button.cur{border-color:var(--acc);color:#fff;background:var(--acc);font-weight:700}
+.qnav button.done{background:var(--ok-soft);border-color:#bfe3cd;color:var(--ok)}
+.qnav button.wrong{background:var(--bad-soft);border-color:#f2c9c4;color:var(--bad)}
+.qnav button.self{background:var(--warn-soft);border-color:#efdca9;color:var(--warn)}
+.prac-q{border:1px solid var(--line);border-radius:12px;padding:16px;background:var(--card)}
+.prac-q .stem{font-size:15.5px;line-height:1.8;margin:10px 0 14px}
+.srcimg{border:1px dashed var(--line);border-radius:10px;background:#faf8f4;padding:8px;margin:8px 0 14px}
+.srcimg summary{cursor:pointer;font-size:13px;color:var(--acc2);font-weight:600}
+.srcimg .shots{display:flex;flex-direction:column;gap:8px;margin-top:8px}
+.crop{position:relative;width:100%;overflow:hidden;border:1px solid var(--line);border-radius:6px;background:#fff;cursor:zoom-in}
+.crop .fill{position:absolute;background-repeat:no-repeat;background-size:100% 100%}
+.opt{display:block;width:100%;text-align:left;border:1px solid var(--line);border-radius:9px;background:var(--card);padding:9px 12px;margin:6px 0;font:inherit;font-size:14.5px;cursor:pointer}
+.opt:hover{border-color:var(--acc)}
+.opt.sel{border-color:var(--acc);background:var(--acc-soft);font-weight:600}
+.opt.right{border-color:var(--ok);background:var(--ok-soft)}
+.opt.bad{border-color:var(--bad);background:var(--bad-soft)}
+.blankrow{margin:10px 0;padding:10px 12px;border:1px solid var(--line);border-radius:9px}
+.blankrow .ask{font-size:14px;margin-bottom:6px}
+.blankrow input,.blankrow textarea{width:100%;border:1px solid var(--line);border-radius:7px;padding:7px 10px;font:inherit;font-size:14px;background:#fff;color:var(--ink)}
+.blankrow textarea{min-height:64px;resize:vertical}
+.verdict{margin-top:12px;padding:10px 12px;border-radius:9px;font-size:13.5px}
+.verdict.ok{background:var(--ok-soft);color:var(--ok)}
+.verdict.bad{background:var(--bad-soft);color:var(--bad)}
+.verdict.self{background:var(--warn-soft);color:var(--warn)}
+.ansbox{margin-top:8px;padding:10px 12px;background:#f7f5f0;border:1px solid var(--line);border-radius:9px;font-size:13.5px}
+#print-area{display:none}
+@media print{
+  body *{visibility:hidden!important}
+  #print-area,#print-area *{visibility:visible!important}
+  #print-area{display:block!important;position:absolute;left:0;top:0;width:100%;color:#000;font-size:12pt}
+  #print-area img{max-width:100%;page-break-after:always}
+  #print-area .phead{border-bottom:2px solid #000;padding-bottom:8px;margin-bottom:14px}
+  #print-area .q{margin:10px 0;page-break-inside:avoid}
+  @page{margin:14mm}
+}
 </style>
 </head>
 <body>
@@ -159,7 +219,7 @@ hr.sep{border:0;border-top:1px dashed var(--line);margin:18px 0}
   <header class="top">
     <div>
       <h1>化学 · 思维脚手架</h1>
-      <div class="sub">九上 · 期中诊断 + 知识框架 + 题型模板 + 错题回炉</div>
+      <div class="sub">九上 · 期中诊断 + 知识框架 + 题型模板 + 错题回炉 + 原卷重做</div>
     </div>
     <div class="pill" id="pill">—</div>
   </header>
@@ -170,9 +230,18 @@ hr.sep{border:0;border-top:1px dashed var(--line);margin:18px 0}
   <section class="view" id="v-map"></section>
   <section class="view" id="v-method"></section>
   <section class="view" id="v-drill"></section>
+  <section class="view" id="v-paper"></section>
   <section class="view" id="v-doc"></section>
 
 </div>
+
+<div class="lightbox" id="lightbox" role="dialog" aria-label="原卷放大">
+  <button class="lbbtn" id="lb-prev" title="上一张">‹</button>
+  <img id="lb-img" src="" alt="原卷">
+  <button class="lbbtn" id="lb-next" title="下一张">›</button>
+  <button class="btn ghost lbclose" id="lb-close">关闭（Esc）</button>
+</div>
+<div id="print-area" aria-hidden="true"></div>
 
 <script>
 /*__DATA__*/
@@ -181,8 +250,8 @@ hr.sep{border:0;border-top:1px dashed var(--line);margin:18px 0}
 (function () {
   'use strict';
 
-  var D = window.__DATA__ || { exam: { questions: [] }, drill: { items: [] } };
-  var EXAM = D.exam, DRILL = D.drill;
+  var D = window.__DATA__ || { exam: { questions: [] }, drill: { items: [] }, papers: [], banks: {} };
+  var EXAM = D.exam, DRILL = D.drill, PAPERS = D.papers || [], BANKS = D.banks || {};
   var KEY = 'chemScaffold.v1';
 
   // ---------- 存储 ----------
@@ -225,13 +294,31 @@ hr.sep{border:0;border-top:1px dashed var(--line);margin:18px 0}
     return { cPts: cPts, cOk: cOk, fPts: fPts, fGet: fGet, fPend: fPend, total: cPts + fPts, get: cOk + fGet };
   }
 
+  // 官方成绩单（批改系统实际给分），替代逐空估算用于对外呈现
+  var OFFICIAL = EXAM.meta.score || null;
+  var OFFICIAL_BY_Q = (function () {
+    var map = {};
+    ((OFFICIAL && OFFICIAL.parts) || []).forEach(function (p) {
+      var no = parseInt(p.label, 10);
+      if (isNaN(no)) return;
+      var e = map[no] || (map[no] = { pts: 0, parts: [] });
+      e.pts += p.score;
+      e.parts.push(p);
+    });
+    return map;
+  })();
+  function officialView(s) {
+    return OFFICIAL || { total: Math.round(s.get), full: s.total, grade: '—', objective: s.cOk, subjective: Math.round(s.fGet), parts: [] };
+  }
+
   // ---------- 视图切换 ----------
   var TABS = [
     { k: 'diag', n: '① 期中诊断' },
     { k: 'map', n: '② 知识框架' },
     { k: 'method', n: '③ 题型模板' },
     { k: 'drill', n: '④ 错题回炉' },
-    { k: 'doc', n: '⑤ 使用说明' }
+    { k: 'doc', n: '⑤ 使用说明' },
+    { k: 'paper', n: '⑥ 原卷重做' }
   ];
   var cur = 'diag';
 
@@ -268,6 +355,7 @@ hr.sep{border:0;border-top:1px dashed var(--line);margin:18px 0}
   // ---------- ① 诊断 ----------
   function renderDiag() {
     var s = score();
+    var o = officialView(s);
     var el = document.getElementById('v-diag');
     var choiceWrong = CHOICE.filter(function (q) { return !q.ok; });
     var badBlanks = [];
@@ -277,15 +365,27 @@ hr.sep{border:0;border-top:1px dashed var(--line);margin:18px 0}
 
     var html = '';
     html += '<div class="scoregrid">' +
-      '<div class="scorebox"><div class="k">选择题</div><div class="v">' + s.cOk + '<small> / ' + s.cPts + '</small></div></div>' +
-      '<div class="scorebox"><div class="k">非选择题（估算）</div><div class="v">≈' + Math.round(s.fGet) + '<small> / ' + s.fPts + '</small></div></div>' +
-      '<div class="scorebox"><div class="k">合计（估算）</div><div class="v">≈' + Math.round(s.get) + '<small> / ' + s.total + '</small></div></div>' +
+      '<div class="scorebox"><div class="k">总分（等级 ' + o.grade + '）</div><div class="v">' + o.total + '<small> / ' + o.full + '</small></div></div>' +
+      '<div class="scorebox"><div class="k">客观分（选择题）</div><div class="v">' + o.objective + '<small> / ' + s.cPts + '</small></div></div>' +
+      '<div class="scorebox"><div class="k">解答题（实际给分）</div><div class="v">' + o.subjective + '<small> / ' + s.fPts + '</small></div></div>' +
       '<div class="scorebox"><div class="k">选择题正确率</div><div class="v">' + Math.round(s.cOk / s.cPts * 100) + '<small> %</small></div></div>' +
       '</div>';
 
+    // 解答题逐题/小问得分（来源：批改系统）
+    if (o.parts.length) {
+      html += '<div class="card"><h3>解答题得分明细（批改系统）</h3><table><thead><tr>' +
+        '<th>题 / 小问</th><th>得分</th></tr></thead><tbody>';
+      o.parts.forEach(function (p) {
+        html += '<tr><td>' + p.label + '</td><td class="ans">' + p.score + '</td></tr>';
+      });
+      html += '<tr><td><b>解答题合计</b></td><td class="ans"><b>' + o.subjective + '</b> / ' + s.fPts + '</td></tr>' +
+        '</tbody></table><p class="mut">合计核对：客观分 ' + o.objective + ' ＋ 解答题 ' + o.subjective + ' ＝ ' + o.total + ' 分（等级 ' + o.grade + '）。' +
+        '下表的逐空 ✓/✗ 仍按卷面核对用，估分 ≈' + Math.round(s.fGet) + ' 只作定位失分点，不再作为成绩。</p></div>';
+    }
+
     html += '<div class="lead">' +
       '<p><b>一句话结论</b>：分数不是卡在「不会」，而是卡在两件事——① 概念只记结论、不记<b>判据</b>（物理变化 vs 微观解释、助燃 vs 供呼吸）；② <b>化学用语规范</b>不过关（离子符号、化学式只写酸根、化合价不列式）。这两类都是「一次记清、长期受益」的错。</p>' +
-      '<p class="mut">选择题 ' + CHOICE.length + ' 题错 ' + choiceWrong.length + ' 题；非选择题 ' + badBlanks.length + ' 空有失分，其中 ' + s.fPend + ' 空手写字迹难辨按「待核」处理（所以你真实分数可能再高 1—2 分）。</p>' +
+      '<p class="mut">选择题 ' + CHOICE.length + ' 题错 ' + choiceWrong.length + ' 题；非选择题 ' + badBlanks.length + ' 空有失分，其中 ' + s.fPend + ' 空手写字迹难辨仍标「待核」——答卷面核对用，成绩以上方批改系统的 ' + o.total + ' 分为准。</p>' +
       '</div>';
 
     // 选择题表
@@ -344,7 +444,8 @@ hr.sep{border:0;border-top:1px dashed var(--line);margin:18px 0}
         head = '第 ' + q.no + ' 题 · ' + q.ans + ' · 你选 ' + q.mine;
       } else {
         var okN = q.blanks.filter(function (b) { return b.ok; }).length;
-        head = '第 ' + q.no + ' 题（' + q.pts + ' 分）· ' + okN + '/' + q.blanks.length + ' 空对';
+        var got = OFFICIAL_BY_Q[q.no];
+        head = '第 ' + q.no + ' 题（' + (got ? '实得 ' + got.pts : q.pts) + ' / 满分 ' + q.pts + '）· 卷面 ' + okN + '/' + q.blanks.length + ' 空对';
       }
       var cls = q.type === 'choice' ? (q.ok ? 'ok' : 'bad') : ((q.blanks.filter(function (b) { return b.ok; }).length >= q.blanks.length / 2) ? 'ok' : 'bad');
       html += '<details class="qt"><summary>' + head + '<span class="chip ' + cls + '">' + q.tag + '</span></summary><div class="body">';
@@ -657,10 +758,311 @@ hr.sep{border:0;border-top:1px dashed var(--line);margin:18px 0}
       (drillList === 'wrong' ? '（只练错题）' : '');
   }
 
+  // ---------- ⑥ 原卷重做 ----------
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+  var lbList = [], lbAt = 0;
+  function openLightbox(list, i) {
+    lbList = list; lbAt = i;
+    document.getElementById('lightbox').classList.add('on');
+    showLightbox();
+  }
+  function showLightbox() {
+    if (!lbList.length) return;
+    document.getElementById('lb-img').src = 'images/试卷/' + lbList[lbAt].id + '/' + lbList[lbAt].file;
+  }
+  function closeLightbox() { document.getElementById('lightbox').classList.remove('on'); }
+
+  // 用题库生成不含手写答案的干净重做卷；没有题库的卷子退回原图打印
+  function cleanSheet(paper) {
+    var bank = paper.bank && BANKS[paper.bank];
+    if (!bank || !bank.questions || !bank.questions.length) return null;
+    var h = '<div class="phead"><h2>' + esc(paper.title) + '</h2>' +
+      '<div>姓名：____________　日期：____________　用时：60 分钟　满分：60 分</div>' +
+      '<div class="small">本题卷由题库自动生成的空白重做版，不含手写答案；请以原卷为准。</div></div>';
+    bank.questions.forEach(function (q) {
+      h += '<div class="q"><b>' + q.no + '．</b>' + esc(q.stem) + '</div>';
+      if (q.type === 'choice') {
+        h += '<div style="margin-left:2em">' + (q.options || []).map(function (o, i) {
+          return 'ABCD'[i] + '．' + esc(o);
+        }).join('　') + '　　（　　）</div>';
+      } else {
+        h += '<ol style="margin-left:2em">';
+        (q.blanks || []).forEach(function (b) {
+          h += '<li>' + esc(b.ask) + '：________________________________</li>';
+        });
+        h += '</ol>';
+      }
+    });
+    return h;
+  }
+
+  function printPaper(id) {
+    var p = PAPERS.filter(function (x) { return x.id === id; })[0];
+    if (!p) return;
+    var area = document.getElementById('print-area');
+    var clean = cleanSheet(p);
+    if (clean) {
+      area.innerHTML = clean;
+    } else {
+      area.innerHTML = '<div class="phead"><h2>' + esc(p.title) + '（原卷重做）</h2>' +
+        '<div class="small">原图含手写作答，重做时请先遮住答案；或以题库录入的卷子打印空白版。</div></div>' +
+        p.images.map(function (im) {
+          return '<img src="images/试卷/' + esc(p.id) + '/' + esc(im.file) + '" alt="' + esc(im.label) + '">';
+        }).join('');
+    }
+    window.print();
+  }
+
+  // ---- 快速练习状态：chemPractice.v1（与 chemScaffold.v1 分开，互不干扰） ----
+  var PKEY = 'chemPractice.v1';
+  function pload() {
+    try { var v = JSON.parse(localStorage.getItem(PKEY) || 'null'); return v || {}; }
+    catch (e) { return {}; }
+  }
+  function psave(v) { try { localStorage.setItem(PKEY, JSON.stringify(v)); } catch (e) {} }
+  var PS = pload();
+  var curPaper = PAPERS.length ? PAPERS[0] : null;
+  var curNo = 1, practiceMode = 'practice';
+
+  // 答案归一化：全角→半角、去空格、去「约/大约」与括号说明、常见等价符号
+  function normAns(s) {
+    s = String(s == null ? '' : s)
+      .replace(/[Ａ-Ｚａ-ｚ０-９]/g, function (c) { return String.fromCharCode(c.charCodeAt(0) - 0xFEE0); })
+      .replace(/[\s　]/g, '')
+      .replace(/[（(][^）)]*[）)]/g, '')
+      .replace(/^(约|大约|约为)/, '')
+      .replace(/[∶：]/g, ':').replace(/[＋]/g, '+').replace(/[－—–]/g, '-')
+      .replace(/[，、,]/g, ',').replace(/[。．]/g, '.').replace(/[％%]/g, '%')
+      .toLowerCase();
+    return s;
+  }
+  function ansVariants(a) {
+    var raw = String(a == null ? '' : a);
+    var out = [raw, raw.replace(/[（(][^）)]*[）)]/g, '')];
+    return out.filter(Boolean).map(normAns).filter(Boolean);
+  }
+  function blankIsEssay(b) {
+    var a = String(b.ans || '');
+    return a.length > 12 || /[；;，,。]/.test(a.replace(/[（(][^）)]*[）)]/g, ''));
+  }
+  function cropHtml(paper, no) {
+    var segs = (paper.crops || {})[String(no)] || [];
+    if (!segs.length) return '';
+    var size = paper.pageSize || [1400, 1050];
+    var allSegs = [];
+    segs.forEach(function (s, i) {
+      var b = s.box, bw = b[2] - b[0], bh = b[3] - b[1];
+      allSegs.push({ id: paper.id, file: s.page + '.webp', label: '题目原图 ' + (i + 1) });
+    });
+    var shots = segs.map(function (s, i) {
+      var b = s.box, bw = b[2] - b[0], bh = b[3] - b[1];
+      return '<div class="crop" data-crop="' + i + '" style="aspect-ratio:' + bw + '/' + bh + '">' +
+        '<div class="fill" style="background-image:url(images/试卷/' + esc(paper.id) + '/' + esc(s.page) + '.webp);' +
+        'width:' + (size[0] / bw * 100).toFixed(3) + '%;height:' + (size[1] / bh * 100).toFixed(3) + '%;' +
+        'left:' + (-b[0] / bw * 100).toFixed(3) + '%;top:' + (-b[1] / bh * 100).toFixed(3) + '%"></div></div>';
+    }).join('');
+    return '<details class="srcimg" open><summary>题目原图（点图看整页放大）</summary><div class="shots">' + shots + '</div></details>';
+  }
+  function paperQuestions() {
+    if (!curPaper) return [];
+    var bank = curPaper.bank && BANKS[curPaper.bank];
+    return (bank && bank.questions) || [];
+  }
+  function qState(no) {
+    var pid = curPaper.id;
+    PS[pid] = PS[pid] || { cur: 1, ans: {} };
+    PS[pid].ans[no] = PS[pid].ans[no] || { pick: '', inputs: {}, checks: {}, reveal: {}, self: {} };
+    return PS[pid].ans[no];
+  }
+  function emptyAns() { return { pick: '', inputs: {}, checks: {}, reveal: {}, self: {} }; }
+  function qStatus(q, st) {
+    st = st || emptyAns();
+    st.checks = st.checks || {}; st.reveal = st.reveal || {}; st.self = st.self || {}; st.inputs = st.inputs || {};
+    if (q.type === 'choice') return st.pick ? (st.pick === q.ans ? 'right' : 'wrong') : '';
+    var blanks = q.blanks || [], n = 0, done = 0, bad = 0, self = 0;
+    blanks.forEach(function (b, i) {
+      n++;
+      if (blankIsEssay(b)) { if (st.reveal[i]) { done++; self++; } }
+      else if (st.checks[i]) { done++; if (!st.checks[i]) bad++; }
+    });
+    if (!done) return '';
+    if (bad) return 'wrong';
+    return done >= n ? (self && !bad ? 'self' : 'right') : 'doing';
+  }
+  function renderPractice() {
+    var el = document.getElementById('v-paper');
+    if (!curPaper) {
+      el.innerHTML = '<div class="card"><h3>原卷重做</h3><p class="mut">还没有补录卷子。用 <kbd>node 工具/ingest-paper.mjs "&lt;源目录&gt;" &lt;id&gt;</kbd> 补录一份。</p></div>';
+      return;
+    }
+    var qs = paperQuestions();
+    if (!qs.length) { el.innerHTML = '<div class="card"><h3>原卷重做</h3><p class="mut">这份卷子还没有录入题库，暂时只能看原图与打印。</p></div>'; return; }
+    if (curNo > qs.length) curNo = qs.length;
+    var st = qState(curNo);
+    PS[curPaper.id].cur = curNo; psave(PS);
+
+    var doneN = qs.filter(function (q) { var s = qStatus(q, PS[curPaper.id].ans[q.no] || { pick: '', inputs: {}, checks: {}, reveal: {}, self: {} }); return s && s !== 'doing'; }).length;
+    var nav = qs.map(function (q) {
+      var s = qStatus(q, PS[curPaper.id].ans[q.no] || {});
+      return '<button data-goto="' + q.no + '" class="' + (q.no === curNo ? 'cur' : (s || '')) + '" title="第 ' + q.no + ' 题">' + q.no + '</button>';
+    }).join('');
+
+    var q = qs.filter(function (x) { return x.no === curNo; })[0] || qs[0];
+    var body = '<div class="prac-q"><h3 style="margin:0">第 ' + q.no + ' / ' + qs.length + ' 题　<span class="mut small">' +
+      (q.type === 'choice' ? '选择题 · ' + q.pts + ' 分' : '填空题 · ' + q.pts + ' 分') + '　' + esc(q.tag || '') + '</span></h3>' +
+      cropHtml(curPaper, q.no) + '<div class="stem">' + esc(q.stem) + '</div>';
+
+    if (q.type === 'choice') {
+      body += '<div>' + (q.options || []).map(function (o, i) {
+        var L = 'ABCD'[i], cls = '';
+        if (st.pick) {
+          if (L === q.ans) cls = 'right';
+          else if (L === st.pick) cls = 'bad';
+        } else if (st.pick === L) cls = 'sel';
+        return '<button class="opt ' + cls + '" data-pick="' + L + '">' + L + '．' + esc(o) +
+          (st.pick && L === q.ans ? '　✅ 正确' : '') + (st.pick && L === st.pick && L !== q.ans ? '　✗ 你选的' : '') + '</button>';
+      }).join('') + '</div>';
+      if (st.pick) {
+        body += '<div class="verdict ' + (st.pick === q.ans ? 'ok' : 'bad') + '">' +
+          (st.pick === q.ans ? '✓ 答对了' : '✗ 答错了，正确答案是 ' + q.ans) +
+          '　<button class="btn ghost" data-resetq="1" style="padding:3px 9px">重做本题</button></div>' +
+          '<div class="ansbox"><b>为什么</b>：' + esc(q.why || '') + '</div>';
+      }
+    } else {
+      body += '<div class="mut small">短空直接核对；长填空/简答写完点「看答案」，自己判断对错。</div>';
+      (q.blanks || []).forEach(function (b, i) {
+        var essay = blankIsEssay(b), v = st.inputs[i] || '', ck = st.checks[i], rev = st.reveal[i];
+        body += '<div class="blankrow"><div class="ask"><b>' + esc(b.k) + '</b>　' + esc(b.ask) + '</div>' +
+          (essay
+            ? '<textarea data-input="' + i + '" placeholder="在此写出你的答案">' + esc(v) + '</textarea>'
+            : '<input data-input="' + i + '" value="' + esc(v) + '" placeholder="填入答案">') +
+          '<div style="margin-top:8px">' +
+          (essay
+            ? '<button class="btn ghost" data-reveal="' + i + '" style="padding:5px 10px">' + (rev ? '收起答案' : '看答案自评') + '</button>'
+            : '<button class="btn" data-check="' + i + '" style="padding:5px 10px">核对这一空</button>') +
+          (ck ? '<span class="' + (ck ? 'tag-ok' : 'tag-bad') + '" style="margin-left:10px">' + (ck ? '✓ 正确' : '✗ 再看答案') + '</span>' : '') +
+          '</div>';
+        if (rev) {
+          body += '<div class="ansbox"><b>参考答案</b>：' + esc(b.ans) +
+            '<div style="margin-top:6px"><b>理由</b>：' + esc(b.why || '') + '</div>' +
+            '<div style="margin-top:8px">自己判断：<button class="btn ghost" data-self="' + i + ':ok" style="padding:3px 9px">✓ 我答对了</button> ' +
+            '<button class="btn ghost" data-self="' + i + ':no" style="padding:3px 9px">✗ 还要复习</button>' +
+            (st.self[i] ? '　<span class="' + (st.self[i] === 'ok' ? 'tag-ok' : 'tag-bad') + '">' + (st.self[i] === 'ok' ? '已记为对' : '已记为待复习') + '</span>' : '') +
+            '</div></div>';
+        }
+        body += '</div>';
+      });
+    }
+    body += '<div class="verdict self">已练 ' + doneN + ' / ' + qs.length + ' 题。作答自动存在本机，刷新可续。</div></div>';
+
+    el.innerHTML = '<div class="practice-bar"><b>' + esc(curPaper.title) + '</b>' +
+      '<span class="grow"></span><button class="btn ghost" id="pm-gallery">看整卷原图</button>' +
+      '<button class="btn ghost" id="pm-print">打印空白卷</button></div>' +
+      '<div class="qnav">' + nav + '</div>' + body +
+      '<div class="practice-bar"><button class="btn ghost" id="pq-prev">← 上一题</button><span class="grow"></span>' +
+      '<button class="btn" id="pq-next">下一题 →</button></div>';
+
+    // 事件绑定
+    Array.prototype.forEach.call(el.querySelectorAll('[data-goto]'), function (b) {
+      b.onclick = function () { curNo = parseInt(b.dataset.goto, 10); renderPractice(); window.scrollTo({ top: 0, behavior: 'auto' }); };
+    });
+    Array.prototype.forEach.call(el.querySelectorAll('[data-pick]'), function (b) {
+      b.onclick = function () { st.pick = b.dataset.pick; psave(PS); renderPractice(); };
+    });
+    Array.prototype.forEach.call(el.querySelectorAll('[data-input]'), function (t) {
+      t.oninput = function () { st.inputs[t.dataset.input] = t.value; psave(PS); };
+    });
+    Array.prototype.forEach.call(el.querySelectorAll('[data-check]'), function (b) {
+      b.onclick = function () {
+        var i = b.dataset.check, bk = q.blanks[i];
+        var u = normAns(st.inputs[i] || '');
+        var ok = !!u && ansVariants(bk.ans).some(function (a) { return a === u || (!isNaN(parseFloat(a)) && Math.abs(parseFloat(a) - parseFloat(u)) <= 0.02); });
+        st.checks[i] = ok; psave(PS); renderPractice();
+      };
+    });
+    Array.prototype.forEach.call(el.querySelectorAll('[data-reveal]'), function (b) {
+      b.onclick = function () { var i = b.dataset.reveal; st.reveal[i] = !st.reveal[i]; psave(PS); renderPractice(); };
+    });
+    Array.prototype.forEach.call(el.querySelectorAll('[data-self]'), function (b) {
+      b.onclick = function () { var p = b.dataset.self.split(':'); st.self[p[0]] = p[1]; psave(PS); renderPractice(); };
+    });
+    var rq = el.querySelector('[data-resetq]');
+    if (rq) rq.onclick = function () { st.pick = ''; psave(PS); renderPractice(); };
+    el.querySelector('#pq-prev').onclick = function () { if (curNo > 1) { curNo--; renderPractice(); window.scrollTo({ top: 0, behavior: 'auto' }); } };
+    el.querySelector('#pq-next').onclick = function () { if (curNo < qs.length) { curNo++; renderPractice(); window.scrollTo({ top: 0, behavior: 'auto' }); } };
+    el.querySelector('#pm-gallery').onclick = function () { practiceMode = 'gallery'; renderPaper(); };
+    el.querySelector('#pm-print').onclick = function () { printPaper(curPaper.id); };
+    Array.prototype.forEach.call(el.querySelectorAll('[data-crop]'), function (c) {
+      c.onclick = function () {
+        var segs = curPaper.crops[String(curNo)] || [];
+        var list = segs.map(function (s) { return { id: curPaper.id, file: s.page + '.webp', label: s.page }; });
+        openLightbox(list, parseInt(c.dataset.crop, 10));
+      };
+    });
+  }
+
+  function renderGallery() {
+    var el = document.getElementById('v-paper');
+    var html = '<div class="practice-bar"><b>整卷原图</b><span class="grow"></span>' +
+      '<button class="btn" id="pg-back">← 回到逐题练习</button></div>' +
+      '<div class="card"><p class="mut small">点缩略图看整页；原卷 JPG 只在 OneDrive 留档，页面读压缩后的 webp。</p>';
+    PAPERS.forEach(function (p) {
+      var list = p.images.map(function (im) { return { id: p.id, file: im.file, label: im.label }; });
+      html += '<div class="card"><div class="paper-head"><h3>' + esc(p.title) + '</h3>' +
+        '<span class="paper-meta">' + esc(p.date || '') + '　·　' + list.length + ' 张图</span></div>' +
+        '<div class="thumbs">' + list.map(function (im, i) {
+          return '<div class="thumb" data-open="' + i + '" data-paper="' + esc(p.id) + '">' +
+            '<img loading="lazy" src="images/试卷/' + esc(p.id) + '/' + esc(im.file) + '" alt="' + esc(im.label) + '">' +
+            '<div class="cap">' + esc(im.label) + '</div></div>';
+        }).join('') + '</div>' +
+        '<div class="btnrow"><button class="btn ghost" data-print="' + esc(p.id) + '">打印空白重做卷</button>' +
+        '<button class="btn ghost" data-print-raw="' + esc(p.id) + '">打印原图（含手写）</button></div></div>';
+    });
+    el.innerHTML = html + '</div>';
+    el.querySelector('#pg-back').onclick = function () { practiceMode = 'practice'; renderPaper(); };
+    Array.prototype.forEach.call(el.querySelectorAll('[data-open]'), function (t) {
+      t.onclick = function () {
+        var p = PAPERS.filter(function (x) { return x.id === t.dataset.paper; })[0];
+        var list = p.images.map(function (im) { return { id: p.id, file: im.file, label: im.label }; });
+        openLightbox(list, parseInt(t.dataset.open, 10));
+      };
+    });
+    Array.prototype.forEach.call(el.querySelectorAll('[data-print]'), function (b) { b.onclick = function () { printPaper(b.dataset.print); }; });
+    Array.prototype.forEach.call(el.querySelectorAll('[data-print-raw]'), function (b) {
+      b.onclick = function () {
+        var p = PAPERS.filter(function (x) { return x.id === b.dataset.printRaw; })[0];
+        var area = document.getElementById('print-area');
+        area.innerHTML = '<div class="phead"><h2>' + esc(p.title) + '（原卷）</h2></div>' +
+          p.images.map(function (im) { return '<img src="images/试卷/' + esc(p.id) + '/' + esc(im.file) + '">'; }).join('');
+        window.print();
+      };
+    });
+  }
+  function renderPaper() {
+    if (practiceMode === 'gallery' || !paperQuestions().length) renderGallery();
+    else renderPractice();
+  }
+
+  document.getElementById('lb-close').onclick = closeLightbox;
+  document.getElementById('lb-prev').onclick = function () { lbAt = (lbAt - 1 + lbList.length) % lbList.length; showLightbox(); };
+  document.getElementById('lb-next').onclick = function () { lbAt = (lbAt + 1) % lbList.length; showLightbox(); };
+  document.getElementById('lightbox').onclick = function (e) { if (e.target.id === 'lightbox') closeLightbox(); };
+  document.addEventListener('keydown', function (e) {
+    if (!document.getElementById('lightbox').classList.contains('on')) return;
+    if (e.key === 'Escape') closeLightbox();
+    if (e.key === 'ArrowLeft') { lbAt = (lbAt - 1 + lbList.length) % lbList.length; showLightbox(); }
+    if (e.key === 'ArrowRight') { lbAt = (lbAt + 1) % lbList.length; showLightbox(); }
+  });
+
   // ---------- ⑤ 说明 ----------
   function renderDoc() {
     var el = document.getElementById('v-doc');
     var s = score();
+    var o = officialView(s);
     el.innerHTML =
       '<div class="card"><h3>这份脚手架是什么</h3>' +
       '<p>它由一张真实卷子长出来：<b>2026—2027 学年第一学期 初三级化学科期中考试</b>（8 页 / 60 分）。' +
@@ -670,14 +1072,15 @@ hr.sep{border:0;border-top:1px dashed var(--line);margin:18px 0}
       '<li><b>知识框架</b>：九上六个板块的判据清单，做题卡住时回来查。</li>' +
       '<li><b>题型模板</b>：五类题型的固定步骤，认题型比背知识更快提分。</li>' +
       '<li><b>错题回炉</b>：' + (DRILL.items || []).length + ' 道点选即判的题，全部由本次失分点衍生；答错自动进错题库。</li>' +
+      '<li><b>原卷重做</b>：逐题练习——选择题点选即判、填空题输入核对、解答题写完看答案自评；每题都能展开该题在原卷上的原图。作答存本机 <kbd>chemPractice.v1</kbd>。</li>' +
       '</ul></div>' +
 
       '<div class="card"><h3>口径与约定</h3>' +
-      '<p class="small">① 选择题按答题卡填涂计分（每题 2 分）；非选择题按「每空均分该题分值」估算，' +
-      '手写无法辨认的空按「待核」处理、暂不计分——所以估算分是<b>下限</b>。</p>' +
+      '<p class="small">① <b>成绩以批改系统为准</b>：总分 ' + o.total + '/' + o.full + '（等级 ' + o.grade + '），客观分 ' + o.objective + '/' + s.cPts +
+      '，解答题 ' + o.subjective + '/' + s.fPts + '，明细见「期中诊断」页。逐空 ✓/✗ 是卷面核对用的教辅标注，' +
+      '「每空均分」估算 ≈' + Math.round(s.fGet) + ' 只用来定位失分点，<b>不作为成绩</b>。</p>' +
       '<p class="small">② 有几处参考答案本身存在合理歧义（第 13⑤ 质量比、第 14(5) 选 A 还是 D），已在题目里标注「以老师讲评为准」。</p>' +
-      '<p class="small">③ 本次估算：选择题 ' + s.cOk + '/' + s.cPts + '，非选择题 ≈' + Math.round(s.fGet) + '/' + s.fPts +
-      '，合计 ≈' + Math.round(s.get) + '/' + s.total + '。</p>' +
+      '<p class="small">③ 手写无法辨认的空仍标「待核」（' + s.fPend + ' 空），只影响卷面核对，不影响上面的官方成绩。</p>' +
       '<p class="small">④ 记录存在本机 localStorage（键 <kbd>chemScaffold.v1</kbd>），' +
       '「开始.html」的「今天做什么」会读它，也可以在开始页一键备份。</p></div>' +
 
@@ -700,9 +1103,11 @@ hr.sep{border:0;border-top:1px dashed var(--line);margin:18px 0}
   renderMap();
   renderMethod();
   renderDoc();
+  renderPaper();
   renderDrill(true);
   var s0 = score();
-  document.getElementById('pill').textContent = '本次估算 ≈' + Math.round(s0.get) + ' / ' + s0.total;
+  var o0 = officialView(s0);
+  document.getElementById('pill').textContent = '本次 ' + o0.total + ' / ' + o0.full + '（' + o0.grade + '）';
   readHash();
   go(cur, { keep: true });
   if (!location.hash) go('diag');

@@ -15,6 +15,13 @@ const read = (p) => fs.readFileSync(path.join(root, p), 'utf8');
 const shell = read('源/shell.html');
 const exam = JSON.parse(read('题库/2026-2027期中卷.json'));
 const drill = JSON.parse(read('源/data/drill.json'));
+const papersPath = '题库/试卷库.json';
+const papers = fs.existsSync(path.join(root, papersPath))
+  ? JSON.parse(read(papersPath)) : { version: 1, papers: [] };
+const banks = {};
+for (const f of fs.readdirSync(path.join(root, '题库')).filter((x) => x.endsWith('.json') && x !== '试卷库.json')) {
+  banks[f.replace(/\.json$/, '')] = JSON.parse(read('题库/' + f));
+}
 
 if (!shell.includes('/*__DATA__*/')) {
   console.error('✗ 源/shell.html 缺少 /*__DATA__*/ 占位符');
@@ -37,12 +44,20 @@ const problems = [];
   if (typeof it.a !== 'number' || it.a < 0 || it.a > 3) problems.push(`闪练 ${it.id} 答案下标非法`);
   if (it.ref && !(it.ref in (drill.refs || {}))) problems.push(`闪练 ${it.id} 引用了不存在的速记卡 ${it.ref}`);
 });
+(papers.papers || []).forEach((p) => {
+  if (!p.id || !Array.isArray(p.images) || !p.images.length) problems.push(`试卷 ${p.id || '?'} 缺少 id 或图片`);
+  if (p.bank && !banks[p.bank]) problems.push(`试卷 ${p.id} 引用了不存在的题库 ${p.bank}`);
+  (p.images || []).forEach((im) => {
+    const f = path.join(root, 'images/试卷', p.id, im.file);
+    if (!fs.existsSync(f)) problems.push(`试卷 ${p.id} 缺图 ${im.file}`);
+  });
+});
 if (problems.length) {
   console.error('✗ 数据体检未通过：\n  ' + problems.join('\n  '));
   process.exit(1);
 }
 
-const payload = JSON.stringify({ exam, drill }).replace(/<\/script/gi, '<\\/script');
+const payload = JSON.stringify({ exam, drill, papers: papers.papers || [], banks }).replace(/<\/script/gi, '<\\/script');
 const out = shell.replace('/*__DATA__*/', 'window.__DATA__=' + payload + ';');
 const dest = path.join(root, '化学思维脚手架.html');
 fs.writeFileSync(dest, out, 'utf8');
@@ -52,3 +67,4 @@ const blanks = exam.questions.reduce((n, q) => n + (q.blanks ? q.blanks.length :
 console.log(`✓ 化学思维脚手架.html  ${kb} KB`);
 console.log(`  题目 ${exam.questions.length} 道（选择 ${exam.questions.filter(q => q.type === 'choice').length} / 填空 ${exam.questions.filter(q => q.type === 'fill').length}，共 ${blanks} 空）`);
 console.log(`  闪练 ${drill.items.length} 题`);
+console.log(`  原卷 ${(papers.papers || []).length} 份（${(papers.papers || []).reduce((n, p) => n + p.images.length, 0)} 张图 / 题库 ${Object.keys(banks).length} 份）`);

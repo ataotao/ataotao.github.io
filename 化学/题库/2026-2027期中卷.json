@@ -8,7 +8,25 @@
     "structure": [
       { "part": "第一部分 选择题", "detail": "12 题 × 2 分 = 24 分" },
       { "part": "第二部分 非选择题", "detail": "填空 5 题（13–17）= 36 分" }
-    ]
+    ],
+    "score": {
+      "total": 21.5,
+      "full": 60,
+      "grade": "C2",
+      "objective": 12,
+      "subjective": 9.5,
+      "source": "批改系统成绩单（2026-11）",
+      "parts": [
+        { "label": "13题", "score": 0 },
+        { "label": "14题", "score": 3 },
+        { "label": "15(1)", "score": 0 },
+        { "label": "15(2)", "score": 1 },
+        { "label": "16(1)", "score": 0.5 },
+        { "label": "16(2)", "score": 2 },
+        { "label": "17(1)", "score": 1 },
+        { "label": "17(2)", "score": 2 }
+      ]
+    }
   },
   "questions": [
     {
