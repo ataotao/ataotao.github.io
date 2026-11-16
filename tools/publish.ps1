@@ -322,6 +322,8 @@ $Jobs = @(
             @{ Path = '道德与法治/images'; Filter = '*.webp' }
             '公式记背/公式记背.html'
             '化学/化学思维脚手架.html'
+            # 化学闪练卡：单文件（题库 + 解析已内联），无外链图片
+            '化学/化学闪练卡.html'
             '历史/核心考点训练.html'
             @{ Path = '历史/images/试卷';   Filter = '*.webp' }
             '数学/函数思维脚手架.html'
