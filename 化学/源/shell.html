@@ -126,6 +126,28 @@ td.ans{width:64px;font-weight:700;letter-spacing:1px}
 .fb.bad{background:var(--bad-soft);border:1px solid #f0c9c5}
 .fb b{color:var(--acc2)}
 
+/* 错题回炉：分子/离子速记卡 */
+.refcard{margin:-2px 0 14px;border:1px solid #cfe6ee;border-radius:12px;background:#f2fafc;overflow:hidden}
+.refcard>summary{cursor:pointer;padding:9px 14px;font-size:13.5px;font-weight:600;color:var(--acc2);list-style:none;display:flex;align-items:center;gap:8px}
+.refcard>summary::-webkit-details-marker{display:none}
+.refcard>summary::before{content:"▸";font-size:11px;transition:transform .15s}
+.refcard[open]>summary::before{transform:rotate(90deg)}
+.refcard .refbody{padding:0 14px 13px;border-top:1px dashed #cfe6ee}
+.refcard .reflead{font-size:13px;color:var(--mut);margin:10px 0 8px}
+.refcard table{font-size:13px;background:transparent}
+.refcard th,.refcard td{padding:6px 8px;border-bottom:1px solid #dceef4;vertical-align:top;background:transparent}
+.refcard th{background:#e6f4f8;font-size:12.5px;white-space:nowrap}
+.refcard tr:last-child td{border-bottom:0}
+.refcard td:first-child{white-space:nowrap;color:var(--acc2)}
+.refcard .refsub{margin:12px 0 5px;font-size:13px;color:var(--acc2);font-weight:600}
+.refcard .reflines{margin:0;padding-left:18px;font-size:13px}
+.refcard .reflines li{margin:3px 0}
+.refcard .ionline{font-size:13px;margin:3px 0;padding-left:2px}
+.refcard .ionline b{color:var(--acc2)}
+.refcard .reftips{margin:10px 0 0;padding:9px 12px;background:#fff;border-left:3px solid var(--warn);border-radius:0 8px 8px 0;font-size:12.5px}
+.refcard .reftips li{margin:4px 0}
+.refcard .reftips b{color:var(--acc2)}
+
 .empty{color:var(--mut);font-size:14px;padding:10px 0}
 kbd{background:#f1eee8;border:1px solid var(--line);border-radius:5px;padding:1px 6px;font-size:12.5px;font-family:inherit}
 hr.sep{border:0;border-top:1px dashed var(--line);margin:18px 0}
@@ -536,6 +558,42 @@ hr.sep{border:0;border-top:1px dashed var(--line);margin:18px 0}
     nextDrill();
   }
 
+  // 分子/离子判断等题的随题速记卡（内容来自 drill.json 的 refs）
+  function renderRef(key) {
+    var r = (DRILL.refs || {})[key];
+    if (!r) return '';
+    var h = '<details class="refcard"><summary>' + r.title + ' · 点开速记</summary><div class="refbody">';
+    if (r.lead) h += '<div class="reflead">' + r.lead + '</div>';
+    if (r.rows && r.rows.length) {
+      h += '<table><thead><tr>';
+      (r.cols || []).forEach(function (c) { h += '<th>' + c + '</th>'; });
+      h += '</tr></thead><tbody>';
+      r.rows.forEach(function (row) {
+        h += '<tr>';
+        row.forEach(function (cell) { h += '<td>' + cell + '</td>'; });
+        h += '</tr>';
+      });
+      h += '</tbody></table>';
+    }
+    if (r.ionTitle) h += '<div class="refsub">' + r.ionTitle + '</div>';
+    (r.ions || []).forEach(function (pair) {
+      h += '<div class="ionline"><b>' + pair[0] + '：</b>' + pair[1] + '</div>';
+    });
+    if (r.groupTitle) h += '<div class="refsub">' + r.groupTitle + '</div>';
+    if (r.groups && r.groups.length) {
+      h += '<ul class="reflines">';
+      r.groups.forEach(function (g) { h += '<li>' + g + '</li>'; });
+      h += '</ul>';
+    }
+    if (r.tipsTitle) h += '<div class="refsub">' + r.tipsTitle + '</div>';
+    if (r.tips && r.tips.length) {
+      h += '<ul class="reflines reftips">';
+      r.tips.forEach(function (t) { h += '<li>' + t + '</li>'; });
+      h += '</ul>';
+    }
+    return h + '</div></details>';
+  }
+
   var dIdx = 0;
   function nextDrill() {
     var body = document.getElementById('d-body');
@@ -555,7 +613,9 @@ hr.sep{border:0;border-top:1px dashed var(--line);margin:18px 0}
     dAnswered = false;
     var h = '<div class="qcard">' +
       '<div class="qn">第 ' + (dIdx + 1) + ' / ' + dq.length + ' 题　·　' + it.tag + '</div>' +
-      '<div class="stem">' + it.q + '</div><div class="opts">';
+      '<div class="stem">' + it.q + '</div>' +
+      (it.ref ? renderRef(it.ref) : '') +
+      '<div class="opts">';
     it.o.forEach(function (o, i) {
       h += '<div class="opt" data-i="' + i + '"><span class="l">' + 'ABCD'[i] + '</span><span>' + o + '</span></div>';
     });

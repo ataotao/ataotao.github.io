@@ -35,6 +35,7 @@ const problems = [];
 (drill.items || []).forEach((it) => {
   if (!Array.isArray(it.o) || it.o.length !== 4) problems.push(`闪练 ${it.id} 选项数不是 4`);
   if (typeof it.a !== 'number' || it.a < 0 || it.a > 3) problems.push(`闪练 ${it.id} 答案下标非法`);
+  if (it.ref && !(it.ref in (drill.refs || {}))) problems.push(`闪练 ${it.id} 引用了不存在的速记卡 ${it.ref}`);
 });
 if (problems.length) {
   console.error('✗ 数据体检未通过：\n  ' + problems.join('\n  '));
