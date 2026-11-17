@@ -27,6 +27,8 @@ desktop.ini
 _verify/
 .qa*/
 .qa-train/
+# 评审 subagent 生成的临时 diff（一次性产物，不进版本库）
+.review-diff.txt
 
 # ── 界面截图：由 工具/shots*.mjs 重建，二进制不进版本库 ──
 */预览截图/
