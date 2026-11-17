@@ -4,7 +4,7 @@
 // 用法：
 //   node 物理/题库工具/check-training.mjs           每类 200 题，跑 PT.selfTest
 //   node 物理/题库工具/check-training.mjs 500       每类 500 题
-//   node 物理/题库工具/check-training.mjs --ui      最小 DOM 桩驱动 window.__pt（6 项冒烟）
+//   node 物理/题库工具/check-training.mjs --ui      最小 DOM 桩驱动 window.__pt（17 项冒烟）
 //
 // 默认模式从 HTML 里抽出 <script id="core">（纯逻辑层，不碰 DOM），在 node vm 里跑
 // PT.selfTest：每个生成器各出 N 题，断言
@@ -65,8 +65,8 @@ function runCore() {
     process.exit(1);
   }
 
-  /* 模块注册表：顺序 = model/amount/calc/draw/read，类数 10/4/6/4/3（draw 新增手绘力臂 armdraw） */
-  const want = [['model', 10], ['amount', 4], ['calc', 6], ['draw', 4], ['read', 3]];
+  /* 模块注册表：顺序 = model/amount/calc/draw/read，类数 11/10/12/4/4（2026-11-17/18 三轮扩池后的现状） */
+  const want = [['model', 11], ['amount', 10], ['calc', 12], ['draw', 4], ['read', 4]];
   const got = PT.modules.map((m) => [m.id, (m.kinds || []).length]);
   const bad = want.filter((w, i) => !got[i] || got[i][0] !== w[0] || got[i][1] !== w[1]);
   if (got.length !== want.length || bad.length) {
@@ -208,6 +208,65 @@ function runRegression(PT) {
     const vals = q.fields.map((f) => f.ans);
     ok('专项第 ' + (idx + 1) + ' 题正确解判对', PT.judge(q, vals).ok);
   });
+  /* 13) 认量扩池（2026-11-17）：反用/陷阱题型的答案必须与题干自洽 */
+  for (let s = 1; s <= 30; s++) {
+    const q = gen('amount', 'heatrise', s * 7919);
+    const m = Number((q.prompt.match(/([\d.]+) kg/) || [])[1]);
+    const t0 = Number((q.prompt.match(/([\d.]+)℃ 的水/) || [])[1]);
+    const dt = q.fields[1].ans;
+    ok('「升高了/升高到」Q = cmΔt 自洽', Math.abs(q.fields[2].ans - 4200 * m * dt) < 1e-6);
+    const rise = q.prompt.match(/升高了 ([\d.]+)℃/);
+    if (rise) ok('「升高了」Δt 直接取给定值', Math.abs(dt - Number(rise[1])) < 1e-9);
+    else ok('「升高到」Δt = 末温 − 初温', Math.abs(dt - (Number(q.prompt.match(/加热到 ([\d.]+)℃/)[1]) - t0)) < 1e-9);
+    const fq = gen('amount', 'fuelq', s * 7919);
+    ok('反求热值 q = Q放/m', Math.abs(fq.fields[3].ans - fq.fields[1].ans / fq.fields[2].ans) < 1e-6);
+    const ph = gen('amount', 'pulleyh', s * 7919);
+    ok('反求高度 h = s/n', Math.abs(ph.fields[3].ans - ph.fields[1].ans / ph.fields[2].ans) < 1e-9);
+    const hm = gen('amount', 'heatm', s * 7919);
+    ok('反求质量 m = Q吸/(cΔt)', Math.abs(hm.fields[3].ans - hm.fields[1].ans / (4200 * hm.fields[2].ans)) < 1e-9);
+  }
+  /* 14) 算到底扩池（2026-11-18）：反用/电学题型答案自洽 */
+  for (let s = 1; s <= 30; s++) {
+    const hd = gen('calc', 'heatdt', s * 7919);
+    const cHeat = hd.fields[1].ans / (hd.fields[2].ans * hd.fields[3].ans);
+    ok('反求 Δt：Q = cmΔt 自洽', [4200, 2100, 880].some((c) => Math.abs(cHeat - c) < 1e-6));
+    const ef = gen('calc', 'effforce', s * 7919);
+    const eta = Number((ef.prompt.match(/η = (\d+)%/) || [])[1]) / 100;
+    const sRope = Number((ef.prompt.match(/绳端移动 ([\d.]+) m/) || [])[1]);
+    ok('η 反求 F：W总 = W有/η', Math.abs(ef.fields[2].ans - ef.fields[1].ans / eta) < 1e-6);
+    ok('η 反求 F：F = W总/s', Math.abs(ef.fields[3].ans - ef.fields[2].ans / sRope) < 1e-6);
+    const ls = gen('calc', 'leversolve', s * 7919);
+    const F1p = Number((ls.prompt.match(/动力 F₁ = ([\d.]+) N/) || [])[1]);
+    ok('反求 l₁：l₁ = F₂l₂/F₁', Math.abs(ls.fields[3].ans - ls.fields[1].ans * ls.fields[2].ans / F1p) < 1e-9);
+    const oh = gen('calc', 'ohm', s * 7919);
+    const fv = (re) => (oh.fields.find((f) => f.type === 'num' && re.test(f.label)) || {}).ans;
+    ok('欧姆定律三式自洽', Math.abs(fv(/U =/) - fv(/I =/) * fv(/R =/)) < 1e-9);
+  }
+  /* 15) 电学单元补全（2026-11-18）：电压表读数/接法 + 串并联规律 */
+  for (let s = 1; s <= 20; s++) {
+    const vm = gen('read', 'voltmeter', s * 7919);
+    const vRange = vm.fields[0].ans, vDiv = vm.fields[1].ans, vRead = vm.fields[2].ans;
+    ok('电压表分度值 = 量程/30', Math.abs(vDiv - vRange / 30) < 1e-9);
+    ok('电压表读数 = 小格数 × 分度值', Math.abs(vRead / vDiv - Math.round(vRead / vDiv)) < 1e-9);
+    ok('电压表表盘可画', PT.svgFor(vm).indexOf('<svg') === 0);
+    const si = gen('amount', 'seriesI', s * 7919);
+    ok('串联电流处处相等', si.fields[1].ans === si.fields[2].ans);
+    const pu = gen('amount', 'parallelU', s * 7919);
+    ok('并联电压相等', pu.fields[1].ans === pu.fields[2].ans);
+    const su = gen('calc', 'seriesU', s * 7919);
+    ok('串联分压 U₂ = U总 − U₁', Math.abs(su.fields[3].ans - (su.fields[1].ans - su.fields[2].ans)) < 1e-9);
+    const pi = gen('calc', 'parallelI', s * 7919);
+    ok('并联分流 I总 = I₁ + I₂', Math.abs(pi.fields[3].ans - (pi.fields[1].ans + pi.fields[2].ans)) < 1e-9);
+    const lv = gen('calc', 'leversolve', s * 7919);
+    ok('反求 l₁ 是两位小数以内的整值', Math.abs(lv.fields[3].ans * 100 - Math.round(lv.fields[3].ans * 100)) < 1e-9);
+    const oh2 = gen('calc', 'ohm', s * 7919);
+    ok('欧姆定律三量都是两位小数以内的整值', [oh2.fields[1].ans, oh2.fields[2].ans, oh2.fields[3].ans].every((x) => Math.abs(x * 100 - Math.round(x * 100)) < 1e-9));
+    const mt = gen('model', 'meter', s * 7919);
+    ok('电压表题图可画', !mt.fig || PT.svgFor(mt).indexOf('<svg') === 0);
+  }
+  const wire3Item = PT.drawItems.filter((x) => x.id === 'draw.wire.3')[0];
+  ok('电压表接法题：4 张图、答案甲', !!wire3Item && wire3Item.fields[0].figs.length === 4 && wire3Item.fields[0].ans === 0);
+  ok('电压表接法题图非空', !!wire3Item && wire3Item.fields[0].figs.every((fg) => PT.svgFor({ fig: fg }).indexOf('<svg') === 0));
   return { n, fails };
 }
 
@@ -494,6 +553,27 @@ function runUI() {
     const same = modelR2.kinds.filter((k) => modelR1.kinds.indexOf(k) >= 0);
     if (same.length) throw new Error('两轮 kind 有交集：' + same.join(','));
   });
+  step('题型轮换（amount 两轮 kind 集合不同）', () => {
+    const a1 = runRound(pt, dom, 'amount', 4);
+    const a2 = runRound(pt, dom, 'amount', 4);
+    if (new Set(a2.kinds).size !== a2.kinds.length) throw new Error('amount 单轮 kind 重复');
+    const same = a2.kinds.filter((k) => a1.kinds.indexOf(k) >= 0);
+    if (same.length) throw new Error('amount 两轮 kind 有交集：' + same.join(','));
+  });
+  step('题型轮换（calc 两轮 kind 集合不同）', () => {
+    const c1 = runRound(pt, dom, 'calc', 4);
+    const c2 = runRound(pt, dom, 'calc', 4);
+    if (new Set(c2.kinds).size !== c2.kinds.length) throw new Error('calc 单轮 kind 重复');
+    const same = c2.kinds.filter((k) => c1.kinds.indexOf(k) >= 0);
+    if (same.length) throw new Error('calc 两轮 kind 有交集：' + same.join(','));
+  });
+  step('题型轮换（read 两轮 kind 集合不同）', () => {
+    const r1 = runRound(pt, dom, 'read', 2);
+    const r2 = runRound(pt, dom, 'read', 2);
+    if (new Set(r2.kinds).size !== r2.kinds.length) throw new Error('read 单轮 kind 重复');
+    const same = r2.kinds.filter((k) => r1.kinds.indexOf(k) >= 0);
+    if (same.length) throw new Error('read 两轮 kind 有交集：' + same.join(','));
+  });
   step('lastRound 持久化', () => {
     const raw = dom.store['physTrain_v1'];
     if (!raw) throw new Error('localStorage 里没有 physTrain_v1');
@@ -590,11 +670,11 @@ function runUI() {
   });
 
   const okN = steps.filter(Boolean).length;
-  if (okN !== steps.length || steps.length !== 14) {
+  if (okN !== steps.length || steps.length !== 17) {
     console.error('✗ --ui ' + okN + '/' + steps.length + ' 项通过');
     process.exit(1);
   }
-  console.log('✓ --ui 14 项全部通过');
+  console.log('✓ --ui 17 项全部通过');
 }
 
 if (UI_MODE) runUI(); else runCore();

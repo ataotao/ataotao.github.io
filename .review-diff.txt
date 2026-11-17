@@ -1,0 +1,717 @@
+diff --git "a/\347\211\251\347\220\206/\347\211\251\347\220\206\350\256\255\347\273\203\350\204\232\346\211\213\346\236\266.html" "b/\347\211\251\347\220\206/\347\211\251\347\220\206\350\256\255\347\273\203\350\204\232\346\211\213\346\236\266.html"
+index 4305100..1dd28c7 100644
+--- "a/\347\211\251\347\220\206/\347\211\251\347\220\206\350\256\255\347\273\203\350\204\232\346\211\213\346\236\266.html"
++++ "b/\347\211\251\347\220\206/\347\211\251\347\220\206\350\256\255\347\273\203\350\204\232\346\211\213\346\236\266.html"
+@@ -636,6 +636,10 @@ var PT = (function () {
+       s.push(txt(x, y + 5, 'A', 14, '#1b2333', 'middle', 700));
+       s.push(txt(x, y - 21, label, 11, '#6b7280', 'middle', 600));
+     }
++    function voltmeter(x, y) {
++      s.push(circle(x, y, 14, '#fff', '#1b2333', 2.4));
++      s.push(txt(x, y + 5, 'V', 14, '#1b2333', 'middle', 700));
++    }
+     function battery(x, y) {
+       gapRect(x, y, 44, 28);
+       s.push(ln(x - 26, y, x - 14, y, '#1b2333', 2.4));
+@@ -708,6 +712,21 @@ var PT = (function () {
+         battery(110, 190); sw(215, 190); ammeter(240, 120, 'A');
+       } else if (kind === 'connect-ammeterShort') {
+         battery(110, 190); sw(215, 190); wire(50, 155, 290, 155); ammeter(170, 155, 'A');
++      } else if (kind === 'connect-voltmeterL1') {
++        /* 电压表并联在 L₁ 两端（正确接法） */
++        battery(110, 190); sw(215, 190);
++        wire(105, 70, 105, 95); wire(105, 95, 155, 95); wire(155, 95, 155, 70); voltmeter(130, 95);
++      } else if (kind === 'connect-voltmeterSeries') {
++        /* 电压表串进主电路（错误） */
++        battery(110, 190); sw(215, 190); voltmeter(205, 70);
++      } else if (kind === 'connect-voltmeterBattery') {
++        /* 电压表并在电源两端（测的是电源电压，不是 L₁） */
++        battery(110, 190); sw(215, 190);
++        wire(85, 190, 85, 215); wire(85, 215, 135, 215); wire(135, 215, 135, 190); voltmeter(110, 215);
++      } else if (kind === 'connect-voltmeterL2') {
++        /* 电压表并在 L₂ 两端（测错对象） */
++        battery(110, 190); sw(215, 190);
++        wire(155, 120, 155, 145); wire(155, 145, 205, 145); wire(205, 145, 205, 120); voltmeter(180, 145);
+       }
+     }
+     s.push(svgTail());
+@@ -790,6 +809,35 @@ var PT = (function () {
+     return s.join('');
+   }
+ 
++  /* 电压表表盘：0~3 V 与 0~15 V 两个量程，共 30 小格 */
++  function svgVoltmeter(f) {
++    var W = 320, H = 285, s = [svgHead(W, H, '电压表表盘')];
++    var C = { x: 160, y: 205 }, R = 118, a0 = 210, a1 = -30;
++    function pt(frac, rad) {
++      var a = (a0 + (a1 - a0) * frac) * Math.PI / 180;
++      return { x: C.x + rad * Math.cos(a), y: C.y - rad * Math.sin(a) };
++    }
++    var d = [];
++    for (var i = 0; i <= 60; i++) { var p = pt(i / 60, R); d.push((i ? 'L' : 'M') + r1(p.x) + ' ' + r1(p.y)); }
++    s.push('<path d="' + d.join(' ') + '" fill="none" stroke="#1b2333" stroke-width="2.6"/>');
++    var div = 30;
++    for (var k = 0; k <= div; k++) {
++      var fr = k / div, major = (k % 5 === 0);
++      var p1 = pt(fr, R), p2 = pt(fr, R - (major ? 15 : 8));
++      s.push(ln(p1.x, p1.y, p2.x, p2.y, '#1b2333', major ? 2 : 1.2));
++    }
++    for (var j = 0; j <= 6; j++) { var pp = pt(j / 6, R - 30); s.push(txt(pp.x, pp.y + 4, fmtNum(j * 0.5), 10, '#0f9b8e', 'middle')); }
++    for (var j2 = 0; j2 <= 6; j2++) { var pp2 = pt(j2 / 6, R - 52); s.push(txt(pp2.x, pp2.y + 4, fmtNum(j2 * 2.5), 10, '#6b7280', 'middle')); }
++    var frac = f.range ? Math.max(0, Math.min(1, f.reading / f.range)) : 0;
++    var np = pt(frac, R - 22);
++    s.push(ln(C.x, C.y, np.x, np.y, '#d93025', 3));
++    s.push(circle(np.x, np.y, 4.5, '#d93025'));
++    s.push(circle(C.x, C.y, 7, '#1b2333'));
++    s.push(txt(C.x, C.y + 36, 'V', 16, '#1b2333', 'middle', 700));
++    s.push(svgTail());
++    return s.join('');
++  }
++
+   function svgThermometer(f) {
+     var W = 280, H = 330, s = [svgHead(W, H, '温度计')];
+     var lo = (f.lo == null ? -10 : f.lo), hi = (f.hi == null ? 110 : f.hi);
+@@ -847,12 +895,13 @@ var PT = (function () {
+     else if (f.type === 'armanswer') body = svgArmAnswer(f);
+     else if (f.type === 'charge') body = svgCharge(f);
+     else if (f.type === 'ammeter') body = svgAmmeter(f);
++    else if (f.type === 'voltmeter') body = svgVoltmeter(f);
+     else if (f.type === 'thermometer') body = svgThermometer(f);
+     else if (f.type === 'spring') body = svgSpring(f);
+     return body;
+   }
+ 
+-  /* ================= 认模型（10 类，全部 choice） ================= */
++  /* ================= 认模型（11 类，全部 choice；含电压表使用） ================= */
+   function genModelTension(r) {
+     var v = ri(r, 0, 2);
+     if (v === 0) {
+@@ -1005,6 +1054,41 @@ var PT = (function () {
+     };
+   }
+ 
++
++  /* ---------- 电压表 / 电流表的使用（第11周：电压、电阻与电路连接） ---------- */
++  function genModelMeter(r) {
++    var v = ri(r, 0, 2);
++    if (v === 0) {
++      return {
++        id: 'model.meter', kind: 'meter', title: '电压表测的是哪段电压',
++        prompt: '如图电路，电压表 V 并联在 L₁ 两端。闭合开关后，电压表测的是（　）',
++        fields: [choiceField(r, 'L₁ 两端的电压', ['L₂ 两端的电压', '电源两端的电压', '通过 L₁ 的电流'])],
++        tip: '电压表并联在谁两端，就测谁的电压。',
++        explain: ['电压表的两个接线柱分别接在 L₁ 的两端，所以测的是 L₁ 两端的电压。', '要测 L₂ 的电压就并联在 L₂ 两端；测电源电压就并联在电源两端。'],
++        fig: { type: 'circuit', kind: 'connect-voltmeterL1' }, figBefore: true,
++        kp: ['电压表', '电压']
++      };
++    }
++    if (v === 1) {
++      return {
++        id: 'model.meter', kind: 'meter', title: '电压表的使用规则',
++        prompt: '关于电压表的使用，下列说法正确的是（　）',
++        fields: [choiceField(r, '电压表要并联在被测用电器两端，电流从「+」接线柱流入', ['电压表要串联在被测电路中', '电压表不用看量程，接上就行', '电压表的「−」接线柱要接靠近电源正极的一端'])],
++        tip: '电压表并联、电流表串联；都要「+」进「−」出，先看量程。',
++        explain: ['电压表要并联在被测用电器两端。', '接线时电流从「+」接线柱流入、从「−」接线柱流出；量程要按被测电压选，指针偏转太小读数不准。'],
++        kp: ['电压表', '使用规则']
++      };
++    }
++    return {
++      id: 'model.meter', kind: 'meter', title: '电压表量程选择',
++      prompt: '用电压表测一节干电池的电压（约 1.5 V），应选用的量程是（　）',
++      fields: [choiceField(r, '0~3 V 量程', ['0~15 V 量程（指针偏转太小，读数不准）', '两个量程读数一样准，随便选', '必须先接 0~15 V 试触再换'])],
++      tip: '量程要选得比被测值大、又尽量接近：1.5 V 用 0~3 V。',
++      explain: ['被测电压约 1.5 V，选 0~3 V 量程指针能偏转到一半左右，读数更准。', '选 0~15 V 时指针只偏一小格，误差大。'],
++      kp: ['电压表', '量程']
++    };
++  }
++
+   /* ---------- 电学基础（第11周周练考点：电压 / 电阻 / 导体绝缘体 / 串并联） ---------- */
+   function genModelVoltage(r) {
+     var v = ri(r, 0, 2);
+@@ -1201,7 +1285,7 @@ var PT = (function () {
+     };
+   }
+ 
+-  /* ================= 认量（4 类：选公式 → 指认量 → 结果） ================= */
++  /* ================= 认量（10 类：选公式 → 指认量 → 结果；含串联电流/并联电压） ================= */
+   function genAmountHeat(r) {
+     var mWater = pick(r, [2, 3, 4, 5]);
+     var mPot = pick(r, [1, 2, 3]);
+@@ -1299,7 +1383,132 @@ var PT = (function () {
+     };
+   }
+ 
+-  /* ================= 算到底（6 类：选公式 → 指认量 → 结果） ================= */
++  /* ---------- 认量·反用与陷阱（2026-11-17 扩池：4 → 8 类，两轮 kind 才能不重） ---------- */
++  function genAmountHeatRise(r) {
++    var m = pick(r, [1, 2, 3, 4]);
++    var t0 = pick(r, [10, 20, 25]);
++    var dt = pick(r, [20, 30, 40, 50]);
++    var t1 = t0 + dt;
++    var toMode = pick(r, [true, false]);
++    var Q = 4200 * m * dt;
++    return {
++      id: 'amount.heatrise', kind: 'heatrise', title: '「升高了」还是「升高到」',
++      prompt: toMode
++        ? '把 ' + m + ' kg、' + t0 + '℃ 的水加热到 ' + t1 + '℃。已知 c水 = 4.2×10³ J/(kg·℃)。求水吸收的热量。'
++        : '把 ' + m + ' kg、' + t0 + '℃ 的水加热，水温升高了 ' + dt + '℃。已知 c水 = 4.2×10³ J/(kg·℃)。求水吸收的热量。',
++      fields: [
++        choiceField(r, 'Q = cmΔt', ['Q = cmt', 'Q = mq', 'W = Fs'], '第 1 步 选公式：'),
++        { type: 'num', label: '第 2 步 指认量：Δt =', ans: dt, unit: '℃' },
++        { type: 'num', label: '第 3 步 代入：Q吸 =', ans: Q, unit: 'J' }
++      ],
++      tip: toMode ? '「升高到」给的是末温，Δt = 末温 − 初温。' : '「升高了」就是 Δt，不用再减初温。',
++      explain: toMode
++        ? ['Δt = 末温 − 初温 = ' + t1 + ' − ' + t0 + ' = ' + dt + '℃。', 'Q吸 = cmΔt = 4.2×10³ × ' + m + ' × ' + dt + ' = ' + fmtNum(Q) + ' J。']
++        : ['题目直接给了「升高了 ' + dt + '℃」，Δt 就是 ' + dt + '℃（不要再减初温 ' + t0 + '℃）。', 'Q吸 = cmΔt = 4.2×10³ × ' + m + ' × ' + dt + ' = ' + fmtNum(Q) + ' J。'],
++      kp: ['热量', '比热容', '认量']
++    };
++  }
++
++  function genAmountFuelQ(r) {
++    var m = pick(r, [0.2, 0.3, 0.4, 0.5]);
++    var fuel = pick(r, [{ n: '木炭', q: 3.4e7 }, { n: '焦炭', q: 3.0e7 }, { n: '酒精', q: 3.0e7 }]);
++    var Q = m * fuel.q;
++    return {
++      id: 'amount.fuelq', kind: 'fuelq', title: '反求热值：q = Q放/m',
++      prompt: '完全燃烧 ' + m + ' kg ' + fuel.n + '，放出的热量是 ' + fmtNum(Q) + ' J。求' + fuel.n + '的热值 q。',
++      fields: [
++        choiceField(r, 'q = Q放/m', ['q = mQ放', 'q = m/Q放', 'q = Q吸/(cm)'], '第 1 步 选公式：'),
++        { type: 'num', label: '第 2 步 指认量：Q放 =', ans: Q, unit: 'J' },
++        { type: 'num', label: 'm =', ans: m, unit: 'kg' },
++        { type: 'num', label: '第 3 步 代入：q =', ans: fuel.q, unit: 'J/kg' }
++      ],
++      tip: '热值 q = Q放 ÷ m；别把放出的热量当成热值。',
++      explain: [
++        'Q放 = mq，所以 q = Q放/m。',
++        'q = ' + fmtNum(Q) + ' ÷ ' + m + ' = ' + fmtNum(fuel.q) + ' J/kg。'
++      ],
++      kp: ['热值', '认量']
++    };
++  }
++
++  function genAmountPulleyH(r) {
++    var n = pick(r, [2, 3]);
++    var h = pick(r, [2, 3, 4, 5]);
++    var s = n * h;
++    return {
++      id: 'amount.pulleyh', kind: 'pulleyh', title: '反求高度：h = s/n',
++      prompt: '用滑轮组提升物体，承担物重的绳子有 n = ' + n + ' 段，绳端移动了 ' + s + ' m。求物体上升的高度 h。',
++      fields: [
++        choiceField(r, 'h = s/n', ['h = ns', 'h = n/s', 'h = s'], '第 1 步 选公式：'),
++        { type: 'num', label: '第 2 步 指认量：s =', ans: s, unit: 'm' },
++        { type: 'num', label: 'n =', ans: n },
++        { type: 'num', label: '第 3 步 代入：h =', ans: h, unit: 'm' }
++      ],
++      tip: '已知绳端距离求高度：h = s/n，别把 s 直接当 h。',
++      explain: [
++        's = nh，所以 h = s/n。',
++        'h = ' + s + ' ÷ ' + n + ' = ' + h + ' m。'
++      ],
++      kp: ['滑轮组', '认量']
++    };
++  }
++
++  function genAmountHeatM(r) {
++    var m = pick(r, [1, 2, 3, 4]);
++    var dt = pick(r, [20, 30, 40, 50]);
++    var Q = 4200 * m * dt;
++    return {
++      id: 'amount.heatm', kind: 'heatm', title: '反求质量：m = Q吸/(cΔt)',
++      prompt: '某同学给水加热，水吸收了 ' + fmtNum(Q) + ' J 的热量，水温升高了 ' + dt + '℃。已知 c水 = 4.2×10³ J/(kg·℃)。求水的质量。',
++      fields: [
++        choiceField(r, 'm = Q吸/(cΔt)', ['m = Q吸/(c+Δt)', 'm = cΔt/Q吸', 'm = Q吸·cΔt'], '第 1 步 选公式：'),
++        { type: 'num', label: '第 2 步 指认量：Q吸 =', ans: Q, unit: 'J' },
++        { type: 'num', label: 'Δt =', ans: dt, unit: '℃' },
++        { type: 'num', label: '第 3 步 代入：m =', ans: m, unit: 'kg' }
++      ],
++      tip: '反求质量：m = Q吸 ÷ (cΔt)。',
++      explain: [
++        'Q吸 = cmΔt，所以 m = Q吸/(cΔt)。',
++        'm = ' + fmtNum(Q) + ' ÷ (4.2×10³ × ' + dt + ') = ' + m + ' kg。'
++      ],
++      kp: ['热量', '比热容', '认量']
++    };
++  }
++
++  /* ---------- 电学认量（第11周：串联电流处处相等 / 并联电压相等） ---------- */
++  function genAmountSeriesI(r) {
++    var I = pick(r, [0.1, 0.2, 0.3, 0.5]);
++    return {
++      id: 'amount.seriesI', kind: 'seriesI', title: '串联：电流处处相等',
++      prompt: '两个灯泡 L₁、L₂ 串联在电路中，通过 L₁ 的电流是 ' + I + ' A。通过 L₂ 的电流是多少？',
++      fields: [
++        choiceField(r, '串联电路各处电流相等', ['串联电路电流逐段减小', '串联电路电流跟电阻成反比', '串联电路电流等于各支路电流之和'], '第 1 步 选规律：'),
++        { type: 'num', label: '第 2 步 指认量：I₁ =', ans: I, unit: 'A' },
++        { type: 'num', label: '第 3 步 结论：I₂ =', ans: I, unit: 'A' }
++      ],
++      tip: '串联电路只有一条路径，电流处处相等：I₁ = I₂ = I。',
++      explain: ['串联电路电流只有一条路径，各处电流相等。', '所以 I₂ = I₁ = ' + I + ' A。'],
++      kp: ['串联', '电流', '认量']
++    };
++  }
++
++  function genAmountParallelU(r) {
++    var U = pick(r, [1.5, 3, 4.5, 6]);
++    return {
++      id: 'amount.parallelU', kind: 'parallelU', title: '并联：各支路电压相等',
++      prompt: '两盏灯并联接在电压为 ' + U + ' V 的电源上。L₁ 两端的电压是 ' + U + ' V，L₂ 两端的电压是多少？',
++      fields: [
++        choiceField(r, '并联各支路两端电压相等，都等于电源电压', ['并联各支路电压之和等于电源电压', '并联的支路越多，每条支路电压越小', '并联各支路电压跟电阻成正比'], '第 1 步 选规律：'),
++        { type: 'num', label: '第 2 步 指认量：U电源 =', ans: U, unit: 'V' },
++        { type: 'num', label: '第 3 步 结论：U₂ =', ans: U, unit: 'V' }
++      ],
++      tip: '并联各支路两端电压相等，都等于电源电压。',
++      explain: ['并联电路中各支路两端电压相等，等于电源电压。', '所以 U₂ = U电源 = ' + U + ' V。'],
++      kp: ['并联', '电压', '认量']
++    };
++  }
++
++  /* ================= 算到底（11 类：选公式 → 指认量 → 结果；含反用、欧姆定律、串并联） ================= */
+   function genCalcHeat(r) {
+     var sub = pick(r, [{ n: '水', c: 4200 }, { n: '煤油', c: 2100 }, { n: '铝', c: 880 }]);
+     var m = pick(r, [0.5, 1, 2, 3, 4, 5]);
+@@ -1494,7 +1703,186 @@ var PT = (function () {
+     };
+   }
+ 
+-  /* ================= 作图判断（固定 6 组图，四选一，轮换） ================= */
++  /* ---------- 算到底·反用与电学（2026-11-18 扩池：6 → 10 类，两轮 kind 才能不重） ---------- */
++  function genCalcHeatDt(r) {
++    var sub = pick(r, [{ n: '水', c: 4200 }, { n: '煤油', c: 2100 }, { n: '铝', c: 880 }]);
++    var m = pick(r, [0.5, 1, 2, 3]);
++    var dt = pick(r, [20, 30, 40, 50]);
++    var Q = sub.c * m * dt;
++    return {
++      id: 'calc.heatdt', kind: 'heatdt', title: 'Q = cmΔt 反求 Δt',
++      prompt: '把质量为 ' + m + ' kg 的' + sub.n + '加热，' + sub.n + '吸收了 ' + fmtNum(Q) + ' J 的热量。已知 c' + sub.n + ' = ' + fmtNum(sub.c) + ' J/(kg·℃)。求' + sub.n + '升高的温度。',
++      fields: [
++        choiceField(r, 'Δt = Q吸/(cm)', ['Δt = Q吸/(c+m)', 'Δt = Q吸·cm', 'Δt = cm/Q吸'], '第 1 步 选公式：'),
++        { type: 'num', label: '第 2 步 指认量：Q吸 =', ans: Q, unit: 'J' },
++        { type: 'num', label: 'm =', ans: m, unit: 'kg' },
++        { type: 'num', label: '第 3 步 代入：Δt =', ans: dt, unit: '℃' }
++      ],
++      tip: '反求温度变化：Δt = Q吸 ÷ (cm)。',
++      explain: ['Q吸 = cmΔt → Δt = Q吸/(cm)。', 'Δt = ' + fmtNum(Q) + ' ÷ (' + fmtNum(sub.c) + ' × ' + m + ') = ' + dt + '℃。'],
++      kp: ['热量', '比热容', '计算']
++    };
++  }
++
++  /* 效率反求拉力：先枚举能整除的整数组合，避免出现 266.67 N 这种答案 */
++  var CALC_EFF_FORCE_CASES = (function () {
++    var out = [], Gs = [200, 300, 400, 500], hs = [2, 3, 4, 5], ns = [2, 3], etas = [50, 60, 75, 80];
++    Gs.forEach(function (G) {
++      hs.forEach(function (h) {
++        ns.forEach(function (n) {
++          etas.forEach(function (eta) {
++            var s = n * h, Wy = G * h, Wt = Wy * 100 / eta, F = Wt / s;
++            if (Math.abs(F - Math.round(F)) > 1e-9) return;
++            if (F < 100 || F > 500) return;
++            out.push({ G: G, h: h, n: n, s: s, eta: eta, F: F, Wy: Wy, Wt: Wt });
++          });
++        });
++      });
++    });
++    return out;
++  })();
++
++  function genCalcEffForce(r) {
++    var c = pick(r, CALC_EFF_FORCE_CASES);
++    return {
++      id: 'calc.effforce', kind: 'effforce', title: 'η 反求拉力 F',
++      prompt: '用滑轮组把重 ' + c.G + ' N 的物体匀速提升 ' + c.h + ' m，机械效率 η = ' + c.eta + '%，绳端移动 ' + c.s + ' m。求拉力 F。',
++      fields: [
++        choiceField(r, 'η = W有/W总', ['η = W总/W有', 'F = W有/s', 'η = W有/(W有+W总)'], '第 1 步 选公式：'),
++        { type: 'num', label: '第 2 步 指认量：W有 = Gh =', ans: c.Wy, unit: 'J' },
++        { type: 'num', label: 'W总 = W有/η =', ans: c.Wt, unit: 'J' },
++        { type: 'num', label: '第 3 步 代入：F =', ans: c.F, unit: 'N' }
++      ],
++      tip: '由 η = W有/W总 先求总功 W总 = W有/η，再除以绳端距离得 F。',
++      explain: [
++        'W有 = Gh = ' + c.G + ' × ' + c.h + ' = ' + c.Wy + ' J。',
++        'W总 = W有/η = ' + c.Wy + ' ÷ ' + (c.eta / 100) + ' = ' + c.Wt + ' J。',
++        'F = W总/s = ' + c.Wt + ' ÷ ' + c.s + ' = ' + c.F + ' N。'
++      ],
++      kp: ['机械效率', '计算']
++    };
++  }
++
++  function genCalcLeverSolve(r) {
++    var F2, l2, F1, l1, guard = 0;
++    do {
++      F2 = pick(r, [20, 30, 40, 50, 60]);
++      l2 = pick(r, [0.2, 0.25, 0.3, 0.4, 0.5]);
++      F1 = pick(r, [10, 20, 25, 40, 50]);
++      l1 = F2 * l2 / F1;
++      guard++;
++    } while ((Math.abs(l1 * 100 - Math.round(l1 * 100)) > 1e-9 || l1 < 0.1 || l1 > 1.2) && guard < 40);
++    return {
++      id: 'calc.leversolve', kind: 'leversolve', title: '杠杆 反求动力臂 l₁',
++      prompt: '杠杆平衡时，阻力 F₂ = ' + F2 + ' N，阻力臂 l₂ = ' + l2 + ' m，动力 F₁ = ' + F1 + ' N。求动力臂 l₁。',
++      fields: [
++        choiceField(r, 'l₁ = F₂l₂/F₁', ['l₁ = F₁l₂/F₂', 'l₁ = F₂/(F₁l₂)', 'l₁ = F₁F₂/l₂'], '第 1 步 选公式：'),
++        { type: 'num', label: '第 2 步 指认量：F₂ =', ans: F2, unit: 'N' },
++        { type: 'num', label: 'l₂ =', ans: l2, unit: 'm' },
++        { type: 'num', label: '第 3 步 代入：l₁ =', ans: l1, unit: 'm', tol: 0.05 }
++      ],
++      tip: 'F₁l₁ = F₂l₂ → l₁ = F₂l₂/F₁。',
++      explain: ['l₁ = F₂l₂/F₁。', 'l₁ = ' + F2 + ' × ' + l2 + ' ÷ ' + F1 + ' = ' + fmtNum(l1) + ' m。'],
++      kp: ['杠杆', '平衡条件', '计算']
++    };
++  }
++
++  function genCalcOhm(r) {
++    var v = ri(r, 0, 2);
++    var U = pick(r, [1.5, 3, 4.5, 6, 9, 12]);
++    var R = pick(r, [5, 10, 15, 20, 30]);
++    var I = U / R;
++    if (v === 0) {
++      return {
++        id: 'calc.ohm', kind: 'ohm', title: '欧姆定律 I = U/R',
++        prompt: '某导体两端电压 U = ' + U + ' V，导体的电阻 R = ' + R + ' Ω。求通过导体的电流 I。',
++        fields: [
++          choiceField(r, 'I = U/R', ['I = UR', 'I = R/U', 'I = U + R'], '第 1 步 选公式：'),
++          { type: 'num', label: '第 2 步 指认量：U =', ans: U, unit: 'V' },
++          { type: 'num', label: 'R =', ans: R, unit: 'Ω' },
++          { type: 'num', label: '第 3 步 代入：I =', ans: I, unit: 'A' }
++        ],
++        tip: '欧姆定律 I = U/R：电流跟电压成正比、跟电阻成反比。',
++        explain: ['I = U/R = ' + U + ' ÷ ' + R + ' = ' + fmtNum(I) + ' A。'],
++        kp: ['欧姆定律', '电学', '计算']
++      };
++    }
++    if (v === 1) {
++      var I2 = pick(r, [0.2, 0.3, 0.5, 1, 1.5]);
++      var U2 = pick(r, [1.5, 3, 4.5, 6, 9, 12]);
++      var R2 = U2 / I2;
++      return {
++        id: 'calc.ohm', kind: 'ohm', title: '欧姆定律 反求 R',
++        prompt: '某导体两端电压 U = ' + U2 + ' V，通过它的电流 I = ' + I2 + ' A。求导体的电阻 R。',
++        fields: [
++          choiceField(r, 'R = U/I', ['R = UI', 'R = I/U', 'R = U + I'], '第 1 步 选公式：'),
++          { type: 'num', label: '第 2 步 指认量：U =', ans: U2, unit: 'V' },
++          { type: 'num', label: 'I =', ans: I2, unit: 'A' },
++          { type: 'num', label: '第 3 步 代入：R =', ans: R2, unit: 'Ω' }
++        ],
++        tip: 'R = U/I 是测量式：用电压和电流的比值算电阻。',
++        explain: ['R = U/I = ' + U2 + ' ÷ ' + I2 + ' = ' + fmtNum(R2) + ' Ω。'],
++        kp: ['欧姆定律', '电学', '计算']
++      };
++    }
++    var I3 = pick(r, [0.2, 0.3, 0.5, 1, 1.5]);
++    var R3 = pick(r, [5, 10, 15, 20, 30]);
++    var U3 = I3 * R3;
++    return {
++      id: 'calc.ohm', kind: 'ohm', title: '欧姆定律 反求 U',
++      prompt: '通过某导体的电流 I = ' + I3 + ' A，导体的电阻 R = ' + R3 + ' Ω。求导体两端的电压 U。',
++      fields: [
++        choiceField(r, 'U = IR', ['U = I/R', 'U = R/I', 'U = I + R'], '第 1 步 选公式：'),
++        { type: 'num', label: '第 2 步 指认量：I =', ans: I3, unit: 'A' },
++        { type: 'num', label: 'R =', ans: R3, unit: 'Ω' },
++        { type: 'num', label: '第 3 步 代入：U =', ans: U3, unit: 'V' }
++      ],
++      tip: 'U = IR：已知电流和电阻求电压。',
++      explain: ['U = IR = ' + I3 + ' × ' + R3 + ' = ' + fmtNum(U3) + ' V。'],
++      kp: ['欧姆定律', '电学', '计算']
++    };
++  }
++
++  /* ---------- 串并联电路的 U、I 关系（第11周） ---------- */
++  function genCalcSeriesPar(r) {
++    var v = ri(r, 0, 1);
++    if (v === 0) {
++      var U1 = pick(r, [1, 1.5, 2, 2.5]);
++      var U2 = pick(r, [1, 1.5, 2, 3]);
++      var U = Math.round((U1 + U2) * 100) / 100;
++      return {
++        id: 'calc.seriespar', kind: 'seriespar', title: '串联：U总 = U₁ + U₂',
++        prompt: '两个灯泡串联接在电压为 ' + fmtNum(U) + ' V 的电源上，L₁ 两端的电压是 ' + fmtNum(U1) + ' V。求 L₂ 两端的电压。',
++        fields: [
++          choiceField(r, 'U总 = U₁ + U₂', ['U总 = U₁ = U₂', 'U总 = U₁ − U₂', 'U总 = U₁ × U₂'], '第 1 步 选公式：'),
++          { type: 'num', label: '第 2 步 指认量：U总 =', ans: U, unit: 'V' },
++          { type: 'num', label: 'U₁ =', ans: U1, unit: 'V' },
++          { type: 'num', label: '第 3 步 代入：U₂ =', ans: U2, unit: 'V' }
++        ],
++        tip: '串联电路两端总电压等于各部分电压之和：U = U₁ + U₂。',
++        explain: ['串联分压：U = U₁ + U₂。', 'U₂ = U − U₁ = ' + fmtNum(U) + ' − ' + fmtNum(U1) + ' = ' + fmtNum(U2) + ' V。'],
++        kp: ['串联', '电压', '计算']
++      };
++    }
++    var I1 = pick(r, [0.1, 0.2, 0.3, 0.4]);
++    var I2 = pick(r, [0.1, 0.2, 0.3, 0.5]);
++    var I = Math.round((I1 + I2) * 100) / 100;
++    return {
++      id: 'calc.seriespar', kind: 'seriespar', title: '并联：I总 = I₁ + I₂',
++      prompt: '两盏灯并联在电路中，通过 L₁ 的电流是 ' + fmtNum(I1) + ' A，通过 L₂ 的电流是 ' + fmtNum(I2) + ' A。求干路电流。',
++      fields: [
++        choiceField(r, 'I总 = I₁ + I₂', ['I总 = I₁ = I₂', 'I总 = I₁ − I₂', 'I总 = I₁ × I₂'], '第 1 步 选公式：'),
++        { type: 'num', label: '第 2 步 指认量：I₁ =', ans: I1, unit: 'A' },
++        { type: 'num', label: 'I₂ =', ans: I2, unit: 'A' },
++        { type: 'num', label: '第 3 步 代入：I总 =', ans: I, unit: 'A' }
++      ],
++      tip: '并联干路电流等于各支路电流之和：I = I₁ + I₂。',
++      explain: ['并联分流：I = I₁ + I₂。', 'I总 = ' + fmtNum(I1) + ' + ' + fmtNum(I2) + ' = ' + fmtNum(I) + ' A。'],
++      kp: ['并联', '电流', '计算']
++    };
++  }
++
++  /* ================= 作图判断（固定 7 组图，四选一，轮换；含电压表接法） ================= */
+   var DRAW = [
+     {
+       id: 'draw.lever.1', kind: 'lever', title: '力臂作垂线（斜向力）',
+@@ -1594,6 +1982,22 @@ var PT = (function () {
+       explain: ['甲：电流表在干路，测总电流；乙：电流表直接接在电源两端，会短路烧表；丙：电流表串在 L₁ 支路，测 L₁ 的电流 ✓；丁：接在 L₂ 支路，测的是 L₂ 的电流。'],
+       kp: ['电路', '电流表']
+     },
++    {
++      id: 'draw.wire.3', kind: 'wire', title: '电压表接法',
++      prompt: '要求用电压表测 L₁ 两端的电压。下列接法中正确的是（　）',
++      fields: [{
++        type: 'choice', label: '', options: ['甲', '乙', '丙', '丁'], ans: 0,
++        figs: [
++          { type: 'circuit', kind: 'connect-voltmeterL1' },
++          { type: 'circuit', kind: 'connect-voltmeterSeries' },
++          { type: 'circuit', kind: 'connect-voltmeterBattery' },
++          { type: 'circuit', kind: 'connect-voltmeterL2' }
++        ]
++      }],
++      tip: '电压表要并联在被测用电器两端，不能串进电路。',
++      explain: ['甲：电压表并联在 L₁ 两端，测的就是 L₁ 的电压 ✓。', '乙：电压表串进了主电路，L₁ 不亮、示数也不对；丙：并在电源两端，测的是电源电压；丁：并在 L₂ 两端，测错了对象。'],
++      kp: ['电路', '电压表']
++    },
+     mkArmItem(
+       'draw.arm.1', '画清力臂（斜向力）', 25, 105,
+       '杠杆可绕支点 O 转动，在 B 点斜向下施力 F（图中虚线是 F 的作用线）。<b>请从支点 O 出发，向 F 的作用线作垂线，垂足处成直角——这条垂线段就是力臂 l。</b>用鼠标或手指从 O 拖到垂足；画好再提交。',
+@@ -1608,7 +2012,7 @@ var PT = (function () {
+     )
+   ];
+ 
+-  /* ================= 读数（3 类：量程 / 分度值 / 读数） ================= */
++  /* ================= 读数（4 类：量程 / 分度值 / 读数；含电压表） ================= */
+   function genReadAmmeter(r) {
+     var range = pick(r, [0.6, 3]);
+     var div = range === 0.6 ? 0.02 : 0.1;
+@@ -1630,6 +2034,28 @@ var PT = (function () {
+     };
+   }
+ 
++  /* 电压表读数：0~3 V / 0~15 V，共 30 小格，分度值 0.1 / 0.5 V */
++  function genReadVoltmeter(r) {
++    var range = pick(r, [3, 15]);
++    var div = range === 3 ? 0.1 : 0.5;
++    var k = ri(r, 3, 28);
++    var reading = Math.round(k * div * 100) / 100;
++    var fmt = range === 3 ? '0~3 V' : '0~15 V';
++    return {
++      id: 'read.voltmeter', kind: 'voltmeter', title: '电压表读数',
++      prompt: '如图是电压表的表盘（表盘上有 0~3 V 和 0~15 V 两个量程的刻度）。现在使用的是 ' + fmt + ' 量程，指针位置如图。',
++      fields: [
++        { type: 'num', label: '量程 =', ans: range, unit: 'V' },
++        { type: 'num', label: '分度值 =', ans: div, unit: 'V' },
++        { type: 'num', label: '读数 =', ans: reading, unit: 'V' }
++      ],
++      tip: '分度值 = 量程 ÷ 大格数；读数 = 小格数 × 分度值。',
++      explain: ['使用的量程是 ' + fmt + '。', '0~' + range + ' V 一共 30 个小格，分度值 = ' + range + ' ÷ 30 = ' + fmtNum(div) + ' V。', '指针偏转 ' + k + ' 个小格，读数 = ' + k + ' × ' + fmtNum(div) + ' = ' + fmtNum(reading) + ' V。'],
++      fig: { type: 'voltmeter', range: range, reading: reading }, figBefore: true,
++      kp: ['电压表', '读数']
++    };
++  }
++
+   function genReadThermometer(r) {
+     var lo = -10, hi = 110, div = 1;
+     var reading = ri(r, -8, 108);
+@@ -1671,7 +2097,7 @@ var PT = (function () {
+   var MODULES = [
+     {
+       id: 'model', name: '认模型', icon: '🧭',
+-      desc: '看图认模型：电压与电池组 / 电阻与材料 / 导体绝缘体 / 串并联 / 测力计张力 / LED / 电荷 / 四冲程 / 表位置 / 滑轮组。',
++      desc: '看图认模型：电压与电池组 / 电阻与材料 / 导体绝缘体 / 串并联 / 表位置 / 电压表测哪段 / 测力计张力 / LED / 电荷 / 四冲程 / 滑轮组。',
+       kinds: [
+         { id: 'voltage', name: '电压与电池组', gen: genModelVoltage },
+         { id: 'resistance', name: '电阻与材料', gen: genModelResistance },
+@@ -1682,29 +2108,41 @@ var PT = (function () {
+         { id: 'charge', name: '接触后带电', gen: genModelCharge },
+         { id: 'stroke', name: '四冲程识别', gen: genModelStroke },
+         { id: 'circuit', name: '串并联与表位置', gen: genModelCircuit },
++        { id: 'meter', name: '电压表测哪段/使用', gen: genModelMeter },
+         { id: 'pulley', name: '滑轮组 n 与力臂', gen: genModelPulley }
+       ]
+     },
+     {
+       id: 'amount', name: '认量', icon: '🎯',
+-      desc: '先认量再动笔：热量题的 m/Δt、热值题的「总−剩」、滑轮组的 s/h/n、效率题的 W有/W总。',
++      desc: '先认量再动笔：热量题 m/Δt 与「升高了/升高到」、热值题「总−剩」与反求 q、滑轮组 s/h/n 与反求 h、效率题 W有/W总、反求质量 m、串联电流处处相等、并联电压相等。',
+       kinds: [
+         { id: 'heatmass', name: '热量题 m/Δt', gen: genAmountHeat },
++        { id: 'heatrise', name: '升高了 / 升高到', gen: genAmountHeatRise },
+         { id: 'fuelmass', name: '热值题总−剩', gen: genAmountFuel },
++        { id: 'fuelq', name: '反求热值 q', gen: genAmountFuelQ },
+         { id: 'pulleyamount', name: '滑轮组 s/h/n', gen: genAmountPulley },
+-        { id: 'effamount', name: '效率题 W有/W总', gen: genAmountEff }
++        { id: 'pulleyh', name: '反求高度 h', gen: genAmountPulleyH },
++        { id: 'effamount', name: '效率题 W有/W总', gen: genAmountEff },
++        { id: 'heatm', name: '反求质量 m', gen: genAmountHeatM },
++        { id: 'seriesI', name: '串联电流处处相等', gen: genAmountSeriesI },
++        { id: 'parallelU', name: '并联各支路电压相等', gen: genAmountParallelU }
+       ]
+     },
+     {
+       id: 'calc', name: '算到底', icon: '🧮',
+-      desc: '选公式 → 指认量 → 代入算到底，每步单独判分，专治「写了公式就停」。',
++      desc: '选公式 → 指认量 → 代入算到底，每步单独判分，专治「写了公式就停」；热学、功与功率、滑轮组、杠杆、欧姆定律、串并联 U/I 关系。',
+       kinds: [
+         { id: 'qheat', name: 'Q = cmΔt', gen: genCalcHeat },
++        { id: 'heatdt', name: '反求 Δt', gen: genCalcHeatDt },
+         { id: 'qfuel', name: 'Q = mq', gen: genCalcFuel },
+         { id: 'qeff', name: 'η = Q吸/Q放', gen: genCalcEff },
+         { id: 'workpower', name: 'W = Fs、P = W/t', gen: genCalcWorkPower },
+         { id: 'pulleycalc', name: '滑轮组 s=nh / W有 / η', gen: genCalcPulley },
+-        { id: 'lever', name: '杠杆 F₁l₁ = F₂l₂', gen: genCalcLever }
++        { id: 'effforce', name: 'η 反求 F', gen: genCalcEffForce },
++        { id: 'lever', name: '杠杆 F₁l₁ = F₂l₂', gen: genCalcLever },
++        { id: 'leversolve', name: '杠杆 反求 l₁', gen: genCalcLeverSolve },
++        { id: 'ohm', name: '欧姆定律 I=U/R', gen: genCalcOhm },
++        { id: 'seriespar', name: '串并联 U/I 关系', gen: genCalcSeriesPar }
+       ]
+     },
+     {
+@@ -1720,9 +2158,10 @@ var PT = (function () {
+     },
+     {
+       id: 'read', name: '读数', icon: '📏',
+-      desc: '量程 / 分度值 / 读数三连：电流表、温度计、弹簧测力计表盘。',
++      desc: '量程 / 分度值 / 读数三连：电流表、电压表、温度计、弹簧测力计表盘。',
+       kinds: [
+         { id: 'ammeter', name: '电流表读数', gen: genReadAmmeter },
++        { id: 'voltmeter', name: '电压表读数', gen: genReadVoltmeter },
+         { id: 'thermometer', name: '温度计读数', gen: genReadThermometer },
+         { id: 'spring', name: '弹簧测力计读数', gen: genReadSpring }
+       ]
+diff --git "a/\347\211\251\347\220\206/\351\242\230\345\272\223\345\267\245\345\205\267/check-training.mjs" "b/\347\211\251\347\220\206/\351\242\230\345\272\223\345\267\245\345\205\267/check-training.mjs"
+index 518c1e6..1319944 100644
+--- "a/\347\211\251\347\220\206/\351\242\230\345\272\223\345\267\245\345\205\267/check-training.mjs"
++++ "b/\347\211\251\347\220\206/\351\242\230\345\272\223\345\267\245\345\205\267/check-training.mjs"
+@@ -4,7 +4,7 @@
+ // 用法：
+ //   node 物理/题库工具/check-training.mjs           每类 200 题，跑 PT.selfTest
+ //   node 物理/题库工具/check-training.mjs 500       每类 500 题
+-//   node 物理/题库工具/check-training.mjs --ui      最小 DOM 桩驱动 window.__pt（6 项冒烟）
++//   node 物理/题库工具/check-training.mjs --ui      最小 DOM 桩驱动 window.__pt（15 项冒烟）
+ //
+ // 默认模式从 HTML 里抽出 <script id="core">（纯逻辑层，不碰 DOM），在 node vm 里跑
+ // PT.selfTest：每个生成器各出 N 题，断言
+@@ -65,8 +65,8 @@ function runCore() {
+     process.exit(1);
+   }
+ 
+-  /* 模块注册表：顺序 = model/amount/calc/draw/read，类数 10/4/6/4/3（draw 新增手绘力臂 armdraw） */
+-  const want = [['model', 10], ['amount', 4], ['calc', 6], ['draw', 4], ['read', 3]];
++  /* 模块注册表：顺序 = model/amount/calc/draw/read，类数 10/8/6/4/3（amount 2026-11-17 扩池 4→8） */
++  const want = [['model', 11], ['amount', 10], ['calc', 11], ['draw', 4], ['read', 4]];
+   const got = PT.modules.map((m) => [m.id, (m.kinds || []).length]);
+   const bad = want.filter((w, i) => !got[i] || got[i][0] !== w[0] || got[i][1] !== w[1]);
+   if (got.length !== want.length || bad.length) {
+@@ -208,6 +208,61 @@ function runRegression(PT) {
+     const vals = q.fields.map((f) => f.ans);
+     ok('专项第 ' + (idx + 1) + ' 题正确解判对', PT.judge(q, vals).ok);
+   });
++  /* 13) 认量扩池（2026-11-17）：反用/陷阱题型的答案必须与题干自洽 */
++  for (let s = 1; s <= 30; s++) {
++    const q = gen('amount', 'heatrise', s * 7919);
++    const m = Number((q.prompt.match(/([\d.]+) kg/) || [])[1]);
++    const t0 = Number((q.prompt.match(/([\d.]+)℃ 的水/) || [])[1]);
++    const dt = q.fields[1].ans;
++    ok('「升高了/升高到」Q = cmΔt 自洽', Math.abs(q.fields[2].ans - 4200 * m * dt) < 1e-6);
++    const rise = q.prompt.match(/升高了 ([\d.]+)℃/);
++    if (rise) ok('「升高了」Δt 直接取给定值', Math.abs(dt - Number(rise[1])) < 1e-9);
++    else ok('「升高到」Δt = 末温 − 初温', Math.abs(dt - (Number(q.prompt.match(/加热到 ([\d.]+)℃/)[1]) - t0)) < 1e-9);
++    const fq = gen('amount', 'fuelq', s * 7919);
++    ok('反求热值 q = Q放/m', Math.abs(fq.fields[3].ans - fq.fields[1].ans / fq.fields[2].ans) < 1e-6);
++    const ph = gen('amount', 'pulleyh', s * 7919);
++    ok('反求高度 h = s/n', Math.abs(ph.fields[3].ans - ph.fields[1].ans / ph.fields[2].ans) < 1e-9);
++    const hm = gen('amount', 'heatm', s * 7919);
++    ok('反求质量 m = Q吸/(cΔt)', Math.abs(hm.fields[3].ans - hm.fields[1].ans / (4200 * hm.fields[2].ans)) < 1e-9);
++  }
++  /* 14) 算到底扩池（2026-11-18）：反用/电学题型答案自洽 */
++  for (let s = 1; s <= 30; s++) {
++    const hd = gen('calc', 'heatdt', s * 7919);
++    const cHeat = hd.fields[1].ans / (hd.fields[2].ans * hd.fields[3].ans);
++    ok('反求 Δt：Q = cmΔt 自洽', [4200, 2100, 880].some((c) => Math.abs(cHeat - c) < 1e-6));
++    const ef = gen('calc', 'effforce', s * 7919);
++    const eta = Number((ef.prompt.match(/η = (\d+)%/) || [])[1]) / 100;
++    const sRope = Number((ef.prompt.match(/绳端移动 ([\d.]+) m/) || [])[1]);
++    ok('η 反求 F：W总 = W有/η', Math.abs(ef.fields[2].ans - ef.fields[1].ans / eta) < 1e-6);
++    ok('η 反求 F：F = W总/s', Math.abs(ef.fields[3].ans - ef.fields[2].ans / sRope) < 1e-6);
++    const ls = gen('calc', 'leversolve', s * 7919);
++    const F1p = Number((ls.prompt.match(/动力 F₁ = ([\d.]+) N/) || [])[1]);
++    ok('反求 l₁：l₁ = F₂l₂/F₁', Math.abs(ls.fields[3].ans - ls.fields[1].ans * ls.fields[2].ans / F1p) < 1e-9);
++    const oh = gen('calc', 'ohm', s * 7919);
++    const fv = (re) => (oh.fields.find((f) => f.type === 'num' && re.test(f.label)) || {}).ans;
++    ok('欧姆定律三式自洽', Math.abs(fv(/U =/) - fv(/I =/) * fv(/R =/)) < 1e-9);
++  }
++  /* 15) 电学单元补全（2026-11-18）：电压表读数/接法 + 串并联规律 */
++  for (let s = 1; s <= 20; s++) {
++    const vm = gen('read', 'voltmeter', s * 7919);
++    const vRange = vm.fields[0].ans, vDiv = vm.fields[1].ans, vRead = vm.fields[2].ans;
++    ok('电压表分度值 = 量程/30', Math.abs(vDiv - vRange / 30) < 1e-9);
++    ok('电压表读数 = 小格数 × 分度值', Math.abs(vRead / vDiv - Math.round(vRead / vDiv)) < 1e-9);
++    ok('电压表表盘可画', PT.svgFor(vm).indexOf('<svg') === 0);
++    const si = gen('amount', 'seriesI', s * 7919);
++    ok('串联电流处处相等', si.fields[1].ans === si.fields[2].ans);
++    const pu = gen('amount', 'parallelU', s * 7919);
++    ok('并联电压相等', pu.fields[1].ans === pu.fields[2].ans);
++    const sp = gen('calc', 'seriespar', s * 7919);
++    ok('串并联 U/I 关系自洽', /串联/.test(sp.prompt)
++      ? Math.abs(sp.fields[3].ans - (sp.fields[1].ans - sp.fields[2].ans)) < 1e-9
++      : Math.abs(sp.fields[3].ans - (sp.fields[1].ans + sp.fields[2].ans)) < 1e-9);
++    const mt = gen('model', 'meter', s * 7919);
++    ok('电压表题图可画', !mt.fig || PT.svgFor(mt).indexOf('<svg') === 0);
++  }
++  const wire3Item = PT.drawItems.filter((x) => x.id === 'draw.wire.3')[0];
++  ok('电压表接法题：4 张图、答案甲', !!wire3Item && wire3Item.fields[0].figs.length === 4 && wire3Item.fields[0].ans === 0);
++  ok('电压表接法题图非空', !!wire3Item && wire3Item.fields[0].figs.every((fg) => PT.svgFor({ fig: fg }).indexOf('<svg') === 0));
+   return { n, fails };
+ }
+ 
+@@ -494,6 +549,27 @@ function runUI() {
+     const same = modelR2.kinds.filter((k) => modelR1.kinds.indexOf(k) >= 0);
+     if (same.length) throw new Error('两轮 kind 有交集：' + same.join(','));
+   });
++  step('题型轮换（amount 两轮 kind 集合不同）', () => {
++    const a1 = runRound(pt, dom, 'amount', 4);
++    const a2 = runRound(pt, dom, 'amount', 4);
++    if (new Set(a2.kinds).size !== a2.kinds.length) throw new Error('amount 单轮 kind 重复');
++    const same = a2.kinds.filter((k) => a1.kinds.indexOf(k) >= 0);
++    if (same.length) throw new Error('amount 两轮 kind 有交集：' + same.join(','));
++  });
++  step('题型轮换（calc 两轮 kind 集合不同）', () => {
++    const c1 = runRound(pt, dom, 'calc', 4);
++    const c2 = runRound(pt, dom, 'calc', 4);
++    if (new Set(c2.kinds).size !== c2.kinds.length) throw new Error('calc 单轮 kind 重复');
++    const same = c2.kinds.filter((k) => c1.kinds.indexOf(k) >= 0);
++    if (same.length) throw new Error('calc 两轮 kind 有交集：' + same.join(','));
++  });
++  step('题型轮换（read 两轮 kind 集合不同）', () => {
++    const r1 = runRound(pt, dom, 'read', 2);
++    const r2 = runRound(pt, dom, 'read', 2);
++    if (new Set(r2.kinds).size !== r2.kinds.length) throw new Error('read 单轮 kind 重复');
++    const same = r2.kinds.filter((k) => r1.kinds.indexOf(k) >= 0);
++    if (same.length) throw new Error('read 两轮 kind 有交集：' + same.join(','));
++  });
+   step('lastRound 持久化', () => {
+     const raw = dom.store['physTrain_v1'];
+     if (!raw) throw new Error('localStorage 里没有 physTrain_v1');
+@@ -590,11 +666,11 @@ function runUI() {
+   });
+ 
+   const okN = steps.filter(Boolean).length;
+-  if (okN !== steps.length || steps.length !== 14) {
++  if (okN !== steps.length || steps.length !== 17) {
+     console.error('✗ --ui ' + okN + '/' + steps.length + ' 项通过');
+     process.exit(1);
+   }
+-  console.log('✓ --ui 14 项全部通过');
++  console.log('✓ --ui 17 项全部通过');
+ }
+ 
+ if (UI_MODE) runUI(); else runCore();
