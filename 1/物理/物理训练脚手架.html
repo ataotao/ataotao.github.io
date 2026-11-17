@@ -266,6 +266,10 @@ var PT = (function () {
     var res = q.fields.map(function (f, i) {
       var v = vals[i];
       if (f.type === 'choice') return { ok: v === f.ans };
+      if (f.type === 'drawline') {
+        var g = armGeom(f.rodDeg, f.fDeg);
+        return judgeDrawArm(v, g, f.tol);
+      }
       var x = (typeof v === 'number') ? v : parseNum(v);
       if (!isFinite(x)) return { ok: false };
       var ans = f.ans;
@@ -278,6 +282,7 @@ var PT = (function () {
   }
   function ansText(f) {
     if (f.type === 'choice') return f.options[f.ans];
+    if (f.type === 'drawline') return '从支点 O 向 F 的作用线作垂线，垂足处标直角（见正确画法图）';
     return fmtNum(f.ans) + (f.unit ? ' ' + f.unit : '');
   }
   function makeChoice(r, correct, distractors) {
@@ -536,6 +541,85 @@ var PT = (function () {
     return s.join('');
   }
 
+  /* ---- 手绘力臂：几何计算 / 判定 / 待作图底图（老师反馈：从支点向作用线作垂线、标直角、把力臂画清楚） ---- */
+  /* 与 svgLever 完全同一套几何，保证「题目给的作用线」和「判分用的垂足」是同一条线 */
+  function armGeom(rodDeg, fDeg) {
+    var rd = (rodDeg == null ? 20 : rodDeg) * Math.PI / 180;
+    var fd = (fDeg == null ? 115 : fDeg) * Math.PI / 180;
+    var O = { x: 62, y: 210 }, L = 232;
+    var B = { x: O.x + L * Math.cos(rd), y: O.y - L * Math.sin(rd) };
+    var dir = { x: Math.cos(fd), y: Math.sin(fd) };
+    var t = (O.x - B.x) * dir.x + (O.y - B.y) * dir.y;
+    var P = { x: B.x + dir.x * t, y: B.y + dir.y * t };   /* 垂足 */
+    return { O: O, B: B, dir: dir, P: P, W: 340, H: 280 };
+  }
+  /* 距离点 (p) 到过 B、方向 dir（单位向量）的作用线 */
+  function distToLine(p, B, dir) {
+    var vx = p.x - B.x, vy = p.y - B.y;
+    return Math.abs(vx * dir.y - vy * dir.x);
+  }
+  /* 手绘判定：起点离 O 近 + 终点落在作用线上 + 连线垂直于作用线（直角）。
+     g 为armGeom，v={x1,y1,x2,y2}（SVG 坐标，起点/终点可互换） */
+  function judgeDrawArm(v, g, tol) {
+    tol = tol || {};
+    var tolO = tol.o || 15, tolLine = tol.line || 13, tolDot = tol.dot || 0.07;
+    if (!v || !isFinite(v.x1) || !isFinite(v.y1) || !isFinite(v.x2) || !isFinite(v.y2)) return { ok: false };
+    var S = { x: v.x1, y: v.y1 }, E = { x: v.x2, y: v.y2 };
+    var dS = Math.hypot(S.x - g.O.x, S.y - g.O.y), dE = Math.hypot(E.x - g.O.x, E.y - g.O.y);
+    var start = dS <= dE ? S : E, end = dS <= dE ? E : S;    /* 允许从任一端起笔 */
+    if (Math.hypot(start.x - g.O.x, start.y - g.O.y) > tolO) return { ok: false };
+    if (distToLine(end, g.B, g.dir) > tolLine) return { ok: false };
+    var sx = end.x - start.x, sy = end.y - start.y, sl = Math.hypot(sx, sy);
+    if (sl < 8) return { ok: false };
+    var dot = Math.abs((sx * g.dir.x + sy * g.dir.y) / sl);  /* 0 = 垂直 */
+    if (dot > tolDot) return { ok: false };
+    return { ok: true };
+  }
+  /* 待作图底图：画杠杆 + 支点 + 力 F + 作用线延长虚线，但不画力臂（留给学生画） */
+  function svgArmBase(f) {
+    var g = armGeom(f.rodDeg, f.fDeg), W = g.W, H = g.H, s = [svgHead(W, H, '画力臂·从支点向作用线作垂线')];
+    var O = g.O, B = g.B, dir = g.dir;
+    var A = { x: O.x + (B.x - O.x) * 0.55, y: O.y + (B.y - O.y) * 0.55 };
+    s.push(ln(O.x, O.y, B.x, B.y, '#1b2333', 6));
+    s.push(circle(O.x, O.y, 7, '#fff', '#1b2333', 2.6));
+    s.push(txt(O.x - 14, O.y + 24, 'O', 13, '#1b2333', 'middle', 700));
+    s.push(txt(B.x + 12, B.y - 10, 'B', 12, '#1b2333', 'middle', 700));
+    s.push(txt(A.x - 14, A.y - 10, 'A', 12, '#1b2333', 'middle', 700));
+    s.push(arrow(A.x, A.y, A.x, A.y + 46, '#0f9b8e', 2.6));
+    s.push('<rect x="' + r1(A.x - 20) + '" y="' + r1(A.y + 46) + '" width="40" height="26" rx="4" fill="#e6f6f4" stroke="#0f9b8e" stroke-width="2"/>');
+    s.push(txt(A.x, A.y + 64, 'G', 12, '#0f9b8e', 'middle', 700));
+    var L2 = 320;
+    s.push(ln(B.x - dir.x * L2, B.y - dir.y * L2, B.x + dir.x * L2, B.y + dir.y * L2, '#93a0b5', 1.8, '7 6'));
+    var Fe = { x: B.x + dir.x * 56, y: B.y + dir.y * 56 };
+    s.push(arrow(B.x, B.y, Fe.x, Fe.y, '#d93025', 2.8));
+    s.push(txt(Fe.x + 10, Fe.y + 5, 'F', 13, '#d93025', 'middle', 700));
+    s.push(txt(B.x - dir.x * 70, B.y - dir.y * 70 + 16, 'F 的作用线', 11, '#7a879d', 'middle', 500));
+    s.push(svgTail());
+    return s.join('');
+  }
+  /* 正确画法示范图：绿线 O→垂足 + 直角符号 + l 标注（复用已验证的 perp 画法） */
+  function svgArmAnswer(f) {
+    return svgLever({ type: 'lever', mode: 'draw', ltype: 'perp', rodDeg: f.rodDeg, fDeg: f.fDeg });
+  }
+  /* 生成一道手绘力臂固定题（放进 DRAW，按 kind=armdraw 过滤） */
+  function mkArmItem(id, title, rodDeg, fDeg, prompt, tip, explain) {
+    var g = armGeom(rodDeg, fDeg);
+    return {
+      id: id, kind: 'armdraw', title: title,
+      prompt: prompt,
+      fields: [{
+        type: 'drawline', label: '', rodDeg: rodDeg, fDeg: fDeg,
+        ans: { x1: g.O.x, y1: g.O.y, x2: g.P.x, y2: g.P.y }
+      }],
+      tip: tip,
+      explain: explain,
+      fig: { type: 'lever', mode: 'model', rodDeg: rodDeg, fDeg: fDeg }, figBefore: false,
+      drawFig: { type: 'armbase', rodDeg: rodDeg, fDeg: fDeg },
+      answerFig: { type: 'armanswer', rodDeg: rodDeg, fDeg: fDeg },
+      kp: ['杠杆', '力臂', '作垂线']
+    };
+  }
+
   function svgCircuit(f) {
     var W = 340, H = 240, s = [svgHead(W, H, '电路图')];
     var kind = f.kind || 'parallel';
@@ -759,6 +843,8 @@ var PT = (function () {
     else if (f.type === 'stroke') body = svgStroke(f);
     else if (f.type === 'pulley') body = svgPulley(f);
     else if (f.type === 'lever') body = svgLever(f);
+    else if (f.type === 'armbase') body = svgArmBase(f);
+    else if (f.type === 'armanswer') body = svgArmAnswer(f);
     else if (f.type === 'charge') body = svgCharge(f);
     else if (f.type === 'ammeter') body = svgAmmeter(f);
     else if (f.type === 'thermometer') body = svgThermometer(f);
@@ -1507,7 +1593,19 @@ var PT = (function () {
       tip: '电流表要与被测用电器串联，不能直接接到电源两端。',
       explain: ['甲：电流表在干路，测总电流；乙：电流表直接接在电源两端，会短路烧表；丙：电流表串在 L₁ 支路，测 L₁ 的电流 ✓；丁：接在 L₂ 支路，测的是 L₂ 的电流。'],
       kp: ['电路', '电流表']
-    }
+    },
+    mkArmItem(
+      'draw.arm.1', '画清力臂（斜向力）', 25, 105,
+      '杠杆可绕支点 O 转动，在 B 点斜向下施力 F（图中虚线是 F 的作用线）。<b>请从支点 O 出发，向 F 的作用线作垂线，垂足处成直角——这条垂线段就是力臂 l。</b>用鼠标或手指从 O 拖到垂足；画好再提交。',
+      '力臂 = 支点到力的作用线的垂线段。先沿 F 把作用线延长，再从 O 作垂线落到延长线上，垂足处标直角。',
+      ['① 找到 F 的作用线（斜向的那条虚线），必要时沿 F 方向延长。', '② 从支点 O 出发，作一条与作用线垂直的线，落到作用线上。', '③ 垂足处成直角，O 到垂足这段就是力臂 l——不是 O 到作用点 B 的连线。']
+    ),
+    mkArmItem(
+      'draw.arm.2', '画清力臂（竖直力）', 30, 90,
+      '杠杆可绕支点 O 转动，在 B 点施加竖直向下的力 F（图中虚线是 F 的竖直作用线）。<b>请从支点 O 出发向作用线作垂线并标出直角，把力臂 l 这段距离画清楚。</b>用鼠标或手指从 O 拖到垂足；画好再提交。',
+      '竖直力的力臂是 O 到竖直作用线的水平距离；力臂不一定在杠杆上。',
+      ['① F 竖直向下，作用线是过 B 的竖直线。', '② 从 O 作水平垂线，垂直落到这条竖直作用线上，垂足处成直角。', '③ O 到垂足的水平距离就是力臂 l——不要把整段杠杆 OA 当成力臂。']
+    )
   ];
 
   /* ================= 读数（3 类：量程 / 分度值 / 读数） ================= */
@@ -1611,9 +1709,10 @@ var PT = (function () {
     },
     {
       id: 'draw', name: '作图判断', icon: '✏️',
-      desc: '四选一选正确画法：力臂作垂线 / 滑轮组绕绳 n=2、n=3 / 并联电路连线。',
+      desc: '四选一选正确画法，再动手画：画清力臂 / 滑轮组绕绳 n=2、n=3 / 并联电路连线。',
       kinds: [
-        { id: 'lever', name: '力臂作垂线' },
+        { id: 'lever', name: '力臂作垂线（四选一）' },
+        { id: 'armdraw', name: '画清力臂（手绘垂线）' },
         { id: 'rope', name: '滑轮组绕绳' },
         { id: 'wire', name: '并联电路连线' }
       ],
@@ -1659,6 +1758,28 @@ var PT = (function () {
     return q;
   }
 
+  /* 画清力臂专项队列（老师反馈 3 道已覆盖练习 + 2 道新手绘）：
+     先认概念 → 两道四选一判断 → 两道手绘。独立于模块注册表，不参与计数。 */
+  function armFocusQueue() {
+    var pick = null;
+    for (var s = 1; s <= 30 && !pick; s++) {
+      var q = gen('model', 'pulley', s * 7919);
+      if (q.title === '力臂是哪个') pick = q;
+    }
+    var byId = {};
+    DRAW.forEach(function (it) { byId[it.id] = it; });
+    var ids = ['draw.lever.1', 'draw.lever.2', 'draw.arm.1', 'draw.arm.2'];
+    var list = [];
+    if (pick) list.push(pick);
+    ids.forEach(function (id) {
+      if (!byId[id]) return;
+      var c = JSON.parse(JSON.stringify(byId[id]));
+      c.mod = 'draw';
+      list.push(c);
+    });
+    return list;
+  }
+
   /* ================= 自检：生成器 / 判分 / 图 / 边界 ================= */
   function checkQuestion(q, tag, fails) {
     if (!q || !q.prompt || /undefined|NaN/.test(q.prompt)) fails.push(tag + ' 题干异常');
@@ -1677,6 +1798,12 @@ var PT = (function () {
           else if (/NaN|undefined/.test(sv)) fails.push(tag + ' 选项图 ' + (j + 1) + ' 含 NaN');
         });
       }
+      if (f.type === 'drawline') {
+        ['drawFig', 'answerFig'].forEach(function (key) {
+          var sv = svgFor({ fig: q[key] });
+          if (sv.indexOf('<svg') !== 0 || /NaN|undefined/.test(sv)) fails.push(tag + ' ' + key + ' 作图异常');
+        });
+      }
     });
     if (q.fig) {
       var svg = svgFor(q);
@@ -1689,6 +1816,10 @@ var PT = (function () {
     /* 错误解必须判错 */
     var wrong = q.fields.map(function (f) {
       if (f.type === 'choice') return (f.ans + 1) % f.options.length;
+      if (f.type === 'drawline') {
+        var g = armGeom(f.rodDeg, f.fDeg);
+        return { x1: g.O.x, y1: g.O.y, x2: g.B.x, y2: g.B.y };   /* 连到作用点而非垂足：典型错误 */
+      }
       if (f.tol != null) return f.ans + Math.abs(f.tol) * 2 + 1;
       var rel = Math.max(Math.abs(f.ans) * 1e-3, 1e-9);
       return f.ans + Math.max(1, rel * 2);
@@ -1772,7 +1903,16 @@ var PT = (function () {
     modules: MODULES, moduleById: moduleById,
     gen: gen, judge: judge, ansText: ansText, svgFor: svgFor,
     parseNum: parseNum, fmtNum: fmtNum, near: near, relTol: relTol,
-    selfTest: selfTest, drawItems: DRAW
+    selfTest: selfTest, drawItems: DRAW,
+    armFocusQueue: armFocusQueue,
+    armProbe: {
+      geom: armGeom,
+      rot: function (seg, O, rad) {
+        var c = Math.cos(rad), s = Math.sin(rad);
+        var dx = seg.x2 - seg.x1, dy = seg.y2 - seg.y1;
+        return { x1: seg.x1, y1: seg.y1, x2: O.x + dx * c - dy * s, y2: O.y + dx * s + dy * c };
+      }
+    }
   };
 })();
 </script>
@@ -1842,7 +1982,7 @@ var PT = (function () {
   /* ---------- 状态 ---------- */
   var S = {
     view: 'today', sess: null, q: null, res: null, answered: false,
-    choice: {}, hint: false, t0: 0, mode: 'new', draft: null, lastVals: null,
+    choice: {}, draw: {}, hint: false, t0: 0, mode: 'new', draft: null, lastVals: null,
     scratch: false, fix: null, example: false
   };
 
@@ -1914,6 +2054,21 @@ var PT = (function () {
       ));
     });
     app.appendChild(tasks);
+
+    /* 老师反馈专项入口：画清力臂（认概念 → 判断 → 手绘），今天可单独练这一项 */
+    var armCard = h('div', { class: 'card', style: 'margin-top:12px;border-left:4px solid var(--brand)' });
+    armCard.appendChild(h('div', { class: 'row' },
+      h('h2', { style: 'margin:0;font-size:17px' }, '✏️ 画清力臂 · 专项练'),
+      h('span', { class: 'pill' }, '老师反馈')
+    ));
+    armCard.appendChild(h('div', { class: 'small muted', style: 'margin-top:4px' },
+      '按老师要求走一遍：先认「力臂是哪个」→ 两道四选一判断画法 → 两道自己动手画垂线、标直角、把力臂这段距离画清楚。共 5 题。'));
+    armCard.appendChild(h('div', { class: 'row', style: 'margin-top:10px' },
+      h('button', { class: 'btn btn-primary', onclick: startArmFocus }, '开始练（5 题）'),
+      h('button', { class: 'btn', onclick: function () { startExample('draw', 'armdraw'); } }, '先看例题'),
+      h('button', { class: 'btn btn-ghost', onclick: function () { go('draw'); } }, '更多作图题 →')
+    ));
+    app.appendChild(armCard);
 
     app.appendChild(h('div', { class: 'grid', style: 'margin-top:12px' },
       statCard('今日题数', tr.length),
@@ -2064,10 +2219,20 @@ var PT = (function () {
     S.view = 'practice';
     nextQuestion();
   }
+  /* 画清力臂专项：认概念 → 判断 → 手绘，固定 5 题顺序（复用 queue 分支，不参与去重） */
+  function startArmFocus() {
+    S.mode = 'new'; S.example = false; S.back = null;
+    var items = PT.armFocusQueue();
+    S.sess = {
+      mod: 'draw', kind: 'armfocus', total: items.length, done: 0, right: 0, t0: Date.now(),
+      queue: items
+    };
+    S.view = 'practice';
+    nextQuestion();
+  }
   function startWrong() {
     S.example = false;
-    S.back = null;
-    var now = Date.now();
+    S.back = null;    var now = Date.now();
     var due = Object.keys(DB.wrong).map(function (k) { return DB.wrong[k]; }).filter(function (w) { return w.due <= now; });
     if (!due.length) {
       var all = Object.keys(DB.wrong).length;
@@ -2098,7 +2263,7 @@ var PT = (function () {
       S.q = pickQuestion(s.mod, kindId, seen);
       recordQuestion(s.round, S.q, kindId);
     }
-    S.res = null; S.answered = false; S.choice = {}; S.hint = false;
+    S.res = null; S.answered = false; S.choice = {}; S.draw = {}; S.hint = false;
     S.draft = null; S.lastVals = null; S.t0 = Date.now(); S.fix = null;
     render();
   }
@@ -2125,6 +2290,12 @@ var PT = (function () {
     if (q.fig) { var f0 = figBlock(q.fig, ''); if (f0) card.appendChild(f0); }
     /* 作图判断：例题页也要把四张选项图铺出来，正确那张标 ✓ */
     q.fields.forEach(function (f) {
+      if (f.type === 'drawline') {
+        card.appendChild(h('div', { class: 'small muted', style: 'margin-top:12px;font-weight:600' }, '从 O 向作用线作垂线，垂足处标直角——绿线就是力臂 l'));
+        var ansFig = q.answerFig || { type: 'armanswer', rodDeg: f.rodDeg, fDeg: f.fDeg };
+        card.appendChild(h('div', { class: 'figbox', html: PT.svgFor({ fig: ansFig }) }));
+        return;
+      }
       if (!f.figs) return;
       if (f.label) card.appendChild(h('div', { class: 'small muted', style: 'margin-top:12px;font-weight:600' }, f.label));
       var box = h('div', { class: 'optgrid' });
@@ -2150,7 +2321,7 @@ var PT = (function () {
         if (S.back) {
           /* 从练习页点进来的：回到刚才那题，别把今日题单丢掉 */
           var b = S.back; S.back = null;
-          S.q = b.q; S.sess = b.sess; S.draft = b.draft; S.choice = b.choice || {}; S.hint = !!b.hint;
+          S.q = b.q; S.sess = b.sess; S.draft = b.draft; S.choice = b.choice || {}; S.draw = b.draw || {}; S.hint = !!b.hint;
           S.res = null; S.answered = false; S.fix = null; S.example = false;
           S.view = 'practice'; render();
           return;
@@ -2223,9 +2394,109 @@ var PT = (function () {
       cv.addEventListener(ev, function () { drawing = false; });
     });
   }
+
+  /* 手绘力臂：在题图上用鼠标/手指从 O 拖到作用线，画一条垂线段。
+     SVG viewBox=340×280；把线存进 S.draw[i]={x1,y1,x2,y2}（viewBox 坐标）。 */
+  function drawArmPad(q, i) {
+    var wrap = h('div', { class: 'drawpad' });
+    wrap.appendChild(h('div', { class: 'small muted', style: 'margin-bottom:4px' },
+      '从支点 O 按住拖到 F 的作用线上（虚线），松手画出垂线。画错可重画。'));
+    var figBox = h('div', { class: 'figbox', style: 'position:relative' });
+    var baseFig = q.drawFig || { type: 'armbase', rodDeg: f.rodDeg, fDeg: f.fDeg };  /* 兼容早期错题无图字段 */
+    figBox.innerHTML = PT.svgFor({ fig: baseFig });
+    wrap.appendChild(figBox);
+    var status = h('div', { class: 'small muted', style: 'margin-top:4px' }, '还没画线');
+    wrap.appendChild(h('div', { class: 'row', style: 'margin-top:6px' },
+      h('button', {
+        class: 'btn btn-sm', onclick: function () { delete S.draw[i]; render(); }
+      }, '重画')
+    ));
+    wrap.appendChild(status);
+    setTimeout(function () { setupDrawArm(figBox, q, i, status); }, 0);
+    return wrap;
+  }
+
+  function setupDrawArm(figBox, q, i, status) {
+    var f = q.fields[i];
+    var g = PT.armProbe.geom(f.rodDeg, f.fDeg);
+    var svg = figBox.querySelector && figBox.querySelector('svg');
+    if (!svg || !svg.addEventListener) return;
+    var NS = 'http://www.w3.org/2000/svg', W = g.W, H = g.H;
+    var stroke = null, halo = null, drawing = false, startPt = null;
+    var readonly = !!S.answered;
+
+    function toView(e) {
+      var r = svg.getBoundingClientRect();
+      var cx = (e.clientX != null) ? e.clientX : ((e.touches && e.touches[0]) ? e.touches[0].clientX : 0);
+      var cy = (e.clientY != null) ? e.clientY : ((e.touches && e.touches[0]) ? e.touches[0].clientY : 0);
+      return { x: (cx - r.left) / (r.width || 1) * W, y: (cy - r.top) / (r.height || 1) * H };
+    }
+    function ensureStroke() {
+      if (stroke) return;
+      halo = document.createElementNS(NS, 'line');
+      halo.setAttribute('stroke', '#ffffff'); halo.setAttribute('stroke-width', '9');
+      halo.setAttribute('stroke-linecap', 'round'); halo.setAttribute('opacity', '0.85');
+      svg.appendChild(halo);
+      stroke = document.createElementNS(NS, 'line');
+      stroke.setAttribute('stroke', '#2563eb'); stroke.setAttribute('stroke-width', '4');
+      stroke.setAttribute('stroke-linecap', 'round');
+      svg.appendChild(stroke);
+    }
+    function paint(seg) {
+      if (!seg) { if (stroke) { stroke.setAttribute('visibility', 'hidden'); halo.setAttribute('visibility', 'hidden'); } return; }
+      ensureStroke();
+      [[halo], [stroke]].forEach(function (arr) {
+        var l = arr[0];
+        l.setAttribute('visibility', 'visible');
+        l.setAttribute('x1', seg.x1); l.setAttribute('y1', seg.y1);
+        l.setAttribute('x2', seg.x2); l.setAttribute('y2', seg.y2);
+      });
+    }
+    function setStatus(t) { if (status) status.textContent = t; }
+
+    var saved = S.draw[i];
+    if (readonly) {
+      if (saved) {
+        paint(saved);
+        if (stroke) stroke.setAttribute('stroke', (S.res && S.res.res[i] && S.res.res[i].ok) ? '#0f9d58' : '#d93025');
+      }
+      return;
+    }
+    if (saved) { paint(saved); setStatus('已画好一条线，可以提交，或点「重画」重来。'); }
+
+    function down(e) {
+      if (S.answered) return;
+      e.preventDefault();
+      drawing = true; startPt = toView(e);
+      paint({ x1: startPt.x, y1: startPt.y, x2: startPt.x, y2: startPt.y });
+      setStatus('拖动中…松手后确定垂线');
+      if (svg.setPointerCapture && e.pointerId != null) { try { svg.setPointerCapture(e.pointerId); } catch (x) { } }
+    }
+    function move(e) {
+      if (!drawing) return;
+      e.preventDefault();
+      var p = toView(e);
+      paint({ x1: startPt.x, y1: startPt.y, x2: p.x, y2: p.y });
+    }
+    function up(e) {
+      if (!drawing) return;
+      drawing = false;
+      var p = toView(e);
+      var seg = { x1: Math.round(startPt.x), y1: Math.round(startPt.y), x2: Math.round(p.x), y2: Math.round(p.y) };
+      S.draw[i] = seg;
+      paint(seg);
+      setStatus('已画好：从 (' + seg.x1 + ',' + seg.y1 + ') 到 (' + seg.x2 + ',' + seg.y2 + ')。可以提交，或点「重画」重来。');
+    }
+    svg.addEventListener('pointerdown', down);
+    svg.addEventListener('pointermove', move);
+    svg.addEventListener('pointerup', up);
+    svg.addEventListener('pointercancel', function () { drawing = false; });
+  }
+
   function readDraft() {
     return S.q.fields.map(function (f, i) {
       if (f.type === 'choice') return '';
+      if (f.type === 'drawline') return S.draw[i] || '';
       var el = document.getElementById('in' + i + '_n');
       return el ? String(el.value || '') : '';
     });
@@ -2233,6 +2504,7 @@ var PT = (function () {
   function rawAns(i) {
     var f = S.q.fields[i], v = (S.lastVals || [])[i];
     if (f.type === 'choice') return S.choice[i] == null ? '空' : (f.figs ? '甲乙丙丁'.charAt(S.choice[i]) : String.fromCharCode(65 + S.choice[i]));
+    if (f.type === 'drawline') return (v && isFinite(v.x1)) ? '画的一条线（起点 ' + v.x1 + ',' + v.y1 + '）' : '没画';
     return (v == null || v === '') ? '空' : String(v);
   }
 
@@ -2279,6 +2551,8 @@ var PT = (function () {
           if (box) box.appendChild(btn); else card.appendChild(btn);
         });
         if (box) card.appendChild(box);
+      } else if (f.type === 'drawline') {
+        card.appendChild(drawArmPad(q, i));
       } else {
         card.appendChild(h('div', { class: 'field' },
           h('span', { class: 'lbl full' }, f.label),
@@ -2295,7 +2569,7 @@ var PT = (function () {
           /* 例题必须和当前这题同题型：今日任务/开始一轮的 sess.kind 是 null，要用当前题的 kind */
           var mod = S.mode === 'wrong' ? ((S.q && S.q.mod) || 'model') : S.sess.mod;
           var kind = (S.q && S.q.kind) || S.sess.kind || null;
-          S.back = { q: S.q, sess: S.sess, draft: readDraft(), choice: S.choice, hint: S.hint };
+          S.back = { q: S.q, sess: S.sess, draft: readDraft(), choice: S.choice, draw: S.draw, hint: S.hint };
           startExample(mod, kind);
         } }, '例题')
       ));
@@ -2351,6 +2625,11 @@ var PT = (function () {
           fb.appendChild(h('div', { class: 'figcap' }, '正确答案：' + (f.figs ? '甲乙丙丁'.charAt(f.ans) : String.fromCharCode(65 + f.ans)) + '（' + f.options[f.ans] + '）'));
           fb.appendChild(h('div', { class: 'figbox', html: PT.svgFor({ fig: f.figs[f.ans] }) }));
         }
+        if (f.type === 'drawline') {
+          fb.appendChild(h('div', { class: 'figcap' }, '正确画法：绿线是力臂 l，垂足处标了直角'));
+          var ansFig = q.answerFig || { type: 'armanswer', rodDeg: f.rodDeg, fDeg: f.fDeg };
+          fb.appendChild(h('div', { class: 'figbox', html: PT.svgFor({ fig: ansFig }) }));
+        }
       });
       if (q.fig && !q.figBefore) {
         var fb2 = figBlock(q.fig, '图');
@@ -2396,6 +2675,10 @@ var PT = (function () {
     }
   }
 
+  function f_hasDraw(q) {
+    return (q.fields || []).some(function (f) { return f.type === 'drawline'; });
+  }
+
   function submit() {
     if (S.answered || S.example) return;
     var q = S.q;
@@ -2403,17 +2686,20 @@ var PT = (function () {
     /* 一个空都没填（含选择题未选）时不判分、不记记录、不进错题本 */
     var anyFilled = q.fields.some(function (f, i) {
       if (f.type === 'choice') return S.choice[i] != null;
+      if (f.type === 'drawline') return !!(S.draw[i] && isFinite(S.draw[i].x1));
       return String(draft[i] == null ? '' : draft[i]).trim() !== '';
     });
-    if (!anyFilled) { alert('先填答案再提交'); return; }
+    if (!anyFilled) { alert(f_hasDraw(q) ? '先从 O 画一条线到作用线，再提交' : '先填答案再提交'); return; }
     var vals = q.fields.map(function (f, i) {
       if (f.type === 'choice') return S.choice[i] == null ? null : S.choice[i];
+      if (f.type === 'drawline') return S.draw[i] || null;
       return PT.parseNum(draft[i]);
     });
     var res = PT.judge(q, vals);
     S.lastVals = draft; S.draft = draft;
     var fixIdx = [];
-    if (!res.ok) q.fields.forEach(function (f, i) { if (!res.res[i].ok && f.type !== 'choice') fixIdx.push(i); });
+    /* drawline 不作数字订正：错了就重画（反馈区给出正确画法图），不进订正框 */
+    if (!res.ok) q.fields.forEach(function (f, i) { if (!res.res[i].ok && f.type !== 'choice' && f.type !== 'drawline') fixIdx.push(i); });
     S.fix = fixIdx.length ? { fields: fixIdx, ok: false, tries: 0 } : null;
     var sec = Math.max(1, Math.round((Date.now() - S.t0) / 1000));
     S.res = res; S.answered = true; S.answeredAt = Date.now();
@@ -2476,6 +2762,8 @@ var PT = (function () {
     DB.wrong[k] = {
       id: q.id, mod: q.mod || S.sess.mod, kind: q.kind, title: q.title, prompt: q.prompt,
       fields: q.fields, explain: q.explain, tip: q.tip, kp: q.kp, fig: q.fig, figBefore: q.figBefore,
+      /* 手绘题回炉要重建画板与正确画法图，否则 drawArmPad 拿不到 fig 会渲染空 */
+      drawFig: q.drawFig, answerFig: q.answerFig,
       ts: now, due: now + gap * PT.DAY, n: n
     };
   }
@@ -2699,6 +2987,7 @@ var PT = (function () {
   window.__pt = {
     S: S, db: function () { return DB; }, MT: PT, PT: PT,
     startSession: startSession, startWrong: startWrong, startOneWrong: startOneWrong, startExample: startExample,
+    startArmFocus: startArmFocus,
     importJSON: importJSON, clearAll: clearAll,
     submit: submit, submitFix: submitFix, next: next, go: go, render: render,
     exportJSON: exportJSON, selfCheck: selfCheck
