@@ -65,8 +65,8 @@ function runCore() {
     process.exit(1);
   }
 
-  /* 模块注册表：顺序 = model/amount/calc/draw/read，类数 10/4/6/3/3 */
-  const want = [['model', 10], ['amount', 4], ['calc', 6], ['draw', 3], ['read', 3]];
+  /* 模块注册表：顺序 = model/amount/calc/draw/read，类数 10/4/6/4/3（draw 新增手绘力臂 armdraw） */
+  const want = [['model', 10], ['amount', 4], ['calc', 6], ['draw', 4], ['read', 3]];
   const got = PT.modules.map((m) => [m.id, (m.kinds || []).length]);
   const bad = want.filter((w, i) => !got[i] || got[i][0] !== w[0] || got[i][1] !== w[1]);
   if (got.length !== want.length || bad.length) {
@@ -178,12 +178,36 @@ function runRegression(PT) {
     ok('定滑轮绳无水平折角', !horiz);
   }
   /* 10) draw 固定题按 kind 过滤（「按题型练」不再随机抽到别的题型） */
-  for (const k of ['lever', 'rope', 'wire']) {
+  for (const k of ['lever', 'armdraw', 'rope', 'wire']) {
     for (let s = 0; s < 5; s++) {
       const q = PT.gen('draw', k, 1000 + s * 7919);
       ok('draw 按 kind 过滤（' + k + '）', q.kind === k);
     }
   }
+  /* 11) 手绘力臂：几何与判定——垂足线判对，连到作用点/偏离起点/不垂直判错 */
+  for (let s = 0; s < 8; s++) {
+    const q = PT.gen('draw', 'armdraw', 1000 + s * 7919);
+    const f = q.fields[0];
+    const g = PT.armProbe.geom(f.rodDeg, f.fDeg);
+    const good = PT.judge({ fields: [f] }, [f.ans]);
+    ok('手绘力臂 垂足线判对', good.ok);
+    const toB = PT.judge({ fields: [f] }, [{ x1: g.O.x, y1: g.O.y, x2: g.B.x, y2: g.B.y }]);
+    ok('手绘力臂 连到作用点判错', !toB.ok);
+    const offOrigin = PT.judge({ fields: [f] }, [{ x1: g.O.x + 60, y1: g.O.y, x2: f.ans.x2, y2: f.ans.y2 }]);
+    ok('手绘力臂 起点偏离 O 判错', !offOrigin.ok);
+    const notPerp = PT.armProbe.rot(f.ans, g.O, 0.35);
+    ok('手绘力臂 不垂直判错', !PT.judge({ fields: [f] }, [notPerp]).ok);
+  }
+  /* 12) 画清力臂专项队列：认概念 → 判断 ×2 → 手绘 ×2，全部正确解判对 */
+  const focus = PT.armFocusQueue();
+  ok('专项队列共 5 题', focus.length === 5);
+  ok('专项首题为认概念', /力臂是/.test(focus[0].prompt) && focus[0].fields[0].type === 'choice');
+  ok('专项第 2、3 题为四选一判断', focus[1].fields[0].type === 'choice' && focus[2].fields[0].type === 'choice');
+  ok('专项第 4、5 题为手绘', focus[3].fields[0].type === 'drawline' && focus[4].fields[0].type === 'drawline');
+  focus.forEach((q, idx) => {
+    const vals = q.fields.map((f) => f.ans);
+    ok('专项第 ' + (idx + 1) + ' 题正确解判对', PT.judge(q, vals).ok);
+  });
   return { n, fails };
 }
 
@@ -323,6 +347,7 @@ function textOf(n) {
 function fillCorrect(pt, doc, q) {
   q.fields.forEach((f, i) => {
     if (f.type === 'choice') { pt.S.choice[i] = f.ans; return; }
+    if (f.type === 'drawline') { pt.S.draw[i] = f.ans; return; }
     const el = doc.getElementById('in' + i + '_n');
     if (!el) throw new Error('找不到输入框 in' + i + '_n');
     el.value = String(f.ans);
@@ -483,7 +508,7 @@ function runUI() {
     }
   });
   step('draw 按 kind 过滤', () => {
-    for (const k of ['lever', 'rope', 'wire']) {
+    for (const k of ['lever', 'armdraw', 'rope', 'wire']) {
       for (let i = 0; i < 5; i++) {
         const q = pt.PT.gen('draw', k, 1000 + i * 7919);
         if (q.kind !== k) throw new Error('gen(draw,' + k + ') 返回了 ' + q.kind);
@@ -494,6 +519,41 @@ function runUI() {
       if (pt.S.q.kind !== 'rope') throw new Error('startSession(draw,rope) 抽到 ' + pt.S.q.kind);
       if (i === 0) pt.next();
     }
+    pt.go('today');
+  });
+
+  /* 手绘力臂：专项出题 / 画线提交 / 判对 / 走到总结（画线用测试钩子模拟，pointer 事件不在桩内测） */
+  step('手绘力臂出题与判分', () => {
+    pt.startSession('draw', 'armdraw', 2);
+    let guard = 0;
+    while (pt.S.view === 'practice' && guard++ < 8) {
+      const q = pt.S.q;
+      if (q.kind !== 'armdraw') throw new Error('专项抽到了 ' + q.kind);
+      if (!q.fields[0] || q.fields[0].type !== 'drawline') throw new Error('不是手绘题');
+      fillCorrect(pt, dom.doc, q);
+      pt.submit();
+      if (!pt.S.res || !pt.S.res.ok) throw new Error('手绘正确解被判错：' + q.id);
+      pt.next();
+    }
+    if (pt.S.view !== 'summary') throw new Error('手绘一轮没走到总结（view=' + pt.S.view + '）');
+    pt.go('today');
+  });
+
+  /* 画清力臂专项：5 题混合队列，认概念→判断→手绘，正确解全判对并走到总结 */
+  step('画清力臂专项队列', () => {
+    pt.startArmFocus();
+    const kinds = [];
+    let guard = 0;
+    while (pt.S.view === 'practice' && guard++ < 10) {
+      const q = pt.S.q;
+      kinds.push(q.fields[0].type);
+      fillCorrect(pt, dom.doc, q);
+      pt.submit();
+      if (!pt.S.res || !pt.S.res.ok) throw new Error('专项题正确解被判错：' + q.id);
+      pt.next();
+    }
+    if (pt.S.view !== 'summary') throw new Error('专项没走到总结');
+    if (kinds.join(',') !== 'choice,choice,choice,drawline,drawline') throw new Error('专项题型顺序不对：' + kinds.join(','));
     pt.go('today');
   });
 
@@ -530,11 +590,11 @@ function runUI() {
   });
 
   const okN = steps.filter(Boolean).length;
-  if (okN !== steps.length || steps.length !== 12) {
+  if (okN !== steps.length || steps.length !== 14) {
     console.error('✗ --ui ' + okN + '/' + steps.length + ' 项通过');
     process.exit(1);
   }
-  console.log('✓ --ui 12 项全部通过');
+  console.log('✓ --ui 14 项全部通过');
 }
 
 if (UI_MODE) runUI(); else runCore();
