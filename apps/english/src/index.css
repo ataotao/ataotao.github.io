@@ -1,0 +1,126 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background-color: #0f0f0f;
+  color: #f5f5f5;
+  font-family: "Source Sans 3", sans-serif;
+  min-height: 100dvh;
+  overscroll-behavior: none;
+}
+
+.perspective-1000 {
+  perspective: 1000px;
+}
+
+.preserve-3d {
+  transform-style: preserve-3d;
+}
+
+.backface-hidden {
+  backface-visibility: hidden;
+}
+
+.rotate-y-180 {
+  transform: rotateY(180deg);
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.touch-manipulation {
+  touch-action: manipulation;
+}
+
+/* Card slide animations - 使用 GPU 加速避免布局抖动 */
+.card-slide-container {
+  overflow: hidden;
+}
+
+.card-slide-container .animate-slide-out-left {
+  animation: slideOutLeft 150ms ease-out forwards;
+}
+
+.card-slide-container .animate-slide-out-right {
+  animation: slideOutRight 150ms ease-out forwards;
+}
+
+.card-slide-container .animate-slide-in-left {
+  animation: slideInLeft 200ms ease-out forwards;
+}
+
+.card-slide-container .animate-slide-in-right {
+  animation: slideInRight 200ms ease-out forwards;
+}
+
+@keyframes slideOutLeft {
+  from {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(-30px) scale(0.95);
+  }
+}
+
+@keyframes slideOutRight {
+  from {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(30px) scale(0.95);
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(30px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(-30px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+.animate-slide-out-left {
+  animation: slideOutLeft 150ms ease-out forwards;
+}
+
+.animate-slide-out-right {
+  animation: slideOutRight 150ms ease-out forwards;
+}
+
+.animate-slide-in-left {
+  animation: slideInLeft 200ms ease-out forwards;
+}
+
+.animate-slide-in-right {
+  animation: slideInRight 200ms ease-out forwards;
+}
