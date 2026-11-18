@@ -1,0 +1,51 @@
+name: 构建并发布站点
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: pages
+  cancel-in-progress: false
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: apps/english/package-lock.json
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+      - name: 英语工程
+        working-directory: apps/english
+        run: npm ci && npm run build
+      - name: 校验（任一红即不发布，禁止加 continue-on-error）
+        run: |
+          node 物理/题库工具/check-training.mjs
+          node 数学/题库工具/check-training.mjs
+          node 化学/题库工具/check-flash.mjs
+          node 工具/dsh-plugin/selfcheck.mjs
+          python 数学/题库工具/qb.py verify
+          node 工具/parity.mjs
+          node 工具/check-size.mjs
+      - name: 组装站点
+        run: bash 工具/assemble-site.sh _site
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
