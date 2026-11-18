@@ -31,6 +31,7 @@ jobs:
           node 物理/题库工具/check-training.mjs
           node 数学/题库工具/check-training.mjs
           node 化学/题库工具/check-flash.mjs
+          node 工具/trainer/sync-adapter.test.mjs
           node 工具/dsh-plugin/selfcheck.mjs
           python 数学/题库工具/qb.py verify
           node 工具/parity.mjs

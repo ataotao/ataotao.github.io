@@ -82,7 +82,14 @@ function makeCloud() {
 async function mockGithub(page, state) {
   const base = '/repos/' + REPO;
   const contents = base + '/contents';
-  const raw = base + '/raw';
+  /* 真机里 Contents API 返回的 download_url 指向 raw.githubusercontent.com，该域不响应 CORS 预检，
+     页面带 Authorization 去 fetch 必被浏览器拦下（2026-11-18 真机 CORS 报错）。这里把该域一律
+     拦成失败并计数：用例断言必须为 0，即适配层只走 api.github.com。 */
+  state.rawHits = 0;
+  await page.route('https://raw.githubusercontent.com/**', (route) => {
+    state.rawHits++;
+    return route.abort();
+  });
   await page.route('https://api.github.com/**', async (route) => {
     const req = route.request();
     const p = new URL(req.url()).pathname;
@@ -91,13 +98,6 @@ async function mockGithub(page, state) {
 
     if (p === base && method === 'GET') return json(200, { default_branch: 'main' });
 
-    if (p.startsWith(raw + '/')) {
-      const rel = decodeURIComponent(p.slice(raw.length + 1));
-      const [subject, file] = rel.split('/');
-      const snap = (state.cloud[subject] || {})[file];
-      return snap ? json(200, snap) : json(404, {});
-    }
-
     if (p.startsWith(contents + '/')) {
       let rel = decodeURIComponent(p.slice(contents.length + 1));
       if (rel.startsWith('devices/')) rel = rel.slice('devices/'.length);
@@ -105,11 +105,19 @@ async function mockGithub(page, state) {
       if (!file) {
         return json(200, Object.keys(state.cloud[subject] || {}).map((f) => ({
           name: f,
-          download_url: 'https://api.github.com' + raw + '/' + encodeURIComponent(subject) + '/' + encodeURIComponent(f)
+          // 与真实 GitHub 一致：download_url 指向 raw.githubusercontent.com（适配层不该用它）
+          download_url: 'https://raw.githubusercontent.com/' + REPO + '/main/devices/' +
+            encodeURIComponent(subject) + '/' + encodeURIComponent(f)
         })));
       }
+      const snap = (state.cloud[subject] || {})[file];
       if (method === 'GET') {
-        return (state.cloud[subject] || {})[file] ? json(200, { sha: 'sha-' + file, name: file }) : json(404, {});
+        if (!snap) return json(404, {});
+        // Accept: raw → 直接给文件正文（真实 Contents API 行为）；否则给元数据（sha/name）
+        const accept = String((req.headers() || {}).accept || '');
+        return accept.indexOf('raw') >= 0
+          ? route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(snap) })
+          : json(200, { sha: 'sha-' + file, name: file });
       }
       if (method === 'PUT') {
         const body = JSON.parse(req.postData() || '{}');
@@ -163,6 +171,7 @@ const urlOf = (f) => 'http://127.0.0.1:' + PORT + '/' + f + '#view=report';
       assert(after.recs === EXPECT.物理.recs, '物理记录 ' + EXPECT.物理.recs + ' 条', 'recs=' + after.recs);
       assert(after.wrong === EXPECT.物理.wrong, '物理错题 ' + EXPECT.物理.wrong + ' 道', 'wrong=' + after.wrong);
       assert(state.writes.length === 1 && state.writes[0].subject === '物理', '写回云端自己那份', state.writes.map((w) => w.subject + '/' + w.file).join(','));
+      assert(state.rawHits === 0, '只访问 api.github.com，不碰 raw.githubusercontent.com（CORS 预检必失败）', 'rawHits=' + state.rawHits);
       const statText = await page.locator('.stat').filter({ hasText: '累计题数' }).locator('b').textContent();
       assert(statText === String(EXPECT.物理.recs), '报告页显示累计题数 ' + EXPECT.物理.recs, '显示=' + statText);
       await ctx.close();

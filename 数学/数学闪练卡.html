@@ -2128,6 +2128,11 @@ window.__ltSync = { carrierSnapshot: carrierSnapshot, syncPlan: syncPlan, subjec
  * PAT 存本机浏览器；科目由 build 注入的 LT_SUBJECT 常量确定，
  * deviceId 带科目前缀、快照按科分目录 —— 三科互不污染（本次修复）。
  * sha 409 冲突时重拉→重并→重写（最多 3 次）。
+ *
+ * 所有请求只发 api.github.com（该域正确处理 CORS 预检 OPTIONS）。读快照正文走
+ * Contents API 的 raw 媒体类型，**不要**用列表返回的 download_url —— 它指向
+ * raw.githubusercontent.com，那个域不响应预检，带 Authorization 的 fetch 会被浏览器拦下
+ * （真机 2026-11-18 报错：Response to preflight request doesn't pass access control check）。
  */
 (function () {
   'use strict';
@@ -2161,9 +2166,16 @@ window.__ltSync = { carrierSnapshot: carrierSnapshot, syncPlan: syncPlan, subjec
     }
     return id;
   }
-  function headers() {
-    return { 'Authorization': 'Bearer ' + (lsGet(PAT_KEY) || ''), 'Accept': 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28' };
+  /* 请求头：全部发往 api.github.com（该域正确应答 CORS 预检）。
+     accept 缺省 JSON 元数据；读快照正文用 raw，直接拿到文件内容。 */
+  function headers(accept) {
+    return {
+      'Authorization': 'Bearer ' + (lsGet(PAT_KEY) || ''),
+      'Accept': accept || 'application/vnd.github+json',
+      'X-GitHub-Api-Version': '2022-11-28'
+    };
   }
+  function rawHeaders() { return headers('application/vnd.github.raw'); }
 
   /* 探测默认分支：失败回退 main，不写死成唯一路径 */
   async function detectBranch() {
@@ -2193,10 +2205,14 @@ window.__ltSync = { carrierSnapshot: carrierSnapshot, syncPlan: syncPlan, subjec
     var out = {}, failed = 0;
     for (const item of list) {
       if (!/\.json$/i.test(item.name)) continue;
-      var fr = await fetch(item.download_url || (API + dir + '/' + encodeURIComponent(item.name)), { headers: headers() });
+      /* 正文从 Contents API 取（Accept: raw），与列目录同一个域，不触发跨域预检。
+         不用 item.download_url：它指向 raw.githubusercontent.com，该域不响应 OPTIONS 预检，
+         带 Authorization 的 fetch 必被浏览器拦下（真机 2026-11-18 CORS 报错）。 */
+      var fr = await fetch(API + dir + '/' + encodeURIComponent(item.name), { headers: rawHeaders() });
       if (!fr.ok) { failed++; continue; }
       try {
-        var j = await fr.json();
+        var j = JSON.parse(await fr.text());
+        if (!j || !Array.isArray(j.recs)) { failed++; continue; }   // 不是快照（例如元数据 JSON）：跳过，不当设备
         var key = String(j.deviceId || item.name.replace(/\.json$/, ''));
         // 双保险：目录已按科分，这里再按 deviceId 前缀过滤一次，拦住误放进来的异科快照
         var tag = j.subject || (key.indexOf('|') > 0 ? key.slice(0, key.indexOf('|')) : '');
