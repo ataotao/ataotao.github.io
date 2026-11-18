@@ -65,5 +65,5 @@ _verify/
 # ── 站点仓专用 ──────────────────────────────────────────
 # 发布的组装产物，由 CI 生成，不入库
 _site/
-# 旧的发布脚本本机配置（退役前仍在本机存在）
-tools/publish.local.json
+# 英语工程 vite 构建产物（CI/本地 npm run build 可重建；assemble-site.sh 从此处取文件）
+apps/english/dist/
