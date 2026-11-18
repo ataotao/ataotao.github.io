@@ -14,7 +14,7 @@ const LEGACY_ID = 'legacy-2026-11-18';
 /** 私有数据仓根目录：真实作答数据只在这里（ADR-0007 决定 9），绝不进公开站点仓。
  *  可用环境变量 LT_RECORDS_DIR 覆盖；默认本机 clone 路径。 */
 export function recordsRoot() {
-  return process.env.LT_RECORDS_DIR || 'C:/work/my-work/learning-records';
+  return process.env.LT_RECORDS_DIR || 'C:/learn/ataotao.github.io_learning-records';
 }
 
 /** 内容嗅探：裸 DB {v,recs,wrong} 与带外壳 {schema:'lt.practice-records/1',data} 都认（ADR-0001） */
