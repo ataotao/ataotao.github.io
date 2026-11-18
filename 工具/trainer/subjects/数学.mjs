@@ -1,4 +1,4 @@
-/* 数学训练脚手架 · 科目配置
+/* 数学闪练卡 · 科目配置
  * 族：scaffold（函数式 h() UI，core 暴露 MT，含 dayPlan / 分数输入 / 题单快照）。
  * 三样真源原样内联，不改渲染引擎。改出题/判分 → 数学/源/train.core.js；
  * 改壳 → 本文件 title/brand/tabs；改 CSS / UI → 数学/源/train.css / train.ui.js。
@@ -14,7 +14,7 @@ export default {
   cssFile: '数学/源/train.css',
   coreFile: '数学/源/train.core.js',
   uiFile: '数学/源/train.ui.js',
-  outFile: '数学/数学训练脚手架.html',
+  outFile: '数学/数学闪练卡.html',
 
   brand: { main: '#3b6fe0', hover: '#3260c8', soft: '#eaf0fe' },
 
@@ -31,7 +31,7 @@ export default {
     { go: 'entry', n: '大题前两步' }, { go: 'report', n: '报告' }
   ],
   head: {
-    title: '数学训练脚手架', brandName: '数学训练脚手架', ver: 'v1',
+    title: '数学闪练卡', brandName: '数学闪练卡', ver: 'v1',
     topNote: '基础快练 · 写解析式 · 大题前两步',
     footer: '记录只存本机浏览器（localStorage）· 每周导出一次 · 单文件离线可用'
   }

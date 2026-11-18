@@ -31,14 +31,14 @@ const TARGETS = [
     watch: ['物理/物理思维脚手架.html', '物理/题库/pack-全部.json'],
   },
   {
-    name: '物理 · 训练脚手架（训练器模板）',
+    name: '物理 · 闪练卡（训练器模板）',
     cmd: ['node', ['工具/trainer/build.mjs', '物理']],
-    watch: ['物理/物理训练脚手架.html'],
+    watch: ['物理/物理闪练卡.html'],
   },
   {
-    name: '数学 · 训练脚手架（训练器模板）',
+    name: '数学 · 闪练卡（训练器模板）',
     cmd: ['node', ['工具/trainer/build.mjs', '数学']],
-    watch: ['数学/数学训练脚手架.html'],
+    watch: ['数学/数学闪练卡.html'],
   },
   {
     name: '化学 · 思维脚手架',

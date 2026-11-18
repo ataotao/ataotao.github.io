@@ -1,4 +1,4 @@
-/* 物理训练脚手架 · 科目配置
+/* 物理闪练卡 · 科目配置
  * 族：scaffold（函数式 h() UI，core 暴露 PT）。三样真源原样内联，不改渲染引擎。
  * 改出题/判分 → 物理/源/train.core.js；改壳 → 本文件 title/brand/tabs；
  * 改 CSS / UI 逻辑 → 物理/源/train.css / train.ui.js（这些是真源，直接改）。
@@ -14,7 +14,7 @@ export default {
   cssFile: '物理/源/train.css',
   coreFile: '物理/源/train.core.js',
   uiFile: '物理/源/train.ui.js',
-  outFile: '物理/物理训练脚手架.html',
+  outFile: '物理/物理闪练卡.html',
 
   brand: { main: '#0f9b8e', hover: '#0c8a7e', soft: '#e6f6f4' },
 
@@ -32,7 +32,7 @@ export default {
     { go: 'wrong', n: '错题本' }, { go: 'report', n: '报告' }
   ],
   head: {
-    title: '物理训练脚手架', brandName: '物理训练脚手架', ver: 'v1',
+    title: '物理闪练卡', brandName: '物理闪练卡', ver: 'v1',
     topNote: '认模型 · 认量 · 算到底 · 作图判断 · 读数',
     footer: '记录只存本机浏览器（localStorage）· 每周导出一次 · 单文件离线可用'
   }

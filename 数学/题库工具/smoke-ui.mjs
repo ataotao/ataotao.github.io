@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// 数学训练脚手架 · UI 层冒烟（node + DOM 桩，不开浏览器）
+// 数学闪练卡 · UI 层冒烟（node + DOM 桩，不开浏览器）
 //
 // 用法：node 数学/题库工具/smoke-ui.mjs
 // 期望：末尾打印「✓ UI 冒烟通过」，退出码 0。
@@ -17,7 +17,7 @@ import { fileURLToPath } from 'node:url';
 import vm from 'node:vm';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
-const FILE = join(ROOT, '数学', '数学训练脚手架.html');
+const FILE = join(ROOT, '数学', '数学闪练卡.html');
 const html = readFileSync(FILE, 'utf8');
 const core = html.match(/<script id="core">([\s\S]*?)<\/script>/)[1];
 const ui = html.match(/<script id="ui">([\s\S]*?)<\/script>/)[1];

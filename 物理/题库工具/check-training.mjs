@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// 物理训练脚手架 · 出题 / 判分 / DOM 桩自检
+// 物理闪练卡 · 出题 / 判分 / DOM 桩自检
 //
 // 用法：
 //   node 物理/题库工具/check-training.mjs           每类 200 题，跑 PT.selfTest
@@ -21,7 +21,7 @@ import { fileURLToPath } from 'node:url';
 import vm from 'node:vm';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
-const FILE = join(ROOT, '物理', '物理训练脚手架.html');
+const FILE = join(ROOT, '物理', '物理闪练卡.html');
 const args = process.argv.slice(2);
 const UI_MODE = args.includes('--ui');
 const N = Number(args.find((a) => /^\d+$/.test(a))) || 200;
@@ -40,8 +40,8 @@ if (!uiM) {
 
 /* ---------- 语法检查：vm.Script 编译等价于 node --check（不执行） ---------- */
 try {
-  new vm.Script(coreM[1], { filename: '物理训练脚手架.core.js' });
-  new vm.Script(uiM[1], { filename: '物理训练脚手架.ui.js' });
+  new vm.Script(coreM[1], { filename: '物理闪练卡.core.js' });
+  new vm.Script(uiM[1], { filename: '物理闪练卡.ui.js' });
 } catch (e) {
   console.error('✗ core / ui 脚本语法错误：' + e.message);
   process.exit(1);
@@ -54,7 +54,7 @@ function runCore() {
   const ctx = { console };
   vm.createContext(ctx);
   try {
-    vm.runInContext(coreM[1], ctx, { filename: '物理训练脚手架.core.js' });
+    vm.runInContext(coreM[1], ctx, { filename: '物理闪练卡.core.js' });
   } catch (e) {
     console.error('✗ 核心脚本运行错误：' + e.message);
     process.exit(1);
@@ -435,8 +435,8 @@ function runUI() {
   const dom = makeDom();
   vm.createContext(dom.ctx);
   try {
-    vm.runInContext(coreM[1], dom.ctx, { filename: '物理训练脚手架.core.js' });
-    vm.runInContext(uiM[1], dom.ctx, { filename: '物理训练脚手架.ui.js' });
+    vm.runInContext(coreM[1], dom.ctx, { filename: '物理闪练卡.core.js' });
+    vm.runInContext(uiM[1], dom.ctx, { filename: '物理闪练卡.ui.js' });
   } catch (e) {
     console.error('✗ UI 脚本在 DOM 桩里运行失败：' + e.message + '\n' + (e.stack || ''));
     process.exit(1);

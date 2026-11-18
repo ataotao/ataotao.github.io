@@ -1,10 +1,10 @@
 #!/usr/bin/env node
-// 数学训练脚手架 · 题生成器 + 今日题单自检
+// 数学闪练卡 · 题生成器 + 今日题单自检
 //
 // 用法：node 数学/题库工具/check-training.mjs [每类题数]
 // 期望：末尾打印「✓ 全部通过」，退出码 0。
 //
-// 它从 数学/数学训练脚手架.html 里抽出 <script id="core">（纯逻辑层，不碰 DOM），
+// 它从 数学/数学闪练卡.html 里抽出 <script id="core">（纯逻辑层，不碰 DOM），
 // 在 node 里跑：
 //   A. MT.selfTest：每个生成器各出 N 题，断言
 //      ① 题干里没有 undefined/NaN；② 答案都是有限数、选项下标不越界；
@@ -20,7 +20,7 @@ import { fileURLToPath } from 'node:url';
 import vm from 'node:vm';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
-const FILE = join(ROOT, '数学', '数学训练脚手架.html');
+const FILE = join(ROOT, '数学', '数学闪练卡.html');
 const N = Number(process.argv[2]) || 200;
 
 const html = readFileSync(FILE, 'utf8');
@@ -33,7 +33,7 @@ if (!m) {
 const ctx = { console };
 vm.createContext(ctx);
 try {
-  new vm.Script(m[1], { filename: '数学训练脚手架.core.js' });
+  new vm.Script(m[1], { filename: '数学闪练卡.core.js' });
   vm.runInContext(m[1], ctx);
 } catch (e) {
   console.error('✗ 核心脚本语法/运行错误：' + e.message);
