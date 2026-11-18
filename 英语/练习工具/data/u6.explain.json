@@ -1,0 +1,350 @@
+{
+  "unit": "U6",
+  "items": {
+    "ca1": {
+      "topic": "不定冠词 a/an",
+      "point": "可数名词单数首次出现、泛指「一个」时用不定冠词；a 用于辅音音素前，an 用于元音音素前。",
+      "why": "way 是可数名词单数，此处泛指「一种新的放松方式」，故用 a。B 的 an 要看后面单词的首音，new 读 /njuː/，是辅音音素 /n/，不能用 an；C 的 the 指双方已知的特定事物，此处并非特指；D 零冠词用于不可数名词或复数泛指，way 是单数可数，不行。",
+      "trap": "别被拼写字母骗了：判断 a/an 看读音，不看首字母。an hour、a useful book 都是反例。"
+    },
+    "ca2": {
+      "topic": "介词 in + 颜色",
+      "point": "in + 颜色/服装表示「穿着……颜色的」「属于……颜色的」；in red 就是「红色的」。",
+      "why": "句意是「记录下一切是你选定颜色的东西」，用 in your colour。A under 表方位「在……下面」；B at 表点状位置；C to 表方向或对象，三者都无法表达「颜色属性」。同理 the girl in red 是「穿红衣服的女孩」。",
+      "trap": "中文「你的颜色」会诱使学生直译成 of your colour 或 your colour 直接后置；表「颜色/衣着」的固定介词是 in。"
+    },
+    "ca3": {
+      "topic": "much + 比较级",
+      "point": "有 than 就要用比较级；much、a lot、even、far 只能修饰比较级，不能修饰原级。",
+      "why": "句中有 than you think，必须用比较级 easier，故选 B。A easy 是原级，与 than 冲突；C easiest 是最高级，用于三者以上比较，且不与 than 连用；D the easiest 加了 the，是最高级形式，同样不能接 than。",
+      "trap": "看到 much 就以为后面是原级（much beautiful 是典型错句）。记：much/even/far/a lot + 比较级。"
+    },
+    "ca4": {
+      "topic": "形容词修饰名词",
+      "point": "修饰名词用形容词；vary（动词）、variously（副词）、variety（名词）同根不同词性，靠空格位置判断。",
+      "why": "空格在名词 objects 前，须用形容词 various「各种各样的」。A very 是副词，不能直接修饰名词；C variously 是副词，只能修饰动词或形容词；D variety 是名词，不能作定语修饰 objects（a variety of objects 才行）。",
+      "trap": "同根词看位置：名词前填形容词，动词前后填副词。variety 只能用于 a variety of 结构。"
+    },
+    "ca5": {
+      "topic": "并列连词 or",
+      "point": "or 表选择「或者」，and 表并列「和」，but 表转折，so 表结果。",
+      "why": "「你可以一个人走，也可以和朋友一起走」是两种可选方式，用 or。A and 会把两种情况并列成同时发生；B but 表转折，句意并不对立；D so 表因果，此处无因果关系。",
+      "trap": "否定句和选择疑问句中也常用 or；先判断两个成分是「并存」还是「二选一」。"
+    },
+    "ca6": {
+      "topic": "情态动词 can",
+      "point": "情态动词后接动词原形，表能力、可能或许可；can 表「能够」，must 表「必须」，should 表「应该」。",
+      "why": "句意「年轻人说这项活动能让他们感到快乐放松」，表能力/效果用 can。B may 表「也许」，语气不确定；C must 表「必须」，把「能让人开心」说成义务，不合逻辑；D should 表建议「应该」，与「年轻人说」的转述语气不符。",
+      "trap": "先看空格后是不是动词原形 make——四个选项都符合语法，所以这题考的是语义，不能只靠语法排除。"
+    },
+    "ca7": {
+      "topic": "一般过去时",
+      "point": "句中出现 yesterday、last week/weekend、in 2023、ago 等明确过去时间状语时，谓语用一般过去时。",
+      "why": "Last weekend 把动作定位在过去，用 decided。A decide 是一般现在时，与过去时间矛盾；B will decide 是将来时；C have decided 是现在完成时，强调对现在的影响，不能与 last weekend 这种具体过去时间连用。",
+      "trap": "现在完成时不能和 last weekend、yesterday 这类具体过去时间连用，这是最高频的时态扣分点。"
+    },
+    "ca8": {
+      "topic": "副词修饰动词",
+      "point": "修饰动词、形容词或其他副词用副词；形容词只修饰名词或作表语。",
+      "why": "空格修饰动词 took（拍照），要用副词 happily。A happy 是形容词，不能修饰动词；C happiness 是名词；D happier 是比较级形容词，句中也没有 than 比较对象。",
+      "trap": "中文「我们开心地拍照」容易写成 We happy took photos。记住：动词前面的修饰语一定是副词。"
+    },
+    "ca9": {
+      "topic": "让步状语从句 even if",
+      "point": "even if / even though 意为「即使、尽管」，引导让步状语从句，主句常用 will 表结果。",
+      "why": "「即使你只在户外待三十分钟，也能从中得到很多乐趣」，前后是让步关系，用 even if。A when 表时间；B since 表「自从/既然」；D although 不能与 even 直接连用（even although 不成立）。",
+      "trap": "even if 与 even though 都可，但 even although 是错的；另外 if 单独用时表条件，不表让步。"
+    },
+    "ca10": {
+      "topic": "感叹句 How",
+      "point": "感叹句两种基本句型：How + 形容词/副词 + 主语 + 谓语！ What + (a/an) + 形容词 + 名词 + 主语 + 谓语！",
+      "why": "空格后是形容词 beautiful，再往后是主语 the world 和谓语 is，符合 How 句型。B What 后须接名词；C What a 后须接「a + 形容词 + 可数名词单数」，此处没有名词；D How a 本身不成立。",
+      "trap": "先找空格后的第一个词：是形容词/副词选 How，是名词（短语）选 What。别凭语感乱填。"
+    },
+
+    "cb1": {
+      "topic": "draw one's attention",
+      "point": "draw / attract / catch one's attention 都是「吸引某人注意」的固定搭配。",
+      "why": "句意「电影从开头就用不同视角吸引观众注意」，用 attention。B course 是课程/过程（in the course of）；C business 是生意（on business）；D goal 是目标，三者都不能与 draw one's 构成「吸引注意」的意思。",
+      "trap": "四个词都能和 draw 搭配（draw a course、do business、set a goal），所以要按句意选，别只背搭配。"
+    },
+    "cb2": {
+      "topic": "形容词辨析（褒贬）",
+      "point": "修饰「中国传统文化」这类正面事物，应选褒义形容词；common 中性偏「普通」，difficult 偏负面。",
+      "why": "句意是「唐诗这一优秀的中国传统文化让世界更了解中国诗词的宇宙」，用 excellent。A common 意为「常见的」，会削弱文化价值；B difficult 说文化「难」，与「让世界了解」的目的相反；D simple 说文化「简单」，也不符合赞颂语气。",
+      "trap": "完形填空先定感情色彩：句中有 made the world know more 这种正面表述，就要选褒义词。"
+    },
+    "cb3": {
+      "topic": "短语动词 learn about",
+      "point": "learn about 意为「了解、学习关于……的知识」；ask for 请求，cut out 剪下/删除，take down 记下/取下。",
+      "why": "「家长带孩子去电影院，是为了让他们了解这些文学经典」，用 learn about。A ask for 是「要求得到」，宾语不能是「经典」；B cut out 是「剪下」，与看电影无关；C take down 是「记下」，看电影不是做笔记。",
+      "trap": "四个都是常见短语动词，考的正是「哪个能接抽象宾语」。learn about 后面常接文化、历史、人物这类抽象名词。"
+    },
+    "cb4": {
+      "topic": "名词辨析 friendship",
+      "point": "根据上下文线索确定名词：此处讲李白与高适两位诗人之间的情感，是「友谊」。",
+      "why": "李白与高适是好友，两人之间的情感是 friendship。A dream 梦想，C trade 贸易，D expression 表达/表情，都不能描述两位诗人之间的情感关系，也无法与 between…and… 搭配出「情谊」。",
+      "trap": "电影里确实有「梦想」这条线，容易误选 dream；但空格要填的是「李白与高适之间」的东西，只有 friendship 说得通。"
+    },
+    "cb5": {
+      "topic": "副词辨析 deeply",
+      "point": "deeply 表程度「深深地」，常与 attract、move、impress 这类动词连用。",
+      "why": "catch one's eye deeply 意为「深深吸引住目光」，与前面 also 强调的「同样」呼应。A quietly 安静地，B politely 有礼貌地，D seriously 严肃地，三个都描述方式，而这里需要的是程度副词。",
+      "trap": "四个都是 -ly 副词，语法上都成立，只能靠语义。看到「吸引目光」这类程度性动词，优先想 deeply。"
+    },
+    "cb6": {
+      "topic": "a golden age",
+      "point": "a golden age 是固定表达「黄金时代」，指某事物最兴盛的时期。",
+      "why": "唐朝因经济文化发达被视为中国历史的「黄金时代」，用 age。A season 指季节或赛季，C month 月份，D year 年份，都不能与 golden 构成「鼎盛时期」的固定说法。",
+      "trap": "golden 后面四个词都能搭（golden season 金秋、golden year），但只有 golden age 是「黄金时代」的固定搭配。"
+    },
+    "cb7": {
+      "topic": "被动语态（一般过去时）",
+      "point": "主语是动作的承受者时用被动：was/were + 过去分词。诗句是「被呈现」的，不是自己「呈现」。",
+      "why": "Forty-eight Tang poems 是 show 的承受者，电影是 2023 年的过去事件，故用 were shown。A followed 意为「被跟随」，诗句不会「被跟随」；B sent 是「被寄送」；C returned 是「被归还」，都不符合「在电影里呈现」的意思。",
+      "trap": "先判断主被动：主语是「诗」、动作是「呈现」，诗不能自己呈现，必须用被动。"
+    },
+    "cb8": {
+      "topic": "There is no doubt that",
+      "point": "There is no doubt that + 从句 = 「毫无疑问……」，that 引导同位语从句，说明 doubt 的内容。",
+      "why": "句意「毫无疑问，这部电影是向世界展示中国优秀文化的佳作」，用 doubt。B praise 赞美（There is no praise that 不成立）；C tradition 传统；D process 过程，三者都无法构成这个固定句型。",
+      "trap": "这是送分句型，但要防「语义反向」：no doubt 是「毫无疑问」，别理解成「没有疑问所以不确定」。"
+    },
+    "cb9": {
+      "topic": "名词辨析 treasures",
+      "point": "regard A as B 意为「把 A 看作 B」，B 要与 A 的价值相匹配。",
+      "why": "中国人把诗人及其作品视为「珍宝」，用 treasures。A models 是「模范」，指人可，指作品不妥；C promises 承诺、D suggestions 建议，都与「经典作品」的价值不匹配。",
+      "trap": "regard…as… 的 as 后接名词或形容词。先想「我们会把李白杜甫的作品叫什么」——国宝级珍品，treasures。"
+    },
+    "cb10": {
+      "topic": "形容词辨析（but 转折）",
+      "point": "but 连接两个语义相对的成分，一边是 meaningful（有意义），另一边应是有难度、有挑战。",
+      "why": "「通过诗句体会诗人的心境，是有挑战但有意义的」，用 challenging。B terrible 可怕的、C brave 勇敢的（形容人）、D popular 受欢迎的，都不能与 meaningful 形成「先难后值」的对照。",
+      "trap": "注意 but 前后的词性要一致（都是形容词），语义要相反。meaningful 的反面不是 terrible，而是「难」。"
+    },
+
+    "ra1": {
+      "topic": "细节计算（年份）",
+      "point": "时间类细节题要在原文找到两个时间点，再做加减；不要直接选文中出现的数字。",
+      "why": "首段说「青春版首演 22 年后」，2026 年 1 月 15 日上演的是「校园版」，故青春版首演 = 2026−22 = 2004 年，选 B。A 2001 是昆曲入选非遗的年份；C 2024 是项目启动年份；D 2026 是校园版首演年份，三个都是文中出现过的「干扰数字」。",
+      "trap": "这类题的错误项往往就是原文里其他年份。看到四个年份都眼熟，必须先确认每个数字各自指什么事件。"
+    },
+    "ra2": {
+      "topic": "细节理解（学生情况）",
+      "point": "细节题要逐项回原文核对，特别注意数量、时长、范围这类限定词。",
+      "why": "第三段说学生来自 29 所高校、with little training in Kunqu（此前几乎没有训练），只练了九个月，故选 D。A 与「几乎没基础」矛盾；B 说练了一年多，原文是 nearly nine months；C 说来自同一所大学，原文是 29 所。",
+      "trap": "B 是典型的「改数字」干扰项：nine months 改成 more than a year。核对时要盯住数字和比较词。"
+    },
+    "ra3": {
+      "topic": "词义猜测 wealthy",
+      "point": "猜词题不能只靠背单词，要用上下文（同位语、解释句、并列句）验证。",
+      "why": "wealthy 意为「富有的」，选 A。后文 her father was a high-ranking official, and her family lived in a large house with a beautiful garden 正是「有钱」的证据。B 说「受教育少」、C 说「住得远离城市」、D 说「因写作出名」，都与「高官父亲 + 大宅花园」无关。",
+      "trap": "四个选项都描述「人物身份」，要选能被下文具体细节支持的那一个，不能凭印象。"
+    },
+    "ra4": {
+      "topic": "推理判断（言外之意）",
+      "point": "人物话语题要抓「态度词」和「对比对象」：surprised、also 往往暗示超出预期。",
+      "why": "白先勇说「惊喜地看到许多高中生也很喜欢」，说明昆曲观众不再只是老一辈，正在年轻化，选 B。A 文中只说他在中国台湾推动项目，没有「大部分时间」的信息；C「全世界更流行」是过度推断；D「一直是最受欢迎的戏曲」文中无此说法，且 most popular 过于绝对。",
+      "trap": "推理题最忌「合理但文中没说」。A、C、D 都是听起来不错、却找不到原文依据的选项。"
+    },
+    "ra5": {
+      "topic": "主旨大意",
+      "point": "主旨题看首段和反复出现的关键词：本文反复出现 campus version、project、students、protect Kunqu。",
+      "why": "全文介绍的是「校园青春版《牡丹亭》」这一保护昆曲的青年项目：由来、排练、演出与意义，选 D。A 只解释了昆曲为何流行，是第四段的一小部分；B 讲昆曲在中国台湾的历史，文中没有；C 比较不同版本，文中只提到青春版与校园版的前后关系，没有比较。",
+      "trap": "主旨题选项若只覆盖某一段（A）或超出范围（B、C），都不能选。学会用「能否概括全文」来筛。"
+    },
+
+    "rb1": {
+      "topic": "词义猜测 patron",
+      "point": "猜词优先找「同义复现」：后文用另一个词重述同一概念时，那个词就是答案。",
+      "why": "patron 指「顾客」，选 D。第三段 the customer insisted 与第一段 a patron told him 指同一人，可见 patron = customer；又因他每晚都来听琴，故为「常客」。A 老板、B 经理，文中另有 the waiter，身份不符；C「新顾客」与「每晚都来」矛盾。",
+      "trap": "patron 还有「赞助人」之意，但在酒吧语境里就是「顾客」。别拿词典第一义硬套。"
+    },
+    "rb2": {
+      "topic": "细节理解（原因）",
+      "point": "原因题找 because、so、in order to、for 等标志；答案常在动作句的前一句或同一句的目的状语里。",
+      "why": "「So in order to bring some money home that night, the piano player… did so for the very first time」，说明他答唱是为了挣钱回家，选 A。B 与原文相反（他说 I think I'm better at playing the piano）；C 文中没有他不想弹琴的信息；D「怕丢工作」是过度推断，原文只说「想拿到报酬」。",
+      "trap": "D 是最容易误选的「合理推断」——不给钱≈丢工作。但原文的落点是「带钱回家」，不是「保住工作」。"
+    },
+    "rb3": {
+      "topic": "细节理解（惊讶点）",
+      "point": "注意 surprised、amazing 这类情绪词前后的内容，那就是「让人意外的事」。",
+      "why": "「nobody had ever heard the song Mona Lisa sung before until that night by Nat King Cole, and it surprised all, including the singer himself」，让人吃惊的是他唱得极好，选 B。A 说酒吧突然来了很多客人，原文说客人并不多；C 说服务员无礼，那是情节不是「惊讶点」；D 说他更擅长唱歌而非弹琴，原文没做这种比较，他本人也一直认为自己更会弹琴。",
+      "trap": "D 把「唱得好」偷换成「唱得比弹得好」。原文没有任何两者水平的比较。"
+    },
+    "rb4": {
+      "topic": "推理判断（假设后果）",
+      "point": "虚拟假设题要找原文的对照句：作者常用「如果没……就会……」来凸显转折。",
+      "why": "「He may have lived the rest of his life as an unknown piano player in a common bar」，即若没被逼着唱，他可能一辈子只是小酒吧里无人知晓的琴师，选 D。A 与原文相反（成名正是因为唱了）；B 说他弹琴能赚更多，文中反而说他需要钱；C 说他会辞职，文中无据。",
+      "trap": "题干问的是「如果他拒绝会怎样」，方向是「没有发生的那条路」，不要选已经发生的事实（A）。"
+    },
+    "rb5": {
+      "topic": "主旨大意（启示）",
+      "point": "寓言类文章的主旨在末段议论句，常以 The question is not… but rather… 这类对比句收尾。",
+      "why": "末段点题：「问题不在于我有什么能力，而在于我怎样使用我拥有的能力」，选 B。A 说学会拒绝别人，与文章「被逼一把反而成功」的意思相反；C 说学会与难缠的人沟通，把重点放在人际技巧上；D 说勇于接受新挑战，只覆盖「唱歌」这一件事，没有触及「用好已有能力」的核心。",
+      "trap": "D 看起来很正能量，但它是「局部」而非「主旨」。选启示时问自己：这句话能否概括整篇？"
+    },
+
+    "qx1": {
+      "topic": "七选五·总起句",
+      "point": "空后出现 An actor usually has… Unlike an actor… 这类对比结构时，空前应是本段主题句。",
+      "why": "本段拿「演员」和「单口喜剧演员」对比：演员有剧本、有搭档，单口演员只能展示自己。因此主题句是「单口喜剧不同于其他表演形式」，选 C。A 讲形式多样，是第三段的内容；B 讲需要练习，对应第 2 空；D、G 讲某档节目，对应第四段。",
+      "trap": "先看空后第一句的主语（An actor），再找能与它构成对照的选项。七选五的答案往往由「下一句」决定。"
+    },
+    "qx2": {
+      "topic": "七选五·承上启下",
+      "point": "空后紧跟 It usually takes days or even weeks of hard work… 时，空前应是「需要大量练习」这类判断。",
+      "why": "后句讲「要花几天甚至几周苦练，才能逗笑观众几分钟」，是「练习」的具体展开，故选 B。E 说成败取决于天赋，与「苦练」相反；A、C 已用于第 1、3 空；F 讲艺术家分享经验，与「苦练」不衔接。",
+      "trap": "E（靠天赋）是最诱人的干扰项，因为语义也通；但下一句讲的是 hard work，前后必须同向。"
+    },
+    "qx3": {
+      "topic": "七选五·段落主题",
+      "point": "段落中连续出现 It can include… / It can simply be… / It can also be… 的排比，说明主题是「形式多样」。",
+      "why": "后文用三个 It can 列举：可以是独白式故事、可以是一串笑话、可以在任何场合表演，故主题句选 A。B 讲练习、C 讲与其他表演的区别，都属于前两段；D、G 讲节目，属于第四段。",
+      "trap": "看到 It can… It can also… 就找含 forms / kinds / types 的选项。这是七选五里最稳定的信号。"
+    },
+    "qx4": {
+      "topic": "七选五·举例支撑",
+      "point": "空后是 When the third season came out… 这类具体季数，空前必须先提到「季」或「整体成绩」。",
+      "why": "后句专讲「第三季播出时」爆火，前句应总说「五季都受欢迎，尤其第三季」，选 D。选项中的 five seasons 与后句 the third season 形成总分关系。A、B、C 已在前面用过；E、F 与本段「节目」话题无关。",
+      "trap": "后句出现 the third season 这种带定冠词的序数，说明前文一定提过「季」，这是最直接的线索。"
+    },
+    "qx5": {
+      "topic": "七选五·总结句",
+      "point": "空后是 More and more young people have begun… 这类「影响/结果」，空前应是「节目取得巨大成功」。",
+      "why": "《脱口秀大会》爆火之后，越来越多年轻人开始看、甚至兼职讲脱口秀，这正是节目成功带来的影响，选 G。E 讲个人天赋、F 讲艺术家分享经验，都不是「节目成功→带动年轻人」的逻辑；A、B、C、D 已用过。",
+      "trap": "七选五最后一空常是「承上总结 + 引出下文结果」。先看空后讲的是「影响」，再回去找「成功」。"
+    },
+
+    "mt1": {
+      "topic": "匹配·抓关键词",
+      "point": "匹配题不要通读全篇，先圈出题干里的「独一无二信息」：人物身份、数字、专有名词。",
+      "why": "题干关键词：young wizard、magical powers、11th birthday，与 A 项 Hogwarts、young wizard、discovers his destiny 完全吻合。B 是超级英雄，C 是沉船爱情，D 是霍比特人，E 是巧克力工厂，F 是玩具，G 是英国国王，都无「11 岁生日」这一细节。",
+      "trap": "D 的 fantasy adventure 与 A 的 fantasy 容易混。要抓「wizard / 11th birthday」这种不可替代的细节。"
+    },
+    "mt2": {
+      "topic": "匹配·抓关键词",
+      "point": "把题干拆成 3–4 个关键词，逐一在选项中找同义复现，全部命中才是答案。",
+      "why": "题干关键词：romantic disaster film、wealthy young woman and poor artist、ship hits an iceberg。C 项 Titanic 以 1912 年真实沉船为背景，正是这三点。A、B、D、E、F、G 都没有「船 + 冰山 + 穷画家」。",
+      "trap": "注意 C 项原文有一处语法瑕疵（A film was directed by…），不要因此怀疑选项本身——匹配看信息，不看语法。"
+    },
+    "mt3": {
+      "topic": "匹配·抓关键词",
+      "point": "动画 + 玩具 + 人类不在时才活过来，三个特征同时出现才能锁定。",
+      "why": "题干关键词：animated、a group of toys、come to life when humans are not around，与 F 项 Toy Story 的 toys that secretly come to life、Woody and Buzz 对应。E 的巧克力工厂、A 的魔法学校都不涉及「玩具」。",
+      "trap": "E、F 都带 fantasy/comedy，先靠「toys」这个核心名词筛掉 E，再看是否提到「人类不在场」。"
+    },
+    "mt4": {
+      "topic": "匹配·抓关键词",
+      "point": "golden ticket、chocolate factory、candy maker 三个名词短语是本题的唯一标识。",
+      "why": "题干讲男孩得到金奖券、参观巧克力工厂，与 E 项 Charlie and the Chocolate Factory 的 a poor boy named Charlie Bucket、wins a tour、chocolate factory 完全对应。A 的魔法学校、D 的魔戒都不涉及巧克力。",
+      "trap": "E 与 F 都写「a poor boy / 男孩主角」吗？F 没有。抓「golden ticket」这种只在 E 出现的词最稳。"
+    },
+    "mt5": {
+      "topic": "匹配·抓关键词",
+      "point": "science fiction + superheroes + alien invasion，三者同现才选《复仇者联盟》。",
+      "why": "题干关键词：science fiction、a group of superheroes、save the world from an alien invasion，对应 B 项 The Avengers 的 a team of Marvel heroes、join forces to save Earth。D 是 fantasy（奇幻），不是科幻；G 是历史剧情片。",
+      "trap": "科幻（science fiction）与奇幻（fantasy）是中考高频区分点：有外星人、超级英雄的是科幻/超级英雄片，有魔法、魔戒的是奇幻。"
+    },
+
+    "qa1": {
+      "topic": "回答问题·事实",
+      "point": "问 What kind of movie 用「A/An + 类型 + film」简答即可，不必抄整句。",
+      "why": "第一段 It is adapted from Liu Cixin's famous science-fiction novel，说明它是科幻片，答 A science-fiction film。若写整句可用 It is a science-fiction film.",
+      "trap": "别把「改编自科幻小说」原文整段抄上去；问 kind 只要给出类型词，多写反而容易出语法错。"
+    },
+    "qa2": {
+      "topic": "回答问题·做法",
+      "point": "问 How do…deal with… 用动词原形开头或 By doing 结构回答。",
+      "why": "第二段末 Global people send thousands of nuclear bombs to blow up the Moon，答 They send thousands of nuclear bombs to blow up the Moon.",
+      "trap": "抄原文时注意主语：原文是 Global people，问句主语是 humans，用 they 指代即可，不要把两处混成一句。"
+    },
+    "qa3": {
+      "topic": "回答问题·概括",
+      "point": "问 Which two… 必须给出「两条」，且要用并列结构（and / 分号）分开。",
+      "why": "第三段两条线索：Liu Peiqiang trains to be a space station astronaut（刘培强苦训）、Tu Hengyu tries to save his dead daughter Yaya（图恒宇救女儿）。答 Liu Peiqiang's training as a space station astronaut and Tu Hengyu's effort to save his dead daughter Yaya.",
+      "trap": "只写一条会扣分。用名词短语并列最省事，避免两句时态不一致。"
+    },
+    "qa4": {
+      "topic": "回答问题·数字",
+      "point": "问 How many 直接答数量，注意原文的 more than / over 不能丢。",
+      "why": "第四段 more than 3,000 visual effect shots，答 More than 3,000.",
+      "trap": "漏掉 more than 就变成「恰好 3000」，与原文不符；数字写 3,000 或 3000 都可。"
+    },
+    "qa5": {
+      "topic": "回答问题·主旨",
+      "point": "问 What does the film tell us… 用 It tells us that + 从句，直接引用文末结论句。",
+      "why": "末句 It tells us unity, responsibility and family love are forever powerful strength in face of great disasters，照此作答即可。",
+      "trap": "这类题答案就是文章最后一句，别自己改写观点；改写容易漏掉 unity / responsibility / family love 三个要点。"
+    },
+
+    "wf1": {
+      "topic": "语篇填词·形容词",
+      "point": "首字母填空先定词性：空格在 kinds 前，必须是形容词。",
+      "why": "v 开头、修饰 kinds、表「各种各样的」，填 various。such as history, geography and pop culture 正是「多种」的例证。",
+      "trap": "别填 variety——它是名词，要用也只能写 a variety of；此处空格直接修饰 kinds，只能填形容词。"
+    },
+    "wf2": {
+      "topic": "语篇填词·形容词",
+      "point": "but 提示前后对比：后面 Angela 准备充分、表现好，前面应是「有难度」。",
+      "why": "c 开头、作表语、与 well prepared 形成转折，填 challenging（有挑战性的）；competitive（竞争激烈的）也说得通。",
+      "trap": "看到 but 先定「反义方向」，再想 c 开头的形容词：challenging / competitive / close 都可能，靠语义取最贴合「有难度」的。"
+    },
+    "wf3": {
+      "topic": "语篇填词·动词原形",
+      "point": "to 引导目的状语时后接动词原形；先定形式，再定词义。",
+      "why": "to ____ the other contestants 意为「为了打败其他选手」，b 开头、动词原形，填 beat。前文 she was soon ahead of the other two contestants 也是提示。",
+      "trap": "beat 的过去式还是 beat，别写成 beated；这里 to 后要原形，正好不受时态干扰。"
+    },
+    "wf4": {
+      "topic": "语篇填词·抽象名词",
+      "point": "between A and B 中的 B 可以是抽象名词，表「与……之间只差一步」。",
+      "why": "v 开头、作介词宾语，与 Angela 相对，指「胜利」，填 victory：她与胜利之间只差一道题。",
+      "trap": "容易想成 contestants（选手）——但 both contestants 已在前文出现，且此处是「只差一题」的抽象距离，用 victory。"
+    },
+    "wf5": {
+      "topic": "语篇填词·过去式",
+      "point": "首字母填空也要看全文时态：本篇讲已结束的比赛，谓语用过去式。",
+      "why": "全文为一般过去时（ran、began、seemed、replied），g 开头、与 great joy and courage 搭配，填 gained（gain great joy 获得快乐）；got 亦可。",
+      "trap": "别填 gets/gains 这类现在时——时态错在语篇填词里同样扣分。先通读定基调时态，再逐空变形。"
+    },
+
+    "gf1": {
+      "topic": "动名词作宾语",
+      "point": "介词后接动名词；hear of / think of / be used to 中的 of、to 都是介词。",
+      "why": "heard of 的 of 是介词，后接动名词 surfing。填 surf 会违反「介词后不接动词原形」，填 surfed 则把主动的「冲浪」说成被动。",
+      "trap": "括号给动词时，先看它前面是不是介词或及物动词的固定搭配：hear of doing、be good at doing、look forward to doing。"
+    },
+    "gf2": {
+      "topic": "现在完成时",
+      "point": "in the last / past + 时间段 是现在完成时的标志；主语为第三人称单数用 has + 过去分词。",
+      "why": "in the last two years 表示「过去两年到现在」，用 has become。若填 became 就与「到现在仍持续」的意思不符，且 in the last two years 不与一般过去时连用。",
+      "trap": "SUP 是缩写，看着像复数，其实指「这项运动」，作主语视为单数，用 has 不用 have。"
+    },
+    "gf3": {
+      "topic": "名词复数",
+      "point": "可数名词泛指多个、前面没有 a/the 限定时用复数；special 修饰复数名词。",
+      "why": "feature 是可数名词，「有多个特别之处」且未特指，用 features。填 feature 则成了单数泛指，与 special（不止一个特点）冲突。",
+      "trap": "括号给名词时只做两件事：判断可数还是不可数、判断单数还是复数。feature 可数、此处表多个，加 -s。"
+    },
+    "gf4": {
+      "topic": "比较级",
+      "point": "much / even / far / a lot 修饰比较级；close 的比较级是 closer。",
+      "why": "feel much closer to nature 意为「感觉离自然更近」，much 提示比较级，故填 closer。填 close 则 much 修饰原级，不合语法；填 closest 是最高级，需要 in/of 范围，句中也没有。",
+      "trap": "close 既可作动词「关闭」也可作形容词「近的」，这里在 feel 后作表语，是形容词比较级 closer。"
+    },
+    "gf5": {
+      "topic": "让步状语从句",
+      "point": "无提示词的空先判断从句类型：前后语义相反（需要耐心 ↔ 停不下来）就是让步，填 Although / Though。",
+      "why": "「虽然掌握它需要一点耐心和练习，但一旦开始你就会发现很难停下来」，前后让步，填 Although（大写，句首）。Because、If、So 都会让逻辑断裂。",
+      "trap": "Although 与 but 不能同时出现：本句主句前没有 but，所以可以放心填 Although。看到已有 but 就不能再填 Although。"
+    },
+
+    "wr1": {
+      "topic": "书面表达·影评",
+      "point": "影评四要素：片名 + 内容简介 + 最打动你的地方 + 你的评价；以一般现在时为主，评价可用 I think / It is worth watching。",
+      "why": "四个提示对应四句话即可成篇：My favourite film is… It is about… What I like most is… I think it is… 首尾各加一句总起与推荐，80 词不难写满。",
+      "trap": "常见失分：全篇用过去时讲故事（讲剧情用现在时即可）、只写剧情不写评价、忘记「不得透露学校姓名」的要求。"
+    }
+  }
+}

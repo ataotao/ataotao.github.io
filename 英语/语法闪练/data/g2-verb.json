@@ -1,0 +1,760 @@
+{
+  "group": "verb",
+  "title": "动词三件套",
+  "block": 2,
+  "items": [
+    {
+      "id": "vb-001",
+      "topic": "不定式",
+      "level": 1,
+      "stem": "Wang Zhenyi built a simple model of the lunar eclipse ______ the movement of the moon more clearly.",
+      "cn": "王贞仪做了一个简单的月食模型，以便更清楚地解释月球的运动。",
+      "options": [
+        "explained",
+        "explain",
+        "to explain",
+        "to explaining"
+      ],
+      "answer": "C",
+      "rule": "表目的用不定式 to do，可译作「为了……」；不定式不能作谓语。",
+      "trap": "空前已有谓语 built，别填 explain；表目的用 to do。",
+      "src": "U1 · 王贞仪与月食",
+      "verified": true
+    },
+    {
+      "id": "vb-002",
+      "topic": "不定式",
+      "level": 1,
+      "stem": "The teacher asked the students ______ their phones away during the lecture about Internet addiction.",
+      "cn": "老师要求学生在上网成瘾讲座期间把手机收起来。",
+      "gloss": {
+        "lecture": "讲座",
+        "Internet addiction": "网瘾"
+      },
+      "options": [
+        "putting",
+        "to put",
+        "put",
+        "to putting"
+      ],
+      "answer": "B",
+      "rule": "ask/tell/want sb to do sth：宾语后接带 to 的不定式。",
+      "trap": "别按中文「让某人做」漏掉 to，写成 asked the students put。",
+      "src": "U4 · 网瘾讲座",
+      "verified": true
+    },
+    {
+      "id": "vb-003",
+      "topic": "不定式",
+      "level": 2,
+      "stem": "In Wang Zhenyi's time, most girls were made ______ at home instead of going to school.",
+      "cn": "在王贞仪那个年代，大多数女孩被迫待在家里，而不能去上学。",
+      "gloss": {
+        "were made": "被迫（做某事）"
+      },
+      "options": [
+        "to stay",
+        "stay",
+        "staying",
+        "stayed"
+      ],
+      "answer": "A",
+      "rule": "make sb do 变被动为 be made to do，原来省略的 to 必须还原。",
+      "trap": "主动不带 to、被动要带 to；照抄 made sb do 而漏 to 是最常见错。",
+      "src": "U1 · 复习指引「非谓语」",
+      "verified": true
+    },
+    {
+      "id": "vb-004",
+      "topic": "不定式",
+      "level": 2,
+      "stem": "The water in the pot was too hot ______ with a bare hand, so the cook turned down the heat.",
+      "cn": "锅里的水太烫了，没法用手直接碰，于是厨师把火调小了。",
+      "gloss": {
+        "turned down": "关小、调低",
+        "a bare hand": "光着手"
+      },
+      "options": [
+        "touching",
+        "touch",
+        "to touching",
+        "to touch"
+      ],
+      "answer": "D",
+      "rule": "too + 形容词 + to do：太……而不能做某事，to 后接动词原形。",
+      "trap": "别因为前面有 too 就写 doing；too...to 中间是形容词，后面是 to do。",
+      "src": "U2 · 体温计与测热",
+      "verified": true
+    },
+    {
+      "id": "vb-005",
+      "topic": "动名词",
+      "level": 1,
+      "stem": "By ______ the lunar eclipse herself, Wang Zhenyi proved that it was not a sign from heaven.",
+      "cn": "通过亲自观测月食，王贞仪证明了它不是上天发出的征兆。",
+      "gloss": {
+        "herself": "亲自"
+      },
+      "options": [
+        "watch",
+        "watching",
+        "to watch",
+        "watched"
+      ],
+      "answer": "B",
+      "rule": "介词（by/after/before/without 等）后接动词，一律用动名词 doing。",
+      "trap": "先看空前是不是介词：By 后只能 doing，别写 to watch 或原形。",
+      "src": "U1 · 王贞仪与月食",
+      "verified": true
+    },
+    {
+      "id": "vb-006",
+      "topic": "动名词",
+      "level": 1,
+      "stem": "The boy practises ______ the piano for an hour after school, even on busy days.",
+      "cn": "这个男孩放学后练习弹钢琴一个小时，即使很忙的日子也照样练。",
+      "options": [
+        "play",
+        "to play",
+        "playing",
+        "played"
+      ],
+      "answer": "C",
+      "rule": "practise/enjoy/finish/mind/keep 后只接动名词 doing，不接不定式。",
+      "trap": "受中文「练习弹琴」影响写 practise to play 是高频错，这些词后只跟 doing。",
+      "src": "U3 · 家庭生活",
+      "verified": true
+    },
+    {
+      "id": "vb-007",
+      "topic": "动名词",
+      "level": 2,
+      "stem": "Grandma is used to ______ up early, though life in the city is quite different.",
+      "cn": "奶奶习惯了早起，尽管城市里的生活大不一样。",
+      "gloss": {
+        "is used to": "习惯于"
+      },
+      "options": [
+        "getting",
+        "get",
+        "to get",
+        "got"
+      ],
+      "answer": "A",
+      "rule": "be used to doing 意为「习惯于做某事」，此处 to 是介词。",
+      "trap": "used to do 是过去常常；be used to 里 to 是介词，后接 doing。",
+      "src": "U3 · 家庭生活",
+      "verified": true
+    },
+    {
+      "id": "vb-008",
+      "topic": "动名词",
+      "level": 2,
+      "stem": "Some teenagers are so addicted to ______ online games that they forget their homework.",
+      "cn": "有些青少年太沉迷于网络游戏，以至于忘了写作业。",
+      "gloss": {
+        "addicted to": "沉迷于"
+      },
+      "options": [
+        "play",
+        "to play",
+        "played",
+        "playing"
+      ],
+      "answer": "D",
+      "rule": "be addicted to 中 to 是介词，后接动名词；so...that 引导结果状语从句。",
+      "trap": "addicted to 后别写 play 或 to play；把它当介词短语，统一用 doing。",
+      "src": "U4 · 压力与网瘾",
+      "verified": true
+    },
+    {
+      "id": "vb-009",
+      "topic": "非谓语辨析",
+      "level": 2,
+      "stem": "I clearly remember ______ the door, but now it is open, so I must go back and check.",
+      "cn": "我清楚地记得自己锁过门，可现在门开着，所以我必须回去看看。",
+      "gloss": {
+        "check": "查看"
+      },
+      "options": [
+        "to lock",
+        "locking",
+        "lock",
+        "locked"
+      ],
+      "answer": "B",
+      "rule": "remember doing 记得做过某事；remember to do 记得要做某事。",
+      "trap": "先看动作是否已发生：句末 now it is open 说明锁过了，用 locking。",
+      "src": "U3 · 家庭生活",
+      "verified": true
+    },
+    {
+      "id": "vb-010",
+      "topic": "非谓语辨析",
+      "level": 2,
+      "stem": "Don't forget ______ the windows before the storm comes, or the rain will get in.",
+      "cn": "别忘记在暴风雨来之前关好窗户，否则雨水会灌进来。",
+      "gloss": {
+        "get in": "灌进来"
+      },
+      "options": [
+        "closing",
+        "close",
+        "to close",
+        "closed"
+      ],
+      "answer": "C",
+      "rule": "forget to do 忘记要做（还没做）；forget doing 忘记做过。",
+      "trap": "or the rain will get in 说明窗还没关，必须用 to close。",
+      "src": "U3 · 家庭生活",
+      "verified": true
+    },
+    {
+      "id": "vb-011",
+      "topic": "非谓语辨析",
+      "level": 3,
+      "stem": "Your bike chain is broken and the tyres need ______ before you ride to school.",
+      "cn": "你的自行车链条断了，轮胎也需要检查一下才能骑车上学。",
+      "gloss": {
+        "tyres": "轮胎"
+      },
+      "options": [
+        "checking",
+        "to check",
+        "checked",
+        "check"
+      ],
+      "answer": "A",
+      "rule": "物作主语时 need doing = need to be done，表示「需要被……」。",
+      "trap": "tyres 自己不会 check；主语是物用 doing 表被动，主语是人用 to do。",
+      "src": "U3 · 家庭生活",
+      "verified": true
+    },
+    {
+      "id": "vb-012",
+      "topic": "一般现在时",
+      "level": 1,
+      "stem": "Our volunteer group ______ old clothes for families in need every winter.",
+      "cn": "我们的志愿者小组每年冬天都为有需要的家庭收集旧衣服。",
+      "gloss": {
+        "families in need": "有困难的家庭"
+      },
+      "options": [
+        "collect",
+        "collected",
+        "are collecting",
+        "collects"
+      ],
+      "answer": "D",
+      "rule": "一般现在时中主语为第三人称单数时，谓语动词加 -s/-es。",
+      "trap": "主语 group 是单数，不随 clothes 变复数；every winter 用现在时。",
+      "src": "U4 · 志愿服务",
+      "verified": true
+    },
+    {
+      "id": "vb-013",
+      "topic": "一般现在时",
+      "level": 2,
+      "stem": "It is well known that water ______ at 100 degrees at sea level.",
+      "cn": "众所周知，水在海平面100摄氏度时沸腾。",
+      "options": [
+        "boiled",
+        "boils",
+        "will boil",
+        "is boiling"
+      ],
+      "answer": "B",
+      "rule": "客观真理、自然规律用一般现在时，不受主句时态影响。",
+      "trap": "别因前面是 It is 就乱选时态；真理句谓语永远用现在时，还有 -s。",
+      "src": "U2 · 体温计与测热",
+      "verified": true
+    },
+    {
+      "id": "vb-014",
+      "topic": "一般过去时",
+      "level": 1,
+      "stem": "Yesterday our class ______ the science museum to learn about ancient inventions.",
+      "cn": "昨天我们班参观了科学博物馆，了解古代的发明。",
+      "options": [
+        "visit",
+        "have visited",
+        "visited",
+        "will visit"
+      ],
+      "answer": "C",
+      "rule": "yesterday 等明确过去时间，谓语用一般过去时。",
+      "trap": "有 yesterday 就不能用 have visited；先找时间状语再定时态。",
+      "src": "U1 · 阿基米德与金冠",
+      "verified": true
+    },
+    {
+      "id": "vb-015",
+      "topic": "条件状语从句",
+      "level": 2,
+      "stem": "If the temperature ______ below zero tonight, the water in the pot will freeze.",
+      "cn": "如果今晚气温降到零度以下，锅里的水就会结冰。",
+      "options": [
+        "drops",
+        "will drop",
+        "dropped",
+        "has dropped"
+      ],
+      "answer": "A",
+      "rule": "if 条件状语从句「主将从现」：从句用一般现在时表示将来。",
+      "trap": "从句里看到 tonight 也别写 will drop；将来时只出现在主句。",
+      "src": "U2 · 体温计与测热",
+      "verified": true
+    },
+    {
+      "id": "vb-016",
+      "topic": "一般将来时",
+      "level": 2,
+      "stem": "Look at the sky! It ______ rain soon, so let's move the plants inside.",
+      "cn": "看看天空！快要下雨了，我们把植物搬到屋里去吧。",
+      "options": [
+        "rains",
+        "rained",
+        "is raining",
+        "is going to"
+      ],
+      "answer": "D",
+      "rule": "说话时有迹象预示将来，用 be going to do；soon 表将来。",
+      "trap": "有迹象预示将来用 be going to；rains/rained 与 soon 冲突。",
+      "src": "U3 · 家庭生活",
+      "verified": true
+    },
+    {
+      "id": "vb-017",
+      "topic": "现在完成时",
+      "level": 2,
+      "stem": "Jenny ______ the Science Museum twice so far this year, and she says the robot show is fantastic.",
+      "cn": "今年到目前为止，珍妮去过两次科学博物馆，她说机器人表演非常精彩。",
+      "gloss": {
+        "so far": "到目前为止",
+        "fantastic": "精彩"
+      },
+      "options": [
+        "has gone to",
+        "has been to",
+        "went to",
+        "has been"
+      ],
+      "answer": "B",
+      "rule": "have been to 去过（人已回来），可与 twice、ever 连用；have gone to 去了未回。",
+      "trap": "so far 要完成时；gone to 不与 twice 连用，经历要用 been to。",
+      "src": "U2 · 复习指引「现在完成时」",
+      "verified": true
+    },
+    {
+      "id": "vb-018",
+      "topic": "现在完成时",
+      "level": 1,
+      "stem": "Mr Chen has taught science in our school ______ 2015, and his students all love his lessons.",
+      "cn": "陈老师从2015年起就在我们学校教科学，他的学生都喜欢他的课。",
+      "options": [
+        "since",
+        "for",
+        "in",
+        "from"
+      ],
+      "answer": "A",
+      "rule": "since + 时间点，for + 时间段；现在完成时常与二者连用。",
+      "trap": "2015 是时间点该用 since，不是 for；完成时也不与 in 2015 这样搭。",
+      "src": "U2 · 复习指引「现在完成时」",
+      "verified": true
+    },
+    {
+      "id": "vb-019",
+      "topic": "现在完成时",
+      "level": 1,
+      "stem": "Li Wei hasn't finished his science report ______, so he will work on it tonight.",
+      "cn": "李伟还没有完成他的科学报告，所以他今晚要接着做。",
+      "gloss": {
+        "work on": "接着做"
+      },
+      "options": [
+        "already",
+        "ever",
+        "yet",
+        "still"
+      ],
+      "answer": "C",
+      "rule": "yet 用于否定句和疑问句句末；already 多用于肯定句。",
+      "trap": "否定句句末别填 already；hasn't ... yet 是固定搭配。",
+      "src": "U2 · 语法填空",
+      "verified": true
+    },
+    {
+      "id": "vb-020",
+      "topic": "现在完成时",
+      "level": 3,
+      "stem": "Jenny ______ the library book since last Monday, so she must return it tomorrow.",
+      "cn": "珍妮从上个星期一起就一直没还那本图书馆的书，所以她明天必须去还。",
+      "options": [
+        "has borrowed",
+        "kept",
+        "keeps",
+        "has kept"
+      ],
+      "answer": "D",
+      "rule": "borrow 是短暂动词，不能与 since/for 连用；延续要用 keep。",
+      "trap": "「借了两周」直译 has borrowed for 是高频错；有 since 就换成 kept。",
+      "src": "U3 · 家庭生活",
+      "verified": true
+    },
+    {
+      "id": "vb-021",
+      "topic": "过去进行时",
+      "level": 2,
+      "stem": "While I ______ the science report last night, the lights suddenly went out.",
+      "cn": "昨晚我正在写科学报告时，灯突然灭了。",
+      "gloss": {
+        "went out": "熄灭"
+      },
+      "options": [
+        "wrote",
+        "was writing",
+        "have written",
+        "write"
+      ],
+      "answer": "B",
+      "rule": "while 引导的时间状语从句常用过去进行时，表示背景动作正在进行。",
+      "trap": "别选 wrote：while 后是正在进行的背景动作，突发动作用过去式。",
+      "src": "U2 · 语法填空",
+      "verified": true
+    },
+    {
+      "id": "vb-022",
+      "topic": "被动语态（现在）",
+      "level": 1,
+      "stem": "The lunar eclipse ______ by millions of people in Guangzhou every year.",
+      "cn": "每年广州有数以百万计的人观看月食。",
+      "options": [
+        "is watched",
+        "watches",
+        "is watching",
+        "was watched"
+      ],
+      "answer": "A",
+      "rule": "一般现在时被动：am/is/are + 过去分词；by 引出动作的执行者。",
+      "trap": "eclipse 是被看的，别选 watches；every year 定现在时，was 排除。",
+      "src": "U1 · 复习指引「被动语态」",
+      "verified": true
+    },
+    {
+      "id": "vb-023",
+      "topic": "被动语态（现在）",
+      "level": 2,
+      "stem": "This kind of paper ______ bamboo, and it is very soft.",
+      "cn": "这种纸是用竹子制成的，非常柔软。",
+      "options": [
+        "is made of",
+        "is made by",
+        "is made from",
+        "is made in"
+      ],
+      "answer": "C",
+      "rule": "be made from 指加工后看不出原材料；be made of 指仍看得出原材料。",
+      "trap": "纸由竹子加工而成、看不出竹子用 from；木桌看得出木头才用 of。",
+      "src": "U2 · 复习指引「被动语态」",
+      "verified": true
+    },
+    {
+      "id": "vb-024",
+      "topic": "被动语态（过去）",
+      "level": 1,
+      "stem": "The first thermometer ______ by a scientist more than 400 years ago, and it changed medicine.",
+      "cn": "四百多年前，一位科学家发明了第一支温度计，它改变了医学。",
+      "gloss": {
+        "medicine": "医学"
+      },
+      "options": [
+        "is invented",
+        "invented",
+        "has invented",
+        "was invented"
+      ],
+      "answer": "D",
+      "rule": "一般过去时被动：was/were + 过去分词；more than 400 years ago 定过去。",
+      "trap": "温度计是「被发明」的，别写 invented 主动；有过去时间就用 was。",
+      "src": "U2 · 体温计与测热",
+      "verified": true
+    },
+    {
+      "id": "vb-025",
+      "topic": "被动语态（过去）",
+      "level": 2,
+      "stem": "The crown ______ into a bowl of water, and Archimedes watched the water rise.",
+      "cn": "王冠被放进一碗水里，阿基米德看着水面升高。",
+      "options": [
+        "was putting",
+        "was put",
+        "put",
+        "has put"
+      ],
+      "answer": "B",
+      "rule": "was/were + 过去分词构成过去被动；王冠是「被放入」水中的。",
+      "trap": "put 三形同形，was put 才是被动；别因拼写相同就写成主动 put。",
+      "src": "U1 · 阿基米德与金冠",
+      "verified": true
+    },
+    {
+      "id": "vb-026",
+      "topic": "被动语态（将来）",
+      "level": 2,
+      "stem": "A new science museum ______ in our district next year, and students can visit it free.",
+      "cn": "明年我们区将建一座新的科学博物馆，学生可以免费参观。",
+      "options": [
+        "will be built",
+        "will build",
+        "is built",
+        "was built"
+      ],
+      "answer": "A",
+      "rule": "一般将来时被动：will be + 过去分词。",
+      "trap": "漏掉 be 就成主动 will build；next year 定将来，was built 排除。",
+      "src": "U4 · 志愿服务",
+      "verified": true
+    },
+    {
+      "id": "vb-027",
+      "topic": "被动语态（完成）",
+      "level": 3,
+      "stem": "So far, more than 200 trees ______ in the school garden by the volunteers.",
+      "cn": "到目前为止，志愿者已经在学校花园里种了两百多棵树。",
+      "options": [
+        "have planted",
+        "were planted",
+        "have been planted",
+        "are planted"
+      ],
+      "answer": "C",
+      "rule": "现在完成时被动：has/have been + 过去分词；so far 定完成。",
+      "trap": "so far 要用 have been done，漏掉 been 就变成主动语态。",
+      "src": "U4 · 志愿服务",
+      "verified": true
+    },
+    {
+      "id": "vb-028",
+      "topic": "情态动词",
+      "level": 2,
+      "stem": "—Must I hand in the report today? —No, you ______. You can give it to me on Friday.",
+      "cn": "——我今天必须交报告吗？——不，不用。你可以星期五给我。",
+      "gloss": {
+        "hand in": "上交"
+      },
+      "options": [
+        "mustn't",
+        "needn't",
+        "can't",
+        "shouldn't"
+      ],
+      "answer": "B",
+      "rule": "Must I...? 的否定回答用 needn't（不必），不用 mustn't（禁止）。",
+      "trap": "mustn't 是「不许」；回答「不必」用 needn't 或 don't have to。",
+      "src": "U4 · 压力与网瘾",
+      "verified": true
+    },
+    {
+      "id": "vb-029",
+      "topic": "主谓一致",
+      "level": 2,
+      "stem": "The number of students joining the volunteer club ______ doubled since last year.",
+      "cn": "参加志愿者社团的学生人数自去年以来已经翻了一番。",
+      "gloss": {
+        "the number of": "……的数量",
+        "doubled": "翻了一番"
+      },
+      "options": [
+        "have",
+        "is",
+        "are",
+        "has"
+      ],
+      "answer": "D",
+      "rule": "The number of + 复数名词，中心词是 number，谓语用单数。",
+      "trap": "别看到 students 就用 have；A number of 才接复数谓语。",
+      "src": "U4 · 志愿服务",
+      "verified": true
+    },
+    {
+      "id": "vb-030",
+      "topic": "主谓一致",
+      "level": 3,
+      "stem": "Neither the students nor their teacher ______ happy about the new timetable at yesterday's meeting.",
+      "cn": "在昨天的会上，学生和老师都不满意新的课程表。",
+      "gloss": {
+        "timetable": "课程表"
+      },
+      "options": [
+        "was",
+        "were",
+        "are",
+        "be"
+      ],
+      "answer": "A",
+      "rule": "neither...nor 连接主语时，谓语与最近的主语保持一致（就近原则）。",
+      "trap": "别看到 the students 就选 were；看 nor 后最近的 teacher 定单数。",
+      "src": "U3 · 家庭生活",
+      "verified": true
+    },
+    {
+      "id": "vb-031",
+      "topic": "情态动词",
+      "level": 2,
+      "stem": "Why not ______ her a lovely doll for her birthday?",
+      "cn": "为什么不给她买一个可爱的洋娃娃作生日礼物呢？",
+      "options": [
+        "to get",
+        "getting",
+        "get",
+        "got"
+      ],
+      "answer": "C",
+      "rule": "Why not do sth? 是提建议句型，not 后直接接动词原形。",
+      "trap": "看到 not 就按否定式加 to；Why not 后只接原形 get。",
+      "src": "2026-2027期中·语法选择",
+      "verified": true
+    },
+    {
+      "id": "vb-032",
+      "topic": "情态动词",
+      "level": 2,
+      "stem": "You ______ be so worried about the coming exam — you have already done your best.",
+      "cn": "你不必为即将到来的考试这么担心——你已经尽力了。",
+      "gloss": {
+        "coming": "即将到来的"
+      },
+      "options": [
+        "mustn't",
+        "needn't",
+        "can't",
+        "may not"
+      ],
+      "answer": "B",
+      "rule": "needn't 表「不必」；mustn't 表禁止，can't 表推测「不可能」。",
+      "trap": "「不必担心」用 needn't；mustn't 是禁止，can't 是推测。",
+      "src": "2026-2027期中·语法选择",
+      "verified": true
+    },
+    {
+      "id": "vb-033",
+      "topic": "一般过去时",
+      "level": 1,
+      "stem": "I ______ to send you the package that you should have received in 1956.",
+      "cn": "我忘了把你在1956年就该收到的包裹寄给你。",
+      "options": [
+        "forget",
+        "forgot",
+        "will forget",
+        "was forgetting"
+      ],
+      "answer": "B",
+      "rule": "整句讲过去的事，主句谓语用一般过去时，forgot 与从句呼应。",
+      "trap": "被 should have received 带成现在时；forget 的过去式是 forgot。",
+      "src": "2026-2027期中·语法选择",
+      "verified": true
+    },
+    {
+      "id": "vb-034",
+      "topic": "不定式",
+      "level": 1,
+      "stem": "I decided ______ more hands-on practice after watching the video tutorials.",
+      "cn": "看完视频教程后，我决定多做一些实际操作练习。",
+      "gloss": {
+        "hands-on": "亲自动手的",
+        "video tutorials": "视频教程"
+      },
+      "options": [
+        "getting",
+        "to get",
+        "get",
+        "got"
+      ],
+      "answer": "B",
+      "rule": "decide 后接不定式 to do；decide doing 和 decide do 都不成立。",
+      "trap": "受前面 after watching 影响写成 getting；记 decide to do。",
+      "src": "2026-2027期中·语法选择",
+      "verified": true
+    },
+    {
+      "id": "vb-035",
+      "topic": "动名词",
+      "level": 2,
+      "stem": "It is no use ______ about things you cannot change.",
+      "cn": "为无法改变的事情担心是没有用的。",
+      "options": [
+        "worry",
+        "to worry",
+        "worrying",
+        "worried"
+      ],
+      "answer": "C",
+      "rule": "It is no use doing sth：It 是形式主语，真正主语是动名词短语。",
+      "trap": "看到 It is… 就接 to do；no use / no good 后面固定用动名词。",
+      "src": "2026-2027期中·语法选择",
+      "verified": true
+    },
+    {
+      "id": "vb-036",
+      "topic": "一般过去时",
+      "level": 2,
+      "stem": "Though the recovery was painful, her spirit ______ strong and unbroken.",
+      "cn": "虽然康复的过程很痛苦，但她的精神依然坚强不屈。",
+      "gloss": {
+        "recovery": "康复",
+        "unbroken": "未被击垮"
+      },
+      "options": [
+        "remain",
+        "remains",
+        "remaining",
+        "remained"
+      ],
+      "answer": "D",
+      "rule": "让步从句用 was，主句谓语保持过去时，remain 用 remained。",
+      "trap": "spirit 让人觉得「现在也坚强」就选 remains；看 was 定过去时。",
+      "src": "2026-2027期中·语法选择",
+      "verified": true
+    },
+    {
+      "id": "vb-037",
+      "topic": "被动语态（过去）",
+      "level": 2,
+      "stem": "Slowly, my baking skills ______ by daily practice and became much better.",
+      "cn": "慢慢地，我的烘焙技能通过每天的练习得到了提升，变得越来越好。",
+      "options": [
+        "sharpened",
+        "were sharpened",
+        "are sharpened",
+        "have sharpened"
+      ],
+      "answer": "B",
+      "rule": "skill 是「被磨炼」的对象，过去被动用 were + 过去分词。",
+      "trap": "看到 became 就选主动 sharpened；有 by 短语就该想到被动。",
+      "src": "2026-2027期中·语法选择",
+      "verified": true
+    },
+    {
+      "id": "vb-038",
+      "topic": "主谓一致",
+      "level": 2,
+      "stem": "Everything ______ going well since the new term started.",
+      "cn": "自从新学期开始，一切都很顺利。",
+      "gloss": {
+        "going well": "进展顺利"
+      },
+      "options": [
+        "are",
+        "is",
+        "were",
+        "be"
+      ],
+      "answer": "B",
+      "rule": "everything 等不定代词作主语视为单数，谓语用 is。",
+      "trap": "since 从句有 started 就选过去时；主语是 everything，用单数 is。",
+      "src": "2026-2027期中·语法选择",
+      "verified": true
+    }
+  ]
+}

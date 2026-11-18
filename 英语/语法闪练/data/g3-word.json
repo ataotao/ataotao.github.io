@@ -1,0 +1,979 @@
+{
+  "group": "word",
+  "title": "词法速记",
+  "block": 3,
+  "items": [
+    {
+      "id": "wd-001",
+      "topic": "系动词",
+      "level": 1,
+      "stem": "The soup ______ delicious, so everyone in my family wants more.",
+      "cn": "这汤尝起来很鲜美，所以家里每个人都想再喝一点。",
+      "options": [
+        "is tasted",
+        "tastes",
+        "is tasting",
+        "taste"
+      ],
+      "answer": "B",
+      "rule": "taste 作系动词后接形容词表「尝起来」，用主动一般现在时。",
+      "trap": "见食物「被尝」就选 is tasted；系动词无被动，也不用进行时。",
+      "src": "U3 · 系动词",
+      "verified": true
+    },
+    {
+      "id": "wd-002",
+      "topic": "系动词",
+      "level": 2,
+      "stem": "After cleaning the whole house alone, my mother looked ______ and went to bed early.",
+      "cn": "独自打扫完整座房子后，妈妈看上去很累，很早就去睡了。",
+      "gloss": {
+        "looked": "看上去，显得"
+      },
+      "options": [
+        "tiring",
+        "tire",
+        "tired",
+        "tiredly"
+      ],
+      "answer": "C",
+      "rule": "look 是系动词接形容词；-ed 形容词表人「感到」，-ing 表事物「令人」。",
+      "trap": "主语是人却选 tiring；问谁感到累，人用 tired。",
+      "src": "U3 · 系动词",
+      "verified": true
+    },
+    {
+      "id": "wd-003",
+      "topic": "系动词",
+      "level": 1,
+      "stem": "The sweater your grandma made ______ very soft, and I wear it almost every day.",
+      "cn": "你奶奶织的这件毛衣摸起来很柔软，我几乎每天都穿。",
+      "gloss": {
+        "made": "做，这里指织（毛衣）"
+      },
+      "options": [
+        "feels",
+        "is felt",
+        "is feeling",
+        "feels softly"
+      ],
+      "answer": "A",
+      "rule": "feel 表「摸起来」是系动词，接形容词，用主动形式，不用被动或进行时。",
+      "trap": "选 is felt 或加 -ly 的 feels softly 都错：系动词后只放形容词。",
+      "src": "U3 · 系动词",
+      "verified": true
+    },
+    {
+      "id": "wd-004",
+      "topic": "系动词",
+      "level": 2,
+      "stem": "The old machine in the science museum ______ be broken, but it still works well.",
+      "cn": "科学博物馆里那台旧机器似乎坏了，但它运转起来仍然很好。",
+      "gloss": {
+        "broken": "坏了的，出故障的",
+        "works": "运转，能正常工作"
+      },
+      "options": [
+        "seems",
+        "is seeming to",
+        "is seemed to",
+        "seems to"
+      ],
+      "answer": "D",
+      "rule": "seem 后接不定式：seem to be / seem to do，不能直接接动词原形。",
+      "trap": "漏写 to 成 seems be；seem 无被动、不用进行时。",
+      "src": "U2 · 系动词",
+      "verified": true
+    },
+    {
+      "id": "wd-005",
+      "topic": "系动词",
+      "level": 2,
+      "stem": "The story about the two geniuses sounds ______, and all the students want to hear it again.",
+      "cn": "关于两位天才的故事听起来很有趣，所有学生都想再听一遍。",
+      "gloss": {
+        "sounds": "听起来"
+      },
+      "options": [
+        "interested",
+        "interesting",
+        "interest",
+        "interestingly"
+      ],
+      "answer": "B",
+      "rule": "-ing 形容词表「令人……的」，修饰引起感受的事物；sound 接形容词。",
+      "trap": "按「学生感兴趣」选 interested；陈述对象是 story，用 interesting。",
+      "src": "U2 · 系动词",
+      "verified": true
+    },
+    {
+      "id": "wd-006",
+      "topic": "形容词副词",
+      "level": 1,
+      "stem": "Nancy plays the piano very ______, and she dreams of becoming a musician.",
+      "cn": "南希钢琴弹得很好，她梦想成为一名音乐家。",
+      "gloss": {
+        "plays": "弹奏，演奏（乐器）"
+      },
+      "options": [
+        "good",
+        "well",
+        "nice",
+        "wonderful"
+      ],
+      "answer": "B",
+      "rule": "修饰动词 play 要用副词 well；good 是形容词，只能作定语或表语。",
+      "trap": "按汉语「弹得好」写 very good；空修饰动词，必须用副词。",
+      "src": "U1 · 形容词副词",
+      "verified": true
+    },
+    {
+      "id": "wd-007",
+      "topic": "形容词副词",
+      "level": 3,
+      "stem": "The two young inventors worked so ______ on the machine that they forgot their dinner.",
+      "cn": "两位年轻发明家在机器上干得那么起劲，连晚饭都忘了。",
+      "options": [
+        "hard",
+        "hardly",
+        "harder",
+        "hardest"
+      ],
+      "answer": "A",
+      "rule": "hard 既是形容词也是副词；hardly 意为「几乎不」，不是 hard 的副词。",
+      "trap": "见 -ly 就当副词选 hardly，句意变「几乎不工作」，逻辑反了。",
+      "src": "U2 · 形容词副词",
+      "verified": true
+    },
+    {
+      "id": "wd-008",
+      "topic": "比较级",
+      "level": 1,
+      "stem": "The new model of the lunar eclipse is as ______ as the old one, and it is easier to carry.",
+      "cn": "这个新的月食模型和旧的一样漂亮，而且搬起来更省力。",
+      "options": [
+        "more beautiful",
+        "beautifully",
+        "beautiful",
+        "most beautiful"
+      ],
+      "answer": "C",
+      "rule": "as + 形容词原级 + as 表同级比较，中间不能用比较级或最高级。",
+      "trap": "见比较就加 more；两个 as 之间只放原级，beautifully 也不能用。",
+      "src": "U1 · 比较级",
+      "verified": true
+    },
+    {
+      "id": "wd-009",
+      "topic": "比较级",
+      "level": 2,
+      "stem": "After a good sleep, my grandpa felt ______ better than the day before.",
+      "cn": "好好睡了一觉后，爷爷感觉比前一天好多了。",
+      "gloss": {
+        "felt": "感觉，觉得（身体状态）"
+      },
+      "options": [
+        "very",
+        "more",
+        "so",
+        "much"
+      ],
+      "answer": "D",
+      "rule": "修饰比较级用 much/even/a lot/far；very 和 so 不能修饰比较级。",
+      "trap": "按汉语「好多了」写 very better；记 much/even/a lot + 比较级。",
+      "src": "U3 · 比较级",
+      "verified": true
+    },
+    {
+      "id": "wd-010",
+      "topic": "比较级",
+      "level": 3,
+      "stem": "Archimedes was no less ______ than the greatest scientists of his time.",
+      "cn": "阿基米德和他那个时代最伟大的科学家一样聪明。",
+      "gloss": {
+        "no less": "不亚于，不比……差"
+      },
+      "options": [
+        "clever",
+        "cleverer",
+        "cleverest",
+        "more clever"
+      ],
+      "answer": "A",
+      "rule": "no less + 形容词原级 + than 表「不比……差」，其中用原级不用比较级。",
+      "trap": "照字面「更」就选 cleverer；no less…than 中间只能是原级。",
+      "src": "U1 · 比较级",
+      "verified": true
+    },
+    {
+      "id": "wd-011",
+      "topic": "最高级",
+      "level": 2,
+      "stem": "The lunar eclipse is one of the most ______ natural sights in the night sky.",
+      "cn": "月食是夜空中最令人惊叹的自然景象之一。",
+      "gloss": {
+        "sights": "景象，景观"
+      },
+      "options": [
+        "amazed",
+        "amazement",
+        "more amazing",
+        "amazing"
+      ],
+      "answer": "D",
+      "rule": "one of the + 最高级 + 可数名词复数：one of the most amazing sights。",
+      "trap": "别选 more amazing（most 已是最高级标记）；one of 后要接名词复数。",
+      "src": "U1 · 最高级",
+      "verified": true
+    },
+    {
+      "id": "wd-012",
+      "topic": "冠词",
+      "level": 1,
+      "stem": "It took Archimedes less than ______ hour to solve the king's problem.",
+      "cn": "阿基米德用了不到一小时就解出了国王的难题。",
+      "options": [
+        "a",
+        "an",
+        "the",
+        "—（不填）"
+      ],
+      "answer": "B",
+      "rule": "a/an 由首音素决定：hour 的 h 不发音，以元音音素开头用 an。",
+      "trap": "看字母 h 就选 a；先读出声，首音是元音才用 an。",
+      "src": "U1 · 冠词",
+      "verified": true
+    },
+    {
+      "id": "wd-013",
+      "topic": "冠词",
+      "level": 1,
+      "stem": "Her model was ______ first one that could show a lunar eclipse clearly.",
+      "cn": "她的模型是第一个能清楚演示月食的模型。",
+      "options": [
+        "a",
+        "—（不填）",
+        "the",
+        "an"
+      ],
+      "answer": "C",
+      "rule": "序数词 first 前用定冠词 the；最高级、独一无二的事物前也用 the。",
+      "trap": "first 前误用 a 或省掉 the；序数词前一律用 the。",
+      "src": "U1 · 冠词",
+      "verified": true
+    },
+    {
+      "id": "wd-014",
+      "topic": "冠词",
+      "level": 1,
+      "stem": "My brother goes to ______ school by bike every morning, even in winter.",
+      "cn": "我哥哥每天早上骑自行车上学，连冬天也不例外。",
+      "gloss": {
+        "by bike": "骑自行车"
+      },
+      "options": [
+        "a",
+        "the",
+        "an",
+        "—（不填）"
+      ],
+      "answer": "D",
+      "rule": "go to school 表「上学」，school 前用零冠词；go to bed 同理。",
+      "trap": "按汉语「去学校」加 the；表用途的名词前不加冠词。",
+      "src": "U3 · 冠词",
+      "verified": true
+    },
+    {
+      "id": "wd-015",
+      "topic": "代词",
+      "level": 1,
+      "stem": "Wang Zhenyi's father supported ______ when she wanted to study the stars.",
+      "cn": "王贞仪想研究星星时，父亲很支持她。",
+      "gloss": {
+        "study": "研究"
+      },
+      "options": [
+        "she",
+        "hers",
+        "her",
+        "herself"
+      ],
+      "answer": "C",
+      "rule": "supported 是及物动词，后接宾格 her；主格 she 只能作主语。",
+      "trap": "按汉语「她」直接选 she；动词后的代词一律用宾格。",
+      "src": "U1 · 代词",
+      "verified": true
+    },
+    {
+      "id": "wd-016",
+      "topic": "代词",
+      "level": 2,
+      "stem": "This notebook isn't mine. It's ______, because her name is on the first page.",
+      "cn": "这本笔记本不是我的，是她的，因为第一页上写着她的名字。",
+      "options": [
+        "her",
+        "hers",
+        "she",
+        "herself"
+      ],
+      "answer": "B",
+      "rule": "名词性物主代词 hers = her + 名词，后面不能再接名词。",
+      "trap": "空格后没有名词就用 hers；后面有名词才用 her。",
+      "src": "U3 · 代词",
+      "verified": true
+    },
+    {
+      "id": "wd-017",
+      "topic": "代词",
+      "level": 2,
+      "stem": "My grandma's radio looks quite old, but ______ still works very well.",
+      "cn": "奶奶的收音机看上去挺旧了，但它仍然很好用。",
+      "gloss": {
+        "works": "运转，能正常工作"
+      },
+      "options": [
+        "it",
+        "its",
+        "it's",
+        "itself"
+      ],
+      "answer": "A",
+      "rule": "it 作主语指代前文事物；its 是形容词性物主代词，it's = it is。",
+      "trap": "it's 看着像所有格，其实是 it is；此处缺主语，只能选 it。",
+      "src": "U3 · 代词",
+      "verified": true
+    },
+    {
+      "id": "wd-018",
+      "topic": "不定代词",
+      "level": 1,
+      "stem": "On my father's birthday, I want to cook ______ special for the whole family.",
+      "cn": "在爸爸生日那天，我想给全家人做点特别的好菜。",
+      "options": [
+        "anything",
+        "nothing",
+        "everything",
+        "something"
+      ],
+      "answer": "D",
+      "rule": "肯定句用 something；形容词修饰不定代词时必须后置。",
+      "trap": "写成 special something 是搬汉语语序；不定代词在前，形容词在后。",
+      "src": "U3 · 不定代词",
+      "verified": true
+    },
+    {
+      "id": "wd-019",
+      "topic": "不定代词",
+      "level": 2,
+      "stem": "My parents are both busy, so ______ of them can take me to the museum this weekend.",
+      "cn": "我父母都很忙，所以这个周末他们俩都不能带我去博物馆。",
+      "options": [
+        "both",
+        "either",
+        "neither",
+        "none"
+      ],
+      "answer": "C",
+      "rule": "neither of + 复数代词表「两者都不」；both 表肯定，either 表任一。",
+      "trap": "前句 both busy，后面选 both 就逻辑矛盾；两人都不选 neither。",
+      "src": "U3 · 不定代词",
+      "verified": true
+    },
+    {
+      "id": "wd-020",
+      "topic": "介词",
+      "level": 1,
+      "stem": "Wang Zhenyi was born ______ 1768 and wrote many books about the stars.",
+      "cn": "王贞仪出生于1768年，写了许多关于星星的书。",
+      "options": [
+        "in",
+        "on",
+        "at",
+        "for"
+      ],
+      "answer": "A",
+      "rule": "年份、月份、季节前用 in；具体某天用 on，具体时刻用 at。",
+      "trap": "「在 1768 年」误写 on 1768；先看空后是年份还是日期。",
+      "src": "U1 · 介词",
+      "verified": true
+    },
+    {
+      "id": "wd-021",
+      "topic": "介词",
+      "level": 2,
+      "stem": "After breaking the vase, the little girl hid her face ______ shame.",
+      "cn": "打碎花瓶后，小女孩羞愧得把脸藏了起来。",
+      "options": [
+        "of",
+        "in",
+        "for",
+        "on"
+      ],
+      "answer": "B",
+      "rule": "in + 抽象名词表状态：in shame 羞愧地，in surprise 惊讶地。",
+      "trap": "「羞愧地」误用 of/for；记住 in shame 是固定搭配。",
+      "src": "U3 · 介词",
+      "verified": true
+    },
+    {
+      "id": "wd-022",
+      "topic": "介词",
+      "level": 1,
+      "stem": "Archimedes is famous ______ finding the secret of the golden crown.",
+      "cn": "阿基米德因发现金冠的秘密而闻名。",
+      "options": [
+        "as",
+        "with",
+        "in",
+        "for"
+      ],
+      "answer": "D",
+      "rule": "be famous for + 原因，表「因……而闻名」；be famous as + 身份。",
+      "trap": "for/as 混用：for 后接原因，as 后接身份。",
+      "src": "U1 · 介词",
+      "verified": true
+    },
+    {
+      "id": "wd-023",
+      "topic": "介词短语",
+      "level": 2,
+      "stem": "My sister ______ the school volunteer team, so she has no time to watch TV this week.",
+      "cn": "我姐姐负责学校的志愿者队，所以这周她没时间看电视。",
+      "options": [
+        "is in charge of",
+        "is in the charge of",
+        "takes charge",
+        "is charged with"
+      ],
+      "answer": "A",
+      "rule": "be in charge of 表「负责某事」，主语是人；in the charge of 表「由……负责」。",
+      "trap": "of 前多一个 the 意思就反过来；人负责事用 in charge of。",
+      "src": "U4 · 介词短语",
+      "verified": true
+    },
+    {
+      "id": "wd-024",
+      "topic": "介词短语",
+      "level": 2,
+      "stem": "______ the moon and the stars, Wang Zhenyi studied how eclipses happen.",
+      "cn": "除了月亮和星星之外，王贞仪还研究了日食和月食是怎样发生的。",
+      "options": [
+        "In addition",
+        "Except for",
+        "In addition to",
+        "Instead of"
+      ],
+      "answer": "C",
+      "rule": "in addition to + 名词/动名词 表「除……之外还」；in addition 后要逗号。",
+      "trap": "少写 to 成 In addition；to 是介词，后接名词或动名词。",
+      "src": "U1 · 介词短语",
+      "verified": true
+    },
+    {
+      "id": "wd-025",
+      "topic": "连词",
+      "level": 2,
+      "stem": "Wang Zhenyi kept studying the stars ______ she was very interested in them.",
+      "cn": "王贞仪一直研究星星，因为她对它们非常感兴趣。",
+      "gloss": {
+        "kept": "一直，持续（做某事）"
+      },
+      "options": [
+        "because of",
+        "because",
+        "so",
+        "although"
+      ],
+      "answer": "B",
+      "rule": "because 后接完整句子；because of 后接名词或动名词。",
+      "trap": "空后是完整句子还用 because of；先看空后是句子还是短语。",
+      "src": "U1 · 连词",
+      "verified": true
+    },
+    {
+      "id": "wd-026",
+      "topic": "连词",
+      "level": 3,
+      "stem": "The two geniuses' story was ______ an amazing one that everybody remembered it.",
+      "cn": "两位天才的故事如此精彩，每个人都记住了它。",
+      "options": [
+        "so",
+        "very",
+        "too",
+        "such"
+      ],
+      "answer": "D",
+      "rule": "such + a/an + 形容词 + 名词 + that；so 后直接接形容词或副词。",
+      "trap": "见 amazing 就选 so；后面还有名词 one，必须用 such。",
+      "src": "U2 · 连词",
+      "verified": true
+    },
+    {
+      "id": "wd-027",
+      "topic": "并列连词",
+      "level": 2,
+      "stem": "The problem was solved not by luck ______ by careful thinking.",
+      "cn": "这个问题不是靠运气解决的，而是靠仔细思考解决的。",
+      "options": [
+        "but",
+        "and",
+        "or",
+        "so"
+      ],
+      "answer": "A",
+      "rule": "not A but B 表「不是 A 而是 B」，A、B 结构必须一致。",
+      "trap": "见 not 就选 and/or；not…but… 前后同为 by 短语，用 but。",
+      "src": "U1 · 并列连词",
+      "verified": true
+    },
+    {
+      "id": "wd-028",
+      "topic": "并列连词",
+      "level": 3,
+      "stem": "Either my brother or my parents ______ going to pick me up after the exam.",
+      "cn": "考完试以后，来接我的要么是我哥哥，要么是我父母。",
+      "gloss": {
+        "pick me up": "开车来接我"
+      },
+      "options": [
+        "is",
+        "was",
+        "are",
+        "be"
+      ],
+      "answer": "C",
+      "rule": "either…or 连接并列主语时谓语就近一致，与 or 后最近的主语一致。",
+      "trap": "看到 either 就按单数选 is；看 or 后 parents 是复数，用 are。",
+      "src": "U4 · 并列连词",
+      "verified": true
+    },
+    {
+      "id": "wd-029",
+      "topic": "名词单复数",
+      "level": 1,
+      "stem": "My mother bought two ______ and some beef for dinner tonight.",
+      "cn": "妈妈买了两个西红柿和一些牛肉，准备今晚的晚饭。",
+      "options": [
+        "tomatos",
+        "tomatoes",
+        "tomato",
+        "tomato's"
+      ],
+      "answer": "B",
+      "rule": "以 o 结尾的名词变复数多作 -es：tomato→tomatoes；photo 例外。",
+      "trap": "直接加 -s 写成 tomatos；two 后必须用复数 tomatoes。",
+      "src": "U3 · 名词单复数",
+      "verified": true
+    },
+    {
+      "id": "wd-030",
+      "topic": "词形转换",
+      "level": 2,
+      "stem": "At first, the king was ______ about the crown, so he asked Archimedes to check it.",
+      "cn": "起初，国王对这顶王冠心存怀疑，于是让阿基米德去查验。",
+      "options": [
+        "doubt",
+        "doubtfully",
+        "doubting",
+        "doubtful"
+      ],
+      "answer": "D",
+      "rule": "be + 形容词 + about：doubtful 表「怀疑的」；doubt 是动词/名词。",
+      "trap": "be 后直接放 doubt 是词性错；表语位置要形容词 doubtful。",
+      "src": "U2 · 词形转换",
+      "verified": true
+    },
+    {
+      "id": "wd-031",
+      "topic": "代词",
+      "level": 2,
+      "stem": "Linda's parents promised ______ for her fifth birthday — a doll.",
+      "cn": "琳达的父母答应在她五岁生日时送她一个洋娃娃。",
+      "options": [
+        "one",
+        "ones",
+        "it",
+        "that"
+      ],
+      "answer": "A",
+      "rule": "one 替代上文泛指的单数可数名词 a doll；ones 只代复数。",
+      "trap": "看到 a doll 就想用 it；it 指同一件已知物，这里是「一个」。",
+      "src": "2026-2027期中·语法选择",
+      "verified": true
+    },
+    {
+      "id": "wd-032",
+      "topic": "最高级",
+      "level": 1,
+      "stem": "The doll, given by 'Angel of Joy', made her the ______ child in the world.",
+      "cn": "这个由「快乐天使」送出的洋娃娃，让她成了世界上最幸福的孩子。",
+      "gloss": {
+        "made": "使……成为"
+      },
+      "options": [
+        "happy",
+        "happier",
+        "happiest",
+        "happily"
+      ],
+      "answer": "C",
+      "rule": "the + 最高级 + 名词 + in the world，表示三者以上的比较范围。",
+      "trap": "看到 the ___ child 就填原级；in the world 已是最高级信号。",
+      "src": "2026-2027期中·语法选择",
+      "verified": true
+    },
+    {
+      "id": "wd-033",
+      "topic": "比较级",
+      "level": 1,
+      "stem": "The never-received gift was ______ than any other gift in her eyes.",
+      "cn": "那份始终没有收到的礼物，在她眼里比任何别的礼物都更珍贵。",
+      "gloss": {
+        "never-received": "从未收到过的"
+      },
+      "options": [
+        "precious",
+        "more precious",
+        "most precious",
+        "the most precious"
+      ],
+      "answer": "B",
+      "rule": "than 是比较级标志，多音节形容词前加 more；any other 提示比较对象。",
+      "trap": "in her eyes 诱你填最高级；有 than 就必须用 more precious。",
+      "src": "2026-2027期中·语法选择",
+      "verified": true
+    },
+    {
+      "id": "wd-034",
+      "topic": "词形转换",
+      "level": 2,
+      "stem": "It was Linda's ______ birthday, and she got a gift with a card.",
+      "cn": "那是琳达的六十岁生日，她收到了一份带贺卡的礼物。",
+      "options": [
+        "sixty",
+        "sixtieth",
+        "sixties",
+        "the sixtieth"
+      ],
+      "answer": "B",
+      "rule": "表「第几个生日」用序数词；所有格 Linda's 后直接跟 sixtieth。",
+      "trap": "填 sixty 变成「六十个生日」；所有格已限定，别再加 the。",
+      "src": "2026-2027期中·语篇填词",
+      "verified": true
+    },
+    {
+      "id": "wd-035",
+      "topic": "副词辨析",
+      "level": 1,
+      "stem": "______, they both died in a traffic accident before the doll arrived.",
+      "cn": "令人难过的是，洋娃娃还没送到，他们俩就在一场车祸中去世了。",
+      "options": [
+        "Sad",
+        "Sadly",
+        "Sadness",
+        "Sadder"
+      ],
+      "answer": "B",
+      "rule": "句首修饰整个句子用副词 Sadly，意为「令人难过的是」。",
+      "trap": "句首就想填形容词 Sad；这里修饰整句，要用副词 Sadly。",
+      "src": "2026-2027期中·语法选择",
+      "verified": true
+    },
+    {
+      "id": "wd-036",
+      "topic": "冠词",
+      "level": 1,
+      "stem": "Rita stopped before ______ store, as if drawn by something invisible.",
+      "cn": "丽塔在一家商店前停下，仿佛被什么看不见的东西吸引住了。",
+      "gloss": {
+        "drawn": "被……吸引"
+      },
+      "options": [
+        "a",
+        "an",
+        "the",
+        "—（不填）"
+      ],
+      "answer": "A",
+      "rule": "store 首次出现且表泛指，用不定冠词 a；an 接元音音素开头的词。",
+      "trap": "store 以辅音音素开头，选 an 只看字母不看音；泛指不用 the。",
+      "src": "2026-2027期中·语法选择",
+      "verified": true
+    },
+    {
+      "id": "wd-037",
+      "topic": "介词",
+      "level": 1,
+      "stem": "The robot can drive ______ itself and move cows from one field to another.",
+      "cn": "这台机器人能自己开动，把奶牛从一块田地赶到另一块。",
+      "gloss": {
+        "drive": "开动，行驶",
+        "field": "田地，牧场"
+      },
+      "options": [
+        "by",
+        "with",
+        "on",
+        "for"
+      ],
+      "answer": "A",
+      "rule": "by oneself 是固定搭配，表「独自、靠自己」。",
+      "trap": "中文「自己开」容易想到 with；by itself 才是「自行」。",
+      "src": "2026-2027期中·语法选择",
+      "verified": true
+    },
+    {
+      "id": "wd-038",
+      "topic": "介词短语",
+      "level": 1,
+      "stem": "______ addition to watching online tutorials, I decided to get hands-on practice.",
+      "cn": "除了看网上的教程，我还决定亲自动手练一练。",
+      "gloss": {
+        "hands-on": "亲自动手的"
+      },
+      "options": [
+        "In",
+        "On",
+        "At",
+        "By"
+      ],
+      "answer": "A",
+      "rule": "in addition to 是固定短语，to 后接名词或动名词。",
+      "trap": "按中文「另外」猜 on 或 by；把 in addition to 整块记住。",
+      "src": "2026-2027期中·语法选择",
+      "verified": true
+    },
+    {
+      "id": "wd-039",
+      "topic": "短语动词",
+      "level": 2,
+      "stem": "I realized that I had to ______ on following the steps carefully.",
+      "cn": "我意识到自己必须专心按照步骤仔细操作。",
+      "options": [
+        "focus",
+        "follow",
+        "fix",
+        "face"
+      ],
+      "answer": "A",
+      "rule": "focus on 表「集中注意力于」，后接名词或动名词。",
+      "trap": "follow 不能接 on；fix on、face on 也不成搭配，先验介词。",
+      "src": "2026-2027期中·语法选择",
+      "verified": true
+    },
+    {
+      "id": "wd-040",
+      "topic": "短语动词",
+      "level": 1,
+      "stem": "When I first started, I would ______ up almost every cake I tried to make.",
+      "cn": "刚开始的时候，我几乎每做一个蛋糕都会把它弄砸。",
+      "gloss": {
+        "would": "过去常常，总会"
+      },
+      "options": [
+        "mess",
+        "make",
+        "take",
+        "pick"
+      ],
+      "answer": "A",
+      "rule": "mess up 表「弄砸」；make up 编造，take up 占用，pick up 捡起。",
+      "trap": "空后还有 up，别选 make；「把蛋糕做砸」是 mess up。",
+      "src": "2026-2027期中·语法选择",
+      "verified": true
+    },
+    {
+      "id": "wd-041",
+      "topic": "词形转换",
+      "level": 2,
+      "stem": "Now, I am deeply ______ with the progress I have made.",
+      "cn": "现在，我对自己取得的进步深感满意。",
+      "gloss": {
+        "made": "取得，做出（进步）"
+      },
+      "options": [
+        "satisfy",
+        "satisfied",
+        "satisfying",
+        "satisfaction"
+      ],
+      "answer": "B",
+      "rule": "be + 过去分词 + with 表人的感受，satisfied 意为「满意的」。",
+      "trap": "satisfying 指事物「令人满意的」；主语是 I，要用 satisfied。",
+      "src": "2026-2027期中·语篇填词",
+      "verified": true
+    },
+    {
+      "id": "wd-042",
+      "topic": "词形转换",
+      "level": 2,
+      "stem": "My father looked at the cake with ______ and said it looked like a pro's work.",
+      "cn": "爸爸吃惊地看着这个蛋糕，说它看起来像专业师傅的作品。",
+      "gloss": {
+        "pro's": "专业师傅的，行家的"
+      },
+      "options": [
+        "amaze",
+        "amazed",
+        "amazement",
+        "amazing"
+      ],
+      "answer": "C",
+      "rule": "介词 with 后接名词，amazement 表「惊讶」，with amazement 意为惊讶地。",
+      "trap": "填 amazing 是把形容词放在介词后；with 后要用名词。",
+      "src": "2026-2027期中·语篇填词",
+      "verified": true
+    },
+    {
+      "id": "wd-043",
+      "topic": "副词辨析",
+      "level": 2,
+      "stem": "I could ______ bake a simple cookie without burning it.",
+      "cn": "我几乎连一块简单的小饼干都烤不好，总会把它烤焦。",
+      "options": [
+        "hard",
+        "hardly",
+        "harder",
+        "hardest"
+      ],
+      "answer": "B",
+      "rule": "hardly 意为「几乎不」；hard 作副词是「努力地」，两词意思不同。",
+      "trap": "中文「很难烤好」会选 hard；could hardly 才是「几乎不能」。",
+      "src": "2026-2027期中·语法选择",
+      "verified": true
+    },
+    {
+      "id": "wd-044",
+      "topic": "形容词辨析",
+      "level": 3,
+      "stem": "Baking a perfect cake is not an ______ or simple task.",
+      "cn": "烤出一个完美的蛋糕并不是一件普通或简单的活儿。",
+      "options": [
+        "ordinary",
+        "ancient",
+        "outgoing",
+        "opposite"
+      ],
+      "answer": "A",
+      "rule": "与 simple 并列需形容词，ordinary 表「普通的」，符合句意。",
+      "trap": "与 simple 并列处要填「普通」义，其余三项都不合句意。",
+      "src": "2026-2027期中·语法选择",
+      "verified": true
+    },
+    {
+      "id": "wd-045",
+      "topic": "词义辨析",
+      "level": 2,
+      "stem": "When the terrorists took over her hometown, they ______ girls from attending school.",
+      "cn": "恐怖分子占领她的家乡后，不让女孩们去上学。",
+      "gloss": {
+        "took over": "占领，接管",
+        "attending": "上（学），参加"
+      },
+      "options": [
+        "encouraged",
+        "forced",
+        "allowed",
+        "stopped"
+      ],
+      "answer": "D",
+      "rule": "stop sb from doing 表「阻止某人做某事」；force/allow 接 to do。",
+      "trap": "中文「不让女孩上学」会选 forced；force sb to do 不接 from。",
+      "src": "2026-2027期中·完形填空",
+      "verified": true
+    },
+    {
+      "id": "wd-046",
+      "topic": "词义辨析",
+      "level": 1,
+      "stem": "Malala's story teaches us that one voice can make a ______.",
+      "cn": "马拉拉的故事告诉我们，一个人的声音也能带来改变。",
+      "options": [
+        "promise",
+        "mistake",
+        "difference",
+        "decision"
+      ],
+      "answer": "C",
+      "rule": "make a difference 是固定搭配，表「起作用、带来改变」。",
+      "trap": "make a promise 语法没错但语义不通；看「一个声音」能起什么作用。",
+      "src": "2026-2027期中·完形填空",
+      "verified": true
+    },
+    {
+      "id": "wd-047",
+      "topic": "词义辨析",
+      "level": 2,
+      "stem": "Her courage has ______ millions of people to fight for their dreams.",
+      "cn": "她的勇气激励了千百万人为自己的梦想而奋斗。",
+      "gloss": {
+        "fight for": "为……而奋斗"
+      },
+      "options": [
+        "inspired",
+        "amazed",
+        "attracted",
+        "interested"
+      ],
+      "answer": "A",
+      "rule": "inspire sb to do 表「激励某人做某事」，与 fight for dreams 呼应。",
+      "trap": "amazed、interested 都不接 to do；interest 要接 in doing。",
+      "src": "2026-2027期中·完形填空",
+      "verified": true
+    },
+    {
+      "id": "wd-048",
+      "topic": "短语动词",
+      "level": 3,
+      "stem": "She described her daily life under the terrorists and ______ for attention to girls' education.",
+      "cn": "她讲述了在恐怖分子统治下的日常生活，并呼吁人们关注女孩的教育。",
+      "options": [
+        "waiting",
+        "calling",
+        "paying",
+        "caring"
+      ],
+      "answer": "B",
+      "rule": "call for 表「呼吁、要求」；此处与 attention to education 搭配。",
+      "trap": "wait for 是「等待」，pay for 是「付款」，都与「呼吁关注」无关。",
+      "src": "2026-2027期中·完形填空",
+      "verified": true
+    },
+    {
+      "id": "wd-049",
+      "topic": "短语动词",
+      "level": 2,
+      "stem": "She travels all over the world, meeting leaders and ______ awareness of education.",
+      "cn": "她走遍世界各地，会见各国领导人，还提高人们对教育的认识。",
+      "options": [
+        "raising",
+        "rising",
+        "lowering",
+        "showing"
+      ],
+      "answer": "A",
+      "rule": "raise 是及物动词，「提高意识」说 raise awareness；rise 不及物。",
+      "trap": "rise 与 raise 形近，awareness 前缺宾语时要用及物的 raising。",
+      "src": "2026-2027期中·完形填空",
+      "verified": true
+    },
+    {
+      "id": "wd-050",
+      "topic": "词义辨析",
+      "level": 3,
+      "stem": "Instead of giving up, she became even more ______ to fight for education rights.",
+      "cn": "她没有放弃，反而更加下定决心为受教育权而奋斗。",
+      "options": [
+        "doubtful",
+        "determined",
+        "hesitant",
+        "convinced"
+      ],
+      "answer": "B",
+      "rule": "be determined to do 表「下定决心做某事」，more 修饰形容词。",
+      "trap": "doubtful、hesitant 与 instead of giving up 相反，别选。",
+      "src": "2026-2027期中·完形填空",
+      "verified": true
+    }
+  ]
+}

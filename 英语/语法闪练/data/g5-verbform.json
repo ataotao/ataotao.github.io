@@ -1,0 +1,496 @@
+{
+  "group": "verbform",
+  "title": "不规则动词闪刷",
+  "block": 4,
+  "items": [
+    {
+      "id": "vf-001",
+      "topic": "不规则动词·过去式",
+      "level": 1,
+      "stem": "Last week our class ______ (sell) old books to raise money for the charity.",
+      "cn": "上周我们班卖掉旧书，为慈善机构筹款。",
+      "gloss": {
+        "raise money": "筹款",
+        "charity": "慈善机构"
+      },
+      "options": [
+        "sold",
+        "sell",
+        "selled",
+        "selling"
+      ],
+      "answer": "A",
+      "rule": "sell 是不规则动词，过去式 sold，不按规则加 -ed。",
+      "trap": "别写成 selled；记住 sell – sold – sold 三形。",
+      "src": "课本 P142–143 不规则动词表",
+      "verified": true
+    },
+    {
+      "id": "vf-002",
+      "topic": "不规则动词·过去式",
+      "level": 1,
+      "stem": "My father ______ (buy) me a new dictionary for my birthday yesterday.",
+      "cn": "昨天爸爸给我买了一本新词典。",
+      "options": [
+        "buyed",
+        "buy",
+        "bought",
+        "buying"
+      ],
+      "answer": "C",
+      "rule": "buy 的过去式是 bought，yesterday 提示用过去时。",
+      "trap": "buyed 是受规则动词干扰的错拼，buy – bought – bought。",
+      "src": "课本 P142–143 不规则动词表",
+      "verified": true
+    },
+    {
+      "id": "vf-003",
+      "topic": "不规则动词·过去式",
+      "level": 1,
+      "stem": "Mr Li ______ (teach) us how to make a model of the lunar eclipse last term.",
+      "cn": "上学期李老师教我们怎样制作月食模型。",
+      "gloss": {
+        "lunar eclipse": "月食"
+      },
+      "options": [
+        "teached",
+        "teaching",
+        "teach",
+        "taught"
+      ],
+      "answer": "D",
+      "rule": "teach 的过去式是 taught，词中元音与词尾同时变化。",
+      "trap": "teached 是高频错拼；teach – taught – taught。",
+      "src": "课本 P142–143 不规则动词表",
+      "verified": true
+    },
+    {
+      "id": "vf-004",
+      "topic": "不规则动词·过去式",
+      "level": 1,
+      "stem": "The police ______ (catch) the man who cheated the old man of his savings.",
+      "cn": "警察抓住了那个骗走老人积蓄的人。",
+      "gloss": {
+        "savings": "积蓄；存款"
+      },
+      "options": [
+        "catched",
+        "caught",
+        "catch",
+        "catching"
+      ],
+      "answer": "B",
+      "rule": "catch 的过去式是 caught，属于 -ought/-aught 一族。",
+      "trap": "别写 catched；同族还有 teach–taught、buy–bought。",
+      "src": "课本 P142–143 不规则动词表",
+      "verified": true
+    },
+    {
+      "id": "vf-005",
+      "topic": "不规则动词·过去式",
+      "level": 1,
+      "stem": "Wang Zhenyi ______ (bring) her simple model to the classroom and showed it to us.",
+      "cn": "王贞仪把她的简易模型带到教室，展示给我们看。",
+      "options": [
+        "bringed",
+        "brought",
+        "bring",
+        "bringing"
+      ],
+      "answer": "B",
+      "rule": "bring 的过去式是 brought，与 bought、thought 同形尾。",
+      "trap": "bringed 是错拼；bring – brought – brought。",
+      "src": "课本 P142–143 不规则动词表",
+      "verified": true
+    },
+    {
+      "id": "vf-006",
+      "topic": "不规则动词·过去式",
+      "level": 1,
+      "stem": "At first I ______ (think) the story was boring, but the ending surprised me.",
+      "cn": "起初我以为这个故事很无聊，但结局让我大吃一惊。",
+      "gloss": {
+        "At first": "起初"
+      },
+      "options": [
+        "thought",
+        "think",
+        "thinked",
+        "thinking"
+      ],
+      "answer": "A",
+      "rule": "think 的过去式是 thought，与 at first 的过去语境一致。",
+      "trap": "thinked 是错拼；think – thought – thought。",
+      "src": "课本 P142–143 不规则动词表",
+      "verified": true
+    },
+    {
+      "id": "vf-007",
+      "topic": "不规则动词·过去式",
+      "level": 1,
+      "stem": "We ______ (find) the lost keys under the sofa after searching for half an hour.",
+      "cn": "我们找了半个小时，终于在沙发下面找到了丢失的钥匙。",
+      "gloss": {
+        "lost": "丢失的"
+      },
+      "options": [
+        "finded",
+        "find",
+        "found",
+        "finding"
+      ],
+      "answer": "C",
+      "rule": "find 的过去式是 found，词干改为 -ou-。",
+      "trap": "finded 是错拼；注意 found 不是 found 的规则形。",
+      "src": "课本 P142–143 不规则动词表",
+      "verified": true
+    },
+    {
+      "id": "vf-008",
+      "topic": "不规则动词·过去式",
+      "level": 1,
+      "stem": "She ______ (leave) the party early because she had to look after her sister.",
+      "cn": "她提前离开了聚会，因为她得去照顾妹妹。",
+      "gloss": {
+        "look after": "照顾"
+      },
+      "options": [
+        "leaved",
+        "leave",
+        "leaving",
+        "left"
+      ],
+      "answer": "D",
+      "rule": "leave 的过去式是 left，与 had to 的过去语境一致。",
+      "trap": "leaved 是错拼；left 也常作名词“左边”，看成分辨。",
+      "src": "课本 P142–143 不规则动词表",
+      "verified": true
+    },
+    {
+      "id": "vf-009",
+      "topic": "不规则动词·过去式",
+      "level": 1,
+      "stem": "He ______ (keep) practising every day, so his spoken English improved fast.",
+      "cn": "他每天坚持练习，所以英语口语进步很快。",
+      "gloss": {
+        "keep": "坚持；一直（做）"
+      },
+      "options": [
+        "keeped",
+        "keep",
+        "kept",
+        "keeping"
+      ],
+      "answer": "C",
+      "rule": "keep 的过去式是 kept，与后面的 improved 同为过去时。",
+      "trap": "keeped 是错拼；keep – kept – kept，与 sleep–slept 同族。",
+      "src": "课本 P142–143 不规则动词表",
+      "verified": true
+    },
+    {
+      "id": "vf-010",
+      "topic": "不规则动词·过去式",
+      "level": 1,
+      "stem": "The baby ______ (sleep) for only four hours last night, so he was tired today.",
+      "cn": "宝宝昨晚只睡了四个小时，所以今天很累。",
+      "options": [
+        "sleeped",
+        "slept",
+        "sleep",
+        "sleeping"
+      ],
+      "answer": "B",
+      "rule": "sleep 的过去式是 slept，last night 要求过去时。",
+      "trap": "sleeped 是错拼；sleep – slept – slept，与 keep–kept 同族。",
+      "src": "课本 P142–143 不规则动词表",
+      "verified": true
+    },
+    {
+      "id": "vf-011",
+      "topic": "不规则动词·过去式",
+      "level": 2,
+      "stem": "Archimedes ______ (write) down his idea about the golden crown in a short note.",
+      "cn": "阿基米德把关于金冠的想法写在一张短笺上。",
+      "options": [
+        "writed",
+        "write",
+        "written",
+        "wrote"
+      ],
+      "answer": "D",
+      "rule": "write 的过去式是 wrote；written 是过去分词，不能单独作谓语。",
+      "trap": "written 只能跟在 have/has/be 后，单独谓语用 wrote。",
+      "src": "课本 P142–143 不规则动词表",
+      "verified": true
+    },
+    {
+      "id": "vf-012",
+      "topic": "不规则动词·过去式",
+      "level": 2,
+      "stem": "The two geniuses ______ (eat) nothing but bread during their long journey.",
+      "cn": "两位天才在漫长的旅途中除了面包什么也没吃。",
+      "gloss": {
+        "nothing but": "只有；除……外什么也不"
+      },
+      "options": [
+        "ate",
+        "eat",
+        "eaten",
+        "eated"
+      ],
+      "answer": "A",
+      "rule": "eat 的过去式是 ate；eaten 是过去分词，需与助动词连用。",
+      "trap": "ate 与 eaten 别混：单独谓语用 ate，完成时用 eaten。",
+      "src": "课本 P142–143 不规则动词表",
+      "verified": true
+    },
+    {
+      "id": "vf-013",
+      "topic": "不规则动词·过去分词",
+      "level": 1,
+      "stem": "Up to now, three new bridges ______ across the river to connect the two villages.",
+      "cn": "到目前为止，河上已经建起了三座新桥，把两个村子连接起来。",
+      "gloss": {
+        "Up to now": "到目前为止"
+      },
+      "options": [
+        "have been builded",
+        "have been build",
+        "have built",
+        "have been built"
+      ],
+      "answer": "D",
+      "rule": "被动语态完成时 have been + 过去分词，build 的分词是 built。",
+      "trap": "build 变 built 不加 -ed；桥是被建，必须被动。",
+      "src": "课本 P142–143 不规则动词表",
+      "verified": true
+    },
+    {
+      "id": "vf-014",
+      "topic": "不规则动词·过去分词",
+      "level": 1,
+      "stem": "So far, this story has been ______ to children in many countries.",
+      "cn": "到目前为止，这个故事已经讲给许多国家的孩子们听了。",
+      "gloss": {
+        "So far": "到目前为止"
+      },
+      "options": [
+        "told",
+        "tell",
+        "telling",
+        "tells"
+      ],
+      "answer": "A",
+      "rule": "has been + 过去分词构成现在完成时被动；tell 的过去分词是 told。",
+      "trap": "tell 的过去式与过去分词同形 told，别写成 telled。",
+      "src": "课本 P142–143 不规则动词表",
+      "verified": true
+    },
+    {
+      "id": "vf-015",
+      "topic": "不规则动词·过去分词",
+      "level": 1,
+      "stem": "So far, the story of Wang Zhenyi ______ to thousands of students in our school.",
+      "cn": "到目前为止，王贞仪的故事已经讲给我们学校数千名学生听了。",
+      "gloss": {
+        "So far": "到目前为止"
+      },
+      "options": [
+        "has told",
+        "has been tell",
+        "has been told",
+        "have been told"
+      ],
+      "answer": "C",
+      "rule": "story 是被讲的对象，用现在完成时被动 has been + told。",
+      "trap": "主语 the story 单数，用 has 不用 have；tell 的分词是 told。",
+      "src": "课本 P142–143 不规则动词表",
+      "verified": true
+    },
+    {
+      "id": "vf-016",
+      "topic": "不规则动词·过去分词",
+      "level": 2,
+      "stem": "The window ______ by a ball, so we had to ask someone to repair it.",
+      "cn": "窗户被球打破了，所以我们只好找人修理。",
+      "options": [
+        "was broke",
+        "was broken",
+        "broke",
+        "was breaked"
+      ],
+      "answer": "B",
+      "rule": "一般过去时被动 was + 过去分词；break 的分词是 broken。",
+      "trap": "broke 是过去式，不能当分词用；被动必须是 broken。",
+      "src": "课本 P142–143 不规则动词表",
+      "verified": true
+    },
+    {
+      "id": "vf-017",
+      "topic": "不规则动词·过去分词",
+      "level": 2,
+      "stem": "A lot of plastic bags ______ into the sea every year, which harms sea animals.",
+      "cn": "每年都有大量塑料袋被扔进海里，危害海洋动物。",
+      "gloss": {
+        "harms": "危害",
+        "which": "这（指代前面整件事）"
+      },
+      "options": [
+        "are thrown",
+        "are threw",
+        "throw",
+        "are throwed"
+      ],
+      "answer": "A",
+      "rule": "一般现在时被动 are + 过去分词；throw 的分词是 thrown。",
+      "trap": "threw 是过去式；throwned、throwed 都是错拼。",
+      "src": "课本 P142–143 不规则动词表",
+      "verified": true
+    },
+    {
+      "id": "vf-018",
+      "topic": "不规则动词·过去分词",
+      "level": 2,
+      "stem": "The speech ______ by a famous scientist next Friday, so don't miss it.",
+      "cn": "下周五一位著名科学家将做这场演讲，别错过。",
+      "options": [
+        "will give",
+        "will be given",
+        "will be gave",
+        "will be giving"
+      ],
+      "answer": "B",
+      "rule": "一般将来时被动 will be + 过去分词；give 的分词是 given。",
+      "trap": "gave 是过去式；演讲是被做，用 will be given。",
+      "src": "课本 P142–143 不规则动词表",
+      "verified": true
+    },
+    {
+      "id": "vf-019",
+      "topic": "不规则动词·过去分词",
+      "level": 2,
+      "stem": "The children were well ______ in the hiding game, so nobody could find them.",
+      "cn": "孩子们在捉迷藏中藏得很好，所以没人能找到他们。",
+      "gloss": {
+        "hiding game": "捉迷藏"
+      },
+      "options": [
+        "hided",
+        "hid",
+        "hiding",
+        "hidden"
+      ],
+      "answer": "D",
+      "rule": "be + 过去分词表状态；hide 的分词是 hidden。",
+      "trap": "hid 是过去式，不能跟在 were 后作表语。",
+      "src": "课本 P142–143 不规则动词表",
+      "verified": true
+    },
+    {
+      "id": "vf-020",
+      "topic": "不规则动词·过去分词",
+      "level": 2,
+      "stem": "He has ______ the best way to deal with the pressure from his studies.",
+      "cn": "他已经选出了应对学习压力的最好方法。",
+      "gloss": {
+        "deal with": "应对；处理"
+      },
+      "options": [
+        "chose",
+        "choosed",
+        "chosen",
+        "choosing"
+      ],
+      "answer": "C",
+      "rule": "has + 过去分词构成现在完成时；choose 的分词是 chosen。",
+      "trap": "chose 是过去式，不能跟 has；choose – chose – chosen。",
+      "src": "课本 P142–143 不规则动词表",
+      "verified": true
+    },
+    {
+      "id": "vf-021",
+      "topic": "不规则动词·过去分词",
+      "level": 2,
+      "stem": "The old bike has been ______ for ten years, but it still works well.",
+      "cn": "这辆旧自行车已经被骑了十年，但依然很好骑。",
+      "gloss": {
+        "works well": "好用；运转正常"
+      },
+      "options": [
+        "rode",
+        "rided",
+        "ridden",
+        "riding"
+      ],
+      "answer": "C",
+      "rule": "has been + 过去分词表被动；ride 的分词是 ridden。",
+      "trap": "rode 是过去式；ride – rode – ridden，别写成 rided。",
+      "src": "课本 P142–143 不规则动词表",
+      "verified": true
+    },
+    {
+      "id": "vf-022",
+      "topic": "不规则动词·过去分词",
+      "level": 2,
+      "stem": "Our class has ______ part in the volunteer work at the old people's home for three years.",
+      "cn": "我们班已经连续三年参加敬老院的志愿工作。",
+      "gloss": {
+        "part in": "参加（活动）"
+      },
+      "options": [
+        "took",
+        "taken",
+        "take",
+        "taking"
+      ],
+      "answer": "B",
+      "rule": "has + 过去分词构成现在完成时；take 的过去分词是 taken。",
+      "trap": "took 是过去式，不能跟在 has 后；take – took – taken。",
+      "src": "课本 P142–143 不规则动词表",
+      "verified": true
+    },
+    {
+      "id": "vf-023",
+      "topic": "不规则动词·过去分词",
+      "level": 3,
+      "stem": "The lanterns ______ by students are hanging in the hall for the School Food Festival.",
+      "cn": "为了迎接学校美食节，学生们做的灯笼正挂在礼堂里。",
+      "gloss": {
+        "School Food Festival": "学校美食节"
+      },
+      "options": [
+        "made",
+        "making",
+        "make",
+        "maked"
+      ],
+      "answer": "A",
+      "rule": "过去分词短语作后置定语，表被动：the lanterns made by students = 学生做的灯笼。",
+      "trap": "这里不是谓语动词，用过去分词 made 表被动，不用原形或 -ing。",
+      "src": "课本 P142–143 不规则动词表",
+      "verified": true
+    },
+    {
+      "id": "vf-024",
+      "topic": "不规则动词·过去分词",
+      "level": 3,
+      "stem": "The letter ______ by hand was sent to the teacher to ask for advice.",
+      "cn": "那封手写的信寄给了老师，向他征求意见。",
+      "gloss": {
+        "by hand": "手工；亲手",
+        "ask for advice": "征求意见"
+      },
+      "options": [
+        "wrote",
+        "write",
+        "writing",
+        "written"
+      ],
+      "answer": "D",
+      "rule": "过去分词短语后置修饰 letter，表被动“被写下的”。",
+      "trap": "wrote 是过去式，不能作定语表被动；write – wrote – written。",
+      "src": "课本 P142–143 不规则动词表",
+      "verified": true
+    }
+  ]
+}

@@ -1,0 +1,394 @@
+{
+ "unit": "U3",
+ "title": "九上 U3 过关",
+ "header": {
+  "class": null,
+  "name": null,
+  "id": null
+ },
+ "note": "",
+ "items": [
+  {
+   "no": 1,
+   "kind": "fill",
+   "stem": "In the past, people often used m______ to light candles.",
+   "cn": null,
+   "options": null,
+   "marked": null,
+   "handwriting": [
+    "atches"
+   ],
+   "note": "阅读部分第1题（卷面 1）；题干已印首字母 m，横线手写 atches，即 matches",
+   "id": "r1",
+   "section": "阅读",
+   "fields": 1
+  },
+  {
+   "no": 2,
+   "kind": "fill",
+   "stem": "I stand in front of my father in s______ because I told a lie just now.",
+   "cn": null,
+   "options": null,
+   "marked": null,
+   "handwriting": [
+    "hame"
+   ],
+   "note": "卷面 2；题干已印首字母 s，手写形似 hame（a/o 难辨），应为 shame",
+   "id": "r2",
+   "section": "阅读",
+   "fields": 1
+  },
+  {
+   "no": 3,
+   "kind": "fill",
+   "stem": "I r______ the chair from my bedroom yesterday as it was useless.",
+   "cn": null,
+   "options": null,
+   "marked": null,
+   "handwriting": [
+    "emoved"
+   ],
+   "note": "卷面 3；题干已印首字母 r，横线手写 emoved，即 removed",
+   "id": "r3",
+   "section": "阅读",
+   "fields": 1
+  },
+  {
+   "no": 4,
+   "kind": "fill",
+   "stem": "Be really careful when making friends with others online, or you will be c______.",
+   "cn": null,
+   "options": null,
+   "marked": null,
+   "handwriting": [
+    "heated"
+   ],
+   "note": "卷面 4；题干已印首字母 c，横线手写 heated，即 cheated",
+   "id": "r4",
+   "section": "阅读",
+   "fields": 1
+  },
+  {
+   "no": 5,
+   "kind": "fill",
+   "stem": "The new rule sounds great, but it may cause a lot of trouble when we put it into p______.",
+   "cn": null,
+   "options": null,
+   "marked": null,
+   "handwriting": [
+    "ractice"
+   ],
+   "note": "卷面 5；题干已印首字母 p，横线手写 ractice，即 practice",
+   "id": "r5",
+   "section": "阅读",
+   "fields": 1
+  },
+  {
+   "no": 6,
+   "kind": "fill",
+   "stem": "She looked at the painting with a______ and couldn't move her eyes away from it.",
+   "cn": null,
+   "options": null,
+   "marked": null,
+   "handwriting": [
+    "dmiration"
+   ],
+   "note": "卷面 6；题干已印首字母 a，横线手写 dmiration，即 admiration",
+   "id": "r6",
+   "section": "阅读",
+   "fields": 1
+  },
+  {
+   "no": 7,
+   "kind": "mc",
+   "stem": "Finally, he decided not to keep the fish ______ to set it free.",
+   "cn": null,
+   "options": [
+    {
+     "k": "A",
+     "t": "and"
+    },
+    {
+     "k": "B",
+     "t": "so"
+    },
+    {
+     "k": "C",
+     "t": "or"
+    },
+    {
+     "k": "D",
+     "t": "but"
+    }
+   ],
+   "marked": "D",
+   "handwriting": null,
+   "note": "卷面 7；左侧页边手写大写 D（学生作答）；选项本身无勾画",
+   "id": "r7",
+   "section": "阅读"
+  },
+  {
+   "no": 8,
+   "kind": "mc",
+   "stem": "The boy felt very ______ because he did something wrong.",
+   "cn": null,
+   "options": [
+    {
+     "k": "A",
+     "t": "shame"
+    },
+    {
+     "k": "B",
+     "t": "ashamed"
+    },
+    {
+     "k": "C",
+     "t": "shameful"
+    },
+    {
+     "k": "D",
+     "t": "shamefully"
+    }
+   ],
+   "marked": "B",
+   "handwriting": null,
+   "note": "卷面 8；左侧页边手写大写 B（学生作答）",
+   "id": "r8",
+   "section": "阅读"
+  },
+  {
+   "no": 9,
+   "kind": "mc",
+   "stem": "Riding bicycles is a great way to go around and ______ our bodies.",
+   "cn": null,
+   "options": [
+    {
+     "k": "A",
+     "t": "strong"
+    },
+    {
+     "k": "B",
+     "t": "strength"
+    },
+    {
+     "k": "C",
+     "t": "strengthen"
+    },
+    {
+     "k": "D",
+     "t": "strongly"
+    }
+   ],
+   "marked": "C",
+   "handwriting": null,
+   "note": "卷面 9；左侧页边手写大写 C（学生作答）",
+   "id": "r9",
+   "section": "阅读"
+  },
+  {
+   "no": 10,
+   "kind": "mc",
+   "stem": "I have ______ to tell you. Let's keep it as a secret between us.",
+   "cn": null,
+   "options": [
+    {
+     "k": "A",
+     "t": "something special"
+    },
+    {
+     "k": "B",
+     "t": "special something"
+    },
+    {
+     "k": "C",
+     "t": "something specially"
+    },
+    {
+     "k": "D",
+     "t": "specially anything"
+    }
+   ],
+   "marked": "A",
+   "handwriting": null,
+   "note": "卷面 10；左侧页边手写大写 A（学生作答）；选项按 AB/CD 两行排布，已理顺",
+   "id": "r10",
+   "section": "阅读"
+  },
+  {
+   "no": 11,
+   "kind": "mc",
+   "stem": "Every time ______ I see China's national flag rising, I have a sense of pride from the bottom of my heart.",
+   "cn": null,
+   "options": [
+    {
+     "k": "A",
+     "t": "while"
+    },
+    {
+     "k": "B",
+     "t": "that"
+    },
+    {
+     "k": "C",
+     "t": "when"
+    },
+    {
+     "k": "D",
+     "t": "/"
+    }
+   ],
+   "marked": "D",
+   "handwriting": null,
+   "note": "卷面 11；左侧页边手写大写 D（学生作答）",
+   "id": "r11",
+   "section": "阅读"
+  },
+  {
+   "no": 12,
+   "kind": "mc",
+   "stem": "The young pianist played the difficult piece as ______ as an experienced musician.",
+   "cn": null,
+   "options": [
+    {
+     "k": "A",
+     "t": "skill"
+    },
+    {
+     "k": "B",
+     "t": "skillful"
+    },
+    {
+     "k": "C",
+     "t": "skilfully"
+    },
+    {
+     "k": "D",
+     "t": "more skilfully"
+    }
+   ],
+   "marked": "C",
+   "handwriting": null,
+   "note": "卷面 12；左侧页边手写大写 C（学生作答）",
+   "id": "r12",
+   "section": "阅读"
+  },
+  {
+   "no": 13,
+   "kind": "mc",
+   "stem": "—Tony wasn't chosen for the team. That was a bad ______. —You're right. We can't win the game without him.",
+   "cn": null,
+   "options": [
+    {
+     "k": "A",
+     "t": "accident"
+    },
+    {
+     "k": "B",
+     "t": "promise"
+    },
+    {
+     "k": "C",
+     "t": "decision"
+    },
+    {
+     "k": "D",
+     "t": "challenge"
+    }
+   ],
+   "marked": "C",
+   "handwriting": null,
+   "note": "卷面 13；左侧页边手写大写 C（学生作答）；题干为两行对话，已合并",
+   "id": "r13",
+   "section": "阅读"
+  },
+  {
+   "no": 1,
+   "kind": "mc",
+   "stem": "—How about playing computer games? —That sounds ______. Let's play basketball.",
+   "cn": null,
+   "options": [
+    {
+     "k": "A",
+     "t": "bored"
+    },
+    {
+     "k": "B",
+     "t": "boring"
+    },
+    {
+     "k": "C",
+     "t": "interested"
+    },
+    {
+     "k": "D",
+     "t": "interesting"
+    }
+   ],
+   "marked": "B",
+   "handwriting": null,
+   "note": "语法部分第1题（卷面 1，连续编号为 14）；左侧页边手写大写 B（学生作答），字母纵跨该行与上一行之间，按行高判定属本题",
+   "id": "g1",
+   "section": "语法"
+  },
+  {
+   "no": 2,
+   "kind": "mc",
+   "stem": "The new bed ______ very hard.  I couldn't sleep well last night.",
+   "cn": null,
+   "options": [
+    {
+     "k": "A",
+     "t": "feels"
+    },
+    {
+     "k": "B",
+     "t": "is felt"
+    },
+    {
+     "k": "C",
+     "t": "is feeling"
+    },
+    {
+     "k": "D",
+     "t": "felt"
+    }
+   ],
+   "marked": "C",
+   "handwriting": null,
+   "note": "语法部分第2题（卷面 2，连续编号为 15）；左侧页边手写大写 C（学生作答）",
+   "id": "g2",
+   "section": "语法"
+  },
+  {
+   "no": 3,
+   "kind": "fill",
+   "stem": "Though we sometimes argue with each other, we ______ ______.",
+   "cn": "尽管我们有时互相争吵，但我们仍是朋友。",
+   "options": null,
+   "marked": null,
+   "handwriting": [
+    "still",
+    "friends"
+   ],
+   "note": "语法部分第3题（卷面 3，连续编号为 16）；卷面为两个空，依次手写 still、friends（缺系动词 are）；中文句下「我们仍是朋友」被铅笔圈画",
+   "id": "g3",
+   "section": "语法",
+   "fields": 2
+  },
+  {
+   "no": 4,
+   "kind": "fill",
+   "stem": "你穿这条裙子看上去很漂亮。",
+   "cn": "翻译",
+   "options": null,
+   "marked": null,
+   "handwriting": [
+    "You look beautiful in this dress."
+   ],
+   "note": "语法部分第4题（卷面 4，连续编号为 17）；手写译文照抄",
+   "id": "g4",
+   "section": "语法",
+   "fields": 1
+  }
+ ]
+}

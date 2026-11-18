@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>今晚急救 · 物理基础速练（45 题）</title>
+<style>
+:root{
+  --ink:#1b2430; --ink2:#455261; --muted:#6b7684; --line:#e3ded4;
+  --paper:#faf8f4; --card:#ffffff; --brand:#1f5f8b; --brand-d:#164a6d; --brand-l:#e6f0f7;
+  --ok:#1f7a4d; --ok-bg:#e9f6ee; --bad:#a32b2b; --bad-bg:#fbeceb;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);
+  font-family:"PingFang SC","Microsoft YaHei",system-ui,sans-serif;font-size:16px;line-height:1.7}
+button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
+.wrap{max-width:760px;margin:0 auto;padding:16px 16px 90px}
+
+.bar{position:sticky;top:0;background:rgba(250,248,244,.96);backdrop-filter:blur(6px);
+  padding:10px 0 8px;border-bottom:1px solid var(--line);z-index:9}
+.bar .top{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.bar h1{font-size:15px;margin:0;letter-spacing:.02em}
+.bar .meta{margin-left:auto;font-size:12.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+.pbar{height:5px;border-radius:99px;background:#eeeae2;overflow:hidden;margin-top:8px}
+.pbar>i{display:block;height:100%;background:var(--brand);transition:width .25s}
+
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 18px 16px;margin-top:14px}
+.qno{font-size:12px;font-weight:700;color:var(--brand-d);background:var(--brand-l);
+  padding:2px 9px;border-radius:6px;letter-spacing:.04em}
+.tag{font-size:11.5px;color:var(--muted);background:#f2efe8;padding:2px 9px;border-radius:6px;margin-left:6px}
+.q{font-size:19px;line-height:1.85;margin:14px 0 4px;font-weight:600;white-space:pre-wrap}
+.opts{display:flex;flex-direction:column;gap:9px;margin-top:14px}
+.opt{display:flex;gap:11px;align-items:flex-start;text-align:left;width:100%;
+  border:1.5px solid var(--line);border-radius:12px;background:#fff;padding:13px 14px;
+  font-size:16.5px;line-height:1.6;transition:.12s}
+.opt:hover{border-color:#bfd0dc;background:#fcfdfd}
+.opt .k{width:22px;height:22px;flex:0 0 22px;border-radius:7px;background:#f0ede6;color:var(--muted);
+  font-size:12.5px;font-weight:700;display:grid;place-items:center;margin-top:2px}
+.opt.judge{justify-content:center;font-size:18px;font-weight:700;min-height:58px}
+.opt.ok{border-color:#9dd3b4;background:var(--ok-bg)}
+.opt.ok .k{background:var(--ok);color:#fff}
+.opt.no{border-color:#e5b3af;background:var(--bad-bg)}
+.opt.no .k{background:var(--bad);color:#fff}
+.opt.dim{opacity:.45}
+.opt:disabled{cursor:default}
+
+.explain{margin-top:14px;padding:12px 14px;border-radius:11px;font-size:15px;line-height:1.8;display:none}
+.explain.show{display:block}
+.explain.ok{background:var(--ok-bg);border:1px solid #cfe6d8;color:#1c5f3c}
+.explain.bad{background:var(--bad-bg);border:1px solid #eccfcd;color:#8d2a2a}
+.explain b{font-weight:700}
+
+.next{display:none;margin-top:12px;width:100%;min-height:50px;border-radius:12px;
+  background:var(--brand);color:#fff;font-size:16px;font-weight:700}
+.next.show{display:block}
+.next:active{background:var(--brand-d)}
+
+.hint{margin-top:12px;font-size:12.5px;color:var(--muted);text-align:center}
+kbd{font-family:ui-monospace,monospace;font-size:11.5px;background:#fff;border:1px solid var(--line);
+  border-bottom-width:2px;border-radius:5px;padding:1px 5px;margin:0 2px}
+
+.home h2{font-size:17px;margin:6px 0 4px}
+.home p{font-size:14px;color:var(--ink2);margin:6px 0}
+.home .sub{font-size:13px;color:var(--muted)}
+.gates{display:grid;gap:10px;margin-top:14px}
+.gate{display:flex;align-items:center;gap:12px;text-align:left;width:100%;
+  background:#fff;border:1px solid var(--line);border-radius:13px;padding:14px 15px;transition:.15s}
+.gate:hover{border-color:var(--brand);transform:translateY(-1px)}
+.gate .n{width:34px;height:34px;flex:0 0 34px;border-radius:10px;background:var(--brand-l);
+  color:var(--brand-d);display:grid;place-items:center;font-weight:700;font-size:13px}
+.gate b{display:block;font-size:15.5px}
+.gate span{display:block;font-size:12.5px;color:var(--muted);margin-top:1px}
+.gate .arrow{margin-left:auto;color:var(--brand);font-weight:700}
+
+.result{text-align:center;padding:10px 0 4px}
+.result .big{font-size:52px;font-weight:800;line-height:1.1;color:var(--brand-d);font-variant-numeric:tabular-nums}
+.result .big small{font-size:20px;font-weight:600;color:var(--muted)}
+.result .ln{font-size:14px;color:var(--muted);margin-top:6px}
+.acts{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+.acts button{flex:1;min-width:140px;min-height:48px;border-radius:12px;border:1px solid var(--line);
+  background:#fff;font-size:15px;font-weight:600}
+.acts button.primary{background:var(--brand);border-color:var(--brand);color:#fff}
+.wlist{margin-top:14px;text-align:left}
+.wrow{padding:11px 0;border-bottom:1px dashed var(--line);font-size:14.5px;line-height:1.75}
+.wrow:last-child{border-bottom:0}
+.wrow b{display:block;margin-bottom:3px}
+.wrow .why{color:var(--muted);font-size:13.5px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="bar" id="bar" style="display:none">
+    <div class="top">
+      <h1 id="bartitle">今晚急救</h1>
+      <div class="meta" id="barmeta"></div>
+    </div>
+    <div class="pbar"><i id="pfill" style="width:0%"></i></div>
+  </div>
+  <div id="app"></div>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  /* ============================================================
+     题库：45 条最高频的基础判断。只放"背下来就能对"的东西。
+     每条：q 题干 / a 判断题答案（true=对）/ o+k 选择题选项与答案 / y 一句话理由
+     ============================================================ */
+  var GATES = [
+    {
+      id: 'heat', name: '第 1 关 · 热学', sub: '分子运动 · 内能 · 比热容',
+      items: [
+        { t: 'j', q: '两块表面磨平的铅块紧压在一起，下面能吊起重物，说明分子之间存在引力。', a: true,
+          y: '对。分子间同时存在引力和斥力，铅块被压紧后分子距离变小，引力表现出来。' },
+        { t: 'j', q: '固体和液体很难被压缩，说明分子之间只有斥力，没有引力。', a: false,
+          y: '错。引力和斥力始终同时存在，只是距离很小时斥力表现得明显。' },
+        { t: 'j', q: '0 ℃ 的冰块没有内能。', a: false,
+          y: '错。一切物体在任何温度下都有内能，0 ℃ 的冰分子也在不停地运动。' },
+        { t: 'j', q: '温度越高的物体，含有的热量越多。', a: false,
+          y: '错。热量是"过程量"，只能说吸收或放出多少热量，不能说"含有热量"。' },
+        { t: 'j', q: '物体吸收了热量，温度一定升高。', a: false,
+          y: '错。晶体熔化、水沸腾时都在吸热，但温度保持不变。' },
+        { t: 'j', q: '钻木取火是通过做功的方式改变物体的内能。', a: true,
+          y: '对。机械能转化为内能，属于做功改变内能。' },
+        { t: 'j', q: '用热水袋取暖，是通过热传递的方式改变内能。', a: true,
+          y: '对。热量从温度高的热水袋转移到温度低的人体，是热传递（能量的转移）。' },
+        { t: 'j', q: '发生热传递时，热量总是从内能大的物体传给内能小的物体。', a: false,
+          y: '错。判断依据是"温度差"：热量从温度高的物体传给温度低的物体，和内能大小无关。' },
+        { t: 'j', q: '比热容是物质的一种属性，与物体的质量、温度变化都没有关系。', a: true,
+          y: '对。比热容只由物质种类和状态决定，水是 4.2×10³ J/(kg·℃)。' },
+        { t: 'j', q: '公式 Q = cmΔt 中的 Δt 指的是物体的末温。', a: false,
+          y: '错。Δt 是温度的变化量（升高或降低了多少度），不是末温。' },
+        { t: 'c', q: '下列现象中，能说明分子在不停地做无规则运动的是', o: ['春天柳絮飞舞', '夏天荷花飘香', '秋天落叶飘零', '冬天雪花飘飘'], k: 1,
+          y: '选 B。只有"闻到香味"是分子运动（扩散）；柳絮、落叶、雪花都是肉眼看得见的物体运动。' },
+        { t: 'c', q: '下列实例中，通过做功的方式改变物体内能的是', o: ['在太阳下晒被子', '用热水袋暖手', '搓手取暖', '用冷水给饮料降温'], k: 2,
+          y: '选 C。搓手是克服摩擦做功，机械能转化为内能；其余三项都是热传递。' },
+        { t: 'c', q: '质量相同的水和砂石，吸收相同的热量后，温度升高较多的是', o: ['水', '砂石', '一样多', '无法判断'], k: 1,
+          y: '选 B。由 Δt = Q/(cm) 可知，比热容越小升温越多；砂石比热容比水小得多。' },
+        { t: 'j', q: '物体的内能增大，一定是从外界吸收了热量。', a: false,
+          y: '错。也可能是外界对物体做了功（比如压缩气体、搓手），两种方式都能让内能增大。' },
+        { t: 'j', q: '水的比热容较大，所以汽车发动机常用水来冷却。', a: true,
+          y: '对。同样质量、同样升温，水吸收的热量多，冷却效果好。' }
+      ]
+    },
+    {
+      id: 'eng', name: '第 2 关 · 热机与电路', sub: '四冲程 · 热值 · 电流 · 串并联',
+      items: [
+        { t: 'j', q: '热机是把内能转化为机械能的机器。', a: true,
+          y: '对。汽油机、柴油机都是靠燃料燃烧产生的内能来做功。' },
+        { t: 'j', q: '四冲程汽油机中，只有做功冲程对外做功。', a: true,
+          y: '对。其余三个冲程都靠飞轮的惯性完成，不对外做功。' },
+        { t: 'j', q: '压缩冲程中，气体的内能转化为机械能。', a: false,
+          y: '错。压缩冲程是活塞压缩气体做功，机械能转化为内能；做功冲程才是内能转化为机械能。' },
+        { t: 'j', q: '汽油机的曲轴转 2 圈，完成 1 个工作循环，对外做功 1 次。', a: true,
+          y: '对。1 个工作循环 = 4 个冲程 = 曲轴转 2 圈 = 做功 1 次。' },
+        { t: 'j', q: '燃料的热值越大，燃烧时放出的热量一定越多。', a: false,
+          y: '错。Q放 = mq，放热多少还和燃料的质量、是否完全燃烧有关。' },
+        { t: 'j', q: '燃料燃烧不充分时，它的热值会变小。', a: false,
+          y: '错。热值是燃料的属性，只和燃料种类有关，烧多烧少都不变。' },
+        { t: 'j', q: '任何热机的效率都不可能达到 100%。', a: true,
+          y: '对。总有废气带走热量、摩擦损失等额外功，η = W有用/Q放 一定小于 1。' },
+        { t: 'j', q: '摩擦起电创造了电荷。', a: false,
+          y: '错。摩擦起电的实质是电子从一个物体转移到另一个物体，电荷总数不变。' },
+        { t: 'j', q: '同种电荷互相排斥，异种电荷互相吸引。', a: true,
+          y: '对。这是判断带电情况最基本的依据；还要记住"带电体也能吸引不带电的轻小物体"。' },
+        { t: 'j', q: '金属导体中，电流的方向与自由电子定向移动的方向相同。', a: false,
+          y: '错。规定正电荷定向移动的方向为电流方向，所以金属中两者正好相反。' },
+        { t: 'j', q: '串联电路中，一个开关可以控制整个电路。', a: true,
+          y: '对。串联只有一条路径，开关放在哪里都能控制所有用电器。' },
+        { t: 'j', q: '并联电路中，各支路的用电器会互相影响。', a: false,
+          y: '错。并联各支路互不影响，一个坏了另一个照样工作。' },
+        { t: 'j', q: '电流表要并联在被测电路中。', a: false,
+          y: '错。电流表必须串联，电压表才并联。接反了电流表会被烧坏。' },
+        { t: 'c', q: '下列电路元件中，属于电源的是', o: ['小灯泡', '干电池', '开关', '导线'], k: 1,
+          y: '选 B。电源提供电能，干电池、蓄电池、发电机都是电源。' },
+        { t: 'c', q: '教室里的日光灯与它旁边的开关，连接方式是', o: ['串联', '并联', '无法判断', '既串联又并联'], k: 0,
+          y: '选 A。开关要控制这盏灯，必须和它串联；但各盏灯之间是并联的。' }
+      ]
+    },
+    {
+      id: 'mech', name: '第 3 关 · 简单机械', sub: '杠杆 · 滑轮 · 机械效率',
+      items: [
+        { t: 'j', q: '力臂是支点到力的作用点的距离。', a: false,
+          y: '错。力臂是支点到"力的作用线"的垂线段长度，不是到作用点的距离。' },
+        { t: 'j', q: '船桨、镊子、筷子都是费力杠杆。', a: true,
+          y: '对。它们的动力臂都比阻力臂短，费力但省距离。' },
+        { t: 'j', q: '使用省力杠杆，一定也省距离。', a: false,
+          y: '错。省力必费距离，既省力又省距离的机械不存在（不省功）。' },
+        { t: 'j', q: '定滑轮能省力，但不能改变力的方向。', a: false,
+          y: '错，说反了。定滑轮不省力，但能改变力的方向。' },
+        { t: 'j', q: '不计摩擦和轮重时，动滑轮可以省一半的力。', a: true,
+          y: '对。F = G/2，但同时费一倍距离（s = 2h）。' },
+        { t: 'j', q: '使用任何机械都不省功。', a: true,
+          y: '对。这是功的原理：省力必费距离，省距离必费力。' },
+        { t: 'j', q: '机械效率越高的机械，做的有用功一定越多。', a: false,
+          y: '错。η = W有用/W总 是个比值，和做多少功没有必然关系。' },
+        { t: 'j', q: '机械效率有可能大于 100%。', a: false,
+          y: '错。总有额外功，η 一定小于 100%，通常滑轮组在 80% 左右。' },
+        { t: 'j', q: '做同样的有用功时，额外功越小，机械效率越高。', a: true,
+          y: '对。η = W有用/(W有用 + W额外)，分母变小，效率就变大。' },
+        { t: 'j', q: '杠杆的平衡条件是 F₁l₁ = F₂l₂。', a: true,
+          y: '对。这个式子必须背下来，是杠杆一切计算题的出发点。' },
+        { t: 'j', q: '滑轮组有几段绳子吊着动滑轮，不计摩擦和轮重时，拉力就是物重的几分之一。', a: true,
+          y: '对。数"吊着动滑轮的绳子段数 n"，F = G/n，s = nh。' },
+        { t: 'c', q: '下列工具中，属于省力杠杆的是', o: ['筷子', '镊子', '开瓶器', '钓鱼竿'], k: 2,
+          y: '选 C。开瓶器的动力臂比阻力臂长，是省力杠杆；其余三个都是费力杠杆。' },
+        { t: 'c', q: '用定滑轮提升重物（不计摩擦），最主要的好处是', o: ['省力', '省距离', '改变力的方向', '省功'], k: 2,
+          y: '选 C。定滑轮实质是等臂杠杆，不省力也不省距离，只改变力的方向。' },
+        { t: 'c', q: '天平属于', o: ['省力杠杆', '费力杠杆', '等臂杠杆', '不是杠杆'], k: 2,
+          y: '选 C。天平两臂相等（l₁ = l₂），所以不省力也不费力。' },
+        { t: 'c', q: '下列工具中，属于费力杠杆的是', o: ['羊角锤', '镊子', '独轮车', '钢丝钳'], k: 1,
+          y: '选 B。镊子的动力臂短、阻力臂长，费力但省距离，方便夹取细小物体。' }
+      ]
+    }
+  ];
+
+  var KEY = 'phys_jijiu_v1';
+  var app = document.getElementById('app');
+  var bar = document.getElementById('bar');
+  var barTitle = document.getElementById('bartitle');
+  var barMeta = document.getElementById('barmeta');
+  var pfill = document.getElementById('pfill');
+
+  var S = null;   /* 当前一轮的状态 */
+
+  function loadWrong() {
+    try { return JSON.parse(localStorage.getItem(KEY) || '[]'); } catch (e) { return []; }
+  }
+  function saveWrong(arr) {
+    try { localStorage.setItem(KEY, JSON.stringify(arr)); } catch (e) { }
+  }
+  function itemKey(g, i) { return g + '#' + i; }
+
+  function allItems(gates) {
+    var out = [];
+    gates.forEach(function (g, gi) {
+      g.items.forEach(function (it, ii) { out.push({ g: g.id, gname: g.name, gi: gi, ii: ii, it: it, key: itemKey(g.id, ii) }); });
+    });
+    return out;
+  }
+
+  function start(gateIds, onlyWrong) {
+    var pool = [];
+    GATES.forEach(function (g) {
+      if (gateIds && gateIds.indexOf(g.id) < 0) return;
+      g.items.forEach(function (it, ii) {
+        pool.push({ g: g.id, gname: g.name, gi: 0, ii: ii, it: it, key: itemKey(g.id, ii) });
+      });
+    });
+    if (onlyWrong) {
+      var w = loadWrong();
+      pool = pool.filter(function (x) { return w.indexOf(x.key) >= 0; });
+      if (!pool.length) { renderHome(); return; }
+    }
+    S = { queue: pool, i: 0, right: 0, wrong: [], t0: Date.now(), locked: false, gateIds: gateIds, onlyWrong: !!onlyWrong };
+    renderQ();
+  }
+
+  function renderHome() {
+    bar.style.display = 'none';
+    var w = loadWrong();
+    var total = allItems(GATES).length;
+    var html = '<div class="home">' +
+      '<h2>今晚急救 · 物理基础速练</h2>' +
+      '<p>点一个选项就出结果，答对自动跳下一题。目标不是做完，是<b>刷到不用想</b>。</p>' +
+      '<p class="sub">共 ' + total + ' 条 · 全部是最基础的判断，广州卷的选择题和填空题就靠这些分。</p>' +
+      '<div class="gates">' +
+      '<button class="gate" data-act="all"><span class="n">45</span><span><b>连刷三关（推荐先做这个）</b><span>热学 → 热机电路 → 简单机械，一遍约 12 分钟</span></span><span class="arrow">→</span></button>';
+    GATES.forEach(function (g) {
+      html += '<button class="gate" data-act="' + g.id + '"><span class="n">' + g.items.length + '</span>' +
+        '<span><b>' + g.name + '</b><span>' + g.sub + '</span></span><span class="arrow">→</span></button>';
+    });
+    if (w.length) {
+      html += '<button class="gate" data-act="wrong"><span class="n">' + w.length + '</span>' +
+        '<span><b>只刷错过的（' + w.length + ' 条）</b><span>答对的会自动从错题里消失</span></span><span class="arrow">→</span></button>';
+    }
+    html += '</div>' +
+      '<p class="sub" style="margin-top:14px">键盘：<kbd>1</kbd><kbd>2</kbd>（判断）或 <kbd>1</kbd>~<kbd>4</kbd>（选择）作答，<kbd>Enter</kbd> 下一题。</p>' +
+      '</div>';
+    app.innerHTML = html;
+    app.querySelectorAll('[data-act]').forEach(function (b) {
+      b.addEventListener('click', function () {
+        var a = b.getAttribute('data-act');
+        if (a === 'all') start(null, false);
+        else if (a === 'wrong') start(null, true);
+        else start([a], false);
+      });
+    });
+  }
+
+  function renderQ() {
+    bar.style.display = '';
+    barTitle.textContent = '今晚急救 · 基础速练';
+    var cur = S.queue[S.i];
+    var pct = Math.round(S.i / S.queue.length * 100);
+    pfill.style.width = pct + '%';
+    var done = S.i;
+    var acc = done ? Math.round(S.right / done * 100) : null;
+    barMeta.textContent = '第 ' + (S.i + 1) + '/' + S.queue.length + ' 题' +
+      (done ? ' · 已答 ' + done + ' · 正确率 ' + acc + '%' : '');
+
+    var it = cur.it;
+    var isJudge = it.t === 'j';
+    var opts = isJudge ? ['对', '错'] : it.o;
+    var cards = opts.map(function (o, idx) {
+      return '<button class="opt' + (isJudge ? ' judge' : '') + '" data-k="' + idx + '">' +
+        (isJudge ? '' : '<span class="k">' + 'ABCD'[idx] + '</span>') +
+        '<span>' + esc(o) + '</span></button>';
+    }).join('');
+
+    app.innerHTML =
+      '<div class="card">' +
+      '<div><span class="qno">' + (isJudge ? '判断题' : '选择题') + '</span><span class="tag">' + esc(cur.gname) + '</span></div>' +
+      '<div class="q">' + esc(it.q) + '</div>' +
+      '<div class="opts">' + cards + '</div>' +
+      '<div class="explain" id="ex"></div>' +
+      '<button class="next" id="next">下一题 <span style="opacity:.7">(Enter)</span></button>' +
+      '</div>' +
+      '<div class="hint">' + (isJudge ? '键盘 <kbd>1</kbd> 对 · <kbd>2</kbd> 错' : '键盘 <kbd>1</kbd>~<kbd>' + opts.length + '</kbd> 选') + '</div>';
+
+    S.locked = false;
+    app.querySelectorAll('.opt').forEach(function (b) {
+      b.addEventListener('click', function () { answer(parseInt(b.getAttribute('data-k'), 10)); });
+    });
+    document.getElementById('next').addEventListener('click', next);
+    window.__answer = answer;
+    window.__next = next;
+    window.__optCount = opts.length;
+  }
+
+  function answer(k) {
+    if (!S || S.locked || S.done) return;
+    var cur = S.queue[S.i];
+    var it = cur.it;
+    var isJudge = it.t === 'j';
+    var correctIdx = isJudge ? (it.a ? 0 : 1) : it.k;
+    var ok = k === correctIdx;
+    S.locked = true;
+
+    var btns = app.querySelectorAll('.opt');
+    btns.forEach(function (b, idx) {
+      b.disabled = true;
+      if (idx === correctIdx) b.classList.add('ok');
+      else if (idx === k) b.classList.add('no');
+      else b.classList.add('dim');
+    });
+
+    var ex = document.getElementById('ex');
+    var answerText = isJudge ? (it.a ? '对' : '错') : ('ABCD'[it.k] + '．' + it.o[it.k]);
+    ex.className = 'explain show ' + (ok ? 'ok' : 'bad');
+    ex.innerHTML = (ok ? '<b>对。</b>' : '<b>不是这个。</b>正确答案：<b>' + esc(answerText) + '</b> —— ') + esc(cleanY(it.y));
+
+    if (ok) {
+      S.right++;
+      var w0 = loadWrong();
+      var at0 = w0.indexOf(cur.key);
+      if (at0 >= 0) { w0.splice(at0, 1); saveWrong(w0); }   /* 答对了就从错题本里划掉 */
+      setTimeout(function () { if (S && S.locked && S.queue[S.i] === cur) next(); }, 620);
+    } else {
+      S.wrong.push(cur);
+      var w = loadWrong();
+      if (w.indexOf(cur.key) < 0) { w.push(cur.key); saveWrong(w); }
+      document.getElementById('next').classList.add('show');
+    }
+    var done = S.i + 1;
+    pfill.style.width = Math.round(done / S.queue.length * 100) + '%';
+    document.getElementById('barmeta').textContent = '第 ' + done + '/' + S.queue.length + ' 题 · 已答 ' + done + ' · 正确率 ' +
+      Math.round(S.right / done * 100) + '%';
+  }
+
+  function next() {
+    if (!S || S.done) return;
+    if (!S.locked) return;
+    S.i++;
+    if (S.i >= S.queue.length) return renderResult();
+    renderQ();
+  }
+
+  function renderResult() {
+    var total = S.queue.length;
+    S.done = true;
+    var acc = total ? Math.round(S.right / total * 100) : 0;
+    var sec = Math.round((Date.now() - S.t0) / 1000);
+    var wrong = S.wrong;
+    bar.style.display = 'none';
+
+    var tip = acc === 100 ? '全对。这一关的基础已经很稳了，换个关卡或去刷错题本。'
+      : acc >= 80 ? '不错。把下面这几条念一遍，再刷一次错题就差不多了。'
+        : acc >= 60 ? '基础还有洞。把错题的理由读出声，再刷一轮——第二轮要上 90%。'
+          : '先别急，把下面的"理由"一条条看明白，再点「只重刷错题」。';
+
+    var html = '<div class="card"><div class="result">' +
+      '<div class="big">' + acc + '<small>%</small></div>' +
+      '<div class="ln">答对 ' + S.right + ' / ' + total + ' 题 · 用时 ' + Math.floor(sec / 60) + ' 分 ' + (sec % 60) + ' 秒</div>' +
+      '<div class="ln" style="margin-top:10px">' + esc(tip) + '</div>' +
+      '<div class="acts">' +
+      (wrong.length ? '<button class="primary" data-act="retrywrong">只重刷错题（' + wrong.length + '）</button>' : '') +
+      '<button data-act="again">再来一轮</button>' +
+      '<button data-act="home">换一关</button>' +
+      '</div></div>';
+
+    if (wrong.length) {
+      html += '<div class="wlist"><div style="font-weight:700;margin-top:6px">这几条要记住：</div>';
+      wrong.forEach(function (x) {
+        var it = x.it;
+        var at = it.t === 'j' ? (it.a ? '对' : '错') : ('ABCD'[it.k] + '．' + it.o[it.k]);
+        html += '<div class="wrow"><b>' + esc(it.q) + '</b>' +
+          '<span class="why">正确答案：' + esc(at) + ' —— ' + esc(cleanY(it.y)) + '</span></div>';
+      });
+      html += '</div>';
+    }
+    html += '</div>';
+    app.innerHTML = html;
+
+    app.querySelectorAll('[data-act]').forEach(function (b) {
+      b.addEventListener('click', function () {
+        var a = b.getAttribute('data-act');
+        if (a === 'home') return renderHome();
+        if (a === 'again') {
+          if (S && S.onlyWrong) { return start(S.gateIds, true); }
+          return start(S ? S.gateIds : null, false);
+        }
+        if (a === 'retrywrong') return start(S ? S.gateIds : null, true);
+      });
+    });
+  }
+
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c];
+    });
+  }
+
+  /* 理由开头已经写了"选 B。""对。""错。"，跟前面的"正确答案：…"重复，去掉 */
+  function cleanY(s) {
+    return String(s == null ? '' : s).replace(/^(?:选\s*[A-D]\s*[。.、]|(?:对|错)\s*[。.，,])\s*/, '');
+  }
+
+  document.addEventListener('keydown', function (e) {
+    if (!S || !document.getElementById('barmeta')) return;
+    if (e.key >= '1' && e.key <= '4') {
+      var k = parseInt(e.key, 10) - 1;
+      if (k < (window.__optCount || 0) && window.__answer) window.__answer(k);
+    } else if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      if (S && S.locked && document.getElementById('next')) window.__next();
+    }
+  });
+
+  renderHome();
+})();
+</script>
+</body>
+</html>

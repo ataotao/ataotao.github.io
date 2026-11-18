@@ -1,0 +1,565 @@
+{
+  "packId": "pk-w9",
+  "file": "第9周.docx",
+  "title": "第9周",
+  "pages": 5,
+  "meta": {
+    "pageWidth": 595.299987792969,
+    "pageHeight": 841.900024414063,
+    "leftMargin": 56.7000007629395,
+    "rightMargin": 56.7000007629395,
+    "topMargin": 48.2000007629395,
+    "bottomMargin": 48.2000007629395,
+    "headerDistance": 17,
+    "footerDistance": 28.3500003814697,
+    "pages": 5,
+    "paraCount": 157
+  },
+  "anomalies": [
+    "第9题跨页（共2页）：已出 q09_1..q09_2.png 并竖向合成 q09.png 单图"
+  ],
+  "questions": [
+    {
+      "no": 1,
+      "group": "选择",
+      "isChoice": true,
+      "guessType": "choice",
+      "askText": "1．下列事例中，用热传递的方式来改变物体内能的是（     ）",
+      "opts": [
+        "冬天双手摩擦取暖",
+        "一杯热水慢慢变凉",
+        "人从滑梯滑下臀部发热",
+        "用钢锯锯木头锯条会发热"
+      ],
+      "answerKey": "B",
+      "answerText": "",
+      "section": "一、单选题",
+      "askImg": [
+        "图片/pk-w9/q01.png"
+      ],
+      "ansImg": [],
+      "range": {
+        "startPage": 1,
+        "startY": 111.45,
+        "endPage": 1,
+        "endY": 174.05,
+        "lastContentPage": 1
+      },
+      "extraRanges": [],
+      "ansRange": null,
+      "hasAnswerBlock": false,
+      "ansInferred": false
+    },
+    {
+      "no": 2,
+      "group": "选择",
+      "isChoice": true,
+      "guessType": "choice",
+      "askText": "2．小明用天然气灶把2kg的水从20℃加热到70℃，消耗了[式]的天然气。已知水的比热容为[式]，天然气的热值为[式]，则此天然气灶烧水的效率约为（     ）\n\t\t\tA．26%\tB．40%\tC．52.5%\tD．60%",
+      "opts": [],
+      "answerKey": "C",
+      "answerText": "",
+      "section": "一、单选题",
+      "askImg": [
+        "图片/pk-w9/q02.png"
+      ],
+      "ansImg": [],
+      "range": {
+        "startPage": 1,
+        "startY": 174.05,
+        "endPage": 1,
+        "endY": 236.65,
+        "lastContentPage": 1
+      },
+      "extraRanges": [],
+      "ansRange": null,
+      "hasAnswerBlock": false,
+      "ansInferred": false
+    },
+    {
+      "no": 3,
+      "group": "选择",
+      "isChoice": true,
+      "guessType": "choice",
+      "askText": "3．如图为四冲程汽油机的工作示意图，下列说法正确的是（  ）\n[图]A．在一个工作循环中的工作冲程依次是乙、丁、甲、丙\nB．该汽油机在吸气冲程时，吸入的是空气\nC．甲冲程依靠曲轴的惯性完成\nD．丁冲程的能量转化是内能转化为机械能",
+      "opts": [],
+      "answerKey": "A",
+      "answerText": "",
+      "section": "一、单选题",
+      "askImg": [
+        "图片/pk-w9/q03.png"
+      ],
+      "ansImg": [],
+      "range": {
+        "startPage": 1,
+        "startY": 236.65,
+        "endPage": 1,
+        "endY": 329.95,
+        "lastContentPage": 1
+      },
+      "extraRanges": [],
+      "ansRange": null,
+      "hasAnswerBlock": false,
+      "ansInferred": false
+    },
+    {
+      "no": 4,
+      "group": "选择",
+      "isChoice": true,
+      "guessType": "choice",
+      "askText": "[图]4．有甲、乙、丙三个轻质小球，甲球带正电。将甲与乙、丙靠近时，它们相互作用的情况如图所示，则下列判断正确的是（     ）\n[图]A．乙球可能带负电，丙球一定带正电\nB．乙球一定不带电，丙球可能带负电\nC．乙球一定带负电，丙球可能带正电\nD．乙球可能不带电，丙球一定带负电",
+      "opts": [],
+      "answerKey": "A",
+      "answerText": "",
+      "section": "一、单选题",
+      "askImg": [
+        "图片/pk-w9/q04.png"
+      ],
+      "ansImg": [],
+      "range": {
+        "startPage": 1,
+        "startY": 329.95,
+        "endPage": 1,
+        "endY": 423.85,
+        "lastContentPage": 1
+      },
+      "extraRanges": [],
+      "ansRange": null,
+      "hasAnswerBlock": false,
+      "ansInferred": false
+    },
+    {
+      "no": 5,
+      "group": "选择",
+      "isChoice": true,
+      "guessType": "choice",
+      "askText": "5．二极管在生活中的应用非常广泛。王同学利用如图所示的方式使二极管LED灯发光。橙子在电路中的作用是（     ）",
+      "opts": [
+        "电源",
+        "用电器",
+        "开关",
+        "导线"
+      ],
+      "answerKey": "A",
+      "answerText": "",
+      "section": "一、单选题",
+      "askImg": [
+        "图片/pk-w9/q05.png"
+      ],
+      "ansImg": [],
+      "range": {
+        "startPage": 1,
+        "startY": 423.85,
+        "endPage": 1,
+        "endY": 477.1,
+        "lastContentPage": 1
+      },
+      "extraRanges": [],
+      "ansRange": null,
+      "hasAnswerBlock": false,
+      "ansInferred": false
+    },
+    {
+      "no": 6,
+      "group": "选择",
+      "isChoice": true,
+      "guessType": "choice",
+      "askText": "[图]6．如图中，开关[式]闭合后，关于灯泡[式]、[式]的连接方式及开关作用，正确的是（     ）",
+      "opts": [
+        "[式]、[式]串联",
+        "[式]、[式]并联",
+        "S只控制[式]",
+        "拆除[式]后[式]不发光"
+      ],
+      "answerKey": "B",
+      "answerText": "",
+      "section": "一、单选题",
+      "askImg": [
+        "图片/pk-w9/q06.png"
+      ],
+      "ansImg": [],
+      "range": {
+        "startPage": 1,
+        "startY": 477.1,
+        "endPage": 1,
+        "endY": 539.05,
+        "lastContentPage": 1
+      },
+      "extraRanges": [],
+      "ansRange": null,
+      "hasAnswerBlock": false,
+      "ansInferred": false
+    },
+    {
+      "no": 7,
+      "group": "选择",
+      "isChoice": true,
+      "guessType": "choice",
+      "askText": "7．某同学连接了四个电路来探究开关的控制作用，其中开关S只控制灯泡[式]的电路是（     ）\n\t[图]  [图]\n\tA                     B                    C                   D",
+      "opts": [],
+      "answerKey": "D",
+      "answerText": "",
+      "section": "一、单选题",
+      "askImg": [
+        "图片/pk-w9/q07.png"
+      ],
+      "ansImg": [],
+      "range": {
+        "startPage": 1,
+        "startY": 539.05,
+        "endPage": 1,
+        "endY": 673.05,
+        "lastContentPage": 1
+      },
+      "extraRanges": [],
+      "ansRange": null,
+      "hasAnswerBlock": false,
+      "ansInferred": false
+    },
+    {
+      "no": 8,
+      "group": "选择",
+      "isChoice": true,
+      "guessType": "choice",
+      "askText": "8．如图甲所示电路，闭合开关S，电流表A1、A2的示数如图乙、图丙所示，则正确的是（     ）\n[图]A．L1和L2组成了串联电路\nB．电流表A1的示数是[式]\nC．通过小灯泡L1的电流是[式]\nD．闭合开关S，若L1支路断开，电流表A2的示数增大",
+      "opts": [],
+      "answerKey": "C",
+      "answerText": "",
+      "section": "一、单选题",
+      "askImg": [
+        "图片/pk-w9/q08.png"
+      ],
+      "ansImg": [],
+      "range": {
+        "startPage": 1,
+        "startY": 673.05,
+        "endPage": 1,
+        "endY": 766.95,
+        "lastContentPage": 1
+      },
+      "extraRanges": [],
+      "ansRange": null,
+      "hasAnswerBlock": false,
+      "ansInferred": false
+    },
+    {
+      "no": 9,
+      "group": "选择",
+      "isChoice": true,
+      "guessType": "choice",
+      "askText": "9．用图中的装置来提升重物，既省力又改变力的方向为（     ）",
+      "opts": [
+        "[图]",
+        "[图]",
+        "[图]",
+        "[图]"
+      ],
+      "answerKey": "C",
+      "answerText": "",
+      "section": "一、单选题",
+      "askImg": [
+        "图片/pk-w9/q09.png"
+      ],
+      "ansImg": [],
+      "range": {
+        "startPage": 1,
+        "startY": 766.95,
+        "endPage": 2,
+        "endY": 195.95,
+        "lastContentPage": 2
+      },
+      "extraRanges": [],
+      "ansRange": null,
+      "hasAnswerBlock": false,
+      "ansInferred": false
+    },
+    {
+      "no": 10,
+      "group": "选择",
+      "isChoice": true,
+      "guessType": "choice",
+      "askText": "[图]10．用甲、乙两个滑轮组分别将两个物体在相同时间内匀速提升相同高度，拉力分别为[式]，此过程相关数据如图丙所示。下列说法不正确的是（     ）\nA．[式]和[式]一样大\nB．[式]的功率比[式]的功率大\nC．甲、乙装置中的两个物体[式]\nD．乙的机械效率比甲小",
+      "opts": [],
+      "answerKey": "D",
+      "answerText": "",
+      "section": "一、单选题",
+      "askImg": [
+        "图片/pk-w9/q10.png"
+      ],
+      "ansImg": [],
+      "range": {
+        "startPage": 2,
+        "startY": 195.95,
+        "endPage": 2,
+        "endY": 345.6,
+        "lastContentPage": 2
+      },
+      "extraRanges": [],
+      "ansRange": null,
+      "hasAnswerBlock": false,
+      "ansInferred": false
+    },
+    {
+      "no": 11,
+      "group": "选择",
+      "isChoice": false,
+      "guessType": "fill",
+      "askText": "11．有甲、乙两种不同的燃料，甲燃料的质量为2kg，乙燃料的质量为1kg，当甲、乙温度都升高1℃，吸收的热量如图a所示；甲、乙燃料完全燃烧后放出的热量如图b所示。则甲燃料的比热容________乙燃料的比热容，甲燃料的热值________乙燃料的热值（前两空均选填“大于”“等于”或“小于”），乙燃料的热值为________J/kg。",
+      "opts": [],
+      "answerKey": "",
+      "answerText": "小于     小于     [式]",
+      "section": "二、非选择题",
+      "askImg": [
+        "图片/pk-w9/q11.png"
+      ],
+      "ansImg": [
+        "图片/pk-w9/q11-a.png"
+      ],
+      "range": {
+        "startPage": 2,
+        "startY": 361.25,
+        "endPage": 2,
+        "endY": 486.45,
+        "lastContentPage": 2
+      },
+      "extraRanges": [],
+      "ansRange": {
+        "startPage": 5,
+        "startY": 113.3,
+        "endPage": 5,
+        "endY": 144,
+        "lastContentPage": 5
+      },
+      "hasAnswerBlock": true,
+      "ansInferred": false
+    },
+    {
+      "no": 12,
+      "group": "选择",
+      "isChoice": false,
+      "guessType": "solve",
+      "askText": "[图]12．如图甲所示，土灶是我国古代劳动人民智慧的结晶，它通常以木柴、秸秆为燃料。1kg的干木柴在土灶中完全燃烧，可以让铁锅内2kg的水温度升高50°C。[[式]，[式]]\n(1)求铁锅内水吸收的热量。\n(2)求[式]干木柴完全燃烧放出的热量。\n(3)求土灶的烧水效率。\n(4)某厂家参考图甲所示的土灶设计了图乙所示的移动式土灶，用移动式土灶加热相同质量的水，使水升高相同的温度，只需完全燃烧[式]的干木柴，求移动式土灶的烧水效率。",
+      "opts": [],
+      "answerKey": "",
+      "answerText": "(1)[式](2)[式](3)[式](4)[式]\n解:（1）[式]\n（2）[式]\n（3）[式]\n（4）[式]\n[式]",
+      "section": "二、非选择题",
+      "askImg": [
+        "图片/pk-w9/q12.png"
+      ],
+      "ansImg": [
+        "图片/pk-w9/q12-a.png"
+      ],
+      "range": {
+        "startPage": 2,
+        "startY": 486.45,
+        "endPage": 3,
+        "endY": 49.45,
+        "lastContentPage": 2
+      },
+      "extraRanges": [],
+      "ansRange": {
+        "startPage": 5,
+        "startY": 144,
+        "endPage": 5,
+        "endY": 362.5,
+        "lastContentPage": 5
+      },
+      "hasAnswerBlock": true,
+      "ansInferred": false
+    },
+    {
+      "no": 13,
+      "group": "选择",
+      "isChoice": false,
+      "guessType": "solve",
+      "askText": "[图]13．如图所示是工地上一台起重机吊臂的滑轮组，它在50s内将重为2.4×104N的钢材匀速提高10m。不计滑轮摩擦和绳重，已知拉力F为104N，则这个过程中：\n(1)拉力F的功率多大？\n(2)如果提升5.4×104N重物，滑轮组效率为多少？",
+      "opts": [],
+      "answerKey": "",
+      "answerText": "(1)[式](2)[式]\n解:（1）[式]\n[式]\n[式]\n（2）[式]\n[式]",
+      "section": "二、非选择题",
+      "askImg": [
+        "图片/pk-w9/q13.png"
+      ],
+      "ansImg": [
+        "图片/pk-w9/q13-a.png"
+      ],
+      "range": {
+        "startPage": 3,
+        "startY": 49.45,
+        "endPage": 4,
+        "endY": 49.45,
+        "lastContentPage": 3
+      },
+      "extraRanges": [],
+      "ansRange": {
+        "startPage": 5,
+        "startY": 362.5,
+        "endPage": 5,
+        "endY": 550.35,
+        "lastContentPage": 5
+      },
+      "hasAnswerBlock": true,
+      "ansInferred": false
+    },
+    {
+      "no": 14,
+      "group": "选择",
+      "isChoice": false,
+      "guessType": "fill",
+      "askText": "14．一位物理老师在动物园内，用弹簧测力计称出了一头大象的质量。在称象过程中，他用到了吊车、铁笼和一根长10 m且质量分布均匀的槽钢等辅助工具。\n[图]\n(1)如图乙所示，槽钢上的悬吊点O为支点，测得动力臂l1为9 m，阻力臂l2为1 m。槽钢在水平位置平衡时，弹簧测力计的示数为200N。若不计槽钢和铁笼的质量，大象的质量约为____________kg，若在5s内使大象上升了1 cm，测力计始终保持竖直，则拉力F1做功的功率为____________W；（g取10N/kg）\n(2)如果要考虑槽钢和铁笼的质量，那么在称象前应做的准备工作是：先在槽钢上____________，（选填“挂上铁笼”或“取下铁笼”），调节槽钢悬挂点O的位置，使______________________________，然后将大象放进铁笼，“称”出大象质量。\n(3)测量槽钢的质量：如图1，槽钢可以绕O点在竖直平面内自由转动，不计摩擦，一拉力位移传感器竖直作用在杆上，并能使杆始终保持水平平衡。该传感器显示其拉力与作用点到O点距离的变化关系如图2所示。据图可知槽钢质量为____________kg。\n[图]\n(4)继续测出铁笼质量为49 kg，若弹簧测力计最大测量值为500N，则（2）中悬挂点O到点B的距离为____________m，用此方法能称出的大象最大质量为____________t。",
+      "opts": [],
+      "answerKey": "",
+      "answerText": "(1)     180     3.6\n(2)     挂上铁笼     槽钢在水平位置平衡\n(3)1\n(4)     0.1     4.95",
+      "section": "二、非选择题",
+      "askImg": [
+        "图片/pk-w9/q14.png"
+      ],
+      "ansImg": [
+        "图片/pk-w9/q14-a.png"
+      ],
+      "range": {
+        "startPage": 4,
+        "startY": 49.45,
+        "endPage": 5,
+        "endY": 49.45,
+        "lastContentPage": 4
+      },
+      "extraRanges": [],
+      "ansRange": {
+        "startPage": 5,
+        "startY": 550.35,
+        "endPage": null,
+        "endY": null,
+        "lastContentPage": 5
+      },
+      "hasAnswerBlock": true,
+      "ansInferred": false
+    }
+  ],
+  "shapeBoxes": [
+    {
+      "page": 1,
+      "x0": 469.7,
+      "y0": 57.8,
+      "x1": 551.8,
+      "y1": 123,
+      "owner": "q1",
+      "ownerName": "第1题"
+    },
+    {
+      "page": 1,
+      "x0": 347.9,
+      "y0": 254.8,
+      "x1": 552.7,
+      "y1": 345.4,
+      "owner": "q3",
+      "ownerName": "第3题"
+    },
+    {
+      "page": 1,
+      "x0": 269.3,
+      "y0": 376,
+      "x1": 445,
+      "y1": 428,
+      "owner": "q4",
+      "ownerName": "第4题"
+    },
+    {
+      "page": 1,
+      "x0": 468.3,
+      "y0": 367.4,
+      "x1": 544.8,
+      "y1": 454.4,
+      "owner": "q4",
+      "ownerName": "第4题"
+    },
+    {
+      "page": 1,
+      "x0": 465,
+      "y0": 482,
+      "x1": 560.8,
+      "y1": 539.4,
+      "owner": "q6",
+      "ownerName": "第6题"
+    },
+    {
+      "page": 1,
+      "x0": 241.5,
+      "y0": 693.4,
+      "x1": 551.2,
+      "y1": 781.2,
+      "owner": "q8",
+      "ownerName": "第8题"
+    },
+    {
+      "page": 2,
+      "x0": 305.3,
+      "y0": 227.8,
+      "x1": 543.1,
+      "y1": 345.6,
+      "owner": "q10",
+      "ownerName": "第10题"
+    },
+    {
+      "page": 2,
+      "x0": 379.4,
+      "y0": 487.3,
+      "x1": 541.4,
+      "y1": 584,
+      "owner": "q12",
+      "ownerName": "第12题"
+    },
+    {
+      "page": 2,
+      "x0": 279.8,
+      "y0": 352.8,
+      "x1": 561.1,
+      "y1": 447.3,
+      "owner": "q11",
+      "ownerName": "第11题"
+    },
+    {
+      "page": 3,
+      "x0": 475.7,
+      "y0": 70.2,
+      "x1": 537.9,
+      "y1": 194.7,
+      "owner": "q13",
+      "ownerName": "第13题"
+    }
+  ],
+  "answerBlocks": [
+    {
+      "no": 11,
+      "startIdx": 138,
+      "endIdx": 140
+    },
+    {
+      "no": 12,
+      "startIdx": 140,
+      "endIdx": 147
+    },
+    {
+      "no": 13,
+      "startIdx": 147,
+      "endIdx": 154
+    },
+    {
+      "no": 14,
+      "startIdx": 154,
+      "endIdx": 158
+    }
+  ],
+  "answerTable": {
+    "10": "D",
+    "9": "C",
+    "8": "C",
+    "7": "D",
+    "6": "B",
+    "5": "A",
+    "4": "A",
+    "3": "A",
+    "2": "C",
+    "1": "B"
+  }
+}

@@ -1,0 +1,582 @@
+{
+  "packId": "pk-w5b",
+  "file": "第5周_2.docx",
+  "title": "第五周（国庆1）",
+  "pages": 5,
+  "meta": {
+    "pageWidth": 595.299987792969,
+    "pageHeight": 841.900024414063,
+    "leftMargin": 56.7000007629395,
+    "rightMargin": 56.7000007629395,
+    "topMargin": 48.2000007629395,
+    "bottomMargin": 48.2000007629395,
+    "headerDistance": 17,
+    "footerDistance": 28.3500003814697,
+    "pages": 5,
+    "paraCount": 172
+  },
+  "anomalies": [
+    "第6题的图在题号上方（图注「第6题」），已把该图并入本题裁图",
+    "有 1 个浮动图形未能归到某题（未参与边界扩展）",
+    "第7题跨页（共2页）：已出 q07_1..q07_2.png 并竖向合成 q07.png 单图"
+  ],
+  "questions": [
+    {
+      "no": 1,
+      "group": "选择",
+      "isChoice": true,
+      "guessType": "choice",
+      "askText": "1．一般情况下固体和液体很难被压缩。这一现象表明（      ）\n\t[图]",
+      "opts": [
+        "分子非常小",
+        "分子间存在斥力",
+        "分子在永不停息地运动",
+        "分子间存在引力"
+      ],
+      "answerKey": "B",
+      "answerText": "",
+      "section": "一、单选题",
+      "askImg": [
+        "图片/pk-w5b/q01.png"
+      ],
+      "ansImg": [],
+      "range": {
+        "startPage": 1,
+        "startY": 111.45,
+        "endPage": 1,
+        "endY": 174.05,
+        "lastContentPage": 1
+      },
+      "extraRanges": [],
+      "ansRange": null,
+      "hasAnswerBlock": false,
+      "ansInferred": false
+    },
+    {
+      "no": 2,
+      "group": "选择",
+      "isChoice": true,
+      "guessType": "choice",
+      "askText": "2．当图中的玻璃板被抽去后，两个瓶子内的颜色逐渐变得均匀，这种现象主要表明（  ）",
+      "opts": [
+        "分子有一定的质量",
+        "分子有一定的大小",
+        "分子间有相互作用力",
+        "分子在不停地做无规则的运动"
+      ],
+      "answerKey": "D",
+      "answerText": "",
+      "section": "一、单选题",
+      "askImg": [
+        "图片/pk-w5b/q02.png"
+      ],
+      "ansImg": [],
+      "range": {
+        "startPage": 1,
+        "startY": 174.05,
+        "endPage": 1,
+        "endY": 236.65,
+        "lastContentPage": 1
+      },
+      "extraRanges": [],
+      "ansRange": null,
+      "hasAnswerBlock": false,
+      "ansInferred": false
+    },
+    {
+      "no": 3,
+      "group": "选择",
+      "isChoice": true,
+      "guessType": "choice",
+      "askText": "3．关于温度、热量和内能，下列说法正确的是（  ）\nA．物体吸收热量，温度一定升高           B．80℃的水一定比30℃的水含有的热量多\nC．温度相同的物体接触时不发生热传递     D．物体温度升高，内能不一定增加，但一定吸收热量\n[图]",
+      "opts": [],
+      "answerKey": "C",
+      "answerText": "",
+      "section": "一、单选题",
+      "askImg": [
+        "图片/pk-w5b/q03.png"
+      ],
+      "ansImg": [],
+      "range": {
+        "startPage": 1,
+        "startY": 236.65,
+        "endPage": 1,
+        "endY": 299.25,
+        "lastContentPage": 1
+      },
+      "extraRanges": [],
+      "ansRange": null,
+      "hasAnswerBlock": false,
+      "ansInferred": false
+    },
+    {
+      "no": 4,
+      "group": "选择",
+      "isChoice": true,
+      "guessType": "choice",
+      "askText": "4．如图所示，我国在文昌卫星发射中心用长征五号运载火箭将“嫦娥五号”发射升空，下列说法正确的是（     ）\nA．用液态氢做燃料，原因之一是因为氢的热值大\nB．液态氢在燃烧过程中，将内能转化为化学能\nC．火箭在大气层中加速升空时，能量不守恒\nD．火箭在大气层中加速升空时，动能不变",
+      "opts": [],
+      "answerKey": "A",
+      "answerText": "",
+      "section": "一、单选题",
+      "askImg": [
+        "图片/pk-w5b/q04.png"
+      ],
+      "ansImg": [],
+      "range": {
+        "startPage": 1,
+        "startY": 299.25,
+        "endPage": 1,
+        "endY": 408.2,
+        "lastContentPage": 1
+      },
+      "extraRanges": [],
+      "ansRange": null,
+      "hasAnswerBlock": false,
+      "ansInferred": false
+    },
+    {
+      "no": 5,
+      "group": "选择",
+      "isChoice": true,
+      "guessType": "choice",
+      "askText": "5．不同形式的能量可以在一定条件下相互转化，如图给出的实例中，错误的是（  ）",
+      "opts": [
+        "热机做功冲程",
+        "电池甲充电",
+        "电池乙供电",
+        "植物生长"
+      ],
+      "answerKey": "A",
+      "answerText": "",
+      "section": "一、单选题",
+      "askImg": [
+        "图片/pk-w5b/q05.png"
+      ],
+      "ansImg": [],
+      "range": {
+        "startPage": 1,
+        "startY": 408.2,
+        "endPage": 1,
+        "endY": 626.7,
+        "lastContentPage": 1
+      },
+      "extraRanges": [],
+      "ansRange": null,
+      "hasAnswerBlock": false,
+      "ansInferred": false
+    },
+    {
+      "no": 6,
+      "group": "选择",
+      "isChoice": true,
+      "guessType": "choice",
+      "askText": "6．如图所示，工人用平行斜面向上的恒定推力F，将重6N的物体以1m/s的速度匀速推到斜面顶端，斜面长1m，测得斜面的机械效率为75%，斜面的倾斜角度为30°。则下列说法正确的是（   ）\nA．推力做的功为3J\nB．物体受到的摩擦力为1.5N\nC．物体在匀速上升过程中，速度越快受到的摩擦力越大\nD．若以2m/s的速度匀速推动物体，斜面的机械效率仍为75%",
+      "opts": [],
+      "answerKey": "D",
+      "answerText": "",
+      "section": "一、单选题",
+      "askImg": [
+        "图片/pk-w5b/q06.png"
+      ],
+      "ansImg": [],
+      "range": {
+        "startPage": 1,
+        "startY": 457.65,
+        "endPage": 1,
+        "endY": 720,
+        "lastContentPage": 1
+      },
+      "extraRanges": [],
+      "ansRange": null,
+      "hasAnswerBlock": false,
+      "ansInferred": false
+    },
+    {
+      "no": 7,
+      "group": "选择",
+      "isChoice": true,
+      "guessType": "choice",
+      "askText": "7．在使用重为[式]的滑轮做如下图所示实验中，竖直匀速向上拉弹簧测力计，弹簧测力计的示数分别是F1、F2，不计绳重和绳与轮间的摩擦，则下列说法正确的是（     ）",
+      "opts": [
+        "该滑轮是定滑轮",
+        "[式]",
+        "若钩码匀速上升[式]，则绳子自由端移动的距离是[式]",
+        "若该滑轮的机械效率为[式]，则提升的钩码总重为[式]"
+      ],
+      "answerKey": "D",
+      "answerText": "",
+      "section": "一、单选题",
+      "askImg": [
+        "图片/pk-w5b/q07.png"
+      ],
+      "ansImg": [],
+      "range": {
+        "startPage": 1,
+        "startY": 720,
+        "endPage": 2,
+        "endY": 96.4,
+        "lastContentPage": 2
+      },
+      "extraRanges": [],
+      "ansRange": null,
+      "hasAnswerBlock": false,
+      "ansInferred": false
+    },
+    {
+      "no": 8,
+      "group": "选择",
+      "isChoice": true,
+      "guessType": "choice",
+      "askText": "[图]8．如图甲所示为停车场的电子闸杆，其结构图如图乙所示，闸杆和摇杆组成一根可绕转轴[式]转动的杠杆，闸杆质量分布均匀，摇杆质量不计，当力[式]作用于[式]点时，闸杆恰好能够向上转动，关于此瞬间，下列说法正确的是（      ）\nA．此装置可视为省力杠杆\nB．力[式]的力臂一定为[式]\nC．闸杆重力的力臂为[式]\nD．当力[式]垂直[式]向下时，[式]有最小值",
+      "opts": [],
+      "answerKey": "D",
+      "answerText": "",
+      "section": "一、单选题",
+      "askImg": [
+        "图片/pk-w5b/q08.png"
+      ],
+      "ansImg": [],
+      "range": {
+        "startPage": 2,
+        "startY": 96.4,
+        "endPage": 2,
+        "endY": 221,
+        "lastContentPage": 2
+      },
+      "extraRanges": [],
+      "ansRange": null,
+      "hasAnswerBlock": false,
+      "ansInferred": false
+    },
+    {
+      "no": 9,
+      "group": "选择",
+      "isChoice": true,
+      "guessType": "choice",
+      "askText": "9．如图所示，在两个相同的烧杯中，分别装有质量、初温都相同的甲、乙两种物质，用同一热源对其加热，两物质在相同的时间内吸收相同的热量。用电子温度计分别测量两物质的温度，实验数据记录如表。则下列说法正确的是（     ）\n[图]\nA．热源通过做功的方式改变两种物质的内能\nB．甲物质的比热容比乙物质的小\nC．若杯中甲物质和乙物质吸收了相同的热量，则乙升高的温度更多\nD．杯中乙物质升温10℃所吸收的热量比甲物质升温5℃所吸收的热量要多",
+      "opts": [],
+      "answerKey": "C",
+      "answerText": "",
+      "section": "一、单选题",
+      "askImg": [
+        "图片/pk-w5b/q09.png"
+      ],
+      "ansImg": [],
+      "range": {
+        "startPage": 2,
+        "startY": 221,
+        "endPage": 2,
+        "endY": 502.1,
+        "lastContentPage": 2
+      },
+      "extraRanges": [],
+      "ansRange": null,
+      "hasAnswerBlock": false,
+      "ansInferred": false
+    },
+    {
+      "no": 10,
+      "group": "选择",
+      "isChoice": false,
+      "guessType": "fill",
+      "askText": "10．如图所示，OA为一轻质杠杆，OB长0.2m，AB长0.4m，重物的重力[式]，拉力F作用在A点上，当杠杆水平平衡时，拉力为________N；保持拉力F与杠杆垂直，杠杆缓慢地由A位置放至C位置，此过程中拉力F将________（填“变大”、“变小”或“不变”）。\n[图]",
+      "opts": [],
+      "answerKey": "",
+      "answerText": "20     变小",
+      "section": "二、非选择题",
+      "askImg": [
+        "图片/pk-w5b/q10.png"
+      ],
+      "ansImg": [
+        "图片/pk-w5b/q10-a.png"
+      ],
+      "range": {
+        "startPage": 2,
+        "startY": 517.15,
+        "endPage": 2,
+        "endY": 704.35,
+        "lastContentPage": 2
+      },
+      "extraRanges": [],
+      "ansRange": {
+        "startPage": 5,
+        "startY": 165.3,
+        "endPage": 5,
+        "endY": 180.95,
+        "lastContentPage": 5
+      },
+      "hasAnswerBlock": true,
+      "ansInferred": false
+    },
+    {
+      "no": 11,
+      "group": "选择",
+      "isChoice": false,
+      "guessType": "fill",
+      "askText": "11．用如图所示的滑轮组将重为[式]的物体匀速提升[式]，已知动滑轮重为[式]。不计绳重和摩擦，作用在绳端上的拉力为_______[式]，绳端移动的距离为________[式]。",
+      "opts": [],
+      "answerKey": "",
+      "answerText": "200     6",
+      "section": "二、非选择题",
+      "askImg": [
+        "图片/pk-w5b/q11.png"
+      ],
+      "ansImg": [
+        "图片/pk-w5b/q11-a.png"
+      ],
+      "range": {
+        "startPage": 2,
+        "startY": 704.35,
+        "endPage": 3,
+        "endY": 49.45,
+        "lastContentPage": 2
+      },
+      "extraRanges": [],
+      "ansRange": {
+        "startPage": 5,
+        "startY": 180.95,
+        "endPage": 5,
+        "endY": 197.2,
+        "lastContentPage": 5
+      },
+      "hasAnswerBlock": true,
+      "ansInferred": false
+    },
+    {
+      "no": 12,
+      "group": "选择",
+      "isChoice": false,
+      "guessType": "selfcheck",
+      "askText": "12．[图]\n(1)如图甲所示，活塞式抽水机[式]部分可视为杠杆，O为支点，请画出作用在手柄A点动力F1的动力臂L1和B点所受阻力F2的示意图。\n(2)如图乙所示工人用滑轮组提升材料按要求完成作图。\n(3)如图丙所示，[式]为轻质杠杆，O为支点，在B点处挂一个铁球，请画出杠杆在图示位置平衡时受到的阻力F2和最小动力F1。",
+      "opts": [],
+      "answerKey": "",
+      "answerText": "(1)[图](2)[图](3)[图]",
+      "section": "二、非选择题",
+      "askImg": [
+        "图片/pk-w5b/q12.png"
+      ],
+      "ansImg": [
+        "图片/pk-w5b/q12-a.png"
+      ],
+      "range": {
+        "startPage": 3,
+        "startY": 49.45,
+        "endPage": 3,
+        "endY": 345.6,
+        "lastContentPage": 3
+      },
+      "extraRanges": [],
+      "ansRange": {
+        "startPage": 5,
+        "startY": 197.2,
+        "endPage": 5,
+        "endY": 305.55,
+        "lastContentPage": 5
+      },
+      "hasAnswerBlock": true,
+      "ansInferred": false
+    },
+    {
+      "no": 13,
+      "group": "选择",
+      "isChoice": false,
+      "guessType": "fill",
+      "askText": "13．为了比较不同物质的比热容，小冰利用规格相同的电加热器给质量相同的A和B液体加热，如图甲所示。她利用实验得到的数据绘制出两种液体温度随加热时间的变化图像，如图乙所示。相同时间两种液体吸收的热量相同。\n[图]\n(1)根据图乙中的实验数据可知：实验需用到的测量工具有____________和____________；\n(2)当A和B两种液体升高的温度相同时，____________（选填“A”或“B”）液体吸收的热量更多；\n(3)分析图乙可知____________（选填“A”或“B”）的比热容更大，你的依据是：___________________________________________________________________________________________；\n(4)“暖手宝”中装的储热液应该选____________（选填“A”或“B”）",
+      "opts": [],
+      "answerKey": "",
+      "answerText": "(1)     秒表     温度计\n(2)B\n(3)     B     两种液体质量相等、升高温度（如都从10℃升高至30℃）相同时，B的加热时间更长，根据[式]可知，B的比热容更大。\n(4)B",
+      "section": "二、非选择题",
+      "askImg": [
+        "图片/pk-w5b/q13.png"
+      ],
+      "ansImg": [
+        "图片/pk-w5b/q13-a.png"
+      ],
+      "range": {
+        "startPage": 3,
+        "startY": 345.6,
+        "endPage": 4,
+        "endY": 49.45,
+        "lastContentPage": 3
+      },
+      "extraRanges": [],
+      "ansRange": {
+        "startPage": 5,
+        "startY": 305.55,
+        "endPage": 5,
+        "endY": 383.8,
+        "lastContentPage": 5
+      },
+      "hasAnswerBlock": true,
+      "ansInferred": false
+    },
+    {
+      "no": 14,
+      "group": "选择",
+      "isChoice": false,
+      "guessType": "solve",
+      "askText": "14．如图所示，工人师傅要将重为1000N的木箱拉到1.5m高的车厢里，他将一块5m长的木板搁在地面与车厢之间构成斜面，然后站在车上用400N的拉力将物体从斜面底端匀速拉到车厢里，用时20s，求：\n[图](1)工人拉动木箱的速度；\n(2)工人做功的功率；\n(3)斜面的摩擦力；\n(4)该斜面的机械效率。\n(5)若工人想更省力，换用了一块8m长的木板搭成斜面（车厢高度不变）。当他用300N的拉力也能将木箱匀速拉到车厢时，求此时斜面的机械效率。",
+      "opts": [],
+      "answerKey": "",
+      "answerText": "(1)0.25m/s\n(2)100W\n(3)100N\n(4)75%\n(5)62.5%",
+      "section": "二、非选择题",
+      "askImg": [
+        "图片/pk-w5b/q14.png"
+      ],
+      "ansImg": [
+        "图片/pk-w5b/q14-a.png"
+      ],
+      "range": {
+        "startPage": 4,
+        "startY": 49.45,
+        "endPage": 4,
+        "endY": 408.2,
+        "lastContentPage": 4
+      },
+      "extraRanges": [],
+      "ansRange": {
+        "startPage": 5,
+        "startY": 383.8,
+        "endPage": 5,
+        "endY": 461.45,
+        "lastContentPage": 5
+      },
+      "hasAnswerBlock": true,
+      "ansInferred": false
+    },
+    {
+      "no": 15,
+      "group": "选择",
+      "isChoice": false,
+      "guessType": "solve",
+      "askText": "15．某燃气热水器的技术参数如表所示，“额定耗气量”的含义是：热水器正常工作1h消耗的燃气体积。某次洗浴，燃气热水器以额定耗气量正常工作1h，将质量为400kg的水的水温升高30℃。\n(1)求该过程中水吸收的热量是多少？[[式]]\n(2)若该过程燃气完全燃烧，放出的热量为多少？\n(3)能效等级是根据热效率来划分的，其中三级能效的热效率≥84%，二级能效的热效率≥89%，一级能效的热效率≥98%。请根据计算判断该燃气热水器属于哪一级能效？（热效率结果保留整数）",
+      "opts": [],
+      "answerKey": "",
+      "answerText": "(1)5.04×107J\n(2)5.4×107J\n(3)二级能效",
+      "section": "二、非选择题",
+      "askImg": [
+        "图片/pk-w5b/q15.png"
+      ],
+      "ansImg": [
+        "图片/pk-w5b/q15-a.png"
+      ],
+      "range": {
+        "startPage": 4,
+        "startY": 408.2,
+        "endPage": 5,
+        "endY": 49.45,
+        "lastContentPage": 4
+      },
+      "extraRanges": [],
+      "ansRange": {
+        "startPage": 5,
+        "startY": 461.45,
+        "endPage": null,
+        "endY": null,
+        "lastContentPage": 5
+      },
+      "hasAnswerBlock": true,
+      "ansInferred": false
+    }
+  ],
+  "shapeBoxes": [
+    {
+      "page": 5,
+      "x0": -999939.3,
+      "y0": 51.4,
+      "x1": -999857.2,
+      "y1": 116.7,
+      "owner": "",
+      "ownerName": ""
+    },
+    {
+      "page": 1,
+      "x0": 443.9,
+      "y0": 53,
+      "x1": 526,
+      "y1": 118.3,
+      "owner": "q1",
+      "ownerName": "第1题"
+    },
+    {
+      "page": 1,
+      "x0": 478.5,
+      "y0": 137.5,
+      "x1": 543.8,
+      "y1": 220.2,
+      "owner": "q2",
+      "ownerName": "第2题"
+    },
+    {
+      "page": 1,
+      "x0": 449.2,
+      "y0": 288.8,
+      "x1": 524.6,
+      "y1": 367.6,
+      "owner": "q4",
+      "ownerName": "第4题"
+    },
+    {
+      "page": 2,
+      "x0": 316.1,
+      "y0": 140.6,
+      "x1": 522.5,
+      "y1": 217.3,
+      "owner": "q8",
+      "ownerName": "第8题"
+    },
+    {
+      "page": 4,
+      "x0": 342.3,
+      "y0": 87.4,
+      "x1": 549.3,
+      "y1": 156.4,
+      "owner": "q14",
+      "ownerName": "第14题"
+    }
+  ],
+  "answerBlocks": [
+    {
+      "no": 10,
+      "startIdx": 158,
+      "endIdx": 159
+    },
+    {
+      "no": 11,
+      "startIdx": 159,
+      "endIdx": 160
+    },
+    {
+      "no": 12,
+      "startIdx": 160,
+      "endIdx": 161
+    },
+    {
+      "no": 13,
+      "startIdx": 161,
+      "endIdx": 165
+    },
+    {
+      "no": 14,
+      "startIdx": 165,
+      "endIdx": 170
+    },
+    {
+      "no": 15,
+      "startIdx": 170,
+      "endIdx": 173
+    }
+  ],
+  "answerTable": {
+    "9": "C",
+    "8": "D",
+    "7": "D",
+    "6": "D",
+    "5": "A",
+    "4": "A",
+    "3": "C",
+    "2": "D",
+    "1": "B"
+  }
+}

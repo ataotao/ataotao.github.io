@@ -1,0 +1,594 @@
+{
+ "unit": "U2",
+ "title": "九上 U2 过关",
+ "note": "「语法填空」短文跨页 2–3（页3 顶部之前是它的后半）；第 4 空附近被白色修正带遮挡，短文可能存在未拍到/被遮内容，第 4、5 空答案存疑。",
+ "header": {
+  "class": null,
+  "name": null,
+  "id": null,
+  "note": "本页未见班级/姓名/学号栏；页眉只有大标题「九上 U2 过关卷」"
+ },
+ "items": [
+  {
+   "id": "m1",
+   "no": 1,
+   "kind": "fill",
+   "section": null,
+   "stem": "Her smile s______ to suggest that she knew the secret.",
+   "cn": null,
+   "options": null,
+   "marked": null,
+   "handwriting": [
+    "hows"
+   ],
+   "note": "横线前已有印刷字母 s，学生手写补 hows，合成 shows（应为 seems）。",
+   "fields": 1
+  },
+  {
+   "id": "m2",
+   "no": 2,
+   "kind": "fill",
+   "section": null,
+   "stem": "My brother was so hungry that he ate a large b______ of rice just now.",
+   "cn": null,
+   "options": null,
+   "marked": null,
+   "handwriting": null,
+   "note": "横线空白，未作答。",
+   "fields": 1
+  },
+  {
+   "id": "m3",
+   "no": 3,
+   "kind": "fill",
+   "section": null,
+   "stem": "Many people make serious mistakes because of their in______ of basic scientific knowledge.",
+   "cn": null,
+   "options": null,
+   "marked": null,
+   "handwriting": [
+    "[看不清]"
+   ],
+   "note": "横线前印刷字母为 in（放大可辨 i+n）；横线处手写被重涂、笔画重叠，无法辨认（起笔似 mag…）。 印刷前缀被手写覆盖，in（→in ignorance of?）与 ig（→ignorance）均有可能，故不给答案。",
+   "fields": 1
+  },
+  {
+   "id": "m4",
+   "no": 4,
+   "kind": "fill",
+   "section": null,
+   "stem": "These traditional teaching practices are gradually d______ by the new methods.",
+   "cn": null,
+   "options": null,
+   "marked": null,
+   "handwriting": [
+    "[看不清]"
+   ],
+   "note": "手写压在横线上并向右下与下一行印刷 by 重叠，形似 disappearing/disappeared，无法确认。",
+   "fields": 1
+  },
+  {
+   "id": "m5",
+   "no": 5,
+   "kind": "mc",
+   "section": null,
+   "stem": "The model plane is made ______ used wood and glass, and the paper is made ______ wood.",
+   "cn": null,
+   "options": [
+    {
+     "k": "A",
+     "t": "of; of"
+    },
+    {
+     "k": "B",
+     "t": "of; from"
+    },
+    {
+     "k": "C",
+     "t": "from; from"
+    },
+    {
+     "k": "D",
+     "t": "from; of"
+    }
+   ],
+   "marked": "B",
+   "handwriting": null,
+   "note": "题号左侧页边手写大写 B。"
+  },
+  {
+   "id": "m6",
+   "no": 6,
+   "kind": "mc",
+   "section": null,
+   "stem": "We are all busy and seem ______ less time to get together than before.",
+   "cn": null,
+   "options": [
+    {
+     "k": "A",
+     "t": "have"
+    },
+    {
+     "k": "B",
+     "t": "to have"
+    },
+    {
+     "k": "C",
+     "t": "having"
+    },
+    {
+     "k": "D",
+     "t": "had"
+    }
+   ],
+   "marked": "C",
+   "handwriting": null,
+   "note": "6 题号左侧页边为 C；其下方（第 6 题选项行左端）另有一处 B 形笔迹，归属不确定。"
+  },
+  {
+   "id": "m7",
+   "no": 7,
+   "kind": "mc",
+   "section": null,
+   "stem": "The owner often asks the customers ______ their suggestions.",
+   "cn": null,
+   "options": [
+    {
+     "k": "A",
+     "t": "with"
+    },
+    {
+     "k": "B",
+     "t": "for"
+    },
+    {
+     "k": "C",
+     "t": "to"
+    },
+    {
+     "k": "D",
+     "t": "in"
+    }
+   ],
+   "marked": "B",
+   "handwriting": null,
+   "note": "该题号附近页边有三处笔迹：上方一处 B；7 题号左侧一个 C 被长斜线划掉；其下一行（选项行）左端又有一个 C。综合判为改答，取 B，存疑。"
+  },
+  {
+   "id": "m8",
+   "no": 8,
+   "kind": "mc",
+   "section": null,
+   "stem": "Life is ______ challenges and chances, and it is ______ something different.",
+   "cn": null,
+   "options": [
+    {
+     "k": "A",
+     "t": "full of; fill with"
+    },
+    {
+     "k": "B",
+     "t": "filled with; full into"
+    },
+    {
+     "k": "C",
+     "t": "full of; filled with"
+    },
+    {
+     "k": "D",
+     "t": "fill with; full of"
+    }
+   ],
+   "marked": "B",
+   "handwriting": null,
+   "note": "8 题号左侧页边为 B（笔迹夸张带斜划）；其上一行（第 7 题选项行）左端另有一个 C，归属不确定。"
+  },
+  {
+   "id": "m9",
+   "no": 9,
+   "kind": "mc",
+   "section": null,
+   "stem": "—______ wonderful movie it is! —I couldn't agree more.",
+   "cn": null,
+   "options": [
+    {
+     "k": "A",
+     "t": "What an"
+    },
+    {
+     "k": "B",
+     "t": "What a"
+    },
+    {
+     "k": "C",
+     "t": "What"
+    },
+    {
+     "k": "D",
+     "t": "How"
+    }
+   ],
+   "marked": "B",
+   "handwriting": null,
+   "note": "题号左侧页边手写大写 B。"
+  },
+  {
+   "id": "m10",
+   "no": 10,
+   "kind": "mc",
+   "section": null,
+   "stem": "The man who ______ Ms Yang ______ giving him all her savings was finally caught.",
+   "cn": null,
+   "options": [
+    {
+     "k": "A",
+     "t": "fooled; /"
+    },
+    {
+     "k": "B",
+     "t": "foolish; into"
+    },
+    {
+     "k": "C",
+     "t": "fooled; into"
+    },
+    {
+     "k": "D",
+     "t": "foolish; /"
+    }
+   ],
+   "marked": "C",
+   "handwriting": null,
+   "note": "题号左侧页边手写大写 C。"
+  },
+  {
+   "id": "m11",
+   "no": 11,
+   "kind": "fill",
+   "section": null,
+   "stem": "The group members are ______ ______ the unfair decision.",
+   "cn": "小组成员们不满意这个不公平的决定。",
+   "options": null,
+   "marked": null,
+   "handwriting": [
+    "not",
+    "satisfied with"
+   ],
+   "note": "第二空手写为 satisfied，with 写在横线末端外。",
+   "fields": 2
+  },
+  {
+   "id": "m12",
+   "no": 12,
+   "kind": "fill",
+   "section": null,
+   "stem": "______ it is to see these creative achievements!",
+   "cn": "看到这些创意成果多么令人惊讶啊！",
+   "options": null,
+   "marked": null,
+   "handwriting": [
+    "How amazing"
+   ],
+   "note": "该题只有一处长横线，手写两个词 How amazing。",
+   "fields": 1
+  },
+  {
+   "id": "m13",
+   "no": 13,
+   "kind": "fill",
+   "section": null,
+   "stem": "After the meeting, he ______ ______ the coffee shop to relax.",
+   "cn": "会议结束后，他直接去了咖啡店放松。",
+   "options": null,
+   "marked": null,
+   "handwriting": [
+    "went",
+    "straight to"
+   ],
+   "note": "第二空手写 straight to 两词。",
+   "fields": 2
+  },
+  {
+   "id": "g1",
+   "no": 1,
+   "kind": "mc",
+   "section": "语法",
+   "stem": "He ______ in the library until the rain stopped.",
+   "cn": null,
+   "options": [
+    {
+     "k": "A",
+     "t": "stayed"
+    },
+    {
+     "k": "B",
+     "t": "didn't stay"
+    },
+    {
+     "k": "C",
+     "t": "stays"
+    },
+    {
+     "k": "D",
+     "t": "hasn't stayed"
+    }
+   ],
+   "marked": "A",
+   "handwriting": null,
+   "note": "「语法」小节卷面重新从 1 编号；题号左侧手写 A，另有一条长勾从 A 行斜划下去（勾不作答案，以页边字母为准）。"
+  },
+  {
+   "id": "g2",
+   "no": 2,
+   "kind": "mc",
+   "section": "语法",
+   "stem": "______ will you reach the supermarket? —I'm not sure, probably in another ten minutes.",
+   "cn": null,
+   "options": [
+    {
+     "k": "A",
+     "t": "How far"
+    },
+    {
+     "k": "B",
+     "t": "How often"
+    },
+    {
+     "k": "C",
+     "t": "How soon"
+    },
+    {
+     "k": "D",
+     "t": "How long"
+    }
+   ],
+   "marked": "C",
+   "handwriting": null,
+   "note": "题号左侧页边手写大写 C。"
+  },
+  {
+   "id": "g3",
+   "no": 3,
+   "kind": "mc",
+   "section": "语法",
+   "stem": "—Alice, do you go to school by bus or on foot every day? —______ It's only 5 minutes' walk.",
+   "cn": null,
+   "options": [
+    {
+     "k": "A",
+     "t": "Yes, I do."
+    },
+    {
+     "k": "B",
+     "t": "No, I don't."
+    },
+    {
+     "k": "C",
+     "t": "On foot."
+    },
+    {
+     "k": "D",
+     "t": "By bus."
+    }
+   ],
+   "marked": "C",
+   "handwriting": null,
+   "note": "题号左侧页边手写 C；另有一条长勾从 A. Yes, I do. 斜划到选项区，勾不作答案。"
+  },
+  {
+   "id": "g4",
+   "no": 4,
+   "kind": "mc",
+   "section": "语法",
+   "stem": "______ you've offered! I understand this plan better now.",
+   "cn": null,
+   "options": [
+    {
+     "k": "A",
+     "t": "How useful information"
+    },
+    {
+     "k": "B",
+     "t": "What useful information"
+    },
+    {
+     "k": "C",
+     "t": "How a useful information"
+    },
+    {
+     "k": "D",
+     "t": "What a useful information"
+    }
+   ],
+   "marked": "B",
+   "handwriting": null,
+   "note": "题号左侧页边手写 B；B 选项前另有手写勾，二者不冲突。"
+  },
+  {
+   "id": "g5",
+   "no": 5,
+   "kind": "fill",
+   "section": "语法",
+   "stem": "______ you ______ with the new BRT system?",
+   "cn": "你对新的快速公交系统感到满意吗？",
+   "options": null,
+   "marked": null,
+   "handwriting": [
+    "Are",
+    "satisfied"
+   ],
+   "note": "两空手写 Are / satisfied。",
+   "fields": 2
+  },
+  {
+   "id": "g6",
+   "no": 6,
+   "kind": "fill",
+   "section": "语法",
+   "stem": "______ the heat, or the milk will ______.",
+   "cn": "把火调小，不然牛奶会溢出来。",
+   "options": null,
+   "marked": null,
+   "handwriting": [
+    "Turn down",
+    "boil over"
+   ],
+   "note": "两空各手写两个词。",
+   "fields": 2
+  },
+  {
+   "id": "g7",
+   "no": 7,
+   "kind": "fill",
+   "section": "语法",
+   "stem": "—______ you ______ to Disneyland? —Yes, I ______ ______ twice before.",
+   "cn": "——你去过迪士尼乐园吗？——是的，之前我去过那两次了。",
+   "options": null,
+   "marked": null,
+   "handwriting": [
+    "Have",
+    "been",
+    "have",
+    "been to"
+   ],
+   "note": "四个空依次为 Have / been / have / been to。",
+   "fields": 4
+  },
+  {
+   "id": "g8",
+   "no": 8,
+   "kind": "fill",
+   "section": "语法",
+   "stem": "Please ______ the box and put it on the table.",
+   "cn": "请把箱子抬起来，放到桌子上。",
+   "options": null,
+   "marked": null,
+   "handwriting": [
+    "pick up"
+   ],
+   "note": "一空手写两个词 pick up。",
+   "fields": 1
+  },
+  {
+   "id": "g9",
+   "no": 9,
+   "kind": "fill",
+   "section": "语法",
+   "stem": "______ a ______ experience it is!",
+   "cn": "（2024 广州）这是一次多么有意义的经历啊！",
+   "options": null,
+   "marked": null,
+   "handwriting": [
+    "what",
+    "[看不清]"
+   ],
+   "note": "第一空手写 what；第二空手写被反复涂画成一团黑，无法辨认。",
+   "fields": 2
+  },
+  {
+   "id": "g10",
+   "no": 10,
+   "kind": "fill",
+   "section": "语法",
+   "stem": "______ you ever ______ about a maths project done by some students in Guangzhou?",
+   "cn": "（2023 广州）你听说过一群广州学生做的数学项目吗？",
+   "options": null,
+   "marked": null,
+   "handwriting": [
+    "Have",
+    "heard"
+   ],
+   "note": "两空手写 Have / heard。",
+   "fields": 2
+  },
+  {
+   "id": "gf1",
+   "no": 1,
+   "section": "语法填空",
+   "kind": "fill",
+   "stem": "People were ______(doubt) whether this was a safe or accurate way.",
+   "cn": null,
+   "options": null,
+   "marked": null,
+   "handwriting": [
+    "doubtful"
+   ],
+   "note": "页顶为短文语法填空（属本卷上一页末段，原文前半未拍到），此为其第1空；手写 doubtful。本页该部分题号与「阅读」1-6 重复，故连续编号为 18",
+   "fields": 1
+  },
+  {
+   "id": "gf2",
+   "no": 2,
+   "section": "语法填空",
+   "kind": "fill",
+   "stem": "Doctors needed a tool ______(check) fevers, and scientists needed one to study heat.",
+   "cn": null,
+   "options": null,
+   "marked": null,
+   "handwriting": [
+    "to check"
+   ],
+   "note": "同上一题短文第2空；手写潦草，疑为 to check",
+   "fields": 1
+  },
+  {
+   "id": "gf3",
+   "no": 3,
+   "section": "语法填空",
+   "kind": "fill",
+   "stem": "A better way to measure temperature ______(need).",
+   "cn": null,
+   "options": null,
+   "marked": null,
+   "handwriting": [
+    "[看不清]"
+   ],
+   "note": "短文第3空；手写字迹潦草（形似 in need / is needed），无法确认",
+   "fields": 1
+  },
+  {
+   "id": "gf4",
+   "no": 4,
+   "section": "语法填空",
+   "kind": "fill",
+   "stem": "The thermometer helps us ______ many ways.",
+   "cn": null,
+   "options": null,
+   "marked": null,
+   "handwriting": [],
+   "note": "短文第4空；该空（含可能的括号提示）被白色涂改带整块遮挡，仅见左右两侧 helps us 与 many ways，故题干只保留空格",
+   "fields": 1
+  },
+  {
+   "id": "gf5",
+   "no": 5,
+   "section": "语法填空",
+   "kind": "fill",
+   "stem": "Cooks use it for baking, ______. Factories use it to keep machines safe.",
+   "cn": null,
+   "options": null,
+   "marked": null,
+   "handwriting": [
+    "[看不清]"
+   ],
+   "note": "短文第5空；空及提示被白色涂改带遮挡（涂改带上有手写字迹，形似 Mony），无法确认；右侧 Factories 的 Fa 亦被覆盖",
+   "fields": 1
+  },
+  {
+   "id": "gf6",
+   "no": 6,
+   "section": "语法填空",
+   "kind": "fill",
+   "stem": "It ______(apply) to many aspects of our daily lives, bringing great convenience.",
+   "cn": null,
+   "options": null,
+   "marked": null,
+   "handwriting": [],
+   "note": "短文第6空；该空未见手写作答",
+   "fields": 1
+  }
+ ],
+ "passages": {
+  "语法填空": "For thousands of years, people could not measure temperature exactly. They only knew if something was hot or cold by touching it. People were {{1}}(doubt) whether this was a safe or accurate way. Doctors needed a tool {{2}}(check) fevers, and scientists needed one to study heat. A better way to measure temperature {{3}}(need). The thermometer helps us {{4}} many ways. Cooks use it for baking, {{5}}. Factories use it to keep machines safe. It {{6}}(apply) to many aspects of our daily lives, bringing great convenience."
+ }
+}

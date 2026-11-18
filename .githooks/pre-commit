@@ -1,0 +1,12 @@
+#!/bin/sh
+# 容量闸门（软规则写进文档，硬规则写进这里）。
+# 规则与阈值在 工具/check-size.mjs 头部；本文件只负责"提交前必跑"。
+#
+# 启用（clone 后一次性）：git config core.hooksPath .githooks
+# 逃生门：git commit --no-verify
+
+node 工具/check-size.mjs || {
+  echo ""
+  echo "提交被容量闸门拦下。看懂原因后：压图 / gitignore / --no-verify（最后手段）"
+  exit 1
+}

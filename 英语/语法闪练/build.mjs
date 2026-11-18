@@ -1,0 +1,548 @@
+// 语法闪练 · 数据校验 + 打包
+//   node build.mjs              校验 data/g*.json，生成 data/bundle.js 与 ../语法闪练.html
+//   node build.mjs --strict     缺数据文件也当错误（发布前验收用）
+//
+// 数据格式见 data/SCHEMA.md。产物只能由本脚本生成，不手改（ADR-0003）。
+// 不写 generatedAt：同一份源重建两次，产物须逐字节相同。
+import { readFileSync, writeFileSync, existsSync, readdirSync } from "node:fs";
+import { join, dirname } from "node:path";
+import { fileURLToPath } from "node:url";
+
+const here = dirname(fileURLToPath(import.meta.url));
+const dataDir = join(here, "data");
+const strict = process.argv.includes("--strict");
+const strip = (s) => s.replace(/^\uFEFF/, "");
+const readJson = (p) => JSON.parse(strip(readFileSync(p, "utf8")));
+
+// ---- 受控词表（与 data/SCHEMA.md 保持一致；改这里要同步改 SCHEMA.md） ----
+const TOPICS = {
+  clause: [
+    "adj + that 从句", "it 作形式主语", "宾语从句", "宾语从句语序", "宾语从句时态",
+    "状语从句", "条件状语从句", "让步状语从句", "名词性从句", "定语从句",
+    "感叹句", "特殊疑问句", "祈使句", "附加疑问句", "直接引语间接引语",
+  ],
+  verb: [
+    "不定式", "动名词", "非谓语辨析", "一般现在时", "一般过去时", "一般将来时",
+    "现在完成时", "过去进行时", "被动语态（现在）", "被动语态（过去）",
+    "被动语态（将来）", "被动语态（完成）", "情态动词", "主谓一致",
+  ],
+  word: [
+    "系动词", "形容词副词", "形容词辨析", "副词辨析", "比较级", "最高级",
+    "冠词", "代词", "不定代词", "介词", "介词短语", "连词", "并列连词",
+    "名词单复数", "量词", "词形转换", "词义辨析", "短语动词",
+  ],
+  gz: ["广州卷·语法选择", "广州卷·语法填空", "广州卷·语篇填词"],
+  // zk（Block 6「中考卷真题同款」）：不设专属考点，沿用上面 1–3 组的受控词，
+  // 这样同一考点在 B1/B2/B3 与 B6 里能被一起聚合正确率（与 gz 同一套做法）。
+  zk: [],
+  verbform: ["不规则动词·过去式", "不规则动词·过去分词"],
+};
+const ALL_TOPICS = new Set(Object.values(TOPICS).flat());
+const GROUP_PREFIX = { clause: "cl", verb: "vb", word: "wd", gz: "gz", zk: "zk", verbform: "vf" };
+const SPEC = {
+  clause: [1, "从句与句子类型"], verb: [2, "动词三件套"], word: [3, "词法速记"],
+  gz: [null, null], zk: [6, "中考卷真题同款"], verbform: [4, "不规则动词闪刷"],
+};
+
+const problems = [];
+const warnings = [];
+const err = (m) => problems.push(m);
+const warn = (m) => warnings.push(m);
+const chars = (s) => [...String(s ?? "")].length;
+const UNDERSCORE = /_{3,}/g;
+
+// ---- 读 block 元数据 ----
+const metaPath = join(dataDir, "blocks.json");
+if (!existsSync(metaPath)) err("缺少 data/blocks.json");
+const meta = existsSync(metaPath) ? readJson(metaPath) : { blocks: [] };
+const metaByBlock = new Map((meta.blocks || []).map((b) => [b.block, b]));
+
+// ---- 悬停词表（data/glossary.json）：题干每个词 → 中文 ----
+// 词表是「悬停看词义」的唯一数据源：缺一个词 = 学生滑过去没反应，所以这里按词点名。
+// 算法与 index.html 的 stemHTML 保持一致：长短语优先、短语不跨过 ______ 空。
+const glossPath = join(dataDir, "glossary.json");
+const glossary = { words: {}, phrases: {} };
+const phraseList = [];
+const normEn = (s) => String(s ?? "").toLowerCase().replace(/\u2019/g, "'");
+const sortPhrases = (list) => list.sort((a, b) => b.n - a.n || (a.key < b.key ? -1 : a.key > b.key ? 1 : 0));
+if (!existsSync(glossPath)) {
+  warn("缺少 data/glossary.json：题干没有悬停词义（答后译文仍来自 item.cn）");
+} else {
+  let raw = {};
+  try { raw = readJson(glossPath); } catch (e) { err(`glossary.json: JSON 解析失败 — ${e.message}`); }
+  const bad = (m) => err(`glossary.json: ${m}`);
+  Object.keys((raw && raw.words) || {}).forEach((k) => {
+    const v = raw.words[k];
+    if (typeof v !== "string" || !v.trim()) return bad(`words["${k}"] 释义为空`);
+    if (k !== k.trim() || k !== k.toLowerCase()) bad(`words 键应为小写、无首尾空格："${k}"`);
+    if (/\s/.test(k)) bad(`words 键是单词，不该含空格："${k}"（短语请放 phrases）`);
+    if (chars(v) > 34) warn(`glossary.json: words["${k}"] 释义 ${chars(v)} 字，偏长（≤34）`);
+    glossary.words[k] = v.trim();
+  });
+  Object.keys((raw && raw.phrases) || {}).forEach((k) => {
+    const v = raw.phrases[k];
+    if (typeof v !== "string" || !v.trim()) return bad(`phrases["${k}"] 释义为空`);
+    const ws = keyWords(k);
+    if (ws.length < 2) return bad(`phrases 键至少两个词："${k}"`);
+    if (ws.length > 6) return bad(`phrases 键太长（>6 词）："${k}"`);
+    if (k !== k.trim() || k !== k.toLowerCase()) bad(`phrases 键应为小写、无首尾空格："${k}"`);
+    if (glossary.words[k]) bad(`"${k}" 同时出现在 words 与 phrases`);
+    if (chars(v) > 44) warn(`glossary.json: phrases["${k}"] 释义 ${chars(v)} 字，偏长（≤44）`);
+    glossary.phrases[k] = v.trim();
+    phraseList.push({ key: k, ws, n: ws.length });
+  });
+  sortPhrases(phraseList);
+}
+
+// 把题干切成英文词（与 index.html 的 WORD_RE 一致：首尾都是字母，不吞引号）
+function stemWordList(stem) {
+  const re = /[A-Za-z](?:[A-Za-z'\u2019-]*[A-Za-z])?/g;
+  const out = [];
+  let m;
+  while ((m = re.exec(stem))) out.push({ lo: normEn(m[0]), s: m.index, e: m.index + m[0].length });
+  return out;
+}
+// 词表键 → 词数组（小写、去掉键尾的所有格撇号，题干切词里没有尾撇号）
+function keyWords(key) {
+  return normEn(key).split(/\s+/).filter(Boolean).map((w) => w.replace(/'+$/, ""));
+}
+function keyInStem(ws, wordList) {
+  for (let i = 0; i + ws.length <= wordList.length; i++) {
+    let same = true;
+    for (let j = 0; j < ws.length; j++) if (wordList[i + j].lo !== ws[j]) { same = false; break; }
+    if (same) return true;
+  }
+  return false;
+}
+// 某题实际生效的词表：全局词表 + item.gloss 语境覆盖
+function itemGlossTable(it) {
+  const words = Object.assign({}, glossary.words);
+  const phrases = phraseList.slice();
+  if (it && it.gloss && typeof it.gloss === "object" && !Array.isArray(it.gloss)) {
+    Object.keys(it.gloss).forEach((k) => {
+      const v = it.gloss[k];
+      const ws = keyWords(k);
+      if (!ws.length) return;
+      if (ws.length === 1) words[ws[0]] = v;
+      else phrases.push({ key: k, ws, n: ws.length });
+    });
+    sortPhrases(phrases);
+  }
+  return { words, phrases };
+}
+// 返回被短语块覆盖的词下标（与 index.html 的贪心匹配同规则）
+function phraseCovered(stem, wordList, phrases) {
+  const covered = new Array(wordList.length).fill(false);
+  let i = 0;
+  while (i < wordList.length) {
+    let hit = null;
+    for (const ph of phrases) {
+      if (i + ph.n > wordList.length) continue;
+      let same = true;
+      for (let j = 0; j < ph.n; j++) if (wordList[i + j].lo !== ph.ws[j]) { same = false; break; }
+      if (!same) continue;
+      if (stem.slice(wordList[i].s, wordList[i + ph.n - 1].e).indexOf("___") >= 0) continue;
+      hit = ph;
+      break;
+    }
+    if (hit) {
+      for (let j = 0; j < hit.n; j++) covered[i + j] = true;
+      i += hit.n;
+    } else i += 1;
+  }
+  return covered;
+}
+
+// ---- 读所有数据文件 ----
+const files = readdirSync(dataDir)
+  .filter((f) => /^g\d.*\.json$/.test(f))
+  .sort();
+if (!files.length) err("data/ 下没有任何 g*.json 题库文件");
+
+const groups = [];
+const seenId = new Map();   // id -> file
+const seenStem = new Map(); // stem -> id
+const allTopicsSeen = new Set();
+let cnTotal = 0, covWordsTotal = 0, covWordsHit = 0;   // 译文 / 悬停覆盖统计
+
+for (const f of files) {
+  let doc;
+  try {
+    doc = readJson(join(dataDir, f));
+  } catch (e) {
+    err(`${f}: JSON 解析失败 — ${e.message}`);
+    continue;
+  }
+  const group = doc.group;
+  if (!SPEC[group]) { err(`${f}: group "${group}" 非法（只允许 ${Object.keys(SPEC).join("/")}）`); continue; }
+  if (!Array.isArray(doc.items) || !doc.items.length) { err(`${f}: items 为空`); continue; }
+  if (doc.block !== SPEC[group][0] && SPEC[group][0] != null) {
+    err(`${f}: block 应为 ${SPEC[group][0]}，实际 ${doc.block}`);
+  }
+  const block = doc.block;
+  if (!Number.isInteger(block) || block < 1 || block > 9) err(`${f}: block 非法（${block}）`);
+  if (!metaByBlock.has(block)) warn(`${f}: blocks.json 里没有 block ${block} 的元数据，界面会用兜底标题`);
+
+  const prefix = GROUP_PREFIX[group];
+  const localStem = new Map();
+  let level3 = 0, unverified = 0;
+  const missWordsAll = [];
+
+  doc.items.forEach((it, i) => {
+    const where = `${f} 第 ${i + 1} 条${it.id ? `（${it.id}）` : ""}`;
+    const id = String(it.id ?? "");
+    if (!/^[a-z]{2}-\d{3}$/.test(id)) err(`${where}: id 格式应为 "xx-001"`);
+    if (!id.startsWith(prefix + "-")) err(`${where}: id 前缀应为 "${prefix}-"（group=${group}）`);
+    if (seenId.has(id)) err(`${where}: id 与 ${seenId.get(id)} 重复`);
+    else seenId.set(id, f);
+
+    if (!ALL_TOPICS.has(it.topic)) err(`${where}: topic "${it.topic}" 不在受控词表内`);
+    else allTopicsSeen.add(it.topic);
+    if (!Number.isInteger(it.level) || it.level < 1 || it.level > 3) err(`${where}: level 应为 1/2/3`);
+    if (it.level === 3) level3++;
+
+    const stem = String(it.stem ?? "");
+    const holes = (stem.match(UNDERSCORE) || []).length;
+    if (holes !== 1) err(`${where}: 题干应恰好有一个 ______ 空（实际 ${holes} 个）`);
+    if (!stem.trim()) err(`${where}: stem 为空`);
+    if (seenStem.has(stem)) err(`${where}: 题干与 ${seenStem.get(stem)} 重复`);
+    else seenStem.set(stem, id);
+    if (localStem.has(stem)) err(`${where}: 文件内题干重复`);
+    const stemWords = stemWordList(stem);
+
+    const opts = it.options;
+    if (!Array.isArray(opts) || opts.length !== 4) err(`${where}: options 必须是长度 4 的数组`);
+    else {
+      const norm = opts.map((o) => String(o ?? "").trim());
+      if (norm.some((o) => !o)) err(`${where}: 有空选项`);
+      if (new Set(norm.map((o) => o.toLowerCase())).size !== 4) err(`${where}: 四个选项有重复`);
+      if (norm.some((o) => /^[A-Da-d][.、)]/.test(o))) err(`${where}: 选项不要带 "A." 前缀`);
+      if (norm.some((o) => /_{3,}/.test(o))) err(`${where}: 选项里不要出现下划线空`);
+    }
+    if (!/^[A-D]$/.test(String(it.answer ?? ""))) err(`${where}: answer 应为 A–D`);
+    // ---- 整句译文（答完题显示在题干下方） ----
+    const cn = it.cn == null ? "" : String(it.cn).trim();
+    if (!cn) {
+      (strict ? err : warn)(`${where}: 缺少 cn 整句译文（答完题就没有译文可显示）`);
+    } else {
+      cnTotal++;
+      if (chars(cn) > 120) warn(`${where}: cn ${chars(cn)} 字，偏长（≤120）`);
+      if (!/[\u4e00-\u9fff]/.test(cn)) err(`${where}: cn 里没有中文`);
+      if (/_{2,}/.test(cn)) err(`${where}: cn 里不要留 ______（按正确选项补全后翻译）`);
+    }
+    // ---- 语境义覆盖（item.gloss）：只放「和词典第一义不同」的词/短语 ----
+    if (it.gloss != null) {
+      if (typeof it.gloss !== "object" || Array.isArray(it.gloss)) err(`${where}: gloss 应为对象`);
+      else Object.keys(it.gloss).forEach((k) => {
+        const v = it.gloss[k];
+        const ws = keyWords(k);
+        if (typeof v !== "string" || !v.trim()) err(`${where}: gloss["${k}"] 释义为空`);
+        if (!ws.length || ws.length > 6) err(`${where}: gloss 键格式不对："${k}"`);
+        else if (!keyInStem(ws, stemWords)) err(`${where}: gloss 键在题干里找不到："${k}"`);
+      });
+    }
+    // ---- 悬停覆盖率：题干每个词要么在全局词表，要么被短语 / gloss 覆盖 ----
+    {
+      const table = itemGlossTable(it);
+      const covered = phraseCovered(stem, stemWords, table.phrases);
+      let miss = 0;
+      stemWords.forEach((w, k) => {
+        if (covered[k] || table.words[w.lo]) return;
+        miss++;
+        missWordsAll.push(w.lo);
+      });
+      covWordsTotal += stemWords.length;
+      covWordsHit += stemWords.length - miss;
+    }
+    if (!String(it.rule ?? "").trim()) err(`${where}: rule 为空`);
+    if (chars(it.rule) > 60) err(`${where}: rule ${chars(it.rule)} 字，超过 60`);
+    if (!String(it.trap ?? "").trim()) err(`${where}: trap 为空`);
+    if (chars(it.trap) > 50) err(`${where}: trap ${chars(it.trap)} 字，超过 50`);
+    if (!String(it.src ?? "").trim()) err(`${where}: src 为空`);
+    if (typeof it.verified !== "boolean") err(`${where}: verified 应为 true/false`);
+    if (it.verified === false) unverified++;
+  });
+
+  if (doc.items.length >= 10 && level3 / doc.items.length > 0.15) {
+    err(`${f}: level 3 占 ${level3}/${doc.items.length}，超过 15%`);
+  }
+  if (unverified) warn(`${f}: ${unverified} 题标了 verified:false，需人工复核`);
+  if (missWordsAll.length) {
+    const uniq = [...new Set(missWordsAll)];
+    warn(`${f}: 悬停词义缺 ${uniq.length} 个词形：${uniq.slice(0, 8).join("、")}${uniq.length > 8 ? " 等" : ""}（补 data/glossary.json 或该题 gloss）`);
+  }
+
+  // block 内组顺序：block 升序，同 block 按文件名（= 便宜的顺序控制）
+  groups.push({ group, block, title: doc.title, file: f, items: doc.items });
+  console.log(`✓ ${f}: ${doc.items.length} 题 · block ${block} · level3 ${level3} · 未复核 ${unverified}`);
+}
+
+// ---- 缺文件检查 ----
+const MUST = ["g1-clause.json", "g2-verb.json", "g3-word.json", "g5-verbform.json"];
+for (const m of MUST) {
+  if (!files.includes(m)) (strict ? err : warn)(`缺少题库文件 data/${m}`);
+}
+
+// ---- 考点邻接表（「只判考点」模式的干扰项来源） ----
+// key = 正确考点，值 = 3 个最容易和它混的邻近考点。改表不用改 index.html。
+const nearPath = join(dataDir, "near-topics.json");
+const near = {};
+if (!existsSync(nearPath)) {
+  warn("缺少 data/near-topics.json，「只判考点」的干扰考点会退化为同 block 的其它考点");
+} else {
+  let raw = {};
+  try { raw = readJson(nearPath); } catch (e) { err(`near-topics.json: JSON 解析失败 — ${e.message}`); }
+  Object.keys(raw || {}).forEach((k) => {
+    if (k.charAt(0) === "_") return;   // "_doc" 之类的说明字段
+    const v = raw[k];
+    if (!ALL_TOPICS.has(k)) { err(`near-topics.json: key "${k}" 不在受控词表内`); return; }
+    if (!Array.isArray(v) || v.length !== 3) { err(`near-topics.json: "${k}" 应给出恰好 3 个邻近考点`); return; }
+    if (new Set(v).size !== 3) { err(`near-topics.json: "${k}" 的 3 个邻近考点有重复`); return; }
+    const bad = v.filter((x) => typeof x !== "string" || !ALL_TOPICS.has(x) || x === k);
+    if (bad.length) { err(`near-topics.json: "${k}" 的邻近考点非法（${bad.join(" / ")}）`); return; }
+    near[k] = v.slice();
+  });
+  const noNear = [...allTopicsSeen].filter((t) => !near[t]);
+  if (noNear.length) warn(`near-topics.json 缺少考点的邻接项（这些点会退化为同 block 干扰项）：${noNear.join("、")}`);
+}
+
+// ---- 考点识别线索（解析里的「怎么认出」） ----
+// key = 考点，值 = 一句「先看哪里 → 怎么判断」。缺一条都算错：解析缺线索就退化回「只讲规则」。
+const cuePath = join(dataDir, "topic-cues.json");
+const cues = {};
+if (!existsSync(cuePath)) {
+  warn("缺少 data/topic-cues.json，解析里不会显示「怎么认出」");
+} else {
+  let raw = {};
+  try { raw = readJson(cuePath); } catch (e) { err(`topic-cues.json: JSON 解析失败 — ${e.message}`); }
+  Object.keys(raw || {}).forEach((k) => {
+    if (k.charAt(0) === "_") return;
+    const v = raw[k];
+    if (!ALL_TOPICS.has(k)) { err(`topic-cues.json: key "${k}" 不在受控词表内`); return; }
+    if (typeof v !== "string" || !v.trim()) { err(`topic-cues.json: "${k}" 的识别线索为空`); return; }
+    if (chars(v) > 60) { err(`topic-cues.json: "${k}" 的线索 ${chars(v)} 字，超过 60`); return; }
+    cues[k] = v.trim();
+  });
+  const noCue = [...allTopicsSeen].filter((t) => !cues[t]);
+  if (noCue.length) err(`topic-cues.json 缺少这些考点的识别线索（解析会缺一行）：${noCue.join("、")}`);
+}
+
+// ---- 组包 ----
+const items = [];
+for (const g of groups) {
+  for (const it of g.items) {
+    items.push({
+      id: it.id, group: g.group, block: g.block,
+      topic: it.topic, level: it.level,
+      stem: it.stem, cn: it.cn ?? null, gloss: it.gloss ?? null,
+      options: it.options.map((o) => String(o).trim()),
+      answer: it.answer,
+      rule: it.rule, trap: it.trap, src: it.src,
+      verified: it.verified !== false,
+    });
+  }
+}
+
+const blocks = [...new Set(items.map((i) => i.block))]
+  .sort((a, b) => a - b)
+  .map((b) => {
+    const m = metaByBlock.get(b) || {};
+    const its = items.filter((i) => i.block === b);
+    return {
+      block: b,
+      title: m.title || its[0]?.blockTitle || `第 ${b} 组`,
+      minutes: m.minutes || Math.max(5, Math.round(its.length * 0.5)),
+      hint: m.hint || "",
+      items: its,
+    };
+  });
+
+// ---- 附带文档：把仓库里的 markdown 转成页内可读的 HTML ----
+// 为什么在构建期转换：`.md` 在浏览器里只会变成下载或源码，页内直接渲染才叫"方便查看"，
+// 而且单文件离线版也能一并带走（不依赖相对路径、不依赖联网）。
+// 只支持我们这几份文档用到的语法：标题 / 段落 / 粗体 / 行内代码 / 链接 / 列表 / 引用 / 分隔线 / 表格 / 代码块。
+function mdToHtml(md) {
+  const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  const inline = (s) =>
+    esc(s)
+      .replace(/`([^`]+)`/g, "<code>$1</code>")
+      .replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>")
+      .replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
+  const lines = String(md).replace(/^\uFEFF/, "").replace(/\r\n?/g, "\n").split("\n");
+  const out = [];
+  const STOP = /^(#{1,6}\s|[-*]\s|\d+\.\s|>|\||```|-{3,}$|\*{3,}$)/;
+  let i = 0;
+  while (i < lines.length) {
+    const line = lines[i].trim();
+    if (!line) { i++; continue; }
+    const before = i;
+
+    if (/^```/.test(line)) {
+      i++;
+      const buf = [];
+      while (i < lines.length && !/^```/.test(lines[i].trim())) buf.push(lines[i++]);
+      i++;
+      out.push("<pre><code>" + esc(buf.join("\n")) + "</code></pre>");
+    } else if (/^-{3,}$/.test(line) || /^\*{3,}$/.test(line)) {
+      out.push("<hr>");
+      i++;
+    } else if (/^(#{1,6})\s+/.test(line)) {
+      const m = line.match(/^(#{1,6})\s+(.*)$/);
+      const lv = Math.min(m[1].length, 4);
+      out.push(`<h${lv}>${inline(m[2])}</h${lv}>`);
+      i++;
+    } else if (line.startsWith("|") && i + 1 < lines.length && /\|/.test(lines[i + 1]) && /-/.test(lines[i + 1])) {
+      const cells = (s) => s.replace(/^\s*\|/, "").replace(/\|\s*$/, "").split("|").map((x) => x.trim());
+      const head = cells(line);
+      i += 2;
+      const rows = [];
+      while (i < lines.length && lines[i].trim().startsWith("|")) rows.push(cells(lines[i++].trim()));
+      out.push(
+        "<table><thead><tr>" + head.map((c) => `<th>${inline(c)}</th>`).join("") + "</tr></thead><tbody>" +
+        rows.map((r) => "<tr>" + r.map((c) => `<td>${inline(c)}</td>`).join("") + "</tr>").join("") + "</tbody></table>"
+      );
+    } else if (/^>\s?/.test(line)) {
+      const buf = [];
+      while (i < lines.length && /^>\s?/.test(lines[i].trim())) buf.push(lines[i++].trim().replace(/^>\s?/, ""));
+      out.push("<blockquote>" + buf.map(inline).join("<br>") + "</blockquote>");
+    } else if (/^[-*]\s+/.test(line) || /^\d+\.\s+/.test(line)) {
+      const ordered = /^\d+\.\s+/.test(line);
+      const re = ordered ? /^\d+\.\s+/ : /^[-*]\s+/;
+      const buf = [];
+      while (i < lines.length) {
+        const t = lines[i].trim();
+        if (re.test(t)) { buf.push(t.replace(re, "")); i++; }
+        else break;
+      }
+      const tag = ordered ? "ol" : "ul";
+      out.push(`<${tag}>` + buf.map((x) => `<li>${inline(x)}</li>`).join("") + `</${tag}>`);
+    } else {
+      const buf = [];
+      while (i < lines.length && lines[i].trim() && !STOP.test(lines[i].trim())) buf.push(lines[i++].trim());
+      if (!buf.length) buf.push(lines[i++].trim());
+      out.push("<p>" + inline(buf.join(" ")) + "</p>");
+    }
+    if (i === before) i++; // 兜底：任何分支都必须前进，避免死循环
+  }
+  return out.join("\n");
+}
+
+const DOC_FILES = [
+  { key: "card", title: "考前口诀卡", file: "考前口诀卡.md" },
+  { key: "pair", title: "最小对立对卡", file: "最小对立对卡.md" },
+  { key: "plan", title: "今晚复习方案", file: "../../docs/plans/语法闪练与今晚复习方案.md" },
+  { key: "guide", title: "使用说明", file: "使用说明.md" },
+];
+const docs = {};
+for (const d of DOC_FILES) {
+  const p = join(here, d.file);
+  if (!existsSync(p)) { warn(`缺少文档 ${d.file}，「${d.title}」在页内不可用`); continue; }
+  docs[d.key] = { title: d.title, html: mdToHtml(readFileSync(p, "utf8")) };
+}
+
+// ---- 考点识别速查表：从 data/topic-cues.json + 题库题量生成（不手抄第二份） ----
+const escHtml = (s) => String(s ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+const topicCount = new Map();
+for (const it of items) topicCount.set(it.topic, (topicCount.get(it.topic) || 0) + 1);
+const QUICK_SECTIONS = [
+  { title: "一、从句与句子类型 · Block 1", topics: TOPICS.clause },
+  { title: "二、动词三件套 · Block 2", topics: TOPICS.verb },
+  { title: "三、词法速记 · Block 3", topics: TOPICS.word },
+  { title: "四、不规则动词闪刷 · Block 4", topics: TOPICS.verbform },
+];
+function quickTableHtml() {
+  let h = '<h1>考点识别速查表 · 九上 U1–U4</h1>' +
+    '<p class="lead">每个考点一句「先看哪里 → 怎么判断」。做题时先用它归考点，再想规则；' +
+    '「题数」= 本题库里的题量，<code>0</code> 表示考纲里有、这次没出题。' +
+    '线索与 `data/topic-cues.json` 同源，改数据后重跑 build 即可。</p>';
+  for (const sec of QUICK_SECTIONS) {
+    const rows = sec.topics.filter((t) => cues[t]).map((t) =>
+      '<tr><td class="tp">' + escHtml(t) + '</td><td class="n">' + (topicCount.get(t) || 0) + '</td><td>' + escHtml(cues[t]) + '</td></tr>');
+    if (!rows.length) continue;
+    h += '<h2>' + escHtml(sec.title) + '</h2>' +
+      '<table class="q"><thead><tr><th>考点</th><th>题数</th><th>怎么认出</th></tr></thead><tbody>' +
+      rows.join("") + '</tbody></table>';
+  }
+  return h;
+}
+const quickHtml = quickTableHtml();
+docs.quick = { title: "考点识别速查表", html: quickHtml };
+// 页内文档顺序：口诀卡 → 对比卡 → 速查表 → 方案 → 说明（缺失的跳过）
+const DOC_ORDER = ["card", "pair", "quick", "plan", "guide"];
+const orderedDocs = {};
+DOC_ORDER.forEach((k) => { if (docs[k]) orderedDocs[k] = docs[k]; });
+
+const bundle = { blocks };
+const dataScript =
+  `window.FLASH_DATA = ${JSON.stringify(bundle, null, 1)};\n` +
+  `window.FLASH_NEAR = ${JSON.stringify(near)};\n` +
+  `window.FLASH_CUES = ${JSON.stringify(cues)};\n` +
+  `window.FLASH_GLOSS = ${JSON.stringify(glossary)};\n` +
+  `window.FLASH_DOCS = ${JSON.stringify(orderedDocs)};\n`;
+writeFileSync(join(dataDir, "bundle.js"), dataScript, "utf8");
+
+// ---- 单文件打印版：考点识别速查表（A4） ----
+const QUICK_CSS = `
+@page{size:A4 portrait;margin:8mm}
+*{box-sizing:border-box}
+body{margin:0;font:10.2px/1.3 "Microsoft YaHei","PingFang SC","Noto Sans SC",system-ui,sans-serif;color:#222}
+h1{font-size:15px;margin:0 0 2px}
+h2{font-size:10.6px;margin:6px 0 2px;padding-bottom:1.5px;border-bottom:1px solid #ddd;color:#5b4bb5}
+.lead{font-size:9px;color:#666;margin:0 0 5px;line-height:1.35}
+code{font:inherit;background:#f3f1fa;padding:0 2px;border-radius:3px}
+table{width:100%;border-collapse:collapse;table-layout:fixed}
+th,td{padding:1.1px 4px;border-bottom:1px solid #ececf2;vertical-align:top;text-align:left}
+th{background:#f6f3ff;font-size:9.6px;font-weight:700;color:#5b4bb5}
+th:nth-child(1),td.tp{width:20%}
+th:nth-child(2),td.n{width:6%;text-align:center;color:#9a9aa5}
+tr{break-inside:avoid;page-break-inside:avoid}
+h2{break-after:avoid;page-break-after:avoid}
+`;
+const quickPage = '<!doctype html>\n<html lang="zh-CN">\n<head>\n<meta charset="utf-8">\n' +
+  '<title>考点识别速查表 · 九上 U1–U4</title>\n<style>' + QUICK_CSS + '</style>\n</head>\n<body>\n' +
+  quickHtml + '\n</body>\n</html>\n';
+writeFileSync(join(here, "考点识别速查表.html"), quickPage, "utf8");
+
+// ---- 单文件版 ----
+const htmlPath = join(here, "index.html");
+if (!existsSync(htmlPath)) {
+  warn("index.html 还没生成，跳过单文件版");
+} else {
+  const html = readFileSync(htmlPath, "utf8");
+  const marker = '<script src="data/bundle.js"></script>';
+  if (!html.includes(marker)) {
+    err('index.html 里找不到数据占位 <script src="data/bundle.js"></script>，无法生成单文件版');
+  } else {
+    writeFileSync(join(here, "..", "语法闪练.html"), html.replace(marker, `<script>${dataScript}</script>`), "utf8");
+  }
+}
+
+// ---- 汇总 ----
+const byTopic = new Map();
+for (const it of items) byTopic.set(it.topic, (byTopic.get(it.topic) || 0) + 1);
+const unverifiedIds = items.filter((i) => !i.verified).map((i) => i.id);
+const missing = Object.keys(TOPICS).filter((g) => !groups.some((x) => x.group === g));
+
+console.log("");
+console.log(`分 block：${blocks.map((b) => `B${b.block} ${b.title} ${b.items.length}题`).join(" ｜ ")}`);
+console.log(`合计 ${items.length} 题 · 考点 ${byTopic.size} 个 · 未复核 ${unverifiedIds.length}${unverifiedIds.length ? "（" + unverifiedIds.join(",") + "）" : ""}`);
+console.log(`考点邻接表：${Object.keys(near).length} 个考点有邻近项 · 识别线索：${Object.keys(cues).length} 条`);
+console.log(`悬停词表：${Object.keys(glossary.words).length} 词 · ${Object.keys(glossary.phrases).length} 短语 · 题干词覆盖 ${covWordsHit}/${covWordsTotal}（${covWordsTotal ? Math.round((covWordsHit / covWordsTotal) * 100) : 0}%）`);
+console.log(`答后译文：${cnTotal}/${items.length} 题有 cn`);
+console.log(`页内文档：${Object.keys(orderedDocs).map((k) => `${orderedDocs[k].title}(${(orderedDocs[k].html.length / 1024).toFixed(0)}KB)`).join(" · ") || "无"}`);
+if (missing.length) console.log(`未启用的题组：${missing.join(", ")}`);
+
+if (warnings.length) {
+  console.log("\n⚠ 警告：");
+  warnings.forEach((w) => console.log("  - " + w));
+}
+if (problems.length) {
+  console.error("\n✗ 数据校验未通过（" + problems.length + " 项）：");
+  problems.forEach((p) => console.error("  - " + p));
+  process.exitCode = 1;
+} else {
+  console.log("\n✓ 数据校验通过");
+  console.log("→ data/bundle.js");
+  console.log("→ 考点识别速查表.html（单文件打印版，A4）");
+  if (existsSync(join(here, "..", "语法闪练.html"))) console.log("→ ../语法闪练.html（单文件，可双击打开）");
+}

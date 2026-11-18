@@ -1,0 +1,7 @@
+{
+  "meta": {
+    "title": "Training Workbench",
+    "description": "Read-only view of subject material health, the cross-subject todo queue, and study-record statistics."
+  },
+  "panel": "Workbench"
+}

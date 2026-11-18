@@ -1,0 +1,4 @@
+- insert:
+    - id: learning-training-workbench
+      name: '@local/learning-training-workbench'
+      config: {}
