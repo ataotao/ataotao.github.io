@@ -105,6 +105,7 @@ async function mockGithub(page, state) {
       if (!file) {
         return json(200, Object.keys(state.cloud[subject] || {}).map((f) => ({
           name: f,
+          sha: 'sha-' + f,          // 真实列表每项都带 sha：适配层写回时直接复用，不再多发一次 GET
           // 与真实 GitHub 一致：download_url 指向 raw.githubusercontent.com（适配层不该用它）
           download_url: 'https://raw.githubusercontent.com/' + REPO + '/main/devices/' +
             encodeURIComponent(subject) + '/' + encodeURIComponent(f)

@@ -73,7 +73,7 @@
     var r = await fetch(API + dir, { headers: headers() });
     if (r.status === 404) {
       // 本科目录还不存在（首次同步），视为空载体（正常情况，不是错误）
-      return {};
+      return { snaps: {}, shas: {} };
     }
     if (!r.ok) {
       var msg = r.status === 401 ? 'PAT 无效或已过期，请重新生成并填入'
@@ -82,9 +82,10 @@
       throw new Error(msg);
     }
     var list = await r.json();
-    var out = {}, failed = 0;
+    var out = {}, shas = {}, failed = 0;
     for (const item of list) {
       if (!/\.json$/i.test(item.name)) continue;
+      if (item.sha) shas[item.name] = item.sha;      // 目录列表自带 sha：写回时直接用，省一次 GET（否则首次写回必留个 404）
       /* 正文从 Contents API 取（Accept: raw），与列目录同一个域，不触发跨域预检。
          不用 item.download_url：它指向 raw.githubusercontent.com，该域不响应 OPTIONS 预检，
          带 Authorization 的 fetch 必被浏览器拦下（真机 2026-11-18 CORS 报错）。 */
@@ -102,16 +103,27 @@
       } catch (e) { failed++; }
     }
     if (failed) HOST && HOST.notify('有 ' + failed + ' 份快照未能读取，已跳过（下次同步会重试）');
-    return out;
+    return { snaps: out, shas: shas };
   }
 
-  async function pushOne(id, snapshot, branch, s) {
-    var url = API + deviceDir(s) + '/' + encodeURIComponent(
-      (id.indexOf('|') > 0 ? id.slice(id.indexOf('|') + 1) : id) + '.json'
-    );
-    var sha = null;
-    var cur = await fetch(url, { headers: headers() });
-    if (cur.ok) { var cj = await cur.json(); sha = cj.sha; }
+  /** 本机 deviceId 对应的载体文件名（去掉科目前缀）。 */
+  function fileNameOf(id) {
+    return (id.indexOf('|') > 0 ? id.slice(id.indexOf('|') + 1) : id) + '.json';
+  }
+
+  /**
+   * 写回本机那一份。
+   * sha 优先级：目录列表里已经带了这个文件的 sha（最常见，第二次同步起）就直接用，
+   * 不再多发一次 GET —— 那次 GET 对「本机首次写回」必然 404，DevTools 里红得吓人但没有问题。
+   * 只有文件不在列表里时才探测一次（真的不存在 → 404 属正常，PUT 不带 sha 即为新建）。
+   */
+  async function pushOne(id, snapshot, branch, s, knownSha) {
+    var url = API + deviceDir(s) + '/' + encodeURIComponent(fileNameOf(id));
+    var sha = knownSha || null;
+    if (!sha) {
+      var cur = await fetch(url, { headers: headers() });
+      if (cur.ok) { var cj = await cur.json(); sha = cj.sha; }
+    }
     var body = {
       message: 'sync ' + id + ' ' + new Date().toISOString(),
       content: btoa(unescape(encodeURIComponent(JSON.stringify(snapshot, null, 2)))),
@@ -142,10 +154,12 @@
       for (var attempt = 1; attempt <= CONFLICT_RETRY; attempt++) {
         HOST.notify('正在同步…' + (attempt > 1 ? '（冲突重试 ' + attempt + '/' + CONFLICT_RETRY + '）' : ''));
         try {
-          var all = await pullAll(s);
-          var plan = window.__ltSync.syncPlan(HOST.getDB(), all, deviceId(), s);
+          var pulled = await pullAll(s);
+          var id = deviceId();
+          var plan = window.__ltSync.syncPlan(HOST.getDB(), pulled.snaps, id, s);
           HOST.setDB(plan.db);                   // 合并结果先写回本机：即使云端失败，本机记录也不丢（ADR 决定 6）
-          var wrote = await pushOne(deviceId(), plan.snapshot, branch, s);
+          var known = pulled.shas[fileNameOf(id)] || null;
+          var wrote = await pushOne(id, plan.snapshot, branch, s, known);
           if (!wrote) continue;                  // 409：重拉→重并→重写（setDB 幂等，安全）
           HOST.notify('同步完成：' + (s ? s + ' ' : '') + '本机共 ' + plan.db.recs.length + ' 条记录');
           return;

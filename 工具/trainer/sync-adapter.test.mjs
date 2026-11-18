@@ -64,24 +64,29 @@ function makeFetch(opts) {
     const dir = '/repos/' + REPO + '/contents/devices/' + subject;
     if (p === dir) {
       if (!files.length) return reply(404, '{"message":"Not Found"}');
+      // 真实列表每项都带 sha：适配层写回时应直接复用，不再多发一次 GET
       return reply(200, JSON.stringify(files.map((f) => ({
         name: f,
+        sha: 'sha-' + f,
         download_url: 'https://raw.githubusercontent.com/' + REPO + '/main/devices/' +
           encodeURIComponent(subject) + '/' + encodeURIComponent(f)
       }))));
     }
     if (p.startsWith(dir + '/')) {
       const file = p.slice(dir.length + 1);
+      const exists = files.includes(file) || Object.prototype.hasOwnProperty.call(snaps, file);
       if (method === 'GET') {
-        // 只有 Accept: raw 才给正文；否则给元数据（与真实 Contents API 一致）
-        return accept === 'application/vnd.github.raw' && snaps[file]
-          ? reply(200, JSON.stringify(snaps[file]))
-          : reply(200, JSON.stringify({ sha: 'sha-' + file, name: file }));
+        if (!exists) return reply(404, '{"message":"Not Found"}');   // 真实语义：文件不存在就是 404
+        if (accept === 'application/vnd.github.raw') {
+          // 只有 Accept: raw 才给正文；非快照内容照样是 200，靠适配层自己识别并跳过
+          return reply(200, JSON.stringify(snaps[file] || { notASnapshot: true }));
+        }
+        return reply(200, JSON.stringify({ sha: 'sha-' + file, name: file }));
       }
       if (method === 'PUT') {
         const body = JSON.parse(cfg.body || '{}');
         const snap = JSON.parse(Buffer.from(body.content || '', 'base64').toString('utf8'));
-        writes.push({ file, snap, message: body.message, branch: body.branch });
+        writes.push({ file, snap, sha: body.sha || null, message: body.message, branch: body.branch });
         return reply(201, '{"content":{"sha":"sha-new"}}');
       }
     }
@@ -93,7 +98,7 @@ function makeFetch(opts) {
 /* 在 vm 里跑产物自带的 merge + sync 段（含 LT_SUBJECT 注入），返回宿主桩。
    merge 段必须先跑：sync 的 carrierSnapshot/syncPlan 以全局函数名调 mergeRecords
    （产物里 merge、sync 是两个 <script>，靠经典脚本的全局函数互相看见）。 */
-function loadAdapter(subject, fetchStub, db, notes) {
+function loadAdapter(subject, fetchStub, db, notes, preStore) {
   const html = fs.readFileSync(path.join(ROOT, PRODUCT[subject]), 'utf8');
   const mergeM = html.match(/<script id="merge">([\s\S]*?)<\/script>/);
   const m = html.match(/<script id="sync">([\s\S]*?)<\/script>/);
@@ -101,7 +106,7 @@ function loadAdapter(subject, fetchStub, db, notes) {
   assert.ok(m, subject + ' 产物缺少 sync 段');
   assert.ok(m[1].includes('var LT_SUBJECT = ' + JSON.stringify(subject)), subject + ' 的 LT_SUBJECT 未注入');
 
-  const store = Object.create(null);
+  const store = Object.assign(Object.create(null), preStore || {});
   const sandbox = {
     console, JSON, Date, Math, Object, Array, String, Number,
     fetch: fetchStub, btoa, unescape, encodeURIComponent,
@@ -164,6 +169,38 @@ async function caseMerge(subject) {
   check(!!w && w.snap.deviceId.startsWith(subject + '|'), subject + '：写回快照 deviceId 带科目前缀');
   check(!!w && w.snap.recs.length === 2 && w.snap.days === undefined, subject + '：载体只带 recs/wrong/meta，不带设备态');
   check(!!w && w.file.endsWith('.json') && w.branch === 'main', subject + '：写到 devices/' + subject + '/ 下、默认分支 main');
+  /* 本机 deviceId 是新建的 → 不在目录列表里 → 允许探测一次 sha（这次 GET 必然 404，
+     是 DevTools 里唯一那个红色 404，属正常：文件确实还不存在，PUT 随即创建它）。 */
+  const probe404 = fake.hits.filter((h) => h.method === 'GET' && h.accept === 'application/vnd.github+json' &&
+    decodeURIComponent(h.url).includes('/devices/' + subject + '/dev-'));
+  check(probe404.length === 1, subject + '：新建设备只探测一次 sha（404 属正常，不会静默失败）');
+  check(!!w && !w.sha, subject + '：新建快照的 PUT 不带 sha（否则 GitHub 会判冲突）');
+}
+
+/* ---------- A2. 已有本机快照：sha 直接复用目录列表，不再多发一次 GET（消灭那个 404 噪音） ---------- */
+async function caseReuseSha(subject) {
+  console.log('\n[' + subject + '] 第二次同步：本机快照已在列表里 → 复用 sha，不再探测');
+  const own = 'dev-existing';
+  const ownFile = own + '.json';
+  const mine = {
+    v: 1, deviceId: subject + '|' + own, subject,
+    recs: [{ ts: 3001, mod: 'calc', kind: 'k', kn: '本机已有', ok: true }],
+    wrong: {}, meta: {}
+  };
+  const fake = makeFetch({ subject, files: [ownFile], snaps: { [ownFile]: mine } });
+  const db = { v: 1, recs: [], wrong: {}, meta: {} };
+  const notes = [];
+  const api = loadAdapter(subject, fake.fetch, db, notes, { ['__lt_device_id_v1_' + subject]: subject + '|' + own });
+  await api.run();
+
+  noForeignHost(fake.hits, subject);
+  check(/^同步完成/.test(notes[notes.length - 1] || ''), subject + '：第二次同步成功');
+  check(db.recs.length === 1, subject + '：把自己的旧快照并回本机（不丢）');
+  const metaGets = fake.hits.filter((h) => h.method === 'GET' && h.accept === 'application/vnd.github+json' &&
+    decodeURIComponent(h.url).endsWith('/' + ownFile));
+  check(metaGets.length === 0, subject + '：本机快照已在列表里，不再多发 sha 探测 GET（DevTools 无 404 噪音）');
+  const w = fake.writes[0];
+  check(!!w && w.sha === 'sha-' + ownFile, subject + '：PUT 复用列表里的 sha（乐观锁仍生效）');
 }
 
 /* ---------- B. 首次同步：本科目录 404 视为空载体 ---------- */
@@ -194,9 +231,9 @@ async function caseBadPAT() {
   check(fake.writes.length === 0, '数学：拉取失败不写回');
 }
 
-for (const subject of Object.keys(PRODUCT)) await caseMerge(subject);
+for (const subject of Object.keys(PRODUCT)) { await caseMerge(subject); await caseReuseSha(subject); }
 await caseFirstSync();
 await caseBadPAT();
 
-console.log('\n' + (failures ? '✗ 云同步适配层测试失败 ' + failures + ' 项' : '✓ 云同步适配层测试全过（3 科 × 10 项 + 首次同步 4 项 + 401 4 项）'));
+console.log('\n' + (failures ? '✗ 云同步适配层测试失败 ' + failures + ' 项' : '✓ 云同步适配层测试全过（3 科 × 12 项 + 二次同步 5 项/科 + 首次同步 4 项 + 401 4 项）'));
 process.exit(failures ? 1 : 0);
