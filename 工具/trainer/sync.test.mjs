@@ -80,4 +80,15 @@ const tagged = carrierSnapshot('物理|dev-x', mkDB([]), '物理');
 assert.equal(tagged.subject, '物理');
 ok('carrierSnapshot 给快照打 subject 标记');
 
-console.log('✓ 云同步编排测试全过（8 组断言）');
+/* ⑨ 写回本机的 db 必须保留本机设备态 days/sess——数学页 renderReport 依赖 DB.days（真机 bug 回归）
+ * 载体快照不带 days（见③），但写回本地的 db 若把 days 丢了，mathtrain 的 dayKeys() 会抛错、报告页渲染中断。 */
+const localWithDays = mkDB([rec(1, 'D')]);
+localWithDays.days = { '2026-11-15': { qs: [rec(1, 'D')] } };
+localWithDays.sess = { done: 2 };
+const daysPlan = syncPlan(localWithDays, {}, 'dev-d', '数学');
+assert.deepStrictEqual(daysPlan.db.days, localWithDays.days, '本机 days 必须原样保留');
+assert.deepStrictEqual(daysPlan.db.sess, localWithDays.sess, '本机 sess 必须原样保留');
+assert.equal('days' in daysPlan.snapshot, false, '载体仍不得带 days');
+ok('写回本机保留 days/sess 设备态，载体仍净（数学报告页不崩）');
+
+console.log('✓ 云同步编排测试全过（9 组断言）');

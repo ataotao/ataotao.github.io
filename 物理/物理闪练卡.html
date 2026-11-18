@@ -2489,11 +2489,15 @@ function syncPlan(local, allSnapshots, deviceId, subject) {
     var s = allSnapshots[id];
     if (s && typeof s === 'object' && belongsToSubject(s, id, subject)) acc = mergeRecords(acc, s);
   }
-  // 写回：只覆盖自己那份
+  // 写回本机：以本机 DB 为基底，只覆盖 recs/wrong/meta，保留 days/sess 等设备态。
+  // （载体快照故意不带设备态；但若写回本机也用干净的 acc，数学页 renderReport 依赖的
+  //   DB.days 会丢失、dayKeys() 抛错 → 报告页渲染中断。这是真机验证发现的 bug。）
+  var db = Object.assign({}, local || {}, { v: 1, recs: acc.recs, wrong: acc.wrong, meta: acc.meta });
+  // 写回云端：只覆盖自己那份，且绝不带设备态
   var snapshot = carrierSnapshot(deviceId, acc, subject);
   var writeTargets = {};
   writeTargets[deviceId] = snapshot;
-  return { db: acc, snapshot: snapshot, writeTargets: writeTargets };
+  return { db: db, snapshot: snapshot, writeTargets: writeTargets };
 }
 window.__ltSync = { carrierSnapshot: carrierSnapshot, syncPlan: syncPlan, subjectFromId: subjectFromId };
 /* 云同步网络适配层（内联进产物；GitHub Contents API + PAT + sha 乐观锁）
