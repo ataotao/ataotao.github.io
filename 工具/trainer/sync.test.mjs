@@ -53,4 +53,31 @@ const qplan = syncPlan(withQid, {}, 'dev-a');
 assert.equal(qplan.db.recs[0].qid, 'air.o2.题Q');
 ok('qid 字段在同步往返中保留');
 
-console.log('✓ 云同步编排测试全过（5 组断言）');
+/* ⑥ 按科隔离：物理设备同步时，数学快照的错题绝不能并进来（本次修复的核心） */
+const physLocal = mkDB([]);
+const crossCarrier = {
+  '物理|legacy-2026-11-18': Object.assign(carrierSnapshot('物理|legacy-2026-11-18', mkDB([rec(10, 'P')], { pw: { key: 'pw', due: 1 } })), { subject: '物理' }),
+  '数学|legacy-2026-11-18': Object.assign(carrierSnapshot('数学|legacy-2026-11-18', mkDB([rec(20, 'M')], { mw: { key: 'mw', due: 1 } })), { subject: '数学' })
+};
+const physPlan = syncPlan(physLocal, crossCarrier, 'dev-p', '物理');
+assert.equal(physPlan.db.recs.length, 1, '物理设备只应有物理快照的 1 条');
+assert.equal(physPlan.db.recs[0].prompt, '题P');
+assert.deepStrictEqual(Object.keys(physPlan.db.wrong), ['pw'], '物理设备不该有数学错题');
+const mathPlan = syncPlan(mkDB([]), crossCarrier, 'dev-m', '数学');
+assert.equal(mathPlan.db.recs.length, 1);
+assert.equal(mathPlan.db.recs[0].prompt, '题M');
+assert.deepStrictEqual(Object.keys(mathPlan.db.wrong), ['mw']);
+ok('按科隔离：物理只并物理快照、数学只并数学快照，错题零串科');
+
+/* ⑦ 无 subject 的旧快照：按 deviceId 前缀推断科目，保持向后兼容 */
+const legacyOld = { '物理|legacy-x': carrierSnapshot('物理|legacy-x', mkDB([rec(30, 'L')])) };
+const compat = syncPlan(mkDB([]), legacyOld, '物理|dev-new', '物理');
+assert.equal(compat.db.recs.length, 1);
+ok('向后兼容：deviceId 前缀为「物理|」的旧快照仍能被物理科读到');
+
+/* ⑧ carrierSnapshot 带 subject 标记 */
+const tagged = carrierSnapshot('物理|dev-x', mkDB([]), '物理');
+assert.equal(tagged.subject, '物理');
+ok('carrierSnapshot 给快照打 subject 标记');
+
+console.log('✓ 云同步编排测试全过（8 组断言）');

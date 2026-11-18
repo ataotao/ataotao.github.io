@@ -2052,6 +2052,7 @@ window.__ltMerge = { pickIdent: pickIdent, recSig: recSig, mergeRecords: mergeRe
 </script>
 
 <script id="sync">
+var LT_SUBJECT = "数学";
 /* 云同步编排 · 纯函数（网络 I/O 由页面薄适配层负责）
  * ============================================================
  * 真源仍是各设备浏览器（GLOSSARY 同步载体）；本模块只决定「拉全部后怎么合、写回什么」。
@@ -2062,16 +2063,31 @@ window.__ltMerge = { pickIdent: pickIdent, recSig: recSig, mergeRecords: mergeRe
 /**
  * 由本机 DB 生成写进载体的快照：只带 recs/wrong/meta，打上 deviceId，丢弃设备态。
  */
-function carrierSnapshot(deviceId, db) {
+function carrierSnapshot(deviceId, db, subject) {
   var merged = mergeRecords(db, { v: 1, recs: [], wrong: {}, meta: {} });
   return {
     v: 1,
     deviceId: deviceId,
+    subject: subject || subjectFromId(deviceId) || '',
     recs: merged.recs,
     wrong: merged.wrong,
     meta: merged.meta
     /* days / lastRound / dayPlan / sess 故意不带上 */
   };
+}
+
+/** 从 deviceId 前缀推断科目（形如「物理|legacy-2026-11-18」）。无前缀返回空串。 */
+function subjectFromId(deviceId) {
+  var s = String(deviceId || '');
+  var i = s.indexOf('|');
+  return i > 0 ? s.slice(0, i) : '';
+}
+
+/** 判断快照是否属于本科：优先看 subject 字段，回退 deviceId 前缀；两者都无则视为本科（兼容最老的裸快照）。 */
+function belongsToSubject(snapshot, deviceId, expected) {
+  if (!expected) return true;                       // 未指定科目：不过滤（老调用方）
+  var tag = snapshot.subject || subjectFromId(snapshot.deviceId || deviceId);
+  return tag ? tag === expected : true;
 }
 
 /**
@@ -2081,23 +2097,23 @@ function carrierSnapshot(deviceId, db) {
  * @param deviceId 本机设备标识
  * @returns {{ db, snapshot, writeTargets }}
  */
-function syncPlan(local, allSnapshots, deviceId) {
+function syncPlan(local, allSnapshots, deviceId, subject) {
   var acc = { v: 1, recs: [], wrong: {}, meta: {} };
   // 本机先并入（保证本机最新作答不被远端旧快照盖掉）
   acc = mergeRecords(acc, local);
-  // 再并入所有设备快照（包括自己旧的那份，取并集不会丢）
+  // 再并入本科设备快照（包括自己旧的那份，取并集不会丢）；异科快照一律跳过，防串科
   var ids = Object.keys(allSnapshots || {}).sort();
   for (const id of ids) {
     var s = allSnapshots[id];
-    if (s && typeof s === 'object') acc = mergeRecords(acc, s);
+    if (s && typeof s === 'object' && belongsToSubject(s, id, subject)) acc = mergeRecords(acc, s);
   }
   // 写回：只覆盖自己那份
-  var snapshot = carrierSnapshot(deviceId, acc);
+  var snapshot = carrierSnapshot(deviceId, acc, subject);
   var writeTargets = {};
   writeTargets[deviceId] = snapshot;
   return { db: acc, snapshot: snapshot, writeTargets: writeTargets };
 }
-window.__ltSync = { carrierSnapshot: carrierSnapshot, syncPlan: syncPlan };
+window.__ltSync = { carrierSnapshot: carrierSnapshot, syncPlan: syncPlan, subjectFromId: subjectFromId };
 /* 云同步网络适配层（内联进产物；GitHub Contents API + PAT + sha 乐观锁）
  * ============================================================
  * 本机测试覆盖不到真实 fetch，故这里刻意做薄：只负责 I/O 与提示，
@@ -2105,7 +2121,9 @@ window.__ltSync = { carrierSnapshot: carrierSnapshot, syncPlan: syncPlan };
  * 由各族 UI 注入宿主接口后调用：
  *   window.__ltSyncUI.init({ getDB, setDB, key, notify })
  *   window.__ltSyncUI.run()  // 点按钮触发
- * PAT / deviceId 存本机浏览器；sha 409 冲突时重拉→重并→重写（最多 3 次）。
+ * PAT 存本机浏览器；科目由 build 注入的 LT_SUBJECT 常量确定，
+ * deviceId 带科目前缀、快照按科分目录 —— 三科互不污染（本次修复）。
+ * sha 409 冲突时重拉→重并→重写（最多 3 次）。
  */
 (function () {
   'use strict';
@@ -2120,11 +2138,22 @@ window.__ltSync = { carrierSnapshot: carrierSnapshot, syncPlan: syncPlan };
 
   function lsGet(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
   function lsSet(k, v) { try { localStorage.setItem(k, v); } catch (e) {} return true; }
+
+  /** 当前科目：build 注入常量优先，宿主 subject 兜底（未注入时退化为不分科的老行为）。 */
+  function subject() {
+    if (typeof LT_SUBJECT !== 'undefined' && LT_SUBJECT) return LT_SUBJECT;
+    return (HOST && HOST.subject) || '';
+  }
+  /** 快照所在子目录（按科隔离）；英文/中文科目名都做路径编码。 */
+  function deviceDir(s) { return '/devices' + (s ? '/' + encodeURIComponent(s) : ''); }
+
   function deviceId() {
-    var id = lsGet('__lt_device_id_v1');
+    var s = subject();
+    var key = '__lt_device_id_v1' + (s ? '_' + s : '');
+    var id = lsGet(key);
     if (!id) {
-      id = 'dev-' + Date.now().toString(36) + '-' + Math.floor(Math.random() * 1e6).toString(36);
-      lsSet('__lt_device_id_v1', id);
+      id = (s ? s + '|' : '') + 'dev-' + Date.now().toString(36) + '-' + Math.floor(Math.random() * 1e6).toString(36);
+      lsSet(key, id);
     }
     return id;
   }
@@ -2143,10 +2172,11 @@ window.__ltSync = { carrierSnapshot: carrierSnapshot, syncPlan: syncPlan };
     return BRANCH;
   }
 
-  async function pullAll() {
-    var r = await fetch(API + '/devices', { headers: headers() });
+  async function pullAll(s) {
+    var dir = deviceDir(s);
+    var r = await fetch(API + dir, { headers: headers() });
     if (r.status === 404) {
-      // 首次同步：devices/ 目录还不存在，视为空载体（正常情况，不是错误）
+      // 本科目录还不存在（首次同步），视为空载体（正常情况，不是错误）
       return {};
     }
     if (!r.ok) {
@@ -2159,19 +2189,26 @@ window.__ltSync = { carrierSnapshot: carrierSnapshot, syncPlan: syncPlan };
     var out = {}, failed = 0;
     for (const item of list) {
       if (!/\.json$/i.test(item.name)) continue;
-      var fr = await fetch(item.download_url || (API + '/devices/' + item.name), { headers: headers() });
+      var fr = await fetch(item.download_url || (API + dir + '/' + encodeURIComponent(item.name)), { headers: headers() });
       if (!fr.ok) { failed++; continue; }
       try {
         var j = await fr.json();
-        out[String(j.deviceId || item.name.replace(/\.json$/, ''))] = j;
+        var key = String(j.deviceId || item.name.replace(/\.json$/, ''));
+        // 双保险：目录已按科分，这里再按 deviceId 前缀过滤一次，拦住误放进来的异科快照
+        var tag = j.subject || (key.indexOf('|') > 0 ? key.slice(0, key.indexOf('|')) : '');
+        if (s && tag && tag !== s) { continue; }   // 明确异科：丢掉
+        if (s && !tag) { j.subject = s; }          // 无标签老快照：按所在目录归科，杜绝裸快照串科
+        out[key] = j;
       } catch (e) { failed++; }
     }
     if (failed) HOST && HOST.notify('有 ' + failed + ' 份快照未能读取，已跳过（下次同步会重试）');
     return out;
   }
 
-  async function pushOne(id, snapshot, branch) {
-    var url = API + '/devices/' + id + '.json';
+  async function pushOne(id, snapshot, branch, s) {
+    var url = API + deviceDir(s) + '/' + encodeURIComponent(
+      (id.indexOf('|') > 0 ? id.slice(id.indexOf('|') + 1) : id) + '.json'
+    );
     var sha = null;
     var cur = await fetch(url, { headers: headers() });
     if (cur.ok) { var cj = await cur.json(); sha = cj.sha; }
@@ -2196,19 +2233,21 @@ window.__ltSync = { carrierSnapshot: carrierSnapshot, syncPlan: syncPlan };
     hasPAT: function () { return !!lsGet(PAT_KEY); },
     patHelp: PAT_HELP,
     deviceId: deviceId,
+    subject: subject,
     run: async function () {
       if (!HOST) throw new Error('同步未初始化');
       if (!lsGet(PAT_KEY)) { HOST.notify('请先填入 PAT（个人访问令牌）'); return; }
+      var s = subject();
       var branch = await detectBranch();
       for (var attempt = 1; attempt <= CONFLICT_RETRY; attempt++) {
         HOST.notify('正在同步…' + (attempt > 1 ? '（冲突重试 ' + attempt + '/' + CONFLICT_RETRY + '）' : ''));
         try {
-          var all = await pullAll();
-          var plan = window.__ltSync.syncPlan(HOST.getDB(), all, deviceId());
+          var all = await pullAll(s);
+          var plan = window.__ltSync.syncPlan(HOST.getDB(), all, deviceId(), s);
           HOST.setDB(plan.db);                   // 合并结果先写回本机：即使云端失败，本机记录也不丢（ADR 决定 6）
-          var wrote = await pushOne(deviceId(), plan.snapshot, branch);
+          var wrote = await pushOne(deviceId(), plan.snapshot, branch, s);
           if (!wrote) continue;                  // 409：重拉→重并→重写（setDB 幂等，安全）
-          HOST.notify('同步完成：本机共 ' + plan.db.recs.length + ' 条记录');
+          HOST.notify('同步完成：' + (s ? s + ' ' : '') + '本机共 ' + plan.db.recs.length + ' 条记录');
           return;
         } catch (e) {
           HOST.notify('同步失败：' + (e && e.message ? e.message : e));

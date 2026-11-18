@@ -5,7 +5,9 @@
  * 由各族 UI 注入宿主接口后调用：
  *   window.__ltSyncUI.init({ getDB, setDB, key, notify })
  *   window.__ltSyncUI.run()  // 点按钮触发
- * PAT / deviceId 存本机浏览器；sha 409 冲突时重拉→重并→重写（最多 3 次）。
+ * PAT 存本机浏览器；科目由 build 注入的 LT_SUBJECT 常量确定，
+ * deviceId 带科目前缀、快照按科分目录 —— 三科互不污染（本次修复）。
+ * sha 409 冲突时重拉→重并→重写（最多 3 次）。
  */
 (function () {
   'use strict';
@@ -20,11 +22,22 @@
 
   function lsGet(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
   function lsSet(k, v) { try { localStorage.setItem(k, v); } catch (e) {} return true; }
+
+  /** 当前科目：build 注入常量优先，宿主 subject 兜底（未注入时退化为不分科的老行为）。 */
+  function subject() {
+    if (typeof LT_SUBJECT !== 'undefined' && LT_SUBJECT) return LT_SUBJECT;
+    return (HOST && HOST.subject) || '';
+  }
+  /** 快照所在子目录（按科隔离）；英文/中文科目名都做路径编码。 */
+  function deviceDir(s) { return '/devices' + (s ? '/' + encodeURIComponent(s) : ''); }
+
   function deviceId() {
-    var id = lsGet('__lt_device_id_v1');
+    var s = subject();
+    var key = '__lt_device_id_v1' + (s ? '_' + s : '');
+    var id = lsGet(key);
     if (!id) {
-      id = 'dev-' + Date.now().toString(36) + '-' + Math.floor(Math.random() * 1e6).toString(36);
-      lsSet('__lt_device_id_v1', id);
+      id = (s ? s + '|' : '') + 'dev-' + Date.now().toString(36) + '-' + Math.floor(Math.random() * 1e6).toString(36);
+      lsSet(key, id);
     }
     return id;
   }
@@ -43,10 +56,11 @@
     return BRANCH;
   }
 
-  async function pullAll() {
-    var r = await fetch(API + '/devices', { headers: headers() });
+  async function pullAll(s) {
+    var dir = deviceDir(s);
+    var r = await fetch(API + dir, { headers: headers() });
     if (r.status === 404) {
-      // 首次同步：devices/ 目录还不存在，视为空载体（正常情况，不是错误）
+      // 本科目录还不存在（首次同步），视为空载体（正常情况，不是错误）
       return {};
     }
     if (!r.ok) {
@@ -59,19 +73,26 @@
     var out = {}, failed = 0;
     for (const item of list) {
       if (!/\.json$/i.test(item.name)) continue;
-      var fr = await fetch(item.download_url || (API + '/devices/' + item.name), { headers: headers() });
+      var fr = await fetch(item.download_url || (API + dir + '/' + encodeURIComponent(item.name)), { headers: headers() });
       if (!fr.ok) { failed++; continue; }
       try {
         var j = await fr.json();
-        out[String(j.deviceId || item.name.replace(/\.json$/, ''))] = j;
+        var key = String(j.deviceId || item.name.replace(/\.json$/, ''));
+        // 双保险：目录已按科分，这里再按 deviceId 前缀过滤一次，拦住误放进来的异科快照
+        var tag = j.subject || (key.indexOf('|') > 0 ? key.slice(0, key.indexOf('|')) : '');
+        if (s && tag && tag !== s) { continue; }   // 明确异科：丢掉
+        if (s && !tag) { j.subject = s; }          // 无标签老快照：按所在目录归科，杜绝裸快照串科
+        out[key] = j;
       } catch (e) { failed++; }
     }
     if (failed) HOST && HOST.notify('有 ' + failed + ' 份快照未能读取，已跳过（下次同步会重试）');
     return out;
   }
 
-  async function pushOne(id, snapshot, branch) {
-    var url = API + '/devices/' + id + '.json';
+  async function pushOne(id, snapshot, branch, s) {
+    var url = API + deviceDir(s) + '/' + encodeURIComponent(
+      (id.indexOf('|') > 0 ? id.slice(id.indexOf('|') + 1) : id) + '.json'
+    );
     var sha = null;
     var cur = await fetch(url, { headers: headers() });
     if (cur.ok) { var cj = await cur.json(); sha = cj.sha; }
@@ -96,19 +117,21 @@
     hasPAT: function () { return !!lsGet(PAT_KEY); },
     patHelp: PAT_HELP,
     deviceId: deviceId,
+    subject: subject,
     run: async function () {
       if (!HOST) throw new Error('同步未初始化');
       if (!lsGet(PAT_KEY)) { HOST.notify('请先填入 PAT（个人访问令牌）'); return; }
+      var s = subject();
       var branch = await detectBranch();
       for (var attempt = 1; attempt <= CONFLICT_RETRY; attempt++) {
         HOST.notify('正在同步…' + (attempt > 1 ? '（冲突重试 ' + attempt + '/' + CONFLICT_RETRY + '）' : ''));
         try {
-          var all = await pullAll();
-          var plan = window.__ltSync.syncPlan(HOST.getDB(), all, deviceId());
+          var all = await pullAll(s);
+          var plan = window.__ltSync.syncPlan(HOST.getDB(), all, deviceId(), s);
           HOST.setDB(plan.db);                   // 合并结果先写回本机：即使云端失败，本机记录也不丢（ADR 决定 6）
-          var wrote = await pushOne(deviceId(), plan.snapshot, branch);
+          var wrote = await pushOne(deviceId(), plan.snapshot, branch, s);
           if (!wrote) continue;                  // 409：重拉→重并→重写（setDB 幂等，安全）
-          HOST.notify('同步完成：本机共 ' + plan.db.recs.length + ' 条记录');
+          HOST.notify('同步完成：' + (s ? s + ' ' : '') + '本机共 ' + plan.db.recs.length + ' 条记录');
           return;
         } catch (e) {
           HOST.notify('同步失败：' + (e && e.message ? e.message : e));

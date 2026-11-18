@@ -33,13 +33,15 @@ function mergeScript() {
 
 /* 段三：云同步编排（sync.mjs，依赖 merge）与网络适配（sync-adapter.mjs）内联，
    去 export / import 后挂全局 __ltSync / __ltSyncUI，供两族 UI 的同步按钮调用。 */
-function syncScript() {
+function syncScript(subject) {
   const core = r('工具/trainer/sync.mjs')
     .replace(/^import[^\n]*\n/gm, '')
     .replace(/^export\s+/gm, '');
   const adapter = r('工具/trainer/sync-adapter.mjs');
-  return '<script id="sync">\n' + core.trimEnd() + '\n' +
-    'window.__ltSync = { carrierSnapshot: carrierSnapshot, syncPlan: syncPlan };\n' +
+  // 科目常量由 build 注入：deviceId 前缀、快照子目录、syncPlan 过滤都靠它隔离三科
+  const inject = 'var LT_SUBJECT = ' + JSON.stringify(subject) + ';\n';
+  return '<script id="sync">\n' + inject + core.trimEnd() + '\n' +
+    'window.__ltSync = { carrierSnapshot: carrierSnapshot, syncPlan: syncPlan, subjectFromId: subjectFromId };\n' +
     adapter.trimEnd() + '\n</script>\n\n';
 }
 
@@ -90,13 +92,13 @@ for (const name of names) {
     const shellHtml = scaffoldShell(SUBJECT).replace('/*__CSS__*/', r(SUBJECT.cssFile).trimEnd());
     html = shellHtml +
       '<script id="core">\n' + core.trimEnd() + '\n</script>\n\n' +
-      mergeScript() + syncScript() +
+      mergeScript() + syncScript(name) +
       '<script id="ui">\n' + uiSrc.trimEnd() + '\n</script>\n' +
       '</body>\n</html>\n';
   } else {
     html = shell(SUBJECT) +
       '<script id="core">\n' + core.trimEnd() + '\n</script>\n\n' +
-      mergeScript() + syncScript() +
+      mergeScript() + syncScript(name) +
       uiScript(SUBJECT);
   }
 

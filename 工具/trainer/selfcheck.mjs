@@ -15,13 +15,48 @@ const { default: SUB } = await import('file://' + path.join(ROOT, '工具/traine
 const html = fs.readFileSync(path.join(ROOT, SUB.outFile), 'utf8');
 
 const fail = (m) => { console.error('✗ ' + m); process.exit(1); };
+
+/** 段三修复：在给定 sandbox 里跑 sync 段，验证产物内 syncPlan 真按科过滤（防串科回退）。 */
+function verifySyncIsolation(syncCode, label) {
+  if (label !== '物理' && label !== '数学') return;   // 化学暂无历史种子，跳过
+  const sb = { console, Set, Math, JSON, Date, Object, Array, String, Number, isFinite, parseInt, parseFloat,
+    localStorage: { getItem() { return null; }, setItem() {} }, fetch() {}, btoa() {}, unescape, encodeURIComponent };
+  sb.window = sb; vm.createContext(sb);
+  try {
+    // syncPlan 依赖 merge.mjs 的全局 mergeRecords，先跑 merge 段再跑 sync 段
+    vm.runInContext(mergeM[1], sb, { filename: label + '.merge.js' });
+    vm.runInContext(syncCode, sb, { filename: label + '.sync.js' });
+  }
+  catch (e) { fail(label + ' sync 段无法执行：' + e.message); }
+  if (!sb.__ltSync || typeof sb.__ltSync.syncPlan !== 'function') fail(label + ' sync 段未挂出 __ltSync.syncPlan');
+  const r = (ts, prompt) => ({ ts, mod: 'm', kind: 'k', prompt });
+  const carriers = {
+    '物理|legacy': { v: 1, deviceId: '物理|legacy', subject: '物理', recs: [r(1, '仅物理')], wrong: { pw: { key: 'pw', due: 9 } }, meta: {} },
+    '数学|legacy': { v: 1, deviceId: '数学|legacy', subject: '数学', recs: [r(2, '仅数学')], wrong: { mw: { key: 'mw', due: 9 } }, meta: {} }
+  };
+  const mine = sb.__ltSync.syncPlan({ v: 1, recs: [], wrong: {}, meta: {} }, carriers, label + '|dev-x', label);
+  if (mine.db.recs.length !== 1 || mine.db.recs[0].prompt !== '仅' + label) {
+    fail(label + ' 产物内 syncPlan 未按科过滤：' + JSON.stringify(mine.db.recs.map((x) => x.prompt)));
+  }
+  const wantWrong = label === '物理' ? 'pw' : 'mw';
+  if (Object.keys(mine.db.wrong).join(',') !== wantWrong) {
+    fail(label + ' 产物内 syncPlan 串科错题：' + Object.keys(mine.db.wrong).join(','));
+  }
+}
 const coreM = html.match(/<script id="core">([\s\S]*?)<\/script>/);
 const mergeM = html.match(/<script id="merge">([\s\S]*?)<\/script>/);
+const syncM = html.match(/<script id="sync">([\s\S]*?)<\/script>/);
 const uiM = html.match(/<script id="ui">([\s\S]*?)<\/script>/);
 if (!coreM || !uiM) fail('产物缺少 core / ui 脚本节点');
 if (!mergeM) fail('产物缺少 merge 脚本节点（段三：两族共用的事件并集合并函数）');
+if (!syncM) fail('产物缺少 sync 脚本节点（段三：云同步编排 + 网络适配）');
 if ((html.match(/<script id="core">/g) || []).length !== 1) fail('core 脚本节点不唯一');
 if ((html.match(/<script id="merge">/g) || []).length !== 1) fail('merge 脚本节点不唯一');
+if ((html.match(/<script id="sync">/g) || []).length !== 1) fail('sync 脚本节点不唯一');
+// 段三修复：每科产物必须注入自己的科目常量，否则同步会串科
+if (syncM[1].indexOf('var LT_SUBJECT = ' + JSON.stringify(name)) < 0) {
+  fail('sync 段注入的 LT_SUBJECT 不是本科（' + name + '），按科隔离失效');
+}
 
 /* ===== 脚手架族（物理 / 数学）：三源逐字节内联，只校验「产物=源」契约 =====
    渲染引擎用 h() + canvas，DOM 桩覆盖不了；运行时另由 check-training.mjs --ui 守。 */
@@ -50,6 +85,7 @@ if (SUB.family === 'scaffold') {
   // 段三：sync 段存在、UI 有云同步按钮、注入了宿主接口
   if (!/id="sync"/.test(html)) fail('产物缺少 sync 脚本节点');
   if (uiM[1].indexOf('__ltSyncUI') < 0 || uiM[1].indexOf('云同步') < 0) fail('UI 未接云同步');
+  verifySyncIsolation(syncM[1], name);   // 产物内真实 syncPlan 按科过滤验证
   // 记录键在 UI 里
   if (uiM[1].indexOf("'" + SUB.key + "'") < 0) fail(`UI 里找不到记录键 ${SUB.key}`);
   // 单文件：无外部脚本/样式引用（fetch 是云同步必需的运行时 API，不算外部依赖）
@@ -100,10 +136,15 @@ try {
   vm.runInContext(coreM[1], sandbox, { filename: name + '.core.js' });
   vm.runInContext(mergeM[1], sandbox, { filename: name + '.merge.js' });
   if (!sandbox.__ltMerge || typeof sandbox.__ltMerge.mergeRecords !== 'function') fail('merge 脚本未挂出 __ltMerge');
+  vm.runInContext(syncM[1], sandbox, { filename: name + '.sync.js' });
+  if (!sandbox.__ltSync || typeof sandbox.__ltSync.syncPlan !== 'function') fail('sync 脚本未挂出 __ltSync');
   vm.runInContext(uiM[1], sandbox, { filename: name + '.ui.js' });
 } catch (e) {
   fail('产物运行时异常：' + e.message + '\n' + (e.stack || '').split('\n').slice(0, 4).join('\n'));
 }
+
+/* 段三修复：产物内真实 syncPlan 按科过滤验证（物理/数学；化学无历史种子跳过） */
+verifySyncIsolation(syncM[1], name);
 
 const T = sandbox[SUB.global];
 if (!T || !T.CH || typeof T.mergeRecords !== 'function') fail('没有拿到训练器测试钩子 / mergeRecords');

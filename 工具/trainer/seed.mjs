@@ -17,6 +17,15 @@ export function recordsRoot() {
   return process.env.LT_RECORDS_DIR || 'C:/learn/ataotao.github.io_learning-records';
 }
 
+/** 从种子文件名识别科目（如「物理训练记录-2026-11-18.json」→ 物理）。
+ *  按科隔离是硬约束：物理种子绝不能混进数学快照，否则两科同步会互相污染。 */
+export function subjectOf(fileName) {
+  var base = String(fileName || '');
+  var m = base.match(/(物理|数学|化学|英语|语文|历史|道法)/);
+  if (!m) throw new Error('无法从文件名识别科目：' + base);
+  return m[1];
+}
+
 /** 内容嗅探：裸 DB {v,recs,wrong} 与带外壳 {schema:'lt.practice-records/1',data} 都认（ADR-0001） */
 export function sniffAndNormalize(raw) {
   if (!raw || typeof raw !== 'object') throw new Error('种子不是对象');
@@ -35,26 +44,28 @@ export function sniffAndNormalize(raw) {
 }
 
 /**
- * 由原始种子路径列表重算 legacy 快照。
+ * 由原始种子路径列表重算 legacy 快照 —— 按科目分别产出，互不混合。
+ * 设备 id 形如「物理|legacy-2026-11-18」，竖线前半即科目（同步层据此分目录）。
  * @returns {{ devices: {[id]: object}, merged: object }}
  */
 export function rebuildLegacy(filePaths) {
-  var acc = { v: 1, recs: [], wrong: {}, meta: {} };
-  var created = Infinity;
+  var bySubject = Object.create(null);   // 科目 → 归一化后的 DB
   for (const p of filePaths) {
+    var subject = subjectOf(path.basename(p));
     var raw = JSON.parse(fs.readFileSync(p, 'utf8'));
     var norm = sniffAndNormalize(raw);
-    if (typeof norm.meta.created === 'number') created = Math.min(created, norm.meta.created);
-    acc = mergeRecords(acc, norm);
+    var acc = bySubject[subject] || { v: 1, recs: [], wrong: {}, meta: {} };
+    bySubject[subject] = mergeRecords(acc, norm);   // 同科多份种子仍取并集
   }
-  if (created !== Infinity) acc.meta.created = created;
-  var device = Object.assign({}, acc, { v: 1, deviceId: LEGACY_ID });
-  // merged 是不带 deviceId 的合并视图，供训练台读；不含设备态
-  var merged = { v: 1, recs: acc.recs, wrong: acc.wrong, meta: acc.meta };
-  return {
-    devices: { [LEGACY_ID]: device },
-    merged: merged
-  };
+  var devices = Object.create(null);
+  var merged = { v: 1, recs: [], wrong: {}, meta: {} };
+  for (const subject of Object.keys(bySubject).sort()) {
+    var db = bySubject[subject];
+    var id = subject + '|' + LEGACY_ID;
+    devices[id] = Object.assign({}, db, { v: 1, deviceId: id, subject: subject });
+    merged = mergeRecords(merged, db);   // merged 仅供训练台读，不用于同步
+  }
+  return { devices: devices, merged: { v: 1, recs: merged.recs, wrong: merged.wrong, meta: merged.meta } };
 }
 
 /** CLI：node 工具/trainer/seed.mjs [输出目录]
@@ -66,10 +77,15 @@ if (process.argv[1] && path.resolve(process.argv[1]) === path.resolve(fileURLToP
   const files = fs.readdirSync(seedDir).filter((f) => /\.json$/i.test(f)).map((f) => path.join(seedDir, f)).sort();
   if (!files.length) { console.error('没有找到原始种子：' + seedDir); process.exit(1); }
   var result = rebuildLegacy(files);
-  fs.mkdirSync(outDir, { recursive: true });
-  var dest = path.join(outDir, LEGACY_ID + '.json');
-  fs.writeFileSync(dest, JSON.stringify(result.devices[LEGACY_ID], null, 2) + '\n', 'utf8');
-  var d = result.devices[LEGACY_ID];
-  console.log('✓ 写入 ' + dest);
-  console.log('  ' + d.recs.length + ' 条 recs · ' + Object.keys(d.wrong).length + ' 道错题 · deviceId=' + d.deviceId);
+  // 清理旧版单文件混合快照（早期段三产物，物理+数学混在 devices/legacy-*.json）
+  var stale = path.join(outDir, LEGACY_ID + '.json');
+  if (fs.existsSync(stale)) { fs.unlinkSync(stale); console.log('· 移除旧的混合快照 ' + stale); }
+  for (const id of Object.keys(result.devices).sort()) {
+    var d = result.devices[id];
+    var dest = path.join(outDir, d.subject, LEGACY_ID + '.json');
+    fs.mkdirSync(path.dirname(dest), { recursive: true });
+    fs.writeFileSync(dest, JSON.stringify(d, null, 2) + '\n', 'utf8');
+    console.log('✓ 写入 ' + dest);
+    console.log('  ' + d.recs.length + ' 条 recs · ' + Object.keys(d.wrong).length + ' 道错题 · deviceId=' + d.deviceId);
+  }
 }
