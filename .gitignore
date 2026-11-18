@@ -67,3 +67,8 @@ _verify/
 _site/
 # 英语工程 vite 构建产物（CI/本地 npm run build 可重建；assemble-site.sh 从此处取文件）
 apps/english/dist/
+# ── 段三：学习记录真实数据只在私有仓 learning-records，绝不进公开站点仓（ADR-0007 决定 9） ──
+# 学习记录/ 下只保留 README.md；原始种子与设备快照一律忽略
+学习记录/*.json
+学习记录/**/*.json
+!学习记录/README.md

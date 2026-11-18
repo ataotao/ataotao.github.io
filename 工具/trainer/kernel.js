@@ -139,53 +139,26 @@ export function uiScript(cfg) {
   var DB = load();
 
   /* ---------- 记录层 ---------- */
-  function emptyDB() { return { v: 1, recs: [], wrong: {}, meta: { round: 0, lastKind: {} }, sess: null }; }
+  function devId() { return window.__ltSyncUI ? window.__ltSyncUI.deviceId() : undefined; }
+  function emptyDB() { return { v: 1, deviceId: devId(), recs: [], wrong: {}, meta: { round: 0, lastKind: {} }, sess: null }; }
   function load() {
     try {
       var d = JSON.parse(localStorage.getItem(KEY) || 'null');
-      if (d && d.v === 1 && Array.isArray(d.recs) && d.wrong && typeof d.wrong === 'object') return d;
+      if (d && d.v === 1 && Array.isArray(d.recs) && d.wrong && typeof d.wrong === 'object') {
+        if (!d.deviceId && window.__ltSyncUI) d.deviceId = window.__ltSyncUI.deviceId();  // 旧记录补 deviceId
+        return d;
+      }
     } catch (e) {}
     return emptyDB();
   }
   function save() { try { localStorage.setItem(KEY, JSON.stringify(DB)); } catch (e) {} }
   function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
 
-  /* ---------- 合并函数（导入按钮 / 云同步 共用，段三不许另写） ----------
-     去重键：(ts, mod, kind, prompt 前 40 字)。合并不求和：并集 + 各自保留。 */
-  function recSig(r) { return [r.ts, r.mod, r.kind, String(r.prompt || '').slice(0, 40)].join('|'); }
-  function mergeRecords(base, incoming) {
-    var out = emptyDB(), seen = Object.create(null);
-    function addRec(r) {
-      if (!r || typeof r !== 'object') return;
-      var k = recSig(r); if (seen[k]) return; seen[k] = 1; out.recs.push(r);
-    }
-    ((base && base.recs) || []).forEach(addRec);
-    ((incoming && incoming.recs) || []).forEach(addRec);
-    out.recs.sort(function (a, b) { return (a.ts || 0) - (b.ts || 0); });
-    if (out.recs.length > 2000) out.recs = out.recs.slice(-1500);
-    var bw = (base && base.wrong) || {}, iw = (incoming && incoming.wrong) || {};
-    Object.keys(bw).forEach(function (k) { out.wrong[k] = bw[k]; });
-    Object.keys(iw).forEach(function (k) {
-      var a = out.wrong[k], b = iw[k];
-      if (!a) { out.wrong[k] = b; return; }
-      out.wrong[k] = {
-        key: k, mod: b.mod || a.mod, kind: b.kind || a.kind,
-        kindName: b.kindName || a.kindName, modName: b.modName || a.modName,
-        title: b.title || a.title, prompt: b.prompt || a.prompt, fields: b.fields || a.fields,
-        tip: b.tip || a.tip, explain: b.explain || a.explain, kp: b.kp || a.kp,
-        ts: Math.min(a.ts || Infinity, b.ts || Infinity),
-        due: Math.min(a.due || Infinity, b.due || Infinity),
-        n: Math.max(a.n || 1, b.n || 1)
-      };
-    });
-    var bm = (base && base.meta) || {}, im = (incoming && incoming.meta) || {};
-    out.meta = {
-      round: Math.max(bm.round || 0, im.round || 0),
-      lastKind: Object.assign({}, bm.lastKind || {}, im.lastKind || {})
-    };
-    out.sess = null;
-    return out;
-  }
+  /* ---------- 合并函数：全局共用（merge.mjs 内联），导入 / 云同步共用同一份 ----------
+     去重键 (ts,mod,kind,prompt[:40]||kn)；不求和；days/lastRound/dayPlan/sess 不进载体。
+     本地薄封装仅为兼容 selfcheck 的 window[global].mergeRecords 钩子。 */
+  function recSig(r) { return window.__ltMerge.recSig(r); }
+  function mergeRecords(a, b) { return window.__ltMerge.mergeRecords(a, b); }
   function importText(txt) {
     var d;
     try { d = JSON.parse(txt); } catch (e) { alert('不是合法的 JSON 文件'); return false; }
@@ -279,7 +252,8 @@ export function uiScript(cfg) {
     var s = S.sess, recMod = (s.mode === 'wrong' || s.mode === 'wrongall') ? (S.q.mod || 'all') : (s.mod || (S.q.mod || 'all'));
     DB.recs.push({ ts: Date.now(), mod: recMod, kind: S.q.kind, kindName: S.q.kindName,
       title: S.q.title, ok: res.ok, got: res.got, total: res.total,
-      prompt: S.q.prompt, kp: S.q.kp, mode: s.mode });
+      prompt: S.q.prompt, kp: S.q.kp, mode: s.mode,
+      qid: recMod + '.' + (S.q.kind || '') + '.' + String(S.q.prompt || '').slice(0, 40) });
     if (DB.recs.length > 2000) DB.recs = DB.recs.slice(-1500);
     if (res.ok) {
       s.right++;
@@ -547,7 +521,11 @@ export function uiScript(cfg) {
       '<div class="row" style="margin-top:16px"><button class="btn" data-act="export">导出记录 JSON</button>' +
       '<button class="btn" data-act="import">导入记录 JSON</button>' +
       '<input type="file" id="importFile" accept="application/json,.json" style="display:none">' +
-      '<button class="btn btn-ghost" data-act="reset">清空记录</button></div></div>';
+      '<button class="btn btn-ghost" data-act="reset">清空记录</button></div>' +
+      '<div class="row" style="margin-top:10px"><button class="btn btn-ghost" data-act="sync">云同步（跨设备）</button>' +
+      '<button class="btn btn-ghost" data-act="pathelp" title="PAT 怎么生成">PAT 是什么？</button>' +
+      '<input id="syncPat" type="password" placeholder="GitHub PAT（只填一次，存本机）" style="flex:1;min-width:180px;padding:8px;border:1px solid var(--line);border-radius:8px">' +
+      '<span id="syncMsg" class="small muted"></span></div></div>';
   }
 
   /* ---------- 事件绑定 ---------- */
@@ -616,6 +594,12 @@ export function uiScript(cfg) {
       document.getElementById('importFile').click(); return;
     } else if (a === 'reset') {
       if (confirm(T.resetConfirm)) { DB = emptyDB(); clearSess(); save(); render(); return; }
+    } else if (a === 'sync') {
+      var patEl = document.getElementById('syncPat');
+      if (patEl && patEl.value) window.__ltSyncUI.setPAT(patEl.value);
+      window.__ltSyncUI.run(); return;   // 异步：内部 setDB → save/render，不在此重复
+    } else if (a === 'pathelp') {
+      alert(window.__ltSyncUI.patHelp); return;
     }
     save(); render();
   }
@@ -631,6 +615,13 @@ export function uiScript(cfg) {
     if (v === 'today') go('today'); else if (v === 'wrong') go('wrong');
     else if (v === 'report') go('report');
     else if (v === 'mod' && p.m) go('mod', p.m, p.k || null);
+  });
+
+  /* 段三：云同步适配层注入宿主接口（DB 读写/通知），按钮 data-act="sync" 触发 */
+  if (window.__ltSyncUI) window.__ltSyncUI.init({
+    getDB: function () { return DB; },
+    setDB: function (d) { DB = d; save(); render(); },
+    notify: function (msg) { var el = document.getElementById('syncMsg'); if (el) el.textContent = msg; }
   });
 
   /* 启动即读 hash；带 hash 进入不恢复上次位置（契约） */

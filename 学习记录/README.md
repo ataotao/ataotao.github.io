@@ -61,6 +61,8 @@
 记录里是孩子自己的作答数据。**合并进 `ataotao/ataotao.github.io` 之后，本目录所在仓库是公开的**
 （它对外发 Pages），所以：
 
-- 真实作答记录**不再提交到本目录**，改放进私有的数据仓 `learning-records`（见 ADR-0007）；
-- 本目录只留这份说明；「一键备份」仍会把记录写到本机，放哪里由你决定；
+- 真实作答记录**不再提交到本目录**，改放进私有的数据仓 `learning-records`（见 ADR-0007）：
+  私有仓 `ataotao/ataotao.github.io_learning-records`，本机 clone 在 `C:/work/my-work/learning-records`；
+  `raw/` 放历史导出种子（只增不改），`devices/` 放各设备快照。可用环境变量 `LT_RECORDS_DIR` 覆盖根目录。
+- 本目录只留这份说明；`.gitignore` 已排除本目录下所有 JSON，防误提交；
 - 历史导出只进私有仓，**绝不进站点仓**——这是硬约束，不是习惯。

@@ -5,7 +5,8 @@
   var tabs = document.getElementById('tabs');
 
   /* ---------- 存储 ---------- */
-  function blankDB() { return { v: MT.VERSION, recs: [], wrong: {}, days: {}, meta: { created: Date.now() } }; }
+  function devId() { return window.__ltSyncUI ? window.__ltSyncUI.deviceId() : undefined; }
+  function blankDB() { return { v: MT.VERSION, deviceId: devId(), recs: [], wrong: {}, days: {}, meta: { created: Date.now() } }; }
   var DB = (function () {
     try {
       var raw = localStorage.getItem(KEY);
@@ -15,6 +16,7 @@
         try { localStorage.setItem(KEY + '.bak', raw); } catch (e2) { }   /* 旧版本先留备份，再重置 */
         return blankDB();
       }
+      if (!o.deviceId && window.__ltSyncUI) o.deviceId = devId();   /* 旧记录补 deviceId */
       o.recs = o.recs || []; o.wrong = o.wrong || {}; o.days = o.days || {}; o.meta = o.meta || {};
       return o;
     } catch (e) { return blankDB(); }
@@ -680,7 +682,8 @@
     s.done++;
     if (res.ok) s.right++;
     var recMod = s.mod === 'wrong' ? (S.q.mod || 'drill') : s.mod;
-    DB.recs.push({ ts: Date.now(), mod: recMod, kind: q.kind, kn: q.title, ok: res.ok, got: res.got, total: res.total, sec: sec, hint: S.hint, mode: S.mode, daily: !!s.daily });
+    DB.recs.push({ ts: Date.now(), mod: recMod, kind: q.kind, kn: q.title, ok: res.ok, got: res.got, total: res.total, sec: sec, hint: S.hint, mode: S.mode, daily: !!s.daily,
+      qid: recMod + '.' + (q.kind || '') + '.' + String(q.title || '') });
     /* 记住这个模块最近练的题型：模块页「先看例题」用它，别随机抽到别的题型 */
     if (q.kind) { DB.meta.lastKind = DB.meta.lastKind || {}; DB.meta.lastKind[recMod] = q.kind; }
     snapAdd(s.mod === 'wrong' ? (S.q.mod || 'drill') : s.mod, q, res, sec);
@@ -861,6 +864,12 @@
         h('button', { class: 'btn btn-sm', onclick: selfCheck }, '自检（每组 120 题）'),
         h('button', { class: 'btn btn-sm', style: 'color:#d93025', onclick: clearAll }, '清空记录')
       ),
+      h('div', { class: 'row', style: 'margin-top:8px' },
+        h('button', { class: 'btn btn-sm', onclick: runSync }, '云同步（跨设备）'),
+        h('button', { class: 'btn btn-sm btn-ghost', title: 'PAT 怎么生成', onclick: function () { alert(window.__ltSyncUI.patHelp); } }, 'PAT 是什么？'),
+        h('input', { id: 'syncPat', type: 'password', placeholder: 'GitHub PAT（存本机）', style: 'flex:1;min-width:160px;padding:6px;border:1px solid var(--line);border-radius:8px' }),
+        h('span', { id: 'syncMsg', class: 'small muted' })
+      ),
       h('p', { class: 'small muted', style: 'margin-bottom:0' }, '记录只在本机浏览器；清缓存 / 换设备前先导出，放进 学习记录/。')
     );
     app.appendChild(data);
@@ -885,21 +894,18 @@
         try {
           var o = JSON.parse(String(fr.result));
           if (!o || o.v !== MT.VERSION || !Array.isArray(o.recs)) throw new Error('格式不对');
-          /* 去重：同一份 JSON 导入两次不会把统计翻倍 */
-          var seen = {};
-          DB.recs.forEach(function (r) { seen[r.ts + '|' + r.mod + '|' + r.kind] = 1; });
-          var added = 0;
-          o.recs.forEach(function (r) {
-            if (!r || typeof r.ts !== 'number') return;
-            var kk = r.ts + '|' + r.mod + '|' + r.kind;
-            if (seen[kk]) return;
-            seen[kk] = 1; DB.recs.push(r); added++;
-          });
-          Object.keys(o.wrong || {}).forEach(function (k) {
-            var w = o.wrong[k];
+          /* recs/wrong 与云同步共用同一合并函数（merge.mjs 内联），同份导入两次不翻倍。
+             脚手架族 recs 带 kn 无 prompt，合并键取 prompt[:40]||kn，见 ADR-0007 决定 4。
+             days 是设备态、不进云同步载体；本地导入仍需它算连续天数，故照原样合并。 */
+          var before = DB.recs.length;
+          var merged = window.__ltMerge.mergeRecords(DB, o);
+          DB.recs = merged.recs;
+          Object.keys(merged.wrong || {}).forEach(function (k) {
+            var w = merged.wrong[k];
             if (!w || !Array.isArray(w.fields) || typeof w.due !== 'number') return;   /* 结构坏的错题跳过 */
             DB.wrong[k] = w;
           });
+          var added = DB.recs.length - before;
           Object.keys(o.days || {}).forEach(function (k) {
             var src = o.days[k];
             if (!src || !Array.isArray(src.qs)) return;
@@ -912,6 +918,12 @@
       fr.readAsText(f);
     };
     inp.click();
+  }
+  function runSync() {
+    if (!window.__ltSyncUI) { alert('云同步组件未加载'); return; }
+    var patEl = document.getElementById('syncPat');
+    if (patEl && patEl.value) window.__ltSyncUI.setPAT(patEl.value);
+    window.__ltSyncUI.run();
   }
   function selfCheck() {
     var t0 = Date.now();
@@ -938,6 +950,12 @@
     if (!S.answered) { submit(); return; }
     if (S.fix && !S.fix.ok) { submitFix(); return; }
     next();
+  });
+  /* 段三：云同步适配层注入宿主接口（DB 读写/通知），报告页「云同步」按钮触发 runSync */
+  if (window.__ltSyncUI) window.__ltSyncUI.init({
+    getDB: function () { return DB; },
+    setDB: function (d) { DB = d; save(); render(); },
+    notify: function (msg) { var el = document.getElementById('syncMsg'); if (el) el.textContent = msg; }
   });
   (function boot() {
     var m = (location.hash || '').match(/view=([a-z]+)/);

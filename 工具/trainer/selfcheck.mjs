@@ -16,9 +16,12 @@ const html = fs.readFileSync(path.join(ROOT, SUB.outFile), 'utf8');
 
 const fail = (m) => { console.error('✗ ' + m); process.exit(1); };
 const coreM = html.match(/<script id="core">([\s\S]*?)<\/script>/);
+const mergeM = html.match(/<script id="merge">([\s\S]*?)<\/script>/);
 const uiM = html.match(/<script id="ui">([\s\S]*?)<\/script>/);
 if (!coreM || !uiM) fail('产物缺少 core / ui 脚本节点');
+if (!mergeM) fail('产物缺少 merge 脚本节点（段三：两族共用的事件并集合并函数）');
 if ((html.match(/<script id="core">/g) || []).length !== 1) fail('core 脚本节点不唯一');
+if ((html.match(/<script id="merge">/g) || []).length !== 1) fail('merge 脚本节点不唯一');
 
 /* ===== 脚手架族（物理 / 数学）：三源逐字节内联，只校验「产物=源」契约 =====
    渲染引擎用 h() + canvas，DOM 桩覆盖不了；运行时另由 check-training.mjs --ui 守。 */
@@ -38,12 +41,21 @@ if (SUB.family === 'scaffold') {
   if (!new RegExp('var\\s+' + SUB.coreGlobal + '\\s*=\\s*\\(function').test(coreM[1])) {
     fail(`core 没有暴露 ${SUB.coreGlobal}`);
   }
+  // merge 段与真源一致（去 export 后比对），且导入调用共用函数
+  const mergeSrc = fs.readFileSync(path.join(ROOT, '工具/trainer/merge.mjs'), 'utf8').replace(/^export\s+/gm, '').trim();
+  if (n(mergeM[1].replace(/window\.__ltMerge[^\n]*\n?/, '')) !== n(mergeSrc)) {
+    fail('merge 段与真源 工具/trainer/merge.mjs 不一致（改了源忘重建？）');
+  }
+  if (uiM[1].indexOf('__ltMerge.mergeRecords') < 0) fail('UI 导入未调用共用合并函数');
+  // 段三：sync 段存在、UI 有云同步按钮、注入了宿主接口
+  if (!/id="sync"/.test(html)) fail('产物缺少 sync 脚本节点');
+  if (uiM[1].indexOf('__ltSyncUI') < 0 || uiM[1].indexOf('云同步') < 0) fail('UI 未接云同步');
   // 记录键在 UI 里
   if (uiM[1].indexOf("'" + SUB.key + "'") < 0) fail(`UI 里找不到记录键 ${SUB.key}`);
-  // 单文件：无外部依赖
-  if (/<script[^>]+src=|<link[^>]+href=|fetch\(/.test(html)) fail('产物有外部依赖，不是单文件');
+  // 单文件：无外部脚本/样式引用（fetch 是云同步必需的运行时 API，不算外部依赖）
+  if (/<script[^>]+src=|<link[^>]+href=/.test(html)) fail('产物有外部依赖，不是单文件');
   console.log(`✓ ${name} 脚手架族内核自检通过`);
-  console.log('  css/core/ui 三源与产物逐字节一致 · core 暴露 ' + SUB.coreGlobal + ' · 记录键 ' + SUB.key + ' · 单文件');
+  console.log('  css/core/ui 三源逐字节一致 · merge 段同源 · core 暴露 ' + SUB.coreGlobal + ' · 记录键 ' + SUB.key + ' · 单文件');
   process.exit(0);
 }
 
@@ -86,6 +98,8 @@ vm.createContext(sandbox);
 
 try {
   vm.runInContext(coreM[1], sandbox, { filename: name + '.core.js' });
+  vm.runInContext(mergeM[1], sandbox, { filename: name + '.merge.js' });
+  if (!sandbox.__ltMerge || typeof sandbox.__ltMerge.mergeRecords !== 'function') fail('merge 脚本未挂出 __ltMerge');
   vm.runInContext(uiM[1], sandbox, { filename: name + '.ui.js' });
 } catch (e) {
   fail('产物运行时异常：' + e.message + '\n' + (e.stack || '').split('\n').slice(0, 4).join('\n'));
@@ -93,6 +107,9 @@ try {
 
 const T = sandbox[SUB.global];
 if (!T || !T.CH || typeof T.mergeRecords !== 'function') fail('没有拿到训练器测试钩子 / mergeRecords');
+/* 段三：云同步静态契约（sync 段存在、UI 接了按钮；网络运行层本机不测） */
+if (!/id="sync"/.test(html)) fail('产物缺少 sync 脚本节点');
+if (uiM[1].indexOf('__ltSyncUI') < 0 || uiM[1].indexOf('云同步') < 0) fail('UI 未接云同步');
 
 /* ① 启动渲染：今日视图有单元卡片、有统计区 */
 if (app.innerHTML.indexOf('modcard') < 0) fail('今日视图没有单元卡片');

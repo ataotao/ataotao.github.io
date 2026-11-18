@@ -22,6 +22,27 @@ import { shell as scaffoldShell } from './scaffold.js';
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
 const r = (p) => fs.readFileSync(path.join(ROOT, p), 'utf8');
 
+/* 段三：事件并集合并函数（merge.mjs）去 export 后内联进产物，挂到全局供两族 UI 共用。
+   去掉 export 后是普通脚本；新 vm.Script 语法体检同样覆盖它。 */
+function mergeScript() {
+  const src = r('工具/trainer/merge.mjs').replace(/^export\s+/gm, '');
+  return '<script id="merge">\n' + src.trimEnd() + '\n' +
+    'window.__ltMerge = { pickIdent: pickIdent, recSig: recSig, mergeRecords: mergeRecords };\n' +
+    '</script>\n\n';
+}
+
+/* 段三：云同步编排（sync.mjs，依赖 merge）与网络适配（sync-adapter.mjs）内联，
+   去 export / import 后挂全局 __ltSync / __ltSyncUI，供两族 UI 的同步按钮调用。 */
+function syncScript() {
+  const core = r('工具/trainer/sync.mjs')
+    .replace(/^import[^\n]*\n/gm, '')
+    .replace(/^export\s+/gm, '');
+  const adapter = r('工具/trainer/sync-adapter.mjs');
+  return '<script id="sync">\n' + core.trimEnd() + '\n' +
+    'window.__ltSync = { carrierSnapshot: carrierSnapshot, syncPlan: syncPlan };\n' +
+    adapter.trimEnd() + '\n</script>\n\n';
+}
+
 const arg = process.argv[2];
 if (!arg) {
   console.error('用法：node 工具/trainer/build.mjs 化学|物理|数学   (或 all)');
@@ -56,8 +77,10 @@ for (const name of names) {
   }
 
   const uiSrc = isScaffold ? r(SUBJECT.uiFile) : uiScript(SUBJECT).replace(/^<script id="ui">|<\/script>\s*$/g, '');
-  // 语法体检：core 与 ui 都不能有语法错
-  for (const [label, src] of [['core', core], ['ui', uiSrc]]) {
+  const mergeSrc = r('工具/trainer/merge.mjs').replace(/^export\s+/gm, '');
+  const syncCore = r('工具/trainer/sync.mjs').replace(/^import[^\n]*\n/gm, '').replace(/^export\s+/gm, '');
+  // 语法体检：core / merge / sync / ui 都不能有语法错（适配层用 async/顶层 IIFE，vm 可解析）
+  for (const [label, src] of [['core', core], ['merge', mergeSrc], ['sync', syncCore + '\n' + r('工具/trainer/sync-adapter.mjs')], ['ui', uiSrc]]) {
     try { new vm.Script(src, { filename: name + '.' + label + '.js' }); }
     catch (e) { console.error(`✗ ${name} ${label} 语法错误：${e.message}`); process.exit(1); }
   }
@@ -67,19 +90,23 @@ for (const name of names) {
     const shellHtml = scaffoldShell(SUBJECT).replace('/*__CSS__*/', r(SUBJECT.cssFile).trimEnd());
     html = shellHtml +
       '<script id="core">\n' + core.trimEnd() + '\n</script>\n\n' +
+      mergeScript() + syncScript() +
       '<script id="ui">\n' + uiSrc.trimEnd() + '\n</script>\n' +
       '</body>\n</html>\n';
   } else {
     html = shell(SUBJECT) +
       '<script id="core">\n' + core.trimEnd() + '\n</script>\n\n' +
+      mergeScript() + syncScript() +
       uiScript(SUBJECT);
   }
 
-  // 结构自检：两个约定脚本必须存在且各一次
+  // 结构自检：四个约定脚本必须存在且各一次
   const nCore = (html.match(/<script id="core">/g) || []).length;
+  const nMerge = (html.match(/<script id="merge">/g) || []).length;
+  const nSync = (html.match(/<script id="sync">/g) || []).length;
   const nUi = (html.match(/<script id="ui">/g) || []).length;
-  if (nCore !== 1 || nUi !== 1) {
-    console.error(`✗ 产物脚本节点异常：core×${nCore} ui×${nUi}`); process.exit(1);
+  if (nCore !== 1 || nMerge !== 1 || nSync !== 1 || nUi !== 1) {
+    console.error(`✗ 产物脚本节点异常：core×${nCore} merge×${nMerge} sync×${nSync} ui×${nUi}`); process.exit(1);
   }
 
   const dest = path.join(ROOT, SUBJECT.outFile);
