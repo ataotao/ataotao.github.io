@@ -25,10 +25,10 @@ pub 历史/核心考点训练.html       历史/核心考点训练.html
 pub 数学/函数思维脚手架.html     数学/函数思维脚手架.html
 pub 数学/今晚急救包.html         数学/今晚急救包.html
 pub 数学/坐标图象训练.html       数学/坐标图象训练.html
-pub 数学/数学训练脚手架.html     数学/数学训练脚手架.html
+pub 数学/数学闪练卡.html         数学/数学闪练卡.html
 pub 数学/错题本.html             数学/错题本.html
 pub 物理/物理思维脚手架.html     物理/物理思维脚手架.html
-pub 物理/物理训练脚手架.html     物理/物理训练脚手架.html
+pub 物理/物理闪练卡.html         物理/物理闪练卡.html
 pub 英语/九上英语过关练习.html   英语/九上英语过关练习.html
 pub 英语/语法闪练.html           英语/语法闪练.html
 pub 语文/语文思维脚手架.html     语文/语文思维脚手架.html

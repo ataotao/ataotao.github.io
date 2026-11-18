@@ -3,7 +3,7 @@
 
 # 2026-11-18 起全库统一 LF。
 # 原因：Windows 上的编辑器与 agent 工具会把整份文件改写成 CRLF，而 git 里存的是 LF，
-# 于是每次小改动都变成全文件假 diff（物理训练脚手架.html 一次编辑就报 6886 行）。
+# 于是每次小改动都变成全文件假 diff（物理闪练卡.html 一次编辑就报 6886 行）。
 # text=auto 在入库时归一化：工作树里出现 CRLF 也不再算改动；eol=lf 让检出与 CI（Linux）
 # 都拿到 LF。二进制文件由 git 自动识别，不受影响。
 * text=auto eol=lf
