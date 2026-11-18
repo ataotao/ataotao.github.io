@@ -63,10 +63,7 @@ input.txt.ok{border-color:var(--ok);background:var(--ok-soft)}input.txt.bad{bord
 .fb.good{background:var(--ok-soft);border:1px solid #bfe6cd}
 .fb.bad{background:var(--bad-soft);border:1px solid #f3c9c4}
 .fb.ftitle{font-weight:800;font-size:15px;margin-bottom:6px}
-.steps{list-style:none;margin:8px 0;padding:0}
-.steps li{padding:3px 0}
 .mk{display:inline-block;width:20px;font-weight:800}.mk.ok{color:var(--ok)}.mk.bad{color:var(--bad)}
-.stepno{color:var(--muted);font-size:12px}
 .tipbox{background:var(--warn-soft);border:1px solid #f1d9a8;border-radius:10px;padding:10px 12px;margin-top:10px;font-size:14px;color:#8a4b00}
 .kpline{margin-top:8px;font-size:12px;color:var(--muted)}
 .modgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px;margin-top:10px}
@@ -82,7 +79,6 @@ input.txt.ok{border-color:var(--ok);background:var(--ok-soft)}input.txt.bad{bord
 .statbox .k{font-size:12px;color:var(--muted)}.statbox .v{font-size:24px;font-weight:800;color:var(--brand)}
 .wrongitem{border-left:3px solid var(--bad);padding-left:10px;margin:10px 0}
 .due{font-size:11px;color:var(--warn);font-weight:700}
-.kbd{font-family:ui-monospace,Menlo,Consolas,monospace;background:#f1f4fa;border:1px solid var(--line);border-bottom-width:2px;border-radius:6px;padding:1px 6px;font-size:12px}
 @media(max-width:560px){.qbody{font-size:15px}.statbox .v{font-size:20px}.top-note{display:none}}
 @media print{nav.tabs,header.top,.btn{display:none!important}body{background:#fff}.card{box-shadow:none}}
 </style>
@@ -94,11 +90,10 @@ input.txt.ok{border-color:var(--ok);background:var(--ok-soft)}input.txt.bad{bord
   <nav class="tabs" id="tabs"></nav>
 </header>
 <main class="wrap" id="app"></main>
-
 <script id="core">
 /* ============================================================
    化学闪练卡 · 核心逻辑（纯数据 + 出题 + 判分，不碰 DOM）
-   节点：<script id="core"> 由 化学/题库工具/check-flash.mjs 抽出跑自检
+   节点：本文件由 build.mjs 内联为 core 脚本节点，check-flash.mjs 抽出跑自检
    ============================================================ */
 var CH = (function () {
   'use strict';
@@ -1273,20 +1268,83 @@ var CH = (function () {
 <script id="ui">
 (function () {
   'use strict';
-  var KEY = 'chemflash_v1';
+  var CFG = {"key":"chemflash_v1","sessionSuffix":"_sess","coreGlobal":"CH","inputPrefix":"chemIn","global":"__chemflash","plan":[1,3,7,14],"views":[{"k":"today","n":"今日"},{"k":"wrong","n":"错题回炉"},{"k":"report","n":"训练报告"}],"texts":{"scopePill":"全 {units} 单元 · {kinds} 类考点","intro":"每题随机生成，选择点选即判、数值 / 符号填空输入后提交；答案解析讲清考点与难点。答错自动进错题库，按 {plan} 天回炉。","unitTitle":"按单元练（人教版初三全考点）","allScope":"全考点","inputPlaceholder":"输入答案","summaryGood":"不错！错的题已进错题库，按 {plan} 天再练一遍就稳了。","summaryLow":"别急，错题已收进错题库。点「错题回炉」优先清到期题，配合每题的考点难点解析效果最好。","dueUnit":"天后复习","wrongTimes":"错","wrongIntro":"答错的题自动进本，按 {plan} 天到期回炉；回炉答对自动移出。","downloadName":"化学闪练卡记录.json","resetConfirm":"确定清空所有做题记录和错题库？此操作不可撤销。"}};
+  var CH = window[CFG.coreGlobal];
+  var KEY = CFG.key, SKEY = KEY + CFG.sessionSuffix, IP = CFG.inputPrefix;
+  var T = CFG.texts, PLAN = CFG.plan, VIEWS = CFG.views;
+  function fillTpl(s, map) {
+    return String(s == null ? '' : s).replace(/\{(\w+)\}/g, function (m, k) {
+      return map[k] == null ? m : String(map[k]);
+    });
+  }
+  /* 全内核统一一套统计 DOM（statgrid / statbox） */
+  function statBoxes(pairs, style) {
+    return '<div class="statgrid"' + (style ? ' style="' + style + '"' : '') + '>' + pairs.map(function (p) {
+      return '<div class="statbox"><div class="k">' + p[0] + '</div><div class="v">' + p[1] + '</div></div>';
+    }).join('') + '</div>';
+  }
   var app = document.getElementById('app'), tabsBar = document.getElementById('tabs');
   var S = { view: 'today', mod: null, kind: null, sess: null, q: null, res: null, answered: false, hint: false, back: null };
   var DB = load();
 
+  /* ---------- 记录层 ---------- */
+  function emptyDB() { return { v: 1, recs: [], wrong: {}, meta: { round: 0, lastKind: {} }, sess: null }; }
   function load() {
     try {
       var d = JSON.parse(localStorage.getItem(KEY) || 'null');
       if (d && d.v === 1 && Array.isArray(d.recs) && d.wrong && typeof d.wrong === 'object') return d;
     } catch (e) {}
-    return { v: 1, recs: [], wrong: {}, meta: { round: 0, lastKind: {} }, sess: null };
+    return emptyDB();
   }
   function save() { try { localStorage.setItem(KEY, JSON.stringify(DB)); } catch (e) {} }
   function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+
+  /* ---------- 合并函数（导入按钮 / 云同步 共用，段三不许另写） ----------
+     去重键：(ts, mod, kind, prompt 前 40 字)。合并不求和：并集 + 各自保留。 */
+  function recSig(r) { return [r.ts, r.mod, r.kind, String(r.prompt || '').slice(0, 40)].join('|'); }
+  function mergeRecords(base, incoming) {
+    var out = emptyDB(), seen = Object.create(null);
+    function addRec(r) {
+      if (!r || typeof r !== 'object') return;
+      var k = recSig(r); if (seen[k]) return; seen[k] = 1; out.recs.push(r);
+    }
+    ((base && base.recs) || []).forEach(addRec);
+    ((incoming && incoming.recs) || []).forEach(addRec);
+    out.recs.sort(function (a, b) { return (a.ts || 0) - (b.ts || 0); });
+    if (out.recs.length > 2000) out.recs = out.recs.slice(-1500);
+    var bw = (base && base.wrong) || {}, iw = (incoming && incoming.wrong) || {};
+    Object.keys(bw).forEach(function (k) { out.wrong[k] = bw[k]; });
+    Object.keys(iw).forEach(function (k) {
+      var a = out.wrong[k], b = iw[k];
+      if (!a) { out.wrong[k] = b; return; }
+      out.wrong[k] = {
+        key: k, mod: b.mod || a.mod, kind: b.kind || a.kind,
+        kindName: b.kindName || a.kindName, modName: b.modName || a.modName,
+        title: b.title || a.title, prompt: b.prompt || a.prompt, fields: b.fields || a.fields,
+        tip: b.tip || a.tip, explain: b.explain || a.explain, kp: b.kp || a.kp,
+        ts: Math.min(a.ts || Infinity, b.ts || Infinity),
+        due: Math.min(a.due || Infinity, b.due || Infinity),
+        n: Math.max(a.n || 1, b.n || 1)
+      };
+    });
+    var bm = (base && base.meta) || {}, im = (incoming && incoming.meta) || {};
+    out.meta = {
+      round: Math.max(bm.round || 0, im.round || 0),
+      lastKind: Object.assign({}, bm.lastKind || {}, im.lastKind || {})
+    };
+    out.sess = null;
+    return out;
+  }
+  function importText(txt) {
+    var d;
+    try { d = JSON.parse(txt); } catch (e) { alert('不是合法的 JSON 文件'); return false; }
+    if (!d || !Array.isArray(d.recs) || !d.wrong || typeof d.wrong !== 'object') {
+      alert('不是本训练器的记录文件（需要 recs / wrong 字段）'); return false;
+    }
+    DB = mergeRecords(DB, d); save(); render();
+    alert('已导入并合并：累计 ' + DB.recs.length + ' 条做题记录 / ' + Object.keys(DB.wrong).length + ' 道错题');
+    return true;
+  }
 
   /* ---------- 种子 / 去重 / 题型轮换 ---------- */
   function newSeed() { return (Date.now() ^ (Math.random() * 0xffffffff)) >>> 0; }
@@ -1302,6 +1360,7 @@ var CH = (function () {
     while (seenSigs.indexOf(sigOf(q)) >= 0 && tries < 40);
     return q;
   }
+  function modOf(k) { return k.mod; }
   function kindQueue(mod, n) {
     var m = CH.moduleById(mod), out = [];
     var all = m ? m.kinds.map(function (k) { return k.id; }) : CH.allKinds.map(function (k) { return modOf(k) + '/' + k.id; });
@@ -1312,7 +1371,6 @@ var CH = (function () {
     for (var i = 0; i < n; i++) out.push(ordered[i % ordered.length]);
     return out;
   }
-  function modOf(k) { return k.mod; }
 
   /* ---------- 会话 ---------- */
   function startRound(mod, kind, total, mode) {
@@ -1387,14 +1445,14 @@ var CH = (function () {
         var sel = document.querySelector('#app [data-choice="' + i + '"].sel');
         return sel ? parseInt(sel.getAttribute('data-choice-val'), 10) : null;
       }
-      var el = document.getElementById('chemIn' + i);
+      var el = document.getElementById(IP + i);
       return el ? el.value : '';
     });
   }
   function snapshot() { return { view: S.view, q: S.q, res: S.res, answered: S.answered, sess: S.sess, hint: S.hint, vals: S.vals }; }
   function restore() {
     try {
-      var x = JSON.parse(localStorage.getItem(KEY + '_sess') || 'null');
+      var x = JSON.parse(localStorage.getItem(SKEY) || 'null');
       if (x && x.q && x.sess) {
         S.q = x.q; S.res = x.res; S.answered = !!x.answered; S.sess = x.sess;
         S.hint = !!x.hint; S.vals = x.vals || null; S.view = 'quiz';
@@ -1403,22 +1461,23 @@ var CH = (function () {
     } catch (e) {}
     return false;
   }
-  function saveSess() { try { localStorage.setItem(KEY + '_sess', JSON.stringify(snapshot())); } catch (e) {} }
-  function clearSess() { try { localStorage.removeItem(KEY + '_sess'); } catch (e) {} DB.sess = null; save(); }
+  function saveSess() { try { localStorage.setItem(SKEY, JSON.stringify(snapshot())); } catch (e) {} }
+  function clearSess() { try { localStorage.removeItem(SKEY); } catch (e) {} DB.sess = null; save(); }
 
-  /* ---------- 错题库（1/3/7/14 天） ---------- */
-  function wrongKey(q) { return CH.normChem(q.mod + '.' + q.kind + '|' + q.prompt).slice(0, 90); }
+  /* ---------- 错题库（plan 天回炉，默认 1/3/7/14） ---------- */
+  function wrongKey(q) { return CH.normChem(q.mod + "." + q.kind + "|" + q.prompt).slice(0, 90); }
+  function gapFor(n) { return PLAN[Math.min(Math.max(n, 1), PLAN.length) - 1]; }
   function addWrong(q) {
     var k = wrongKey(q), now = Date.now(), w = DB.wrong[k], n = w ? (w.n || 1) + 1 : 1;
-    var gap = n <= 1 ? 1 : (n === 2 ? 3 : (n === 3 ? 7 : 14));
+    var gap = gapFor(n);
     DB.wrong[k] = { key: k, mod: q.mod, kind: q.kind, kindName: q.kindName, modName: q.modName,
       title: q.title, prompt: q.prompt, fields: q.fields, tip: q.tip, explain: q.explain, kp: q.kp,
       ts: now, due: now + gap * CH.DAY, n: n };
   }
   function bumpWrong(k) {
     var w = DB.wrong[k]; if (!w) return;
-    var n = (w.n || 1) + 1, gap = n <= 1 ? 1 : (n === 2 ? 3 : (n === 3 ? 7 : 14));
-    w.n = n; w.due = Date.now() + gap * CH.DAY;
+    var n = (w.n || 1) + 1;
+    w.n = n; w.due = Date.now() + gapFor(n) * CH.DAY;
   }
   function removeWrong(k) { delete DB.wrong[k]; }
   function dueWrong() {
@@ -1428,7 +1487,6 @@ var CH = (function () {
   }
 
   /* ---------- 路由 ---------- */
-  var VIEWS = [{ k: 'today', n: '今日' }, { k: 'wrong', n: '错题回炉' }, { k: 'report', n: '训练报告' }];
   function parseHash() {
     var h = (location.hash || '').replace(/^#\/?/, ''), p = {};
     h.split('&').forEach(function (kv) { if (!kv) return; var a = kv.split('='); p[a[0]] = decodeURIComponent(a[1] || ''); });
@@ -1445,7 +1503,7 @@ var CH = (function () {
     var p = parseHash(), v = p.view || 'today', startKind = null;
     if (v === 'mod' && p.m) {
       S.view = 'mod'; S.mod = p.m; S.kind = p.k || null;
-      if (p.k) startKind = p.k;   // 带 k 直接进入该题型练习
+      if (p.k) startKind = p.k;
     } else if (v === 'wrong') S.view = 'wrong';
     else if (v === 'report') S.view = 'report';
     else S.view = 'today';
@@ -1467,23 +1525,20 @@ var CH = (function () {
     bind();
   }
   function renderTabs() {
-    var list = VIEWS.slice();
-    tabsBar.innerHTML = list.map(function (t) {
+    tabsBar.innerHTML = VIEWS.map(function (t) {
       var act = (S.view === t.k || (t.k === 'wrong' && S.view === 'summary')) ? ' active' : '';
       return '<button data-go="' + t.k + '" class="' + act.trim() + '">' + t.n + '</button>';
     }).join('');
   }
-
   function stats() {
     var recs = DB.recs, done = recs.length, right = recs.filter(function (r) { return r.ok; }).length;
     return { done: done, right: right, rate: done ? Math.round(right / done * 100) : 0,
       wrong: Object.keys(DB.wrong).length, due: dueWrong().length };
   }
   function viewToday() {
-    var st = stats();
-    var resume = '';
+    var st = stats(), resume = '';
     try {
-      var x = JSON.parse(localStorage.getItem(KEY + '_sess') || 'null');
+      var x = JSON.parse(localStorage.getItem(SKEY) || 'null');
       if (x && x.sess && x.sess.done < x.sess.total) resume = '<button class="btn" data-act="resume">继续上次练习（第 ' + (x.sess.done + 1) + ' 题）</button>';
     } catch (e) {}
     var mods = CH.modules.map(function (m) {
@@ -1495,19 +1550,17 @@ var CH = (function () {
         (recs.length ? ' · 已练 ' + recs.length + ' 题（' + Math.round(ok / recs.length * 100) + '%）' : ' · 未练') +
         (wr ? ' · 错题 ' + wr : '') + '</div></div>';
     }).join('');
+    var scope = fillTpl(T.scopePill, { units: CH.modules.length, kinds: CH.allKinds.length });
+    var intro = fillTpl(T.intro, { plan: PLAN.join(' / ') });
     return '<div class="card"><div class="row"><h2 style="margin:0">今日练习</h2><span class="grow"></span>' +
-      '<span class="pill">全 12 单元 · ' + CH.allKinds.length + ' 类考点</span></div>' +
-      '<p class="muted small">每题随机生成，选择点选即判、数值 / 符号填空输入后提交；答案解析讲清考点与难点。答错自动进错题库，按 1 / 3 / 7 / 14 天回炉。</p>' +
-      '<div class="statgrid" style="margin:12px 0">' +
-      '<div class="statbox"><div class="k">累计做题</div><div class="v">' + st.done + '</div></div>' +
-      '<div class="statbox"><div class="k">正确率</div><div class="v">' + st.rate + '%</div></div>' +
-      '<div class="statbox"><div class="k">错题库</div><div class="v">' + st.wrong + '</div></div>' +
-      '<div class="statbox"><div class="k">今日到期</div><div class="v">' + st.due + '</div></div></div>' +
+      '<span class="pill">' + scope + '</span></div>' +
+      '<p class="muted small">' + esc(intro) + '</p>' +
+      statBoxes([['累计做题', st.done], ['正确率', st.rate + '%'], ['错题库', st.wrong], ['今日到期', st.due]], 'margin:12px 0') +
       '<div class="row"><button class="btn btn-primary" data-act="all">全部考点 · 随机 10 题</button>' +
       '<button class="btn" data-act="all20">混合 20 题</button>' +
       (st.due ? '<button class="btn" data-act="wrongdue">复习到期错题（' + st.due + '）</button>' : '') +
       resume + '</div></div>' +
-      '<h2>按单元练（人教版初三全考点）</h2><div class="modgrid">' + mods + '</div>';
+      '<h2>' + esc(T.unitTitle) + '</h2><div class="modgrid">' + mods + '</div>';
   }
   function viewMod() {
     var m = CH.moduleById(S.mod);
@@ -1529,7 +1582,7 @@ var CH = (function () {
     var s = S.sess, q = S.q;
     if (!s || !q) return '<div class="card"><p>练习已结束。</p><button class="btn" data-go="today">回今日</button></div>';
     var pct = Math.round(s.done / s.total * 100);
-    var head = '<div class="row"><span class="pill">' + ((s.mode === 'wrong' || s.mode === 'wrongall') ? '错题回炉' : esc(q.modName || '全考点')) + '</span>' +
+    var head = '<div class="row"><span class="pill">' + ((s.mode === 'wrong' || s.mode === 'wrongall') ? '错题回炉' : esc(q.modName || T.allScope)) + '</span>' +
       '<span class="small muted">' + esc(q.title || '') + ' · ' + esc(q.kindName || '') + '</span>' +
       '<span class="grow"></span><span class="small muted">' + (s.done + 1) + ' / ' + s.total + '</span></div>' +
       '<div class="progress" style="margin:8px 0 14px"><i style="width:' + pct + '%"></i></div>';
@@ -1549,7 +1602,7 @@ var CH = (function () {
       } else {
         var icls = 'txt' + (S.answered ? ' ' + ((S.res && S.res.res[i].ok) ? 'ok' : 'bad') : '');
         body += '<div class="field">' + (f.label ? '<span class="lbl">' + esc(f.label) + '</span>' : '') +
-          '<input class="' + icls + '" id="chemIn' + i + '" autocomplete="off" placeholder="输入答案"' +
+          '<input class="' + icls + '" id="' + IP + i + '" autocomplete="off" placeholder="' + esc(T.inputPlaceholder) + '"' +
           (S.answered ? ' value="' + esc((S.vals || [])[i] || '') + '" readonly' : '') + '>' +
           (f.unit ? '<span class="unit">' + esc(f.unit) + '</span>' : '') + '</div>';
       }
@@ -1594,10 +1647,8 @@ var CH = (function () {
   function viewSummary() {
     var s = S.sess, rate = s.total ? Math.round(s.right / s.total * 100) : 0;
     return '<div class="card"><h2>本轮完成</h2>' +
-      '<div class="statgrid"><div class="statbox"><div class="k">做题</div><div class="v">' + s.done + '</div></div>' +
-      '<div class="statbox"><div class="k">答对</div><div class="v">' + s.right + '</div></div>' +
-      '<div class="statbox"><div class="k">正确率</div><div class="v">' + rate + '%</div></div></div>' +
-      '<p class="muted small" style="margin-top:12px">' + (rate >= 80 ? '不错！错的题已进错题库，按 1 / 3 / 7 / 14 天再练一遍就稳了。' : '别急，错题已收进错题库。点「错题回炉」优先清到期题，配合每题的考点难点解析效果最好。') + '</p>' +
+      statBoxes([['做题', s.done], ['答对', s.right], ['正确率', rate + '%']]) +
+      '<p class="muted small" style="margin-top:12px">' + esc(rate >= 80 ? fillTpl(T.summaryGood, { plan: PLAN.join(' / ') }) : T.summaryLow) + '</p>' +
       '<div class="row"><button class="btn btn-primary" data-act="again-round">再来一轮（新题）</button>' +
       '<button class="btn" data-go="wrong">去清错题</button><button class="btn btn-ghost" data-go="today">回今日</button></div></div>';
   }
@@ -1607,13 +1658,13 @@ var CH = (function () {
     var list = all.map(function (w) {
       var d = Math.ceil((w.due - Date.now()) / CH.DAY);
       return '<div class="wrongitem"><div class="row"><span class="pill">' + esc(w.kindName || w.kind) + '</span>' +
-        (w.due <= Date.now() ? '<span class="pill bad">待复习</span>' : '<span class="due">' + d + ' 天后复习</span>') +
-        '<span class="grow"></span><span class="small muted">错 ' + (w.n || 1) + ' 次</span>' +
+        (w.due <= Date.now() ? '<span class="pill bad">待复习</span>' : '<span class="due">' + d + ' ' + T.dueUnit + '</span>') +
+        '<span class="grow"></span><span class="small muted">' + T.wrongTimes + ' ' + (w.n || 1) + ' 次</span>' +
         '<button class="btn btn-ghost btn-sm" data-del="' + esc(w.key) + '">移除</button></div>' +
         '<div class="small">' + esc(w.prompt) + '</div></div>';
     }).join('');
     return '<div class="card"><div class="row"><h2 style="margin:0">错题回炉</h2><span class="pill">共 ' + all.length + ' 道</span></div>' +
-      '<p class="muted small">答错的题自动进本，按 1 / 3 / 7 / 14 天到期回炉；回炉答对自动移出。</p>' +
+      '<p class="muted small">' + esc(fillTpl(T.wrongIntro, { plan: PLAN.join(' / ') })) + '</p>' +
       '<div class="row">' + (due.length ? '<button class="btn btn-primary" data-act="wrongdue">复习到期题（' + due.length + '）</button>' : '<span class="small muted">今天没有到期错题，明天再来。</span>') +
       (all.length ? '<button class="btn" data-act="wrongall">全部错题练一遍</button>' : '') + '</div>' +
       (list || '<p class="muted">错题库是空的，先去做几题吧。</p>') + '</div>';
@@ -1638,14 +1689,13 @@ var CH = (function () {
       return '<div class="row small"><span>' + esc(w.k) + '</span><span class="grow"></span>' +
         '<span class="pill ' + (w.rate >= .8 ? 'ok' : (w.rate >= .6 ? 'warn' : 'bad')) + '">' + Math.round(w.rate * 100) + '% (' + w.n + ')</span></div>';
     }).join('') : '<p class="muted small">做题满 2 次后，这里会显示最需要复习的考点。</p>';
-    return '<div class="card"><h2>训练报告</h2><div class="statgrid">' +
-      '<div class="statbox"><div class="k">累计做题</div><div class="v">' + st.done + '</div></div>' +
-      '<div class="statbox"><div class="k">累计答对</div><div class="v">' + st.right + '</div></div>' +
-      '<div class="statbox"><div class="k">总正确率</div><div class="v">' + st.rate + '%</div></div>' +
-      '<div class="statbox"><div class="k">错题待清</div><div class="v">' + st.wrong + '</div></div></div>' +
+    return '<div class="card"><h2>训练报告</h2>' +
+      statBoxes([['累计做题', st.done], ['累计答对', st.right], ['总正确率', st.rate + '%'], ['错题待清', st.wrong]]) +
       '<h3>各单元正确率</h3>' + (mods || '<p class="muted small">还没有记录。</p>') +
       '<h3>薄弱考点（正确率最低）</h3>' + weakHtml +
       '<div class="row" style="margin-top:16px"><button class="btn" data-act="export">导出记录 JSON</button>' +
+      '<button class="btn" data-act="import">导入记录 JSON</button>' +
+      '<input type="file" id="importFile" accept="application/json,.json" style="display:none">' +
       '<button class="btn btn-ghost" data-act="reset">清空记录</button></div></div>';
   }
 
@@ -1678,6 +1728,14 @@ var CH = (function () {
     Array.prototype.forEach.call(app.querySelectorAll('[data-act]'), function (b) {
       b.onclick = function () { action(b.getAttribute('data-act')); };
     });
+    var fileEl = document.getElementById('importFile');
+    if (fileEl) fileEl.onchange = function () {
+      var f = fileEl.files && fileEl.files[0]; if (!f) return;
+      var rd = new FileReader();
+      rd.onload = function () { importText(String(rd.result)); };
+      rd.readAsText(f, 'utf-8');
+      fileEl.value = '';
+    };
   }
   function action(a) {
     if (a === 'all') { startRound(null, null, 10); }
@@ -1702,12 +1760,11 @@ var CH = (function () {
     else if (a === 'export') {
       var blob = new Blob([JSON.stringify(DB, null, 2)], { type: 'application/json' });
       var u = URL.createObjectURL(blob), a2 = document.createElement('a');
-      a2.href = u; a2.download = '化学闪练卡记录.json'; a2.click(); URL.revokeObjectURL(u); return;
+      a2.href = u; a2.download = T.downloadName; a2.click(); URL.revokeObjectURL(u); return;
+    } else if (a === 'import') {
+      document.getElementById('importFile').click(); return;
     } else if (a === 'reset') {
-      if (confirm('确定清空所有做题记录和错题库？此操作不可撤销。')) {
-        DB = { v: 1, recs: [], wrong: {}, meta: { round: 0, lastKind: {} }, sess: null };
-        clearSess(); save(); render(); return;
-      }
+      if (confirm(T.resetConfirm)) { DB = emptyDB(); clearSess(); save(); render(); return; }
     }
     save(); render();
   }
@@ -1727,9 +1784,7 @@ var CH = (function () {
 
   /* 启动即读 hash；带 hash 进入不恢复上次位置（契约） */
   boot();
-  window.__chemflash = { S: S, DB: DB, CH: CH, go: go, startRound: startRound, action: action,
-    save: save, load: load, render: render };
+  window[CFG.global] = { S: S, DB: DB, CH: CH, go: go, startRound: startRound, action: action,
+    save: save, load: load, render: render, mergeRecords: mergeRecords, importText: importText };
 })();
 </script>
-</body>
-</html>

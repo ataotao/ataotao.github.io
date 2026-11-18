@@ -7,9 +7,18 @@
 - `开始.html` —— **唯一入口**：今天做什么（读本机记录）+ 六科入口 + 一键备份记录
 - `道德与法治/` `历史/` `物理/` `数学/` `英语/` `化学/` `语文/` —— 各科目训练材料
   （`化学/` 两份：`化学思维脚手架.html` 走 `源/shell.html` + `题库/*.json` → `node 工具/build.mjs` 生成；
-  `化学闪练卡.html` 是单文件 B 类（人教版初三 12 单元 / 53 题型参数化随机出题，解析讲考点难点 + 错题库 1/3/7/14 回炉，
-  见 `docs/plans/化学闪练卡-2026-11-16.md`；改出题/判分后跑 `node 化学/题库工具/check-flash.mjs`，记录键 `chemflash_v1`）；
+  `化学闪练卡.html` 是训练器模板首个迁移产物（人教版初三 12 单元 / 53 题型参数化随机出题，解析讲考点难点 + 错题库 1/3/7/14 回炉）：
+  内核 `工具/trainer/kernel.js` + 配置 `工具/trainer/subjects/化学.mjs` + core `化学/源/flash.core.js`
+  → `node 工具/trainer/build.mjs 化学` 生成；改出题/判分改 core、改壳改内核/配置，**产物不手改**。
+  验收：`node 化学/题库工具/check-flash.mjs`（出题）+ `node 工具/trainer/selfcheck.mjs 化学`（UI 运行层）；
+  记录键 `chemflash_v1`，见 `docs/plans/单仓发布与记录同步-2026-11-18.md` 段二）；
   `语文/` 是单文件 B 类：`语文思维脚手架.html` 引擎与数据同体，无构建脚本；
+  `物理训练脚手架.html`、`数学训练脚手架.html` 已迁入训练器模板第二族 `scaffold`：
+  三源 `物理/源/train.{css,core,ui}.js` / `数学/源/train.*` 逐字节内联，
+  `node 工具/trainer/build.mjs 物理|数学` 生成；产物与迁移前逐字节相同，改三源后重建，
+  验收 `node 物理|数学/题库工具/check-training.mjs` + `node 工具/trainer/selfcheck.mjs 物理|数学`。
+  （两族：闪练卡族 `kernel.js` 壳/统计/记录全共用；脚手架族 `scaffold.js` 只共用壳，
+  渲染引擎 h()/SVG/分数独立，因数学无 UI 桩测试不强合并。）
   `数学/` 四份：`函数思维脚手架.html`（B 类，`qb.py` 自动 `.bak`；**主包只有引擎约 300 KB，
   试卷数据在 `题库/packs/*.js` 分片里**，改题只动 `题库/pack-*.json` 再 `qb.py build`，
   发手机用 `qb.py bundle` 生成 `_单文件/` 版）＋ `坐标图象训练.html`
