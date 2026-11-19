@@ -103,7 +103,7 @@
       var x = META[m.id] || { n: 6, sub: '' };
       return { mod: m.id, n: x.n, label: m.name, sub: x.sub, go: m.id };
     });
-    var dueN = Object.keys(DB.wrong).filter(function (k) { return DB.wrong[k].due <= Date.now(); }).length;
+    var dueN = window.__ltReview.dueList(DB.wrong).length;
     tasks_plan.push({ mod: 'wrong', n: 1, label: '错题回炉', sub: (dueN ? '到期 ' + dueN + ' 题' : '暂无到期') + ' · 2 分钟', go: 'wrong' });
     var done = {};
     tasks_plan.forEach(function (p) { done[p.mod] = 0; });
@@ -140,14 +140,14 @@
         h('li', null, '今天的配比：' + plan.note),
         h('li', null, '主力题型按 8 类轮换（顶点式 → 交点式 → 反比例 → 线段 → 分段 → 利润 → 拱桥 → 对称轴），8 天一轮全覆盖；最近一轮有错题时，主力换成错的那一类（弱项优先）。'),
         h('li', null, '难度顺序：因式分解 → 解方程 → 轮换题；写解析式先顶点式（要写全式），再主力，再次主力。'),
-        h('li', null, '同一套内题干不重复；错题回炉按 1/3/7/14 天到期；跳过几天不累计欠账。')
+        h('li', null, '同一套内题干不重复；错题按 1/3/7/14 天档位回炉，到期后连续 2 次答对才算掌握（看提示/秒答不算）；跳过几天不累计欠账。')
       )
     ));
 
     var stats = h('div', { class: 'grid', style: 'margin-top:12px' },
       statCard('今日题数', tr.length),
       statCard('今日正确率', tr.length ? pct(tr.filter(function (r) { return r.ok; }).length, tr.length) + '%' : '—'),
-      statCard('错题待回炉', Object.keys(DB.wrong).filter(function (k) { return DB.wrong[k].due <= Date.now(); }).length)
+      statCard('错题待回炉', window.__ltReview.dueList(DB.wrong).length)
     );
     app.appendChild(stats);
 
@@ -288,10 +288,10 @@
     S.example = false;   /* 例题页残留标记必须清掉，否则回炉会显示例题 */
     S.back = null;
     var now = Date.now();
-    var due = Object.keys(DB.wrong).map(function (k) { return DB.wrong[k]; }).filter(function (w) { return w.due <= now; });
+    var due = window.__ltReview.dueList(DB.wrong, now);
     if (!due.length) {
       var all = Object.keys(DB.wrong).length;
-      alert(all ? '错题本里有 ' + all + ' 道，但还没到期（按 1/3/7/14 天回炉）。今天先练新的。' : '错题本是空的，先做几题吧。');
+      alert(all ? '错题本里有 ' + all + ' 道，但还没到期（按 1/3/7/14 天档位回炉，到期后连对 2 次才算掌握）。今天先练新的。' : '错题本是空的，先做几题吧。');
       return;
     }
     S.mode = 'wrong';
@@ -682,13 +682,13 @@
     s.done++;
     if (res.ok) s.right++;
     var recMod = s.mod === 'wrong' ? (S.q.mod || 'drill') : s.mod;
+    var qid = recMod + '.' + (q.kind || '') + '.' + String(q.title || '');
     DB.recs.push({ ts: Date.now(), mod: recMod, kind: q.kind, kn: q.title, ok: res.ok, got: res.got, total: res.total, sec: sec, hint: S.hint, mode: S.mode, daily: !!s.daily,
-      qid: recMod + '.' + (q.kind || '') + '.' + String(q.title || '') });
+      qid: qid });
     /* 记住这个模块最近练的题型：模块页「先看例题」用它，别随机抽到别的题型 */
     if (q.kind) { DB.meta.lastKind = DB.meta.lastKind || {}; DB.meta.lastKind[recMod] = q.kind; }
     snapAdd(s.mod === 'wrong' ? (S.q.mod || 'drill') : s.mod, q, res, sec);
-    if (!res.ok) addWrong(q);
-    else removeWrong(q);   /* 任何模式答对都移出错题本（11-12 卡判据：答对自动移出） */
+    reviewAnswer(q, res.ok, sec, qid);   /* 统一错题回炉（ADR-0010）：连对2次+行为约束才算掌握 */
     save();
     render();
   }
@@ -727,21 +727,27 @@
     nextQuestion();
   }
 
-  /* ---------- 错题本 ---------- */
+  /* ---------- 错题本（共享回炉内核 ADR-0010，规则只在 工具/trainer/review.js） ---------- */
   function wrongKey(q) { return q.id + '|' + String(q.prompt).slice(0, 60); }
-  function addWrong(q) {
-    var k = wrongKey(q);
-    var w = DB.wrong[k];
-    var now = Date.now();
-    var n = w ? (w.n || 1) + 1 : 1;
-    var gap = n <= 1 ? 1 : (n === 2 ? 3 : (n === 3 ? 7 : 14));
-    DB.wrong[k] = {
-      id: q.id, mod: q.mod || S.sess.mod, kind: q.kind, title: q.title, prompt: q.prompt,
-      fields: q.fields, explain: q.explain, tip: q.tip, no: q.no, fig: q.fig,
-      ts: now, due: now + gap * MT.DAY, n: n
-    };
+  /* 数学最短有效用时：选择/填空 3 秒，写解析式/大题前两步(entry，含单空题) 10 秒 */
+  function minSecOf(q) { return (q.mod === 'write' || q.mod === 'entry' || (q.fields && q.fields.length > 1)) ? 10 : 3; }
+  function reviewAnswer(q, ok, sec, qid) {
+    var R = window.__ltReview, k = wrongKey(q), w = DB.wrong[k], now = Date.now();
+    if (R.migrate(w, now)) save();
+    if (!ok) {
+      if (!w) {
+        w = { id: q.id, qid: qid, mod: q.mod || S.sess.mod, kind: q.kind, title: q.title, prompt: q.prompt,
+          fields: q.fields, explain: q.explain, tip: q.tip, no: q.no, fig: q.fig };
+        DB.wrong[k] = w;
+      }
+      if (qid && !w.qid) w.qid = qid;   /* 旧条目补 qid，供历史错题清单匹配 */
+      R.onWrong(w, now);
+      return;
+    }
+    var sig = { sec: sec, minSec: minSecOf(q), hint: !!S.hint, fixed: false };
+    var act = R.onPass(w, sig, now);
+    if (act === 'mastered') delete DB.wrong[k];
   }
-  function removeWrong(q) { delete DB.wrong[wrongKey(q)]; }
 
   /* ---------- 本轮总结 ---------- */
   function renderSummary() {
@@ -821,7 +827,7 @@
     var wc = h('div', { class: 'card' }, h('h3', { style: 'margin-top:0' }, '错题本（最近 10 条）'));
     if (!ws.length) wc.appendChild(h('div', { class: 'empty' }, '还没有错题'));
     ws.forEach(function (w) {
-      var dueTxt = w.due <= Date.now() ? '已到期' : ('还有 ' + Math.ceil((w.due - Date.now()) / MT.DAY) + ' 天');
+      var dueTxt = window.__ltReview.statusText(w);
       wc.appendChild(h('div', { class: 'wrongitem' },
         h('div', { class: 'wt', html: String(w.prompt).replace(/<br>/g, ' ').slice(0, 80) + '…' }),
         h('div', { class: 'small muted' }, dueTxt)
@@ -831,6 +837,27 @@
       h('button', { class: 'btn btn-primary btn-sm', onclick: startWrong }, '回炉到期的')
     ));
     app.appendChild(wc);
+
+    /* 历史错题清单：从 recs 聚合整学期曾错过的题（掌握后移出错题本仍留档） */
+    var hist = window.__ltReview.everWrong(DB.recs, DB.wrong);
+    var hc = h('div', { class: 'card' },
+      h('h3', { style: 'margin-top:0' }, '曾经错过的题（期末复盘 · ' + hist.length + ' 道）'),
+      h('p', { class: 'small muted', style: 'margin:0 0 8px' }, '按错次排序。移到「已掌握」的题仍留档；错题库已清的浏览器无历史，导出 JSON 可长期保存。'));
+    if (!hist.length) hc.appendChild(h('div', { class: 'empty' }, '还没有答错的记录'));
+    else {
+      var ht = h('table', { class: 'tb' }, h('tr', null,
+        h('th', null, '题目'), h('th', { class: 'n' }, '错/对'), h('th', null, '首错'), h('th', null, '末错'), h('th', null, '状态')));
+      hist.forEach(function (e) {
+        ht.appendChild(h('tr', null,
+          h('td', null, e.label.slice(0, 40)),
+          h('td', { class: 'n' }, e.wrong + '/' + e.okCount),
+          h('td', null, window.__ltReview.dayText(e.firstWrongAt)),
+          h('td', null, window.__ltReview.dayText(e.lastWrongAt)),
+          h('td', null, e.inBook ? '在错题本' : '已掌握')));
+      });
+      hc.appendChild(ht);
+    }
+    app.appendChild(hc);
 
     /* 当日题单快照（最近 14 天，按天倒序） */
     var dkeys = dayKeys().reverse();

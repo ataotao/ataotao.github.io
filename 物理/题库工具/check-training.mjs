@@ -436,6 +436,9 @@ function runUI() {
   vm.createContext(dom.ctx);
   try {
     vm.runInContext(coreM[1], dom.ctx, { filename: '物理闪练卡.core.js' });
+    const reviewM = html.match(/<script id="review">([\s\S]*?)<\/script>/);
+    if (!reviewM) throw new Error('产物缺少 <script id="review">（共享错题回炉内核）');
+    vm.runInContext(reviewM[1], dom.ctx, { filename: '物理闪练卡.review.js' });
     vm.runInContext(uiM[1], dom.ctx, { filename: '物理闪练卡.ui.js' });
   } catch (e) {
     console.error('✗ UI 脚本在 DOM 桩里运行失败：' + e.message + '\n' + (e.stack || ''));

@@ -197,6 +197,9 @@ function runUI() {
   vm.createContext(ctx);
   vm.runInContext(dataSrc, ctx, { filename: 'data.js' });
   vm.runInContext(coreSrc, ctx, { filename: 'core.js' });
+  const reviewM = html.match(/<script id="review">([\s\S]*?)<\/script>/);
+  if (!reviewM) { console.error('✗ 产物缺少 <script id="review">（共享错题回炉内核）'); process.exit(1); }
+  vm.runInContext(reviewM[1], ctx, { filename: 'review.js' });
   // UI 依赖 merge / sync 段的全局，用桩顶上
   ctx.__ltMerge = { mergeRecords(a, b) {
     const seen = new Set((a.recs || []).map((r) => r.qid || r.kn || JSON.stringify(r)));
@@ -316,10 +319,13 @@ function runUI() {
 
   // 错题「真正掌握」：未到期答对不算；到期后连对两次（隔天）才移出
   const wrongObj = () => Object.values(T.db().wrong)[0];
-  const answerStored = (w, correct) => {
+  const answerStored = (w, correct, sec) => {
     T.startOneWrong(w);
     const f = T.S.q.fields[0];
     T.S.choice[0] = correct ? f.ans : (f.ans + 1) % f.options.length;
+    // 模拟真实思考用时：英语四选一最短有效 1.5 秒；秒答会被判无效
+    if (sec !== undefined) T.S.t0 = Date.now() - sec * 1000;
+    else T.S.t0 = Date.now() - 3000;
     T.submit();
   };
   answerStored(wrongObj(), true);
@@ -336,6 +342,7 @@ function runUI() {
   T.startWrong();
   ok('回炉单题 total=1', T.S.sess.total === 1 && T.S.sess.mode === 'wrong');
   T.S.choice[0] = T.S.q.fields[0].ans;
+  T.S.t0 = Date.now() - 3000;   // 模拟有效作答用时（≥1.5 秒）
   T.submit();
   ok('回炉答完仍是 1 / 1', countText() === '1 / 1' && T.S.sess.done === 0);
   ok('第二次到期答对才移出', Object.keys(T.db().wrong).length === 0);
@@ -347,14 +354,22 @@ function runUI() {
   T.S.choice[0] = (T.S.q.fields[0].ans + 1) % T.S.q.fields[0].options.length;
   T.submit();
   wrongObj().okStreak = 1;
+  wrongObj().lvl = 3;                 // 从 7 天档答错 → 回退到 3 天档（ADR-0010）
   wrongObj().due = Date.now() - 1000;
   answerStored(wrongObj(), false);
-  ok('到期答错清零并重排 3 天', Object.keys(T.db().wrong).length === 1 && wrongObj().okStreak === 0
-    && wrongObj().n === 2 && wrongObj().due - Date.now() > 2 * 86400000);
+  ok('到期答错清零并回退一档到 3 天', Object.keys(T.db().wrong).length === 1 && wrongObj().okStreak === 0
+    && wrongObj().lvl === 2 && wrongObj().due - Date.now() > 2 * 86400000);
 
-  // 手动「已掌握」直接移出
-  T.markMastered(wrongObj());
-  ok('手动标记已掌握可移出', Object.keys(T.db().wrong).length === 0);
+  // 秒答蒙对不算数（英语四选一最短 1.5 秒）：连对清零、不进档
+  wrongObj().due = Date.now() - 1000;
+  wrongObj().okStreak = 1;
+  answerStored(wrongObj(), true, 0.2);
+  ok('秒答蒙对不算掌握', Object.keys(T.db().wrong).length === 1 && wrongObj().okStreak === 0);
+
+  // 「跳过本次」只推到期、不删除；仍要连对 2 次才移出
+  T.skipWrong(wrongObj());
+  ok('跳过本次不删除只推到期', Object.keys(T.db().wrong).length === 1
+    && wrongObj().due - Date.now() > 20 * 3600 * 1000);
 
   // 双击下一题不应连跳：第二下发生在 answered=false 之后
   T.startSession('primary.ox3a.unit1', 'e2c', 3);

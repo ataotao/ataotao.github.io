@@ -21,7 +21,7 @@ const texts = {
   summaryLow: '别急，错题已收进错题库。点「错题回炉」优先清到期题，配合每题的考点难点解析效果最好。',
   dueUnit: '天后复习',
   wrongTimes: '错',
-  wrongIntro: '答错的题自动进本，按 {plan} 天到期回炉；回炉答对自动移出。',
+  wrongIntro: '答错的题自动进本，按 {plan} 天档位回炉；到期后连续 2 次答对才算掌握（看提示/秒答不算）。',
   downloadName: '化学闪练卡记录.json',
   resetConfirm: '确定清空所有做题记录和错题库？此操作不可撤销。'
 };

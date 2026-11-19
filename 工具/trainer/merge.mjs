@@ -39,7 +39,8 @@ export function mergeRecords(base, incoming) {
   ((base && base.recs) || []).forEach(addRec);
   ((incoming && incoming.recs) || []).forEach(addRec);
   out.recs.sort(function (a, b) { return (a.ts || 0) - (b.ts || 0); });
-  if (out.recs.length > 2000) out.recs = out.recs.slice(-1500);
+  /* 不截断 recs：整学期作答是期末复盘（everWrong）的原始依据，砍掉最老记录会丢历史。
+     单条约 200 B，几千条在 localStorage 5 MB 配额内；与 kernel.js 的提交段口径一致。 */
 
   var bw = (base && base.wrong) || {}, iw = (incoming && incoming.wrong) || {};
   Object.keys(bw).forEach(function (k) { if (bw[k]) out.wrong[k] = Object.assign({}, bw[k]); });

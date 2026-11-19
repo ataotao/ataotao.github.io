@@ -199,7 +199,7 @@ ok("随机练习三档去重且隔离", randInfo && randInfo.view && randInfo.se
   randInfo.counts.every(x=>x.got===x.n && x.uniq===x.n && x.area==='random'), JSON.stringify(randInfo));
 await shot('02c-random');
 
-// 答错进错题本；到期前答对不算掌握；列表有「已掌握」
+// 答错进错题本；到期前答对不算掌握；列表有「跳过本次」与连对规则说明
 const wrongInfo = await $(`(() => {
   const T = window.__ew;
   T.startSession('primary.ox3a.unit1', 'e2c', 1);
@@ -214,17 +214,24 @@ const wrongInfo = await $(`(() => {
   T.go('wrong');
   const btns = [...document.querySelectorAll('button')].map((b) => b.textContent.trim());
   return { wrong: before, afterEarly, text: document.body.innerText.indexOf('错题本') >= 0,
-           hint: document.body.innerText.indexOf('连对两次') >= 0, mastered: btns.indexOf('已掌握') >= 0,
+           hint: document.body.innerText.indexOf('连续 2 次答对') >= 0, skipBtn: btns.indexOf('跳过本次') >= 0,
            okStreak: (Object.values(T.db().wrong)[0] || {}).okStreak };
 })()`);
 ok("答错进错题本并可渲染", wrongInfo && wrongInfo.wrong >= 1 && wrongInfo.text, JSON.stringify(wrongInfo));
 ok("未到期答对不算掌握", wrongInfo && wrongInfo.afterEarly === wrongInfo.wrong && wrongInfo.okStreak === 0, JSON.stringify(wrongInfo));
-ok("错题列表有「已掌握」与连对规则说明", wrongInfo && wrongInfo.mastered && wrongInfo.hint, JSON.stringify(wrongInfo));
+ok("错题列表有「跳过本次」与连对规则说明", wrongInfo && wrongInfo.skipBtn && wrongInfo.hint, JSON.stringify(wrongInfo));
 await shot('03-wrong');
 
-// 报告页
-const report = await $(`(() => { window.__ew.go('report'); return { text: document.body.innerText.indexOf('累计题数') >= 0, recs: window.__ew.db().recs.length }; })()`);
+// 报告页 + 历史错题清单（期末复盘：掌握后移出错题本仍留档）
+const report = await $(`(() => {
+  window.__ew.go('report');
+  const body = document.body.innerText;
+  const rows = [...document.querySelectorAll('.card table.tb tr')].length;
+  return { text: body.indexOf('累计题数') >= 0, recs: window.__ew.db().recs.length,
+           histTitle: body.indexOf('曾经错过的词') >= 0, histRows: rows };
+})()`);
 ok("报告页渲染", report && report.text && report.recs >= 4, JSON.stringify(report));
+ok("报告页有历史错题清单", report && report.histTitle && report.histRows >= 2, JSON.stringify(report));
 await shot('04-report');
 
 // 离线：无外部资源请求

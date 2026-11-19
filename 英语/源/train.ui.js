@@ -104,7 +104,7 @@
   function renderToday() {
     var tr = todayRecs();
     var ok = tr.filter(function (r) { return r.ok; }).length;
-    var due = Object.keys(DB.wrong).map(function (k) { return DB.wrong[k]; }).filter(function (w) { return w.due <= Date.now(); }).length;
+    var due = window.__ltReview.dueList(DB.wrong).length;
     app.appendChild(h('div', { class: 'grid' },
       statCard('今日题数', tr.length), statCard('今日正确率', pct(ok, tr.length) + '%'), statCard('错题待回炉', due)
     ));
@@ -283,7 +283,7 @@
   }
   function startWrong() {
     var now = Date.now();
-    var due = Object.keys(DB.wrong).map(function (k) { return DB.wrong[k]; }).filter(function (w) { return w.due <= now; });
+    var due = window.__ltReview.dueList(DB.wrong, now);
     if (!due.length) { alert(Object.keys(DB.wrong).length ? '错题还没到期（1/3/7/14 天回炉）。今天先练新的。' : '错题本是空的，先练一组词吧。'); return; }
     setSession('wrong', {
       mode: 'wrong', mod: 'wrong', kind: null, total: Math.min(due.length, 8), done: 0, right: 0, t0: now, queue: due.slice(0, 8),
@@ -388,13 +388,13 @@
     var s = S.sess;
     if (res.ok) s.right++;
     var recMod = s.mod === 'wrong' ? (q.mod || 'primary') : s.mod;
+    var qid = recMod + '.' + q.kind + '.' + String(q.prompt).slice(0, 40);
     DB.recs.push({
       ts: Date.now(), mod: recMod, kind: q.kind, kn: q.tip || q.prompt,
       ok: res.ok, got: res.got, total: res.total, sec: Math.max(1, Math.round((Date.now() - S.t0) / 1000)),
-      hint: false, mode: S.mode, qid: recMod + '.' + q.kind + '.' + String(q.prompt).slice(0, 40)
+      hint: false, mode: S.mode, qid: qid
     });
-    if (!res.ok) addWrong(q);
-    else passWrong(q);
+    reviewAnswer(q, res.ok, qid);   /* 统一错题回炉（ADR-0010）：连对2次+行为约束才算掌握 */
     save(); render();
   }
   function next() {
@@ -407,47 +407,42 @@
     nextQuestion();
   }
 
-  /* ---------- 错题本 ---------- */
+  /* ---------- 错题本（共享回炉内核 ADR-0010，规则只在 工具/trainer/review.js） ---------- */
   function wrongKey(q) { return q.id + '|' + String(q.prompt).slice(0, 60); }
-  function addWrong(q) {
-    var k = wrongKey(q), w = DB.wrong[k], now = Date.now();
-    var n = w ? (w.n || 1) + 1 : 1;
-    var gap = n <= 1 ? 1 : (n === 2 ? 3 : (n === 3 ? 7 : 14));
-    DB.wrong[k] = {
-      id: q.id, mod: q.mod, kind: q.kind, prompt: q.prompt, speak: q.speak, ipa: q.ipa,
-      fields: q.fields, tip: q.tip, answerText: q.answerText, kp: q.kp,
-      word: q.word, ex: q.ex, exZh: q.exZh,
-      kn: q.tip || q.prompt, ts: now, due: now + gap * EW.DAY, n: n,
-      okStreak: 0, lastOkAt: 0        // 到期后的连续答对次数（答错清零）
-    };
+  function reviewAnswer(q, ok, qid) {
+    var R = window.__ltReview, k = wrongKey(q), w = DB.wrong[k], now = Date.now();
+    if (R.migrate(w, now)) save();
+    if (!ok) {
+      if (!w) {
+        w = {
+          id: q.id, qid: qid, mod: q.mod, kind: q.kind, prompt: q.prompt, speak: q.speak, ipa: q.ipa,
+          fields: q.fields, tip: q.tip, answerText: q.answerText, kp: q.kp,
+          word: q.word, ex: q.ex, exZh: q.exZh, kn: q.tip || q.prompt
+        };
+        DB.wrong[k] = w;
+      }
+      if (qid && !w.qid) w.qid = qid;   /* 旧条目补 qid，供历史错题清单匹配 */
+      R.onWrong(w, now);
+      return;
+    }
+    var sec = Math.max(1, Math.round((now - (S.t0 || now)) / 1000));
+    var act = R.onPass(w, { sec: sec, minSec: 1.5, hint: false, fixed: false }, now);
+    if (act === 'mastered') delete DB.wrong[k];
   }
-  /* 错题「真正掌握」判定：不能靠一次蒙对——
-     - 到期（due 已到）后，任何模式答对都记一次「确认」；
-     - 连续两次到期确认（第二次至少隔 1 天）才移出；答错清零；
-     - 未到期答对不计，防止同一天连刷凑次数。 */
-  function passWrong(q) {
-    var k = wrongKey(q), w = DB.wrong[k], now = Date.now();
-    if (!w || !(w.due <= now)) return;
-    var streak = (w.okStreak || 0) + 1;
-    if (streak >= 2) { delete DB.wrong[k]; return; }
-    w.okStreak = streak;
-    w.lastOkAt = now;
-    w.due = now + EW.DAY;            // 明天再确认一次
-  }
-  /* 手动「已掌握」：家长/孩子确认后直接移出（兜底，不必等回炉）。 */
-  function markMastered(w) {
+  /* 「跳过本次」：不删除错题，只把到期推到一天后；仍须连对 2 次才移出（ADR-0010）。 */
+  function skipWrong(w) {
     if (!w) return;
     var k = wrongKey(w);
     if (!DB.wrong[k]) return;
-    if (!confirm('把「' + (w.word || w.prompt) + '」移出错题本？')) return;
-    delete DB.wrong[k];
+    if (!confirm('跳过本次：把「' + (w.word || w.prompt) + '」推迟到明天再练，仍要连对 2 次才算掌握。确定？')) return;
+    window.__ltReview.skip(DB.wrong[k]);
     save(); render();
   }
   function renderWrong() {
     var ws = Object.keys(DB.wrong).map(function (k) { return DB.wrong[k]; }).sort(function (a, b) { return a.due - b.due; });
     app.appendChild(h('div', { class: 'card' },
       h('div', { class: 'row' }, h('h2', { style: 'margin:0;font-size:19px' }, '错题本'), h('span', { class: 'pill' }, ws.length + ' 道')),
-      h('p', { class: 'muted small', style: 'margin:6px 0 0' }, '答错的词自动进本，按 1 / 3 / 7 / 14 天到期回炉。到期后要连对两次（隔天）、答错清零，才算真正掌握并移出；没到期时答对不算数。也可以手动标「已掌握」。'),
+      h('p', { class: 'muted small', style: 'margin:6px 0 0' }, '答错的词自动进本，按 1 / 3 / 7 / 14 天档位回炉。到期后要连续 2 次答对才算掌握（秒答不算），答错清零；没到期时答对不算数。急用可「跳过本次」推到明天，但仍要连对 2 次才移出。'),
       h('div', { class: 'row', style: 'margin-top:12px' },
         h('button', { class: 'btn btn-primary', onclick: startWrong }, '回炉到期的'),
         h('button', { class: 'btn', onclick: function () { go('report'); } }, '看报告'))
@@ -455,13 +450,13 @@
     var card = h('div', { class: 'card' });
     if (!ws.length) card.appendChild(h('div', { class: 'empty' }, '还没有错题，先练一组词吧。'));
     ws.forEach(function (w) {
-      var dueTxt = w.due <= Date.now() ? '已到期' : ('还有 ' + Math.ceil((w.due - Date.now()) / EW.DAY) + ' 天');
-      var passTxt = w.okStreak ? ' · 已确认 ' + w.okStreak + '/2，明天再对一次' : '';
+      var dueTxt = window.__ltReview.statusText(w);
+      var passTxt = w.okStreak ? ' · 已确认 ' + w.okStreak + '/2' : '';
       card.appendChild(h('div', { class: 'wrongitem' },
         h('div', { class: 'wt' }, String(w.tip || w.prompt).slice(0, 90)),
         h('div', { class: 'small muted' }, dueTxt + passTxt + ' · 错过 ' + (w.n || 1) + ' 次'),
         h('button', { class: 'btn btn-sm', onclick: (function (ww) { return function () { startOneWrong(ww); }; })(w) }, '重做'),
-        h('button', { class: 'btn btn-sm btn-ghost', onclick: (function (ww) { return function () { markMastered(ww); }; })(w) }, '已掌握')
+        h('button', { class: 'btn btn-sm btn-ghost', onclick: (function (ww) { return function () { skipWrong(ww); }; })(w) }, '跳过本次')
       ));
     });
     app.appendChild(card);
@@ -500,6 +495,28 @@
         h('span', { class: 'small muted' }, byKind[k].ok + '/' + byKind[k].n + ' · ' + pct(byKind[k].ok, byKind[k].n) + '%')));
     });
     app.appendChild(kcard);
+
+    // 历史错题清单：从 recs 聚合整学期曾错过的词（掌握后移出错题本仍留档）
+    var hist = window.__ltReview.everWrong(DB.recs, DB.wrong);
+    var hc = h('div', { class: 'card', style: 'margin-top:12px' },
+      h('b', null, '曾经错过的词（期末复盘 · ' + hist.length + ' 个）'),
+      h('p', { class: 'small muted', style: 'margin:4px 0 8px' }, '按错次排序。已掌握的词仍留档；错题库已清的浏览器无历史，导出 JSON 可长期保存。'));
+    if (!hist.length) hc.appendChild(h('div', { class: 'small muted' }, '还没有答错的记录'));
+    else {
+      var ht = h('table', { class: 'tb', style: 'margin-top:6px' }, h('tr', null,
+        h('th', null, '词 / 方向'), h('th', { class: 'n' }, '错/对'), h('th', null, '首错'), h('th', null, '末错'), h('th', null, '状态')));
+      hist.forEach(function (e) {
+        ht.appendChild(h('tr', null,
+          h('td', null, e.label.slice(0, 28) + (e.kind ? ' · ' + (EW.nameOf(e.kind) || e.kind) : '')),
+          h('td', { class: 'n' }, e.wrong + '/' + e.okCount),
+          h('td', null, window.__ltReview.dayText(e.firstWrongAt)),
+          h('td', null, window.__ltReview.dayText(e.lastWrongAt)),
+          h('td', null, e.inBook ? '在错题本' : '已掌握')));
+      });
+      hc.appendChild(ht);
+    }
+    app.appendChild(hc);
+
     app.appendChild(h('div', { class: 'card', style: 'margin-top:12px' },
       h('b', null, '记录管理'),
       h('p', { class: 'small muted' }, '记录只存本机。换设备或清缓存前先导出，到新设备再导入（重复的会自动跳过）。'),
@@ -598,7 +615,7 @@
     S: S, db: function () { return DB; }, EW: EW,
     startSession: startSession, startUnitAll: startUnitAll, startRandom: startRandom,
     startWrong: startWrong, startOneWrong: startOneWrong, restart: restart,
-    markMastered: markMastered,
+    skipWrong: skipWrong,
     importJSON: importJSON, clearAll: clearAll, submit: submit, next: next,
     go: go, render: render, exportJSON: exportJSON, selfCheck: selfCheck, speak: speak
   };

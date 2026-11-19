@@ -33,12 +33,12 @@ const TARGETS = [
   {
     name: '物理 · 闪练卡（训练器模板）',
     cmd: ['node', ['工具/trainer/build.mjs', '物理']],
-    watch: ['物理/物理闪练卡.html'],
+    watch: ['物理/物理闪练卡.html', '工具/trainer/review.js'],
   },
   {
     name: '数学 · 闪练卡（训练器模板）',
     cmd: ['node', ['工具/trainer/build.mjs', '数学']],
-    watch: ['数学/数学闪练卡.html'],
+    watch: ['数学/数学闪练卡.html', '工具/trainer/review.js'],
   },
   {
     name: '化学 · 思维脚手架',
@@ -48,7 +48,7 @@ const TARGETS = [
   {
     name: '化学 · 闪练卡（训练器模板）',
     cmd: ['node', ['工具/trainer/build.mjs', '化学']],
-    watch: ['化学/化学闪练卡.html'],
+    watch: ['化学/化学闪练卡.html', '工具/trainer/review.js'],
   },
   {
     name: '英语 · 语法闪练',
@@ -63,7 +63,7 @@ const TARGETS = [
   {
     name: '英语 · 单词闪练卡（训练器模板）',
     cmd: ['node', ['工具/trainer/build.mjs', '英语单词']],
-    watch: ['英语/英语单词闪练卡.html', '英语/词库.js'],
+    watch: ['英语/英语单词闪练卡.html', '工具/trainer/review.js', '英语/词库.js'],
   },
 ];
 

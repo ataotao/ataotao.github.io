@@ -99,7 +99,7 @@
       draw: { n: 2, sub: '2 题 · 3 分钟 · 四选一选正确画法' },
       read: { n: 2, sub: '2 题 · 3 分钟 · 量程 / 分度值 / 读数' }
     };
-    var dueN = Object.keys(DB.wrong).filter(function (k) { return DB.wrong[k].due <= Date.now(); }).length;
+    var dueN = window.__ltReview.dueList(DB.wrong).length;
     var plan = [
       { mod: 'calc', n: 4, label: '算到底', sub: META.calc.sub, go: 'calc' },
       { mod: 'amount', n: 4, label: '认量', sub: META.amount.sub, go: 'amount' },
@@ -155,7 +155,7 @@
     app.appendChild(h('div', { class: 'grid', style: 'margin-top:12px' },
       statCard('今日题数', tr.length),
       statCard('今日正确率', tr.length ? pct(tr.filter(function (r) { return r.ok; }).length, tr.length) + '%' : '—'),
-      statCard('错题待回炉', Object.keys(DB.wrong).filter(function (k) { return DB.wrong[k].due <= Date.now(); }).length)
+      statCard('错题待回炉', window.__ltReview.dueList(DB.wrong).length)
     ));
 
     var mods = h('div', { class: 'grid', style: 'margin-top:16px' });
@@ -315,10 +315,10 @@
   function startWrong() {
     S.example = false;
     S.back = null;    var now = Date.now();
-    var due = Object.keys(DB.wrong).map(function (k) { return DB.wrong[k]; }).filter(function (w) { return w.due <= now; });
+    var due = window.__ltReview.dueList(DB.wrong, now);
     if (!due.length) {
       var all = Object.keys(DB.wrong).length;
-      alert(all ? '错题本里有 ' + all + ' 道，但还没到期（按 1/3/7/14 天回炉）。今天先练新的。' : '错题本是空的，先做几题吧。');
+      alert(all ? '错题本里有 ' + all + ' 道，但还没到期（按 1/3/7/14 天档位回炉，到期后连对 2 次才算掌握）。今天先练新的。' : '错题本是空的，先做几题吧。');
       return;
     }
     S.mode = 'wrong';
@@ -789,16 +789,16 @@
     s.done++;
     if (res.ok) s.right++;
     var recMod = s.mod === 'wrong' ? (q.mod || 'model') : s.mod;
+    var qid = recMod + '.' + (q.kind || '') + '.' + String(q.title || '');
     DB.recs.push({
       ts: Date.now(), mod: recMod,
       kind: q.kind, kn: q.title, ok: res.ok, got: res.got, total: res.total,
       sec: sec, hint: S.hint, mode: S.mode, steps: res.total,
-      qid: recMod + '.' + (q.kind || '') + '.' + String(q.title || '')
+      qid: qid
     });
     /* 记住这个模块最近练的题型：模块页「先看例题」用它，别随机抽到别的题型 */
     if (q.kind) { DB.meta.lastKind = DB.meta.lastKind || {}; DB.meta.lastKind[recMod] = q.kind; }
-    if (!res.ok) addWrong(q);
-    else if (S.mode === 'wrong') removeWrong(q);
+    reviewAnswer(q, res.ok, sec, qid);   /* 统一错题回炉（ADR-0010）：连对2次+行为约束才算掌握 */
     save();
     render();
   }
@@ -830,7 +830,7 @@
     nextQuestion();
   }
 
-  /* ---------- 错题本（1/3/7/14 天） ---------- */
+  /* ---------- 错题本（共享回炉内核 ADR-0010，规则只在 工具/trainer/review.js） ---------- */
   /* 错题 key：题号 + 题干 + 图/选项图摘要（题面一样、只有图不同的题不能合并成一条） */
   function figSig(q) {
     var s = q.fig ? JSON.stringify(q.fig) : '';
@@ -838,25 +838,38 @@
     return s;
   }
   function wrongKey(q) { return q.id + '|' + String(q.prompt).slice(0, 60) + '|' + figSig(q); }
-  function addWrong(q) {
-    var k = wrongKey(q), w = DB.wrong[k], now = Date.now();
-    var n = w ? (w.n || 1) + 1 : 1;
-    var gap = n <= 1 ? 1 : (n === 2 ? 3 : (n === 3 ? 7 : 14));
-    DB.wrong[k] = {
-      id: q.id, mod: q.mod || S.sess.mod, kind: q.kind, title: q.title, prompt: q.prompt,
-      fields: q.fields, explain: q.explain, tip: q.tip, kp: q.kp, fig: q.fig, figBefore: q.figBefore,
-      /* 手绘题回炉要重建画板与正确画法图，否则 drawArmPad 拿不到 fig 会渲染空 */
-      drawFig: q.drawFig, answerFig: q.answerFig,
-      ts: now, due: now + gap * PT.DAY, n: n
-    };
+  /* 物理最短有效用时：算到底/作图判断 10 秒，认模型/认量/读数 3 秒 */
+  function minSecOf(q) {
+    var mod = q.mod || '', kind = q.kind || '';
+    return (mod === 'calc' || mod === 'draw' || kind === 'armdraw') ? 10 : 3;
   }
-  function removeWrong(q) { delete DB.wrong[wrongKey(q)]; }
+  function reviewAnswer(q, ok, sec, qid) {
+    var R = window.__ltReview, k = wrongKey(q), w = DB.wrong[k], now = Date.now();
+    if (R.migrate(w, now)) save();
+    if (!ok) {
+      if (!w) {
+        w = {
+          id: q.id, qid: qid, mod: q.mod || S.sess.mod, kind: q.kind, title: q.title, prompt: q.prompt,
+          fields: q.fields, explain: q.explain, tip: q.tip, kp: q.kp, fig: q.fig, figBefore: q.figBefore,
+          /* 手绘题回炉要重建画板与正确画法图，否则 drawArmPad 拿不到 fig 会渲染空 */
+          drawFig: q.drawFig, answerFig: q.answerFig
+        };
+        DB.wrong[k] = w;
+      }
+      if (qid && !w.qid) w.qid = qid;   /* 旧条目补 qid，供历史错题清单匹配 */
+      R.onWrong(w, now);
+      return;
+    }
+    var sig = { sec: sec, minSec: minSecOf(q), hint: !!S.hint, fixed: false };
+    var act = R.onPass(w, sig, now);
+    if (act === 'mastered') delete DB.wrong[k];
+  }
 
   function renderWrong() {
     var ws = Object.keys(DB.wrong).map(function (k) { return DB.wrong[k]; }).sort(function (a, b) { return a.due - b.due; });
     var head = h('div', { class: 'card' },
       h('div', { class: 'row' }, h('h2', { style: 'margin:0;font-size:19px' }, '错题本'), h('span', { class: 'pill' }, ws.length + ' 道')),
-      h('p', { class: 'muted small', style: 'margin:6px 0 0' }, '答错的题自动进本；按 1 / 3 / 7 / 14 天到期回炉，回炉答对自动移出。')
+      h('p', { class: 'muted small', style: 'margin:6px 0 0' }, '答错的题自动进本；按 1 / 3 / 7 / 14 天档位回炉，到期后连续 2 次答对才算掌握（看提示/秒答不算）。')
     );
     head.appendChild(h('div', { class: 'row', style: 'margin-top:12px' },
       h('button', { class: 'btn btn-primary', onclick: startWrong }, '回炉到期的'),
@@ -866,7 +879,7 @@
     var card = h('div', { class: 'card' });
     if (!ws.length) card.appendChild(h('div', { class: 'empty' }, '还没有错题。做几题吧。'));
     ws.forEach(function (w) {
-      var dueTxt = w.due <= Date.now() ? '已到期' : ('还有 ' + Math.ceil((w.due - Date.now()) / PT.DAY) + ' 天');
+      var dueTxt = window.__ltReview.statusText(w);
       card.appendChild(h('div', { class: 'wrongitem' },
         h('div', { class: 'wt' }, String(w.prompt).replace(/<br\s*\/?>/g, ' ').slice(0, 90) + '…'),
         h('div', { class: 'small muted' }, dueTxt + ' · 错过 ' + (w.n || 1) + ' 次'),
@@ -966,7 +979,7 @@
     var wc = h('div', { class: 'card' }, h('h3', { style: 'margin-top:0' }, '错题本（最近 10 条）'));
     if (!ws.length) wc.appendChild(h('div', { class: 'empty' }, '还没有错题'));
     ws.forEach(function (w) {
-      var dueTxt = w.due <= Date.now() ? '已到期' : ('还有 ' + Math.ceil((w.due - Date.now()) / PT.DAY) + ' 天');
+      var dueTxt = window.__ltReview.statusText(w);
       wc.appendChild(h('div', { class: 'wrongitem' },
         h('div', { class: 'wt' }, String(w.prompt).replace(/<br\s*\/?>/g, ' ').slice(0, 80) + '…'),
         h('div', { class: 'small muted' }, dueTxt)
@@ -977,6 +990,27 @@
       h('button', { class: 'btn btn-sm', onclick: function () { go('wrong'); } }, '看全部错题')
     ));
     app.appendChild(wc);
+
+    /* 历史错题清单：从 recs 聚合整学期曾错过的题（掌握后移出错题本仍留档） */
+    var hist = window.__ltReview.everWrong(DB.recs, DB.wrong);
+    var hc = h('div', { class: 'card' },
+      h('h3', { style: 'margin-top:0' }, '曾经错过的题（期末复盘 · ' + hist.length + ' 道）'),
+      h('p', { class: 'small muted', style: 'margin:0 0 8px' }, '按错次排序。移到「已掌握」的题仍留档；错题库已清的浏览器无历史，导出 JSON 可长期保存。'));
+    if (!hist.length) hc.appendChild(h('div', { class: 'empty' }, '还没有答错的记录'));
+    else {
+      var ht = h('table', { class: 'tb' }, h('tr', null,
+        h('th', null, '题目'), h('th', { class: 'n' }, '错/对'), h('th', null, '首错'), h('th', null, '末错'), h('th', null, '状态')));
+      hist.forEach(function (e) {
+        ht.appendChild(h('tr', null,
+          h('td', null, e.label.slice(0, 40)),
+          h('td', { class: 'n' }, e.wrong + '/' + e.okCount),
+          h('td', null, window.__ltReview.dayText(e.firstWrongAt)),
+          h('td', null, window.__ltReview.dayText(e.lastWrongAt)),
+          h('td', null, e.inBook ? '在错题本' : '已掌握')));
+      });
+      hc.appendChild(ht);
+    }
+    app.appendChild(hc);
 
     /* 数据 */
     app.appendChild(h('div', { class: 'card' },

@@ -45,10 +45,12 @@ function verifySyncIsolation(syncCode, label) {
 }
 const coreM = html.match(/<script id="core">([\s\S]*?)<\/script>/);
 const dataM = html.match(/<script id="data">([\s\S]*?)<\/script>/);
+const reviewM = html.match(/<script id="review">([\s\S]*?)<\/script>/);
 const mergeM = html.match(/<script id="merge">([\s\S]*?)<\/script>/);
 const syncM = html.match(/<script id="sync">([\s\S]*?)<\/script>/);
 const uiM = html.match(/<script id="ui">([\s\S]*?)<\/script>/);
 if (!coreM || !uiM) fail('产物缺少 core / ui 脚本节点');
+if (!reviewM) fail('产物缺少 review 脚本节点（段四：共享错题回炉内核 ADR-0010）');
 if (!mergeM) fail('产物缺少 merge 脚本节点（段三：两族共用的事件并集合并函数）');
 if (!syncM) fail('产物缺少 sync 脚本节点（段三：云同步编排 + 网络适配）');
 if ((html.match(/<script id="core">/g) || []).length !== 1) fail('core 脚本节点不唯一');
@@ -157,6 +159,8 @@ vm.createContext(sandbox);
 
 try {
   vm.runInContext(coreM[1], sandbox, { filename: name + '.core.js' });
+  vm.runInContext(reviewM[1], sandbox, { filename: name + '.review.js' });
+  if (!sandbox.__ltReview || typeof sandbox.__ltReview.onPass !== 'function') fail('review 段未挂出 __ltReview');
   vm.runInContext(mergeM[1], sandbox, { filename: name + '.merge.js' });
   if (!sandbox.__ltMerge || typeof sandbox.__ltMerge.mergeRecords !== 'function') fail('merge 脚本未挂出 __ltMerge');
   vm.runInContext(syncM[1], sandbox, { filename: name + '.sync.js' });

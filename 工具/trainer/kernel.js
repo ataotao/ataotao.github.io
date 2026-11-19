@@ -203,7 +203,7 @@ export function uiScript(cfg) {
     if (mode === 'wrong' || mode === 'wrongall') {
       var ws = Object.keys(DB.wrong).map(function (k) { return DB.wrong[k]; })
         .sort(function (a, b) { return a.due - b.due; });
-      if (mode === 'wrong') ws = ws.filter(function (w) { return w.due <= Date.now(); });
+      if (mode === 'wrong') ws = window.__ltReview.dueList(DB.wrong);
       queue = ws.slice(0, total).map(function (w) { return { key: w.key, mod: w.mod, kind: w.kind }; });
       if (!queue.length) { S.view = 'wrong'; render(); return; }
       total = queue.length;
@@ -235,7 +235,7 @@ export function uiScript(cfg) {
       S.q = pickQuestion(mod, kind, s.sigs, (s.seed + s.done * 104729) >>> 0);
       s.sigs.push(sigOf(S.q));
     }
-    S.res = null; S.answered = false; S.hint = false;
+    S.res = null; S.answered = false; S.hint = false; S.qAt = Date.now();
     save(); render();
   }
   function submit() {
@@ -250,16 +250,15 @@ export function uiScript(cfg) {
     var res = CH.judge(S.q, vals);
     S.res = res; S.answered = true;
     var s = S.sess, recMod = (s.mode === 'wrong' || s.mode === 'wrongall') ? (S.q.mod || 'all') : (s.mod || (S.q.mod || 'all'));
+    var qid = recMod + '.' + (S.q.kind || '') + '.' + String(S.q.prompt || '').slice(0, 40);
     DB.recs.push({ ts: Date.now(), mod: recMod, kind: S.q.kind, kindName: S.q.kindName,
       title: S.q.title, ok: res.ok, got: res.got, total: res.total,
       prompt: S.q.prompt, kp: S.q.kp, mode: s.mode,
-      qid: recMod + '.' + (S.q.kind || '') + '.' + String(S.q.prompt || '').slice(0, 40) });
-    if (DB.recs.length > 2000) DB.recs = DB.recs.slice(-1500);
-    if (res.ok) {
-      s.right++;
-      if (S.q._wrongKey) removeWrong(S.q._wrongKey);
-    } else if (!S.q._wrongKey) addWrong(S.q);
-    else bumpWrong(S.q._wrongKey);
+      qid: qid });
+    /* 不再截断 recs：整学期作答（含每次答错）是期末复盘的原始依据，见 ADR-0010。
+       单条记录约 200B，一学期几千条约 1MB，localStorage 5MB 配额内。 */
+    if (res.ok) s.right++;
+    reviewAnswer(S.q, res.ok, qid);   /* 统一错题回炉（ADR-0010）：连对2次+行为约束才算掌握 */
     if (S.q.kind) { DB.meta.lastKind = DB.meta.lastKind || {}; DB.meta.lastKind[recMod] = S.q.kind; }
     DB.meta.round = (DB.meta.round || 0) + 1;
     DB.sess = snapshot(); save(); render();
@@ -291,25 +290,25 @@ export function uiScript(cfg) {
 
   /* ---------- 错题库（plan 天回炉，默认 1/3/7/14） ---------- */
   function wrongKey(q) { return ${cfg.wrongKeyExpr}; }
-  function gapFor(n) { return PLAN[Math.min(Math.max(n, 1), PLAN.length) - 1]; }
-  function addWrong(q) {
-    var k = wrongKey(q), now = Date.now(), w = DB.wrong[k], n = w ? (w.n || 1) + 1 : 1;
-    var gap = gapFor(n);
-    DB.wrong[k] = { key: k, mod: q.mod, kind: q.kind, kindName: q.kindName, modName: q.modName,
-      title: q.title, prompt: q.prompt, fields: q.fields, tip: q.tip, explain: q.explain, kp: q.kp,
-      ts: now, due: now + gap * CH.DAY, n: n };
+  /* 共享回炉内核 ADR-0010：规则只在 工具/trainer/review.js，化学最短有效用时 3 秒 */
+  function reviewAnswer(q, ok, qid) {
+    var R = window.__ltReview, k = q._wrongKey || wrongKey(q), w = DB.wrong[k], now = Date.now();
+    if (R.migrate(w, now)) save();
+    var sec = Math.max(1, Math.round((now - (S.qAt || now)) / 1000));
+    if (!ok) {
+      if (!w) {
+        w = { key: k, qid: qid, mod: q.mod, kind: q.kind, kindName: q.kindName, modName: q.modName,
+          title: q.title, prompt: q.prompt, fields: q.fields, tip: q.tip, explain: q.explain, kp: q.kp };
+        DB.wrong[k] = w;
+      }
+      if (qid && !w.qid) w.qid = qid;   /* 旧条目补 qid，供历史错题清单匹配 */
+      R.onWrong(w, now);
+      return;
+    }
+    var act = R.onPass(w, { sec: sec, minSec: 3, hint: !!S.hint, fixed: false }, now);
+    if (act === 'mastered') delete DB.wrong[k];
   }
-  function bumpWrong(k) {
-    var w = DB.wrong[k]; if (!w) return;
-    var n = (w.n || 1) + 1;
-    w.n = n; w.due = Date.now() + gapFor(n) * CH.DAY;
-  }
-  function removeWrong(k) { delete DB.wrong[k]; }
-  function dueWrong() {
-    return Object.keys(DB.wrong).map(function (k) { return DB.wrong[k]; })
-      .filter(function (w) { return w.due <= Date.now(); })
-      .sort(function (a, b) { return a.due - b.due; });
-  }
+  function dueWrong() { return window.__ltReview.dueList(DB.wrong); }
 
   /* ---------- 路由 ---------- */
   function parseHash() {
@@ -478,14 +477,15 @@ export function uiScript(cfg) {
       '<button class="btn" data-go="wrong">去清错题</button><button class="btn btn-ghost" data-go="today">回今日</button></div></div>';
   }
   function viewWrong() {
-    var all = Object.keys(DB.wrong).map(function (k) { return DB.wrong[k]; }).sort(function (a, b) { return a.due - b.due; });
-    var due = all.filter(function (w) { return w.due <= Date.now(); });
+    var R = window.__ltReview;
+    var all = Object.keys(DB.wrong).map(function (k) { var w = DB.wrong[k]; R.migrate(w, Date.now()); return w; }).sort(function (a, b) { return a.due - b.due; });
+    var due = R.dueList(DB.wrong);
     var list = all.map(function (w) {
-      var d = Math.ceil((w.due - Date.now()) / CH.DAY);
       return '<div class="wrongitem"><div class="row"><span class="pill">' + esc(w.kindName || w.kind) + '</span>' +
-        (w.due <= Date.now() ? '<span class="pill bad">待复习</span>' : '<span class="due">' + d + ' ' + T.dueUnit + '</span>') +
-        '<span class="grow"></span><span class="small muted">' + T.wrongTimes + ' ' + (w.n || 1) + ' 次</span>' +
-        '<button class="btn btn-ghost btn-sm" data-del="' + esc(w.key) + '">移除</button></div>' +
+        (R.isDue(w) ? '<span class="pill bad">待复习</span>' : '<span class="due">' + esc(R.statusText(w)) + '</span>') +
+        '<span class="grow"></span><span class="small muted">' + T.wrongTimes + ' ' + (w.n || 1) + ' 次' +
+        (w.okStreak ? ' · 已确认 ' + w.okStreak + '/' + R.KEEP : '') + '</span>' +
+        '<button class="btn btn-ghost btn-sm" data-del="' + esc(w.key) + '">跳过本次</button></div>' +
         '<div class="small">' + esc(w.prompt) + '</div></div>';
     }).join('');
     return '<div class="card"><div class="row"><h2 style="margin:0">错题回炉</h2><span class="pill">共 ' + all.length + ' 道</span></div>' +
@@ -514,10 +514,23 @@ export function uiScript(cfg) {
       return '<div class="row small"><span>' + esc(w.k) + '</span><span class="grow"></span>' +
         '<span class="pill ' + (w.rate >= .8 ? 'ok' : (w.rate >= .6 ? 'warn' : 'bad')) + '">' + Math.round(w.rate * 100) + '% (' + w.n + ')</span></div>';
     }).join('') : '<p class="muted small">做题满 2 次后，这里会显示最需要复习的考点。</p>';
+    /* 历史错题清单：从 recs 聚合整学期曾错过的题（掌握后移出错题本仍留档） */
+    var R = window.__ltReview;
+    var hist = R.everWrong(DB.recs, DB.wrong);
+    var histHtml = hist.length
+      ? '<table class="tb"><tr><th>题目</th><th class="n">错/对</th><th>首错</th><th>末错</th><th>状态</th></tr>' +
+        hist.map(function (e) {
+          return '<tr><td>' + esc(String(e.label).slice(0, 40)) + '</td><td class="n">' + e.wrong + '/' + e.okCount +
+            '</td><td>' + R.dayText(e.firstWrongAt) + '</td><td>' + R.dayText(e.lastWrongAt) +
+            '</td><td>' + (e.inBook ? '在错题本' : '已掌握') + '</td></tr>';
+        }).join('') + '</table>'
+      : '<p class="muted small">还没有答错的记录。</p>';
     return '<div class="card"><h2>训练报告</h2>' +
       statBoxes([['累计做题', st.done], ['累计答对', st.right], ['总正确率', st.rate + '%'], ['错题待清', st.wrong]]) +
       '<h3>各单元正确率</h3>' + (mods || '<p class="muted small">还没有记录。</p>') +
       '<h3>薄弱考点（正确率最低）</h3>' + weakHtml +
+      '<h3>曾经错过的题（期末复盘 · ' + hist.length + ' 道）</h3>' +
+      '<p class="muted small">按错次排序。移到「已掌握」的题仍留档；错题库已清的浏览器无历史，导出 JSON 可长期保存。</p>' + histHtml +
       '<div class="row" style="margin-top:16px"><button class="btn" data-act="export">导出记录 JSON</button>' +
       '<button class="btn" data-act="import">导入记录 JSON</button>' +
       '<input type="file" id="importFile" accept="application/json,.json" style="display:none">' +
@@ -552,7 +565,12 @@ export function uiScript(cfg) {
       };
     });
     Array.prototype.forEach.call(app.querySelectorAll('[data-del]'), function (b) {
-      b.onclick = function () { removeWrong(b.getAttribute('data-del')); save(); render(); };
+      b.onclick = function () {
+        var w = DB.wrong[b.getAttribute('data-del')];
+        if (w && confirm('跳过本次：把这道错题推迟到明天再练，仍要连对 2 次才算掌握。确定？')) {
+          window.__ltReview.skip(w); save(); render();
+        }
+      };
     });
     Array.prototype.forEach.call(app.querySelectorAll('[data-act]'), function (b) {
       b.onclick = function () { action(b.getAttribute('data-act')); };

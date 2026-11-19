@@ -80,4 +80,11 @@ const early = mergeRecords({ v: 1, recs: [], wrong: {}, meta: { created: 50 } },
 assert.equal(early.meta.created, 20);
 ok('meta.created 取两份最早');
 
-console.log('✓ 合并函数单元测试全过（8 组断言）');
+/* ⑨ recs 不截断：整学期作答是期末复盘原始依据（原 2000→1500 截断已去掉） */
+const big = { v: 1, wrong: {}, meta: {}, recs: Array.from({ length: 2200 }, (_, i) => ({ ts: i, mod: 'm', kind: 'k', prompt: 'p' + i })) };
+const bigMerged = mergeRecords(big, { v: 1, recs: [], wrong: {}, meta: {} });
+assert.equal(bigMerged.recs.length, 2200);
+assert.equal(bigMerged.recs[0].ts, 0);   // 最老记录仍在
+ok('recs 不截断：2200 条合并后全留，最老记录不丢');
+
+console.log('✓ 合并函数单元测试全过（9 组断言）');

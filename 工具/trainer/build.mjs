@@ -23,6 +23,12 @@ import { shell as scaffoldShell } from './scaffold.js';
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
 const r = (p) => fs.readFileSync(path.join(ROOT, p), 'utf8');
 
+/* 段四（ADR-0010）：共享错题回炉内核（review.js）内联进产物，挂到 __ltReview 供两族 UI 共用。
+   四科产物内联的是同一份逐字节源码——这是「规则只改一处」的真相源。 */
+function reviewScript() {
+  return '<script id="review">\n' + r('工具/trainer/review.js').trimEnd() + '\n</script>\n\n';
+}
+
 /* 段三：事件并集合并函数（merge.mjs）去 export 后内联进产物，挂到全局供两族 UI 共用。
    去掉 export 后是普通脚本；新 vm.Script 语法体检同样覆盖它。 */
 function mergeScript() {
@@ -83,7 +89,7 @@ for (const name of names) {
   const mergeSrc = r('工具/trainer/merge.mjs').replace(/^export\s+/gm, '');
   const syncCore = r('工具/trainer/sync.mjs').replace(/^import[^\n]*\n/gm, '').replace(/^export\s+/gm, '');
   // 语法体检：core / merge / sync / ui（及可选 data）都不能有语法错（适配层用 async/顶层 IIFE，vm 可解析）
-  const syntaxSegs = [['core', core], ['merge', mergeSrc],
+  const syntaxSegs = [['core', core], ['review', r('工具/trainer/review.js')], ['merge', mergeSrc],
     ['sync', syncCore + '\n' + r('工具/trainer/sync-adapter.mjs')], ['ui', uiSrc]];
   if (SUBJECT.dataFile) syntaxSegs.push(['data', r(SUBJECT.dataFile)]);
   for (const [label, src] of syntaxSegs) {
@@ -103,23 +109,24 @@ for (const name of names) {
     html = shellHtml +
       dataSeg +
       '<script id="core">\n' + core.trimEnd() + '\n</script>\n\n' +
-      mergeScript() + syncScript(name) +
+      reviewScript() + mergeScript() + syncScript(name) +
       '<script id="ui">\n' + uiSrc.trimEnd() + '\n</script>\n' +
       '</body>\n</html>\n';
   } else {
     html = shell(SUBJECT) +
       '<script id="core">\n' + core.trimEnd() + '\n</script>\n\n' +
-      mergeScript() + syncScript(name) +
+      reviewScript() + mergeScript() + syncScript(name) +
       uiScript(SUBJECT);
   }
 
   // 结构自检：四个约定脚本必须存在且各一次
   const nCore = (html.match(/<script id="core">/g) || []).length;
+  const nReview = (html.match(/<script id="review">/g) || []).length;
   const nMerge = (html.match(/<script id="merge">/g) || []).length;
   const nSync = (html.match(/<script id="sync">/g) || []).length;
   const nUi = (html.match(/<script id="ui">/g) || []).length;
-  if (nCore !== 1 || nMerge !== 1 || nSync !== 1 || nUi !== 1) {
-    console.error(`✗ 产物脚本节点异常：core×${nCore} merge×${nMerge} sync×${nSync} ui×${nUi}`); process.exit(1);
+  if (nCore !== 1 || nReview !== 1 || nMerge !== 1 || nSync !== 1 || nUi !== 1) {
+    console.error(`✗ 产物脚本节点异常：core×${nCore} review×${nReview} merge×${nMerge} sync×${nSync} ui×${nUi}`); process.exit(1);
   }
 
   const dest = path.join(ROOT, SUBJECT.outFile);
