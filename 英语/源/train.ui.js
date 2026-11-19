@@ -157,7 +157,7 @@
     var scope = unit ? (grade.name + ' · ' + unit.name + ' · ' + nWords + ' 词') : '未选单元';
     var play = h('div', { class: 'card', style: 'margin-top:12px' },
       h('div', { class: 'row' }, h('b', null, '③ 按单元练习'), h('span', { class: 'grow' }), h('span', { class: 'small muted' }, scope)),
-      h('p', { class: 'small muted' }, '「整单元」把本单元每个词都练到、不遗漏，可反复完整循环；「快练」每轮 10 题（词不够时才重复）。先选再提交（回车也行），答错自动进错题本按 1/3/7/14 天回炉。')
+      h('p', { class: 'small muted' }, '「整单元」把本单元每个词都练到、不遗漏，可反复完整循环；「快练」每轮 10 题（词不够时才重复）。先选再提交（回车也行），答错自动进错题本按 1/3/7/14 天回炉，到期连对两次才移出。')
     );
     var dirs = [{ id: '', n: '三方向混合' }, { id: 'mix2', n: '双向混合（英↔中）' }].concat(
       EW.KINDS.map(function (k) { return { id: k.id, n: k.name }; }));
@@ -394,7 +394,7 @@
       hint: false, mode: S.mode, qid: recMod + '.' + q.kind + '.' + String(q.prompt).slice(0, 40)
     });
     if (!res.ok) addWrong(q);
-    else if (S.mode === 'wrong') removeWrong(q);
+    else passWrong(q);
     save(); render();
   }
   function next() {
@@ -417,15 +417,37 @@
       id: q.id, mod: q.mod, kind: q.kind, prompt: q.prompt, speak: q.speak, ipa: q.ipa,
       fields: q.fields, tip: q.tip, answerText: q.answerText, kp: q.kp,
       word: q.word, ex: q.ex, exZh: q.exZh,
-      kn: q.tip || q.prompt, ts: now, due: now + gap * EW.DAY, n: n
+      kn: q.tip || q.prompt, ts: now, due: now + gap * EW.DAY, n: n,
+      okStreak: 0, lastOkAt: 0        // 到期后的连续答对次数（答错清零）
     };
   }
-  function removeWrong(q) { delete DB.wrong[wrongKey(q)]; }
+  /* 错题「真正掌握」判定：不能靠一次蒙对——
+     - 到期（due 已到）后，任何模式答对都记一次「确认」；
+     - 连续两次到期确认（第二次至少隔 1 天）才移出；答错清零；
+     - 未到期答对不计，防止同一天连刷凑次数。 */
+  function passWrong(q) {
+    var k = wrongKey(q), w = DB.wrong[k], now = Date.now();
+    if (!w || !(w.due <= now)) return;
+    var streak = (w.okStreak || 0) + 1;
+    if (streak >= 2) { delete DB.wrong[k]; return; }
+    w.okStreak = streak;
+    w.lastOkAt = now;
+    w.due = now + EW.DAY;            // 明天再确认一次
+  }
+  /* 手动「已掌握」：家长/孩子确认后直接移出（兜底，不必等回炉）。 */
+  function markMastered(w) {
+    if (!w) return;
+    var k = wrongKey(w);
+    if (!DB.wrong[k]) return;
+    if (!confirm('把「' + (w.word || w.prompt) + '」移出错题本？')) return;
+    delete DB.wrong[k];
+    save(); render();
+  }
   function renderWrong() {
     var ws = Object.keys(DB.wrong).map(function (k) { return DB.wrong[k]; }).sort(function (a, b) { return a.due - b.due; });
     app.appendChild(h('div', { class: 'card' },
       h('div', { class: 'row' }, h('h2', { style: 'margin:0;font-size:19px' }, '错题本'), h('span', { class: 'pill' }, ws.length + ' 道')),
-      h('p', { class: 'muted small', style: 'margin:6px 0 0' }, '答错的词自动进本，按 1 / 3 / 7 / 14 天到期回炉；回炉答对自动移出。'),
+      h('p', { class: 'muted small', style: 'margin:6px 0 0' }, '答错的词自动进本，按 1 / 3 / 7 / 14 天到期回炉。到期后要连对两次（隔天）、答错清零，才算真正掌握并移出；没到期时答对不算数。也可以手动标「已掌握」。'),
       h('div', { class: 'row', style: 'margin-top:12px' },
         h('button', { class: 'btn btn-primary', onclick: startWrong }, '回炉到期的'),
         h('button', { class: 'btn', onclick: function () { go('report'); } }, '看报告'))
@@ -434,10 +456,12 @@
     if (!ws.length) card.appendChild(h('div', { class: 'empty' }, '还没有错题，先练一组词吧。'));
     ws.forEach(function (w) {
       var dueTxt = w.due <= Date.now() ? '已到期' : ('还有 ' + Math.ceil((w.due - Date.now()) / EW.DAY) + ' 天');
+      var passTxt = w.okStreak ? ' · 已确认 ' + w.okStreak + '/2，明天再对一次' : '';
       card.appendChild(h('div', { class: 'wrongitem' },
         h('div', { class: 'wt' }, String(w.tip || w.prompt).slice(0, 90)),
-        h('div', { class: 'small muted' }, dueTxt + ' · 错过 ' + (w.n || 1) + ' 次'),
-        h('button', { class: 'btn btn-sm', onclick: (function (ww) { return function () { startOneWrong(ww); }; })(w) }, '重做')
+        h('div', { class: 'small muted' }, dueTxt + passTxt + ' · 错过 ' + (w.n || 1) + ' 次'),
+        h('button', { class: 'btn btn-sm', onclick: (function (ww) { return function () { startOneWrong(ww); }; })(w) }, '重做'),
+        h('button', { class: 'btn btn-sm btn-ghost', onclick: (function (ww) { return function () { markMastered(ww); }; })(w) }, '已掌握')
       ));
     });
     app.appendChild(card);
@@ -574,6 +598,7 @@
     S: S, db: function () { return DB; }, EW: EW,
     startSession: startSession, startUnitAll: startUnitAll, startRandom: startRandom,
     startWrong: startWrong, startOneWrong: startOneWrong, restart: restart,
+    markMastered: markMastered,
     importJSON: importJSON, clearAll: clearAll, submit: submit, next: next,
     go: go, render: render, exportJSON: exportJSON, selfCheck: selfCheck, speak: speak
   };

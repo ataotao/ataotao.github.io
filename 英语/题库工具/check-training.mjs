@@ -312,17 +312,49 @@ function runUI() {
   ok('答错进错题本', Object.keys(T.db().wrong).length >= 1);
   const wkey = Object.keys(T.db().wrong)[0];
   ok('错题间隔 1 天', T.db().wrong[wkey].due - Date.now() > 20 * 3600 * 1000);
+  ok('新错题带确认计数', T.db().wrong[wkey].okStreak === 0);
 
-  // 回炉（单题）：答完仍是 1 / 1，next 才进总结
-  Object.values(T.db().wrong)[0].due = Date.now() - 1000;
+  // 错题「真正掌握」：未到期答对不算；到期后连对两次（隔天）才移出
+  const wrongObj = () => Object.values(T.db().wrong)[0];
+  const answerStored = (w, correct) => {
+    T.startOneWrong(w);
+    const f = T.S.q.fields[0];
+    T.S.choice[0] = correct ? f.ans : (f.ans + 1) % f.options.length;
+    T.submit();
+  };
+  answerStored(wrongObj(), true);
+  ok('未到期答对不算掌握', Object.keys(T.db().wrong).length === 1 && wrongObj().okStreak === 0);
+
+  // 到期后第一次答对：记 1 次确认，推到明天再确认
+  wrongObj().due = Date.now() - 1000;
+  answerStored(wrongObj(), true);
+  ok('到期答对 1 次仍留在错题本', Object.keys(T.db().wrong).length === 1 && wrongObj().okStreak === 1
+    && wrongObj().due - Date.now() > 20 * 3600 * 1000);
+
+  // 回炉单题：答完仍是 1 / 1，next 才进总结（此时该题还没到第二次确认）
+  wrongObj().due = Date.now() - 1000;
   T.startWrong();
   ok('回炉单题 total=1', T.S.sess.total === 1 && T.S.sess.mode === 'wrong');
   T.S.choice[0] = T.S.q.fields[0].ans;
   T.submit();
   ok('回炉答完仍是 1 / 1', countText() === '1 / 1' && T.S.sess.done === 0);
-  ok('回炉答对移出错题本', Object.keys(T.db().wrong).length === 0);
+  ok('第二次到期答对才移出', Object.keys(T.db().wrong).length === 0);
   T.next();
   ok('回炉 next 进总结', T.S.view === 'summary' && T.S.sess.done === 1);
+
+  // 到期后答错：确认清零，重新按 3 天档排队
+  T.startSession('primary.ox3a.unit1', 'e2c', 1);
+  T.S.choice[0] = (T.S.q.fields[0].ans + 1) % T.S.q.fields[0].options.length;
+  T.submit();
+  wrongObj().okStreak = 1;
+  wrongObj().due = Date.now() - 1000;
+  answerStored(wrongObj(), false);
+  ok('到期答错清零并重排 3 天', Object.keys(T.db().wrong).length === 1 && wrongObj().okStreak === 0
+    && wrongObj().n === 2 && wrongObj().due - Date.now() > 2 * 86400000);
+
+  // 手动「已掌握」直接移出
+  T.markMastered(wrongObj());
+  ok('手动标记已掌握可移出', Object.keys(T.db().wrong).length === 0);
 
   // 双击下一题不应连跳：第二下发生在 answered=false 之后
   T.startSession('primary.ox3a.unit1', 'e2c', 3);

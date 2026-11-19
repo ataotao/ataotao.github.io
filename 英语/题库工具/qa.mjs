@@ -199,17 +199,27 @@ ok("随机练习三档去重且隔离", randInfo && randInfo.view && randInfo.se
   randInfo.counts.every(x=>x.got===x.n && x.uniq===x.n && x.area==='random'), JSON.stringify(randInfo));
 await shot('02c-random');
 
-// 答错进错题本
+// 答错进错题本；到期前答对不算掌握；列表有「已掌握」
 const wrongInfo = await $(`(() => {
   const T = window.__ew;
   T.startSession('primary.ox3a.unit1', 'e2c', 1);
   const q = T.S.q;
   T.S.choice[0] = (q.fields[0].ans + 1) % q.fields[0].options.length;
   T.submit();
+  const w = Object.values(T.db().wrong)[0];
+  const before = Object.keys(T.db().wrong).length;
+  T.startOneWrong(w);
+  T.S.choice[0] = T.S.q.fields[0].ans; T.submit();
+  const afterEarly = Object.keys(T.db().wrong).length;
   T.go('wrong');
-  return { wrong: Object.keys(T.db().wrong).length, text: document.body.innerText.indexOf('错题本') >= 0 };
+  const btns = [...document.querySelectorAll('button')].map((b) => b.textContent.trim());
+  return { wrong: before, afterEarly, text: document.body.innerText.indexOf('错题本') >= 0,
+           hint: document.body.innerText.indexOf('连对两次') >= 0, mastered: btns.indexOf('已掌握') >= 0,
+           okStreak: (Object.values(T.db().wrong)[0] || {}).okStreak };
 })()`);
 ok("答错进错题本并可渲染", wrongInfo && wrongInfo.wrong >= 1 && wrongInfo.text, JSON.stringify(wrongInfo));
+ok("未到期答对不算掌握", wrongInfo && wrongInfo.afterEarly === wrongInfo.wrong && wrongInfo.okStreak === 0, JSON.stringify(wrongInfo));
+ok("错题列表有「已掌握」与连对规则说明", wrongInfo && wrongInfo.mastered && wrongInfo.hint, JSON.stringify(wrongInfo));
 await shot('03-wrong');
 
 // 报告页
