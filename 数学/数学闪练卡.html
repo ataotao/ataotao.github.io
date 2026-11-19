@@ -220,6 +220,8 @@ var MT = (function () {
     return d(Math.round(x * 1000) / 1000);
   }
   function nice(x, unit) { return frac(x) + (unit || ''); }
+  /* π 的系数：k = 1 时写「π」，不写「1π」 */
+  function piText(k) { return k === 1 ? 'π' : frac(k) + 'π'; }
   function near(a, b, tol) { return isFinite(a) && Math.abs(a - b) <= (tol || 1e-6); }
   function parseNum(s) {
     s = String(s == null ? '' : s).trim()
@@ -577,6 +579,44 @@ var MT = (function () {
       explain: ['a = 1，b = ' + d(b) + '，c = ' + d(c) + '。',
         'x₁ + x₂ = −b/a = ' + d(p + q) + '；x₁·x₂ = c/a = ' + d(c) + '。'],
       kp: ['一元二次方程', '韦达定理']
+    };
+  }
+
+  /* 配方法 / 直接开平方（知识图谱 25.2 的 220–222）：现有「解一元二次方程」只练因式分解，
+     这里补另外两条解法：形如 (x − p)² = q 直接开平方；一般式 x² + bx + c 配方成 (x + h)² = k。 */
+  function genComplete(r) {
+    if (r() < 0.4) {
+      var p = ri(r, -5, 5);
+      if (p === 0) p = pick(r, [-3, -2, 2, 3]);   /* (x − 0)² 读起来别扭，避开 p = 0 */
+      var t = ri(r, 2, 7), q = t * t;
+      var x1 = p + t, x2 = p - t;
+      return {
+        id: 'drill.complete', kind: 'complete', title: '配方法 / 直接开平方',
+        prompt: '解方程：(' + (p >= 0 ? 'x − ' + p : 'x + ' + (-p)) + ')² = ' + q + '（两个根都填，顺序不限）',
+        fields: [{ type: 'set', n: 2, label: '两个根', ans: [x1, x2], names: ['x₁', 'x₂'] }],
+        tip: '直接开平方：两边同时开平方时别漏负号，(x − p) = ±√q，得到两个根。',
+        explain: ['两边开平方：' + (p >= 0 ? 'x − ' + p : 'x + ' + (-p)) + ' = ±' + t + '。',
+          '所以 x₁ = ' + d(x1) + '，x₂ = ' + d(x2) + '。',
+          '坑：开平方只写正根，漏掉负根；一元二次方程应该有两个根（相等时算两个相同根）。'],
+        kp: ['一元二次方程', '直接开平方法']
+      };
+    }
+    var h = ri(r, 1, 6), m = ri(r, 0, 5);
+    var c = h * h - m * m;
+    if (c === 0) c = -(h * h);                 /* 避免 c = 0 让方程变成 x² + bx = 0 的特殊形 */
+    var b = 2 * h, k = h * h - c;
+    return {
+      id: 'drill.complete', kind: 'complete', title: '配方法 / 直接开平方',
+      prompt: '把方程 ' + poly2(1, b, c) + ' = 0 配方成 (x + h)² = k 的形式，求 h 和 k。',
+      fields: [
+        { type: 'num', label: 'h =', ans: h },
+        { type: 'num', label: 'k =', ans: k }
+      ],
+      tip: '配方：x² + bx 配上 (b/2)²，凑成完全平方；右边 = (b/2)² − c。',
+      explain: [poly2(1, b, c) + ' = 0 ⟹ x² + ' + b + 'x = ' + d(-c) + '。',
+        '两边加 (b/2)² = ' + h + '² = ' + (h * h) + '：x² + ' + b + 'x + ' + (h * h) + ' = ' + d(-c) + ' + ' + (h * h) + ' = ' + d(k) + '。',
+        '左边写成完全平方：(x + ' + h + ')² = ' + d(k) + '，所以 h = ' + h + '，k = ' + d(k) + '。'],
+      kp: ['一元二次方程', '配方法']
     };
   }
 
@@ -977,7 +1017,9 @@ var MT = (function () {
     radius: 'OA = OB（同圆半径相等），等边对等角',
     perp: '垂直于弦的直径平分这条弦（垂径定理）',
     diam: '直径所对的圆周角是直角',
-    cyc: '圆内接四边形对角互补'
+    cyc: '圆内接四边形对角互补',
+    arc: '同弧所对的圆周角等于圆心角的一半',
+    tan: '圆的切线垂直于过切点的半径'
   };
   /* 每个考点的干扰项单独列：只放「明显不是这条依据」的，
      别放「能推出它的上位定理」（把「圆周角＝圆心角一半」当 90° 的错项，学生有理由争）。 */
@@ -985,7 +1027,9 @@ var MT = (function () {
     radius: ['同弧所对的圆周角等于圆心角的一半', '直径所对的圆周角是直角', '圆内接四边形对角互补', '垂直于弦的直径平分这条弦（垂径定理）'],
     perp: ['同弧所对的圆周角等于圆心角的一半', '直径所对的圆周角是直角', '圆内接四边形对角互补', '等腰三角形的两底角相等'],
     diam: ['圆内接四边形对角互补', '等腰三角形的两底角相等', '垂直于弦的直径平分这条弦（垂径定理）', '等弧所对的弦相等'],
-    cyc: ['圆内接四边形邻角互补（∠A + ∠B = 180°）', '圆内接四边形的对角相等', '直径所对的圆周角是直角', '垂直于弦的直径平分这条弦（垂径定理）']
+    cyc: ['圆内接四边形邻角互补（∠A + ∠B = 180°）', '圆内接四边形的对角相等', '直径所对的圆周角是直角', '垂直于弦的直径平分这条弦（垂径定理）'],
+    arc: ['同弧所对的圆周角是圆心角的两倍', '直径所对的圆周角是直角', '圆内接四边形对角互补', '同圆中半径相等，等边对等角'],
+    tan: ['直径所对的圆周角是直角', '同弧所对的圆周角等于圆心角的一半', '圆内接四边形对角互补', '等腰三角形的两底角相等']
   };
   /* 依据选择：正确项 + 3 个干扰项，位置随机 */
   function basisField(r, key, label) {
@@ -1092,6 +1136,560 @@ var MT = (function () {
         '∠C = 180° − ' + A + '° = ' + (180 - A) + '°；∠D = 180° − ' + B + '° = ' + (180 - B) + '°。',
         '坑：记成「邻角互补」就会拿 ∠A + ∠B 去凑 180°；对角是隔着一条对角线的那两个角。'],
       kp: ['圆的基本性质', '圆内接四边形']
+    };
+  }
+
+  /* ---------- 25.3 / 26.3 / 29.2–30.3 的缺项（2026-11-19 按知识图谱补） ----------
+     知识图谱（做题思维训练/知识图谱_诊断知识漏洞）九上第 25–30 章对照：
+     原有题型只覆盖 29.1–29.2 的概念、垂径、直径所对圆周角、圆内接四边形。
+     下面按「一条公式 / 一条判定」拆成题型，每个都带公式的来历和一条易错点。 */
+
+  /* 弧长：l = n/360 × 2πr = nπr/180。答案问「kπ 里的 k」，先算占周角的几分之几。 */
+  var ARC_PAIRS = [[30, 6], [30, 12], [45, 4], [45, 8], [45, 12], [60, 3], [60, 6], [60, 9], [60, 12],
+    [90, 2], [90, 4], [90, 6], [90, 8], [90, 10], [90, 12], [120, 3], [120, 6], [120, 9], [120, 12],
+    [135, 4], [135, 8], [135, 12], [150, 6], [150, 12], [180, 2], [180, 3], [180, 5], [180, 8], [180, 12],
+    [270, 2], [270, 4], [270, 6], [270, 8], [270, 10]];
+  function genArcLen(r) {
+    var p = pick(r, ARC_PAIRS), n = p[0], rad = p[1];
+    var k = n * rad / 180;
+    var askN = r() < 0.4;                 /* 四成反过来：给弧长求圆心角 */
+    return {
+      id: 'drill.arclen', kind: 'arclen', title: '弧长',
+      prompt: askN
+        ? '一条弧的长为 ' + piText(k) + '，所在圆的半径为 ' + rad + '。这条弧所对的圆心角是多少度？'
+        : '半径为 ' + rad + ' 的圆中，圆心角为 ' + n + '° 的弧长为 kπ。求 k。',
+      fields: [{ type: 'num', label: askN ? '圆心角 =' : 'k =', ans: askN ? n : k, unit: askN ? '°' : '' }],
+      tip: '弧长 = 圆心角占 360° 的几分之几 × 圆周长：l = n/360 × 2πr = nπr/180。分母是 180，不是 360。',
+      explain: askN
+        ? ['弧长公式：l = nπr/180，反过来 n = 180l/(πr)。',
+          n + '° 由 ' + piText(k) + ' = nπ × ' + rad + '/180 解出：n = ' + frac(k) + ' × 180 ÷ ' + rad + ' = ' + n + '。',
+          '核对：n = ' + n + '° 是周角的 ' + frac(n / 360) + '，圆周长 2πr = ' + 2 * rad + 'π，弧长 = ' + frac(n / 360) + ' × ' + 2 * rad + 'π = ' + piText(k) + '。']
+        : ['弧长公式：l = n/360 × 2πr = nπr/180。',
+          'l = ' + n + '/360 × 2π × ' + rad + ' = ' + piText(k) + '，所以 k = ' + frac(k) + '。',
+          '核对：n = ' + n + '° 是周角的 ' + frac(n / 360) + '，圆周长 2πr = ' + 2 * rad + 'π，乘起来就是 ' + piText(k) + '。'],
+      kp: ['圆的基本性质', '弧长']
+    };
+  }
+
+  /* 扇形面积：S = n/360 × πr² = nπr²/360；已知弧长时 S = ½lr（两个公式互推）。 */
+  var SECTOR_PAIRS = [[30, 6], [30, 12], [45, 4], [45, 8], [45, 12], [60, 6], [60, 12],
+    [90, 2], [90, 4], [90, 6], [90, 8], [90, 10], [90, 12], [120, 3], [120, 6], [120, 9], [120, 12],
+    [135, 4], [135, 8], [180, 2], [180, 4], [180, 6], [180, 8], [180, 10], [180, 12],
+    [270, 2], [270, 4], [270, 6], [270, 8]];
+  function genSector(r) {
+    var p = pick(r, SECTOR_PAIRS), n = p[0], rad = p[1];
+    var k = n * rad * rad / 360;
+    var lk = n * rad / 180;               /* 弧长 = lk π；只有整除时才出「给弧长求面积」 */
+    var variant = ri(r, 0, 2);
+    if (variant === 2 && !Number.isInteger(lk)) variant = 0;
+    var prompt, label, ans, unit, chain, check;
+    if (variant === 0) {
+      prompt = '半径为 ' + rad + '、圆心角为 ' + n + '° 的扇形面积为 kπ。求 k。';
+      label = 'k ='; ans = k; unit = '';
+      chain = 'S = ' + n + '/360 × π × ' + rad + '² = ' + frac(k) + 'π。';
+      check = '对照：同样半径的整个圆面积是 ' + (rad * rad) + 'π，扇形占其中的 ' + frac(n / 360) + '。';
+    } else if (variant === 1) {
+      prompt = '一个扇形的面积为 ' + piText(k) + '，半径为 ' + rad + '。它的圆心角是多少度？';
+      label = '圆心角 ='; ans = n; unit = '°';
+      chain = piText(k) + ' = nπ × ' + rad + '²/360 ⟹ n = ' + frac(k) + ' × 360 ÷ ' + (rad * rad) + ' = ' + n + '。';
+      check = '核对：n = ' + n + '° 是周角的 ' + frac(n / 360) + '，圆面积 ' + (rad * rad) + 'π，乘起来是 ' + piText(k) + '。';
+    } else {
+      prompt = '一个扇形的弧长为 ' + piText(lk) + '，半径为 ' + rad + '。它的面积为 kπ，求 k。';
+      label = 'k ='; ans = k; unit = '';
+      chain = 'S = ½ × 弧长 × 半径 = ½ × ' + piText(lk) + ' × ' + rad + ' = ' + piText(k) + '。';
+      check = '也可以先求圆心角：n = ' + frac(lk) + ' × 180 ÷ ' + rad + ' = ' + n + '°，再代 S = nπr²/360，结果相同。';
+    }
+    return {
+      id: 'drill.sector', kind: 'sector', title: '扇形面积',
+      prompt: prompt,
+      fields: [{ type: 'num', label: label, ans: ans, unit: unit }],
+      tip: '扇形面积 = 圆心角占 360° 的几分之几 × 圆面积：S = nπr²/360；已知弧长时用 S = ½lr 更快。',
+      explain: ['公式：S = n/360 × πr² = nπr²/360；由 l = nπr/180 可得 S = ½lr。', chain, check],
+      kp: ['圆的基本性质', '扇形面积']
+    };
+  }
+
+  /* 圆锥：侧面展开图是扇形——扇形半径 = 母线 l，扇形弧长 = 底面周长 2πr。
+     S侧 = πrl，S全 = πr(l+r)，展开图圆心角 θ = 360r/l。 */
+  var CONE_PAIRS = [[2, 6], [2, 8], [3, 4], [3, 5], [3, 6], [4, 6], [4, 8], [5, 6], [5, 10], [5, 12],
+    [6, 8], [6, 10], [8, 10], [9, 12], [10, 12], [12, 15]];
+  function genCone(r) {
+    var p = pick(r, CONE_PAIRS), r0 = p[0], l0 = p[1];
+    var variant = ri(r, 0, 2);
+    if (variant === 2 && (360 * r0) % l0 !== 0) variant = r() < 0.5 ? 0 : 1;
+    if (variant === 1) {
+      var tri = pick(r, RIGHT_TRI);
+      var rr = tri[0], hh = tri[1], ll = tri[2];
+      return {
+        id: 'drill.cone', kind: 'cone', title: '圆锥的侧面积',
+        prompt: '圆锥的底面半径为 ' + rr + '，高为 ' + hh + '。求它的母线长，以及侧面积 kπ 里的 k。',
+        fields: [
+          { type: 'num', label: '母线 l =', ans: ll },
+          { type: 'num', label: '侧面积 k =', ans: rr * ll }
+        ],
+        tip: '母线、底面半径、高构成直角三角形：l² = r² + h²；侧面积 S侧 = πrl（l 是母线，不是高）。',
+        explain: ['在轴截面里，母线 l、底面半径 r、高 h 构成直角三角形：l = √(r² + h²)。',
+          'l = √(' + rr + '² + ' + hh + '²) = ' + ll + '。',
+          'S侧 = πrl = π × ' + rr + ' × ' + ll + ' = ' + (rr * ll) + 'π，所以 k = ' + (rr * ll) + '。'],
+        kp: ['圆的基本性质', '圆锥的侧面积']
+      };
+    }
+    if (variant === 2) {
+      var theta = 360 * r0 / l0;
+      return {
+        id: 'drill.cone', kind: 'cone', title: '圆锥的侧面积',
+        prompt: '把底面半径为 ' + r0 + '、母线长为 ' + l0 + ' 的圆锥侧面展开，得到一个扇形。求这个扇形的圆心角，以及它的弧长 kπ 里的 k。',
+        fields: [
+          { type: 'num', label: '圆心角 =', ans: theta, unit: '°' },
+          { type: 'num', label: '弧长 k =', ans: 2 * r0 }
+        ],
+        tip: '侧面展开图的扇形：半径 = 母线 l，弧长 = 底面周长 2πr；圆心角 θ = 360r/l。',
+        explain: ['展开后扇形的半径就是母线 l = ' + l0 + '，弧长就是底面圆的周长 2πr = ' + 2 * r0 + 'π，所以 k = ' + 2 * r0 + '。',
+          '由弧长公式 ' + 2 * r0 + 'π = θπ × ' + l0 + '/180，得 θ = 360 × ' + r0 + ' ÷ ' + l0 + ' = ' + theta + '°。',
+          '记住关系式：θ/360 = r/l（弧长占展开圆的比 = 底面半径占母线的比）。'],
+        kp: ['圆的基本性质', '圆锥的侧面积']
+      };
+    }
+    var sSide = r0 * l0, sAll = r0 * (l0 + r0);
+    return {
+      id: 'drill.cone', kind: 'cone', title: '圆锥的侧面积',
+      prompt: '圆锥的底面半径为 ' + r0 + '，母线长为 ' + l0 + '。它的侧面积和全面积分别为 kπ、mπ，求 k 和 m。',
+      fields: [
+        { type: 'num', label: '侧面积 k =', ans: sSide },
+        { type: 'num', label: '全面积 m =', ans: sAll }
+      ],
+      tip: 'S侧 = πrl（扇形面积），S全 = S侧 + 底面积 πr² = πr(l + r)。别把「全面积」漏掉底面。',
+      explain: ['侧面积是展开扇形的面积：S侧 = πrl = π × ' + r0 + ' × ' + l0 + ' = ' + sSide + 'π。',
+        '底面积 = πr² = ' + (r0 * r0) + 'π，所以 S全 = ' + sSide + 'π + ' + (r0 * r0) + 'π = ' + sAll + 'π。',
+        '所以 k = ' + sSide + '，m = ' + sAll + '。'],
+      kp: ['圆的基本性质', '圆锥的侧面积']
+    };
+  }
+
+  /* 圆周角定理：同弧所对的圆周角 = 圆心角的一半；同弧的圆周角相等；
+     同弦两侧的圆周角互补（它们所对的圆心角合起来 360°）。 */
+  function genCircAngle(r) {
+    var alpha = ri(r, 20, 80), theta = 2 * alpha;
+    var variant = ri(r, 0, 3);
+    var fields, prompt, explain, tip;
+    if (variant === 0) {
+      prompt = 'AB 是 ⊙O 的弦，点 C 在优弧 AB 上，圆心角 ∠AOB = ' + theta + '°。求圆周角 ∠ACB。';
+      fields = [basisField(r, 'arc', '依据'), { type: 'num', label: '∠ACB =', ans: alpha, unit: '°' }];
+      explain = ['∠AOB 与 ∠ACB 对着同一段弧 AB，同弧所对的圆周角 = 圆心角的一半。',
+        '∠ACB = ½ × ' + theta + '° = ' + alpha + '°。',
+        '坑：圆心角换成圆周角要除以 2，反过来才乘 2；题目问哪个角先圈出来。'];
+      tip = '同弧：先找圆心角和圆周角是否对着同一段弧，再决定 ÷2 还是 ×2。';
+    } else if (variant === 1) {
+      prompt = '点 C 在 ⊙O 的优弧 AB 上，∠ACB = ' + alpha + '°。求圆心角 ∠AOB。';
+      fields = [basisField(r, 'arc', '依据'), { type: 'num', label: '∠AOB =', ans: theta, unit: '°' }];
+      explain = ['∠ACB 是圆周角，∠AOB 是它同弧所对的圆心角，圆周角 = 圆心角的一半。',
+        '∠AOB = 2 × ' + alpha + '° = ' + theta + '°。',
+        '坑：反过来求圆心角要乘 2，别也除以 2。'];
+      tip = '已知圆周角求圆心角：×2；已知圆心角求圆周角：÷2。先写「同弧」再动笔。';
+    } else if (variant === 2) {
+      prompt = '点 C、D 都在 ⊙O 的优弧 AB 上，∠ACB = ' + alpha + '°。求 ∠ADB 和圆心角 ∠AOB。';
+      fields = [basisField(r, 'arc', '依据'),
+        { type: 'num', label: '∠ADB =', ans: alpha, unit: '°' },
+        { type: 'num', label: '∠AOB =', ans: theta, unit: '°' }];
+      explain = ['∠ACB 与 ∠ADB 对着同一段弧 AB，同弧所对的圆周角相等：∠ADB = ∠ACB = ' + alpha + '°。',
+        '圆心角 = 圆周角 × 2：∠AOB = 2 × ' + alpha + '° = ' + theta + '°。',
+        '这两个结论都要求「同弧」，而且点 C、D 要在同一侧的弧上（都在优弧）。'];
+      tip = '同弧的两个圆周角相等；但它们对应的圆心角只有一个，别把 ∠AOB 也算成 ' + alpha + '°。';
+    } else {
+      prompt = '弦 AB 把 ⊙O 分成两段弧，点 C 在优弧 AB 上、点 D 在劣弧 AB 上，∠ACB = ' + alpha + '°。求 ∠ADB。';
+      fields = [basisField(r, 'cyc', '依据'), { type: 'num', label: '∠ADB =', ans: 180 - alpha, unit: '°' }];
+      explain = ['A、C、B、D 四点都在 ⊙O 上，顺次连成圆内接四边形 ACBD，对角互补。',
+        '∠ACB + ∠ADB = 180°，所以 ∠ADB = 180° − ' + alpha + '° = ' + (180 - alpha) + '°。',
+        '换个看法：C、D 在弦 AB 两侧，两个圆周角所对的圆心角合起来是 360°，各自一半加起来就是 180°。'];
+      tip = '同弦两侧的圆周角互补（和 180°），不是相等；「同弧」才相等。';
+    }
+    return {
+      id: 'drill.circangle', kind: 'circangle', title: '圆周角定理',
+      prompt: prompt, fields: fields, tip: tip, explain: explain,
+      kp: ['圆的基本性质', '圆周角定理']
+    };
+  }
+
+  /* 弧、弦、圆心角：同圆或等圆中，圆心角相等 ⟺ 弧相等 ⟺ 弦相等（任一条成立，另两条也成立）。 */
+  var ARC_CHORD_RIGHT = [
+    { s: '在同圆或等圆中，相等的圆心角所对的弦相等', why: '圆心角相等 ⟹ 弧相等 ⟹ 弦相等，这是「三量相等」定理的一半' },
+    { s: '在同圆中，等弧所对的圆心角相等', why: '等弧能完全重合，所对的圆心角自然相等' },
+    { s: '在同圆中，相等的弦所对的劣弧相等', why: '圆心角、弦、劣弧三者一一对应，等弦可得等劣弧' }
+  ];
+  var ARC_CHORD_WRONG = [
+    { s: '相等的圆心角所对的弧相等', why: '缺「在同圆或等圆中」这个前提；两个不同大小的圆里，相等的圆心角所对的弧长不一样' },
+    { s: '相等的弦所对的弧相等', why: '一条弦对着两条弧（优弧、劣弧）；而且不同圆里的等弦也不保证弧相等' },
+    { s: '长度相等的两条弧是等弧', why: '等弧要求能完全重合，半径不同时长度相等的弧并不重合' },
+    { s: '圆心角越大，所对的弦一定越长', why: '离开「同圆或等圆」就不成立；缺前提的命题不能算对' }
+  ];
+  function genArcChord(r) {
+    var variant = ri(r, 0, 2);
+    if (variant === 0) {
+      var n = pick(r, [40, 50, 60, 72, 80, 100]), ab = ri(r, 3, 12);
+      return {
+        id: 'drill.arcchord', kind: 'arcchord', title: '弧、弦、圆心角',
+        prompt: '⊙O 中，∠AOB = ∠COD = ' + n + '°，弦 AB = ' + ab + '。求弦 CD。',
+        fields: [{ type: 'num', label: 'CD =', ans: ab }],
+        tip: '同圆中圆心角相等 ⟹ 所对的弦相等；看到「∠AOB = ∠COD」先写这条，再找弦。',
+        explain: ['∠AOB = ∠COD，且在同一圆中，所以两段弧相等、两条弦相等。',
+          'CD = AB = ' + ab + '。',
+          '注意前提：必须「在同圆或等圆中」；不同圆里相等的圆心角所对的弦不一定相等。'],
+        kp: ['圆的基本性质', '弧、弦、圆心角']
+      };
+    }
+    if (variant === 1) {
+      var m = pick(r, [2, 3, 4, 5, 7, 8, 11]);
+      var minor = 360 / (m + 1), major = 360 - minor;
+      return {
+        id: 'drill.arcchord', kind: 'arcchord', title: '弧、弦、圆心角',
+        prompt: '⊙O 的一条弦把圆周分成 1 : ' + m + ' 两段弧。求劣弧与优弧所对的圆心角。',
+        fields: [
+          { type: 'num', label: '劣弧圆心角 =', ans: minor, unit: '°' },
+          { type: 'num', label: '优弧圆心角 =', ans: major, unit: '°' }
+        ],
+        tip: '两段弧的度数比 = 所对圆心角的比；两段弧合起来是整个圆 360°。',
+        explain: ['两条弧一共 360°，比是 1 : ' + m + '，总份数 ' + (m + 1) + ' 份。',
+          '劣弧圆心角 = 360° ÷ ' + (m + 1) + ' = ' + minor + '°，优弧圆心角 = ' + major + '°。',
+          '核对：' + minor + '° + ' + major + '° = 360°。'],
+        kp: ['圆的基本性质', '弧、弦、圆心角']
+      };
+    }
+    var right = pick(r, ARC_CHORD_RIGHT);
+    var picked = [right.s], guard = 0;
+    while (picked.length < 4 && guard++ < 80) {
+      var w = pick(r, ARC_CHORD_WRONG).s;
+      if (picked.indexOf(w) < 0) picked.push(w);
+    }
+    var opts = shuffle(r, picked);
+    return {
+      id: 'drill.arcchord', kind: 'arcchord', title: '弧、弦、圆心角',
+      prompt: '下列说法中，正确的是（　）',
+      fields: [{ type: 'choice', label: '', ans: opts.indexOf(right.s), options: opts }],
+      tip: '「圆心角、弧、弦三量相等」的共同前提是「在同圆或等圆中」；缺前提的命题一律当错。',
+      explain: [right.s + '：对，' + right.why + '。'].concat(
+        picked.slice(1).map(function (s) {
+          var item = ARC_CHORD_WRONG.filter(function (x) { return x.s === s; })[0];
+          return s + '：错，' + (item ? item.why : '缺少同圆或等圆的前提') + '。';
+        })),
+      kp: ['圆的基本性质', '弧、弦、圆心角']
+    };
+  }
+
+  /* 直线与圆的位置关系：d < r 相交（2 个公共点）、d = r 相切（1 个）、d > r 相离（0 个）。 */
+  function genLineCircle(r) {
+    var rad = ri(r, 2, 10);
+    var kind = ri(r, 0, 2);
+    var dist = kind === 0 ? Math.max(1, rad - ri(r, 1, 4)) : (kind === 1 ? rad : rad + ri(r, 1, 4));
+    var word = ['相交', '相切', '相离'][kind];
+    var points = [2, 1, 0][kind];
+    if (r() < 0.65) {
+      return {
+        id: 'drill.linecircle', kind: 'linecircle', title: '直线与圆的位置关系',
+        prompt: '⊙O 的半径为 ' + rad + '，圆心 O 到直线 l 的距离 d = ' + dist + '。判断 l 与 ⊙O 的位置关系，并写出公共点个数。',
+        fields: [
+          { type: 'choice', label: '位置关系', ans: kind, options: ['相交', '相切', '相离'] },
+          { type: 'num', label: '公共点个数 =', ans: points }
+        ],
+        tip: '只比 d 和 r：d < r 相交、d = r 相切、d > r 相离；公共点个数跟着是 2 / 1 / 0。',
+        explain: ['d = ' + dist + '，r = ' + rad + '，所以 d ' + (kind === 0 ? '<' : kind === 1 ? '=' : '>') + ' r。',
+          '直线与圆' + word + '，公共点有 ' + points + ' 个。',
+          '坑：把 d 和直径 2r = ' + (2 * rad) + ' 比；要比半径 r。'],
+        kp: ['直线与圆', '位置关系']
+      };
+    }
+    return {
+      id: 'drill.linecircle', kind: 'linecircle', title: '直线与圆的位置关系',
+      prompt: '⊙O 的半径为 ' + rad + '，直线 l 与 ⊙O 相切。求圆心 O 到 l 的距离 d。',
+      fields: [{ type: 'num', label: 'd =', ans: rad }],
+      tip: '相切 ⟺ d = r：切线到圆心的距离等于半径。',
+      explain: ['直线与圆相切 ⟺ 圆心到直线的距离 d = r。', '所以 d = ' + rad + '。',
+        '这条等价关系也是「作垂直、证半径」判定切线的依据。'],
+      kp: ['直线与圆', '位置关系']
+    };
+  }
+
+  /* 切线的性质：切线垂直于过切点的半径；连 OA 得 Rt△，再用勾股/互余。 */
+  function genTanProp(r) {
+    var tri = pick(r, RIGHT_TRI);
+    var rad = tri[0], pa = tri[1], op = tri[2];
+    if (r() < 0.35) {
+      var beta = ri(r, 20, 70);
+      return {
+        id: 'drill.tanprop', kind: 'tanprop', title: '切线的性质',
+        prompt: 'PA 切 ⊙O 于点 A，∠AOP = ' + beta + '°。求 ∠P。',
+        fields: [basisField(r, 'tan', '∠OAP = 90° 的依据'), { type: 'num', label: '∠P =', ans: 90 - beta, unit: '°' }],
+        tip: '切线 ⟹ 半径 OA ⊥ PA，∠OAP = 90°；再在 Rt△OAP 里用两锐角互余。',
+        explain: ['PA 是切线，A 是切点，所以 OA ⊥ PA，∠OAP = 90°。',
+          'Rt△OAP 中两锐角互余：∠P = 90° − ' + beta + '° = ' + (90 - beta) + '°。',
+          '坑：把 ∠AOP 当成 ∠P；∠AOP 是圆心处的角，∠P 在圆外。'],
+        kp: ['直线与圆', '切线的性质']
+      };
+    }
+    return {
+      id: 'drill.tanprop', kind: 'tanprop', title: '切线的性质',
+      prompt: 'PA 切 ⊙O 于点 A，OA = ' + rad + '，PA = ' + pa + '。求 OP。',
+      fields: [basisField(r, 'tan', '∠OAP = 90° 的依据'), { type: 'num', label: 'OP =', ans: op }],
+      tip: '切线 ⟹ OA ⊥ PA；把 OA、PA、OP 放进 Rt△OAP，用勾股定理。',
+      explain: ['PA 切 ⊙O 于 A ⟹ OA ⊥ PA，∠OAP = 90°。',
+        'OP = √(OA² + PA²) = √(' + rad + '² + ' + pa + '²) = √' + (op * op) + ' = ' + op + '。',
+        '坑：把 OP 当直角边；直角在切点 A，OP 一定是斜边。'],
+      kp: ['直线与圆', '切线的性质']
+    };
+  }
+
+  /* 切线的判定：经过半径外端且垂直于这条半径的直线是切线。
+     给三边满足勾股 ⟹ 角是 90° ⟹ 垂直 ⟹ 切线；没给公共点时用「作垂直、证 d = r」。 */
+  function genTanJudge(r) {
+    var tri = pick(r, RIGHT_TRI);
+    var rad = tri[0], ab = tri[1], ob = tri[2];
+    var rightOpt = 'OA² + AB² = OB² ⟹ ∠OAB = 90°，AB 过半径外端 A 且垂直于 OA';
+    var opts = shuffle(r, [rightOpt, 'OB 是 ⊙O 的直径', 'AB = OA，△OAB 是等边三角形', '∠AOB = 90°']);
+    var relOpts = shuffle(r, ['相交', '相切', '相离']);
+    return {
+      id: 'drill.tanjudge', kind: 'tanjudge', title: '切线的判定',
+      prompt: 'OA 是 ⊙O 的半径，OA = ' + rad + '，AB = ' + ab + '，OB = ' + ob + '。判断直线 AB 与 ⊙O 的位置关系，并选出判定的依据。',
+      fields: [
+        { type: 'choice', label: '位置关系', ans: relOpts.indexOf('相切'), options: relOpts },
+        { type: 'choice', label: '依据', ans: opts.indexOf(rightOpt), options: opts }
+      ],
+      tip: '判定切线两条路：已知公共点 → 连半径、证垂直；没有公共点 → 作垂直、证 d = r。这题 A 是公共点。',
+      explain: ['OA² + AB² = ' + (rad * rad) + ' + ' + (ab * ab) + ' = ' + (ob * ob) + ' = OB²，所以 ∠OAB = 90°，AB ⊥ OA。',
+        'AB 经过半径 OA 的外端 A，且垂直于 OA，所以 AB 是 ⊙O 的切线。',
+        '坑：只看到「AB 过圆上一点」就说相切——还必须垂直；两个条件缺一不可。'],
+      kp: ['直线与圆', '切线的判定']
+    };
+  }
+
+  /* 切线长定理：从圆外一点引两条切线，切线长相等，OP 平分两切线的夹角。 */
+  function genTanLen(r) {
+    var variant = ri(r, 0, 2);
+    var pa = ri(r, 4, 12);
+    if (variant === 0) {
+      return {
+        id: 'drill.tanlen', kind: 'tanlen', title: '切线长定理',
+        prompt: 'PA、PB 分别切 ⊙O 于 A、B，PA = ' + pa + '。求 PB。',
+        fields: [{ type: 'num', label: 'PB =', ans: pa }],
+        tip: '从圆外一点引两条切线，切线长相等：PA = PB。',
+        explain: ['由切线长定理，PA = PB。', '所以 PB = ' + pa + '。',
+          '坑：把切线与割线混了；从圆外一点引两条「切线」，切线长才相等。'],
+        kp: ['直线与圆', '切线长定理']
+      };
+    }
+    if (variant === 1) {
+      var gamma = 2 * ri(r, 15, 35);
+      return {
+        id: 'drill.tanlen', kind: 'tanlen', title: '切线长定理',
+        prompt: 'PA、PB 分别切 ⊙O 于 A、B，∠APB = ' + gamma + '°。求 ∠APO 和 ∠AOB。',
+        fields: [
+          { type: 'num', label: '∠APO =', ans: gamma / 2, unit: '°' },
+          { type: 'num', label: '∠AOB =', ans: 180 - gamma, unit: '°' }
+        ],
+        tip: 'OP 平分 ∠APB；四边形 PAOB 中 ∠PAO = ∠PBO = 90°，所以 ∠AOB = 180° − ∠APB。',
+        explain: ['PA = PB，OP = OP，OA = OB，所以 △OAP ≌ △OBP，OP 平分 ∠APB：∠APO = ' + gamma + '° ÷ 2 = ' + (gamma / 2) + '°。',
+          '四边形 PAOB 中，∠PAO = ∠PBO = 90°，内角和 360°：∠AOB = 360° − 90° − 90° − ' + gamma + '° = ' + (180 - gamma) + '°。',
+          '坑：把 ∠AOB 算成 180° − ' + (gamma / 2) + '°；两个直角已经占掉 180°。'],
+        kp: ['直线与圆', '切线长定理']
+      };
+    }
+    return {
+      id: 'drill.tanlen', kind: 'tanlen', title: '切线长定理',
+      prompt: 'PA、PB 分别切 ⊙O 于 A、B，∠APB = 60°，PA = ' + pa + '。求 AB。',
+      fields: [{ type: 'num', label: 'AB =', ans: pa }],
+      tip: 'PA = PB 且夹角 60° ⟹ △PAB 是等边三角形。',
+      explain: ['PA = PB（切线长相等），又 ∠APB = 60°，所以 △PAB 是等边三角形。',
+        'AB = PA = ' + pa + '。',
+        '坑：只想到「等腰」就停；顶角 60° 的等腰三角形就是等边三角形。'],
+      kp: ['直线与圆', '切线长定理']
+    };
+  }
+
+  /* 三角形的内切圆：内心 = 三条角平分线交点；直角三角形 r = (a + b − c)/2；
+     任意三角形 ∠AIB = 90° + ∠C/2。 */
+  function genIncircle(r) {
+    if (r() < 0.55) {
+      var tri = pick(r, RIGHT_TRI);
+      var a = tri[0], b = tri[1], c = tri[2];
+      var rin = (a + b - c) / 2;
+      return {
+        id: 'drill.incircle', kind: 'incircle', title: '三角形的内切圆',
+        prompt: '直角三角形的两条直角边分别为 ' + a + '、' + b + '，求它的内切圆半径。',
+        fields: [{ type: 'num', label: 'r =', ans: rin }],
+        tip: '直角三角形内切圆半径 r = (a + b − c)/2（c 是斜边）；也可以 r = 面积 ÷ 半周长。',
+        explain: ['斜边 c = √(' + a + '² + ' + b + '²) = ' + c + '。',
+          'r = (a + b − c)/2 = (' + a + ' + ' + b + ' − ' + c + ')/2 = ' + frac(rin) + '。',
+          '记住：内切圆半径是「面积 = ½ × 周长 × r」里的 r，面积法对任意三角形都成立。'],
+        kp: ['直线与圆', '三角形的内切圆']
+      };
+    }
+    var capC = 2 * ri(r, 15, 45);            /* 取偶数，保证 ∠AIB 是整数 */
+    var capA = ri(r, 40, 150 - capC), capB = 180 - capC - capA;
+    var aib = 90 + capC / 2;
+    return {
+      id: 'drill.incircle', kind: 'incircle', title: '三角形的内切圆',
+      prompt: '△ABC 的内切圆圆心为 I，∠A = ' + capA + '°，∠B = ' + capB + '°。求 ∠AIB。',
+      fields: [{ type: 'num', label: '∠AIB =', ans: aib, unit: '°' }],
+      tip: '内心在角平分线上：∠IAB = ½∠A，∠IBA = ½∠B，再在 △AIB 里用内角和。',
+      explain: ['I 是内心，AI、BI 分别平分 ∠A、∠B。',
+        '∠IAB + ∠IBA = ½ × (' + capA + '° + ' + capB + '°) = ' + ((capA + capB) / 2) + '°。',
+        '∠AIB = 180° − ' + ((capA + capB) / 2) + '° = ' + aib + '°（也等于 90° + ½∠C，∠C = ' + capC + '°）。'],
+      kp: ['直线与圆', '三角形的内切圆']
+    };
+  }
+
+  /* 正多边形与圆：中心角 = 360/n；正 n 边形内角 = 180 − 360/n；正六边形半径 = 边长；
+     正三角形边心距 = 外接圆半径的一半。 */
+  var REGULAR_INNER = [[120, 6], [135, 8], [140, 9], [144, 10], [150, 12], [156, 15], [108, 5]];
+  function genRegular(r) {
+    var variant = ri(r, 0, 3);
+    if (variant === 0) {
+      var n = pick(r, [3, 4, 6, 8, 12]);
+      return {
+        id: 'drill.regular', kind: 'regular', title: '正多边形与圆',
+        prompt: '正 ' + n + ' 边形的中心角是多少度？',
+        fields: [{ type: 'num', label: '中心角 =', ans: 360 / n, unit: '°' }],
+        tip: '中心角 = 360° ÷ 边数；它和每个内角加起来等于 180°。',
+        explain: ['正 n 边形的 n 个中心角合起来是整个周角 360°。',
+          '中心角 = 360° ÷ ' + n + ' = ' + (360 / n) + '°。',
+          '别和「内角」混：内角 = 180° − 中心角 = ' + (180 - 360 / n) + '°。'],
+        kp: ['直线与圆', '正多边形与圆']
+      };
+    }
+    if (variant === 1) {
+      var pair = pick(r, REGULAR_INNER), inner = pair[0], sides = pair[1];
+      return {
+        id: 'drill.regular', kind: 'regular', title: '正多边形与圆',
+        prompt: '一个正 n 边形的每个内角都是 ' + inner + '°，求 n。',
+        fields: [{ type: 'num', label: 'n =', ans: sides }],
+        tip: '内角 = 180° − 360°/n；先求外角 360°/n = 180° − 内角，再求 n。',
+        explain: ['外角 = 180° − ' + inner + '° = ' + (180 - inner) + '°。',
+          '正多边形外角和是 360°：n = 360° ÷ ' + (180 - inner) + '° = ' + sides + '。',
+          '核对：内角 = 180° − 360°/' + sides + ' = ' + inner + '°。'],
+        kp: ['直线与圆', '正多边形与圆']
+      };
+    }
+    if (variant === 2) {
+      var side = ri(r, 2, 10);
+      return {
+        id: 'drill.regular', kind: 'regular', title: '正多边形与圆',
+        prompt: '正六边形的边长为 ' + side + '，求它的外接圆半径。',
+        fields: [{ type: 'num', label: '外接圆半径 =', ans: side }],
+        tip: '正六边形的中心角 60°，中心与相邻两顶点构成等边三角形，所以外接圆半径 = 边长。',
+        explain: ['正六边形的中心角 = 360° ÷ 6 = 60°；半径 OA = OB，△OAB 是等边三角形。',
+          '所以外接圆半径 = 边长 = ' + side + '。',
+          '这条「正六边形半径 = 边长」在求弧长、扇形、圆锥时经常用到。'],
+        kp: ['直线与圆', '正多边形与圆']
+      };
+    }
+    var R = pick(r, [4, 6, 8, 10]);
+    return {
+      id: 'drill.regular', kind: 'regular', title: '正多边形与圆',
+      prompt: '正三角形的外接圆半径为 ' + R + '，求它的边心距。',
+      fields: [{ type: 'num', label: '边心距 =', ans: R / 2 }],
+      tip: '正三角形边心距 = 外接圆半径的一半；也可以用 30° 的直角三角形算。',
+      explain: ['正三角形中心角 120°，半径、边心距、半边长构成含 30° 的直角三角形。',
+        '边心距 = R · sin 30° = ' + R + ' × ½ = ' + frac(R / 2) + '。',
+        '记住比例：正三角形 R : r : 边 = 2 : 1 : 2√3。'],
+      kp: ['直线与圆', '正多边形与圆']
+    };
+  }
+
+  /* 增长率与传播：a(1+x)² = b（连续两轮同一百分率）；传播问题 (1+x)² = 总人数。 */
+  var GROWTH_CASES = [
+    { a: 100, x: 10, up: true }, { a: 100, x: 20, up: true }, { a: 200, x: 10, up: true }, { a: 200, x: 20, up: true },
+    { a: 500, x: 10, up: true }, { a: 500, x: 20, up: true }, { a: 1000, x: 10, up: true },
+    { a: 100, x: 10, up: false }, { a: 200, x: 10, up: false }, { a: 500, x: 10, up: false }, { a: 1000, x: 20, up: false }
+  ];
+  function genGrowth(r) {
+    if (r() < 0.55) {
+      var c = pick(r, GROWTH_CASES);
+      var rate = c.up ? 1 + c.x / 100 : 1 - c.x / 100;
+      var b = Math.round(c.a * rate * rate);
+      return {
+        id: 'drill.growth', kind: 'growth', title: '增长率与传播',
+        prompt: '某商品原价 ' + c.a + ' 元，连续两次' + (c.up ? '涨价' : '降价') + '，每次' + (c.up ? '涨价' : '降价') +
+          '的百分率相同，现价为 ' + b + ' 元。求每次' + (c.up ? '涨价' : '降价') + '的百分率（填数字，如 10 表示 10%）。',
+        fields: [{ type: 'num', label: '百分率 =', ans: c.x, unit: '%' }],
+        tip: '连续两次同一百分率：a(1 ± x)² = b；先开方求 1 ± x，再解出 x。另一个根不合实际意义（百分率不能为负，降价率也不能 ≥ 100%），要舍去。',
+        explain: ['设每次' + (c.up ? '涨价' : '降价') + '的百分率为 x，则 ' + c.a + '(1 ' + (c.up ? '+' : '−') + ' x)² = ' + b + '。',
+          '(1 ' + (c.up ? '+' : '−') + ' x)² = ' + (b / c.a) + '，1 ' + (c.up ? '+' : '−') + ' x = ' + rate + '，x = ' + (c.x / 100) + ' = ' + c.x + '%。',
+          '坑：把两轮当成「一共涨 2x」；两轮是乘法，不是加法。'],
+        kp: ['一元二次方程', '实际问题（增长率）']
+      };
+    }
+    var xx = pick(r, [4, 5, 6, 7, 8, 9]);
+    var total = (1 + xx) * (1 + xx);
+    return {
+      id: 'drill.growth', kind: 'growth', title: '增长率与传播',
+      prompt: '有 1 人患流感，经过两轮传染后共有 ' + total + ' 人患流感。每轮 1 人传染几人？',
+      fields: [{ type: 'num', label: '每轮 1 人传染 =', ans: xx, unit: '人' }],
+      tip: '传播问题：1 人第一轮传染 x 人，共 1 + x 人；第二轮这 1 + x 人每人再传染 x 人，总数 (1 + x)²。',
+      explain: ['设每轮 1 人传染 x 人：第一轮后共 1 + x 人，第二轮后共 (1 + x) + (1 + x)x = (1 + x)² 人。',
+        '(1 + x)² = ' + total + '，1 + x = ' + (1 + xx) + '，x = ' + xx + '（负数解舍去）。',
+        '坑：第二轮只算新增的 x(1 + x) 人，忘了加上第一轮的 1 + x 人。'],
+      kp: ['一元二次方程', '实际问题（传播）']
+    };
+  }
+
+  /* 面积问题：设宽为 x，长用 x 表示，面积列方程；解出两个根后按「边长为正、长 ≥ 宽」取舍。 */
+  var AREA_CASES = [{ w: 5, a: 3 }, { w: 6, a: 4 }, { w: 8, a: 5 }, { w: 4, a: 3 }, { w: 7, a: 2 }, { w: 6, a: 2 }];
+  function genAreaEq(r) {
+    if (r() < 0.55) {
+      var c = pick(r, AREA_CASES), w = c.w, a = c.a, l = w + a, S = w * l;
+      return {
+        id: 'drill.areaeq', kind: 'areaeq', title: '面积问题',
+        prompt: '一个长方形的长比宽多 ' + a + ' 米，面积是 ' + S + ' 平方米。求它的宽和长。',
+        fields: [
+          { type: 'num', label: '宽 =', ans: w, unit: '米' },
+          { type: 'num', label: '长 =', ans: l, unit: '米' }
+        ],
+        tip: '设宽为 x 米，则长为 (x + ' + a + ') 米，面积列方程 x(x + ' + a + ') = ' + S + '；两根里舍去负根。',
+        explain: ['设宽为 x 米，长为 (x + ' + a + ') 米：x(x + ' + a + ') = ' + S + '。',
+          '整理得 x² + ' + a + 'x − ' + S + ' = 0，因式分解 (x − ' + w + ')(x + ' + l + ') = 0，x = ' + w + ' 或 x = −' + l + '。',
+          '长度不能为负，舍去 −' + l + '，所以宽 ' + w + ' 米、长 ' + l + ' 米。'],
+        kp: ['一元二次方程', '实际问题（面积）']
+      };
+    }
+    var pair = pick(r, [[5, 8], [4, 6], [5, 12], [7, 10], [6, 9], [3, 8]]);
+    var w2 = pair[0], l2 = pair[1];
+    var C = 2 * (w2 + l2), S2 = w2 * l2;
+    return {
+      id: 'drill.areaeq', kind: 'areaeq', title: '面积问题',
+      prompt: '一个长方形的周长是 ' + C + ' 米，面积是 ' + S2 + ' 平方米。求它的宽和长。',
+      fields: [
+        { type: 'num', label: '宽 =', ans: w2, unit: '米' },
+        { type: 'num', label: '长 =', ans: l2, unit: '米' }
+      ],
+      tip: '周长给的是「长 + 宽」：设宽为 x，则长为 (' + (C / 2) + ' − x)，再列面积方程。',
+      explain: ['长 + 宽 = ' + C + ' ÷ 2 = ' + (C / 2) + ' 米。设宽为 x，则长为 (' + (C / 2) + ' − x)。',
+        'x(' + (C / 2) + ' − x) = ' + S2 + '，整理得 x² − ' + (C / 2) + 'x + ' + S2 + ' = 0，解得 x = ' + w2 + ' 或 ' + l2 + '。',
+        '两个根分别对应宽和长（长 ≥ 宽），所以宽 ' + w2 + ' 米、长 ' + l2 + ' 米。'],
+      kp: ['一元二次方程', '实际问题（面积）']
+    };
+  }
+
+  /* 二次函数与一元二次方程：图象与 x 轴交点的横坐标就是方程的根；
+     对称轴平分两根：x1 + x2 = 2h，b = −(x1 + x2)，c = x1x2（a = 1）。 */
+  function genFxEq(r) {
+    var x1 = pick(r, [-4, -3, -2, -1, 1, 2]);
+    /* 避开两个退化样本：对称轴 x = 0（b = 0）和 B 落在原点（c = 0）——数学成立，但 0 容易被当成漏填 */
+    var ks = [1, 2, 3, 4].filter(function (k) { return k !== -x1 && x1 + 2 * k !== 0; });
+    var h = x1 + pick(r, ks);                /* 对称轴在两根之间，x2 = 2h − x1 */
+    var x2 = 2 * h - x1;
+    var b = -(x1 + x2), c = x1 * x2;
+    return {
+      id: 'drill.fxeq', kind: 'fxeq', title: '二次函数与一元二次方程',
+      prompt: '二次函数 y = x² + bx + c 的图象与 x 轴交于点 A(' + d(x1) + ', 0)，对称轴是直线 x = ' + d(h) +
+        '。求另一个交点 B 的横坐标，以及 b、c。',
+      fields: [
+        { type: 'num', label: 'B 的横坐标 =', ans: x2 },
+        { type: 'num', label: 'b =', ans: b },
+        { type: 'num', label: 'c =', ans: c }
+      ],
+      tip: '图象与 x 轴交点的横坐标 = 方程 x² + bx + c = 0 的根；对称轴在两根正中间，x1 + x2 = 2h。',
+      explain: ['A(' + d(x1) + ', 0) 在 x 轴上，所以 x = ' + d(x1) + ' 是方程 x² + bx + c = 0 的一个根。',
+        '对称轴 x = ' + d(h) + ' 在两根正中间：(x1 + x2)/2 = ' + d(h) + '，x2 = 2×' + d(h) + ' − (' + d(x1) + ') = ' + d(x2) + '，所以 B(' + d(x2) + ', 0)。',
+        '由韦达定理：b = −(x1 + x2) = ' + d(b) + '，c = x1·x2 = ' + d(c) + '。'],
+      kp: ['二次函数', '二次函数与一元二次方程']
     };
   }
 
@@ -1500,6 +2098,32 @@ var MT = (function () {
       tip: '见弦 → 作弦心距 + 连半径，凑出直角三角形：OA² = OM² + AM²。',
       explain: ['OM ⊥ AB ⟹ AM = MB = ½AB = 8（垂径定理）。', '连 OA 得 Rt△OAM：OA = √(6² + 8²) = 10。', '套路：弦长、弦心距、半径三个量，知二求一。'],
       kp: ['圆的基本性质', '垂径定理']
+    },
+    /* ---- 2026-11-19 补：孩子反馈「扇形、弧、圆锥有点难」，把展开图和公式选择做成第一步 ---- */
+    {
+      id: 'entry.t21', title: '圆锥展开图 · 第一步',
+      prompt: '圆锥的底面半径为 3，母线长为 5。<br><span class="muted small">第一步：侧面展开图是扇形——先写它的半径和弧长。</span>',
+      fields: [
+        { type: 'num', label: '扇形半径（母线）=', ans: 5 },
+        { type: 'num', label: '扇形弧长 = kπ，k =', ans: 6 }
+      ],
+      tip: '圆锥侧面展开：扇形半径 = 母线 l，扇形弧长 = 底面周长 2πr。',
+      explain: ['展开图是扇形：半径就是母线 5；弧长等于底面圆的周长 2πr = 6π。',
+        '所以 k = 6；下一步用 θ = 360r/l 求圆心角：360×3÷5 = 216°。'],
+      kp: ['圆的基本性质', '圆锥的侧面积']
+    },
+    {
+      id: 'entry.t22', title: '扇形面积 · 用哪个公式',
+      prompt: '扇形 AOB 中，∠AOB = 120°，半径 OA = 6。<br><span class="muted small">第一步：选面积公式，再算。</span>',
+      fields: [
+        { type: 'choice', label: '用哪个公式', ans: 0, options: ['S = nπr²/360', 'S = πrl', 'S = πr²', 'S = 2πr'] },
+        { type: 'num', label: '面积 = kπ，k =', ans: 12 }
+      ],
+      tip: '给圆心角用 S = nπr²/360；给弧长用 S = ½lr；两个公式可以互相推。',
+      explain: ['已知圆心角 120°、半径 6，用 S = nπr²/360。',
+        'S = 120 × π × 36 ÷ 360 = 12π，所以 k = 12。',
+        '同一题的弧长 l = 120π×6/180 = 4π，用 S = ½lr = ½×4π×6 = 12π，两个公式结果一致。'],
+      kp: ['圆的基本性质', '扇形面积']
     }
   ];
 
@@ -1510,15 +2134,18 @@ var MT = (function () {
   var MODULES = [
     {
       id: 'drill', name: '基础快练', icon: '⚡',
-      desc: '六个板块、25 个题型，限时一次就对：方程与代数 / 二次函数 / 反比例函数 / 圆 / 图形与变换 / 推理与证明。',
+      desc: '七个板块、40 个题型，限时一次就对：方程与代数 / 二次函数 / 反比例函数 / 圆 / 直线与圆 / 图形与变换 / 推理与证明。',
       kinds: [
         /* group 只决定模块页怎么分组显示；数组顺序 = 「开始一轮」的混抽顺序 = 今日轮换顺序 */
         /* —— 方程与代数 —— */
         { id: 'factor', name: '因式分解（十字相乘）', group: '方程与代数', gen: genFactor },
         { id: 'eq', name: '解一元二次方程', group: '方程与代数', gen: genEq },
+        { id: 'complete', name: '配方法 / 直接开平方', group: '方程与代数', gen: genComplete },
         { id: 'eqdef', name: '一元二次方程识别', group: '方程与代数', gen: genEqDef },
         { id: 'disc', name: '判别式', group: '方程与代数', gen: genDisc },
         { id: 'vieta', name: '韦达定理', group: '方程与代数', gen: genVieta },
+        { id: 'growth', name: '增长率与传播', group: '方程与代数', gen: genGrowth },
+        { id: 'areaeq', name: '面积问题', group: '方程与代数', gen: genAreaEq },
         /* —— 二次函数 —— */
         { id: 'vertexprop', name: '二次函数顶点', group: '二次函数', gen: genVertexProp },
         { id: 'vertexmax', name: '顶点式最值', group: '二次函数', gen: genVertexMax },
@@ -1526,10 +2153,11 @@ var MT = (function () {
         { id: 'plug', name: '二次函数代值', group: '二次函数', gen: genPlug },
         { id: 'shift', name: '抛物线平移', group: '二次函数', gen: genShift },
         { id: 'rangemax', name: '闭区间最值', group: '二次函数', gen: genRangeMax },
+        { id: 'fxeq', name: '二次函数与一元二次方程', group: '二次函数', gen: genFxEq },
         /* —— 反比例函数 —— */
         { id: 'invprop', name: '反比例·性质', group: '反比例函数', gen: genInvProp },
         { id: 'invarea', name: '反比例·面积', group: '反比例函数', gen: genInvArea },
-        /* —— 圆：概念 → 三条辅助线 → 两个易忘推论 —— */
+        /* —— 圆：概念 → 三条辅助线 → 两个易忘推论 → 29.2–29.3 的弧与扇形 —— */
         { id: 'circledef', name: '圆的基本概念', group: '圆', gen: genCircleDef },
         { id: 'ptcirc', name: '点与圆的位置关系', group: '圆', gen: genPtCirc },
         { id: 'circum', name: '直角三角形外接圆', group: '圆', gen: genCircum },
@@ -1537,6 +2165,18 @@ var MT = (function () {
         { id: 'perpchord', name: '垂径定理', group: '圆', gen: genPerpChord },
         { id: 'diam90', name: '直径所对圆周角', group: '圆', gen: genDiam90 },
         { id: 'cycquad', name: '圆内接四边形', group: '圆', gen: genCycQuad },
+        { id: 'circangle', name: '圆周角定理', group: '圆', gen: genCircAngle },
+        { id: 'arcchord', name: '弧、弦、圆心角', group: '圆', gen: genArcChord },
+        { id: 'arclen', name: '弧长', group: '圆', gen: genArcLen },
+        { id: 'sector', name: '扇形面积', group: '圆', gen: genSector },
+        { id: 'cone', name: '圆锥的侧面积', group: '圆', gen: genCone },
+        /* —— 直线与圆（第 30 章） —— */
+        { id: 'linecircle', name: '直线与圆的位置关系', group: '直线与圆', gen: genLineCircle },
+        { id: 'tanprop', name: '切线的性质', group: '直线与圆', gen: genTanProp },
+        { id: 'tanjudge', name: '切线的判定', group: '直线与圆', gen: genTanJudge },
+        { id: 'tanlen', name: '切线长定理', group: '直线与圆', gen: genTanLen },
+        { id: 'incircle', name: '三角形的内切圆', group: '直线与圆', gen: genIncircle },
+        { id: 'regular', name: '正多边形与圆', group: '直线与圆', gen: genRegular },
         /* —— 图形与变换 —— */
         { id: 'rot', name: '旋转后坐标', group: '图形与变换', gen: genRot },
         { id: 'sym', name: '中心对称点', group: '图形与变换', gen: genSym },

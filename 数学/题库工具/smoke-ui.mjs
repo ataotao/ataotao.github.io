@@ -21,6 +21,11 @@ const FILE = join(ROOT, '数学', '数学闪练卡.html');
 const html = readFileSync(FILE, 'utf8');
 const core = html.match(/<script id="core">([\s\S]*?)<\/script>/)[1];
 const ui = html.match(/<script id="ui">([\s\S]*?)<\/script>/)[1];
+/* 段四–段三：review / merge / sync 段也在 <script> 里，UI 启动就调 __ltReview.dueList，
+   不先跑这三段会直接 TypeError（2026-11-19 修：本冒烟停在四科回炉内核合入之前）。 */
+const review = html.match(/<script id="review">([\s\S]*?)<\/script>/)[1];
+const merge = html.match(/<script id="merge">([\s\S]*?)<\/script>/)[1];
+const sync = html.match(/<script id="sync">([\s\S]*?)<\/script>/)[1];
 
 /* ---------- 最小 DOM 桩 ---------- */
 const byId = {};
@@ -59,10 +64,17 @@ const localStorage = {
 const ctx = {
   console, document: doc, localStorage, location: { hash: '' },
   setTimeout: () => 0, alert: () => {}, scrollTo: () => {},
+  /* sync 段定义时就要用到这几个宿主接口；冒烟不测网络，只求能加载 */
+  fetch: () => Promise.reject(new Error('offline smoke')),
+  btoa: (s) => Buffer.from(String(s), 'binary').toString('base64'),
+  unescape, encodeURIComponent,
 };
 vm.createContext(ctx);
 ctx.window = ctx;
 vm.runInContext(core, ctx);
+vm.runInContext(review, ctx);
+vm.runInContext(merge, ctx);
+vm.runInContext(sync, ctx);
 vm.runInContext(ui, ctx);
 
 /* ---------- 断言 ---------- */
