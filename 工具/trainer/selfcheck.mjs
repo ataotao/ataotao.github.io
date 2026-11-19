@@ -44,6 +44,7 @@ function verifySyncIsolation(syncCode, label) {
   }
 }
 const coreM = html.match(/<script id="core">([\s\S]*?)<\/script>/);
+const dataM = html.match(/<script id="data">([\s\S]*?)<\/script>/);
 const mergeM = html.match(/<script id="merge">([\s\S]*?)<\/script>/);
 const syncM = html.match(/<script id="sync">([\s\S]*?)<\/script>/);
 const uiM = html.match(/<script id="ui">([\s\S]*?)<\/script>/);
@@ -67,6 +68,24 @@ if (SUB.family === 'scaffold') {
     ['core', coreM[1], SUB.coreFile],
     ['ui', uiM[1], SUB.uiFile]
   ];
+  if (SUB.dataFile) {
+    if (SUB.dataOutFile) {
+      // ADR-0009：数据外置成同目录 JS，HTML 只留 <script src>；产物与真源逐字节一致
+      const ref = SUB.dataRef || path.basename(SUB.dataOutFile);
+      const tag = '<script src="' + ref + '"></script>';
+      if (html.indexOf(tag) < 0) fail(`科目配置了 dataOutFile，但产物缺少 ${tag}`);
+      if (dataM) fail('数据已外置，产物不应再内联 <script id="data">');
+      const outPath = path.join(ROOT, SUB.dataOutFile);
+      if (!fs.existsSync(outPath)) fail(`外置词库产物不存在：${SUB.dataOutFile}`);
+      seg.push(['data(外置)', fs.readFileSync(outPath, 'utf8'), SUB.dataFile]);
+    } else if (dataM) {
+      seg.push(['data', dataM[1], SUB.dataFile]);
+    } else {
+      fail(`科目配置了 dataFile=${SUB.dataFile}，但产物缺少 <script id="data"> 段`);
+    }
+  } else if (dataM) {
+    fail('产物有 data 段但科目配置没有 dataFile');
+  }
   for (const [label, inHtml, srcFile] of seg) {
     if (inHtml == null) fail(`产物缺少 ${label} 段`);
     const src = fs.readFileSync(path.join(ROOT, srcFile), 'utf8');
@@ -88,10 +107,14 @@ if (SUB.family === 'scaffold') {
   verifySyncIsolation(syncM[1], name);   // 产物内真实 syncPlan 按科过滤验证
   // 记录键在 UI 里
   if (uiM[1].indexOf("'" + SUB.key + "'") < 0) fail(`UI 里找不到记录键 ${SUB.key}`);
-  // 单文件：无外部脚本/样式引用（fetch 是云同步必需的运行时 API，不算外部依赖）
-  if (/<script[^>]+src=|<link[^>]+href=/.test(html)) fail('产物有外部依赖，不是单文件');
+  // 单文件（或「HTML + 同目录词库」）：无外部脚本/样式引用。
+  // ADR-0009：外置词库的那一个 <script src> 是允许的，其它外链一律拒绝。
+  const dataRef = SUB.dataOutFile ? (SUB.dataRef || path.basename(SUB.dataOutFile)) : null;
+  const refs = [...html.matchAll(/<script[^>]+src="([^"]+)"/g), ...html.matchAll(/<link[^>]+href="([^"]+)"/g)].map((m) => m[1]);
+  if (refs.some((x) => x !== dataRef)) fail('产物有非词库的外部依赖：' + refs.filter((x) => x !== dataRef).join(', '));
+  if (dataRef && refs.filter((x) => x === dataRef).length !== 1) fail('外置词库 <script src> 应恰好一次');
   console.log(`✓ ${name} 脚手架族内核自检通过`);
-  console.log('  css/core/ui 三源逐字节一致 · merge 段同源 · core 暴露 ' + SUB.coreGlobal + ' · 记录键 ' + SUB.key + ' · 单文件');
+  console.log('  css/core/ui 三源逐字节一致 · merge 段同源 · core 暴露 ' + SUB.coreGlobal + ' · 记录键 ' + SUB.key + (dataRef ? ` · 外置词库 ${dataRef}` : ' · 单文件'));
   process.exit(0);
 }
 

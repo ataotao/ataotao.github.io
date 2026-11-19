@@ -60,6 +60,11 @@ const TARGETS = [
     cmd: ['node', ['英语/练习工具/build.mjs']],
     watch: ['英语/九上英语过关练习.html', '英语/练习工具/data/bundle.js'],
   },
+  {
+    name: '英语 · 单词闪练卡（训练器模板）',
+    cmd: ['node', ['工具/trainer/build.mjs', '英语单词']],
+    watch: ['英语/英语单词闪练卡.html', '英语/词库.js'],
+  },
 ];
 
 const only = process.argv.slice(2).find((a) => !a.startsWith('--'));

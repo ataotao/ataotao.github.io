@@ -4,7 +4,8 @@
  * 用法（仓库根执行）：
  *   node 工具/trainer/build.mjs 化学         # 闪练卡族（kernel.js）
  *   node 工具/trainer/build.mjs 物理|数学    # 脚手架族（scaffold.js）
- *   node 工具/trainer/build.mjs all          # 全部已迁移科目
+ *   node 工具/trainer/build.mjs 英语单词      # 脚手架族 + 可选 data 段（词库内联）
+ *   node 工具/trainer/build.mjs all          # 化学/物理/数学（不含英语单词，需单独构建）
  *
  * 两族共用本构建编排与 <script id="core">/<script id="ui"> 节点契约：
  *   闪练卡族（family 缺省/flash）：core=科目 core 源(CH)，ui=kernel.uiScript() 生成
@@ -47,7 +48,7 @@ function syncScript(subject) {
 
 const arg = process.argv[2];
 if (!arg) {
-  console.error('用法：node 工具/trainer/build.mjs 化学|物理|数学   (或 all)');
+  console.error('用法：node 工具/trainer/build.mjs 化学|物理|数学|英语单词   (或 all)');
   process.exit(2);
 }
 const names = arg === 'all' ? ['化学', '物理', '数学'] : [arg];
@@ -81,8 +82,11 @@ for (const name of names) {
   const uiSrc = isScaffold ? r(SUBJECT.uiFile) : uiScript(SUBJECT).replace(/^<script id="ui">|<\/script>\s*$/g, '');
   const mergeSrc = r('工具/trainer/merge.mjs').replace(/^export\s+/gm, '');
   const syncCore = r('工具/trainer/sync.mjs').replace(/^import[^\n]*\n/gm, '').replace(/^export\s+/gm, '');
-  // 语法体检：core / merge / sync / ui 都不能有语法错（适配层用 async/顶层 IIFE，vm 可解析）
-  for (const [label, src] of [['core', core], ['merge', mergeSrc], ['sync', syncCore + '\n' + r('工具/trainer/sync-adapter.mjs')], ['ui', uiSrc]]) {
+  // 语法体检：core / merge / sync / ui（及可选 data）都不能有语法错（适配层用 async/顶层 IIFE，vm 可解析）
+  const syntaxSegs = [['core', core], ['merge', mergeSrc],
+    ['sync', syncCore + '\n' + r('工具/trainer/sync-adapter.mjs')], ['ui', uiSrc]];
+  if (SUBJECT.dataFile) syntaxSegs.push(['data', r(SUBJECT.dataFile)]);
+  for (const [label, src] of syntaxSegs) {
     try { new vm.Script(src, { filename: name + '.' + label + '.js' }); }
     catch (e) { console.error(`✗ ${name} ${label} 语法错误：${e.message}`); process.exit(1); }
   }
@@ -90,7 +94,14 @@ for (const name of names) {
   let html;
   if (isScaffold) {
     const shellHtml = scaffoldShell(SUBJECT).replace('/*__CSS__*/', r(SUBJECT.cssFile).trimEnd());
+    // 数据段（ADR-0009）：默认内联；科目配了 dataOutFile 则外置成同目录 JS，HTML 只留 <script src>。
+    const dataSrc = SUBJECT.dataFile ? r(SUBJECT.dataFile).trimEnd() : '';
+    const dataSeg = !dataSrc ? ''
+      : SUBJECT.dataOutFile
+        ? '<script src="' + (SUBJECT.dataRef || path.basename(SUBJECT.dataOutFile)) + '"></script>\n\n'
+        : '<script id="data">\n' + dataSrc + '\n</script>\n\n';
     html = shellHtml +
+      dataSeg +
       '<script id="core">\n' + core.trimEnd() + '\n</script>\n\n' +
       mergeScript() + syncScript(name) +
       '<script id="ui">\n' + uiSrc.trimEnd() + '\n</script>\n' +
@@ -116,5 +127,14 @@ for (const name of names) {
   fs.writeFileSync(dest, html, 'utf8');
   const kb = (Buffer.byteLength(html) / 1024).toFixed(1);
   console.log(`✓ ${SUBJECT.outFile}  ${kb} KB  [${isScaffold ? 'scaffold' : 'flash'}]`);
+  // 可选外置词库（ADR-0009）：配置 dataOutFile 时把 data 源复制成同目录 JS，HTML 用 <script src> 加载。
+  // 经典脚本在 file:// 下可加载同目录文件（fetch 会被 CORS 拦），保持离线可用。
+  if (SUBJECT.dataFile && SUBJECT.dataOutFile) {
+    const dataDest = path.join(ROOT, SUBJECT.dataOutFile);
+    fs.mkdirSync(path.dirname(dataDest), { recursive: true });
+    fs.writeFileSync(dataDest, r(SUBJECT.dataFile).trimEnd() + '\n', 'utf8');
+    const dkb = (Buffer.byteLength(fs.readFileSync(dataDest)) / 1024).toFixed(1);
+    console.log(`  ↳ 外置词库 ${SUBJECT.dataOutFile}  ${dkb} KB  ← <script src="${SUBJECT.dataRef || path.basename(SUBJECT.dataOutFile)}">`);
+  }
   console.log(`  记录键 ${SUBJECT.key} · core ${SUBJECT.contract.MODULES} (${SUBJECT.contract.gen} / ${SUBJECT.contract.judge}) · 回炉 ${SUBJECT.plan.join('/')} 天`);
 }
