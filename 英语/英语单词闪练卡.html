@@ -963,9 +963,6 @@ window.__ltSync = { carrierSnapshot: carrierSnapshot, syncPlan: syncPlan, subjec
 
   /* ---------- 选题数据 ---------- */
   function sources() { return (typeof EW_VOCAB !== 'undefined' && EW_VOCAB.sources) ? EW_VOCAB.sources : []; }
-  function sourceById(id) { return sources().filter(function (s) { return s.id === id; })[0] || null; }
-  function gradeById(src, id) { return (src && src.grades || []).filter(function (g) { return g.id === id; })[0] || null; }
-  function modId(srcId, gradeId, unitId) { return srcId + '.' + gradeId + '.' + unitId; }
 
   /* ---------- 今日 ---------- */
   function renderToday() {
@@ -979,31 +976,39 @@ window.__ltSync = { carrierSnapshot: carrierSnapshot, syncPlan: syncPlan, subjec
     var srcs = sources();
     if (!srcs.length) { app.appendChild(h('div', { class: 'card' }, '词库没加载出来：请确认「词库.js」和本页面在同一个文件夹里（两个文件要一起复制或搬家）。')); return; }
 
-    if (!S.selSource || !sourceById(S.selSource)) S.selSource = srcs[0].id;
-    var src = sourceById(S.selSource);
-    if (!S.selGrade || !gradeById(src, S.selGrade)) S.selGrade = (src.grades[0] || {}).id || '';
-    var grade = gradeById(src, S.selGrade);
+    /* 不再单列「教材来源」一层：把两个来源的 14 个年级册拍平成一行
+       （小学 8 + 初中 6），默认九上；selSource 只在内部用于拼模块 id。 */
+    var grades = [];
+    srcs.forEach(function (s) {
+      (s.grades || []).forEach(function (g) { grades.push({ srcId: s.id, srcName: s.name, g: g }); });
+    });
+    function gradeEntry(id) {
+      for (var i = 0; i < grades.length; i++) if (grades[i].g.id === id) return grades[i];
+      return null;
+    }
+    var entry = S.selGrade ? gradeEntry(S.selGrade) : null;
+    if (!entry) {
+      for (var gi = 0; gi < grades.length; gi++) if (grades[gi].g.name === '九上') { entry = grades[gi]; break; }
+      if (!entry) entry = grades[0];
+      S.selGrade = entry ? entry.g.id : '';
+      S.selUnit = '';
+    }
+    S.selSource = entry ? entry.srcId : '';
+    var grade = entry ? entry.g : null;
     var units = (grade && grade.units) || [];
     if (!S.selUnit || !units.filter(function (u) { return u.id === S.selUnit; }).length) S.selUnit = (units[0] || {}).id || '';
     var unit = units.filter(function (u) { return u.id === S.selUnit; })[0] || null;
 
-    // 来源
+    // 年级册
     var card = h('div', { class: 'card', style: 'margin-top:12px' });
-    card.appendChild(h('div', { class: 'small muted', style: 'margin-bottom:6px' }, '① 选教材来源'));
-    card.appendChild(h('div', { class: 'row' }, srcs.map(function (s) {
-      return h('button', { class: 'btn btn-sm' + (s.id === S.selSource ? ' btn-primary' : ''), onclick: function () {
-        S.selSource = s.id; S.selGrade = (s.grades[0] || {}).id || ''; S.selUnit = ''; render();
-      } }, s.name);
-    })));
-    // 年级
-    card.appendChild(h('div', { class: 'small muted', style: 'margin:14px 0 6px' }, '② 选年级（册）'));
-    card.appendChild(h('div', { class: 'row wrap' }, (src.grades || []).map(function (g) {
-      return h('button', { class: 'btn btn-sm' + (g.id === S.selGrade ? ' btn-primary' : ''), onclick: function () {
-        S.selGrade = g.id; S.selUnit = (g.units[0] || {}).id || ''; render();
-      } }, g.name);
+    card.appendChild(h('div', { class: 'small muted', style: 'margin-bottom:6px' }, '① 选年级（册）'));
+    card.appendChild(h('div', { class: 'row wrap' }, grades.map(function (e) {
+      return h('button', { class: 'btn btn-sm' + (e.g.id === S.selGrade ? ' btn-primary' : ''), onclick: function () {
+        S.selSource = e.srcId; S.selGrade = e.g.id; S.selUnit = (e.g.units[0] || {}).id || ''; render();
+      } }, e.g.name);
     })));
     // 单元
-    card.appendChild(h('div', { class: 'small muted', style: 'margin:14px 0 6px' }, '③ 选单元'));
+    card.appendChild(h('div', { class: 'small muted', style: 'margin:14px 0 6px' }, '② 选单元'));
     card.appendChild(h('div', { class: 'row wrap' }, units.map(function (u) {
       return h('button', { class: 'btn btn-sm' + (u.id === S.selUnit ? ' btn-primary' : ''), onclick: function () {
         S.selUnit = u.id; render();
@@ -1015,7 +1020,7 @@ window.__ltSync = { carrierSnapshot: carrierSnapshot, syncPlan: syncPlan, subjec
     var nWords = unit ? unit.words.length : 0;
     var scope = unit ? (grade.name + ' · ' + unit.name + ' · ' + nWords + ' 词') : '未选单元';
     var play = h('div', { class: 'card', style: 'margin-top:12px' },
-      h('div', { class: 'row' }, h('b', null, '④ 按单元练习'), h('span', { class: 'grow' }), h('span', { class: 'small muted' }, scope)),
+      h('div', { class: 'row' }, h('b', null, '③ 按单元练习'), h('span', { class: 'grow' }), h('span', { class: 'small muted' }, scope)),
       h('p', { class: 'small muted' }, '「整单元」把本单元每个词都练到、不遗漏，可反复完整循环；「快练」每轮 10 题（词不够时才重复）。先选再提交（回车也行），答错自动进错题本按 1/3/7/14 天回炉。')
     );
     var dirs = [{ id: '', n: '三方向混合' }, { id: 'mix2', n: '双向混合（英↔中）' }].concat(

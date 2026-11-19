@@ -68,12 +68,17 @@ await sleep(1500);
 const jsErrors = events.filter((e) => e.method === "Runtime.exceptionThrown").map((e) => e.params.exceptionDetails?.text || 'err');
 ok("无 JS 运行时异常", jsErrors.length === 0, jsErrors.join(' | '));
 
-// 今日页渲染
-const hasToday = await $(`document.body.innerText.indexOf('选教材来源') >= 0`);
-ok("今日页渲染（来源/年级/单元选择器）", hasToday);
-const srcBtns = await $(`Array.from(document.querySelectorAll('button')).filter(b=>/沪教版|沪教牛津小学/.test(b.textContent)).length`);
-ok("两个来源按钮", srcBtns >= 2, srcBtns);
-const unitBtns = await $(`Array.from(document.querySelectorAll('button')).filter(b=>/^Unit \\d+$/.test(b.textContent.trim())).length`);
+// 今日页渲染：去掉「教材来源」一层，14 个年级册平铺，默认九上
+const hasToday = await $(`document.body.innerText.indexOf('选年级') >= 0`);
+ok("今日页渲染（年级册/单元选择器）", hasToday);
+const gradeInfo = await $(`(() => {
+  const btns = [...document.querySelectorAll('button')].filter((b) => /^(三|四|五|六|七|八|九)[上下]$/.test(b.textContent.trim()));
+  const active = btns.filter((b) => b.classList.contains('btn-primary')).map((b) => b.textContent.trim());
+  return { n: btns.length, active };
+})()`);
+ok("年级册 14 个 · 默认九上", gradeInfo && gradeInfo.n === 14 && gradeInfo.active.join(',') === '九上', JSON.stringify(gradeInfo));
+ok("不再有教材来源层", await $(`document.body.innerText.indexOf('选教材来源') < 0`));
+const unitBtns = await $(`Array.from(document.querySelectorAll('button')).filter(b=>b.textContent.trim().startsWith('Unit ')).length`);
 ok("单元按钮渲染", unitBtns >= 1, unitBtns);
 const mixBtn = await $(`Array.from(document.querySelectorAll('button')).some(b=>/双向混合/.test(b.textContent))`);
 ok("双向混合按钮存在", mixBtn);

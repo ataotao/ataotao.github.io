@@ -228,7 +228,9 @@ function runUI() {
 
   // 今日渲染：有单元选择卡
   T.go('today');
-  ok('今日视图渲染', app.innerHTML.indexOf('选教材来源') >= 0 || app.children.length > 0);
+  ok('今日视图渲染', textOf(app).indexOf('选年级（册）') >= 0 && textOf(app).indexOf('选单元') >= 0);
+  ok('今日页不再有教材来源层', textOf(app).indexOf('选教材来源') < 0);
+  ok('默认年级册是九上', T.S.selGrade === 'hb9a' && T.S.selSource === 'hb');
   ok('默认方向为双向混合', T.S.selKind === 'mix2' && T.S.randKinds === 'mix2');
 
   // 三方向各出一轮（用钩子直接 startSession + 检查 q 字段）
