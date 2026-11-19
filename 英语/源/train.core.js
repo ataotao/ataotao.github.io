@@ -218,6 +218,37 @@ var EW = (function () {
     return out;
   }
 
+  /* genSession：快练队列——一次生成 n 题，同一队列内词不重复；
+     单元词数不足 n 时才循环复用（换一轮乱序，尽量避免相邻重复）。
+     kinds 与 genUnitAll 同义；纯 p2c 只取有音标的词（快练不降级，保持所选方向）。 */
+  function genSession(mod, kinds, seed, n) {
+    var m = typeof mod === 'string' ? moduleById(mod) : mod;
+    if (!m || !m.words.length) return [];
+    var ks = normalizeKinds(kinds);
+    if (!ks.length) ks = KIND_IDS.slice();
+    n = Math.max(1, Math.floor(n || 10));
+    var r = mulberry32(((seed || 1) >>> 0) ^ hashStr(m.id + '|sess|' + ks.join(',')));
+    var ipaPool = m.words.filter(function (w) { return !!w.ipa; });
+    var deckPool = (ks.length === 1 && ks[0] === 'p2c') ? ipaPool : m.words;
+    if (!deckPool.length) return [];
+    var donorsCache = Object.create(null), poolCache = Object.create(null);
+    function donorsOf(kind) { return donorsCache[kind] || (donorsCache[kind] = donorsFor(m, kind, r)); }
+    function poolOf(kind) { return poolCache[kind] || (poolCache[kind] = kind === 'p2c' ? ipaPool : m.words); }
+    var deck = shuffle(deckPool, r), pos = 0, last = null, out = [];
+    for (var guard = 0; guard < n * 12 + 50 && out.length < n; guard++) {
+      if (pos >= deck.length) {
+        deck = shuffle(deckPool, r); pos = 0;
+        if (deck.length > 1 && deck[0] === last) { var t = deck[0]; deck[0] = deck[1]; deck[1] = t; }
+      }
+      var w = deck[pos++], kind = ks[out.length % ks.length];
+      if (kind === 'p2c' && !w.ipa) kind = 'e2c';   // 混合方向里无音标降级；纯 p2c 已在 deckPool 过滤
+      var q = buildQ(m, w, kind, r, poolOf(kind), donorsOf(kind));
+      if (!q) continue;
+      out.push(q); last = w;
+    }
+    return out;
+  }
+
   /* 全库词引用（含所属模块），供随机抽词用。 */
   function allWordRefs() {
     var out = [];
@@ -227,12 +258,29 @@ var EW = (function () {
     return out;
   }
 
-  /* genRandom：从全库去重抽 n 词，每词一题，方向轮换。n 超库容则取全库。 */
+  /* 按英文词去重的全库引用：词库有 281 个跨册同形词（green×3 等），
+     随机练习的去重单位必须是「词」而不是「单元×词位」。取首次出现的条目。
+     区分大小写：Miss（小姐）/ miss（错过）、May（五月）/ may（可以）是不同词条。 */
+  function uniqueWordRefs() {
+    var seen = Object.create(null), out = [];
+    MODULES.forEach(function (m) {
+      m.words.forEach(function (w) {
+        if (seen[w.en]) return;
+        seen[w.en] = 1;
+        out.push({ m: m, w: w });
+      });
+    });
+    return out;
+  }
+
+  /* genRandom：从全库按英文词去重抽 n 词，每词一题，方向轮换。n 超库容则取全库唯一词。
+     纯 p2c 只取有音标的词（与 genSession 一致，不静默混入英→中）；混合方向才降级。 */
   function genRandom(n, seed, kinds) {
-    var refs = allWordRefs();
-    n = Math.max(1, Math.min(n || 20, refs.length));
     var ks = normalizeKinds(kinds);
     if (!ks.length) ks = KIND_IDS.slice();
+    var refs = uniqueWordRefs();
+    if (ks.length === 1 && ks[0] === 'p2c') refs = refs.filter(function (ref) { return !!ref.w.ipa; });
+    n = Math.max(1, Math.min(n || 20, refs.length));
     var r = mulberry32(((seed || 1) >>> 0) ^ hashStr('|rand|' + n));
     var order = shuffle(refs, r);
     var out = [];
@@ -361,8 +409,8 @@ var EW = (function () {
     VERSION: VERSION, DAY: DAY,
     KINDS: KINDS, KIND_IDS: KIND_IDS, nameOf: nameOf,
     modules: MODULES, moduleById: moduleById, allUnitIds: allUnitIds,
-    gen: gen, genUnitAll: genUnitAll, genRandom: genRandom,
-    allWordRefs: allWordRefs,
+    gen: gen, genUnitAll: genUnitAll, genSession: genSession, genRandom: genRandom,
+    allWordRefs: allWordRefs, uniqueWordRefs: uniqueWordRefs,
     judge: judge, ansText: ansText, selfTest: selfTest,
     highlightExample: highlightExample
   };

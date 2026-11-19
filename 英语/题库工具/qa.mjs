@@ -118,6 +118,52 @@ const mixInfo = await $(`(() => {
 ok("双向混合只轮换英↔中", mixInfo && mixInfo.ok, mixInfo && mixInfo.kinds.join(','));
 await shot('02b-mix');
 
+// 快练队列：一次出满 10 题、词不重复；题号/进度条不提前进位
+const quick = await $(`(() => {
+  const T = window.__ew, m = T.EW.modules.find((x) => x.words.length >= 12);
+  T.startSession(m.id, 'e2c', 10);
+  const words = (T.S.sess.queue || []).map((q) => q.word);
+  T.S.choice[0] = T.S.q.fields[0].ans; T.submit();
+  const row = document.querySelectorAll('#app > .row')[0];
+  const cnt = row ? row.querySelectorAll('.small.muted')[1].textContent.trim() : '';
+  const bar = document.querySelector('.progress i') ? document.querySelector('.progress i').style.width : '';
+  return { id: m.id, n: words.length, uniq: new Set(words).size, total: T.S.sess.total, done: T.S.sess.done, cnt, bar };
+})()`);
+ok("快练 10 题按不同词出满", quick && quick.n === 10 && quick.uniq === 10 && quick.total === 10, JSON.stringify(quick));
+ok("答完第 1 题题号仍是 1 / 10", quick && quick.cnt === '1 / 10' && quick.done === 0, quick && quick.cnt);
+ok("答完第 1 题进度条 10%", quick && quick.bar === '10%', quick && quick.bar);
+
+// 答满 10 题：最后一题答完应显示 10 / 10，而不是 11 / 10
+const last = await $(`(() => {
+  const T = window.__ew, m = T.EW.modules.find((x) => x.words.length >= 12);
+  T.startSession(m.id, 'e2c', 10);
+  for (let i = 0; i < 10; i++) { T.S.choice[0] = T.S.q.fields[0].ans; T.submit(); if (i < 9) T.next(); }
+  const row = document.querySelectorAll('#app > .row')[0];
+  return { cnt: row ? row.querySelectorAll('.small.muted')[1].textContent.trim() : '',
+           bar: document.querySelector('.progress i') ? document.querySelector('.progress i').style.width : '',
+           done: T.S.sess.done };
+})()`);
+ok("最后一题答完显示 10 / 10", last && last.cnt === '10 / 10' && last.done === 9, JSON.stringify(last));
+ok("最后一题进度条 100%", last && last.bar === '100%', last && last.bar);
+
+// Enter 不再劫持按钮：聚焦选项按 Enter 应选中该选项，而不是弹「先选一个答案」
+await $(`window.__alerts = []; window.alert = (m) => window.__alerts.push(String(m)); 1`);
+await $(`(() => { const T = window.__ew; T.startSession('primary.ox3a.unit1', 'e2c', 5); document.querySelectorAll('.opt')[2].focus(); return 1; })()`);
+await send("Input.dispatchKeyEvent", { type: "keyDown", key: "Enter", code: "Enter", windowsVirtualKeyCode: 13, nativeVirtualKeyCode: 13, text: "\r" });
+await send("Input.dispatchKeyEvent", { type: "keyUp", key: "Enter", code: "Enter", windowsVirtualKeyCode: 13, nativeVirtualKeyCode: 13 });
+await sleep(150);
+const enterPick = await $("({ choice: window.__ew.S.choice[0], answered: window.__ew.S.answered, alerts: window.__alerts })");
+ok("Enter 选中聚焦的选项", enterPick && enterPick.choice === 2 && enterPick.answered === false && enterPick.alerts.length === 0, JSON.stringify(enterPick));
+
+// Enter 不再劫持「退出」：答完后聚焦退出按 Enter 应回到今日
+await $(`(() => { const T = window.__ew; T.S.choice[0] = T.S.q.fields[0].ans; T.submit();
+  const b = [...document.querySelectorAll('button')].find((x) => x.textContent.trim() === '退出'); b.focus(); return 1; })()`);
+await send("Input.dispatchKeyEvent", { type: "keyDown", key: "Enter", code: "Enter", windowsVirtualKeyCode: 13, nativeVirtualKeyCode: 13, text: "\r" });
+await send("Input.dispatchKeyEvent", { type: "keyUp", key: "Enter", code: "Enter", windowsVirtualKeyCode: 13, nativeVirtualKeyCode: 13 });
+await sleep(150);
+const enterExit = await $("({ view: window.__ew.S.view, done: window.__ew.S.sess.done })");
+ok("Enter 触发退出而不是下一题", enterExit && enterExit.view === 'today' && enterExit.done === 0, JSON.stringify(enterExit));
+
 // 整单元：每词一题不遗漏，可完整循环
 const unitAll = await $(`(() => {
   const T = window.__ew, mod='primary.ox3a.unit1';
@@ -136,14 +182,15 @@ const randInfo = await $(`(() => {
   const T = window.__ew, before=T.S.selUnit;
   T.go('random');
   const view = document.body.innerText.indexOf('随机') >= 0;
+  const pill = ([...document.querySelectorAll('.pill')].map((x) => x.textContent).find((x) => /词可选/.test(x))) || '';
   const counts=[];
   for (const n of [20,30,50]) {
     T.startRandom(n, null);
-    counts.push({n, got:T.S.sess.total, uniq:new Set(T.S.sess.queue.map(q=>q.id)).size, area:T.S.area});
+    counts.push({n, got:T.S.sess.total, uniq:new Set(T.S.sess.queue.map(q=>q.word)).size, area:T.S.area});
   }
-  return { view, counts, selUntouched:T.S.selUnit===before };
+  return { view, counts, selUntouched:T.S.selUnit===before, pill, pillOk: pill === T.EW.uniqueWordRefs().length + ' 词可选' };
 })()`);
-ok("随机练习三档去重且隔离", randInfo && randInfo.view && randInfo.selUntouched &&
+ok("随机练习三档去重且隔离", randInfo && randInfo.view && randInfo.selUntouched && randInfo.pillOk &&
   randInfo.counts.every(x=>x.got===x.n && x.uniq===x.n && x.area==='random'), JSON.stringify(randInfo));
 await shot('02c-random');
 

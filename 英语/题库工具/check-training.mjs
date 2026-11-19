@@ -98,17 +98,40 @@ function runCore() {
     console.error(`✗ 整单元出题问题：遗漏/非法 ${omitted} · 重复 ${dup} · 方向越界 ${mixed}`); process.exit(1);
   }
   console.log('整单元：' + units + ' 个单元 × 3 种方向组合，每词一题无遗漏无重复');
-  const allCount = EW.allWordRefs().length;
+  // 去重单位是「英文词」而不是「单元×词位」：词库有 281 个跨册同形词（区分大小写）
+  const uniqCount = new Set(EW.modules.flatMap((m) => m.words.map((w) => w.en))).size;
   for (const n of [20, 30, 50]) {
     const qs = EW.genRandom(n, 7, null);
     if (qs.length !== n) { console.error(`✗ 随机练习数量不对：要 ${n} 得 ${qs.length}`); process.exit(1); }
-    if (new Set(qs.map((q) => q.id)).size !== n) { console.error('✗ 随机练习抽到重复词'); process.exit(1); }
+    if (new Set(qs.map((q) => q.word)).size !== n) { console.error('✗ 随机练习抽到重复英文词'); process.exit(1); }
     if (qs.some((q) => q.kind !== 'e2c' && q.kind !== 'c2e' && q.kind !== 'p2c')) { console.error('✗ 随机练习方向异常'); process.exit(1); }
     if (qs.some((q) => !EW.judge(q, [q.fields[0].ans]).ok)) { console.error('✗ 随机练习判分异常'); process.exit(1); }
   }
-  const capped = EW.genRandom(allCount + 10, 7, null);
-  if (capped.length !== allCount) { console.error(`✗ 随机练习超库容未收敛：${capped.length}/${allCount}`); process.exit(1); }
-  console.log('随机：20/30/50 词各抽满且去重 · 超库容收敛到 ' + allCount);
+  const capped = EW.genRandom(uniqCount + 10, 7, null);
+  if (capped.length !== uniqCount) { console.error(`✗ 随机练习超库容未收敛：${capped.length}/${uniqCount}`); process.exit(1); }
+  const p2cRandom = EW.genRandom(30, 7, 'p2c');
+  if (p2cRandom.length !== 30 || p2cRandom.some((q) => q.kind !== 'p2c')) {
+    console.error('✗ 随机纯 p2c 混入了其它方向（应只取有音标的词）'); process.exit(1);
+  }
+  console.log('随机：20/30/50 词各抽满且按英文词去重 · 超库容收敛到 ' + uniqCount + ' · 纯 p2c 不降级');
+
+  // 快练队列（ADR-0009 补充）：一次生成 n 题，词不重复；单元词不够才循环
+  let sessBad = 0, sessTotal = 0;
+  for (const m of EW.modules) {
+    for (const kinds of [null, ['e2c', 'c2e'], ['p2c'], 'c2e']) {
+      const qs = EW.genSession(m.id, kinds, 11, 10);
+      sessTotal++;
+      const ipaOnly = kinds === 'p2c' || (Array.isArray(kinds) && kinds.length === 1 && kinds[0] === 'p2c');
+      const usable = ipaOnly ? m.words.filter((w) => w.ipa).length : m.words.length;
+      if (qs.length !== 10) sessBad++;
+      if (new Set(qs.map((q) => q.word)).size !== Math.min(10, usable)) sessBad++;
+      if (ipaOnly && qs.some((q) => q.kind !== 'p2c')) sessBad++;
+      if (Array.isArray(kinds) && kinds.join(',') === 'e2c,c2e' && qs.some((q) => q.kind === 'p2c')) sessBad++;
+      if (qs.some((q) => !EW.judge(q, [q.fields[0].ans]).ok)) sessBad++;
+    }
+  }
+  if (sessBad) { console.error(`✗ 快练队列异常 ${sessBad} 处`); process.exit(1); }
+  console.log('快练：' + sessTotal + ' 个「单元×方向」队列 10 题，按词不重复（单元词不足才循环）');
 
   // ADR-0009 补充：干扰项类型必须与题干一致（短语不混单词，防结构泄题）
   let typeLeak = 0, phraseSeen = 0;
@@ -192,6 +215,16 @@ function runUI() {
   if (!T || !T.EW) { console.error('✗ 没有拿到 __ew 测试钩子'); process.exit(1); }
   let uiCheckCount = 0;
   const ok = (name, cond) => { if (!cond) { console.error('✗ ' + name); process.exit(1); } uiCheckCount++; console.log('ok ' + name); };
+  // 最小 DOM 桩的文本聚合（题干/题号断言用）
+  const textOf = (node) => {
+    if (!node) return '';
+    if (typeof node._text === 'string') return node._text;
+    return (node.children || []).map(textOf).join('');
+  };
+  const countText = () => {
+    const m = textOf(app.children[0]).match(/(\d+) \/ (\d+)/);
+    return m ? m[0] : '';
+  };
 
   // 今日渲染：有单元选择卡
   T.go('today');
@@ -206,9 +239,11 @@ function runUI() {
     // 答对
     T.S.choice[0] = q.fields[0].ans;
     T.submit();
-    ok('判对 ' + kind, T.S.res && T.S.res.ok && T.S.sess.done === 1);
+    ok('判对 ' + kind, T.S.res && T.S.res.ok && T.S.sess.done === 0 && T.S.answered === true);
+    ok('答完题号不提前进位 ' + kind, countText() === '1 / 3', textOf(app.children[0]));
     if (q.ex) ok('例句高亮 ' + kind, /hlword/.test(T.EW.highlightExample(q.ex, q.word)));
     T.next();
+    ok('下一题推进计数 ' + kind, T.S.sess.done === 1);
   }
 
   // 双向混合：只轮换 e2c/c2e，不出现 p2c
@@ -221,9 +256,21 @@ function runUI() {
     if (i < 5) T.next();
   }
   ok('双向混合只出英↔中', mixKinds.every((k) => k === 'e2c' || k === 'c2e') && mixKinds.includes('e2c') && mixKinds.includes('c2e'), mixKinds.join(','));
-  // 再来一轮保持双向（s.kind 原样是数组）
+  // 再来一轮保持双向（s.kind 原样是数组，队列每题的 kind 都在双向内）
   T.startSession('primary.ox3a.unit1', T.S.sess.kind, 4);
-  ok('再来一轮保持双向', Array.isArray(T.S.sess.kind) && T.S.sess.kind.join(',') === 'e2c,c2e' && T.S.sess.kinds.length === 4);
+  ok('再来一轮保持双向', Array.isArray(T.S.sess.kind) && T.S.sess.kind.join(',') === 'e2c,c2e'
+    && T.S.sess.queue.length === 4 && T.S.sess.queue.every((q) => q.kind === 'e2c' || q.kind === 'c2e'));
+
+  // 快练 10 题：一次建队列、按不同词出满（P1-2）
+  const mBig = T.EW.modules.find((m) => m.words.length >= 12);
+  T.startSession(mBig.id, 'e2c', 10);
+  const quickWords = (T.S.sess.queue || []).map((q) => q.word);
+  ok('快练 10 题按不同词出满', quickWords.length === 10 && new Set(quickWords).size === 10 && T.S.sess.total === 10);
+  T.S.choice[0] = T.S.q.fields[0].ans;
+  T.submit();
+  ok('答完第 1 题题号仍是 1 / 10', countText() === '1 / 10', textOf(app.children[0]));
+  T.next();
+  ok('答完下一题后 done 正常推进', T.S.sess.done === 1);
 
   // 整单元：每词一题、可完整循环；结束后重开是同一单元同样词数
   const mAll = T.EW.moduleById('primary.ox3a.unit1');
@@ -243,7 +290,7 @@ function runUI() {
   for (const n of [20, 30, 50]) {
     T.startRandom(n, null);
     ok('随机练习 ' + n + ' 词', T.S.sess.total === n && T.S.sess.queue.length === n && T.S.sess.area === 'random');
-    ok('随机练习去重', new Set(T.S.sess.queue.map((q) => q.id)).size === n);
+    ok('随机练习去重（按英文词）', new Set(T.S.sess.queue.map((q) => q.word)).size === n);
   }
   ok('随机区不改单元区配置', T.S.selUnit === unitSelBefore);
   const lastRandom = T.S.sessions.random;
@@ -263,6 +310,24 @@ function runUI() {
   ok('答错进错题本', Object.keys(T.db().wrong).length >= 1);
   const wkey = Object.keys(T.db().wrong)[0];
   ok('错题间隔 1 天', T.db().wrong[wkey].due - Date.now() > 20 * 3600 * 1000);
+
+  // 回炉（单题）：答完仍是 1 / 1，next 才进总结
+  Object.values(T.db().wrong)[0].due = Date.now() - 1000;
+  T.startWrong();
+  ok('回炉单题 total=1', T.S.sess.total === 1 && T.S.sess.mode === 'wrong');
+  T.S.choice[0] = T.S.q.fields[0].ans;
+  T.submit();
+  ok('回炉答完仍是 1 / 1', countText() === '1 / 1' && T.S.sess.done === 0);
+  ok('回炉答对移出错题本', Object.keys(T.db().wrong).length === 0);
+  T.next();
+  ok('回炉 next 进总结', T.S.view === 'summary' && T.S.sess.done === 1);
+
+  // 双击下一题不应连跳：第二下发生在 answered=false 之后
+  T.startSession('primary.ox3a.unit1', 'e2c', 3);
+  T.S.choice[0] = T.S.q.fields[0].ans;
+  T.submit();
+  T.next(); T.next();
+  ok('双击下一题只推进一题', T.S.sess.done === 1);
 
   // 报告 + 导出
   T.go('report');

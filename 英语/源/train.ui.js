@@ -113,7 +113,7 @@
     ));
 
     var srcs = sources();
-    if (!srcs.length) { app.appendChild(h('div', { class: 'card' }, '词库没加载出来：请先跑 node 英语/题库工具/extract-vocab.mjs 再重建。')); return; }
+    if (!srcs.length) { app.appendChild(h('div', { class: 'card' }, '词库没加载出来：请确认「词库.js」和本页面在同一个文件夹里（两个文件要一起复制或搬家）。')); return; }
 
     if (!S.selSource || !sourceById(S.selSource)) S.selSource = srcs[0].id;
     var src = sourceById(S.selSource);
@@ -152,7 +152,7 @@
     var scope = unit ? (grade.name + ' · ' + unit.name + ' · ' + nWords + ' 词') : '未选单元';
     var play = h('div', { class: 'card', style: 'margin-top:12px' },
       h('div', { class: 'row' }, h('b', null, '④ 按单元练习'), h('span', { class: 'grow' }), h('span', { class: 'small muted' }, scope)),
-      h('p', { class: 'small muted' }, '「整单元」把本单元每个词都练到、不遗漏，可反复完整循环；「快练」每轮 10 题。点选即判，答错自动进错题本按 1/3/7/14 天回炉。')
+      h('p', { class: 'small muted' }, '「整单元」把本单元每个词都练到、不遗漏，可反复完整循环；「快练」每轮 10 题（词不够时才重复）。先选再提交（回车也行），答错自动进错题本按 1/3/7/14 天回炉。')
     );
     var dirs = [{ id: '', n: '三方向混合' }, { id: 'mix2', n: '双向混合（英↔中）' }].concat(
       EW.KINDS.map(function (k) { return { id: k.id, n: k.name }; }));
@@ -173,7 +173,7 @@
 
   /* ---------- 随机练习（独立区，与按单元练习互不读写配置/会话） ---------- */
   function renderRandom() {
-    var total = EW.allWordRefs().length;
+    var total = EW.uniqueWordRefs().length;
     app.appendChild(h('div', { class: 'card' },
       h('div', { class: 'row' }, h('b', null, '随机练习 · 全词库'), h('span', { class: 'grow' }),
         h('span', { class: 'pill' }, total + ' 词可选')),
@@ -218,12 +218,8 @@
      单 kind 字符串（'e2c'）        → 只练这一方向
      数组（如 ['e2c','c2e']）       → 按给定方向轮换（双向混合：英↔中，不练音）
      null                          → 三方向混合（e2c/c2e/p2c）
-     注：sess.kind 原样存下，供「再来一轮」保持同一种混合方式。 */
-  function kindQueue(n, kinds) {
-    var q = (kinds && kinds.length) ? kinds : ['e2c', 'c2e', 'p2c'], out = [];
-    for (var i = 0; i < n; i++) out.push(q[i % q.length]);
-    return out;
-  }
+     注：sess.kind 原样存下，供「再来一轮」保持同一种混合方式。
+     快练队列由 EW.genSession 一次生成：同一轮内词不重复，单元词不够才循环。 */
   /* 会话按区存放：S.sessions[area] 保存该区最近一次会话，S.sess 指向当前正在练的。
      builder 记录「再来一轮」所需的重建参数；随机区重建会重新抽词。 */
   function setSession(area, sess) {
@@ -240,10 +236,10 @@
     if (!m) { alert('这个单元词库没加载。'); return; }
     if (Array.isArray(kind) && kind.length === 1) kind = kind[0];
     var n = Math.max(1, Math.min(count || 10, 30));
-    var mix = !kind || (Array.isArray(kind) && kind.length > 1);
+    var qs = EW.genSession(mod, kind, Date.now() >>> 0, n);
+    if (!qs.length) { alert('这个单元暂时出不了题。'); return; }
     setSession('unit', {
-      mode: 'new', mod: mod, kind: kind, total: n, done: 0, right: 0, t0: Date.now(), queue: null,
-      kinds: mix ? kindQueue(n, Array.isArray(kind) ? kind : null) : null,
+      mode: 'new', mod: mod, kind: kind, total: qs.length, done: 0, right: 0, t0: Date.now(), queue: qs,
       builder: { type: 'session', mod: mod, kind: kind, count: n }
     });
   }
@@ -253,9 +249,9 @@
     if (!m || !m.words.length) { alert('这个单元词库没加载。'); return; }
     if (Array.isArray(kinds) && kinds.length === 1) kinds = kinds[0];
     var qs = EW.genUnitAll(mod, kinds, Date.now() >>> 0);
-    if (!qs.length) { alert('这个单元暂时出不出题。'); return; }
+    if (!qs.length) { alert('这个单元暂时出不了题。'); return; }
     setSession('unit', {
-      mode: 'new', mod: mod, kind: kinds, total: qs.length, done: 0, right: 0, t0: Date.now(), queue: qs, kinds: null,
+      mode: 'new', mod: mod, kind: kinds, total: qs.length, done: 0, right: 0, t0: Date.now(), queue: qs,
       builder: { type: 'unitAll', mod: mod, kinds: kinds }
     });
   }
@@ -263,9 +259,9 @@
   function startRandom(count, kinds) {
     if (Array.isArray(kinds) && kinds.length === 1) kinds = kinds[0];
     var qs = EW.genRandom(count, Date.now() >>> 0, kinds);
-    if (!qs.length) { alert('词库没加载出来。'); return; }
+    if (!qs.length) { alert('词库没加载出来：请确认「词库.js」和本页面在同一个文件夹里。'); return; }
     setSession('random', {
-      mode: 'new', mod: 'random', kind: kinds, total: qs.length, done: 0, right: 0, t0: Date.now(), queue: qs, kinds: null,
+      mode: 'new', mod: 'random', kind: kinds, total: qs.length, done: 0, right: 0, t0: Date.now(), queue: qs,
       builder: { type: 'random', count: count, kinds: kinds }
     });
   }
@@ -297,17 +293,12 @@
   }
   function nextQuestion() {
     var s = S.sess;
-    if (s.done >= s.total) { S.view = 'summary'; render(); return; }
-    if (s.queue) S.q = s.queue[s.done];
-    else {
-      var kind = s.kinds ? s.kinds[s.done] : s.kind;
-      var qs = EW.gen(s.mod, kind, (Date.now() ^ (s.done * 7919)) >>> 0, 10);
-      S.q = qs[0];
-      if (!S.q) { s.total = Math.max(s.done, 1); S.view = 'summary'; render(); return; }
-    }
+    if (!s) { go('today'); return; }
+    if (!s.queue || s.done >= s.total || !s.queue[s.done]) { S.view = 'summary'; render(); return; }
+    S.q = s.queue[s.done];
     S.res = null; S.answered = false; S.choice = {}; S.t0 = Date.now();
     render();
-    if (S.q && S.q.speak && S.q.kind === 'p2c') speak(S.q.speak);
+    if (S.q.speak && S.q.kind === 'p2c') speak(S.q.speak);
   }
 
   /* ---------- 练习 ---------- */
@@ -322,7 +313,7 @@
       h('span', { class: 'grow' }),
       h('span', { class: 'small muted' }, (s.done + 1) + ' / ' + s.total)
     ));
-    app.appendChild(h('div', { class: 'progress' }, h('i', { style: 'width:' + (s.done / s.total * 100) + '%' })));
+    app.appendChild(h('div', { class: 'progress' }, h('i', { style: 'width:' + Math.min(100, (s.done + (S.answered ? 1 : 0)) / s.total * 100) + '%' })));
 
     var card = h('div', { class: 'card', style: 'margin-top:12px' });
     var head = h('div', { class: 'qhead' }, h('span', { class: 'pill' }, EW.nameOf(q.kind) || '新题'));
@@ -376,7 +367,7 @@
       }
       card.appendChild(fb);
       card.appendChild(h('div', { class: 'row', style: 'margin-top:14px' },
-        h('button', { class: 'btn btn-primary', onclick: next }, s.done >= s.total ? '看本轮报告' : '下一题'),
+        h('button', { class: 'btn btn-primary', onclick: next }, (s.done + 1) >= s.total ? '看本轮报告' : '下一题'),
         h('button', { class: 'btn btn-ghost', onclick: backView }, '退出')
       ));
     }
@@ -390,7 +381,7 @@
     var res = EW.judge(q, [S.choice[0]]);
     S.res = res; S.answered = true;
     var s = S.sess;
-    s.done++; if (res.ok) s.right++;
+    if (res.ok) s.right++;
     var recMod = s.mod === 'wrong' ? (q.mod || 'primary') : s.mod;
     DB.recs.push({
       ts: Date.now(), mod: recMod, kind: q.kind, kn: q.tip || q.prompt,
@@ -402,7 +393,12 @@
     save(); render();
   }
   function next() {
-    if (S.sess.done >= S.sess.total) { S.view = 'summary'; render(); return; }
+    var s = S.sess;
+    // 只有「已答完当前题」才推进；同时挡住双击下一题把两题一起跳掉
+    if (!s || S.view !== 'practice' || !S.answered) return;
+    // 计数在这里推进，而不是在 submit 时——否则同一道题的解析页会显示成下一题
+    s.done++;
+    if (s.done >= s.total) { S.view = 'summary'; render(); return; }
     nextQuestion();
   }
 
@@ -549,6 +545,10 @@
   });
   document.addEventListener('keydown', function (e) {
     if (e.key !== 'Enter' || S.view !== 'practice') return;
+    // 焦点在按钮/输入控件上时，回车交给控件自己的行为（选选项、退出），
+    // 否则全局 submit/next 会把按钮点击劫持掉。
+    var t = e.target;
+    if (t && (t.tagName === 'BUTTON' || t.tagName === 'A' || t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable)) return;
     e.preventDefault();
     if (!S.answered) submit();
     else next();

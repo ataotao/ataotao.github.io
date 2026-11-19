@@ -348,6 +348,37 @@ var EW = (function () {
     return out;
   }
 
+  /* genSession：快练队列——一次生成 n 题，同一队列内词不重复；
+     单元词数不足 n 时才循环复用（换一轮乱序，尽量避免相邻重复）。
+     kinds 与 genUnitAll 同义；纯 p2c 只取有音标的词（快练不降级，保持所选方向）。 */
+  function genSession(mod, kinds, seed, n) {
+    var m = typeof mod === 'string' ? moduleById(mod) : mod;
+    if (!m || !m.words.length) return [];
+    var ks = normalizeKinds(kinds);
+    if (!ks.length) ks = KIND_IDS.slice();
+    n = Math.max(1, Math.floor(n || 10));
+    var r = mulberry32(((seed || 1) >>> 0) ^ hashStr(m.id + '|sess|' + ks.join(',')));
+    var ipaPool = m.words.filter(function (w) { return !!w.ipa; });
+    var deckPool = (ks.length === 1 && ks[0] === 'p2c') ? ipaPool : m.words;
+    if (!deckPool.length) return [];
+    var donorsCache = Object.create(null), poolCache = Object.create(null);
+    function donorsOf(kind) { return donorsCache[kind] || (donorsCache[kind] = donorsFor(m, kind, r)); }
+    function poolOf(kind) { return poolCache[kind] || (poolCache[kind] = kind === 'p2c' ? ipaPool : m.words); }
+    var deck = shuffle(deckPool, r), pos = 0, last = null, out = [];
+    for (var guard = 0; guard < n * 12 + 50 && out.length < n; guard++) {
+      if (pos >= deck.length) {
+        deck = shuffle(deckPool, r); pos = 0;
+        if (deck.length > 1 && deck[0] === last) { var t = deck[0]; deck[0] = deck[1]; deck[1] = t; }
+      }
+      var w = deck[pos++], kind = ks[out.length % ks.length];
+      if (kind === 'p2c' && !w.ipa) kind = 'e2c';   // 混合方向里无音标降级；纯 p2c 已在 deckPool 过滤
+      var q = buildQ(m, w, kind, r, poolOf(kind), donorsOf(kind));
+      if (!q) continue;
+      out.push(q); last = w;
+    }
+    return out;
+  }
+
   /* 全库词引用（含所属模块），供随机抽词用。 */
   function allWordRefs() {
     var out = [];
@@ -357,12 +388,29 @@ var EW = (function () {
     return out;
   }
 
-  /* genRandom：从全库去重抽 n 词，每词一题，方向轮换。n 超库容则取全库。 */
+  /* 按英文词去重的全库引用：词库有 281 个跨册同形词（green×3 等），
+     随机练习的去重单位必须是「词」而不是「单元×词位」。取首次出现的条目。
+     区分大小写：Miss（小姐）/ miss（错过）、May（五月）/ may（可以）是不同词条。 */
+  function uniqueWordRefs() {
+    var seen = Object.create(null), out = [];
+    MODULES.forEach(function (m) {
+      m.words.forEach(function (w) {
+        if (seen[w.en]) return;
+        seen[w.en] = 1;
+        out.push({ m: m, w: w });
+      });
+    });
+    return out;
+  }
+
+  /* genRandom：从全库按英文词去重抽 n 词，每词一题，方向轮换。n 超库容则取全库唯一词。
+     纯 p2c 只取有音标的词（与 genSession 一致，不静默混入英→中）；混合方向才降级。 */
   function genRandom(n, seed, kinds) {
-    var refs = allWordRefs();
-    n = Math.max(1, Math.min(n || 20, refs.length));
     var ks = normalizeKinds(kinds);
     if (!ks.length) ks = KIND_IDS.slice();
+    var refs = uniqueWordRefs();
+    if (ks.length === 1 && ks[0] === 'p2c') refs = refs.filter(function (ref) { return !!ref.w.ipa; });
+    n = Math.max(1, Math.min(n || 20, refs.length));
     var r = mulberry32(((seed || 1) >>> 0) ^ hashStr('|rand|' + n));
     var order = shuffle(refs, r);
     var out = [];
@@ -491,8 +539,8 @@ var EW = (function () {
     VERSION: VERSION, DAY: DAY,
     KINDS: KINDS, KIND_IDS: KIND_IDS, nameOf: nameOf,
     modules: MODULES, moduleById: moduleById, allUnitIds: allUnitIds,
-    gen: gen, genUnitAll: genUnitAll, genRandom: genRandom,
-    allWordRefs: allWordRefs,
+    gen: gen, genUnitAll: genUnitAll, genSession: genSession, genRandom: genRandom,
+    allWordRefs: allWordRefs, uniqueWordRefs: uniqueWordRefs,
     judge: judge, ansText: ansText, selfTest: selfTest,
     highlightExample: highlightExample
   };
@@ -929,7 +977,7 @@ window.__ltSync = { carrierSnapshot: carrierSnapshot, syncPlan: syncPlan, subjec
     ));
 
     var srcs = sources();
-    if (!srcs.length) { app.appendChild(h('div', { class: 'card' }, '词库没加载出来：请先跑 node 英语/题库工具/extract-vocab.mjs 再重建。')); return; }
+    if (!srcs.length) { app.appendChild(h('div', { class: 'card' }, '词库没加载出来：请确认「词库.js」和本页面在同一个文件夹里（两个文件要一起复制或搬家）。')); return; }
 
     if (!S.selSource || !sourceById(S.selSource)) S.selSource = srcs[0].id;
     var src = sourceById(S.selSource);
@@ -968,7 +1016,7 @@ window.__ltSync = { carrierSnapshot: carrierSnapshot, syncPlan: syncPlan, subjec
     var scope = unit ? (grade.name + ' · ' + unit.name + ' · ' + nWords + ' 词') : '未选单元';
     var play = h('div', { class: 'card', style: 'margin-top:12px' },
       h('div', { class: 'row' }, h('b', null, '④ 按单元练习'), h('span', { class: 'grow' }), h('span', { class: 'small muted' }, scope)),
-      h('p', { class: 'small muted' }, '「整单元」把本单元每个词都练到、不遗漏，可反复完整循环；「快练」每轮 10 题。点选即判，答错自动进错题本按 1/3/7/14 天回炉。')
+      h('p', { class: 'small muted' }, '「整单元」把本单元每个词都练到、不遗漏，可反复完整循环；「快练」每轮 10 题（词不够时才重复）。先选再提交（回车也行），答错自动进错题本按 1/3/7/14 天回炉。')
     );
     var dirs = [{ id: '', n: '三方向混合' }, { id: 'mix2', n: '双向混合（英↔中）' }].concat(
       EW.KINDS.map(function (k) { return { id: k.id, n: k.name }; }));
@@ -989,7 +1037,7 @@ window.__ltSync = { carrierSnapshot: carrierSnapshot, syncPlan: syncPlan, subjec
 
   /* ---------- 随机练习（独立区，与按单元练习互不读写配置/会话） ---------- */
   function renderRandom() {
-    var total = EW.allWordRefs().length;
+    var total = EW.uniqueWordRefs().length;
     app.appendChild(h('div', { class: 'card' },
       h('div', { class: 'row' }, h('b', null, '随机练习 · 全词库'), h('span', { class: 'grow' }),
         h('span', { class: 'pill' }, total + ' 词可选')),
@@ -1034,12 +1082,8 @@ window.__ltSync = { carrierSnapshot: carrierSnapshot, syncPlan: syncPlan, subjec
      单 kind 字符串（'e2c'）        → 只练这一方向
      数组（如 ['e2c','c2e']）       → 按给定方向轮换（双向混合：英↔中，不练音）
      null                          → 三方向混合（e2c/c2e/p2c）
-     注：sess.kind 原样存下，供「再来一轮」保持同一种混合方式。 */
-  function kindQueue(n, kinds) {
-    var q = (kinds && kinds.length) ? kinds : ['e2c', 'c2e', 'p2c'], out = [];
-    for (var i = 0; i < n; i++) out.push(q[i % q.length]);
-    return out;
-  }
+     注：sess.kind 原样存下，供「再来一轮」保持同一种混合方式。
+     快练队列由 EW.genSession 一次生成：同一轮内词不重复，单元词不够才循环。 */
   /* 会话按区存放：S.sessions[area] 保存该区最近一次会话，S.sess 指向当前正在练的。
      builder 记录「再来一轮」所需的重建参数；随机区重建会重新抽词。 */
   function setSession(area, sess) {
@@ -1056,10 +1100,10 @@ window.__ltSync = { carrierSnapshot: carrierSnapshot, syncPlan: syncPlan, subjec
     if (!m) { alert('这个单元词库没加载。'); return; }
     if (Array.isArray(kind) && kind.length === 1) kind = kind[0];
     var n = Math.max(1, Math.min(count || 10, 30));
-    var mix = !kind || (Array.isArray(kind) && kind.length > 1);
+    var qs = EW.genSession(mod, kind, Date.now() >>> 0, n);
+    if (!qs.length) { alert('这个单元暂时出不了题。'); return; }
     setSession('unit', {
-      mode: 'new', mod: mod, kind: kind, total: n, done: 0, right: 0, t0: Date.now(), queue: null,
-      kinds: mix ? kindQueue(n, Array.isArray(kind) ? kind : null) : null,
+      mode: 'new', mod: mod, kind: kind, total: qs.length, done: 0, right: 0, t0: Date.now(), queue: qs,
       builder: { type: 'session', mod: mod, kind: kind, count: n }
     });
   }
@@ -1069,9 +1113,9 @@ window.__ltSync = { carrierSnapshot: carrierSnapshot, syncPlan: syncPlan, subjec
     if (!m || !m.words.length) { alert('这个单元词库没加载。'); return; }
     if (Array.isArray(kinds) && kinds.length === 1) kinds = kinds[0];
     var qs = EW.genUnitAll(mod, kinds, Date.now() >>> 0);
-    if (!qs.length) { alert('这个单元暂时出不出题。'); return; }
+    if (!qs.length) { alert('这个单元暂时出不了题。'); return; }
     setSession('unit', {
-      mode: 'new', mod: mod, kind: kinds, total: qs.length, done: 0, right: 0, t0: Date.now(), queue: qs, kinds: null,
+      mode: 'new', mod: mod, kind: kinds, total: qs.length, done: 0, right: 0, t0: Date.now(), queue: qs,
       builder: { type: 'unitAll', mod: mod, kinds: kinds }
     });
   }
@@ -1079,9 +1123,9 @@ window.__ltSync = { carrierSnapshot: carrierSnapshot, syncPlan: syncPlan, subjec
   function startRandom(count, kinds) {
     if (Array.isArray(kinds) && kinds.length === 1) kinds = kinds[0];
     var qs = EW.genRandom(count, Date.now() >>> 0, kinds);
-    if (!qs.length) { alert('词库没加载出来。'); return; }
+    if (!qs.length) { alert('词库没加载出来：请确认「词库.js」和本页面在同一个文件夹里。'); return; }
     setSession('random', {
-      mode: 'new', mod: 'random', kind: kinds, total: qs.length, done: 0, right: 0, t0: Date.now(), queue: qs, kinds: null,
+      mode: 'new', mod: 'random', kind: kinds, total: qs.length, done: 0, right: 0, t0: Date.now(), queue: qs,
       builder: { type: 'random', count: count, kinds: kinds }
     });
   }
@@ -1113,17 +1157,12 @@ window.__ltSync = { carrierSnapshot: carrierSnapshot, syncPlan: syncPlan, subjec
   }
   function nextQuestion() {
     var s = S.sess;
-    if (s.done >= s.total) { S.view = 'summary'; render(); return; }
-    if (s.queue) S.q = s.queue[s.done];
-    else {
-      var kind = s.kinds ? s.kinds[s.done] : s.kind;
-      var qs = EW.gen(s.mod, kind, (Date.now() ^ (s.done * 7919)) >>> 0, 10);
-      S.q = qs[0];
-      if (!S.q) { s.total = Math.max(s.done, 1); S.view = 'summary'; render(); return; }
-    }
+    if (!s) { go('today'); return; }
+    if (!s.queue || s.done >= s.total || !s.queue[s.done]) { S.view = 'summary'; render(); return; }
+    S.q = s.queue[s.done];
     S.res = null; S.answered = false; S.choice = {}; S.t0 = Date.now();
     render();
-    if (S.q && S.q.speak && S.q.kind === 'p2c') speak(S.q.speak);
+    if (S.q.speak && S.q.kind === 'p2c') speak(S.q.speak);
   }
 
   /* ---------- 练习 ---------- */
@@ -1138,7 +1177,7 @@ window.__ltSync = { carrierSnapshot: carrierSnapshot, syncPlan: syncPlan, subjec
       h('span', { class: 'grow' }),
       h('span', { class: 'small muted' }, (s.done + 1) + ' / ' + s.total)
     ));
-    app.appendChild(h('div', { class: 'progress' }, h('i', { style: 'width:' + (s.done / s.total * 100) + '%' })));
+    app.appendChild(h('div', { class: 'progress' }, h('i', { style: 'width:' + Math.min(100, (s.done + (S.answered ? 1 : 0)) / s.total * 100) + '%' })));
 
     var card = h('div', { class: 'card', style: 'margin-top:12px' });
     var head = h('div', { class: 'qhead' }, h('span', { class: 'pill' }, EW.nameOf(q.kind) || '新题'));
@@ -1192,7 +1231,7 @@ window.__ltSync = { carrierSnapshot: carrierSnapshot, syncPlan: syncPlan, subjec
       }
       card.appendChild(fb);
       card.appendChild(h('div', { class: 'row', style: 'margin-top:14px' },
-        h('button', { class: 'btn btn-primary', onclick: next }, s.done >= s.total ? '看本轮报告' : '下一题'),
+        h('button', { class: 'btn btn-primary', onclick: next }, (s.done + 1) >= s.total ? '看本轮报告' : '下一题'),
         h('button', { class: 'btn btn-ghost', onclick: backView }, '退出')
       ));
     }
@@ -1206,7 +1245,7 @@ window.__ltSync = { carrierSnapshot: carrierSnapshot, syncPlan: syncPlan, subjec
     var res = EW.judge(q, [S.choice[0]]);
     S.res = res; S.answered = true;
     var s = S.sess;
-    s.done++; if (res.ok) s.right++;
+    if (res.ok) s.right++;
     var recMod = s.mod === 'wrong' ? (q.mod || 'primary') : s.mod;
     DB.recs.push({
       ts: Date.now(), mod: recMod, kind: q.kind, kn: q.tip || q.prompt,
@@ -1218,7 +1257,12 @@ window.__ltSync = { carrierSnapshot: carrierSnapshot, syncPlan: syncPlan, subjec
     save(); render();
   }
   function next() {
-    if (S.sess.done >= S.sess.total) { S.view = 'summary'; render(); return; }
+    var s = S.sess;
+    // 只有「已答完当前题」才推进；同时挡住双击下一题把两题一起跳掉
+    if (!s || S.view !== 'practice' || !S.answered) return;
+    // 计数在这里推进，而不是在 submit 时——否则同一道题的解析页会显示成下一题
+    s.done++;
+    if (s.done >= s.total) { S.view = 'summary'; render(); return; }
     nextQuestion();
   }
 
@@ -1365,6 +1409,10 @@ window.__ltSync = { carrierSnapshot: carrierSnapshot, syncPlan: syncPlan, subjec
   });
   document.addEventListener('keydown', function (e) {
     if (e.key !== 'Enter' || S.view !== 'practice') return;
+    // 焦点在按钮/输入控件上时，回车交给控件自己的行为（选选项、退出），
+    // 否则全局 submit/next 会把按钮点击劫持掉。
+    var t = e.target;
+    if (t && (t.tagName === 'BUTTON' || t.tagName === 'A' || t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable)) return;
     e.preventDefault();
     if (!S.answered) submit();
     else next();
