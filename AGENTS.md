@@ -16,7 +16,8 @@
   `物理闪练卡.html`、`数学闪练卡.html` 已迁入训练器模板第二族 `scaffold`：
   三源 `物理/源/train.{css,core,ui}.js` / `数学/源/train.*` 逐字节内联，
   `node 工具/trainer/build.mjs 物理|数学` 生成；产物与迁移前逐字节相同，改三源后重建，
-  验收 `node 物理|数学/题库工具/check-training.mjs` + `node 工具/trainer/selfcheck.mjs 物理|数学`。
+  验收 `node 物理|数学/题库工具/check-training.mjs` + `node 工具/trainer/selfcheck.mjs 物理|数学`；
+  数学另有 UI 桩冒烟 `node 数学/题库工具/smoke-ui.mjs`（题干转义、坏记录自愈、选项打散、题图几何）。
   （两族：闪练卡族 `kernel.js` 壳/统计/记录全共用；脚手架族 `scaffold.js` 只共用壳，
   渲染引擎 h()/SVG/分数独立，因数学无 UI 桩测试不强合并。）
   `数学/` 四份：`函数思维脚手架.html`（B 类，`qb.py` 自动 `.bak`；**主包只有引擎约 300 KB，

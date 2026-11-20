@@ -45,8 +45,17 @@ var MT = (function () {
   function parseNum(s) {
     s = String(s == null ? '' : s).trim()
       .replace(/[−－—–]/g, '-').replace(/[／]/g, '/').replace(/[，,]/g, '')
-      .replace(/\s+/g, '').replace(/[０-９]/g, function (c) { return String.fromCharCode(c.charCodeAt(0) - 0xFEE0); });
+      .replace(/[０-９]/g, function (c) { return String.fromCharCode(c.charCodeAt(0) - 0xFEE0); });
     if (!s) return NaN;
+    /* 带分数必须在删空格之前认：否则「2 1/2」会被拼成「21/2」= 10.5，静默判错 */
+    var mixed = s.match(/^([-+]?)(\d+)\s+(\d+)\s*\/\s*([-+]?\d+)$/);
+    if (mixed) {
+      var mden = parseFloat(mixed[4]);
+      if (!mden) return NaN;
+      var mval = parseFloat(mixed[2]) + parseFloat(mixed[3]) / mden;
+      return mixed[1] === '-' ? -mval : mval;
+    }
+    s = s.replace(/\s+/g, '');
     var negv = false, tv = s;
     if (tv.charAt(0) === '-') { negv = true; tv = tv.slice(1); }
     if (VULGAR[tv] != null) return negv ? -VULGAR[tv] : VULGAR[tv];
@@ -135,7 +144,7 @@ var MT = (function () {
     var x0 = pick(r, [-4, -3, -2, -1, 1, 2, 3, 4]);
     var y0 = pick(r, [-3, -2, -1, 1, 2, 3]);
     var k = x0 * y0;
-    var ds = [-6, -4, -3, -2, -1, 1, 2, 3, 4, 6].filter(function (v) { return k % v === 0; });
+    var ds = [-6, -4, -3, -2, -1, 1, 2, 3, 4, 6].filter(function (v) { return k % v === 0 && v !== x0; });
     var x1 = pick(r, ds);
     return {
       id: 'write.inverse', kind: 'inverse', title: '反比例求 k',
@@ -304,8 +313,9 @@ var MT = (function () {
     var y1 = y0 + k1 * t1;
     var k2 = t1 * y1;
     var cands = [];
-    for (var xv = Math.ceil(t1); xv <= Math.floor(3 * t1); xv++) { if (k2 % xv === 0) cands.push(xv); }
-    var xc = cands.length ? pick(r, cands) : t1;
+    /* 从 t1+1 起找：xc 若等于转折点 t1，第 4 问的答案就是题干里的 (t1, y1)，等于白送 */
+    for (var xv = t1 + 1; xv <= Math.floor(3 * t1); xv++) { if (k2 % xv === 0) cands.push(xv); }
+    var xc = cands.length ? pick(r, cands) : 2 * t1;
     var c0 = k2 / xc;
     return {
       id: 'write.piece', kind: 'piece', title: '分段函数',
@@ -348,6 +358,8 @@ var MT = (function () {
     var p = pick(r, [-6, -5, -4, -3, -2, -1, 1, 2, 3, 4, 5, 6]);
     var q = pick(r, [-6, -5, -4, -3, -2, -1, 1, 2, 3, 4, 5, 6]);
     if (p === q) q = -q;
+    /* b = p+q = 0 时题干是 x²−k，考的是平方差，不是标题写的十字相乘 */
+    if (p + q === 0) q = q > 0 ? q + 1 : q - 1;
     var b = p + q, c = p * q;
     return {
       id: 'drill.factor', kind: 'factor', title: '因式分解（十字相乘）',
@@ -370,7 +382,7 @@ var MT = (function () {
       prompt: '方程 ' + poly2(a, b, c) + ' = 0。',
       fields: [
         { type: 'num', label: 'Δ = b² − 4ac =', ans: delta },
-        { type: 'num', label: '实数根的个数 =', ans: cnt }
+        { type: 'num', label: '不同实数根的个数 =', ans: cnt }
       ],
       tip: 'Δ>0 两个不等实根；Δ=0 两个相等实根（算 1 个不同根）；Δ<0 没有实根。',
       explain: ['Δ = (' + d(b) + ')² − 4×' + a + '×(' + d(c) + ') = ' + d(delta) + '。',
@@ -561,7 +573,7 @@ var MT = (function () {
     both: ['圆', '正方形', '矩形', '菱形', '正六边形', '线段'],
     axis: ['等边三角形', '等腰三角形', '正五边形', '角'],
     center: ['平行四边形'],
-    none: ['一般三角形', '直角三角形']
+    none: ['一般三角形', '不等腰的直角三角形']
   };
   var SHAPE_FACT = {
     '圆': '任意一条直径所在直线都是对称轴；绕圆心旋转 180° 与自身重合。',
@@ -576,7 +588,7 @@ var MT = (function () {
     '角': '角平分线所在直线是对称轴；旋转 180° 不能重合。',
     '平行四边形': '没有对称轴；绕对角线交点旋转 180° 与自身重合。',
     '一般三角形': '既没有对称轴，也不能旋转 180° 重合。',
-    '直角三角形': '既没有对称轴，也不能旋转 180° 重合。'
+    '不等腰的直角三角形': '既没有对称轴，也不能旋转 180° 重合（等腰直角三角形才有一条对称轴）。'
   };
   function genSymShape(r) {
     var v = ri(r, 0, 2);
@@ -770,6 +782,17 @@ var MT = (function () {
     var a = arr.slice();
     for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(r() * (i + 1)), t = a[i]; a[i] = a[j]; a[j] = t; }
     return a;
+  }
+  /* 静态题（ENTRY）的选项位置也要打散：写死 ans:0 时「依据」类选择题一路点 A 就能拿 90% */
+  function shuffleChoices(q, r) {
+    (q.fields || []).forEach(function (f) {
+      if (f.type !== 'choice' || !f.options || f.options.length < 2) return;
+      var right = f.options[f.ans];
+      var opts = shuffle(r, f.options);
+      f.options = opts;
+      f.ans = opts.indexOf(right);
+    });
+    return q;
   }
 
   /* 点与圆的位置关系：d 和 r 比大小 */
@@ -1619,12 +1642,14 @@ var MT = (function () {
   function genSecPerim(r) {
     var p = pick(r, SECPERIM_PAIRS), n = p[0], rad = p[1];
     var k = n * rad / 180, c = 2 * rad;
+    var formula = '弧长 + 2×半径';
+    var fopts = shuffle(r, ['弧长 + 2×半径', '弧长 + 半径', '圆周长 − 弧长', '弧长 × 半径']);
     return {
       id: 'drill.secperim', kind: 'secperim', title: '扇形周长',
       prompt: '扇形的圆心角是 ' + n + '°，半径是 ' + rad + '。它的周长写成 kπ + c 的形式，求 k 和 c。',
       fields: [
-        { type: 'choice', label: '周长公式', ans: 0, options: ['弧长 + 2×半径', '弧长 + 半径', '圆周长 − 弧长', '弧长 × 半径'] },
-        { type: 'num', label: 'k =', ans: k },
+        { type: 'choice', label: '周长公式', options: fopts, ans: fopts.indexOf(formula) },
+        { type: 'num', label: 'k =（可填分数）', ans: k },
         { type: 'num', label: 'c =', ans: c }
       ],
       tip: '扇形周长 = 弧长 + 两条半径：l = nπr/180，C = l + 2r。别只算弧长。',
@@ -1651,7 +1676,11 @@ var MT = (function () {
       id: 'drill.paralleldist', kind: 'paralleldist', title: '平行弦之间的距离',
       prompt: '在半径为 ' + t.R + ' 的 ⊙O 中，弦 AB = ' + t.a + '，弦 CD = ' + t.b + '，且 AB ∥ CD。<br><span class="muted small">两条平行弦可能在圆心同侧，也可能在异侧——答案有两个。</span>',
       fields: [
-        { type: 'choice', label: '分几种情况', ans: 0, options: ['同侧、异侧两种', '只有同侧一种', '只有异侧一种', '三种'] },
+        (function () {
+          var right = '同侧、异侧两种';
+          var opts = shuffle(r, [right, '只有同侧一种', '只有异侧一种', '三种']);
+          return { type: 'choice', label: '分几种情况', options: opts, ans: opts.indexOf(right) };
+        })(),
         { type: 'num', label: '同侧时距离（较小值）=', ans: small },
         { type: 'num', label: '异侧时距离（较大值）=', ans: big }
       ],
@@ -1677,8 +1706,11 @@ var MT = (function () {
       id: 'drill.circumcenter', kind: 'circumcenter', title: '三角形外心',
       prompt: '△ABC 中 ∠A = ' + t.A + '°，∠B = ' + t.B + '°。它的外心位置在（　）',
       fields: [
-        { type: 'choice', label: '外心是哪三条线的交点', ans: 0,
-          options: ['三边的垂直平分线', '三个角的角平分线', '三条中线', '三条高'] },
+        (function () {
+          var right = '三边的垂直平分线';
+          var opts = shuffle(r, [right, '三个角的角平分线', '三条中线', '三条高']);
+          return { type: 'choice', label: '外心是哪三条线的交点', options: opts, ans: opts.indexOf(right) };
+        })(),
         { type: 'choice', label: '外心位置', ans: t.pos,
           options: ['三角形内部', '斜边（最长边）中点', '三角形外部', '顶点上'] }
       ],
@@ -1787,7 +1819,7 @@ var MT = (function () {
       id: 'entry.24.1', group: '图形与变换', no: '24', title: '24(1) 求角度',
       prompt: '正方形 ABCD 中，BP 由 BA 绕 B 逆时针旋转 α 得到。当 △ABP 是等边三角形时，求 ∠BPC。',
       fields: [{ type: 'num', label: '∠BPC =', ans: 15, unit: '°' }],
-      fig: { w: 320, h: 220, need: 1, svg: '<rect x="95" y="20" width="110" height="100" fill="none" stroke="#1b2430" stroke-width="1.5"/><path d="M 95 120 L 150 215 L 205 120 Z" fill="none" stroke="#1b2430" stroke-width="1.5"/><path d="M 95 120 A 110 110 0 0 0 150 215" fill="none" stroke="#e37400" stroke-width="1.2" stroke-dasharray="4 4"/><circle cx="205" cy="120" r="2.6" fill="#1b2430"/><text x="85" y="136" font-size="14" font-family="serif">A</text><text x="209" y="136" font-size="14" font-family="serif">B</text><text x="209" y="22" font-size="14" font-family="serif">C</text><text x="85" y="22" font-size="14" font-family="serif">D</text><text x="148" y="232" font-size="14" font-family="serif">P</text><text x="146" y="100" font-size="12" fill="#a15c00">alpha</text>' },
+      fig: { w: 320, h: 240, need: 1, svg: '<rect x="110" y="48" width="90" height="90" fill="none" stroke="#1b2430" stroke-width="1.5"/><path d="M 110 138 L 155 215.9 L 200 138 Z" fill="none" stroke="#1b2430" stroke-width="1.5"/><path d="M 155 138 A 45 45 0 0 0 177.5 177" fill="none" stroke="#e37400" stroke-width="1.2"/><circle cx="200" cy="138" r="2.6" fill="#1b2430"/><text x="96" y="154" font-size="14" font-family="serif">A</text><text x="206" y="154" font-size="14" font-family="serif">B</text><text x="206" y="44" font-size="14" font-family="serif">C</text><text x="96" y="44" font-size="14" font-family="serif">D</text><text x="146" y="234" font-size="14" font-family="serif">P</text><text x="140" y="172" font-size="12" font-family="serif" fill="#a15c00">α</text>' },
       tip: '等边三角形 → α = 60°；BP = BA = BC，△PBC 是等腰三角形。',
       explain: ['α = 60°，∠PBC = ∠PBA + ∠ABC = 60° + 90° = 150°。', 'BP = BC，所以 ∠BPC = (180° − 150°) ÷ 2 = 15°。'],
       kp: ['几何综合', '旋转']
@@ -1851,7 +1883,7 @@ var MT = (function () {
           options: ['AD ∥ OC，两直线平行、同位角相等', '同弧所对的圆周角等于圆心角的一半', 'OA = OD，等边对等角', '直径所对的圆周角是直角']
         }
       ],
-      fig: { w: 320, h: 220, need: 1, svg: '<circle cx="160" cy="110" r="80" fill="none" stroke="#1b2430" stroke-width="1.5"/><line x1="80" y1="110" x2="240" y2="110" stroke="#1b2430" stroke-width="1.5"/><line x1="160" y1="110" x2="218" y2="55" stroke="#1b2430" stroke-width="1.5"/><line x1="80" y1="110" x2="164" y2="30" stroke="#1b2430" stroke-width="1.5"/><circle cx="160" cy="110" r="2.6" fill="#1b2430"/><text x="68" y="126" font-size="14" font-family="serif">A</text><text x="242" y="126" font-size="14" font-family="serif">B</text><text x="152" y="126" font-size="14" font-family="serif">O</text><text x="221" y="49" font-size="14" font-family="serif">C</text><text x="167" y="26" font-size="14" font-family="serif">D</text><path d="M 170 110 A 26 26 0 0 1 185 91" fill="none" stroke="#e37400" stroke-width="1.2"/><text x="184" y="96" font-size="11" fill="#a15c00">80</text>' },
+      fig: { w: 320, h: 220, need: 1, svg: '<circle cx="160" cy="108" r="85" fill="none" stroke="#1b2430" stroke-width="1.5"/><line x1="75" y1="108" x2="245" y2="108" stroke="#1b2430" stroke-width="1.5"/><line x1="160" y1="108" x2="174.8" y2="24.3" stroke="#1b2430" stroke-width="1.5"/><line x1="75" y1="108" x2="80.1" y2="78.9" stroke="#1b2430" stroke-width="1.5"/><circle cx="160" cy="108" r="2.6" fill="#1b2430"/><path d="M 190 108 A 30 30 0 0 0 165.2 78.5" fill="none" stroke="#e37400" stroke-width="1.2"/><text x="63" y="124" font-size="14" font-family="serif">A</text><text x="247" y="124" font-size="14" font-family="serif">B</text><text x="152" y="124" font-size="14" font-family="serif">O</text><text x="179" y="20" font-size="14" font-family="serif">C</text><text x="64" y="74" font-size="14" font-family="serif">D</text><text x="187" y="78" font-size="11" font-family="serif" fill="#a15c00">80</text>' },
       tip: 'AD ∥ OC，AB 是截线 → ∠DAB 与 ∠BOC 是同位角。',
       explain: ['AD ∥ OC，AB 截两条平行线，∠DAB 与 ∠BOC 是同位角，所以 ∠DAB = ∠BOC = 80°。', '接下来由 OA = OD 得 ∠D = ∠DAB = 80°。'],
       kp: ['圆的基本性质', '平行线与角']
@@ -1954,7 +1986,7 @@ var MT = (function () {
           options: ['BC ∥ OD，内错角相等', 'BC ∥ OD，同位角相等', '同弧所对的圆周角相等', '等边对等角']
         }
       ],
-      fig: { w: 320, h: 220, need: 1, svg: '<circle cx="160" cy="110" r="80" fill="none" stroke="#1b2430" stroke-width="1.5"/><line x1="80" y1="110" x2="240" y2="110" stroke="#1b2430" stroke-width="1.5"/><line x1="160" y1="110" x2="110" y2="55" stroke="#1b2430" stroke-width="1.5"/><line x1="240" y1="110" x2="168" y2="30" stroke="#1b2430" stroke-width="1.5"/><line x1="240" y1="110" x2="110" y2="55" stroke="#1b2430" stroke-width="1.5"/><circle cx="160" cy="110" r="2.6" fill="#1b2430"/><text x="68" y="126" font-size="14" font-family="serif">A</text><text x="242" y="126" font-size="14" font-family="serif">B</text><text x="171" y="28" font-size="14" font-family="serif">C</text><text x="97" y="50" font-size="14" font-family="serif">D</text><text x="151" y="126" font-size="14" font-family="serif">O</text><path d="M 126 90 L 134 84 M 206 79 L 214 73" stroke="#e37400" stroke-width="1.5"/>' },
+      fig: { w: 320, h: 220, need: 1, svg: '<circle cx="160" cy="110" r="80" fill="none" stroke="#1b2430" stroke-width="1.5"/><line x1="80" y1="110" x2="240" y2="110" stroke="#1b2430" stroke-width="1.5"/><line x1="240" y1="110" x2="221.3" y2="58.6" stroke="#1b2430" stroke-width="1.5"/><line x1="160" y1="110" x2="132.6" y2="34.8" stroke="#1b2430" stroke-width="1.5"/><line x1="240" y1="110" x2="132.6" y2="34.8" stroke="#1b2430" stroke-width="1.5"/><circle cx="160" cy="110" r="2.6" fill="#1b2430"/><text x="68" y="126" font-size="14" font-family="serif">A</text><text x="242" y="126" font-size="14" font-family="serif">B</text><text x="226" y="54" font-size="14" font-family="serif">C</text><text x="120" y="30" font-size="14" font-family="serif">D</text><text x="151" y="126" font-size="14" font-family="serif">O</text><path d="M 140.2 55.5 A 22 22 0 0 0 150.7 47.4" fill="none" stroke="#e37400" stroke-width="1.5"/><path d="M 214 110 A 26 26 0 0 1 218.7 95.1" fill="none" stroke="#e37400" stroke-width="1.5"/>' },
       tip: '先抓半径相等（等腰），再用平行线的内错角把角接起来。',
       explain: ['OD=OB ⟹ ∠ODB=∠OBD。', 'BC∥OD ⟹ ∠ODB=∠CBD（内错角）。', '所以 ∠OBD=∠CBD；O 在 AB 上，∠OBD 就是 ∠ABD，所以 BD 平分 ∠ABC。'],
       kp: ['圆的基本性质', '平行线与角']
@@ -1969,7 +2001,7 @@ var MT = (function () {
           options: ['R + d = 31', 'R − d = 31', '2R + d = 31', 'R + 2d = 31']
         }
       ],
-      fig: { w: 320, h: 220, need: 1, svg: '<path d="M 89 175 A 90 90 0 0 1 231 175" fill="none" stroke="#1b2430" stroke-width="1.5"/><line x1="70" y1="175" x2="250" y2="175" stroke="#1b2430" stroke-width="1.5"/><line x1="160" y1="30" x2="160" y2="175" stroke="#1b2430" stroke-width="1.5"/><line x1="89" y1="166" x2="89" y2="175" stroke="#1b2430" stroke-width="1.5"/><line x1="231" y1="166" x2="231" y2="175" stroke="#1b2430" stroke-width="1.5"/><circle cx="160" cy="120" r="2.6" fill="#1b2430"/><path d="M 160 175 L 170 175 L 170 165" fill="none" stroke="#e37400" stroke-width="1.2"/><text x="153" y="26" font-size="14" font-family="serif">H</text><text x="150" y="117" font-size="14" font-family="serif">O</text><text x="153" y="191" font-size="14" font-family="serif">F</text><text x="74" y="163" font-size="13" font-family="serif">A</text><text x="236" y="163" font-size="13" font-family="serif">B</text><text x="78" y="190" font-size="13" font-family="serif">C</text><text x="236" y="190" font-size="13" font-family="serif">D</text>' },
+      fig: { w: 320, h: 220, need: 1, svg: '<path d="M 127 194.5 A 85.8 85.8 0 1 1 193 194.5" fill="none" stroke="#1b2430" stroke-width="1.5"/><line x1="127" y1="200" x2="193" y2="200" stroke="#1b2430" stroke-width="1.5"/><line x1="127" y1="200" x2="127" y2="194.5" stroke="#1b2430" stroke-width="1.5"/><line x1="193" y1="200" x2="193" y2="194.5" stroke="#1b2430" stroke-width="1.5"/><line x1="160" y1="29.5" x2="160" y2="200" stroke="#1b2430" stroke-width="1.5"/><circle cx="160" cy="115.3" r="2.6" fill="#1b2430"/><path d="M 160 200 L 168 200 L 168 192" fill="none" stroke="#e37400" stroke-width="1.2"/><text x="154" y="24" font-size="14" font-family="serif">H</text><text x="166" y="111" font-size="14" font-family="serif">O</text><text x="152" y="216" font-size="14" font-family="serif">F</text><text x="106" y="191" font-size="13" font-family="serif">A</text><text x="198" y="191" font-size="13" font-family="serif">B</text><text x="114" y="215" font-size="13" font-family="serif">C</text><text x="198" y="215" font-size="13" font-family="serif">D</text>' },
       tip: 'HF 过圆心且垂直 CD → 垂径定理平分 CD；注意 HF 不是直径，是 R + d。',
       explain: ['垂径定理：CF=FD=½×12=6。', 'H、O、F 共线，HF=HO+OF=R+d=31。', '下一步：以 F 为原点，A(−6, 1)、O(0, d)，6²+(d−1)²=R²，代 d=31−R 得 R=15.6。'],
       kp: ['圆的基本性质', '垂径定理', '建模']
@@ -2007,7 +2039,7 @@ var MT = (function () {
         },
         { type: 'num', label: '∠C =', ans: 110, unit: '°' }
       ],
-      fig: { w: 320, h: 220, need: 1, svg: '<circle cx="160" cy="110" r="82" fill="none" stroke="#1b2430" stroke-width="1.5"/><path d="M 85 145 L 150 40 L 232 90 L 195 180 Z" fill="none" stroke="#1b2430" stroke-width="1.5"/><circle cx="160" cy="110" r="2.6" fill="#1b2430"/><text x="72" y="152" font-size="14" font-family="serif">A</text><text x="151" y="33" font-size="14" font-family="serif">B</text><text x="237" y="90" font-size="14" font-family="serif">C</text><text x="197" y="194" font-size="14" font-family="serif">D</text><text x="153" y="126" font-size="13" font-family="serif">O</text><text x="92" y="130" font-size="11" fill="#a15c00">70</text><text x="165" y="55" font-size="11" fill="#a15c00">95</text>' },
+      fig: { w: 320, h: 220, need: 1, svg: '<circle cx="160" cy="110" r="82" fill="none" stroke="#1b2430" stroke-width="1.5"/><path d="M 160 192 L 82.9 82 L 145.8 29.2 L 237.1 82 Z" fill="none" stroke="#1b2430" stroke-width="1.5"/><circle cx="160" cy="110" r="2.6" fill="#1b2430"/><text x="153" y="208" font-size="14" font-family="serif">A</text><text x="66" y="86" font-size="14" font-family="serif">B</text><text x="139" y="21" font-size="14" font-family="serif">C</text><text x="242" y="86" font-size="14" font-family="serif">D</text><text x="152" y="126" font-size="13" font-family="serif">O</text><text x="150" y="166" font-size="11" font-family="serif" fill="#a15c00">70</text><text x="104" y="92" font-size="11" font-family="serif" fill="#a15c00">95</text>' },
       tip: '圆内接四边形：对角互补（∠A + ∠C、∠B + ∠D），不是邻角互补——这是最容易记混的一条。',
       explain: ['四边形 ABCD 内接于 ⊙O ⟹ 对角互补：∠A + ∠C = 180°。', '∠C = 180° − 70° = 110°。', '下一步同理：∠D = 180° − ∠B = 85°。'],
       kp: ['圆的基本性质', '圆内接四边形']
@@ -2036,7 +2068,7 @@ var MT = (function () {
         { type: 'num', label: '扇形半径（母线）=', ans: 5 },
         { type: 'num', label: '扇形弧长 = kπ，k =', ans: 6 }
       ],
-      fig: { w: 320, h: 220, need: 1, svg: '<path d="M 70 45 L 38 170 L 102 170 Z" fill="none" stroke="#1b2430" stroke-width="1.5"/><ellipse cx="70" cy="170" rx="32" ry="9" fill="none" stroke="#1b2430" stroke-width="1.2"/><line x1="70" y1="170" x2="102" y2="170" stroke="#1b2430" stroke-width="1.5"/><path d="M 175 170 L 248 100 A 95 95 0 0 1 175 75 Z" fill="none" stroke="#1b2430" stroke-width="1.5"/><circle cx="175" cy="170" r="2.6" fill="#1b2430"/><text x="64" y="38" font-size="13" font-family="serif">A</text><text x="108" y="174" font-size="12" fill="#a15c00">r = 3</text><text x="40" y="108" font-size="12" fill="#a15c00">l = 5</text><text x="165" y="187" font-size="13" font-family="serif">O</text>' },
+      fig: { w: 320, h: 220, need: 1, svg: '<line x1="72" y1="108" x2="27" y2="168" stroke="#1b2430" stroke-width="1.5"/><line x1="72" y1="108" x2="117" y2="168" stroke="#1b2430" stroke-width="1.5"/><ellipse cx="72" cy="168" rx="45" ry="10" fill="none" stroke="#1b2430" stroke-width="1.2"/><path d="M 232 166 L 160.7 189.2 A 75 75 0 1 1 303.3 189.2 Z" fill="none" stroke="#1b2430" stroke-width="1.5"/><circle cx="72" cy="108" r="2.6" fill="#1b2430"/><circle cx="232" cy="166" r="2.6" fill="#1b2430"/><text x="62" y="102" font-size="13" font-family="serif">A</text><text x="24" y="132" font-size="12" font-family="serif" fill="#a15c00">l = 5</text><text x="74" y="188" font-size="12" font-family="serif" fill="#a15c00">r = 3</text><text x="238" y="162" font-size="13" font-family="serif">O</text>' },
       tip: '圆锥侧面展开：扇形半径 = 母线 l，扇形弧长 = 底面周长 2πr。',
       explain: ['展开图是扇形：半径就是母线 5；弧长等于底面圆的周长 2πr = 6π。',
         '所以 k = 6；下一步用 θ = 360r/l 求圆心角：360×3÷5 = 216°。'],
@@ -2072,17 +2104,20 @@ var MT = (function () {
     },
     {
       id: 'entry.w12q12', group: '图形与变换', no: '12', title: '12 关联圆 · 建系第一步',
-      prompt: '5×4 网格中每格边长 1，经过格点 A、B、E 的圆弧与线段 BC 交于 D，AB² = 1²+4²，AC² = 1²+4²，BC² = 5²+3²。<br><span class="muted small">第一步：判断 △ABC 的形状，再看弧所对的圆周角。</span>',
+      prompt: '若一条线段上所有的点都在某个圆的圆内或圆上，就称这个圆是这条线段的「关联圆」。如图，∠MON = 45°，OP = 3，OA = AB = 2√2，以点 P 为旋转中心把线段 AB 逆时针旋转 90° 得到线段 CD。<br><span class="muted small">第一步：以 O 为原点、ON 为 x 轴建系，写出 A、P 的坐标；第二步：旋转后定出 C 的位置。</span>',
       fields: [
+        { type: 'num', label: 'A 的横坐标 = k√2，k =', ans: 2 },
         { type: 'choice', label: 'P 的坐标是', ans: 0,
           options: ['(3√2/2, 3√2/2)', '(3, 3)', '(3√2, 3√2)', '(3/2, 3/2)'] },
-        { type: 'num', label: 'A 的横坐标 = k√2，k =', ans: 2 }
+        { type: 'choice', label: '旋转后 C 的坐标是', ans: 0,
+          options: ['(3√2, 2√2)', '(3√2, 4√2)', '(2√2, 3√2)', '(4√2, 3√2)'] }
       ],
-      fig: { w: 320, h: 220, need: 1, svg: '<g stroke="#c9d2dd" stroke-width="0.9"><line x1="50" y1="20" x2="50" y2="180"/><line x1="90" y1="20" x2="90" y2="180"/><line x1="130" y1="20" x2="130" y2="180"/><line x1="170" y1="20" x2="170" y2="180"/><line x1="210" y1="20" x2="210" y2="180"/><line x1="250" y1="20" x2="250" y2="180"/><line x1="50" y1="20" x2="250" y2="20"/><line x1="50" y1="60" x2="250" y2="60"/><line x1="50" y1="100" x2="250" y2="100"/><line x1="50" y1="140" x2="250" y2="140"/><line x1="50" y1="180" x2="250" y2="180"/></g><path d="M 90 20 A 82.46 82.46 0 0 0 250 60" fill="none" stroke="#1b2430" stroke-width="1.7"/><line x1="50" y1="180" x2="250" y2="60" stroke="#1b2430" stroke-width="1.4"/><circle cx="90" cy="20" r="3" fill="#e37400"/><circle cx="250" cy="60" r="3" fill="#e37400"/><circle cx="50" cy="180" r="3" fill="#e37400"/><circle cx="90" cy="60" r="3" fill="#e37400"/><circle cx="150" cy="120" r="3" fill="#e37400"/><text x="80" y="14" font-size="14" font-family="serif">A</text><text x="254" y="56" font-size="14" font-family="serif">B</text><text x="32" y="196" font-size="14" font-family="serif">C</text><text x="76" y="56" font-size="14" font-family="serif">E</text><text x="142" y="138" font-size="14" font-family="serif">D</text>' },
-      tip: '45° 方向上横纵坐标相等；|OP| = 3 ⟹ 每个坐标 = 3·cos45° = 3√2/2。',
-      explain: ['∠PON = 45° ⟹ P 的横纵坐标相等，设为 t，则 2t² = 3² ⟹ t = 3√2/2。',
-        '所以 P(3√2/2, 3√2/2)；A(2√2, 0)，B(4√2, 0)，中点 T(3√2, 0)。',
-        '下一步：绕 P 逆时针旋转 90°，T 的像是 Q(3√2, 3√2)，再推出 C、D。'],
+      fig: { w: 320, h: 220, need: 1, svg: '<line x1="30" y1="200" x2="300" y2="200" stroke="#1b2430" stroke-width="1.3"/><line x1="30" y1="200" x2="210" y2="20" stroke="#1b2430" stroke-width="1.3"/><polygon points="190,200 184,204 188,196" fill="#1b2430"/><polygon points="218,28 212,38 210,28" fill="#1b2430"/><line x1="90" y1="200" x2="100" y2="200" stroke="#1b2430" stroke-width="4"/><line x1="100" y1="200" x2="110" y2="200" stroke="#1b2430" stroke-width="4"/><circle cx="165" cy="165" r="60" fill="none" stroke="#1b2430" stroke-width="1.3"/><circle cx="128" cy="128" r="3" fill="#1b2430"/><circle cx="106" cy="182" r="3" fill="#1b2430"/><circle cx="145" cy="106" r="3" fill="#1b2430"/><circle cx="193" cy="146" r="3" fill="#1b2430"/><text x="20" y="216" font-size="15" font-family="serif">O</text><text x="90" y="218" font-size="15" font-family="serif">A</text><text x="106" y="218" font-size="15" font-family="serif">B</text><text x="118" y="132" font-size="15" font-family="serif">P</text><text x="196" y="110" font-size="15" font-family="serif">D</text><text x="140" y="102" font-size="15" font-family="serif">C</text><text x="150" y="172" font-size="15" font-family="serif">E</text><text x="214" y="32" font-size="15" font-family="serif">M</text><text x="292" y="218" font-size="15" font-family="serif">N</text>' },
+      tip: 'ON 当 x 轴、OM 当 45° 线：A 在 x 轴上所以纵坐标 0；P 在 45° 线上所以横纵坐标相等，2t² = 3²。',
+      explain: ['以 O 为原点、ON 为 x 轴建系：A(2√2, 0)，B(4√2, 0)，中点 T(3√2, 0)。',
+        'P 在射线 OM 上（∠PON = 45°）⟹ 横纵坐标相等，设 P(t, t)，2t² = 3² ⟹ P(3√2/2, 3√2/2)。',
+        '绕 P 逆时针旋转 90°：T(3√2, 0) → Q(3√2, 3√2)；又 AT = TB = √2，故 QC = QD = √2，得 C(3√2, 2√2)、D(3√2, 4√2)。',
+        '下一步：E 在射线 OM 上设 E(m, m)，令 ED = 2、EC = 2 求两个临界点，即得 7−√3 ≤ OE ≤ 5+√3。'],
       kp: ['图形的变换', '旋转', '新定义']
     },
     {
@@ -2248,7 +2283,7 @@ var MT = (function () {
       var copy = JSON.parse(JSON.stringify(it));
       copy.mod = modId;
       copy.kind = it.id;
-      return copy;
+      return shuffleChoices(copy, r);
     }
     var k = null;
     if (kindId) for (var i = 0; i < m.kinds.length; i++) if (m.kinds[i].id === kindId) { k = m.kinds[i]; break; }
@@ -2627,7 +2662,8 @@ var MT = (function () {
     if (modId === 'entry') {
       var items = moduleById('entry').items.map(function (x) { return JSON.parse(JSON.stringify(x)); });
       var r = mulberry32(plan.seed ^ 0x5bf03635);
-      items = items.map(function (x) { return { x: x, k: r() }; })
+      var r2 = mulberry32(plan.seed ^ 0x1f2e3d4c);
+      items = items.map(function (x) { return { x: shuffleChoices(x, r2), k: r() }; })
         .sort(function (a, b) { return a.k - b.k; })
         .map(function (o) { return o.x; });
       return items.slice(0, p.n);

@@ -178,9 +178,13 @@ ok((textOf(app).match(/当前板块随机题练习/g) || []).length >= 7, '基�
   ok(M.S.sess.queue.length === 1, '单个得分点专项不是 1 题');
   ok(M.S.q.id === 'entry.w12q15' && M.S.q.kind === 'entry.w12q15', '专项练的不是指定的第 15(2) 得分点');
   ok(textOf(app).includes('题图（答题时看这张）'), '几何题答题前没显示题图（图被拖到答后才出现）');
-  ok(ctx.MT.judge(M.S.q, [0, 6]).ok === true, '第 15(2) 正确答案被判错');
-  ok(ctx.MT.judge(M.S.q, [1, 6]).ok === false, '第 15(2) 圆心角选错仍判对');
-  M.S.choice[0] = 0; fill('in1_n', 6); M.submit();
+  /* 选项位置是打散的（防「一路点 A」），所以不能写死下标：
+     只断言「正确项的文字是 120°」和「按 ans 判对、换一个就判错」。 */
+  const angOpts = M.S.q.fields[0].options, angAns = M.S.q.fields[0].ans;
+  ok(angOpts[angAns] === '120°', '第 15(2) 圆心角的正确项不是 120°：' + angOpts[angAns]);
+  ok(ctx.MT.judge(M.S.q, [angAns, 6]).ok === true, '第 15(2) 正确答案被判错');
+  ok(ctx.MT.judge(M.S.q, [(angAns + 1) % angOpts.length, 6]).ok === false, '第 15(2) 圆心角选错仍判对');
+  M.S.choice[0] = angAns; fill('in1_n', 6); M.submit();
   ok(!textOf(app).includes('图象验证'), '题前图又在答后重复出现了一次');
   const lastRec = M.db().recs[M.db().recs.length - 1];
   ok(lastRec.qid === 'entry..15(2) 等边三角形外接圆 · 半径第一步', 'entry 的 qid 格式变了，历史错题会被拆成两条：' + lastRec.qid);
@@ -276,9 +280,176 @@ ok((textOf(app).match(/当前板块随机题练习/g) || []).length >= 7, '基�
   ok(JSON.stringify(noteNums) === JSON.stringify(realNums), '配比文案题数与实际队列不一致（B08 回归）：' + plan.write.note);
 }
 
+/* ---------- 8. 2026-11-20 功能审计回归 ---------- */
+// A01：题干走 innerHTML，`0<x<5` 这类必须转义 —— 否则浏览器把 `<x` 当标签，一路吞到下一个 >
+{
+  const f = M.fracify;
+  ok(f('0<x<5').includes('0&lt;x&lt;5'), 'fracify 没转义 0<x<5，题干会被吞掉半句');
+  ok(f('a<b').includes('a&lt;b'), 'fracify 没转义 a<b（<b 会被当成加粗标签）');
+  ok(f('x < 3').includes('&lt; 3'), 'fracify 没转义孤立的 <');
+  ok(f('<br>换行').includes('<br>'), 'fracify 把合法的 <br> 也转义了');
+  ok(f('<span class="muted small">小字</span>').includes('<span class="muted small">'), 'fracify 把合法的 span 也转义了');
+  ok(!f('<img src=x onerror=alert(1)>').includes('<img'), 'fracify 没拦住注入标签');
+  ok(f('1/2').includes('class="frac"'), 'fracify 的分数排版被转义弄坏了');
+
+  /* 真题干：附加(3) 的 0<x<5 必须原样出现在卡片里 */
+  const qbody = (e) => {
+    if (!e || !e.children) return null;
+    if (e.className === 'qbody') return e;
+    for (const c of e.children) { const r = qbody(c); if (r) return r; }
+    return null;
+  };
+  M.startSession('entry', 'entry.w12q17b', 1);
+  const box = qbody(app);
+  ok(box && String(box.innerHTML).includes('0&lt;x&lt;5'), '附加(3) 题干的 0<x<5 没转义，孩子只能看到半截话');
+
+  /* 反馈里的「正确答案 / 你填的是」也是拼 HTML，字段标签同样不能漏 */
+  const htmlOf = (e) => (e && e.children ? String(e.innerHTML || '') + e.children.map(htmlOf).join('') : '');
+  M.S.choice[1] = 0;
+  M.submit();
+  ok(htmlOf(app).includes('0&lt;x&lt;5'), '附加(3) 反馈里没有转义后的 0<x<5');
+  ok(!htmlOf(app).includes('0<x<5'), '附加(3) 反馈里还有未转义的 0<x<5（会被吞掉）');
+}
+
+// A02：坏记录不能白屏 —— normalizeDB 丢弃坏条目、保住能用的
+{
+  const n = M.normalizeDB({
+    v: ctx.MT.VERSION, recs: 'oops', wrong: [1, 2], days: { '2026-11-20': { qs: 'x' } }, meta: 'x',
+  });
+  ok(Array.isArray(n.recs) && n.recs.length === 0, 'normalizeDB 没把字符串 recs 修成数组');
+  ok(n.wrong && typeof n.wrong === 'object' && !Array.isArray(n.wrong), 'normalizeDB 没把数组 wrong 修成对象');
+  ok(Array.isArray(n.days['2026-11-20'].qs), 'normalizeDB 没把坏 qs 修成数组');
+  ok(n.meta && typeof n.meta === 'object', 'normalizeDB 没把字符串 meta 修成对象');
+  const n2 = M.normalizeDB({ v: ctx.MT.VERSION, recs: [{ ts: 1, mod: 'drill' }, null, { mod: 'x' }], wrong: { a: { due: 1 }, b: 'bad' } });
+  ok(n2.recs.length === 1, 'normalizeDB 没丢掉没有 ts 的记录');
+  ok(Object.keys(n2.wrong).length === 1, 'normalizeDB 没丢掉非对象的错题条目');
+}
+
+// A03：错题条目缺 fields 时，回炉要清掉它而不是崩
+{
+  const d = M.db();
+  const before = Object.keys(d.wrong).length;
+  d.wrong['broken|bad'] = { id: 'broken', due: Date.now() - 1000, ts: Date.now() - 5000 };
+  M.startWrong();
+  ok(!('broken|bad' in M.db().wrong), '缺 fields 的坏错题条目没被清理');
+  ok(Object.keys(M.db().wrong).length >= before - 1, '清理坏条目时误删了正常错题');
+}
+
+// A04：选项位置打散 —— 同一道固定题在不同种子下正确答案不总在 A
+{
+  const it = ctx.MT.moduleById('entry').items.find((x) => x.id === 'entry.w12q15');
+  const pos = new Set();
+  for (let s = 1; s <= 40; s++) {
+    const q = ctx.MT.gen('entry', it.id, s * 7919 + 13);
+    const f = q.fields.find((x) => x.type === 'choice');
+    ok(f.options[f.ans] === '120°', '打散选项后正确项变了：' + f.options[f.ans]);
+    pos.add(f.ans);
+  }
+  ok(pos.size >= 2, '固定题的选项位置没打散（一路点 A 就能蒙对）');
+}
+
+// A05：手绘题图的几何自洽（审计 §4：顶点要在圆上、标注角度要等于实际夹角、比例要对）
+{
+  const fig = (id) => ctx.MT.svgFor(ctx.MT.moduleById('entry').items.find((x) => x.id === id));
+  const num = (s) => (s == null ? NaN : Number(s));
+  const near = (a, b, t) => Math.abs(a - b) <= (t == null ? 1.5 : t);
+  const dist = (p, q) => Math.hypot(p[0] - q[0], p[1] - q[1]);
+  const deg = (v) => Math.atan2(v[1], v[0]) * 180 / Math.PI;
+
+  /* t12：四边形四个顶点都必须落在圆上（原图只有 A 在） */
+  {
+    const s = fig('entry.t12');
+    const c = s.match(/<circle cx="([\d.]+)" cy="([\d.]+)" r="([\d.]+)"/);
+    const O = [num(c[1]), num(c[2])], r = num(c[3]);
+    const m = s.match(/<path d="M ([\d.]+) ([\d.]+) L ([\d.]+) ([\d.]+) L ([\d.]+) ([\d.]+) L ([\d.]+) ([\d.]+) Z"/);
+    ok(!!m, '圆内接四边形没画成闭合四边形');
+    if (m) for (let i = 0; i < 4; i++) {
+      const p = [num(m[1 + i * 2]), num(m[2 + i * 2])];
+      ok(near(dist(p, O), r), '圆内接四边形第 ' + (i + 1) + ' 个顶点不在圆上（距圆心 ' + dist(p, O).toFixed(1) + '，r=' + r + '）');
+    }
+  }
+
+  /* t05：C、D 都在圆上，且 BC ∥ OD（平行是这个题的题设，画错就无从下手） */
+  {
+    const s = fig('entry.t05');
+    const O = [160, 110], r = 80;
+    const segs = [...s.matchAll(/<line x1="([\d.]+)" y1="([\d.]+)" x2="([\d.]+)" y2="([\d.]+)"/g)]
+      .map((m) => [[num(m[1]), num(m[2])], [num(m[3]), num(m[4])]]);
+    const B = [240, 110];
+    const onCircle = segs.flat().filter((p) => near(dist(p, O), r, 2));
+    ok(onCircle.length >= 4, '圆内证角平分线：A/B/C/D 没有全落在圆上');
+    /* BC：一端是 B、长度明显小于直径（AB 也以 B 为端点，但它就是直径，先排除） */
+    const bc = segs.filter((g) => near(dist(g[0], B), 0, 0.5) || near(dist(g[1], B), 0, 0.5))
+      .find((g) => dist(g[0], g[1]) < 1.5 * r);
+    /* OD：一端是圆心 O、另一端正好在圆上（长度 = r）；AB 也过 O 但两端都在圆上 */
+    const od = segs.find((g) => near(dist(g[0], O), 0, 0.5) && near(dist(g[1], O), r, 2));
+    if (bc && od) {
+      const u = [bc[1][0] - bc[0][0], bc[1][1] - bc[0][1]];
+      const v = [od[1][0] - od[0][0], od[1][1] - od[0][1]];
+      const cross = Math.abs(u[0] * v[1] - u[1] * v[0]) / (Math.hypot(...u) * Math.hypot(...v));
+      ok(cross < 0.02, '圆内证角平分线：图上 BC 与 OD 不平行（sin=' + cross.toFixed(3) + '）');
+    } else ok(false, '圆内证角平分线：没找到 BC / OD 两条线');
+  }
+
+  /* 14.1：标注 80°，图上 ∠BOC 就必须是 80°（原图只有 43.5°） */
+  {
+    const s = fig('entry.14.1');
+    const O = [160, 108];
+    const arc = s.match(/<path d="M ([\d.]+) ([\d.]+) A [\d.]+ [\d.]+ 0 0 0 ([\d.]+) ([\d.]+)"/);
+    ok(!!arc, '平行得角：找不到 80° 的角标注弧');
+    if (arc) {
+      const a = deg([num(arc[1]) - O[0], num(arc[2]) - O[1]]);
+      const b = deg([num(arc[3]) - O[0], num(arc[4]) - O[1]]);
+      const d = Math.abs(((a - b) % 360 + 360) % 360);
+      const ang = d > 180 ? 360 - d : d;
+      ok(near(ang, 80, 1.5), '平行得角：图上 ∠BOC 实际是 ' + ang.toFixed(1) + '°，标注写的是 80°');
+    }
+  }
+
+  /* t06：CD 与 HF 的像素比必须等于 12:31（原图 142:145 ≈ 1:1） */
+  {
+    const s = fig('entry.t06');
+    const m = s.match(/<line x1="([\d.]+)" y1="200" x2="([\d.]+)" y2="200"/);
+    const h = s.match(/<line x1="160" y1="([\d.]+)" x2="160" y2="([\d.]+)"/);
+    ok(!!m && !!h, '灯罩轴截面：找不到底座线或轴线');
+    if (m && h) {
+      const cd = Math.abs(num(m[2]) - num(m[1]));
+      const hf = Math.abs(num(h[2]) - num(h[1]));
+      ok(near(cd / hf, 12 / 31, 0.02), '灯罩轴截面：CD:HF 画成 ' + cd.toFixed(0) + ':' + hf.toFixed(0) + '，题设是 12:31');
+    }
+  }
+
+  /* t21：扇形两条腰必须等长，且等于弧半径（原图 101 vs 95） */
+  {
+    const s = fig('entry.t21');
+    const m = s.match(/<path d="M ([\d.]+) ([\d.]+) L ([\d.]+) ([\d.]+) A ([\d.]+) [\d.]+ 0 1 1 ([\d.]+) ([\d.]+) Z"/);
+    ok(!!m, '圆锥展开图：扇形不是「圆心 + 两条腰 + 弧」');
+    if (m) {
+      const O = [num(m[1]), num(m[2])], r = num(m[5]);
+      const d1 = dist([num(m[3]), num(m[4])], O), d2 = dist([num(m[6]), num(m[7])], O);
+      ok(near(d1, d2, 1.5), '圆锥展开图：扇形两条腰不等长（' + d1.toFixed(1) + ' vs ' + d2.toFixed(1) + '）');
+      ok(near(d1, r, 1.5) && near(d2, r, 1.5), '圆锥展开图：扇形腰长与弧半径不一致');
+    }
+  }
+
+  /* 24.1：正方形必须是正方形，且 BP = BA（旋转保长） */
+  {
+    const s = fig('entry.24.1');
+    const m = s.match(/<rect x="([\d.]+)" y="([\d.]+)" width="([\d.]+)" height="([\d.]+)"/);
+    ok(!!m, '求角度：没画正方形');
+    if (m) ok(near(num(m[3]), num(m[4]), 1), '求角度：正方形画成了 ' + num(m[3]) + '×' + num(m[4]));
+    const t = s.match(/<path d="M ([\d.]+) ([\d.]+) L ([\d.]+) ([\d.]+) L ([\d.]+) ([\d.]+) Z"/);
+    ok(!!t, '求角度：没画 △ABP');
+    if (t) {
+      const A = [num(t[1]), num(t[2])], Pp = [num(t[3]), num(t[4])], B = [num(t[5]), num(t[6])];
+      ok(near(dist(A, B), dist(Pp, B), 1), '求角度：图上 BP ≠ BA，看不出是旋转来的');
+    }
+  }
+}
+
 if (fails.length) {
   console.error('✗ UI 冒烟失败 ' + fails.length + ' 处：');
   fails.forEach((f) => console.error('  - ' + f));
   process.exit(1);
 }
-console.log('✓ UI 冒烟通过（今日渲染 / 题单一致 / expr 判分 / 报告 / 专项 3 题 / 大题前两步分组、配图与专项 / 板块随机覆盖与重来 / 回归：expr 顺序、例题提交、空提交、当天题单、配比文案）');
+console.log('✓ UI 冒烟通过（今日渲染 / 题单一致 / expr 判分 / 报告 / 专项 3 题 / 大题前两步分组、配图与专项 / 板块随机覆盖与重来 / 回归：expr 顺序、例题提交、空提交、当天题单、配比文案、题干转义、坏记录自愈、选项打散、手绘题图几何自洽）');

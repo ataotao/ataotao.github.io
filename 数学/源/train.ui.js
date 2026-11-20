@@ -7,18 +7,46 @@
   /* ---------- 存储 ---------- */
   function devId() { return window.__ltSyncUI ? window.__ltSyncUI.deviceId() : undefined; }
   function blankDB() { return { v: MT.VERSION, deviceId: devId(), recs: [], wrong: {}, days: {}, meta: { created: Date.now() } }; }
+  /* 记录有两个写入方：本机 UI 和云同步回写。任何一方写坏一个字段（recs 变成字符串、
+     wrong 变成数组）都不能让整站白屏，所以统一过一遍规整，坏的条目直接丢弃。 */
+  function normalizeDB(o) {
+    if (!o || typeof o !== 'object' || Array.isArray(o)) return blankDB();
+    var out = { v: MT.VERSION, deviceId: o.deviceId || devId(), recs: [], wrong: {}, days: {}, meta: {} };
+    if (Array.isArray(o.recs)) {
+      out.recs = o.recs.filter(function (r) { return r && typeof r === 'object' && !Array.isArray(r) && typeof r.ts === 'number'; });
+    }
+    if (o.wrong && typeof o.wrong === 'object' && !Array.isArray(o.wrong)) {
+      Object.keys(o.wrong).forEach(function (k) {
+        var w = o.wrong[k];
+        if (w && typeof w === 'object' && !Array.isArray(w)) out.wrong[k] = w;
+      });
+    }
+    if (o.days && typeof o.days === 'object' && !Array.isArray(o.days)) {
+      Object.keys(o.days).forEach(function (k) {
+        var d = o.days[k];
+        if (!d || typeof d !== 'object') return;
+        out.days[k] = { qs: Array.isArray(d.qs) ? d.qs.filter(function (q) { return q && typeof q === 'object'; }) : [] };
+      });
+    }
+    if (o.meta && typeof o.meta === 'object' && !Array.isArray(o.meta)) {
+      out.meta = o.meta;
+      var dp = out.meta.dayPlan;
+      if (dp && (typeof dp !== 'object' || !dp.plan || !dp.plan.drill)) delete out.meta.dayPlan;
+    }
+    return out;
+  }
   var DB = (function () {
     try {
       var raw = localStorage.getItem(KEY);
       if (!raw) return blankDB();
       var o = JSON.parse(raw);
-      if (!o || o.v !== MT.VERSION) {
+      if (!o || typeof o !== 'object' || o.v !== MT.VERSION) {
         try { localStorage.setItem(KEY + '.bak', raw); } catch (e2) { }   /* 旧版本先留备份，再重置 */
         return blankDB();
       }
-      if (!o.deviceId && window.__ltSyncUI) o.deviceId = devId();   /* 旧记录补 deviceId */
-      o.recs = o.recs || []; o.wrong = o.wrong || {}; o.days = o.days || {}; o.meta = o.meta || {};
-      return o;
+      var n = normalizeDB(o);
+      if (!n.deviceId && window.__ltSyncUI) n.deviceId = devId();   /* 旧记录补 deviceId */
+      return n;
     } catch (e) { return blankDB(); }
   })();
   var SAVE_FAIL = false;
@@ -28,10 +56,11 @@
   }
   /* 当天题单固化：同一天打开几次都是同一套；弱项只在换天后影响主力 */
   function dayPlan() {
-    var d = today(), p = DB.meta && DB.meta.dayPlan;
-    if (p && p.day === d && p.plan) return p.plan;
+    var d = today();
+    if (!DB.meta || typeof DB.meta !== 'object') DB.meta = {};
+    var p = DB.meta.dayPlan;
+    if (p && typeof p === 'object' && p.day === d && p.plan) return p.plan;
     var plan = MT.planForDay(d, weakKind());
-    DB.meta = DB.meta || {};
     DB.meta.dayPlan = { day: d, plan: plan };
     save();
     return plan;
@@ -79,7 +108,13 @@
   function render() {
     clear(app);
     var fn = VIEWS[S.view] || renderToday;
-    fn();
+    try {
+      fn();
+    } catch (err) {
+      /* 单页渲染炸掉不能整站白屏：把错误摊在页面上，并给两条自救路径 */
+      clear(app);
+      app.appendChild(renderCrash(err));
+    }
     if (SAVE_FAIL) {
       app.appendChild(h('div', { class: 'fb bad', style: 'margin-top:10px' },
         '⚠ 记录没能存进本机（隐私模式或空间满）：刷新后会丢，请先「报告 → 导出 JSON」。'));
@@ -87,6 +122,25 @@
     Array.prototype.forEach.call(tabs.children, function (b) {
       b.classList.toggle('active', b.getAttribute('data-go') === S.view || (S.view === 'practice' && b.getAttribute('data-go') === S.sess.mod));
     });
+  }
+  function renderCrash(err) {
+    var box = h('div', { class: 'card' });
+    box.appendChild(h('h2', { style: 'margin:0 0 6px' }, '这一页没画出来'));
+    box.appendChild(h('div', { class: 'small muted' },
+      '本机记录里可能有一条坏数据。先导出备份，再重置本机记录：错题和打卡会清空，题目本身不受影响。'));
+    box.appendChild(h('pre', { class: 'small', style: 'white-space:pre-wrap;margin:8px 0;color:#b3261e' },
+      String((err && (err.stack || err.message)) || err)));
+    box.appendChild(h('div', { class: 'row', style: 'margin-top:10px' },
+      h('button', { class: 'btn', onclick: function () { try { exportJSON(); } catch (e) { alert('导出也失败了：' + e.message); } } }, '导出备份 JSON'),
+      h('button', {
+        class: 'btn', onclick: function () {
+          if (!window.confirm('确定重置本机记录？建议先导出备份。')) return;
+          try { localStorage.setItem(KEY + '.bak', localStorage.getItem(KEY) || ''); } catch (e) { }
+          DB = blankDB(); S.view = 'today'; S.sess = null; S.q = null; S.example = false; S.mode = 'new';
+          save(); render();
+        }
+      }, '重置本机记录')));
+    return box;
   }
 
   /* ---------- 今日 ---------- */
@@ -332,15 +386,24 @@
   function startWrong() {
     S.example = false;   /* 例题页残留标记必须清掉，否则回炉会显示例题 */
     S.back = null;
+    /* 坏条目（缺 fields 的快照，多半是旧版本或云同步写坏）不能拿去渲染，先清掉，
+       否则点「错题回炉」会直接 Cannot read properties of undefined */
+    var bad = 0;
+    Object.keys(DB.wrong).forEach(function (k) {
+      var w = DB.wrong[k];
+      if (!w || !Array.isArray(w.fields) || !w.fields.length) { delete DB.wrong[k]; bad++; }
+    });
+    if (bad) save();
     var now = Date.now();
     var due = window.__ltReview.dueList(DB.wrong, now);
     if (!due.length) {
       var all = Object.keys(DB.wrong).length;
-      alert(all ? '错题本里有 ' + all + ' 道，但还没到期（按 1/3/7/14 天档位回炉，到期后连对 2 次才算掌握）。今天先练新的。' : '错题本是空的，先做几题吧。');
+      alert(all ? '错题本里有 ' + all + ' 道，但还没到期（按 1/3/7/14 天档位回炉，到期后连对 2 次才算掌握）。今天先练新的。'
+        : (bad ? '有 ' + bad + ' 条错题记录已损坏，已自动清理，现在错题本是空的。' : '错题本是空的，先做几题吧。'));
       return;
     }
     S.mode = 'wrong';
-    S.sess = { mod: 'wrong', kind: null, total: Math.min(due.length, 5), done: 0, right: 0, t0: Date.now(), queue: due };
+    S.sess = { mod: 'wrong', kind: null, total: Math.min(due.length, 5), done: 0, right: 0, skipped: 0, t0: Date.now(), queue: due };
     S.view = 'practice';
     nextQuestion();
   }
@@ -390,7 +453,7 @@
     ansBox.appendChild(h('div', { class: 'ftitle' }, '答案'));
     var ul = h('ul');
     q.fields.forEach(function (f) {
-      ul.appendChild(h('li', { html: (f.label ? f.label + ' ' : '') + fracify(MT.ansText(f)) }));
+      ul.appendChild(h('li', { html: (f.label ? escLt(f.label) + ' ' : '') + fracify(MT.ansText(f)) }));
     });
     ansBox.appendChild(ul);
     card.appendChild(ansBox);
@@ -409,6 +472,7 @@
           var b = S.back; S.back = null;
           S.q = b.q; S.sess = b.sess; S.draft = b.draft; S.choice = b.choice || {}; S.hint = !!b.hint;
           S.res = null; S.answered = false; S.fix = null; S.example = false;
+          S.t0 = Date.now();   /* 看例题的时间不算进这题的用时，否则报告里的「平均用时」全被撑大 */
           S.view = 'practice'; render();
           return;
         }
@@ -497,7 +561,16 @@
           var kind = (S.q && S.q.kind) || S.sess.kind || null;
           S.back = { q: S.q, sess: S.sess, draft: readDraft(), choice: S.choice, hint: S.hint };
           startExample(mod, kind);
-        } }, '例题')
+        } }, '例题'),
+        S.mode === 'wrong' ? h('button', { class: 'btn btn-ghost btn-sm', onclick: function () {
+          /* 跳过本次：只把 due 推到明天，档位和连对都不动（规则见 工具/trainer/review.js）
+             不计作答、不写记录，所以 s.right 不变，只把进度往前推一格 */
+          window.__ltReview.skip(S.q, Date.now());
+          save();
+          S.sess.done++;
+          S.sess.skipped = (S.sess.skipped || 0) + 1;
+          nextQuestion();
+        } }, '跳过本次') : null
       ));
       card.appendChild(h('div', { class: 'small muted' }, '负号写哪儿都算对；回车提交。'));
       if (S.scratch) card.appendChild(scratchPad());
@@ -518,7 +591,7 @@
       var ul = h('ul');
       q.fields.forEach(function (f, i) {
         ul.appendChild(h('li', {
-          html: (f.label ? f.label + ' ' : '') + '正确答案：' + fracify(MT.ansText(f)) +
+          html: (f.label ? escLt(f.label) + ' ' : '') + '正确答案：' + fracify(MT.ansText(f)) +
             (S.res.res[i].ok ? '' : '（你填的是 ' + fracify(rawAns(i)) + '）')
         }));
       });
@@ -662,9 +735,22 @@
   function fracVal(o) {
     return MT.parseNum(o);
   }
+  /* 题干/解析走 innerHTML，但数学里的 `0<x<5`、`a<b` 会被浏览器当成标签起始，
+     一路吞到下一个 `>`（`<x<5 …</span>` 整段消失，孩子看到的就是半截话）。
+     这里只放行白名单标签，其余 `<` 一律转义。先把合法标签换成占位符，避免误伤。 */
+  var SAFE_TAGS = /<\/?(?:br|span|b|i|sub|sup)\b[^<>]*>/gi;
+  function escLt(s) {
+    var keep = [];
+    var t = String(s == null ? '' : s).replace(SAFE_TAGS, function (m) {
+      keep.push(m);
+      return '\u0001' + (keep.length - 1) + '\u0001';
+    });
+    t = t.replace(/</g, '&lt;');
+    return t.replace(/\u0001(\d+)\u0001/g, function (m, i) { return keep[+i]; });
+  }
   /* 把文本里的 1/2、-1/2、1/-2 都显示成上下结构的分数（负号统一放分子前） */
   function fracify(s) {
-    return String(s).replace(/([−-]?)(\d+)\s*\/\s*([−-]?)(\d+)/g, function (m, sa, a, sb, b) {
+    return escLt(s).replace(/([−-]?)(\d+)\s*\/\s*([−-]?)(\d+)/g, function (m, sa, a, sb, b) {
       var neg = (sa === '-' || sa === '−') !== (sb === '-' || sb === '−');
       return '<span class="frac"><i>' + (neg ? '−' : '') + a + '</i><i>' + b + '</i></span>';
     });
@@ -692,6 +778,8 @@
 
   /* ---------- 当日题单快照：那天到底做了哪几题（复盘用，只留最近 14 天） ---------- */
   var SNAP_DAYS = 14;
+  /* 同一天同一题可能做两遍，所以键要带时间戳；只按题干去重会把第二遍吞掉 */
+  function snapKey(q) { return [q.mod || '', q.kind || '', q.p || '', q.t || 0].join('|'); }
   function snapAdd(mod, q, res, sec) {
     var k = today();
     var d = DB.days[k] || (DB.days[k] = { qs: [] });
@@ -807,10 +895,13 @@
   function renderSummary() {
     var s = S.sess;
     var mins = Math.max(1, Math.round((Date.now() - s.t0) / 60000));
+    /* 跳过的不算分母：否则跳过一题会把正确率拉低，孩子会以为自己做错了 */
+    var answered = Math.max(0, s.total - (s.skipped || 0));
     app.appendChild(h('div', { class: 'card', style: 'text-align:center;padding:28px 18px' },
       h('div', { style: 'font-size:44px;line-height:1.1' }, s.right === s.total ? '🎉' : (s.right / s.total >= .6 ? '👍' : '💪')),
       h('h2', { style: 'margin:8px 0 4px' }, s.right + ' / ' + s.total + ' 全对'),
-      h('p', { class: 'muted' }, '用时约 ' + mins + ' 分钟 · 正确率 ' + pct(s.right, s.total) + '%'),
+      h('p', { class: 'muted' }, '用时约 ' + mins + ' 分钟 · 正确率 ' + pct(s.right, answered || s.total) + '%' +
+        (s.skipped ? ' · 跳过 ' + s.skipped + ' 题（明天再来）' : '')),
       h('div', { class: 'row', style: 'justify-content:center;margin-top:16px' },
         h('button', { class: 'btn btn-primary', onclick: function () {
           if (s.replay) s.replay();
@@ -887,8 +978,11 @@
     if (!ws.length) wc.appendChild(h('div', { class: 'empty' }, '还没有错题'));
     ws.forEach(function (w) {
       var dueTxt = window.__ltReview.statusText(w);
+      /* 预览只留纯文字：题干里的 <span class="muted small">、<br> 去掉后再转义，
+         否则「0<x<5」这类会被 HTML 解析器吃掉半句话 */
+      var brief = String(w.prompt == null ? '' : w.prompt).replace(/<[^<>]*>/g, ' ').replace(/\s+/g, ' ').trim();
       wc.appendChild(h('div', { class: 'wrongitem' },
-        h('div', { class: 'wt', html: String(w.prompt).replace(/<br>/g, ' ').slice(0, 80) + '…' }),
+        h('div', { class: 'wt', html: escLt(brief.slice(0, 80)) + (brief.length > 80 ? '…' : '') }),
         h('div', { class: 'small muted' }, dueTxt)
       ));
     });
@@ -996,7 +1090,15 @@
             var src = o.days[k];
             if (!src || !Array.isArray(src.qs)) return;
             var dst = DB.days[k] || (DB.days[k] = { qs: [] });
-            dst.qs = dst.qs.concat(src.qs);
+            var seen = {};
+            dst.qs.forEach(function (q) { if (q && typeof q === 'object') seen[snapKey(q)] = 1; });
+            src.qs.forEach(function (q) {
+              if (!q || typeof q !== 'object') return;
+              var sk = snapKey(q);
+              if (seen[sk]) return;   /* 同一份文件导两次，题单快照不该翻倍 */
+              seen[sk] = 1;
+              dst.qs.push(q);
+            });
           });
           save(); render(); alert('已导入 ' + added + ' 条记录（重复的已跳过）');
         } catch (e) { alert('导入失败：' + e.message); }
@@ -1040,7 +1142,7 @@
   /* 段三：云同步适配层注入宿主接口（DB 读写/通知），报告页「云同步」按钮触发 runSync */
   if (window.__ltSyncUI) window.__ltSyncUI.init({
     getDB: function () { return DB; },
-    setDB: function (d) { DB = d; save(); render(); },
+    setDB: function (d) { DB = normalizeDB(d); save(); render(); },   /* 云端回写也要过一遍规整，坏数据不能进内存 */
     notify: function (msg) { var el = document.getElementById('syncMsg'); if (el) el.textContent = msg; }
   });
   (function boot() {
@@ -1054,6 +1156,7 @@
   /* 调试/自测钩子：不参与界面，供 node 里的 DOM 桩测试使用 */
   window.__mt = {
     S: S, db: function () { return DB; },
+    fracify: fracify, escLt: escLt, normalizeDB: normalizeDB,
     startSession: startSession, startWrong: startWrong, startDaily: startDaily, startExample: startExample,
     startGroupRandom: startGroupRandom,
     plan: function () { return dayPlan(); },
