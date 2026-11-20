@@ -590,7 +590,7 @@ def cmd_build(args, override=None):
     for n in names:
         lines.append('<script src="题库/packs/%s"></script>' % n)
     lines.append(PMARK_E)
-    html = html[:ps] + '\r\n'.join(lines) + '\r\n' + html[pe:]
+    html = html[:ps] + '\r\n'.join(lines) + html[pe:]
     backup(HTML)
     write_text(HTML, html)
     qn = sum(len(p['questions']) for p in packs)

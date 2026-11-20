@@ -96,7 +96,7 @@
     var META = {
       drill: { n: 6, sub: '6 题 · 5 分钟 · ' + plan.drill.note },
       write: { n: 8, sub: '8 题 · 10 分钟 · ' + plan.write.note },
-      entry: { n: 3, sub: '3 题 · 8 分钟 · 27 个得分点里按今天这套取 3 个' }
+      entry: { n: 3, sub: '3 题 · 8 分钟 · ' + MT.moduleById('entry').items.length + ' 个得分点里按今天这套取 3 个' }
     };
     /* 顺序由 MT.modules 决定，这里只配题量与说明 */
     var tasks_plan = MT.modules.map(function (m) {
@@ -191,62 +191,55 @@
       h('p', { class: 'muted small', style: 'margin:6px 0 0' }, m.desc)
     );
     app.appendChild(head);
-    /* 分组抽象：题型带 group 就按组显示标题 + 按钮；不带 group 就整页算一个板块，按钮放页头。
-       写解析式现在没有分组，未来加 group 后自动切成按组按钮，下面逻辑不用改。 */
+    /* 分组抽象：kinds（生成器题型）和 items（固定得分点）都按 group 切板块。
+       这样大题前两步也能看到全部题型、单独练某一题、按板块随机练。 */
+    var isItems = !m.kinds;
+    var cards = m.kinds || m.items.map(function (it) {
+      return { id: it.id, name: it.title, group: it.group || '' };
+    });
     var groups = [], byGroup = {};
-    (m.kinds || []).forEach(function (k) {
+    cards.forEach(function (k) {
       var g = k.group || '';
       if (!byGroup[g]) { byGroup[g] = []; groups.push(g); }
       byGroup[g].push(k);
     });
     var showGroupHead = groups.length > 1 || (groups.length === 1 && groups[0] !== '');
-    function randomBtn(kinds) {
-      return h('button', { class: 'btn btn-sm btn-random', onclick: function () { startGroupRandom(m.id, kinds); } }, '当前板块随机题练习');
+    function randomBtn(arr) {
+      return h('button', { class: 'btn btn-sm btn-random', onclick: function () { startGroupRandom(m.id, arr); } }, '当前板块随机题练习');
     }
     head.appendChild(h('div', { class: 'row', style: 'margin-top:12px' },
       h('button', { class: 'btn btn-primary', onclick: function () { startSession(m.id, null, m.id === 'entry' ? 3 : 8); } }, '开始一轮'),
       h('button', { class: 'btn', onclick: function () { startExample(m.id, lastKindOf(m.id)); } }, '先看例题'),
-      (m.kinds && !showGroupHead) ? randomBtn(m.kinds) : null
+      (!showGroupHead) ? randomBtn(cards) : null
     ));
     head.appendChild(h('div', { class: 'small muted', style: 'margin-top:8px' },
-      m.kinds
-        ? ('「开始一轮」按题型混抽（每次不同）；每个题型可以单独连做 3 题（专项）。' +
+      isItems
+        ? '「开始一轮」从全部得分点混抽 3 个；每个得分点可单独练 1 题；板块标题右侧按该板块每个得分点各出 1 题。'
+        : ('「开始一轮」按题型混抽（每次不同）；每个题型可以单独连做 3 题（专项）。' +
            (showGroupHead ? '板块标题右侧「当前板块随机题练习」按该板块题型各出 1~2 题。' : '「当前板块随机题练习」按本页题型各出 1~2 题。'))
-        : '「开始一轮」从全部得分点里随机抽 3 个。'
     ));
     var list = h('div', { style: 'margin-top:4px' });
-    if (m.kinds) {
-      groups.forEach(function (g) {
-        if (showGroupHead && g) list.appendChild(h('div', { class: 'gsec' },
-          h('b', null, g),
-          h('span', null, byGroup[g].length + ' 个题型'),
-          h('span', null, '每种 1~2 题'),
-          randomBtn(byGroup[g])
+    groups.forEach(function (g) {
+      if (showGroupHead && g) list.appendChild(h('div', { class: 'gsec' },
+        h('b', null, g),
+        h('span', null, byGroup[g].length + (isItems ? ' 个得分点' : ' 个题型')),
+        h('span', null, isItems ? '每个得分点 1 题' : '每种 1~2 题'),
+        randomBtn(byGroup[g])
+      ));
+      var grid = h('div', { class: 'grid' });
+      byGroup[g].forEach(function (k) {
+        var st = kindStat('new', m.id, k.id);
+        grid.appendChild(h('div', { class: 'module' },
+          h('div', { class: 'mh' }, h('b', null, k.name)),
+          h('div', { class: 'desc small muted' }, st.n ? '练过 ' + st.n + ' 题 · 正确率 ' + pct(st.ok, st.n) + '%' : '还没练过'),
+          h('div', { class: 'row', style: 'margin-top:auto' },
+            h('button', { class: 'btn btn-primary btn-sm', onclick: function () { startSession(m.id, k.id, isItems ? 1 : 3); } }, isItems ? '练这个得分点' : '专项 3 题'),
+            h('button', { class: 'btn btn-sm', onclick: function () { startExample(m.id, k.id); } }, '看例题')
+          )
         ));
-        var grid = h('div', { class: 'grid' });
-        byGroup[g].forEach(function (k) {
-          var st = kindStat('new', m.id, k.id);
-          grid.appendChild(h('div', { class: 'module' },
-            h('div', { class: 'mh' }, h('b', null, k.name)),
-            h('div', { class: 'desc small muted' }, st.n ? '练过 ' + st.n + ' 题 · 正确率 ' + pct(st.ok, st.n) + '%' : '还没练过'),
-            h('div', { class: 'row', style: 'margin-top:auto' },
-              h('button', { class: 'btn btn-primary btn-sm', onclick: function () { startSession(m.id, k.id, 3); } }, '专项 3 题'),
-              h('button', { class: 'btn btn-sm', onclick: function () { startExample(m.id, k.id); } }, '看例题')
-            )
-          ));
-        });
-        list.appendChild(grid);
       });
-    } else {
-      list.appendChild(h('div', { class: 'grid' }, h('div', { class: 'module' },
-        h('div', { class: 'mh' }, h('b', null, '全部得分点混排')),
-        h('div', { class: 'desc small muted' }, '共 ' + m.items.length + ' 个得分点，每次随机 3 个'),
-        h('div', { class: 'row', style: 'margin-top:auto' },
-          h('button', { class: 'btn btn-primary btn-sm', onclick: function () { startSession(m.id, null, 3); } }, '练 3 题'),
-          h('button', { class: 'btn btn-sm', onclick: function () { startExample(m.id, null); } }, '看例题')
-        )
-      )));
-    }
+      list.appendChild(grid);
+    });
     app.appendChild(list);
   }
   /* 这个模块最近练过的题型（没有就返回 null，例题退化为随机） */
@@ -272,11 +265,17 @@
     var n = count || 8;
     var sess = { mod: mod, kind: kind, total: n, done: 0, right: 0, t0: Date.now() };
     if (mod === 'entry') {
-      var items = MT.moduleById('entry').items.map(function (x) {
-        var c = JSON.parse(JSON.stringify(x)); c.mod = 'entry'; return c;
-      });
-      sess.queue = shuffle(items).slice(0, n);
-      sess.total = sess.queue.length;
+      if (kind) {
+        /* 单个得分点专项：固定题只有一道，练 1 题就够，不重复三遍同样的题 */
+        sess.queue = [MT.gen('entry', kind, (Math.random() * 1e9) | 0)];
+        sess.total = 1;
+      } else {
+        var items = MT.moduleById('entry').items.map(function (x) {
+          var c = JSON.parse(JSON.stringify(x)); c.mod = 'entry'; c.kind = x.id; return c;
+        });
+        sess.queue = shuffle(items).slice(0, n);
+        sess.total = sess.queue.length;
+      }
     }
     S.sess = sess;
     S.view = 'practice';
@@ -286,10 +285,11 @@
      队列现场生成，「再来一轮」走 sess.replay 重放同一板块规则，不退化成全场混抽。 */
   function startGroupRandom(mod, kinds) {
     if (!kinds || !kinds.length) { startSession(mod, null, 8); return; }
+    var isItems = !MT.moduleById(mod).kinds;   /* 大题前两步是固定得分点：每种只出 1 题，避免同题重复 */
     var pool = [];
     kinds.forEach(function (k) {
       pool.push(k.id);
-      if (Math.random() < 0.5) pool.push(k.id);
+      if (!isItems && Math.random() < 0.5) pool.push(k.id);
     });
     var ids = shuffle(pool), seen = {}, qs = [];
     ids.forEach(function (id) {
@@ -306,7 +306,7 @@
     S.example = false;
     S.back = null;
     var sess = { mod: mod, kind: null, total: qs.length, done: 0, right: 0, t0: Date.now(),
-      queue: qs, groupLabel: '本板块 ' + kinds.length + ' 个题型 · 每种 1~2 题' };
+      queue: qs, groupLabel: '本板块 ' + kinds.length + (isItems ? ' 个得分点 · 各 1 题' : ' 个题型 · 每种 1~2 题') };
     sess.replay = function () { startGroupRandom(mod, kinds); };
     S.sess = sess;
     S.view = 'practice';
@@ -382,6 +382,10 @@
     ));
     var card = h('div', { class: 'card' });
     card.appendChild(h('div', { class: 'qbody', html: fracify(q.prompt) }));
+    if (q.fig && q.fig.need) {
+      card.appendChild(h('div', { class: 'figcap' }, '题图（答题时看这张）'));
+      card.appendChild(h('div', { class: 'figbox', html: MT.svgFor(q) }));
+    }
     var ansBox = h('div', { class: 'fb good', style: 'margin-top:14px' });
     ansBox.appendChild(h('div', { class: 'ftitle' }, '答案'));
     var ul = h('ul');
@@ -394,7 +398,7 @@
     exBox.appendChild(h('div', { class: 'ftitle' }, '怎么想'));
     (q.explain || []).forEach(function (line) { exBox.appendChild(h('div', { class: 'small', html: fracify(line) })); });
     card.appendChild(exBox);
-    if (q.fig) {
+    if (q.fig && !q.fig.need) {
       card.appendChild(h('div', { class: 'figcap' }, '图象'));
       card.appendChild(h('div', { class: 'figbox', html: MT.svgFor(q) }));
     }
@@ -435,6 +439,10 @@
       q.kp ? h('span', { class: 'small muted' }, q.kp.join(' · ')) : null
     ));
     card.appendChild(h('div', { class: 'qbody', html: fracify(q.prompt) }));
+    if (q.fig && q.fig.need) {
+      card.appendChild(h('div', { class: 'figcap' }, '题图（答题时看这张）'));
+      card.appendChild(h('div', { class: 'figbox', html: MT.svgFor(q) }));
+    }
 
     q.fields.forEach(function (f, i) {
       if (f.type === 'choice') {
@@ -516,7 +524,7 @@
       });
       fb.appendChild(ul);
       (q.explain || []).forEach(function (line) { fb.appendChild(h('div', { class: 'small', html: fracify(line) })); });
-      if (q.fig) {
+      if (q.fig && !q.fig.need) {
         fb.appendChild(h('div', { class: 'figcap' }, '图象验证：上面的式子画出来是这样——对着图再读一遍顶点、交点、增减。'));
         fb.appendChild(h('div', { class: 'figbox', html: MT.svgFor(q) }));
       }
@@ -727,7 +735,8 @@
     s.done++;
     if (res.ok) s.right++;
     var recMod = s.mod === 'wrong' ? (S.q.mod || 'drill') : s.mod;
-    var qid = recMod + '.' + (q.kind || '') + '.' + String(q.title || '');
+    /* qid 要和历史记录兼容：entry 的 kind 现在是得分点 id，拼进去会把老记录拆成两条 */
+    var qid = recMod + '.' + (q.mod === 'entry' ? '' : (q.kind || '')) + '.' + String(q.title || '');
     DB.recs.push({ ts: Date.now(), mod: recMod, kind: q.kind, kn: q.title, ok: res.ok, got: res.got, total: res.total, sec: sec, hint: S.hint, mode: S.mode, daily: !!s.daily,
       qid: qid });
     /* 记住这个模块最近练的题型：模块页「先看例题」用它，别随机抽到别的题型 */

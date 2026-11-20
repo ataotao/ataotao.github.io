@@ -911,7 +911,9 @@ var MT = (function () {
     { s: '等弧的长度相等', why: '等弧能完全重合，长度自然相等（反过来不成立）' },
     { s: '直径所对的圆周角是直角', why: '直径的两端和圆上任一点构成直角三角形，斜边是直径' },
     { s: '半圆所对的圆周角是 90°', why: '就是「直径所对的圆周角是直角」，半圆的两端连起来就是直径' },
-    { s: '圆内接四边形的对角互补', why: '一组对角所对的两段弧合起来是整个圆，两角和 = 360° ÷ 2 = 180°' }
+    { s: '圆内接四边形的对角互补', why: '一组对角所对的两段弧合起来是整个圆，两角和 = 360° ÷ 2 = 180°' },
+    { s: '在同心圆中，同一圆心角所对的两条弧的度数相等', why: '弧的度数只由圆心角决定，与半径无关；半径不同只影响弧长' },
+    { s: '平分弦（不是直径）的直径垂直于这条弦', why: '垂径定理的推论；被平分的弦若是直径则结论不成立' }
   ];
   var CIRCLE_WRONG = [
     { s: '弧是半圆，半圆是弧', why: '半圆是弧，但弧不一定是半圆——还有优弧、劣弧' },
@@ -927,7 +929,9 @@ var MT = (function () {
     { s: '圆内接四边形的邻角互补', why: '互补的是对角（∠A + ∠C、∠B + ∠D），邻角不一定；这是最常见的记混' },
     { s: '圆内接四边形的对角相等', why: '对角是互补（和 180°），不是相等；只有矩形这种特殊情况才相等' },
     { s: '同一条弦所对的圆周角都相等', why: '要「同弧」所对的圆周角才相等；弦的两侧所对的圆周角互补' },
-    { s: '直径所对的圆周角是 180°', why: '是 90°：直径当斜边，直角在圆上那一点' }
+    { s: '直径所对的圆周角是 180°', why: '是 90°：直径当斜边，直角在圆上那一点' },
+    { s: '相等的弦所对的弧相等', why: '缺少「在同圆或等圆中」的前提；同圆内一条弦还对着优弧、劣弧两条弧' },
+    { s: '平分弦的直径平分弦所对的两条弧', why: '被平分的弦若是直径则不一定成立；要注明弦不是直径' }
   ];
   var ABSURD_CASES = [
     { concl: '一个三角形中不能有两个角是直角', ans: '三角形中有两个角是直角',
@@ -1791,9 +1795,106 @@ var MT = (function () {
   }
 
   /* ---------- 大题前两步：固定题（来自 2026-11 期中卷 20–25 的得分点） ---------- */
+  /* ---------- 第 12 周限时练习（11.18）补的四个考点缺口 ---------- */
+
+  /* 扇形周长 = 弧长 + 两条半径：l = nπr/180，C = l + 2r。答案问 kπ + c 里的 k、c。 */
+  var SECPERIM_PAIRS = [[60, 3], [90, 4], [120, 6], [150, 3], [150, 6],
+    [180, 4], [135, 4], [90, 6], [120, 3], [180, 6], [45, 8], [90, 12]];
+  function genSecPerim(r) {
+    var p = pick(r, SECPERIM_PAIRS), n = p[0], rad = p[1];
+    var k = n * rad / 180, c = 2 * rad;
+    return {
+      id: 'drill.secperim', kind: 'secperim', title: '扇形周长',
+      prompt: '扇形的圆心角是 ' + n + '°，半径是 ' + rad + '。它的周长写成 kπ + c 的形式，求 k 和 c。',
+      fields: [
+        { type: 'choice', label: '周长公式', ans: 0, options: ['弧长 + 2×半径', '弧长 + 半径', '圆周长 − 弧长', '弧长 × 半径'] },
+        { type: 'num', label: 'k =', ans: k },
+        { type: 'num', label: 'c =', ans: c }
+      ],
+      tip: '扇形周长 = 弧长 + 两条半径：l = nπr/180，C = l + 2r。别只算弧长。',
+      explain: ['弧长 l = ' + n + '/360 × 2π × ' + rad + ' = ' + piText(k) + '。',
+        '扇形周长还要加两条半径：C = ' + piText(k) + ' + 2 × ' + rad + ' = ' + piText(k) + ' + ' + c + '。',
+        '坑：把周长当弧长（漏加 2r），或只加一条半径。'],
+      kp: ['圆的基本性质', '弧长', '扇形周长']
+    };
+  }
+
+  /* 平行弦之间的距离：两弦可能在圆心同侧或异侧，答案有两个（弦心距之差 或 之和）。 */
+  var PARALLEL_PAIRS = [
+    { R: 10, a: 12, b: 16, d1: 8, d2: 6 },
+    { R: 13, a: 10, b: 24, d1: 12, d2: 5 },
+    { R: 15, a: 18, b: 24, d1: 12, d2: 9 },
+    { R: 17, a: 16, b: 30, d1: 15, d2: 8 },
+    { R: 25, a: 14, b: 48, d1: 24, d2: 7 },
+    { R: 25, a: 30, b: 40, d1: 20, d2: 15 }
+  ];
+  function genParallelDist(r) {
+    var t = pick(r, PARALLEL_PAIRS);
+    var small = Math.abs(t.d1 - t.d2), big = t.d1 + t.d2;
+    return {
+      id: 'drill.paralleldist', kind: 'paralleldist', title: '平行弦之间的距离',
+      prompt: '在半径为 ' + t.R + ' 的 ⊙O 中，弦 AB = ' + t.a + '，弦 CD = ' + t.b + '，且 AB ∥ CD。<br><span class="muted small">两条平行弦可能在圆心同侧，也可能在异侧——答案有两个。</span>',
+      fields: [
+        { type: 'choice', label: '分几种情况', ans: 0, options: ['同侧、异侧两种', '只有同侧一种', '只有异侧一种', '三种'] },
+        { type: 'num', label: '同侧时距离（较小值）=', ans: small },
+        { type: 'num', label: '异侧时距离（较大值）=', ans: big }
+      ],
+      tip: '先分别求两条弦的弦心距 d₁、d₂；同侧相距 |d₁−d₂|，异侧相距 d₁+d₂。漏一种就少一个答案。',
+      explain: ['d₁ = √(' + t.R + '² − ' + (t.a / 2) + '²) = ' + t.d1 + '，d₂ = √(' + t.R + '² − ' + (t.b / 2) + '²) = ' + t.d2 + '。',
+        '两弦在圆心同侧：距离 = |' + t.d1 + ' − ' + t.d2 + '| = ' + small + '。',
+        '两弦在圆心异侧：距离 = ' + t.d1 + ' + ' + t.d2 + ' = ' + big + '。',
+        '坑：只算一种情况；或把弦长的一半当弦心距。'],
+      kp: ['圆的基本性质', '垂径定理', '弦心距', '平行弦']
+    };
+  }
+
+  /* 三角形外心：三边垂直平分线的交点（到三顶点距离相等）；锐角在内、直角斜边中点、钝角在外。 */
+  function genCircumCenter(r) {
+    var t = pick(r, [
+      { A: 50, B: 60, pos: 0, why: '锐角三角形，三条垂直平分线交于三角形内部' },
+      { A: 90, B: 30, pos: 1, why: '直角三角形，外心是斜边中点' },
+      { A: 110, B: 30, pos: 2, why: '钝角三角形，外心在三角形外部' },
+      { A: 70, B: 70, pos: 0, why: '三个角都是锐角，外心在内部' },
+      { A: 120, B: 25, pos: 2, why: '∠A 是钝角，外心在外部' }
+    ]);
+    return {
+      id: 'drill.circumcenter', kind: 'circumcenter', title: '三角形外心',
+      prompt: '△ABC 中 ∠A = ' + t.A + '°，∠B = ' + t.B + '°。它的外心位置在（　）',
+      fields: [
+        { type: 'choice', label: '外心是哪三条线的交点', ans: 0,
+          options: ['三边的垂直平分线', '三个角的角平分线', '三条中线', '三条高'] },
+        { type: 'choice', label: '外心位置', ans: t.pos,
+          options: ['三角形内部', '斜边（最长边）中点', '三角形外部', '顶点上'] }
+      ],
+      tip: '外心 = 三边垂直平分线的交点，到三个顶点距离相等（OA=OB=OC）。锐角在内、直角在斜边中点、钝角在外。',
+      explain: ['外心是三边垂直平分线的交点，它到三个顶点的距离相等：OA = OB = OC。',
+        '∠C = 180° − ' + t.A + '° − ' + t.B + '° = ' + (180 - t.A - t.B) + '°；' + t.why + '。',
+        '坑：把「角平分线交点（内心）」「中线交点（重心）」和外心混起来。'],
+      kp: ['圆的基本性质', '三角形外接圆', '外心']
+    };
+  }
+
+  /* 等边三角形的外接圆：三个顶点三等分圆周，中心角 120°，弧长 = 2πR/3。 */
+  function genEquiArc(r) {
+    var R = pick(r, [3, 6, 9, 12, 15, 18]);
+    return {
+      id: 'drill.equiarc', kind: 'equiarc', title: '等边三角形外接圆的弧长',
+      prompt: '等边三角形 ABC 的外接圆半径为 ' + R + '，O 为外心。求弧 AB 的长（写成 kπ 的形式）。',
+      fields: [
+        { type: 'num', label: '圆心角 ∠AOB =', ans: 120, unit: '°' },
+        { type: 'num', label: '弧 AB = kπ，k =', ans: 2 * R / 3 }
+      ],
+      tip: '等边三角形把外接圆三等分：每段弧所对圆心角 120°；弧长 = 120πR/180 = 2πR/3。',
+      explain: ['等边三角形三个顶点把圆周三等分，每段弧所对的圆心角 = 360° ÷ 3 = 120°。',
+        '弧 AB = 120 × π × ' + R + ' ÷ 180 = ' + frac(2 * R / 3) + 'π。',
+        '顺带记住：等边三角形边长 a = √3 R，所以 R = 6 时边长 6√3——这是常见搭配。'],
+      kp: ['圆的基本性质', '三角形外接圆', '弧长']
+    };
+  }
+
   var ENTRY = [
     {
-      id: 'entry.21.1', no: '21', title: '21(1) 求交点',
+      id: 'entry.21.1', group: '函数与图象', no: '21', title: '21(1) 求交点',
       prompt: '直线 y = −x − 2 与 x 轴交于点 A，与 y 轴交于点 B。<br><span class="muted small">先求这两个点——这是 21 题的第一个得分点。</span>',
       fields: [{ type: 'num', label: 'A 的横坐标 =', ans: -2 }, { type: 'num', label: 'B 的纵坐标 =', ans: -2 }],
       tip: 'x 轴上的点 y = 0；y 轴上的点 x = 0。',
@@ -1801,7 +1902,7 @@ var MT = (function () {
       kp: ['一次函数']
     },
     {
-      id: 'entry.21.2', no: '21', title: '21(1) 顶点式求 a',
+      id: 'entry.21.2', group: '函数与解析式', no: '21', title: '21(1) 顶点式求 a',
       prompt: '抛物线顶点为 A(−2, 0)，且经过 B(0, −2)。设 y₂ = a(x + 2)²。',
       fields: [{ type: 'num', label: 'a =', ans: -0.5 }],
       tip: '顶点已知 → 设顶点式，只剩 a；代另一个点。',
@@ -1810,7 +1911,7 @@ var MT = (function () {
       kp: ['二次函数', '待定系数法']
     },
     {
-      id: 'entry.21.3', no: '21', title: '21(2) 图象比较',
+      id: 'entry.21.3', group: '函数与解析式', no: '21', title: '21(2) 图象比较',
       prompt: '已知 y₁ = −x − 2，y₂ = −1/2(x + 2)²。当 y₁ > y₂ 时，x 的取值范围是？',
       fields: [{ type: 'choice', label: '', ans: 0, options: ['x < −2 或 x > 0', '−2 < x < 0', 'x < 0 或 x > 2', '−2 < x < 2'] }],
       tip: '两图象交点横坐标是 −2 和 0；在交点之间、之外各试一个数。',
@@ -1818,7 +1919,7 @@ var MT = (function () {
       kp: ['二次函数', '图象']
     },
     {
-      id: 'entry.22.1', no: '22', title: '22(1) 求 k',
+      id: 'entry.22.1', group: '函数与图象', no: '22', title: '22(1) 求 k',
       prompt: '直线 y = −x + 6 与反比例函数 y = k/x 的图象在第一象限交于 A、B，B 的纵坐标为 2。',
       fields: [{ type: 'num', label: 'B 的横坐标 =', ans: 4 }, { type: 'num', label: 'k =', ans: 8 }],
       tip: 'B 同时在直线和反比例图象上：先代直线求坐标，再代反比例求 k。',
@@ -1827,7 +1928,7 @@ var MT = (function () {
       kp: ['反比例函数', '一次函数']
     },
     {
-      id: 'entry.22.2', no: '22', title: '22(2) 求另一交点',
+      id: 'entry.22.2', group: '函数与图象', no: '22', title: '22(2) 求另一交点',
       prompt: '已知 k = 8，直线 y = −x + 6 与 y = 8/x 交于 A、B，其中 B(4, 2)。求另一个交点 A 的坐标。',
       fields: [{ type: 'num', label: 'A 的横坐标 =', ans: 2 }, { type: 'num', label: 'A 的纵坐标 =', ans: 4 }],
       tip: '联立 y = −x + 6 与 y = 8/x，解一元二次方程。',
@@ -1835,7 +1936,7 @@ var MT = (function () {
       kp: ['反比例函数', '一次函数']
     },
     {
-      id: 'entry.23.1', no: '23', title: '23(1) 用 x 表示',
+      id: 'entry.23.1', group: '建模与应用', no: '23', title: '23(1) 用 x 表示',
       prompt: '团扇每把盈利 60 元，每天卖 30 把；每降价 2 元，每天多卖 3 把。设每把降价 x 元。<br>每把盈利 = a − x，每天销量 = 30 + b·x。',
       fields: [{ type: 'num', label: 'a =', ans: 60 }, { type: 'num', label: 'b =', ans: 1.5 }],
       tip: '“每降 2 元多卖 3 把” → 降 1 元多卖 3/2 把。',
@@ -1843,7 +1944,7 @@ var MT = (function () {
       kp: ['二次函数', '建模']
     },
     {
-      id: 'entry.23.2', no: '23', title: '23(2) 解出并取舍',
+      id: 'entry.23.2', group: '建模与应用', no: '23', title: '23(2) 解出并取舍',
       prompt: '团扇日盈利 W = (60 − x)(30 + 1.5x)，其中 x 是降价元数。要 W = 2250，解得 x₁ = 10，x₂ = 30。<br>要让顾客得实惠，应降价多少元？',
       fields: [{ type: 'choice', label: '', ans: 1, options: ['10 元', '30 元'] }],
       tip: '“让顾客实惠”= 降得更多。',
@@ -1851,7 +1952,7 @@ var MT = (function () {
       kp: ['二次函数', '建模']
     },
     {
-      id: 'entry.20.1', no: '20', title: '20(1) 上升段解析式',
+      id: 'entry.20.1', group: '建模与应用', no: '20', title: '20(1) 上升段解析式',
       prompt: '注意力指标 y 随时间 x 变化：上升段是直线，过 (0, 20) 和 (10, 45)。',
       fields: [{ type: 'num', label: 'y = kx + b 中，k =', ans: 2.5 }, { type: 'num', label: 'b =', ans: 20 }],
       tip: 'b 就是 x = 0 时的 y；k 用两点差算。',
@@ -1859,7 +1960,7 @@ var MT = (function () {
       kp: ['一次函数', '建模']
     },
     {
-      id: 'entry.20.2', no: '20', title: '20(1) 下降段反比例',
+      id: 'entry.20.2', group: '函数与图象', no: '20', title: '20(1) 下降段反比例',
       prompt: '注意力指标的下降段是反比例函数 y = k/x，过点 (20, 45)。',
       fields: [{ type: 'num', label: 'k =', ans: 900 }],
       tip: '反比例段：k = x·y。',
@@ -1867,15 +1968,16 @@ var MT = (function () {
       kp: ['反比例函数', '分段函数']
     },
     {
-      id: 'entry.24.1', no: '24', title: '24(1) 求角度',
+      id: 'entry.24.1', group: '图形与变换', no: '24', title: '24(1) 求角度',
       prompt: '正方形 ABCD 中，BP 由 BA 绕 B 逆时针旋转 α 得到。当 △ABP 是等边三角形时，求 ∠BPC。',
       fields: [{ type: 'num', label: '∠BPC =', ans: 15, unit: '°' }],
+      fig: { w: 320, h: 220, need: 1, svg: '<rect x="95" y="20" width="110" height="100" fill="none" stroke="#1b2430" stroke-width="1.5"/><path d="M 95 120 L 150 215 L 205 120 Z" fill="none" stroke="#1b2430" stroke-width="1.5"/><path d="M 95 120 A 110 110 0 0 0 150 215" fill="none" stroke="#e37400" stroke-width="1.2" stroke-dasharray="4 4"/><circle cx="205" cy="120" r="2.6" fill="#1b2430"/><text x="85" y="136" font-size="14" font-family="serif">A</text><text x="209" y="136" font-size="14" font-family="serif">B</text><text x="209" y="22" font-size="14" font-family="serif">C</text><text x="85" y="22" font-size="14" font-family="serif">D</text><text x="148" y="232" font-size="14" font-family="serif">P</text><text x="146" y="100" font-size="12" fill="#a15c00">alpha</text>' },
       tip: '等边三角形 → α = 60°；BP = BA = BC，△PBC 是等腰三角形。',
       explain: ['α = 60°，∠PBC = ∠PBA + ∠ABC = 60° + 90° = 150°。', 'BP = BC，所以 ∠BPC = (180° − 150°) ÷ 2 = 15°。'],
       kp: ['几何综合', '旋转']
     },
     {
-      id: 'entry.25.1', no: '25', title: '25(1) 代值',
+      id: 'entry.25.1', group: '函数与解析式', no: '25', title: '25(1) 代值',
       prompt: '抛物线 y = x² + 2ax + 2a − 5。当 a = −1、x = 2 时，y = ?',
       fields: [{ type: 'num', label: 'y =', ans: -7 }],
       tip: '先把 a 代进去，再把 x 代进去。',
@@ -1884,7 +1986,7 @@ var MT = (function () {
       kp: ['二次函数', '含参']
     },
     {
-      id: 'entry.25.2', no: '25', title: '25(1) 判断点',
+      id: 'entry.25.2', group: '函数与解析式', no: '25', title: '25(1) 判断点',
       prompt: '已知 a = −1 时抛物线为 y = x² − 2x − 7。点 (2, −6) 在图象上吗？',
       fields: [{ type: 'choice', label: '', ans: 1, options: ['在', '不在'] }],
       tip: '把 x = 2 代进去，看 y 等不等于 −6。',
@@ -1893,7 +1995,7 @@ var MT = (function () {
     },
     /* ---- 第 11 周周练卷（11.11）的解答题前两步 ---- */
     {
-      id: 'entry.13.1', no: '13', title: '13(1) 对称轴与顶点',
+      id: 'entry.13.1', group: '函数与解析式', no: '13', title: '13(1) 对称轴与顶点',
       prompt: '已知二次函数 y₁ = −x² + 2x + 3。<br><span class="muted small">求对称轴和顶点——这是 13 题的第一个得分点（4 分里先拿 2 分）。</span>',
       fields: [
         { type: 'num', label: '对称轴 直线 x =', ans: 1 },
@@ -1905,7 +2007,7 @@ var MT = (function () {
       kp: ['二次函数', '顶点']
     },
     {
-      id: 'entry.13.3', no: '13', title: '13(3) 平移后解析式',
+      id: 'entry.13.3', group: '函数与解析式', no: '13', title: '13(3) 平移后解析式',
       prompt: '把抛物线 y = −x² + 2x + 3 向下平移 3 个单位，再向左平移 2 个单位。<br>写出平移后的解析式（13(3) 的 3 分）。',
       fields: [{ type: 'expr', form: 'general', tpl: 'y = {}x² + {}x', label: '平移后的解析式', ans: [-1, -2] }],
       tip: '「上加下减」改常数项，「左加右减」把 x 换成 (x + 2)。',
@@ -1913,7 +2015,7 @@ var MT = (function () {
       kp: ['二次函数', '平移']
     },
     {
-      id: 'entry.13.5', no: '13', title: '13(5) 面积怎么设',
+      id: 'entry.13.5', group: '函数与解析式', no: '13', title: '13(5) 面积怎么设',
       prompt: 'A(0, 3)、B(3, 0)，P 在线段 AB 上方的抛物线上。设 P(t, −t² + 2t + 3)，过 P 作 PQ ∥ y 轴交 AB 于 Q。<br><span class="muted small">先写出 PQ 的长度——这是 13(5) 的关键一步。</span>',
       fields: [{
         type: 'choice', label: 'PQ =', ans: 0,
@@ -1924,7 +2026,7 @@ var MT = (function () {
       kp: ['二次函数', '面积最值']
     },
     {
-      id: 'entry.14.1', no: '14', title: '14 第一步：平行得角',
+      id: 'entry.14.1', group: '圆与扇形', no: '14', title: '14 第一步：平行得角',
       prompt: 'AB 为 ⊙O 的直径，∠BOC = 80°，AD ∥ OC。<br><span class="muted small">第一步：∠DAB 是多少度？依据是哪条？</span>',
       fields: [
         { type: 'num', label: '∠DAB =', ans: 80, unit: '°' },
@@ -1933,12 +2035,13 @@ var MT = (function () {
           options: ['AD ∥ OC，两直线平行、同位角相等', '同弧所对的圆周角等于圆心角的一半', 'OA = OD，等边对等角', '直径所对的圆周角是直角']
         }
       ],
+      fig: { w: 320, h: 220, need: 1, svg: '<circle cx="160" cy="110" r="80" fill="none" stroke="#1b2430" stroke-width="1.5"/><line x1="80" y1="110" x2="240" y2="110" stroke="#1b2430" stroke-width="1.5"/><line x1="160" y1="110" x2="218" y2="55" stroke="#1b2430" stroke-width="1.5"/><line x1="80" y1="110" x2="164" y2="30" stroke="#1b2430" stroke-width="1.5"/><circle cx="160" cy="110" r="2.6" fill="#1b2430"/><text x="68" y="126" font-size="14" font-family="serif">A</text><text x="242" y="126" font-size="14" font-family="serif">B</text><text x="152" y="126" font-size="14" font-family="serif">O</text><text x="221" y="49" font-size="14" font-family="serif">C</text><text x="167" y="26" font-size="14" font-family="serif">D</text><path d="M 170 110 A 26 26 0 0 1 185 91" fill="none" stroke="#e37400" stroke-width="1.2"/><text x="184" y="96" font-size="11" fill="#a15c00">80</text>' },
       tip: 'AD ∥ OC，AB 是截线 → ∠DAB 与 ∠BOC 是同位角。',
       explain: ['AD ∥ OC，AB 截两条平行线，∠DAB 与 ∠BOC 是同位角，所以 ∠DAB = ∠BOC = 80°。', '接下来由 OA = OD 得 ∠D = ∠DAB = 80°。'],
       kp: ['圆的基本性质', '平行线与角']
     },
     {
-      id: 'entry.15.1', no: '15', title: '15(1) 建系设式求 a',
+      id: 'entry.15.1', group: '建模与应用', no: '15', title: '15(1) 建系设式求 a',
       prompt: '三孔桥：以水面为 x 轴、大孔抛物线对称轴为 y 轴。大孔水面宽 20 m，顶点距水面 8 m。<br>设 y = ax² + k，求 k 和 a。',
       fields: [
         { type: 'num', label: 'k =', ans: 8 },
@@ -1950,7 +2053,7 @@ var MT = (function () {
       kp: ['二次函数', '建模', '待定系数法']
     },
     {
-      id: 'entry.16.1', no: '16', title: '16(1) 销量用 x 表示',
+      id: 'entry.16.1', group: '建模与应用', no: '16', title: '16(1) 销量用 x 表示',
       prompt: '进价 40 元、售价 50 元，每月可卖 150 件；每涨价 2 元就少卖 5 件。设每件涨价 x 元。<br>每月可卖 = 150 − b·x。',
       fields: [
         { type: 'num', label: 'b =', ans: 2.5 },
@@ -1961,7 +2064,7 @@ var MT = (function () {
       kp: ['二次函数', '建模']
     },
     {
-      id: 'entry.16.2', no: '16', title: '16(2) 取值范围',
+      id: 'entry.16.2', group: '函数与解析式', no: '16', title: '16(2) 取值范围',
       prompt: '某商品售价 50 元，每件涨价 x 元（x 为偶数），售价不能超过 70 元。<br>自变量 x 的取值范围是？',
       fields: [{
         type: 'choice', label: '', ans: 0,
@@ -1972,7 +2075,7 @@ var MT = (function () {
       kp: ['二次函数', '取值范围']
     },
     {
-      id: 'entry.17.1', no: '附加', title: '附加(1) 对称轴求 b、c',
+      id: 'entry.17.1', group: '函数与解析式', no: '附加', title: '附加(1) 对称轴求 b、c',
       prompt: '抛物线 y = −x² + bx + c 的对称轴是直线 x = 1，且经过点 A(−1, 0)。<br>求 b 和 c（附加题第一个得分点）。',
       fields: [
         { type: 'num', label: 'b =', ans: 2 },
@@ -1987,40 +2090,43 @@ var MT = (function () {
        只收「第一步就是下笔障碍」的：辅助线 / 等半径 / 垂径定理 / 建模 / 待定系数。
        纯概念选择（点与圆的位置关系、k 的几何意义、三次方程）已经有基础快练的题型覆盖，不在这里重复。 */
     {
-      id: 'entry.t01', title: '错题本 p01 · 垂径定理第一步',
+      id: 'entry.t01', group: '圆与扇形', title: '错题本 p01 · 垂径定理第一步',
       prompt: 'CD 是 ⊙O 的直径，AB 是 ⊙O 的弦，AB⊥CD 于 M。若 AB=8，OM∶OC=3∶5。<br><span class="muted small">第一步：垂径定理得 AM，再设 k 求半径。</span>',
       fields: [
         { type: 'num', label: 'AM =', ans: 4 },
         { type: 'num', label: '设 OM=3k、OC=5k，则 k =', ans: 1 }
       ],
+      fig: { w: 320, h: 220, need: 1, svg: '<circle cx="160" cy="110" r="80" fill="none" stroke="#1b2430" stroke-width="1.5"/><line x1="80" y1="110" x2="240" y2="110" stroke="#1b2430" stroke-width="1.5"/><line x1="208" y1="46" x2="208" y2="174" stroke="#1b2430" stroke-width="1.5"/><circle cx="160" cy="110" r="2.6" fill="#1b2430"/><circle cx="208" cy="110" r="2.6" fill="#1b2430"/><path d="M 208 110 L 218 110 L 218 100" fill="none" stroke="#e37400" stroke-width="1.2"/><text x="68" y="126" font-size="13" font-family="serif">C</text><text x="243" y="126" font-size="13" font-family="serif">D</text><text x="212" y="42" font-size="13" font-family="serif">A</text><text x="212" y="184" font-size="13" font-family="serif">B</text><text x="214" y="106" font-size="13" font-family="serif">M</text><text x="150" y="126" font-size="13" font-family="serif">O</text>' },
       tip: '直径垂直于弦 → 平分弦；半径 OA=OC=5k，在 Rt△AOM 里列勾股。',
       explain: ['CD 过圆心且 AB⊥CD ⟹ AM=BM=½AB=4。', 'OM=3k、OC=5k ⟹ OA=5k；Rt△AOM：25k²=9k²+16 ⟹ k=1（OM=3、半径 5）。'],
       kp: ['圆的基本性质', '垂径定理']
     },
     {
-      id: 'entry.t02', title: '错题本 p02 · 半圆里的角度链',
+      id: 'entry.t02', group: '圆与扇形', title: '错题本 p02 · 半圆里的角度链',
       prompt: '以 △ABC 的边 AB 为直径作半圆 O，分别交 AC、BC 于 D、E。若 AC=BC，∠C=70°。<br><span class="muted small">第一步：先求 ∠A，再求 ∠CAE。</span>',
       fields: [
         { type: 'num', label: '∠A =', ans: 55, unit: '°' },
         { type: 'num', label: '∠CAE =', ans: 20, unit: '°' }
       ],
+      fig: { w: 320, h: 220, need: 1, svg: '<path d="M 70 170 A 90 90 0 0 1 250 170" fill="none" stroke="#1b2430" stroke-width="1.5"/><line x1="70" y1="170" x2="250" y2="170" stroke="#1b2430" stroke-width="1.5"/><path d="M 70 170 L 160 35 L 250 170" fill="none" stroke="#1b2430" stroke-width="1.5"/><circle cx="125" cy="87" r="2.6" fill="#e37400"/><circle cx="195" cy="87" r="2.6" fill="#e37400"/><text x="58" y="186" font-size="14" font-family="serif">A</text><text x="252" y="186" font-size="14" font-family="serif">B</text><text x="153" y="29" font-size="14" font-family="serif">C</text><text x="112" y="82" font-size="13" font-family="serif">D</text><text x="199" y="82" font-size="13" font-family="serif">E</text><text x="146" y="60" font-size="11" fill="#a15c00">70</text>' },
       tip: '等腰三角形先算 ∠A；AB 是直径 ⟹ ∠AEB=90°，再在 Rt△ACE 里算 ∠CAE。',
       explain: ['AC=BC、∠C=70° ⟹ ∠A=∠B=(180°−70°)/2=55°。', 'AB 为直径 ⟹ ∠AEB=90°；Rt△ACE 中 ∠CAE=90°−∠C=20°。', '再往下一步：∠DOE=2∠DAE=40°。'],
       kp: ['圆的基本性质', '直径所对的圆周角']
     },
     {
-      id: 'entry.t03', title: '错题本 p03 · 扇形里的等腰直角',
+      id: 'entry.t03', group: '圆与扇形', title: '错题本 p03 · 扇形里的等腰直角',
       prompt: '扇形 AOB 中 ∠AOB=90°，P 为弧 AB 上一点，PC⊥OA 于 C，交 AB 于 D，PD=3，CD=2。求半径。<br><span class="muted small">第一步：先判断 △ACD 的形状。</span>',
       fields: [
         { type: 'choice', label: '△ACD 是', ans: 0, options: ['等腰直角三角形', '等边三角形', '含 30° 的直角三角形', '普通直角三角形'] },
         { type: 'num', label: 'AC =', ans: 2 }
       ],
+      fig: { w: 320, h: 220, need: 1, svg: '<circle cx="90" cy="180" r="90" fill="none" stroke="#1b2430" stroke-width="1.5"/><path d="M 90 180 L 90 90 A 90 90 0 0 1 180 180 Z" fill="none" stroke="#1b2430" stroke-width="1.5"/><line x1="180" y1="180" x2="90" y2="90" stroke="#e37400" stroke-width="1.2" stroke-dasharray="4 4"/><line x1="154" y1="116" x2="154" y2="180" stroke="#1b2430" stroke-width="1.5"/><path d="M 154 180 L 164 180 L 164 170" fill="none" stroke="#e37400" stroke-width="1.2"/><text x="80" y="193" font-size="14" font-family="serif">O</text><text x="184" y="186" font-size="14" font-family="serif">A</text><text x="80" y="84" font-size="14" font-family="serif">B</text><text x="158" y="110" font-size="14" font-family="serif">P</text><text x="158" y="178" font-size="13" font-family="serif">C</text><text x="158" y="158" font-size="13" font-family="serif">D</text>' },
       tip: 'OA=OB、∠AOB=90° ⟹ ∠OAB=45°；PC⊥OA ⟹ ∠ACD=90°，所以 △ACD 也是等腰直角。',
       explain: ['OA=OB、∠AOB=90° ⟹ ∠OAB=45°。', 'PC⊥OA ⟹ ∠ACD=90°，∠CAD=45° ⟹ △ACD 等腰直角，AC=CD=2。', '于是 PC=PD+DC=5、OC=R−2，在 Rt△OCP 列勾股：R²=(R−2)²+25 ⟹ R=29/4。'],
       kp: ['圆的基本性质', '等腰直角三角形']
     },
     {
-      id: 'entry.t05', title: '错题本 p05 · 圆内证角平分线',
+      id: 'entry.t05', group: '圆与扇形', title: '错题本 p05 · 圆内证角平分线',
       prompt: 'AB 是 ⊙O 的直径，C、D 在 ⊙O 上，BC∥OD。求证：BD 平分 ∠ABC。<br><span class="muted small">第一步：两条依据先写出来。</span>',
       fields: [
         {
@@ -2032,12 +2138,13 @@ var MT = (function () {
           options: ['BC ∥ OD，内错角相等', 'BC ∥ OD，同位角相等', '同弧所对的圆周角相等', '等边对等角']
         }
       ],
+      fig: { w: 320, h: 220, need: 1, svg: '<circle cx="160" cy="110" r="80" fill="none" stroke="#1b2430" stroke-width="1.5"/><line x1="80" y1="110" x2="240" y2="110" stroke="#1b2430" stroke-width="1.5"/><line x1="160" y1="110" x2="110" y2="55" stroke="#1b2430" stroke-width="1.5"/><line x1="240" y1="110" x2="168" y2="30" stroke="#1b2430" stroke-width="1.5"/><line x1="240" y1="110" x2="110" y2="55" stroke="#1b2430" stroke-width="1.5"/><circle cx="160" cy="110" r="2.6" fill="#1b2430"/><text x="68" y="126" font-size="14" font-family="serif">A</text><text x="242" y="126" font-size="14" font-family="serif">B</text><text x="171" y="28" font-size="14" font-family="serif">C</text><text x="97" y="50" font-size="14" font-family="serif">D</text><text x="151" y="126" font-size="14" font-family="serif">O</text><path d="M 126 90 L 134 84 M 206 79 L 214 73" stroke="#e37400" stroke-width="1.5"/>' },
       tip: '先抓半径相等（等腰），再用平行线的内错角把角接起来。',
       explain: ['OD=OB ⟹ ∠ODB=∠OBD。', 'BC∥OD ⟹ ∠ODB=∠CBD（内错角）。', '所以 ∠OBD=∠CBD；O 在 AB 上，∠OBD 就是 ∠ABD，所以 BD 平分 ∠ABC。'],
       kp: ['圆的基本性质', '平行线与角']
     },
     {
-      id: 'entry.t06', title: '错题本 p06 · 灯罩轴截面建模',
+      id: 'entry.t06', group: '圆与扇形', title: '错题本 p06 · 灯罩轴截面建模',
       prompt: '球形灯罩的轴截面：HF 过圆心且垂直底座 CD 于 F，AC=BD=1，CD=12，HF=31。<br><span class="muted small">第一步：垂径定理求 CF，再写 R 与 OF 的关系。</span>',
       fields: [
         { type: 'num', label: 'CF =', ans: 6 },
@@ -2046,12 +2153,13 @@ var MT = (function () {
           options: ['R + d = 31', 'R − d = 31', '2R + d = 31', 'R + 2d = 31']
         }
       ],
+      fig: { w: 320, h: 220, need: 1, svg: '<path d="M 89 175 A 90 90 0 0 1 231 175" fill="none" stroke="#1b2430" stroke-width="1.5"/><line x1="70" y1="175" x2="250" y2="175" stroke="#1b2430" stroke-width="1.5"/><line x1="160" y1="30" x2="160" y2="175" stroke="#1b2430" stroke-width="1.5"/><line x1="89" y1="166" x2="89" y2="175" stroke="#1b2430" stroke-width="1.5"/><line x1="231" y1="166" x2="231" y2="175" stroke="#1b2430" stroke-width="1.5"/><circle cx="160" cy="120" r="2.6" fill="#1b2430"/><path d="M 160 175 L 170 175 L 170 165" fill="none" stroke="#e37400" stroke-width="1.2"/><text x="153" y="26" font-size="14" font-family="serif">H</text><text x="150" y="117" font-size="14" font-family="serif">O</text><text x="153" y="191" font-size="14" font-family="serif">F</text><text x="74" y="163" font-size="13" font-family="serif">A</text><text x="236" y="163" font-size="13" font-family="serif">B</text><text x="78" y="190" font-size="13" font-family="serif">C</text><text x="236" y="190" font-size="13" font-family="serif">D</text>' },
       tip: 'HF 过圆心且垂直 CD → 垂径定理平分 CD；注意 HF 不是直径，是 R + d。',
       explain: ['垂径定理：CF=FD=½×12=6。', 'H、O、F 共线，HF=HO+OF=R+d=31。', '下一步：以 F 为原点，A(−6, 1)、O(0, d)，6²+(d−1)²=R²，代 d=31−R 得 R=15.6。'],
       kp: ['圆的基本性质', '垂径定理', '建模']
     },
     {
-      id: 'entry.t08', title: '错题本 p08 · 反比例 + 一次函数',
+      id: 'entry.t08', group: '函数与图象', title: '错题本 p08 · 反比例 + 一次函数',
       prompt: '双曲线 y=k/x（x>0）上有一点 A(1, 5)，过 A 的直线 y=−mx+n 与该双曲线交于点 B，且 B 的纵坐标为 1。<br><span class="muted small">第一步：求 k 和 B 的坐标。</span>',
       fields: [
         { type: 'num', label: 'k =', ans: 5 },
@@ -2062,7 +2170,7 @@ var MT = (function () {
       kp: ['反比例函数', '待定系数法']
     },
     {
-      id: 'entry.t11', title: '错题本 p11 · 旋转题的等腰直角',
+      id: 'entry.t11', group: '图形与变换', title: '错题本 p11 · 旋转题的等腰直角',
       prompt: '平行四边形 ABCD 中 ∠DAB=45°，DE⊥AB 于 E，DE=2√2，AE=2EB。<br><span class="muted small">第一步：先看 △ADE 是什么三角形。</span>',
       fields: [
         { type: 'choice', label: 'AE =', ans: 0, options: ['2√2', '2', '4', '2√3'] },
@@ -2074,7 +2182,7 @@ var MT = (function () {
     },
     /* ---- 2026-11-14 老师反馈补的两道「第一步」：圆内接四边形对角互补、弦心距 + 连半径 ---- */
     {
-      id: 'entry.t12', title: '圆内接四边形 · 对角互补第一步',
+      id: 'entry.t12', group: '圆与扇形', title: '圆内接四边形 · 对角互补第一步',
       prompt: '四边形 ABCD 内接于 ⊙O，∠A = 70°，∠B = 95°。<br><span class="muted small">第一步：先写哪条结论，再算 ∠C。</span>',
       fields: [
         {
@@ -2083,12 +2191,13 @@ var MT = (function () {
         },
         { type: 'num', label: '∠C =', ans: 110, unit: '°' }
       ],
+      fig: { w: 320, h: 220, need: 1, svg: '<circle cx="160" cy="110" r="82" fill="none" stroke="#1b2430" stroke-width="1.5"/><path d="M 85 145 L 150 40 L 232 90 L 195 180 Z" fill="none" stroke="#1b2430" stroke-width="1.5"/><circle cx="160" cy="110" r="2.6" fill="#1b2430"/><text x="72" y="152" font-size="14" font-family="serif">A</text><text x="151" y="33" font-size="14" font-family="serif">B</text><text x="237" y="90" font-size="14" font-family="serif">C</text><text x="197" y="194" font-size="14" font-family="serif">D</text><text x="153" y="126" font-size="13" font-family="serif">O</text><text x="92" y="130" font-size="11" fill="#a15c00">70</text><text x="165" y="55" font-size="11" fill="#a15c00">95</text>' },
       tip: '圆内接四边形：对角互补（∠A + ∠C、∠B + ∠D），不是邻角互补——这是最容易记混的一条。',
       explain: ['四边形 ABCD 内接于 ⊙O ⟹ 对角互补：∠A + ∠C = 180°。', '∠C = 180° − 70° = 110°。', '下一步同理：∠D = 180° − ∠B = 85°。'],
       kp: ['圆的基本性质', '圆内接四边形']
     },
     {
-      id: 'entry.t13', title: '弦心距 + 连半径 · 垂径第一步',
+      id: 'entry.t13', group: '圆与扇形', title: '弦心距 + 连半径 · 垂径第一步',
       prompt: 'AB 是 ⊙O 的弦，AB = 16，圆心 O 到 AB 的距离 OM = 6。<br><span class="muted small">第一步：作什么辅助线？先求哪条线段？</span>',
       fields: [
         {
@@ -2098,35 +2207,127 @@ var MT = (function () {
         { type: 'num', label: 'AM =', ans: 8 },
         { type: 'num', label: '半径 OA =', ans: 10 }
       ],
+      fig: { w: 320, h: 220, need: 1, svg: '<circle cx="160" cy="110" r="80" fill="none" stroke="#1b2430" stroke-width="1.5"/><line x1="91" y1="150" x2="229" y2="150" stroke="#1b2430" stroke-width="1.5"/><line x1="160" y1="110" x2="160" y2="150" stroke="#1b2430" stroke-width="1.5"/><line x1="160" y1="110" x2="91" y2="150" stroke="#e37400" stroke-width="1.2" stroke-dasharray="4 4"/><path d="M 160 150 L 170 150 L 170 140" fill="none" stroke="#e37400" stroke-width="1.2"/><circle cx="160" cy="110" r="2.6" fill="#1b2430"/><text x="80" y="166" font-size="14" font-family="serif">A</text><text x="232" y="166" font-size="14" font-family="serif">B</text><text x="152" y="103" font-size="14" font-family="serif">O</text><text x="153" y="166" font-size="13" font-family="serif">M</text>' },
       tip: '见弦 → 作弦心距 + 连半径，凑出直角三角形：OA² = OM² + AM²。',
       explain: ['OM ⊥ AB ⟹ AM = MB = ½AB = 8（垂径定理）。', '连 OA 得 Rt△OAM：OA = √(6² + 8²) = 10。', '套路：弦长、弦心距、半径三个量，知二求一。'],
       kp: ['圆的基本性质', '垂径定理']
     },
     /* ---- 2026-11-19 补：孩子反馈「扇形、弧、圆锥有点难」，把展开图和公式选择做成第一步 ---- */
     {
-      id: 'entry.t21', title: '圆锥展开图 · 第一步',
+      id: 'entry.t21', group: '圆与扇形', title: '圆锥展开图 · 第一步',
       prompt: '圆锥的底面半径为 3，母线长为 5。<br><span class="muted small">第一步：侧面展开图是扇形——先写它的半径和弧长。</span>',
       fields: [
         { type: 'num', label: '扇形半径（母线）=', ans: 5 },
         { type: 'num', label: '扇形弧长 = kπ，k =', ans: 6 }
       ],
+      fig: { w: 320, h: 220, need: 1, svg: '<path d="M 70 45 L 38 170 L 102 170 Z" fill="none" stroke="#1b2430" stroke-width="1.5"/><ellipse cx="70" cy="170" rx="32" ry="9" fill="none" stroke="#1b2430" stroke-width="1.2"/><line x1="70" y1="170" x2="102" y2="170" stroke="#1b2430" stroke-width="1.5"/><path d="M 175 170 L 248 100 A 95 95 0 0 1 175 75 Z" fill="none" stroke="#1b2430" stroke-width="1.5"/><circle cx="175" cy="170" r="2.6" fill="#1b2430"/><text x="64" y="38" font-size="13" font-family="serif">A</text><text x="108" y="174" font-size="12" fill="#a15c00">r = 3</text><text x="40" y="108" font-size="12" fill="#a15c00">l = 5</text><text x="165" y="187" font-size="13" font-family="serif">O</text>' },
       tip: '圆锥侧面展开：扇形半径 = 母线 l，扇形弧长 = 底面周长 2πr。',
       explain: ['展开图是扇形：半径就是母线 5；弧长等于底面圆的周长 2πr = 6π。',
         '所以 k = 6；下一步用 θ = 360r/l 求圆心角：360×3÷5 = 216°。'],
       kp: ['圆的基本性质', '圆锥的侧面积']
     },
     {
-      id: 'entry.t22', title: '扇形面积 · 用哪个公式',
+      id: 'entry.t22', group: '圆与扇形', title: '扇形面积 · 用哪个公式',
       prompt: '扇形 AOB 中，∠AOB = 120°，半径 OA = 6。<br><span class="muted small">第一步：选面积公式，再算。</span>',
       fields: [
         { type: 'choice', label: '用哪个公式', ans: 0, options: ['S = nπr²/360', 'S = πrl', 'S = πr²', 'S = 2πr'] },
         { type: 'num', label: '面积 = kπ，k =', ans: 12 }
       ],
+      fig: { w: 320, h: 220, need: 1, svg: '<circle cx="160" cy="170" r="95" fill="none" stroke="#1b2430" stroke-width="1.5"/><path d="M 160 170 L 78 122 A 95 95 0 0 1 242 122 Z" fill="none" stroke="#1b2430" stroke-width="1.5"/><circle cx="160" cy="170" r="2.6" fill="#1b2430"/><path d="M 160 170 L 190 140 A 38 38 0 0 1 205 150" fill="none" stroke="#e37400" stroke-width="1.2"/><text x="152" y="186" font-size="13" font-family="serif">O</text><text x="66" y="118" font-size="14" font-family="serif">A</text><text x="246" y="118" font-size="14" font-family="serif">B</text><text x="190" y="152" font-size="11" fill="#a15c00">120</text><text x="118" y="150" font-size="12" fill="#a15c00">6</text>' },
       tip: '给圆心角用 S = nπr²/360；给弧长用 S = ½lr；两个公式可以互相推。',
       explain: ['已知圆心角 120°、半径 6，用 S = nπr²/360。',
         'S = 120 × π × 36 ÷ 360 = 12π，所以 k = 12。',
         '同一题的弧长 l = 120π×6/180 = 4π，用 S = ½lr = ½×4π×6 = 12π，两个公式结果一致。'],
       kp: ['圆的基本性质', '扇形面积']
+    },
+    {
+      id: 'entry.w12q7', group: '圆与扇形', no: '7', title: '7 网格弧长 · 第一步',
+      prompt: '5×4 网格中每格边长 1，经过格点 A、B、E 的圆弧与线段 BC 交于 D，AB² = 1²+4²，AC² = 1²+4²，BC² = 5²+3²。<br><span class="muted small">第一步：判断 △ABC 的形状，再看弧所对的圆周角。</span>',
+      fields: [
+        { type: 'num', label: 'AB² =', ans: 17 },
+        { type: 'choice', label: '△ABC 是', ans: 0, options: ['等腰直角三角形', '等边三角形', '直角但非等腰', '钝角三角形'] }
+      ],
+      fig: { w: 320, h: 220, need: 1, svg: '<g stroke="#c9d2dd" stroke-width="0.9"><line x1="50" y1="20" x2="50" y2="180"/><line x1="90" y1="20" x2="90" y2="180"/><line x1="130" y1="20" x2="130" y2="180"/><line x1="170" y1="20" x2="170" y2="180"/><line x1="210" y1="20" x2="210" y2="180"/><line x1="250" y1="20" x2="250" y2="180"/><line x1="50" y1="20" x2="250" y2="20"/><line x1="50" y1="60" x2="250" y2="60"/><line x1="50" y1="100" x2="250" y2="100"/><line x1="50" y1="140" x2="250" y2="140"/><line x1="50" y1="180" x2="250" y2="180"/></g><path d="M 90 20 A 82.46 82.46 0 0 0 250 60" fill="none" stroke="#1b2430" stroke-width="1.7"/><line x1="50" y1="180" x2="250" y2="60" stroke="#1b2430" stroke-width="1.4"/><circle cx="90" cy="20" r="3" fill="#e37400"/><circle cx="250" cy="60" r="3" fill="#e37400"/><circle cx="50" cy="180" r="3" fill="#e37400"/><circle cx="90" cy="60" r="3" fill="#e37400"/><circle cx="150" cy="120" r="3" fill="#e37400"/><text x="80" y="14" font-size="14" font-family="serif">A</text><text x="254" y="56" font-size="14" font-family="serif">B</text><text x="32" y="196" font-size="14" font-family="serif">C</text><text x="76" y="56" font-size="14" font-family="serif">E</text><text x="142" y="138" font-size="14" font-family="serif">D</text>' },
+      tip: '勾股定理算出三边平方，看 AB²+AC² 与 BC² 的关系；等腰 + 直角 ⟹ 底角 45°。',
+      explain: ['AB² = 1 + 16 = 17，AC² = 1 + 16 = 17，BC² = 25 + 9 = 34。',
+        'AB² + AC² = 34 = BC² 且 AB = AC ⟹ △ABC 是等腰直角三角形，∠ABC = 45°。',
+        '弧 AD 所对圆周角 45° ⟹ 圆心角 90°；由网格 AE 竖直、EB 水平得 ∠AEB = 90°，所以 AB 是直径，R = √17/2，弧长 = √17π/4。'],
+      kp: ['圆的基本性质', '弧长', '勾股定理']
+    },
+    {
+      id: 'entry.w12q12', group: '图形与变换', no: '12', title: '12 关联圆 · 建系第一步',
+      prompt: '5×4 网格中每格边长 1，经过格点 A、B、E 的圆弧与线段 BC 交于 D，AB² = 1²+4²，AC² = 1²+4²，BC² = 5²+3²。<br><span class="muted small">第一步：判断 △ABC 的形状，再看弧所对的圆周角。</span>',
+      fields: [
+        { type: 'choice', label: 'P 的坐标是', ans: 0,
+          options: ['(3√2/2, 3√2/2)', '(3, 3)', '(3√2, 3√2)', '(3/2, 3/2)'] },
+        { type: 'num', label: 'A 的横坐标 = k√2，k =', ans: 2 }
+      ],
+      fig: { w: 320, h: 220, need: 1, svg: '<g stroke="#c9d2dd" stroke-width="0.9"><line x1="50" y1="20" x2="50" y2="180"/><line x1="90" y1="20" x2="90" y2="180"/><line x1="130" y1="20" x2="130" y2="180"/><line x1="170" y1="20" x2="170" y2="180"/><line x1="210" y1="20" x2="210" y2="180"/><line x1="250" y1="20" x2="250" y2="180"/><line x1="50" y1="20" x2="250" y2="20"/><line x1="50" y1="60" x2="250" y2="60"/><line x1="50" y1="100" x2="250" y2="100"/><line x1="50" y1="140" x2="250" y2="140"/><line x1="50" y1="180" x2="250" y2="180"/></g><path d="M 90 20 A 82.46 82.46 0 0 0 250 60" fill="none" stroke="#1b2430" stroke-width="1.7"/><line x1="50" y1="180" x2="250" y2="60" stroke="#1b2430" stroke-width="1.4"/><circle cx="90" cy="20" r="3" fill="#e37400"/><circle cx="250" cy="60" r="3" fill="#e37400"/><circle cx="50" cy="180" r="3" fill="#e37400"/><circle cx="90" cy="60" r="3" fill="#e37400"/><circle cx="150" cy="120" r="3" fill="#e37400"/><text x="80" y="14" font-size="14" font-family="serif">A</text><text x="254" y="56" font-size="14" font-family="serif">B</text><text x="32" y="196" font-size="14" font-family="serif">C</text><text x="76" y="56" font-size="14" font-family="serif">E</text><text x="142" y="138" font-size="14" font-family="serif">D</text>' },
+      tip: '45° 方向上横纵坐标相等；|OP| = 3 ⟹ 每个坐标 = 3·cos45° = 3√2/2。',
+      explain: ['∠PON = 45° ⟹ P 的横纵坐标相等，设为 t，则 2t² = 3² ⟹ t = 3√2/2。',
+        '所以 P(3√2/2, 3√2/2)；A(2√2, 0)，B(4√2, 0)，中点 T(3√2, 0)。',
+        '下一步：绕 P 逆时针旋转 90°，T 的像是 Q(3√2, 3√2)，再推出 C、D。'],
+      kp: ['图形的变换', '旋转', '新定义']
+    },
+    {
+      id: 'entry.w12q16', group: '圆与扇形', no: '16', title: '16(1) 圆弧拱桥 · 求半径第一步',
+      prompt: '圆弧形桥拱跨度 AC = 40 m，拱高 BD = 10 m。设所在圆半径为 R。<br><span class="muted small">第一步：由垂径定理写出半跨度与圆心到弦的距离，再列勾股。</span>',
+      fields: [
+        { type: 'num', label: '半跨度 AD =', ans: 20, unit: 'm' },
+        { type: 'choice', label: '圆心到弦的距离 OD =', ans: 0, options: ['R − 10', 'R + 10', '10 − R', '20'] },
+        { type: 'num', label: '由 R² = 20² + (R−10)² 解得 R =', ans: 25 }
+      ],
+      fig: { w: 320, h: 220, need: 1, svg: '<path d="M 40 170 A 150 150 0 0 1 280 170" fill="none" stroke="#1b2430" stroke-width="1.8"/><line x1="40" y1="170" x2="280" y2="170" stroke="#1b2430" stroke-width="1.2"/><line x1="160" y1="110" x2="160" y2="170" stroke="#e37400" stroke-width="1.3" stroke-dasharray="4 4"/><circle cx="160" cy="260" r="2.6" fill="#1b2430"/><text x="32" y="188" font-size="13" font-family="serif">A</text><text x="282" y="188" font-size="13" font-family="serif">C</text><text x="153" y="104" font-size="13" font-family="serif">B</text><text x="153" y="186" font-size="13" font-family="serif">D</text><text x="151" y="278" font-size="13" font-family="serif">O</text><text x="92" y="186" font-size="11" fill="#a15c00">40</text><text x="168" y="145" font-size="11" fill="#a15c00">10</text>' },
+      tip: '跨度的一半是 20；圆心在拱顶下方，弦心距 = R − 拱高 = R − 10。',
+      explain: ['垂径定理：D 是 AC 中点，AD = 40/2 = 20。',
+        '圆心 O 在 BD 所在直线上，OD = OB − BD = R − 10。',
+        'Rt△ODA：OA² = OD² + AD² ⟹ R² = (R−10)² + 20² ⟹ 20R = 500 ⟹ R = 25。'],
+      kp: ['圆的基本性质', '垂径定理', '拱桥建模']
+    },
+    {
+      id: 'entry.w12q17a', group: '函数与解析式', no: '附加', title: '附加(2) 等腰三角形 · 分类第一步',
+      prompt: 'a=1、c=9 时抛物线为 y=(x−3)²，顶点 D(3,0)，与 y 轴交于 C(0,9)。点 P 在对称轴 x=3 上，设 P(3,p)。<br><span class="muted small">第一步：写出 CD²，并判断要分几种情况。</span>',
+      fields: [
+        { type: 'num', label: 'CD² =', ans: 90 },
+        { type: 'choice', label: '△CDP 等腰要分几种情况', ans: 0,
+          options: ['3 种：CP=DP、CP=CD、DP=CD', '2 种', '1 种', '4 种'] }
+      ],
+      tip: '等腰三角形任意两边都可能相等，三条边两两组合共 3 种；别漏掉「CD 作腰」的情况。',
+      explain: ['C(0,9)、D(3,0) ⟹ CD² = 3² + 9² = 90。',
+        '设 P(3,p)：CP² = 3² + (p−9)² = p²−18p+90，DP² = p²。',
+        '① CP=DP ⟹ p=5；② CP=CD ⟹ p=18（p=0 舍）；③ DP=CD ⟹ p=±3√10。'],
+      kp: ['二次函数', '等腰三角形存在性']
+    },
+    {
+      id: 'entry.w12q17b', group: '函数与解析式', no: '附加', title: '附加(3) 含参取值范围 · 第一步',
+      prompt: '由对称轴 x=3 得 b=−6a；由交点条件得 c=9a+6，于是 y = ax²−6ax+9a+6 = a(x−3)²+6（a>0）。<br><span class="muted small">第一步：写出顶点纵坐标，判断 0<x<5 上离对称轴最远的是哪一端。</span>',
+      fields: [
+        { type: 'num', label: '顶点纵坐标（最小值）=', ans: 6 },
+        { type: 'choice', label: '0<x<5 上 y 最大出现在', ans: 0,
+          options: ['x→0（离对称轴 3 个单位，取不到）', 'x=5', 'x=3', 'x→5（取不到）'] }
+      ],
+      tip: '开口向上，顶点取最小值；离对称轴越远函数值越大。x=0 距 3、x=5 距 2，所以 x→0 最大但取不到。',
+      explain: ['y = a(x−3)²+6，顶点 (3,6)，最小值 6（x=3 在区间内）。',
+        'x∈(0,5) 时 x=0 离对称轴 3 个单位、x=5 离 2 个单位，故 x→0 时 y→9a+6 但取不到。',
+        '所以 6 ≤ y < 9a+6：左端闭（顶点取得到）、右端开（x=0 取不到）。'],
+      kp: ['二次函数', '取值范围']
+    },
+    {
+      id: 'entry.w12q15', group: '圆与扇形', no: '15', title: '15(2) 等边三角形外接圆 · 半径第一步',
+      prompt: '△ABC 为等边三角形，边长 AB = 6√3，⊙O 是它的外接圆。<br><span class="muted small">第一步：先定圆心角，再求半径 R——这是 15(2) 的前两个得分点。</span>',
+      fields: [
+        {
+          type: 'choice', label: '圆心角 ∠AOB =', ans: 0,
+          options: ['120°', '60°', '90°', '180°']
+        },
+        { type: 'num', label: '外接圆半径 R =', ans: 6 }
+      ],
+      fig: { w: 320, h: 220, need: 1, svg: '<circle cx="160" cy="131" r="98" fill="none" stroke="#1b2430" stroke-width="1.5"/><path d="M 160 35 L 75 180 L 245 180 Z" fill="none" stroke="#1b2430" stroke-width="1.5"/><circle cx="160" cy="131" r="2.6" fill="#e37400"/><text x="153" y="28" font-size="14" font-family="serif">A</text><text x="60" y="197" font-size="14" font-family="serif">B</text><text x="249" y="197" font-size="14" font-family="serif">C</text><text x="166" y="128" font-size="13" font-family="serif">O</text><text x="100" y="118" font-size="12" fill="#a15c00">6sqrt(3)</text>' },
+      tip: '外心是两条边垂直平分线的交点；等边三角形把圆周三等分，所以 ∠AOB = 360°/3 = 120°。',
+      explain: ['作 OD ⊥ AB 于 D：垂径定理得 BD = ½AB = 3√3；外心角 ∠AOB = 2∠C = 120°，所以 ∠BOD = 60°。',
+        '在 Rt△BOD 中，OB = BD/sin60° = 3√3 ÷ (√3/2) = 6，即外接圆半径 R = 6。',
+        '下一步：弧 AB = 120π×6/180 = 4π；别把圆心角写成 60°（那是圆周角 ∠C）。'],
+      kp: ['圆的基本性质', '三角形外接圆', '弧长']
     }
   ];
 
@@ -2137,7 +2338,7 @@ var MT = (function () {
   var MODULES = [
     {
       id: 'drill', name: '基础快练', icon: '⚡',
-      desc: '七个板块、40 个题型，限时一次就对：方程与代数 / 二次函数 / 反比例函数 / 圆 / 直线与圆 / 图形与变换 / 推理与证明。',
+      desc: '七个板块、44 个题型，限时一次就对：方程与代数 / 二次函数 / 反比例函数 / 圆 / 直线与圆 / 图形与变换 / 推理与证明。',
       kinds: [
         /* group 只决定模块页怎么分组显示；数组顺序 = 「开始一轮」的混抽顺序 = 今日轮换顺序 */
         /* —— 方程与代数 —— */
@@ -2186,7 +2387,12 @@ var MT = (function () {
         { id: 'symshape', name: '对称图形判断', group: '图形与变换', gen: genSymShape },
         { id: 'path', name: '最短路径', group: '图形与变换', gen: genPath },
         /* —— 推理与证明 —— */
-        { id: 'absurd', name: '反证法第一步', group: '推理与证明', gen: genAbsurd }
+        { id: 'absurd', name: '反证法第一步', group: '推理与证明', gen: genAbsurd },
+        /* —— 第 12 周限时练习暴露的四个缺口 —— */
+        { id: 'secperim', name: '扇形周长', group: '圆', gen: genSecPerim },
+        { id: 'paralleldist', name: '平行弦之间的距离', group: '圆', gen: genParallelDist },
+        { id: 'circumcenter', name: '三角形外心', group: '圆', gen: genCircumCenter },
+        { id: 'equiarc', name: '等边三角形外接圆的弧长', group: '圆', gen: genEquiArc }
       ]
     },
     {
@@ -2205,7 +2411,7 @@ var MT = (function () {
     },
     {
       id: 'entry', name: '大题前两步', icon: '🚪',
-      desc: '只写每道大题的前 1–2 个得分点，不求解。补的是「大题空白」这一断点；来源：期中卷 20–25、第 11 周卷 13–16/附加、错题本里的大题第一步。',
+      desc: '只写每道大题的前 1–2 个得分点，不求解。补的是「大题空白」这一断点；来源：期中卷 20–25、第 11/12 周卷、错题本。按 5 个板块分组，可单题专项，也可板块随机。',
       items: ENTRY
     }
   ];
@@ -2218,9 +2424,14 @@ var MT = (function () {
     if (!m) throw new Error('未知模块 ' + modId);
     var r = mulberry32((seed >>> 0) || 1);
     if (m.items) {
-      var it = m.items[Math.floor(r() * m.items.length)];
+      /* 大题前两步：传 kindId 就练指定得分点，不传才全场混抽。
+         kind 必须写回题目：模块页统计、板块随机覆盖、记录里的题型都靠它。 */
+      var it = null;
+      if (kindId) for (var j = 0; j < m.items.length; j++) if (m.items[j].id === kindId) { it = m.items[j]; break; }
+      if (!it) it = m.items[Math.floor(r() * m.items.length)];
       var copy = JSON.parse(JSON.stringify(it));
       copy.mod = modId;
+      copy.kind = it.id;
       return copy;
     }
     var k = null;
@@ -2312,6 +2523,13 @@ var MT = (function () {
   function svgFor(q) {
     var f = q.fig;
     if (!f) return '';
+    /* 圆/几何题用内联 SVG：与题包 fig.svg 同格式（f.svg 是 <svg> 内部片段），
+       不走坐标系变换，免得把圆、扇形压扁。只画题设，不标答案。 */
+    if (f.svg) {
+      var rw = f.w || 360, rh = f.h || 280;
+      return '<svg viewBox="0 0 ' + rw + ' ' + rh + '" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="题图">' +
+        '<rect width="' + rw + '" height="' + rh + '" fill="#fbfcff" rx="10"/>' + f.svg + '</svg>';
+    }
     var W = 360, H = 280, PAD = 30;
     var paths = [], dots = (f.dots || []).map(function (d) { return { x: d[0], y: d[1], label: d[2] || '' }; });
     var all = [];
@@ -3258,7 +3476,7 @@ window.__ltSync = { carrierSnapshot: carrierSnapshot, syncPlan: syncPlan, subjec
     var META = {
       drill: { n: 6, sub: '6 题 · 5 分钟 · ' + plan.drill.note },
       write: { n: 8, sub: '8 题 · 10 分钟 · ' + plan.write.note },
-      entry: { n: 3, sub: '3 题 · 8 分钟 · 27 个得分点里按今天这套取 3 个' }
+      entry: { n: 3, sub: '3 题 · 8 分钟 · ' + MT.moduleById('entry').items.length + ' 个得分点里按今天这套取 3 个' }
     };
     /* 顺序由 MT.modules 决定，这里只配题量与说明 */
     var tasks_plan = MT.modules.map(function (m) {
@@ -3353,62 +3571,55 @@ window.__ltSync = { carrierSnapshot: carrierSnapshot, syncPlan: syncPlan, subjec
       h('p', { class: 'muted small', style: 'margin:6px 0 0' }, m.desc)
     );
     app.appendChild(head);
-    /* 分组抽象：题型带 group 就按组显示标题 + 按钮；不带 group 就整页算一个板块，按钮放页头。
-       写解析式现在没有分组，未来加 group 后自动切成按组按钮，下面逻辑不用改。 */
+    /* 分组抽象：kinds（生成器题型）和 items（固定得分点）都按 group 切板块。
+       这样大题前两步也能看到全部题型、单独练某一题、按板块随机练。 */
+    var isItems = !m.kinds;
+    var cards = m.kinds || m.items.map(function (it) {
+      return { id: it.id, name: it.title, group: it.group || '' };
+    });
     var groups = [], byGroup = {};
-    (m.kinds || []).forEach(function (k) {
+    cards.forEach(function (k) {
       var g = k.group || '';
       if (!byGroup[g]) { byGroup[g] = []; groups.push(g); }
       byGroup[g].push(k);
     });
     var showGroupHead = groups.length > 1 || (groups.length === 1 && groups[0] !== '');
-    function randomBtn(kinds) {
-      return h('button', { class: 'btn btn-sm btn-random', onclick: function () { startGroupRandom(m.id, kinds); } }, '当前板块随机题练习');
+    function randomBtn(arr) {
+      return h('button', { class: 'btn btn-sm btn-random', onclick: function () { startGroupRandom(m.id, arr); } }, '当前板块随机题练习');
     }
     head.appendChild(h('div', { class: 'row', style: 'margin-top:12px' },
       h('button', { class: 'btn btn-primary', onclick: function () { startSession(m.id, null, m.id === 'entry' ? 3 : 8); } }, '开始一轮'),
       h('button', { class: 'btn', onclick: function () { startExample(m.id, lastKindOf(m.id)); } }, '先看例题'),
-      (m.kinds && !showGroupHead) ? randomBtn(m.kinds) : null
+      (!showGroupHead) ? randomBtn(cards) : null
     ));
     head.appendChild(h('div', { class: 'small muted', style: 'margin-top:8px' },
-      m.kinds
-        ? ('「开始一轮」按题型混抽（每次不同）；每个题型可以单独连做 3 题（专项）。' +
+      isItems
+        ? '「开始一轮」从全部得分点混抽 3 个；每个得分点可单独练 1 题；板块标题右侧按该板块每个得分点各出 1 题。'
+        : ('「开始一轮」按题型混抽（每次不同）；每个题型可以单独连做 3 题（专项）。' +
            (showGroupHead ? '板块标题右侧「当前板块随机题练习」按该板块题型各出 1~2 题。' : '「当前板块随机题练习」按本页题型各出 1~2 题。'))
-        : '「开始一轮」从全部得分点里随机抽 3 个。'
     ));
     var list = h('div', { style: 'margin-top:4px' });
-    if (m.kinds) {
-      groups.forEach(function (g) {
-        if (showGroupHead && g) list.appendChild(h('div', { class: 'gsec' },
-          h('b', null, g),
-          h('span', null, byGroup[g].length + ' 个题型'),
-          h('span', null, '每种 1~2 题'),
-          randomBtn(byGroup[g])
+    groups.forEach(function (g) {
+      if (showGroupHead && g) list.appendChild(h('div', { class: 'gsec' },
+        h('b', null, g),
+        h('span', null, byGroup[g].length + (isItems ? ' 个得分点' : ' 个题型')),
+        h('span', null, isItems ? '每个得分点 1 题' : '每种 1~2 题'),
+        randomBtn(byGroup[g])
+      ));
+      var grid = h('div', { class: 'grid' });
+      byGroup[g].forEach(function (k) {
+        var st = kindStat('new', m.id, k.id);
+        grid.appendChild(h('div', { class: 'module' },
+          h('div', { class: 'mh' }, h('b', null, k.name)),
+          h('div', { class: 'desc small muted' }, st.n ? '练过 ' + st.n + ' 题 · 正确率 ' + pct(st.ok, st.n) + '%' : '还没练过'),
+          h('div', { class: 'row', style: 'margin-top:auto' },
+            h('button', { class: 'btn btn-primary btn-sm', onclick: function () { startSession(m.id, k.id, isItems ? 1 : 3); } }, isItems ? '练这个得分点' : '专项 3 题'),
+            h('button', { class: 'btn btn-sm', onclick: function () { startExample(m.id, k.id); } }, '看例题')
+          )
         ));
-        var grid = h('div', { class: 'grid' });
-        byGroup[g].forEach(function (k) {
-          var st = kindStat('new', m.id, k.id);
-          grid.appendChild(h('div', { class: 'module' },
-            h('div', { class: 'mh' }, h('b', null, k.name)),
-            h('div', { class: 'desc small muted' }, st.n ? '练过 ' + st.n + ' 题 · 正确率 ' + pct(st.ok, st.n) + '%' : '还没练过'),
-            h('div', { class: 'row', style: 'margin-top:auto' },
-              h('button', { class: 'btn btn-primary btn-sm', onclick: function () { startSession(m.id, k.id, 3); } }, '专项 3 题'),
-              h('button', { class: 'btn btn-sm', onclick: function () { startExample(m.id, k.id); } }, '看例题')
-            )
-          ));
-        });
-        list.appendChild(grid);
       });
-    } else {
-      list.appendChild(h('div', { class: 'grid' }, h('div', { class: 'module' },
-        h('div', { class: 'mh' }, h('b', null, '全部得分点混排')),
-        h('div', { class: 'desc small muted' }, '共 ' + m.items.length + ' 个得分点，每次随机 3 个'),
-        h('div', { class: 'row', style: 'margin-top:auto' },
-          h('button', { class: 'btn btn-primary btn-sm', onclick: function () { startSession(m.id, null, 3); } }, '练 3 题'),
-          h('button', { class: 'btn btn-sm', onclick: function () { startExample(m.id, null); } }, '看例题')
-        )
-      )));
-    }
+      list.appendChild(grid);
+    });
     app.appendChild(list);
   }
   /* 这个模块最近练过的题型（没有就返回 null，例题退化为随机） */
@@ -3434,11 +3645,17 @@ window.__ltSync = { carrierSnapshot: carrierSnapshot, syncPlan: syncPlan, subjec
     var n = count || 8;
     var sess = { mod: mod, kind: kind, total: n, done: 0, right: 0, t0: Date.now() };
     if (mod === 'entry') {
-      var items = MT.moduleById('entry').items.map(function (x) {
-        var c = JSON.parse(JSON.stringify(x)); c.mod = 'entry'; return c;
-      });
-      sess.queue = shuffle(items).slice(0, n);
-      sess.total = sess.queue.length;
+      if (kind) {
+        /* 单个得分点专项：固定题只有一道，练 1 题就够，不重复三遍同样的题 */
+        sess.queue = [MT.gen('entry', kind, (Math.random() * 1e9) | 0)];
+        sess.total = 1;
+      } else {
+        var items = MT.moduleById('entry').items.map(function (x) {
+          var c = JSON.parse(JSON.stringify(x)); c.mod = 'entry'; c.kind = x.id; return c;
+        });
+        sess.queue = shuffle(items).slice(0, n);
+        sess.total = sess.queue.length;
+      }
     }
     S.sess = sess;
     S.view = 'practice';
@@ -3448,10 +3665,11 @@ window.__ltSync = { carrierSnapshot: carrierSnapshot, syncPlan: syncPlan, subjec
      队列现场生成，「再来一轮」走 sess.replay 重放同一板块规则，不退化成全场混抽。 */
   function startGroupRandom(mod, kinds) {
     if (!kinds || !kinds.length) { startSession(mod, null, 8); return; }
+    var isItems = !MT.moduleById(mod).kinds;   /* 大题前两步是固定得分点：每种只出 1 题，避免同题重复 */
     var pool = [];
     kinds.forEach(function (k) {
       pool.push(k.id);
-      if (Math.random() < 0.5) pool.push(k.id);
+      if (!isItems && Math.random() < 0.5) pool.push(k.id);
     });
     var ids = shuffle(pool), seen = {}, qs = [];
     ids.forEach(function (id) {
@@ -3468,7 +3686,7 @@ window.__ltSync = { carrierSnapshot: carrierSnapshot, syncPlan: syncPlan, subjec
     S.example = false;
     S.back = null;
     var sess = { mod: mod, kind: null, total: qs.length, done: 0, right: 0, t0: Date.now(),
-      queue: qs, groupLabel: '本板块 ' + kinds.length + ' 个题型 · 每种 1~2 题' };
+      queue: qs, groupLabel: '本板块 ' + kinds.length + (isItems ? ' 个得分点 · 各 1 题' : ' 个题型 · 每种 1~2 题') };
     sess.replay = function () { startGroupRandom(mod, kinds); };
     S.sess = sess;
     S.view = 'practice';
@@ -3544,6 +3762,10 @@ window.__ltSync = { carrierSnapshot: carrierSnapshot, syncPlan: syncPlan, subjec
     ));
     var card = h('div', { class: 'card' });
     card.appendChild(h('div', { class: 'qbody', html: fracify(q.prompt) }));
+    if (q.fig && q.fig.need) {
+      card.appendChild(h('div', { class: 'figcap' }, '题图（答题时看这张）'));
+      card.appendChild(h('div', { class: 'figbox', html: MT.svgFor(q) }));
+    }
     var ansBox = h('div', { class: 'fb good', style: 'margin-top:14px' });
     ansBox.appendChild(h('div', { class: 'ftitle' }, '答案'));
     var ul = h('ul');
@@ -3556,7 +3778,7 @@ window.__ltSync = { carrierSnapshot: carrierSnapshot, syncPlan: syncPlan, subjec
     exBox.appendChild(h('div', { class: 'ftitle' }, '怎么想'));
     (q.explain || []).forEach(function (line) { exBox.appendChild(h('div', { class: 'small', html: fracify(line) })); });
     card.appendChild(exBox);
-    if (q.fig) {
+    if (q.fig && !q.fig.need) {
       card.appendChild(h('div', { class: 'figcap' }, '图象'));
       card.appendChild(h('div', { class: 'figbox', html: MT.svgFor(q) }));
     }
@@ -3597,6 +3819,10 @@ window.__ltSync = { carrierSnapshot: carrierSnapshot, syncPlan: syncPlan, subjec
       q.kp ? h('span', { class: 'small muted' }, q.kp.join(' · ')) : null
     ));
     card.appendChild(h('div', { class: 'qbody', html: fracify(q.prompt) }));
+    if (q.fig && q.fig.need) {
+      card.appendChild(h('div', { class: 'figcap' }, '题图（答题时看这张）'));
+      card.appendChild(h('div', { class: 'figbox', html: MT.svgFor(q) }));
+    }
 
     q.fields.forEach(function (f, i) {
       if (f.type === 'choice') {
@@ -3678,7 +3904,7 @@ window.__ltSync = { carrierSnapshot: carrierSnapshot, syncPlan: syncPlan, subjec
       });
       fb.appendChild(ul);
       (q.explain || []).forEach(function (line) { fb.appendChild(h('div', { class: 'small', html: fracify(line) })); });
-      if (q.fig) {
+      if (q.fig && !q.fig.need) {
         fb.appendChild(h('div', { class: 'figcap' }, '图象验证：上面的式子画出来是这样——对着图再读一遍顶点、交点、增减。'));
         fb.appendChild(h('div', { class: 'figbox', html: MT.svgFor(q) }));
       }
@@ -3889,7 +4115,8 @@ window.__ltSync = { carrierSnapshot: carrierSnapshot, syncPlan: syncPlan, subjec
     s.done++;
     if (res.ok) s.right++;
     var recMod = s.mod === 'wrong' ? (S.q.mod || 'drill') : s.mod;
-    var qid = recMod + '.' + (q.kind || '') + '.' + String(q.title || '');
+    /* qid 要和历史记录兼容：entry 的 kind 现在是得分点 id，拼进去会把老记录拆成两条 */
+    var qid = recMod + '.' + (q.mod === 'entry' ? '' : (q.kind || '')) + '.' + String(q.title || '');
     DB.recs.push({ ts: Date.now(), mod: recMod, kind: q.kind, kn: q.title, ok: res.ok, got: res.got, total: res.total, sec: sec, hint: S.hint, mode: S.mode, daily: !!s.daily,
       qid: qid });
     /* 记住这个模块最近练的题型：模块页「先看例题」用它，别随机抽到别的题型 */

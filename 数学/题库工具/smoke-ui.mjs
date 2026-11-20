@@ -155,6 +155,50 @@ ok(textOf(app).includes('按题型混抽'), '模块页没有混抽说明');
 M.go('drill');
 ok((textOf(app).match(/当前板块随机题练习/g) || []).length >= 7, '基础快练不是每个分组都有随机按钮');
 
+/* 6a. 大题前两步：按板块显示全部得分点，每个可单独练，板块可随机 */
+{
+  M.go('entry');
+  const et = textOf(app);
+  const em = ctx.MT.moduleById('entry');
+  const groups = [...new Set(em.items.map((x) => x.group))].filter(Boolean);
+  ok(groups.length === 5, '大题前两步板块数不是 5，是 ' + groups.length);
+  groups.forEach((g) => ok(et.includes(g), '大题前两步板块标题缺失：' + g));
+  ok((et.match(/当前板块随机题练习/g) || []).length >= groups.length, '大题前两步不是每个板块都有随机按钮');
+  ok((et.match(/练这个得分点/g) || []).length === em.items.length, '大题前两步没有逐个显示可练的得分点');
+  ok(!et.includes('全部得分点混排'), '大题前两步还在用旧的「全部得分点混排」卡片');
+  ok(et.includes('15(2) 等边三角形外接圆'), '第 15(2) 得分点没进模块页');
+  const figItems = em.items.filter((x) => x.fig);
+  ok(figItems.length >= 21, '圆与几何得分点的配图不足，只有 ' + figItems.length + ' 张');
+  ok(figItems.every((x) => { const svg = ctx.MT.svgFor(x); return svg.indexOf('<svg') === 0 && !/undefined|NaN/.test(svg); }),
+    '有配图的得分点渲染出空图或含 NaN/undefined');
+  ok(ctx.MT.svgFor(em.items.find((x) => x.id === 'entry.w12q15')).includes('<circle'), '第 15(2) 外接圆图没画出圆');
+
+  /* 指定得分点出题：必须就是那道题，而不是全场随机 */
+  M.startSession('entry', 'entry.w12q15', 1);
+  ok(M.S.sess.queue.length === 1, '单个得分点专项不是 1 题');
+  ok(M.S.q.id === 'entry.w12q15' && M.S.q.kind === 'entry.w12q15', '专项练的不是指定的第 15(2) 得分点');
+  ok(textOf(app).includes('题图（答题时看这张）'), '几何题答题前没显示题图（图被拖到答后才出现）');
+  ok(ctx.MT.judge(M.S.q, [0, 6]).ok === true, '第 15(2) 正确答案被判错');
+  ok(ctx.MT.judge(M.S.q, [1, 6]).ok === false, '第 15(2) 圆心角选错仍判对');
+  M.S.choice[0] = 0; fill('in1_n', 6); M.submit();
+  ok(!textOf(app).includes('图象验证'), '题前图又在答后重复出现了一次');
+  const lastRec = M.db().recs[M.db().recs.length - 1];
+  ok(lastRec.qid === 'entry..15(2) 等边三角形外接圆 · 半径第一步', 'entry 的 qid 格式变了，历史错题会被拆成两条：' + lastRec.qid);
+
+  /* 板块随机：固定得分点每种恰好 1 题、覆盖全部、可按规则重来 */
+  M.startGroupRandom('entry', em.items);
+  let qs = M.S.sess.queue;
+  const ids = qs.map((x) => x.kind);
+  ok(qs.length === em.items.length, '大题前两步板块随机题量不对：' + qs.length);
+  ok(new Set(ids).size === em.items.length, '大题前两步板块随机没覆盖全部得分点');
+  ok(em.items.every((x) => ids.includes(x.id)), '大题前两步板块随机漏了某些得分点');
+  ok(M.S.sess.groupLabel.includes('得分点'), '板块随机标签没说明是得分点');
+  ok(M.S.sess.daily !== true, '大题前两步板块随机被误算成今日题单');
+  const label = M.S.sess.groupLabel;
+  M.S.sess.replay();
+  ok(M.S.sess.groupLabel === label && M.S.sess.queue.length === em.items.length, '「再来一轮」没重放得分点板块规则');
+}
+
 /* 6b. 板块随机：每种题型 1~2 次、全覆盖、题数由题型数决定，重来按同板块规则 */
 {
   const wm = ctx.MT.moduleById('write');
@@ -237,4 +281,4 @@ if (fails.length) {
   fails.forEach((f) => console.error('  - ' + f));
   process.exit(1);
 }
-console.log('✓ UI 冒烟通过（今日渲染 / 题单一致 / expr 判分 / 报告 / 专项 3 题 / 板块随机覆盖与重来 / 回归：expr 顺序、例题提交、空提交、当天题单、配比文案）');
+console.log('✓ UI 冒烟通过（今日渲染 / 题单一致 / expr 判分 / 报告 / 专项 3 题 / 大题前两步分组、配图与专项 / 板块随机覆盖与重来 / 回归：expr 顺序、例题提交、空提交、当天题单、配比文案）');
