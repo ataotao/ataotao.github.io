@@ -34,6 +34,7 @@ pub 英语/语法闪练.html           英语/语法闪练.html
 pub 英语/英语单词闪练卡.html     英语/英语单词闪练卡.html
 pub 英语/词库.js                 英语/词库.js
 pub 语文/语文思维脚手架.html     语文/语文思维脚手架.html
+pub 语文/背诵训练卡.html         语文/背诵训练卡.html
 
 # ---------- 目录型资源（按扩展名筛选） ----------
 copydir() {  # copydir <源目录> <目标相对1/的路径> <扩展名>
@@ -51,5 +52,19 @@ copydir 道德与法治/images        道德与法治/images        .webp
 copydir 历史/images/试卷          历史/images/试卷          .webp
 copydir 数学/题库/packs           数学/题库/packs           .js
 copydir 物理/图片                 物理/图片                .png
+
+# ---------- 整目录复制（多扩展名资源，如带 .webmanifest 的 PWA） ----------
+copytree() {  # copytree <源目录> <目标相对1/的路径> [不发布的扩展名，空格分隔]
+  local src="$1" dst="$OUT/1/$2" skip="$3" e n
+  [ -d "$src" ] || { echo "缺失源目录：$src" >&2; exit 1; }
+  mkdir -p "$dst"
+  cp -R "$src"/. "$dst"/
+  for e in $skip; do find "$dst" -type f -name "*$e" -delete; done
+  n=$(find "$dst" -type f | wc -l)
+  echo "  $2: $n 个文件（整目录）"
+  [ "$n" -gt 0 ] || { echo "目录是空的：$src" >&2; exit 1; }
+}
+# 粤学词：多文件 PWA（html/css/js/webmanifest/png/svg 混在一起），按整目录发
+copytree 英语/yuexueci-web        英语/yuexueci-web        .md
 
 echo "组装完成：$(find "$OUT" -type f | wc -l) 个文件"

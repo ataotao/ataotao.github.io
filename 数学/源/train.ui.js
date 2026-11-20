@@ -103,7 +103,7 @@
   var S = { view: 'today', sess: null, q: null, res: null, answered: false, choice: {}, hint: false, t0: 0, mode: 'new', draft: null, lastVals: null, scratch: false, fix: null, example: false };
 
   /* ---------- 路由 ---------- */
-  var VIEWS = { today: renderToday, write: renderModule, entry: renderModule, drill: renderModule, report: renderReport, practice: renderPractice, summary: renderSummary };
+  var VIEWS = { today: renderToday, write: renderModule, entry: renderModule, drill: renderModule, week12: renderModule, report: renderReport, practice: renderPractice, summary: renderSummary };
   function go(view) { S.view = view; render(); window.scrollTo(0, 0); }
   function render() {
     clear(app);
@@ -152,8 +152,8 @@
       write: { n: 8, sub: '8 题 · 10 分钟 · ' + plan.write.note },
       entry: { n: 3, sub: '3 题 · 8 分钟 · ' + MT.moduleById('entry').items.length + ' 个得分点里按今天这套取 3 个' }
     };
-    /* 顺序由 MT.modules 决定，这里只配题量与说明 */
-    var tasks_plan = MT.modules.map(function (m) {
+    /* 顺序由 MT.modules 决定，这里只配题量与说明；daily:false 的临时项目（本周错题）不进今日任务 */
+    var tasks_plan = MT.modules.filter(function (m) { return m.daily !== false; }).map(function (m) {
       var x = META[m.id] || { n: 6, sub: '' };
       return { mod: m.id, n: x.n, label: m.name, sub: x.sub, go: m.id };
     });
@@ -194,7 +194,8 @@
         h('li', null, '今天的配比：' + plan.note),
         h('li', null, '主力题型按 8 类轮换（顶点式 → 交点式 → 反比例 → 线段 → 分段 → 利润 → 拱桥 → 对称轴），8 天一轮全覆盖；最近一轮有错题时，主力换成错的那一类（弱项优先）。'),
         h('li', null, '难度顺序：因式分解 → 解方程 → 轮换题；写解析式先顶点式（要写全式），再主力，再次主力。'),
-        h('li', null, '同一套内题干不重复；错题按 1/3/7/14 天档位回炉，到期后连续 2 次答对才算掌握（看提示/秒答不算）；跳过几天不累计欠账。')
+        h('li', null, '同一套内题干不重复；错题按 1/3/7/14 天档位回炉，到期后连续 2 次答对才算掌握（看提示/秒答不算）；跳过几天不累计欠账。'),
+        h('li', null, '「本周错题」是临时项目（一周一换）：本周卷子里做错/不会的题各练一种同类变式，随时可点，不计入上面 4 个任务。')
       )
     ));
 
@@ -444,10 +445,11 @@
       h('span', { class: 'small muted' }, '先看懂，再开始练')
     ));
     var card = h('div', { class: 'card' });
+    var figEx = figOf(q);
     card.appendChild(h('div', { class: 'qbody', html: fracify(q.prompt) }));
-    if (q.fig && q.fig.need) {
-      card.appendChild(h('div', { class: 'figcap' }, '题图（答题时看这张）'));
-      card.appendChild(h('div', { class: 'figbox', html: MT.svgFor(q) }));
+    if (figEx && figEx.need) {
+      card.appendChild(h('div', { class: 'figcap' }, figEx.cap || '题图（答题时看这张）'));
+      card.appendChild(h('div', { class: 'figbox', html: MT.svgFor({ fig: figEx }) }));
     }
     var ansBox = h('div', { class: 'fb good', style: 'margin-top:14px' });
     ansBox.appendChild(h('div', { class: 'ftitle' }, '答案'));
@@ -461,9 +463,9 @@
     exBox.appendChild(h('div', { class: 'ftitle' }, '怎么想'));
     (q.explain || []).forEach(function (line) { exBox.appendChild(h('div', { class: 'small', html: fracify(line) })); });
     card.appendChild(exBox);
-    if (q.fig && !q.fig.need) {
-      card.appendChild(h('div', { class: 'figcap' }, '图象'));
-      card.appendChild(h('div', { class: 'figbox', html: MT.svgFor(q) }));
+    if (figEx && !figEx.need) {
+      card.appendChild(h('div', { class: 'figcap' }, figEx.cap || '图象'));
+      card.appendChild(h('div', { class: 'figbox', html: MT.svgFor({ fig: figEx }) }));
     }
     card.appendChild(h('div', { class: 'row', style: 'margin-top:14px' },
       h('button', { class: 'btn btn-primary', onclick: function () {
@@ -499,13 +501,14 @@
 
     var card = h('div', { class: 'card', style: 'margin-top:12px' });
     card.appendChild(h('div', { class: 'qhead' },
-      h('span', { class: 'pill' }, q.no ? qnoLabel(q.no) : (q.mod === 'entry' ? '得分点' : '新题')),
+      h('span', { class: 'pill' }, q.noLabel ? q.noLabel : (q.no ? qnoLabel(q.no) : (q.mod === 'entry' ? '得分点' : '新题'))),
       q.kp ? h('span', { class: 'small muted' }, q.kp.join(' · ')) : null
     ));
     card.appendChild(h('div', { class: 'qbody', html: fracify(q.prompt) }));
-    if (q.fig && q.fig.need) {
-      card.appendChild(h('div', { class: 'figcap' }, '题图（答题时看这张）'));
-      card.appendChild(h('div', { class: 'figbox', html: MT.svgFor(q) }));
+    var figP = figOf(q);
+    if (figP && figP.need) {
+      card.appendChild(h('div', { class: 'figcap' }, figP.cap || '题图（答题时看这张）'));
+      card.appendChild(h('div', { class: 'figbox', html: MT.svgFor({ fig: figP }) }));
     }
 
     q.fields.forEach(function (f, i) {
@@ -597,9 +600,9 @@
       });
       fb.appendChild(ul);
       (q.explain || []).forEach(function (line) { fb.appendChild(h('div', { class: 'small', html: fracify(line) })); });
-      if (q.fig && !q.fig.need) {
+      if (figP && !figP.need) {
         fb.appendChild(h('div', { class: 'figcap' }, '图象验证：上面的式子画出来是这样——对着图再读一遍顶点、交点、增减。'));
-        fb.appendChild(h('div', { class: 'figbox', html: MT.svgFor(q) }));
+        fb.appendChild(h('div', { class: 'figbox', html: MT.svgFor({ fig: figP }) }));
       }
       card.appendChild(fb);
 
@@ -871,6 +874,12 @@
 
   /* ---------- 错题本（共享回炉内核 ADR-0010，规则只在 工具/trainer/review.js） ---------- */
   function wrongKey(q) { return q.id + '|' + String(q.prompt).slice(0, 60); }
+  /* 原题裁切图（第 12 周）不进错题本：base64 动辄几十 KB，快照只存 cropKey，渲染时按 key 重建 */
+  function figOf(q) {
+    if (q.fig) return q.fig;
+    if (q.cropKey && MT.cropFig) return MT.cropFig({ key: q.cropKey, cap: q.cropCap });
+    return null;
+  }
   /* 数学最短有效用时：选择/填空 3 秒，写解析式/大题前两步(entry，含单空题) 10 秒 */
   function minSecOf(q) { return (q.mod === 'write' || q.mod === 'entry' || (q.fields && q.fields.length > 1)) ? 10 : 3; }
   function reviewAnswer(q, ok, sec, qid) {
@@ -879,7 +888,8 @@
     if (!ok) {
       if (!w) {
         w = { id: q.id, qid: qid, mod: q.mod || S.sess.mod, kind: q.kind, title: q.title, prompt: q.prompt,
-          fields: q.fields, explain: q.explain, tip: q.tip, no: q.no, fig: q.fig };
+          fields: q.fields, explain: q.explain, tip: q.tip, no: q.no, noLabel: q.noLabel,
+          cropKey: q.cropKey, cropCap: q.cropCap, fig: q.cropKey ? null : q.fig };
         DB.wrong[k] = w;
       }
       if (qid && !w.qid) w.qid = qid;   /* 旧条目补 qid，供历史错题清单匹配 */
@@ -1148,7 +1158,7 @@
   (function boot() {
     var m = (location.hash || '').match(/view=([a-z]+)/);
     var v = m && m[1];
-    if (v === 'write' || v === 'entry' || v === 'drill') { go(v); return; }
+    if (MT.moduleById(v)) { go(v); return; }   /* 模块页：drill / write / entry / week12…按注册表走，加模块不用改这里 */
     if (v === 'report') { go('report'); return; }
     go('today');
   })();

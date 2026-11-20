@@ -42,6 +42,21 @@ var MT = (function () {
   /* π 的系数：k = 1 时写「π」，不写「1π」 */
   function piText(k) { return k === 1 ? 'π' : frac(k) + 'π'; }
   function near(a, b, tol) { return isFinite(a) && Math.abs(a - b) <= (tol || 1e-6); }
+
+  /* ---------- 原题裁切图（第 12 周卷，2026-11-20） ----------
+     图放在 数学/源/week12-img.js（构建内联成 <script id="data">），只给「本周错题」临时项目用：
+     每道练习点旁边显示卷面原题，孩子一眼知道这题对应卷子第几题。
+     没有这个全局（如 check-training 只抽 core）就返回 null——不画图，其余照跑。 */
+  var WEEK_IMG = (typeof W12_IMG !== 'undefined') ? W12_IMG : {};
+  function cropFig(c) {
+    var im = (c && c.key) ? WEEK_IMG[c.key] : null;
+    if (!im) return null;
+    return {
+      w: im.w, h: im.h, need: 1, cap: c.cap,
+      /* 同时写 href 与 xlink:href：老一点的安卓 WebView（微信 X5 等）只认 xlink 版本 */
+      svg: '<image href="' + im.uri + '" xlink:href="' + im.uri + '" x="0" y="0" width="' + im.w + '" height="' + im.h + '" preserveAspectRatio="xMidYMid meet"/>'
+    };
+  }
   function parseNum(s) {
     s = String(s == null ? '' : s).trim()
       .replace(/[−－—–]/g, '-').replace(/[／]/g, '/').replace(/[，,]/g, '')
@@ -448,6 +463,57 @@ var MT = (function () {
         '两边加 (b/2)² = ' + h + '² = ' + (h * h) + '：x² + ' + b + 'x + ' + (h * h) + ' = ' + d(-c) + ' + ' + (h * h) + ' = ' + d(k) + '。',
         '左边写成完全平方：(x + ' + h + ')² = ' + d(k) + '，所以 h = ' + h + '，k = ' + d(k) + '。'],
       kp: ['一元二次方程', '配方法']
+    };
+  }
+
+  /* 缺常数项（形如 x² − 2021x = 0）：先提公因式，别两边同除以 x。
+     第 12 周卷第 13 题 (1) 就是这一类——第 (2) 题她会配方，第 (1) 题换了形式就卡住。
+     现有题型都绕开了它：genFactor 的两根都不为 0，genComplete 还特意把 c = 0 排除，
+     genEq 虽然偶尔抽出 0 根，但题干不带「缺常数项」的提示，孩子认不出这是一个题型。 */
+  var MISSING_CONST = [
+    { a: 1, b: 2021 }, { a: 1, b: 7 }, { a: 1, b: 15 }, { a: 1, b: 3 },
+    { a: 2, b: 5 }, { a: 3, b: 6 }, { a: 5, b: 2 }, { a: 4, b: 3 }
+  ];
+  function genMissingConst(r) {
+    var v = ri(r, 0, 2);
+    if (v === 2) {
+      /* 整体提公因式：(x − m)² = k(x − m) */
+      var m = ri(r, 2, 6), kk = pick(r, [2, 3, 4, 5]);
+      var right = '把 (x − ' + m + ') 看成一个整体，移项后提公因式';
+      var opts = shuffle(r, [right, '两边同除以 (x − ' + m + ')', '直接开平方', '用求根公式硬算']);
+      return {
+        id: 'drill.missingconst', kind: 'missingconst', title: '缺常数项：提公因式',
+        prompt: '解方程：' + binom(m) + '² = ' + kk + binom(m) + '（两个根都填，顺序不限）。' +
+          '<br><span class="muted small">这一类先把公因式提出来，两边不能直接除。</span>',
+        fields: [
+          { type: 'choice', label: '第一步做什么', options: opts, ans: opts.indexOf(right) },
+          { type: 'set', n: 2, label: '两个根', ans: [m, m + kk], names: ['x₁', 'x₂'] }
+        ],
+        tip: '把 (x − m) 看成一个整体 a：a² = k·a ⟹ a(a − k) = 0 ⟹ a = 0 或 a = k。别两边除以 a，会把它等于 0 的那个根除掉。',
+        explain: ['移项：' + binom(m) + '² − ' + kk + ' ' + binom(m) + ' = 0。',
+          '提公因式 ' + binom(m) + '：' + binom(m) + '[' + binom(m) + ' − ' + kk + '] = 0。',
+          '所以 ' + binom(m) + ' = 0 或 ' + binom(m) + ' = ' + kk + '，即 x₁ = ' + m + '，x₂ = ' + (m + kk) + '。',
+          '坑：两边同除以 ' + binom(m) + '，就只剩 x₂ = ' + (m + kk) + '，把 x₁ = ' + m + ' 弄丢了。'],
+        kp: ['一元二次方程', '因式分解法', '整体思想']
+      };
+    }
+    var t = pick(r, MISSING_CONST), a = t.a, b = t.b, x2 = b / a;
+    var right2 = '提出公因式 x';
+    var opts2 = shuffle(r, [right2, '两边同除以 x', '配方', '用求根公式']);
+    return {
+      id: 'drill.missingconst', kind: 'missingconst', title: '缺常数项：提公因式',
+      prompt: '解方程：' + poly2(a, -b, 0) + ' = 0（两个根都填，顺序不限）。' +
+        '<br><span class="muted small">来源：第 12 周限时练习（11.18）第 13 题 (1) 的形式——缺常数项。</span>',
+      fields: [
+        { type: 'choice', label: '第一步做什么', options: opts2, ans: opts2.indexOf(right2) },
+        { type: 'set', n: 2, label: '两个根', ans: [0, x2], names: ['x₁', 'x₂'] }
+      ],
+      tip: '缺常数项（c = 0）就提公因式 x：x(ax − b) = 0 ⟹ x = 0 或 ax − b = 0。千万别两边同除以 x。',
+      explain: [poly2(a, -b, 0) + ' = 0 ⟹ 提公因式 x：x(' + leadCoef(a) + 'x − ' + b + ') = 0。',
+        '所以 x = 0 或 ' + leadCoef(a) + 'x − ' + b + ' = 0，得 x = ' + frac(x2) + '。',
+        '两个根：x₁ = 0，x₂ = ' + frac(x2) + '。',
+        '坑：两边同除以 x 只剩 x = ' + frac(x2) + '，把 x = 0 这个根丢掉了——这是第 13 题 (1) 最容易丢的分。'],
+      kp: ['一元二次方程', '因式分解法', '缺常数项']
     };
   }
 
@@ -1740,6 +1806,145 @@ var MT = (function () {
     };
   }
 
+  /* ---------- 第 12 周限时练习（11.18）错题补的四个知识点（2026-11-20） ----------
+     第 12 题「关联圆」、第 16 题圆弧拱桥、第 17 题等腰三角形存在性 / 开区间取值范围。
+     本卷第 10、11 题的缺口（扇形周长、平行弦距离）11.18 已补，见上一段；这一段只补
+     「本轮错题里还没有任何题型覆盖」的四块。题面把位置关系写全，不需要题设图。 */
+
+  /* 关联圆：线段上所有点都在 ⊙E 内或圆上 ⟺ 半径 ≥ 两端点到 E 的距离的较大者。
+     取 E 在 CD 的垂直平分线上（EC = ED），于是最小半径 = √(半长² + 到中点距离²)。 */
+  var RELATE_TRIOS = [[3, 4, 5], [6, 8, 10], [5, 12, 13], [9, 12, 15], [8, 15, 17]];
+  function genRelateCircle(r) {
+    var t = pick(r, RELATE_TRIOS), a = t[0], b = t[1], c = t[2];
+    var why = '线段上离 E 最远的点必是端点';
+    var whyOpts = shuffle(r, [why, '线段的中点离 E 最远', '圆心到中点的距离就等于半径', '只要中点在圆内，整条线段就在圆内']);
+    return {
+      id: 'drill.relatecircle', kind: 'relatecircle', title: '关联圆（线段与圆）',
+      prompt: '在平面直角坐标系中，线段 CD 的两个端点为 C(−' + a + ', 0)、D(' + a + ', 0)，点 E 为 (0, ' + b + ')。' +
+        '若线段 CD 上所有的点都在 ⊙E 内或圆上，就称 ⊙E 是线段 CD 的「关联圆」。<br>' +
+        '<span class="muted small">来源：第 12 周限时练习（11.18）第 12 题的「关联圆」新定义。</span>',
+      fields: [
+        { type: 'choice', label: '线段 CD 上哪个点离 E 最远', options: whyOpts, ans: whyOpts.indexOf(why) },
+        { type: 'num', label: '⊙E 半径的最小值 =', ans: c },
+        { type: 'num', label: '半径取这个最小值时，E 到 CD 中点（原点）的距离 =', ans: b }
+      ],
+      tip: '新定义题先翻译成式子：线段上所有点在圆内或圆上 ⟺ 半径 ≥ 两端点到圆心的距离中较大的那个。找最远点只看端点。',
+      explain: [
+        '⊙E 是 CD 的关联圆 ⟺ 线段 CD 上每一点到 E 的距离都 ≤ 半径，即 半径 ≥ max(EC, ED)。',
+        'C(−' + a + ', 0)、D(' + a + ', 0) 关于 y 轴对称，EC = ED = √(' + a + '² + ' + b + '²) = ' + c + '。所以半径的最小值就是 ' + c + '。',
+        '反过来校验：半径取 ' + c + ' 时，E 到 CD 中点的距离 = √(' + c + '² − ' + a + '²) = ' + b + '，正好是给定高度。',
+        '坑：只拿「E 到中点的距离」' + b + ' 当半径，线段两端就落在圆外了——这是第 12 题最容易错的一步。'
+      ],
+      kp: ['圆的基本性质', '点与圆的位置关系', '新定义', '勾股定理']
+    };
+  }
+
+  /* 圆弧形拱桥：半径用垂径定理 + 勾股；水位上升后水面宽 = 2√(R² − OE²)，OE = R − 拱高 + 上升高度。 */
+  var ARCH_CIRCLE = [
+    { a: 8, h: 2, R: 5, rise: 1, OE: 4, EF: 3 },
+    { a: 16, h: 4, R: 10, rise: 2, OE: 8, EF: 6 },
+    { a: 24, h: 8, R: 13, rise: 7, OE: 12, EF: 5 },
+    { a: 30, h: 9, R: 17, rise: 7, OE: 15, EF: 8 },
+    { a: 40, h: 10, R: 25, rise: 5, OE: 20, EF: 15 }
+  ];
+  function genArchCircle(r) {
+    var t = pick(r, ARCH_CIRCLE), half = t.a / 2;
+    var right = 'R² = (跨度/2)² + (R − 拱高)²';
+    var opts = shuffle(r, [right, 'R = 拱高 + 跨度/2', 'R² = 跨度² − 拱高²', 'R = 跨度/2']);
+    return {
+      id: 'drill.archcircle', kind: 'archcircle', title: '圆弧形拱桥：半径与水面宽',
+      prompt: '某桥的主桥拱是圆弧形，跨度 AC = ' + t.a + ' m，拱高 BD = ' + t.h + ' m。' +
+        '<br><span class="muted small">来源：第 12 周限时练习（11.18）第 16 题的圆弧桥 A。</span>',
+      fields: [
+        { type: 'choice', label: '求半径用哪个关系', options: opts, ans: opts.indexOf(right) },
+        { type: 'num', label: '半径 R =', ans: t.R, unit: ' m' },
+        { type: 'num', label: '水位上升 ' + t.rise + ' m 后，水面宽 =', ans: 2 * t.EF, unit: ' m' }
+      ],
+      tip: '设半径 R，圆心在拱高的延长线上：R² = (跨度/2)² + (R − 拱高)²。水位上升后水面宽 = 2√(R² − OE²)，其中 OE = R − 拱高 + 上升高度。',
+      explain: [
+        '设圆心 O 在 BD 的延长线上，半径 R = OA = OB，则 OD = R − ' + t.h + '，AD = ' + t.a + '/2 = ' + half + '。',
+        'Rt△ODA：R² = ' + half + '² + (R − ' + t.h + ')²，化简得 ' + (2 * t.h) + 'R = ' + (half * half + t.h * t.h) + '，所以 R = ' + t.R + '（m）。',
+        '水位上升 ' + t.rise + ' m 后 OE = ' + t.R + ' − ' + t.h + ' + ' + t.rise + ' = ' + t.OE + '，EF = √(' + t.R + '² − ' + t.OE + '²) = ' + t.EF + '，水面宽 = 2EF = ' + (2 * t.EF) + '（m）。',
+        '坑：把拱高当半径；或水位上升时忘了 OE 是在 R − 拱高 的基础上再往上加。'
+      ],
+      kp: ['圆的基本性质', '垂径定理', '勾股定理', '拱桥建模']
+    };
+  }
+
+  /* 对称轴上的点构成等腰三角形：三种分类（CP = DP / CP = CD / DP = CD），漏一种就少解。
+     抛物线 y = (x − h)² + k：顶点 D(h, k)、与 y 轴交点 C(0, h² + k)、P(h, p)。 */
+  var ISO_CASES = [
+    { h: 3, k: 0 },    /* 原卷附加题数据：C(0,9)、D(3,0) → p = 5 / 18 */
+    { h: 2, k: 0 },    /* C(0,4)、D(2,0) → p = 5/2 / 8 */
+    { h: 4, k: 0 },    /* C(0,16)、D(4,0) → p = 17/2 / 32 */
+    { h: 2, k: -1 }    /* C(0,3)、D(2,−1) → p = 3/2 / 7 */
+  ];
+  function genIsoPoint(r) {
+    var t = pick(r, ISO_CASES), h = t.h, k = t.k;
+    var c = h * h + k;                       /* C(0, c) */
+    var p1 = (h * h + 1) / 2 + k;            /* CP = DP */
+    var p2 = 2 * c - k;                      /* CP = CD（P 与 D 不重合） */
+    var cdTxt = h + '√' + (h * h + 1);       /* CD = h√(h²+1) */
+    var cnt = '4 个';
+    var cntOpts = shuffle(r, [cnt, '2 个', '3 个', '6 个']);
+    var polyTxt = 'y = (x − ' + h + ')²' + (k === 0 ? '' : (k > 0 ? ' + ' + k : ' − ' + (-k)));
+    return {
+      id: 'drill.isopoint', kind: 'isopoint', title: '对称轴上的点构等腰三角形',
+      prompt: '抛物线 ' + polyTxt + ' 的顶点为 D，与 y 轴交于点 C，点 P 是抛物线对称轴上的一点。当 △CDP 是等腰三角形时——' +
+        '<br><span class="muted small">来源：第 12 周限时练习（11.18）附加题第 (2) 问。</span>',
+      fields: [
+        { type: 'choice', label: '满足条件的 P 有几个', options: cntOpts, ans: cntOpts.indexOf(cnt) },
+        { type: 'num', label: '当 CP = DP 时，P 的纵坐标 p =', ans: p1 },
+        { type: 'num', label: '当 CP = CD 时（P 与 D 不重合），p =', ans: p2 }
+      ],
+      tip: '等腰三角形要分三种：CP = DP、CP = CD、DP = CD。P 在对称轴上，先设坐标再两点距离平方列方程，别只算一种。',
+      explain: [
+        polyTxt + '：顶点 D(' + h + ', ' + k + ')，令 x = 0 得 C(0, ' + c + ')。P 在对称轴 x = ' + h + ' 上，设 P(' + h + ', p)。',
+        '① CP = DP：' + h + '² + (p − ' + c + ')² = (p − ' + k + ')²，解得 p = ' + frac(p1) + '。',
+        '② CP = CD：' + h + '² + (p − ' + c + ')² = ' + h + '² + ' + (h * h) + '²，即 (p − ' + c + ')² = ' + (h * h * h * h) + '，所以 p = ' + c + ' ± ' + (h * h) + '，取 ' + frac(p2) + '（另一个 p = ' + k + ' 就是点 D，舍去）。',
+        '③ DP = CD：|p − ' + k + '| = ' + cdTxt + '，得 p = ' + k + ' ± ' + cdTxt + '，两个点（含根号也算两个）。',
+        '所以共 1 + 1 + 2 = 4 个点。坑：只写 CP = DP 一种；或把 p = ' + k + '（即点 D）也当作解。'
+      ],
+      kp: ['二次函数', '对称轴', '等腰三角形存在性', '分类讨论']
+    };
+  }
+
+  /* 开区间取值范围：顶点在区间内 → 最小值取得到；最大值在较远端点，而端点不在开区间内 → 只能「<」。 */
+  var OPEN_CASES = [
+    { a: 1, h: 3, k: 2, p: 0, q: 5 },
+    { a: 1, h: 1, k: -1, p: 0, q: 4 },
+    { a: 2, h: 2, k: 1, p: 0, q: 5 },
+    { a: 1, h: 4, k: 1, p: 0, q: 6 },
+    { a: 0.5, h: 2, k: 3, p: 0, q: 6 }
+  ];
+  function genRangeOpen(r) {
+    var t = pick(r, OPEN_CASES), a = t.a, h = t.h, k = t.k, p = t.p, q = t.q;
+    var yp = a * (p - h) * (p - h) + k, yq = a * (q - h) * (q - h) + k;
+    var hi = Math.max(yp, yq), farIsP = yp > yq;
+    var polyTxt = 'y = ' + (a === 1 ? '' : (a === 0.5 ? '½' : a)) + '(x − ' + h + ')²' + (k >= 0 ? ' + ' + k : ' − ' + (-k));
+    var canTxt = '取不到：x = ' + p + '、' + q + ' 都不在开区间内';
+    var canOpts = shuffle(r, [canTxt, '取得到（顶点处）', '取得到（端点处）', '要看 a 的正负']);
+    return {
+      id: 'drill.rangeopen', kind: 'rangeopen', title: '开区间取值范围',
+      prompt: '二次函数 ' + polyTxt + '，当 ' + p + ' < x < ' + q + ' 时，求 y 的取值范围。' +
+        '<br><span class="muted small">来源：第 12 周限时练习（11.18）附加题第 (3) 问（原题含参数 a，这里先练不含参数的版本）。</span>',
+      fields: [
+        { type: 'num', label: '最小值 =', ans: k },
+        { type: 'num', label: '最大值（边界值）=', ans: hi },
+        { type: 'choice', label: '这个最大值能不能取到', options: canOpts, ans: canOpts.indexOf(canTxt) },
+        { type: 'choice', label: '离对称轴更远的是哪个端点', options: ['x = ' + p, 'x = ' + q], ans: farIsP ? 0 : 1 }
+      ],
+      tip: '先看顶点横坐标在不在 (p, q) 内：在，最小值就是顶点纵坐标；最大值落在离对称轴较远的那个端点上，但端点取不到，所以写成「<」。',
+      explain: [
+        '对称轴 x = ' + h + '。因为 ' + p + ' < ' + h + ' < ' + q + '，顶点在区间内，所以最小值 = ' + k + '（在 x = ' + h + ' 处取到）。',
+        '再把两个端点代进去：y(' + p + ') = ' + yp + '，y(' + q + ') = ' + yq + '，所以最大值只能趋近 ' + hi + '。',
+        '但 x = ' + p + ' 和 x = ' + q + ' 都不在开区间 ' + p + ' < x < ' + q + ' 里，' + hi + ' 取不到。',
+        '所以取值范围是 ' + k + ' ≤ y < ' + hi + '。坑：右端写成 ≤；或没比较两个端点，直接把顶点当最大值。'
+      ],
+      kp: ['二次函数', '区间最值', '开区间', '取值范围']
+    };
+  }
+
   var ENTRY = [
     {
       id: 'entry.21.1', group: '函数与图象', no: '21', title: '21(1) 求交点',
@@ -2189,13 +2394,14 @@ var MT = (function () {
   var MODULES = [
     {
       id: 'drill', name: '基础快练', icon: '⚡',
-      desc: '七个板块、44 个题型，限时一次就对：方程与代数 / 二次函数 / 反比例函数 / 圆 / 直线与圆 / 图形与变换 / 推理与证明。',
+      desc: '七个板块、49 个题型，限时一次就对：方程与代数 / 二次函数 / 反比例函数 / 圆 / 直线与圆 / 图形与变换 / 推理与证明。',
       kinds: [
         /* group 只决定模块页怎么分组显示；数组顺序 = 「开始一轮」的混抽顺序 = 今日轮换顺序 */
         /* —— 方程与代数 —— */
         { id: 'factor', name: '因式分解（十字相乘）', group: '方程与代数', gen: genFactor },
         { id: 'eq', name: '解一元二次方程', group: '方程与代数', gen: genEq },
         { id: 'complete', name: '配方法 / 直接开平方', group: '方程与代数', gen: genComplete },
+        { id: 'missingconst', name: '缺常数项：提公因式', group: '方程与代数', gen: genMissingConst },
         { id: 'eqdef', name: '一元二次方程识别', group: '方程与代数', gen: genEqDef },
         { id: 'disc', name: '判别式', group: '方程与代数', gen: genDisc },
         { id: 'vieta', name: '韦达定理', group: '方程与代数', gen: genVieta },
@@ -2243,7 +2449,12 @@ var MT = (function () {
         { id: 'secperim', name: '扇形周长', group: '圆', gen: genSecPerim },
         { id: 'paralleldist', name: '平行弦之间的距离', group: '圆', gen: genParallelDist },
         { id: 'circumcenter', name: '三角形外心', group: '圆', gen: genCircumCenter },
-        { id: 'equiarc', name: '等边三角形外接圆的弧长', group: '圆', gen: genEquiArc }
+        { id: 'equiarc', name: '等边三角形外接圆的弧长', group: '圆', gen: genEquiArc },
+        /* —— 第 12 周错题补的四个知识点（2026-11-20） —— */
+        { id: 'relatecircle', name: '关联圆（线段与圆）', group: '圆', gen: genRelateCircle },
+        { id: 'archcircle', name: '圆弧形拱桥', group: '圆', gen: genArchCircle },
+        { id: 'isopoint', name: '对称轴上的等腰三角形', group: '二次函数', gen: genIsoPoint },
+        { id: 'rangeopen', name: '开区间取值范围', group: '二次函数', gen: genRangeOpen }
       ]
     },
     {
@@ -2264,6 +2475,31 @@ var MT = (function () {
       id: 'entry', name: '大题前两步', icon: '🚪',
       desc: '只写每道大题的前 1–2 个得分点，不求解。补的是「大题空白」这一断点；来源：期中卷 20–25、第 11/12 周卷、错题本。按 5 个板块分组，可单题专项，也可板块随机。',
       items: ENTRY
+    },
+    /* ---------- 临时训练项目：本周错题（一周一换，daily:false 不进「今日任务」） ----------
+       2026-11-20 建：来源第 12 周限时练习（11.18）的错题与不会题——
+       第 10、11、12、16 题 + 附加题（卷面第 17 题）；第 13 题两小题全对，不重复。
+       每道错题一个 kind，全部复用已有生成器（不新增题面逻辑），专项统计按 kind 单独记。
+       下线方式：删本模块 + 科目配置 tabs 里那一行 + ui.js 的 VIEWS 一行即可，其余不动。 */
+    {
+      id: 'week12', name: '本周错题', icon: '🎯', daily: false,
+      desc: '临时项目（一周一换）：第 12 周限时练习（11.18）的错题与不会题——第 10、11、12、16 题、第 13 题 (1)（缺常数项换形式就不会）与第 17 题（附加题），每题一种同类变式，答题时上方显示卷面原题的裁切图。第 13 题 (2) 已会，不重复；新补的五个知识点也已并进「基础快练」的方程 / 圆 / 二次函数板块。',
+      kinds: [
+        { id: 'secperim', name: '第 10 题 · 扇形周长', ref: '10', refLabel: '第 10 题',
+          crop: { key: 'q10', cap: '卷面原题：第 12 周限时练习（11.18）第 10 题' }, gen: genSecPerim },
+        { id: 'paralleldist', name: '第 11 题 · 平行弦之间的距离', ref: '11', refLabel: '第 11 题',
+          crop: { key: 'q11', cap: '卷面原题：第 12 周限时练习（11.18）第 11 题' }, gen: genParallelDist },
+        { id: 'relatecircle', name: '第 12 题 · 关联圆', ref: '12', refLabel: '第 12 题',
+          crop: { key: 'q12', cap: '卷面原题：第 12 周限时练习（11.18）第 12 题' }, gen: genRelateCircle },
+        { id: 'missingconst', name: '第 13 题 (1) · 缺常数项提公因式', ref: '13', refLabel: '第 13 题 (1)',
+          crop: { key: 'q13', cap: '卷面原题：第 12 周限时练习（11.18）第 13 题（第 2 小题已会，不重复）' }, gen: genMissingConst },
+        { id: 'archcircle', name: '第 16 题 · 圆弧形拱桥', ref: '16', refLabel: '第 16 题',
+          crop: { key: 'q16', cap: '卷面原题：第 12 周限时练习（11.18）第 16 题' }, gen: genArchCircle },
+        { id: 'isopoint', name: '第 17 题 (2) · 等腰三角形存在性', ref: '17', refLabel: '第 17 题 (2)',
+          crop: { key: 'q17', cap: '卷面原题：第 12 周限时练习（11.18）第 17 题（附加题）' }, gen: genIsoPoint },
+        { id: 'rangeopen', name: '第 17 题 (3) · 开区间取值范围', ref: '17', refLabel: '第 17 题 (3)',
+          crop: { key: 'q17', cap: '卷面原题：第 12 周限时练习（11.18）第 17 题（附加题）' }, gen: genRangeOpen }
+      ]
     }
   ];
 
@@ -2290,6 +2526,14 @@ var MT = (function () {
     if (!k) k = m.kinds[Math.floor(r() * m.kinds.length)];
     var q = k.gen(r);
     q.mod = modId;
+    /* 临时项目（本周错题）：题型带 ref/crop 时，把「卷面第几题」与原题裁切图挂到题目上；
+       基础快练里同名题型不带，避免每道变式都贴一张原卷图。 */
+    if (k.ref) { q.no = k.ref; if (k.refLabel) q.noLabel = k.refLabel; }
+    if (k.crop) {
+      /* cropKey/cropCap 写进题目：错题本只存这两个短字段，渲染时再按 key 重建大图（base64 不进 localStorage） */
+      q.cropKey = k.crop.key; q.cropCap = k.crop.cap;
+      var cf = cropFig(k.crop); if (cf) q.fig = cf;
+    }
     return q;
   }
 
@@ -2378,7 +2622,7 @@ var MT = (function () {
        不走坐标系变换，免得把圆、扇形压扁。只画题设，不标答案。 */
     if (f.svg) {
       var rw = f.w || 360, rh = f.h || 280;
-      return '<svg viewBox="0 0 ' + rw + ' ' + rh + '" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="题图">' +
+      return '<svg viewBox="0 0 ' + rw + ' ' + rh + '" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" role="img" aria-label="题图">' +
         '<rect width="' + rw + '" height="' + rh + '" fill="#fbfcff" rx="10"/>' + f.svg + '</svg>';
     }
     var W = 360, H = 280, PAD = 30;
@@ -2686,7 +2930,7 @@ var MT = (function () {
     VERSION: VERSION, DAY: DAY,
     modules: MODULES, moduleById: moduleById,
     planForDay: planForDay, dailyQueue: dailyQueue, daySeed: daySeed, kindName: kindName,
-    gen: gen, judge: judge, ansText: ansText, svgFor: svgFor,
+    gen: gen, judge: judge, ansText: ansText, svgFor: svgFor, cropFig: cropFig,
     parseNum: parseNum, near: near, frac: frac, nice: nice,
     selfTest: selfTest
   };

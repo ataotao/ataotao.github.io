@@ -20,6 +20,8 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 const FILE = join(ROOT, '数学', '数学闪练卡.html');
 const html = readFileSync(FILE, 'utf8');
 const core = html.match(/<script id="core">([\s\S]*?)<\/script>/)[1];
+/* 数据段（第 12 周原题裁切图）：core 启动时读 W12_IMG，不先跑这一段就拿不到裁切图 */
+const dataSeg = (html.match(/<script id="data">([\s\S]*?)<\/script>/) || [])[1];
 const ui = html.match(/<script id="ui">([\s\S]*?)<\/script>/)[1];
 /* 段四–段三：review / merge / sync 段也在 <script> 里，UI 启动就调 __ltReview.dueList，
    不先跑这三段会直接 TypeError（2026-11-19 修：本冒烟停在四科回炉内核合入之前）。 */
@@ -71,6 +73,7 @@ const ctx = {
 };
 vm.createContext(ctx);
 ctx.window = ctx;
+if (dataSeg) vm.runInContext(dataSeg, ctx);
 vm.runInContext(core, ctx);
 vm.runInContext(review, ctx);
 vm.runInContext(merge, ctx);
@@ -447,9 +450,91 @@ ok((textOf(app).match(/当前板块随机题练习/g) || []).length >= 7, '基�
   }
 }
 
+/* 7. 本周错题（临时项目 week12）：注册表、不进今日任务、模块页、判分、知识点归属 */
+{
+  const wm = ctx.MT.moduleById('week12');
+  ok(!!wm, '没有「本周错题」临时模块');
+  if (wm) {
+    ok(wm.daily === false, '本周错题被算进今日任务（应 daily:false）');
+    ok(wm.kinds && wm.kinds.length === 7, '本周错题题型数不是 7，是 ' + (wm.kinds ? wm.kinds.length : 0));
+    const want = ['secperim', 'paralleldist', 'relatecircle', 'missingconst', 'archcircle', 'isopoint', 'rangeopen'];
+    ok(want.every((id) => wm.kinds.some((k) => k.id === id)), '本周错题漏了错题对应的题型');
+    ok(wm.kinds.every((k) => typeof k.gen === 'function'), '本周错题有题型没有生成器');
+
+    /* 今日页：模块卡在（可点进去），但 4 个今日任务的结构与文案不变 */
+    M.go('today');
+    const tt = textOf(app);
+    ok(tt.includes('本周错题'), '今日页没显示本周错题模块卡');
+    ok(tt.includes('顺序：热身 → 写式 → 入口 → 错题'), '今日任务的顺序文案被改动了');
+
+    /* 模块页：6 个题型 + 每个都有「专项 3 题」 */
+    M.go('week12');
+    const wt = textOf(app);
+    want.forEach((id) => {
+      const nm = wm.kinds.find((k) => k.id === id).name;
+      ok(wt.includes(nm), '本周错题模块页缺题型：' + nm);
+    });
+    ok((wt.match(/专项 3 题/g) || []).length === 7, '本周错题模块页「专项 3 题」不是 7 个');
+
+    /* 出题 + 判分：mod/kind 必须对得上（否则专项统计与错题归集会串） */
+    want.forEach((id) => {
+      const q = ctx.MT.gen('week12', id, 12345);
+      ok(q.mod === 'week12' && q.kind === id, '本周错题出题 mod/kind 不对：' + id + ' → ' + q.mod + '/' + q.kind);
+      ok(ctx.MT.judge(q, q.fields.map((f) => f.ans)).ok, '本周错题正确答案被判错：' + id);
+    });
+
+    /* 新补的四个知识点同时要在「基础快练」里：临时项目删掉后，知识点还留着 */
+    const dm = ctx.MT.moduleById('drill');
+    ['relatecircle', 'archcircle', 'isopoint', 'rangeopen', 'missingconst'].forEach((id) => {
+      ok(dm.kinds.some((k) => k.id === id), '基础快练没补进知识点：' + id);
+    });
+
+    /* 每个练习点必须标出「卷面第几题」，并带一张原题裁切图（data URI，离线可用） */
+    ok(!!dataSeg, '产物没有 <script id="data"> 段（第 12 周原题裁切图）');
+    const refs = {
+      secperim: ['10', '第 10 题'], paralleldist: ['11', '第 11 题'], relatecircle: ['12', '第 12 题'],
+      archcircle: ['16', '第 16 题'], isopoint: ['17', '第 17 题 (2)'], rangeopen: ['17', '第 17 题 (3)'],
+      missingconst: ['13', '第 13 题 (1)'],
+    };
+    Object.keys(refs).forEach((id) => {
+      const q = ctx.MT.gen('week12', id, 2026);
+      ok(q.no === refs[id][0] && q.noLabel === refs[id][1],
+        '本周错题没标卷面题号：' + id + ' → ' + q.no + ' / ' + q.noLabel);
+      ok(q.fig && q.fig.need && q.fig.cap && q.fig.cap.indexOf('第 ' + q.no) >= 0,
+        '本周错题缺原题裁切图或图注：' + id);
+      const svg = ctx.MT.svgFor(q);
+      ok(svg.indexOf('data:image/webp;base64,') > 0, '裁切图没内联成 data URI：' + id);
+      /* 只查 base64 之外的部分：base64 里出现 "NaN" 这类子串是正常的，不能整体扫 */
+      const shell = svg.replace(/data:image\/webp;base64,[A-Za-z0-9+/=]+/g, 'IMG');
+      ok(!/NaN|undefined/.test(shell), '裁切图 SVG 骨架含 NaN/undefined：' + id);
+      /* 基础快练里的同名题型不贴原卷图：只有临时项目要看「卷面第几题」 */
+      const dq = ctx.MT.gen('drill', id, 2026);
+      ok(!dq.no && !dq.fig, '基础快练被误加了原卷题号/裁切图：' + id);
+    });
+    /* 练习页确实把题号画出来了（题号 pill 走 q.noLabel） */
+    M.startSession('week12', 'isopoint', 1);
+    ok(textOf(app).includes('第 17 题 (2)'), '练习页没显示「卷面第几题」');
+
+    /* 错题本不存裁切图（base64 会撑大 localStorage）：只存 cropKey/noLabel，回炉时按 key 重建 */
+    M.startSession('week12', 'secperim', 1);
+    const wq = M.S.q;
+    ok(wq.cropKey === 'q10', '本周错题出题没带 cropKey：' + wq.cropKey);
+    M.S.choice[0] = (wq.fields[0].ans + 1) % wq.fields[0].options.length;
+    fill('in1_n', 999); fill('in2_n', 999);
+    M.submit();
+    const wRec = Object.keys(M.db().wrong).map((k) => M.db().wrong[k]).filter((w) => w.cropKey === 'q10').pop();
+    ok(!!wRec, '本周错题答错后没进错题本');
+    ok(!!wRec && !wRec.fig, '错题本存了整张裁切图（base64 会撑大 localStorage）');
+    ok(!!wRec && wRec.noLabel === '第 10 题', '错题条目丢了卷面题号');
+    ok(!!ctx.MT.cropFig && ctx.MT.cropFig({ key: 'q10' }).svg.indexOf('data:image/webp') > 0,
+      'cropFig 不能按 key 重建裁切图（回炉时会没图）');
+  }
+}
+
 if (fails.length) {
   console.error('✗ UI 冒烟失败 ' + fails.length + ' 处：');
   fails.forEach((f) => console.error('  - ' + f));
   process.exit(1);
 }
-console.log('✓ UI 冒烟通过（今日渲染 / 题单一致 / expr 判分 / 报告 / 专项 3 题 / 大题前两步分组、配图与专项 / 板块随机覆盖与重来 / 回归：expr 顺序、例题提交、空提交、当天题单、配比文案、题干转义、坏记录自愈、选项打散、手绘题图几何自洽）');
+console.log('✓ UI 冒烟通过（今日渲染 / 题单一致 / expr 判分 / 报告 / 专项 3 题 / 大题前两步分组、配图与专项 / 板块随机覆盖与重来 / 本周错题临时项目（不进今日、7 题型、判分、卷面题号与原题裁切图）/ 回归：expr 顺序、例题提交、空提交、当天题单、配比文案、题干转义、坏记录自愈、选项打散、手绘题图几何自洽）');
+
