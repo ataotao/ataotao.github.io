@@ -65,6 +65,11 @@ const TARGETS = [
     cmd: ['node', ['工具/trainer/build.mjs', '英语单词']],
     watch: ['英语/英语单词闪练卡.html', '工具/trainer/review.js', '英语/词库.js'],
   },
+  {
+    name: '语文 · 背诵训练卡',
+    cmd: ['node', ['语文/数据/build.mjs']],
+    watch: ['语文/背诵训练卡.html', '工具/trainer/review.js'],
+  },
 ];
 
 const only = process.argv.slice(2).find((a) => !a.startsWith('--'));

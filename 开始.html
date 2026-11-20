@@ -181,6 +181,8 @@
       file: '化学闪练卡.html', quick: '#view=today', quickText: '全考点闪练', wrong: '#view=wrong', wrongText: '清错题' },
     { key: 'yuwen',    name: '语文',        icon: '📜', accent: '#3f6b57', href: '语文/语文思维脚手架.html', desc: '期中逐题诊断 + 九板块框架 + 作文逐段批改',
       file: '语文思维脚手架.html', quick: '#view=drill', quickText: '失分点闪练', wrong: '#view=drill&list=wrong', wrongText: '清错题' },
+    { key: 'ywrecite', name: '语文背诵',   icon: '📖', accent: '#3f6b57', href: '语文/背诵训练卡.html', desc: '75 篇全覆盖 · 按学期分组 · 考点默写逐字批改+回炉',
+      file: '背诵训练卡.html', quick: '#p=chushibiao&m=read', quickText: '背出师表', wrong: '#p=chushibiao&m=exam', wrongText: '考点回炉' },
     { key: 'math',     name: '数学',        icon: '📐', accent: '#3b6fe0', href: '数学/函数思维脚手架.html', desc: '五步流程 + 闪练 + 整卷',
       file: '函数思维脚手架', quick: '#view=task', quickText: '本次任务', wrong: '#view=report', wrongText: '训练报告' },
     { key: 'coord',    name: '坐标图象',    icon: '📍', accent: '#2f6fd0', href: '数学/坐标图象训练.html', desc: '五层闯关：找点 → 读点 → 直线 → 抛物线',
@@ -213,7 +215,7 @@
 
   // 卡片分组：以后加卡片，改 SUBJECTS + 这里加一行映射即可
   var GROUP_OF = {
-    yuwen: '语文',
+    yuwen: '语文', ywrecite: '语文',
     math: '数学', coord: '数学', train: '数学', firstaid: '数学', wrong: '数学',
     english: '英语', flash: '英语', words: '英语', yuexueci: '英语', wordsflash: '英语',
     physics: '物理', phystrain: '物理', chem: '化学', chemflash: '化学', history: '历史', politics: '道德与法治',
@@ -230,6 +232,7 @@
     { key: 'chemScaffold.v1', subject: 'chem' },
     { key: 'chemflash_v1', subject: 'chemflash' },
     { key: 'ywScaffold.v1', subject: 'yuwen' },
+    { key: 'ywRecite.v1', subject: 'ywrecite' },
     { key: 'fn_scaffold_v1', subject: 'math' },
     { key: 'mathcoord_v1', subject: 'coord' },
     { key: 'mathtrain_v1', subject: 'train' },
@@ -436,6 +439,19 @@
     (function () {
       var v = readJSON('ywScaffold.v1'); if (!v) return;
       var s = bump('yuwen');
+      for (var id in (v.stat || {})) {
+        var e = v.stat[id] || {};
+        s.attempts += num(e.att); s.correct += num(e.ok); s.wrong += num(e.wrong);
+        var last = dateFromStamp(e.at); if (last && (!s.last || last > s.last)) s.last = last;
+      }
+      bumpDays(v.days);
+      var t = (v.days || {})[todayKey()]; if (t) s.today = num(t.n);
+    })();
+
+    // 语文背诵（跟读/遮罩/考点默写，stat+days 同形）
+    (function () {
+      var v = readJSON('ywRecite.v1'); if (!v) return;
+      var s = bump('ywrecite');
       for (var id in (v.stat || {})) {
         var e = v.stat[id] || {};
         s.attempts += num(e.att); s.correct += num(e.ok); s.wrong += num(e.wrong);
@@ -674,6 +690,8 @@
       { key: 'chemflash', title: '化学闪练 · 随机 10 题', reason: '初三全考点，答案解析讲考点难点', hash: '#view=today' },
       { key: 'wordsflash', title: '单词闪练 · 5 分钟记 10 词', reason: '按年级单元练英→中/中→英/音→中', hash: '#view=today' },
       { key: 'yuwen', title: '语文 · 10 分钟失分点闪练', reason: '文言翻译与赏析题，先按模板过一遍', hash: '#view=drill' },
+      { key: 'ywrecite', title: '语文背诵 · 背《出师表》', reason: '本周要求背诵，跟读→遮罩→考点默写过一遍', hash: '#p=chushibiao&m=read' },
+      { key: 'ywrecite', title: '语文 · 《出师表》考点默写', reason: '按中考真题情境写整句，逐字批改+错字回炉', hash: '#p=chushibiao&m=exam' },
       { key: 'history', title: '历史 · 5 分钟 ★必背', reason: '★ 的是必背，刷四选一', hash: '#mode=choice&fs=star' }
     ];
     defaults.forEach(function (d) {
