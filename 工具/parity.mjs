@@ -68,7 +68,9 @@ const TARGETS = [
   {
     name: '语文 · 背诵训练卡',
     cmd: ['node', ['语文/数据/build.mjs']],
-    watch: ['语文/背诵训练卡.html', '工具/trainer/review.js'],
+    watch: ['语文/背诵训练卡.html', '工具/trainer/review.js', '工具/trainer/merge.mjs',
+      '工具/trainer/sync.mjs', '工具/trainer/sync-adapter.mjs', '语文/数据/build.mjs',
+      '语文/数据/背诵训练卡.template.html'],
   },
 ];
 

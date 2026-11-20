@@ -99,6 +99,10 @@ const main = scripts[scripts.length - 1];
 const reviewMatch = html.match(/<script id="review"[^>]*>([\s\S]*?)<\/script>/);
 const reviewScript = reviewMatch ? reviewMatch[1] : scripts[scripts.length - 2];
 if (!reviewMatch) bad('产物 review 段缺 id="review"（规范 §2.1）');
+const mergeMatch = html.match(/<script id="merge"[^>]*>([\s\S]*?)<\/script>/);
+const syncMatch = html.match(/<script id="sync"[^>]*>([\s\S]*?)<\/script>/);
+if (!mergeMatch) bad('产物缺 merge 段（导入/云同步合并器）');
+if (!syncMatch) bad('产物缺 sync 段（云同步适配层）');
 function mockEl() {
   return {
     innerHTML: '', textContent: '', value: '', disabled: false,
@@ -115,6 +119,7 @@ const getEl = (id) => (els[id] || (els[id] = mockEl()));
 const evButtons = ['all', 'due', 'history'].map(v => {
   const e = mockEl(); e.setAttribute('data-ev', v); return e;
 });
+const revGoButton = mockEl(); revGoButton.setAttribute('data-rev-go', 'chushibiao#0');
 const wenyan = outAll.filter(p => p.type === 'wenyan');
 const poem = outAll.filter(p => p.type === 'poem');
 const modern = outAll.filter(p => p.type === 'modern');
@@ -132,16 +137,28 @@ const ctx = {
     querySelectorAll(sel) {
       // 考点视图切换按钮需要真实可点，才能测「错题史」视图（缓存，保证绑定到同一批对象）
       if (sel === '[data-ev]') return evButtons;
+      if (sel === '[data-rev-go]') return [revGoButton];
       return [];
     },
+    createElement() { return mockEl(); },
+    body: { appendChild() {}, removeChild() {} },
     addEventListener: (t, f) => { handlers['doc:' + t] = f; }
   },
-  localStorage: { getItem: () => null, setItem() {} },
+  // 老记录缺 examOk 字段，用来回归「按钮显示 NaN%」的 bug
+  localStorage: (() => {
+    let raw = JSON.stringify({ v: 1, stat: { chushibiao: { att: 2, ok: 1, wrong: 1, exam: 3 } }, days: {}, examWrong: {},
+      // 老流水没有 title：历史清单不能只显示 chushibiao#0
+      examRecs: [{ qid: 'chushibiao#0', piece: 'chushibiao', ok: false, ts: Date.now() - 86400000, kind: '理解性默写' }] });
+    return { getItem: () => raw, setItem(k, v) { raw = v; } };
+  })(),
   location: { hash: '' },
   history: { replaceState() {} },
   window: winObj,
-  setTimeout() {}, confirm() { return true; },
-  Blob: function () {}, URL: { createObjectURL: () => '', revokeObjectURL() {} }
+  setTimeout() {}, confirm() { return true; }, alert() {},
+  Blob: function () {}, URL: { createObjectURL: () => '', revokeObjectURL() {} },
+  FileReader: function () { this.readAsText = () => {}; },
+  fetch: () => Promise.reject(new Error('offline test')),
+  btoa: (s) => s, unescape: (s) => s
 };
 ctx.globalThis = ctx;
 vm.createContext(ctx);
@@ -150,13 +167,19 @@ const paraLabel = () => {
   return m ? Number(m[1]) : -1;
 };
 try {
-  // review 内核先挂到 window
+  // review / merge / sync 内核先挂到 window
   vm.runInContext(reviewScript, ctx, { timeout: 5000 });
   if (!winObj.__ltReview) bad('错题回炉内核未挂到 window.__ltReview');
   else ok('错题回炉内核已加载');
+  vm.runInContext(mergeMatch[1], ctx, { timeout: 5000 });
+  if (!winObj.__ltMerge || typeof winObj.__ltMerge.mergeRecords !== 'function') bad('合并内核未挂到 window.__ltMerge');
+  else ok('导入/云同步共用合并内核已加载');
+  vm.runInContext(syncMatch[1], ctx, { timeout: 5000 });
+  if (!winObj.__ltSyncUI || !winObj.__ltSync) bad('云同步编排/适配层未加载');
+  else ok('云同步编排与适配层已加载');
 
   vm.runInContext(main, ctx, { timeout: 5000 });
-  for (const m of ['read','mask','exam','star']) {
+  for (const m of ['read','mask','exam','review','star']) {
     ctx.location.hash = '#p=chushibiao&m=' + m;
     handlers['win:hashchange']();
     if (!getEl('stage').innerHTML) bad(`模式 ${m} 渲染为空`);
@@ -165,7 +188,20 @@ try {
   ctx.location.hash = '#p=chushibiao&m=fill';
   handlers['win:hashchange']();
   if (!getEl('stage').innerHTML) bad('已移除的 fill 模式回退渲染为空');
-  ok('四种模式渲染无异常，旧深链安全回退');
+  ok('五种模式渲染无异常，旧深链安全回退');
+
+  // 截图 bug 回归：老记录缺 examOk 时进度不能显示 NaN%
+  const chipsHtml = getEl('pieceGroups').innerHTML;
+  if (chipsHtml.indexOf('NaN') >= 0) bad('篇目按钮出现 NaN%（旧统计字段未归一化）');
+  else ok('旧记录缺字段时篇目按钮不显示 NaN%');
+  if (html.indexOf('data-m="review"') < 0) bad('顶部缺「错题回炉」栏目入口');
+  if (getEl('dueBadge').textContent === '') bad('错题回炉待办角标未初始化');
+  for (const id of ['exportBtn','importBtn','importFile','syncBtn','patHelpBtn']) {
+    const el = getEl(id);
+    if (['exportBtn','importBtn','syncBtn','patHelpBtn'].includes(id) && typeof el.onclick !== 'function') bad(`${id} 未绑定`);
+  }
+  if (!winObj.__ywRecite || typeof winObj.__ywRecite.importText !== 'function') bad('导入合并接口未暴露');
+  else ok('导出/导入/云同步按钮均已绑定');
 
   ctx.location.hash = '#p=chushibiao&m=read';
   handlers['win:hashchange']();
@@ -230,11 +266,34 @@ try {
     const hh = getEl('stage').innerHTML;
     if (hh.indexOf('曾经错过的题') < 0) bad('错题史视图缺清单标题');
     if (hh.indexOf('histtable') < 0) bad('错题史视图未渲染清单表格');
-    else ok('历史错题清单（everWrong+dayText）正常渲染');
+    else if (hh.indexOf('chushibiao#0') >= 0) bad('历史清单仍显示题目 id 而非题干');
+    else if (hh.indexOf('《出师表》开篇') < 0) bad('历史清单缺真实题干摘要');
+    else ok('历史错题清单（everWrong+dayText）显示真实题干');
     // 切回全部题，避免污染后续用例
     const allBtn = evButtons.find(b => b.getAttribute('data-ev') === 'all');
     if (allBtn && allBtn.onclick) allBtn.onclick();
   }
+
+  // 顶层错题回炉栏目：跨篇目看到到期题，并能跳回考点默写
+  ctx.location.hash = '#p=yueyanglouji&m=review';
+  handlers['win:hashchange']();
+  const rv = getEl('stage').innerHTML;
+  if (rv.indexOf('错题回炉') < 0 || rv.indexOf('待回炉') < 0) bad('错题回炉栏目缺待回炉区');
+  else if (rv.indexOf('出师表') < 0) bad('跨篇目回炉清单未显示其他篇目的错题');
+  else if (typeof revGoButton.onclick !== 'function') bad('回炉题「去默写」未绑定');
+  else {
+    revGoButton.onclick();
+    if (getEl('stage').innerHTML.indexOf('eqInput') < 0) bad('「去默写」未跳回考点默写');
+    else ok('顶层错题回炉栏目可见，跨篇目待办与跳转正常');
+  }
+
+  // 导入/云同步共用合并器：同份记录重复导入不翻倍
+  const api = winObj.__ywRecite;
+  const before = api.DB.examRecs.length;
+  const after = api.importText(JSON.stringify(api.DB));
+  if (after !== before) bad(`同份记录导入后翻倍：${before}→${after}`);
+  else if (api.toShared(api.DB).recs.length !== before) bad('共享快照投影的流水条数不一致');
+  else ok('导入合并去重：同份记录重复导入不翻倍');
 
   // 全部篇目都有考点：抽查一篇新增篇目（岳阳楼记）能进考点默写并出题
   ctx.location.hash = '#p=chushibiao&m=exam&t=all';

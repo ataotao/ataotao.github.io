@@ -8,6 +8,9 @@
  *   背诵-考点.json             —— 按中考命题规则整理的考点默写题（样板：出师表）
  * 共享内核：
  *   工具/trainer/review.js     —— 统一错题回炉内核（ADR-0010），内联进产物
+ *   工具/trainer/merge.mjs     —— 事件并集合并（导入/云同步共用，ADR-0007）
+ *   工具/trainer/sync.mjs      —— 云同步编排（拉全部→合并→写回）
+ *   工具/trainer/sync-adapter.mjs —— GitHub Contents API 网络薄适配层
  */
 import { readFileSync, writeFileSync, existsSync, readdirSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
@@ -122,6 +125,16 @@ const poem = all.filter(p => p.type === 'poem');
 const modern = all.filter(p => p.type === 'modern');
 
 const reviewJS = readFileSync(join(root, '工具', 'trainer', 'review.js'), 'utf8');
+// 合并器与云同步：照训练器 build.mjs 的契约去 export/import 后内联，科目常量由本构建注入
+const mergeJS = readFileSync(join(root, '工具', 'trainer', 'merge.mjs'), 'utf8')
+  .replace(/^export\s+/gm, '') + '\n' +
+  'window.__ltMerge = { pickIdent: pickIdent, recSig: recSig, mergeRecords: mergeRecords };\n';
+const syncCore = readFileSync(join(root, '工具', 'trainer', 'sync.mjs'), 'utf8')
+  .replace(/^import[^\n]*\n/gm, '').replace(/^export\s+/gm, '');
+const syncAdapter = readFileSync(join(root, '工具', 'trainer', 'sync-adapter.mjs'), 'utf8');
+const syncJS = 'var LT_SUBJECT = ' + JSON.stringify('语文背诵') + ';\n' + syncCore.trimEnd() + '\n' +
+  'window.__ltSync = { carrierSnapshot: carrierSnapshot, syncPlan: syncPlan, subjectFromId: subjectFromId };\n' +
+  syncAdapter.trimEnd();
 
 let html = readFileSync(tplPath, 'utf8');
 const j = (arr) => JSON.stringify(arr).replace(/<\//g, '<\\/');
@@ -131,8 +144,10 @@ html = html.replace('/*__WENYAN__*/', j(wenyan))
            .replace('/*__CATALOG__*/', j(catalog))
            .replace('/*__TERMS__*/', j(TERMS))
            .replace('/*__EXAM__*/', j(exam))
+           .replace('/*__MERGE_JS__*/', mergeJS)
+           .replace('/*__SYNC_JS__*/', syncJS)
            .replace('/*__REVIEW_JS__*/', reviewJS);
-for (const ph of ['/*__WENYAN__*/', '/*__POEM__*/', '/*__MODERN__*/', '/*__CATALOG__*/', '/*__TERMS__*/', '/*__EXAM__*/', '/*__REVIEW_JS__*/']) {
+for (const ph of ['/*__WENYAN__*/', '/*__POEM__*/', '/*__MODERN__*/', '/*__CATALOG__*/', '/*__TERMS__*/', '/*__EXAM__*/', '/*__MERGE_JS__*/', '/*__SYNC_JS__*/', '/*__REVIEW_JS__*/']) {
   if (html.indexOf(ph) >= 0) { console.error(`✗ 占位符 ${ph} 未被替换`); process.exit(1); }
 }
 writeFileSync(outPath, html, 'utf8');
@@ -143,5 +158,6 @@ const examCount = exam.reduce((n, b) => n + b.items.length, 0);
 console.log(`✓ 背诵训练卡.html：${all.length} 篇（文言 ${wenyan.length} / 诗词 ${poem.length} / 现代文 ${modern.length}）`);
 console.log(`  标注：${JSON.stringify(byLevel)}`);
 console.log(`  学期：${JSON.stringify(byTerm)}`);
-console.log(`  考点默写：${exam.length} 篇 ${examCount} 题（全部篇目覆盖，答案已校验逐字来自原文）；错题回炉内核已内联`);
+console.log(`  考点默写：${exam.length} 篇 ${examCount} 题（全部篇目覆盖，答案已校验逐字来自原文）`);
+console.log(`  共享内核已内联：错题回炉 review.js + 合并 merge.mjs + 云同步 sync.mjs/sync-adapter.mjs（科目「语文背诵」）`);
 console.log(`  课标 60 篇齐全；产物 ${(Buffer.byteLength(html) / 1024).toFixed(1)} KB`);

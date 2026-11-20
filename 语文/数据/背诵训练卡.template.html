@@ -30,10 +30,10 @@ header.top .sub{color:var(--mut);font-size:13px;margin-top:2px}
 .picker .glabel{font-size:12.5px;color:var(--mut);letter-spacing:.5px;margin:10px 0 6px;font-weight:600}
 .picker .glabel:first-child{margin-top:0}
 .chips{display:flex;gap:7px;flex-wrap:wrap}
-.chip-piece{appearance:none;border:1px solid var(--line);background:#fdfcfa;border-radius:999px;padding:6px 13px;font:inherit;font-size:13.5px;color:var(--ink);cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+.chip-piece{appearance:none;border:1px solid var(--line);background:#fdfcfa;border-radius:999px;padding:6px 13px;font:inherit;font-size:13.5px;color:var(--ink);cursor:pointer;display:inline-flex;align-items:center;gap:6px;white-space:nowrap;max-width:100%;min-width:0;overflow:hidden}
 .chip-piece:hover{border-color:#bcd3c5;background:#f5faf7}
 .chip-piece.on{background:var(--acc);border-color:var(--acc);color:#fff;font-weight:600}
-.chip-piece .pg{font-size:11px;opacity:.75;font-variant-numeric:tabular-nums}
+.chip-piece .pg{font-size:11px;opacity:.75;font-variant-numeric:tabular-nums;flex:0 0 auto}
 .chip-piece .st{color:var(--star);font-size:13px}
 .chip-piece.on .st{color:#ffe08a}
 .filters{display:flex;gap:7px;flex-wrap:wrap;align-items:center;margin:0 0 10px}
@@ -59,6 +59,7 @@ nav.modes{display:flex;gap:6px;flex-wrap:wrap;border-bottom:1px solid var(--line
 nav.modes button{appearance:none;border:0;background:transparent;font:inherit;font-size:14.5px;color:var(--mut);padding:9px 14px;border-bottom:2px solid transparent;cursor:pointer;border-radius:8px 8px 0 0}
 nav.modes button:hover{background:#f3f0ea;color:var(--ink)}
 nav.modes button.on{color:var(--acc2);border-bottom-color:var(--acc);font-weight:700}
+nav.modes .due-n{display:inline-flex;align-items:center;justify-content:center;min-width:19px;height:19px;padding:0 5px;margin-left:5px;border-radius:999px;background:var(--bad);color:#fff;font-size:11px;font-weight:700;font-variant-numeric:tabular-nums}
 .piecehead{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:12px}
 .piecehead h2{margin:0;font-size:20px}
 .piecehead .meta{font-size:12.5px;color:var(--mut)}
@@ -155,6 +156,28 @@ ruby rt{font-size:.68em;color:var(--acc2);font-weight:600;letter-spacing:0;line-
 .histtable .st-done{color:var(--ok);font-weight:600}
 .statbar{display:flex;gap:12px;flex-wrap:wrap;font-size:12.5px;color:var(--mut);margin-top:10px}
 .statbar b{color:var(--acc2)}
+/* 数据管理：导出 / 导入 / 云同步 */
+.datacard{padding:14px 18px}
+.datahd{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+.datahd b{font-size:15px}
+.datahd .hint{font-size:12.5px;color:var(--mut)}
+.datarow{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.datarow button{appearance:none;border:1px solid var(--line);background:#fff;border-radius:9px;padding:6px 13px;font:inherit;font-size:13px;color:var(--ink);cursor:pointer}
+.datarow button:hover{background:#f3f7f4}
+.datarow button.primary{background:var(--acc);border-color:var(--acc);color:#fff}
+.datarow input[type=password]{border:1px solid var(--line);border-radius:9px;padding:6px 11px;font:inherit;font-size:13px;min-width:190px;flex:1;color:var(--ink);background:#fff}
+.datarow .msg{font-size:12.5px;color:var(--mut);flex-basis:100%}
+.datarow .msg.ok{color:var(--ok)}
+.datarow .msg.bad{color:var(--bad)}
+/* 错题回炉：跨全部篇目的到期清单 */
+.revsec{font-size:14px;color:var(--acc2);margin:16px 0 8px}
+.revlist{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px}
+.revitem{border:1px solid var(--line);border-radius:12px;padding:12px 14px;background:var(--card)}
+.revitem .revttl{font-weight:700;font-size:14px;margin-bottom:5px;display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.revitem .revq{font-size:13px;line-height:1.75;color:var(--ink)}
+.revitem .revans{font-size:12.5px;color:var(--mut);margin:5px 0 9px}
+.revitem button{appearance:none;border:1px solid var(--line);background:var(--acc-soft);color:var(--acc2);border-radius:8px;padding:5px 11px;font:inherit;font-size:12.5px;cursor:pointer}
+.revitem button:hover{background:#dceee3}
 .foot{font-size:12.5px;color:var(--mut);margin-top:24px;border-top:1px solid var(--line);padding-top:14px;line-height:1.8}
 @media(max-width:640px){.wrap{padding:18px 12px 60px}.txt{font-size:17px;padding:14px}nav.modes button{padding:8px 10px;font-size:13.5px}header.top h1{font-size:21px}}
 </style>
@@ -168,7 +191,6 @@ ruby rt{font-size:.68em;color:var(--acc2);font-weight:600;letter-spacing:0;line-
   </div>
   <div class="head-actions">
     <span class="pill" id="todayPill">今日 0 次</span>
-    <span class="pill btn" id="exportBtn">导出记录</span>
   </div>
 </header>
 
@@ -176,7 +198,21 @@ ruby rt{font-size:.68em;color:var(--acc2);font-weight:600;letter-spacing:0;line-
   本周重点：<b>《出师表》</b>。推荐走法——先用 <span class="kbd">跟读</span> 看拼音读顺，
   再切 <span class="kbd">遮罩</span> 盖住逐段背，背不顺的段落点 <span class="kbd">★</span> 标记。
   背熟后用 <span class="kbd">考点默写</span> 按中考真题的情境题干写整句、逐字批改；答错的题自动进
-  <b>1 / 3 / 7 / 14 天回炉</b>。难读字已标拼音，可随时开关。
+  <b>1 / 3 / 7 / 14 天回炉</b>，到期题在顶部 <span class="kbd">错题回炉</span> 栏目统一查看。
+  难读字已标拼音，可随时开关。
+</div>
+
+<div class="card datacard">
+  <div class="datahd"><b>数据管理</b><span class="hint">记录只在本机浏览器；换设备或清缓存前先导出/同步。导入与云同步走同一套合并，重复导入不会翻倍。</span></div>
+  <div class="datarow">
+    <button id="exportBtn" class="primary">导出数据</button>
+    <button id="importBtn">导入数据</button>
+    <input type="file" id="importFile" accept="application/json,.json" style="display:none">
+    <button id="syncBtn">云同步（跨设备）</button>
+    <button id="patHelpBtn">PAT 是什么？</button>
+    <input id="syncPat" type="password" placeholder="GitHub PAT（只填一次，存本机）" value="">
+    <span class="msg" id="dataMsg"></span>
+  </div>
 </div>
 
 <div class="card picker">
@@ -189,6 +225,7 @@ ruby rt{font-size:.68em;color:var(--acc2);font-weight:600;letter-spacing:0;line-
   <button data-m="read">跟读</button>
   <button data-m="mask">遮罩背诵</button>
   <button data-m="exam">考点默写</button>
+  <button data-m="review">错题回炉<span class="due-n" id="dueBadge">0</span></button>
   <button data-m="star">★ 重点段</button>
 </nav>
 
@@ -206,6 +243,8 @@ ruby rt{font-size:.68em;color:var(--acc2);font-weight:600;letter-spacing:0;line-
 <script id="data-catalog" type="application/json">/*__CATALOG__*/</script>
 <script id="data-terms" type="application/json">/*__TERMS__*/</script>
 <script id="data-exam" type="application/json">/*__EXAM__*/</script>
+<script id="merge">/*__MERGE_JS__*/</script>
+<script id="sync">/*__SYNC_JS__*/</script>
 <script id="review">/*__REVIEW_JS__*/</script>
 <script>
 (function(){
@@ -217,15 +256,23 @@ ruby rt{font-size:.68em;color:var(--acc2);font-weight:600;letter-spacing:0;line-
   var TERMS = JSON.parse(document.getElementById('data-terms').textContent);
   var EXAM = JSON.parse(document.getElementById('data-exam').textContent);
   var REV = window.__ltReview; // 统一错题回炉内核（ADR-0010）
+  var MERGE = window.__ltMerge; // 统一事件并集合并（导入/云同步共用）
+  var SYNCUI = window.__ltSyncUI; // 统一云同步适配层
   var ALL = WENYAN.concat(POEM, MODERN);
   var BYID = {};
   ALL.forEach(function(p){ BYID[p.id] = p; });
   var EXAM_BYID = {};
   EXAM.forEach(function(b){ EXAM_BYID[b.id] = b; });
+  // qid 形如「chushibiao#0」→ 题库里的那道题；历史清单靠它显示真实题干
+  function examItemByKey(key){
+    var cut=String(key||'').indexOf('#'); if(cut<0) return null;
+    var b=EXAM_BYID[key.slice(0,cut)], i=parseInt(key.slice(cut+1),10);
+    return b&&b.items&&b.items[i]?b.items[i]:null;
+  }
 
   var KEY = 'ywRecite.v1';
-  var MODES = ['read','mask','exam','star'];
-  var MODE_TXT = {read:'跟读',mask:'遮罩背诵',exam:'考点默写',star:'重点段'};
+  var MODES = ['read','mask','exam','review','star'];
+  var MODE_TXT = {read:'跟读',mask:'遮罩背诵',exam:'考点默写',review:'错题回炉',star:'重点段'};
   var LV = { '中考必背':{cls:'lb-exam',txt:'中考必背'}, '教材必背':{cls:'lb-book',txt:'教材必背'}, '了解':{cls:'lb-know',txt:'了解'} };
   function lvBadge(p){
     var v = LV[p.level] || LV['教材必背'];
@@ -240,6 +287,21 @@ ruby rt{font-size:.68em;color:var(--acc2);font-weight:600;letter-spacing:0;line-
       if(v&&v.v===1){
         v.stat=v.stat||{}; v.days=v.days||{};
         v.examWrong=v.examWrong||{}; v.examRecs=v.examRecs||[]; // 考点回炉（答错→1/3/7/14天）
+        // 老版本 stat 可能没有 exam/examOk 字段，缺字段会让进度显示 NaN%（截图中的 bug）
+        Object.keys(v.stat).forEach(function(pid){
+          var s=v.stat[pid]; if(!s||typeof s!=='object') return;
+          ['att','ok','wrong','view','exam','examOk'].forEach(function(f){
+            if(typeof s[f]!=='number'||!isFinite(s[f])) s[f]=0;
+          });
+          if(!Array.isArray(s.starred)) s.starred=[];
+        });
+        // 老流水缺 title 时，历史清单只会显示 chushibiao#0 这种题目 id；按题库回填题干
+        (v.examRecs||[]).forEach(function(r){
+          if(r&&typeof r==='object'&&r.qid&&(!r.title||/^[\w-]+#\d+$/.test(r.title))){
+            var it=examItemByKey(r.qid);
+            if(it){ r.title=String(it.q||'').slice(0,60); r.kind=r.kind||it.type; }
+          }
+        });
         return v;
       }
     }catch(e){}
@@ -262,6 +324,8 @@ ruby rt{font-size:.68em;color:var(--acc2);font-weight:600;letter-spacing:0;line-
   function refreshToday(){
     var d=DB.days[todayKey()];
     document.getElementById('todayPill').textContent='今日 '+(d?d.n:0)+' 次';
+    var badge=document.getElementById('dueBadge');
+    if(badge) badge.textContent=dueAll().length;
   }
   function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
   function norm(s){ return String(s||'').replace(/[\s，。！？；：、,'"“”‘’·—…（）()／\/]/g,''); }
@@ -329,7 +393,8 @@ ruby rt{font-size:.68em;color:var(--acc2);font-weight:600;letter-spacing:0;line-
   function chipHTML(p){
     var s=st(p.id), on=p.id===state.piece?' on':'';
     var star=s.starred.length?' <span class="st">★</span>':'';
-    var pg=s.exam?' '+Math.round(s.examOk/s.exam*100)+'%':'';
+    var rate=(s.exam>0&&isFinite(s.examOk))?Math.round(s.examOk/s.exam*100):0;
+    var pg=rate?' '+rate+'%':'';
     var dot='<span class="dot '+(LV[p.level]||LV['教材必背']).cls+'"></span>';
     return '<button class="chip-piece mini'+on+'" data-p="'+p.id+'" title="'+esc(p.title)+' · '+esc(p.level)+' · '+esc(p.term)+'">'+dot+esc(p.title)+star+'<span class="pg">'+pg+'</span></button>';
   }
@@ -434,6 +499,21 @@ ruby rt{font-size:.68em;color:var(--acc2);font-weight:600;letter-spacing:0;line-
     var now=Date.now();
     return eqList().filter(function(x){ var w=DB.examWrong[x.key]; return w && REV.isDue(w,now); });
   }
+  // 跨全部篇目的回炉清单：回炉栏目不能只显示当前篇目，否则答错别的篇目会看不到
+  function allExamEntries(){
+    var out=[];
+    EXAM.forEach(function(b){
+      var p=BYID[b.id]; if(!p) return;
+      b.items.forEach(function(it,i){ out.push({key:b.id+'#'+i,piece:b.id,title:p.title,it:it,i:i}); });
+    });
+    return out;
+  }
+  function dueAll(){
+    var now=Date.now();
+    return allExamEntries().filter(function(e){
+      var w=DB.examWrong[e.key]; return w && REV.isDue(w,now);
+    });
+  }
   function cmpChars(user,ans){
     // 逐字对齐：相同=绿，写错=红波浪，漏字=红底。返回 html
     var a=norm(user), b=norm(ans), out='', i;
@@ -455,7 +535,10 @@ ruby rt{font-size:.68em;color:var(--acc2);font-weight:600;letter-spacing:0;line-
     var rows=hist.length
       ? '<table class="histtable"><tr><th>题目（题干摘要）</th><th class="n">错/对</th><th>首错</th><th>末错</th><th>状态</th></tr>'+
         hist.map(function(e){
-          return '<tr><td>'+esc(String(e.label||e.key).slice(0,44))+'</td>'+
+          // 优先按 qid 回题库取题干：老流水可能没存 title，只留 chushibiao#0 这种 id
+          var stem=examItemByKey(e.key);
+          var label=stem?String(stem.q||''):String(e.label||e.key);
+          return '<tr><td>'+esc(label.slice(0,44))+'</td>'+
             '<td class="n">'+e.wrong+' / '+e.okCount+'</td>'+
             '<td>'+esc(R.dayText(e.firstWrongAt))+'</td><td>'+esc(R.dayText(e.lastWrongAt))+'</td>'+
             '<td><span class="'+(e.inBook?'st-in':'st-done')+'">'+(e.inBook?'在错题本':'已掌握')+'</span></td></tr>';
@@ -595,6 +678,38 @@ ruby rt{font-size:.68em;color:var(--acc2);font-weight:600;letter-spacing:0;line-
     save();
   }
 
+  /* ===== 错题回炉栏目（顶层可见：1/3/7/14 天到期题 + 历史错题） ===== */
+  function viewReview(){
+    var due=dueAll();
+    var dueHtml=due.length
+      ? '<div class="revlist">'+due.map(function(e,i){
+          var w=DB.examWrong[e.key];
+          return '<div class="revitem">'+
+            '<div class="revttl">'+esc(e.title)+'<span class="eqtag rev">'+esc(REV.statusText(w))+' · 连对 '+(w.okStreak||0)+'/2</span></div>'+
+            '<div class="revq">'+(i+1)+'. '+esc(e.it.q)+'</div>'+
+            '<div class="revans">答案：'+esc(e.it.ans)+'</div>'+
+            '<button data-rev-go="'+esc(e.key)+'">去默写 →</button></div>';
+        }).join('')+'</div>'
+      : '<div class="empty">当前没有到期的回炉题。考点默写答错后，题目会在 1 天后出现在这里。</div>';
+    return '<div class="piecehead"><h2>错题回炉</h2>'+
+      '<span class="meta">1 / 3 / 7 / 14 天间隔复习 · 全部篇目统一查看 · 连对 2 次有效作答才移出</span></div>'+
+      '<h3 class="revsec">待回炉（'+due.length+'）</h3>'+dueHtml+
+      viewExamHistory();
+  }
+  function bindReview(){
+    document.querySelectorAll('[data-rev-go]').forEach(function(el){
+      el.onclick=function(){
+        var key=el.getAttribute('data-rev-go'), cut=key.indexOf('#');
+        if(cut<0) return;
+        state.piece=key.slice(0,cut);
+        var idx=parseInt(key.slice(cut+1),10);
+        state.mode='exam'; state.examView='all'; state.eq=isFinite(idx)?idx:0;
+        state.eqStart[key]=Date.now();
+        writeHash(); renderAll();
+      };
+    });
+  }
+
   function viewStar(){
     var rows=[];
     ALL.forEach(function(p){
@@ -635,9 +750,10 @@ ruby rt{font-size:.68em;color:var(--acc2);font-weight:600;letter-spacing:0;line-
     if(state.mode==='read'){ box.innerHTML=viewRead(); bindRead(); }
     else if(state.mode==='mask'){ box.innerHTML=viewMask(); bindMask(); }
     else if(state.mode==='exam'){ box.innerHTML=viewExam(); bindExam(); bindExamView(); }
+    else if(state.mode==='review'){ box.innerHTML=viewReview(); bindReview(); }
     else { box.innerHTML=viewStar(); bindStarView(); }
     // 上一段/下一段/只看★段 在 read/mask 两种模式都渲染，统一在此绑定
-    if(state.mode!=='star' && state.mode!=='exam') bindNav(n);
+    if(state.mode!=='star' && state.mode!=='exam' && state.mode!=='review') bindNav(n);
   }
   function bindExamView(){
     document.querySelectorAll('[data-ev]').forEach(function(b){
@@ -682,11 +798,102 @@ ruby rt{font-size:.68em;color:var(--acc2);font-weight:600;letter-spacing:0;line-
     state.eq=0; state.eqStart[eqid(0)]=Date.now();
     writeHash(); renderAll();
   });
+  /* ===== 数据管理：导出 / 导入 / 云同步（合并统一走 __ltMerge） ===== */
+  function dataMsg(text,cls){
+    var el=document.getElementById('dataMsg'); if(!el) return;
+    el.textContent=text||'';
+    el.className='msg'+(cls?' '+cls:'');
+  }
+  // 本卡记录 {stat,days,examWrong,examRecs} → 共享合并器认识的 {recs,wrong,meta}
+  function toShared(db){
+    var recs=(db.examRecs||[]).map(function(r){
+      return Object.assign({},r,{
+        mod:'ywRecite', kind:r.kind||r.type||'',
+        kn:String(r.qid||''), prompt:(String(r.qid||'')+'|'+String(r.title||'')).slice(0,40),
+        ts:r.ts||0
+      });
+    });
+    var wrong={};
+    Object.keys(db.examWrong||{}).forEach(function(k){
+      var w=db.examWrong[k]; if(!w) return;
+      wrong[k]=Object.assign({},w,{
+        kn:k, prompt:(String(k)+'|'+String(w.q||'')).slice(0,40)
+      });
+    });
+    return {v:1,recs:recs,wrong:wrong,meta:{}};
+  }
+  function fromShared(shared,base){
+    var out=Object.assign({},base||{v:1,stat:{},days:{},examWrong:{},examRecs:[]});
+    out.v=1;
+    out.examRecs=(shared.recs||[]).map(function(r){
+      var c=Object.assign({},r);
+      ['mod','kn','prompt'].forEach(function(f){ delete c[f]; });
+      return c;
+    });
+    out.examWrong={};
+    Object.keys(shared.wrong||{}).forEach(function(k){
+      var w=Object.assign({},shared.wrong[k]);
+      ['kn','prompt'].forEach(function(f){ delete w[f]; });
+      out.examWrong[k]=w;
+    });
+    // stat/days 是设备态：跟读、遮罩也计入 stat，云端只同步作答流水和回炉档
+    out.stat=out.stat||{}; out.days=out.days||{};
+    return out;
+  }
+  function applyImport(text){
+    var obj=JSON.parse(text);
+    var incoming=(obj&&obj.apps&&obj.apps[KEY])?obj.apps[KEY]:obj;
+    if(!incoming||typeof incoming!=='object') throw new Error('文件不是合法的记录 JSON');
+    // 兼容三种文件：本卡导出（examRecs）、开始页整份备份（apps[KEY]）、共享快照（recs）
+    var inc=Array.isArray(incoming.examRecs)?incoming
+      :{v:1,stat:{},days:{},examWrong:incoming.wrong||{},examRecs:incoming.recs||[]};
+    var merged=MERGE.mergeRecords(toShared(DB),toShared(inc));
+    DB=fromShared(merged,DB);
+    save(); renderAll();
+    return DB.examRecs.length;
+  }
   document.getElementById('exportBtn').onclick=function(){
     var blob=new Blob([JSON.stringify(DB,null,2)],{type:'application/json'});
     var a=document.createElement('a'); a.href=URL.createObjectURL(blob);
     a.download='背诵记录_'+todayKey()+'.json'; a.click();
     setTimeout(function(){ URL.revokeObjectURL(a.href); },1000);
+    dataMsg('已导出 '+DB.examRecs.length+' 条作答流水。','ok');
+  };
+  document.getElementById('importBtn').onclick=function(){
+    document.getElementById('importFile').click();
+  };
+  document.getElementById('importFile').onchange=function(e){
+    var f=e.target.files&&e.target.files[0]; if(!f) return;
+    var reader=new FileReader();
+    reader.onload=function(){
+      try{
+        var n=applyImport(String(reader.result));
+        dataMsg('已导入并合并：本机累计 '+n+' 条作答流水（重复记录自动跳过）。','ok');
+      }catch(err){ dataMsg('导入失败：'+(err&&err.message?err.message:err),'bad'); }
+    };
+    reader.readAsText(f);
+    e.target.value='';
+  };
+  document.getElementById('patHelpBtn').onclick=function(){
+    if(SYNCUI&&SYNCUI.patHelp) alert(SYNCUI.patHelp);
+    else alert('云同步模块未加载，请重新用构建脚本生成页面。');
+  };
+  document.getElementById('syncBtn').onclick=function(){
+    if(!SYNCUI||!MERGE){ dataMsg('云同步模块未加载，请重新用构建脚本生成页面。','bad'); return; }
+    var pat=document.getElementById('syncPat');
+    if(pat&&pat.value){ SYNCUI.setPAT(pat.value); pat.value=''; }
+    if(!SYNCUI.hasPAT()){ dataMsg('请先填入 GitHub PAT（点「PAT 是什么？」看生成步骤）。'); return; }
+    SYNCUI.run();
+  };
+  if(SYNCUI) SYNCUI.init({
+    getDB:function(){ return toShared(DB); },
+    setDB:function(shared){ DB=fromShared(shared,DB); save(); renderAll(); },
+    notify:function(msg){ dataMsg(msg); }
+  });
+  window.__ywRecite={
+    get DB(){ return DB; },
+    importText:function(text){ return applyImport(text); },
+    toShared:toShared, fromShared:fromShared
   };
   window.addEventListener('hashchange',function(){ parseHash(); renderAll(); });
 
