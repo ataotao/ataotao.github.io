@@ -10,7 +10,7 @@
 //   ② 今日题单同一天两次一致、写解析式 8 题、第一题是顶点式；
 //   ③ 顶点式第一空是 expr（y = a(x−h)²+k 三个空）+ 一个求值空，填对判对；
 //   ④ 报告视图能渲染；
-//   ⑤ 模块页有「专项 10 题」与混抽说明。
+//   ⑤ 模块页有「专项 3 题」、板块随机按钮与混抽说明；板块随机的题量/覆盖/重来。
 import { readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -149,8 +149,38 @@ ok(textOf(app).length > 0, '报告视图渲染为空');
 ok(textOf(app).includes('题单快照'), '报告里没有题单快照卡');
 
 M.go('write');
-ok(textOf(app).includes('专项 10 题'), '模块页没有「专项 10 题」');
+ok(textOf(app).includes('专项 3 题'), '模块页没有「专项 3 题」');
+ok(textOf(app).includes('当前板块随机题练习'), '写解析式页没有板块随机按钮');
 ok(textOf(app).includes('按题型混抽'), '模块页没有混抽说明');
+M.go('drill');
+ok((textOf(app).match(/当前板块随机题练习/g) || []).length >= 7, '基础快练不是每个分组都有随机按钮');
+
+/* 6b. 板块随机：每种题型 1~2 次、全覆盖、题数由题型数决定，重来按同板块规则 */
+{
+  const wm = ctx.MT.moduleById('write');
+  M.startGroupRandom('write', wm.kinds);
+  let qs = M.S.sess.queue;
+  const n = wm.kinds.length;
+  const cnt = {};
+  qs.forEach((x) => { cnt[x.kind] = (cnt[x.kind] || 0) + 1; });
+  ok(qs.length >= n && qs.length <= 2 * n, '写解析式板块随机题数超范围：' + qs.length);
+  ok(Object.keys(cnt).length === n, '写解析式板块随机没覆盖全部题型');
+  ok(Object.values(cnt).every((c) => c === 1 || c === 2), '写解析式板块随机次数不是 1~2');
+  ok(M.S.sess.daily !== true, '板块随机被误算成今日题单');
+  const label = M.S.sess.groupLabel;
+  M.S.sess.replay();
+  qs = M.S.sess.queue;
+  ok(M.S.sess.groupLabel === label && qs.length >= n && qs.length <= 2 * n, '「再来一轮」没重放板块随机规则');
+
+  const dm = ctx.MT.moduleById('drill');
+  const grp = dm.kinds.filter((k) => k.group === '圆');
+  M.startGroupRandom('drill', grp);
+  qs = M.S.sess.queue;
+  const gc = {};
+  qs.forEach((x) => { gc[x.kind] = (gc[x.kind] || 0) + 1; });
+  ok(qs.length >= grp.length && qs.length <= 2 * grp.length, '圆板块随机题数超范围：' + qs.length);
+  ok(Object.keys(gc).length === grp.length && Object.values(gc).every((c) => c === 1 || c === 2), '圆板块随机覆盖不全或次数超限');
+}
 
 /* ---------- 7. 审查后回归（B01/B03/B05/B06/B08） ---------- */
 // B01：expr 必须按模板空位顺序判分 —— 把 a/h 互换应判错
@@ -207,4 +237,4 @@ if (fails.length) {
   fails.forEach((f) => console.error('  - ' + f));
   process.exit(1);
 }
-console.log('✓ UI 冒烟通过（今日渲染 / 题单一致 / expr 判分 / 报告 / 专项 / 回归：expr 顺序、例题提交、空提交、当天题单、配比文案）');
+console.log('✓ UI 冒烟通过（今日渲染 / 题单一致 / expr 判分 / 报告 / 专项 3 题 / 板块随机覆盖与重来 / 回归：expr 顺序、例题提交、空提交、当天题单、配比文案）');

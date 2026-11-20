@@ -109,7 +109,7 @@
     tasks_plan.forEach(function (p) { done[p.mod] = 0; });
     tr.forEach(function (r) {
       if (r.mode === 'wrong') done.wrong++;
-      else if (r.daily && done[r.mod] != null) done[r.mod]++;   /* 只有「今日题单」的题才算完成，专项 10 题不算 */
+      else if (r.daily && done[r.mod] != null) done[r.mod]++;   /* 只有「今日题单」的题才算完成，专项 3 题 / 板块随机不算 */
     });
 
     var tasks = h('div', { class: 'card' });
@@ -191,23 +191,38 @@
       h('p', { class: 'muted small', style: 'margin:6px 0 0' }, m.desc)
     );
     app.appendChild(head);
-    head.appendChild(h('div', { class: 'row', style: 'margin-top:12px' },
-      h('button', { class: 'btn btn-primary', onclick: function () { startSession(m.id, null, m.id === 'entry' ? 3 : 8); } }, '开始一轮'),
-      h('button', { class: 'btn', onclick: function () { startExample(m.id, lastKindOf(m.id)); } }, '先看例题')
-    ));
-    head.appendChild(h('div', { class: 'small muted', style: 'margin-top:8px' }, '「开始一轮」按题型混抽（每次不同）；下面按板块分组，每个题型可以单独连做 10 题（专项）。'));
-    /* 分组：按 group 首次出现的顺序，同 group 的卡片排在一起；没有 group 就不出标题 */
+    /* 分组抽象：题型带 group 就按组显示标题 + 按钮；不带 group 就整页算一个板块，按钮放页头。
+       写解析式现在没有分组，未来加 group 后自动切成按组按钮，下面逻辑不用改。 */
     var groups = [], byGroup = {};
-    if (m.kinds) m.kinds.forEach(function (k) {
+    (m.kinds || []).forEach(function (k) {
       var g = k.group || '';
       if (!byGroup[g]) { byGroup[g] = []; groups.push(g); }
       byGroup[g].push(k);
     });
     var showGroupHead = groups.length > 1 || (groups.length === 1 && groups[0] !== '');
+    function randomBtn(kinds) {
+      return h('button', { class: 'btn btn-sm btn-random', onclick: function () { startGroupRandom(m.id, kinds); } }, '当前板块随机题练习');
+    }
+    head.appendChild(h('div', { class: 'row', style: 'margin-top:12px' },
+      h('button', { class: 'btn btn-primary', onclick: function () { startSession(m.id, null, m.id === 'entry' ? 3 : 8); } }, '开始一轮'),
+      h('button', { class: 'btn', onclick: function () { startExample(m.id, lastKindOf(m.id)); } }, '先看例题'),
+      (m.kinds && !showGroupHead) ? randomBtn(m.kinds) : null
+    ));
+    head.appendChild(h('div', { class: 'small muted', style: 'margin-top:8px' },
+      m.kinds
+        ? ('「开始一轮」按题型混抽（每次不同）；每个题型可以单独连做 3 题（专项）。' +
+           (showGroupHead ? '板块标题右侧「当前板块随机题练习」按该板块题型各出 1~2 题。' : '「当前板块随机题练习」按本页题型各出 1~2 题。'))
+        : '「开始一轮」从全部得分点里随机抽 3 个。'
+    ));
     var list = h('div', { style: 'margin-top:4px' });
     if (m.kinds) {
       groups.forEach(function (g) {
-        if (showGroupHead && g) list.appendChild(h('div', { class: 'gsec' }, h('b', null, g), h('span', null, byGroup[g].length + ' 个题型')));
+        if (showGroupHead && g) list.appendChild(h('div', { class: 'gsec' },
+          h('b', null, g),
+          h('span', null, byGroup[g].length + ' 个题型'),
+          h('span', null, '每种 1~2 题'),
+          randomBtn(byGroup[g])
+        ));
         var grid = h('div', { class: 'grid' });
         byGroup[g].forEach(function (k) {
           var st = kindStat('new', m.id, k.id);
@@ -215,7 +230,7 @@
             h('div', { class: 'mh' }, h('b', null, k.name)),
             h('div', { class: 'desc small muted' }, st.n ? '练过 ' + st.n + ' 题 · 正确率 ' + pct(st.ok, st.n) + '%' : '还没练过'),
             h('div', { class: 'row', style: 'margin-top:auto' },
-              h('button', { class: 'btn btn-primary btn-sm', onclick: function () { startSession(m.id, k.id, 10); } }, '专项 10 题'),
+              h('button', { class: 'btn btn-primary btn-sm', onclick: function () { startSession(m.id, k.id, 3); } }, '专项 3 题'),
               h('button', { class: 'btn btn-sm', onclick: function () { startExample(m.id, k.id); } }, '看例题')
             )
           ));
@@ -263,6 +278,36 @@
       sess.queue = shuffle(items).slice(0, n);
       sess.total = sess.queue.length;
     }
+    S.sess = sess;
+    S.view = 'practice';
+    nextQuestion();
+  }
+  /* 当前板块随机题：每种题型先保证 1 题，再掷骰子加 1 题（1~2 次），题数 = 板块题型数 ~ 2 倍。
+     队列现场生成，「再来一轮」走 sess.replay 重放同一板块规则，不退化成全场混抽。 */
+  function startGroupRandom(mod, kinds) {
+    if (!kinds || !kinds.length) { startSession(mod, null, 8); return; }
+    var pool = [];
+    kinds.forEach(function (k) {
+      pool.push(k.id);
+      if (Math.random() < 0.5) pool.push(k.id);
+    });
+    var ids = shuffle(pool), seen = {}, qs = [];
+    ids.forEach(function (id) {
+      var q, key, tries = 0;
+      do {
+        q = MT.gen(mod, id, (Math.random() * 1e9) | 0);
+        key = id + '|' + String(q.prompt);
+        tries++;
+      } while (seen[key] && tries < 6);   /* 同题型出两遍时，尽量不撞同一题干 */
+      seen[key] = true;
+      qs.push(q);
+    });
+    S.mode = 'new';
+    S.example = false;
+    S.back = null;
+    var sess = { mod: mod, kind: null, total: qs.length, done: 0, right: 0, t0: Date.now(),
+      queue: qs, groupLabel: '本板块 ' + kinds.length + ' 个题型 · 每种 1~2 题' };
+    sess.replay = function () { startGroupRandom(mod, kinds); };
     S.sess = sess;
     S.view = 'practice';
     nextQuestion();
@@ -375,7 +420,7 @@
     var q = S.q, s = S.sess;
     if (!q) { go('today'); return; }
     var head = h('div', { class: 'row', style: 'margin-bottom:8px' },
-      h('span', { class: 'pill' }, S.mode === 'wrong' ? '错题回炉' : (MT.moduleById(s.mod).name)),
+      h('span', { class: 'pill' }, S.mode === 'wrong' ? '错题回炉' : (MT.moduleById(s.mod).name + (s.groupLabel ? ' · ' + s.groupLabel : ''))),
       h('span', { class: 'small muted' }, (q.title || '')),
       h('span', { class: 'grow' }),
       h('span', { class: 'small muted' }, Math.min(s.done + (S.answered ? 0 : 1), s.total) + ' / ' + s.total)
@@ -758,7 +803,12 @@
       h('h2', { style: 'margin:8px 0 4px' }, s.right + ' / ' + s.total + ' 全对'),
       h('p', { class: 'muted' }, '用时约 ' + mins + ' 分钟 · 正确率 ' + pct(s.right, s.total) + '%'),
       h('div', { class: 'row', style: 'justify-content:center;margin-top:16px' },
-        h('button', { class: 'btn btn-primary', onclick: function () { if (s.mod === 'wrong') startWrong(); else if (s.daily) startDaily(s.mod); else startSession(s.mod, s.kind, s.total); } }, '再来一轮'),
+        h('button', { class: 'btn btn-primary', onclick: function () {
+          if (s.replay) s.replay();
+          else if (s.mod === 'wrong') startWrong();
+          else if (s.daily) startDaily(s.mod);
+          else startSession(s.mod, s.kind, s.total);
+        } }, '再来一轮'),
         h('button', { class: 'btn', onclick: function () { go('today'); } }, '回今日')
       )
     ));
@@ -996,6 +1046,7 @@
   window.__mt = {
     S: S, db: function () { return DB; },
     startSession: startSession, startWrong: startWrong, startDaily: startDaily, startExample: startExample,
+    startGroupRandom: startGroupRandom,
     plan: function () { return dayPlan(); },
     submit: submit, submitFix: submitFix, next: next, go: go, render: render
   };
