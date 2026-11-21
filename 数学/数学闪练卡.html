@@ -2153,6 +2153,164 @@ var MT = (function () {
     };
   }
 
+  /* ---------- 第二十九章《圆》单元测试卷（2026-11-21）补的六个考点 ----------
+     对照《第二十九章《圆》单元测试卷》（23 题 / 120 分）逐题过了一遍，闪练卡缺这六块：
+     ① 弦 = 半径 ⟹ 等边三角形（卷 1、7 题）；② 圆内接四边形外角 = 内对角（19 题）；
+     ③ 同心圆被一条弦截出四条线段（16 题）；④ 弓形面积 = 扇形 − 三角形（14、22 题）；
+     ⑤ 已知两点和半径，确定圆的个数（6 题）；⑥ 尺规作图找圆心 = 两条轨迹的交点（20 题）。
+     每一块都写成「先算哪一步 + 一条易错点」，和前面几批补缺口的写法一致。 */
+
+  /* ① 弦长等于半径：△OAB 三边都是半径 ⟹ 等边 ⟹ 圆心角 60°，圆周角 30°。 */
+  function genChordRadius(r) {
+    var rad = pick(r, [4, 5, 6, 8, 9, 10, 12, 15, 18]);
+    return {
+      id: 'drill.chordradius', kind: 'chordradius', title: '弦等于半径（等边三角形）',
+      prompt: '⊙O 的半径为 ' + rad + '，弦 AB = ' + rad + '。<br><span class="muted small">先连 OA、OB，判断 △OAB 是什么三角形。</span>',
+      fields: [
+        { type: 'num', label: '圆心角 ∠AOB =', ans: 60, unit: '°' },
+        { type: 'num', label: '圆周角 ∠ACB =', ans: 30, unit: '°' }
+      ],
+      tip: '连 OA、OB：三条边都等于半径 ⟹ 等边三角形 ⟹ 圆心角 60°；同弧的圆周角再除以 2。',
+      explain: ['OA = OB = ' + rad + '（半径），又弦 AB = ' + rad + '，所以 OA = OB = AB，△OAB 是等边三角形。',
+        '圆心角 ∠AOB = 60°。',
+        '点 C 在优弧上时，∠ACB 与 ∠AOB 对着同一段弧 AB，∠ACB = ½ × 60° = 30°。',
+        '记结论：弦 = 半径 ⟺ 圆心角 60°；这条比套弧长公式还省事（卷面第 7 题就是这么出的）。'],
+      kp: ['圆的基本性质', '连半径得等腰', '圆周角定理']
+    };
+  }
+
+  /* ② 圆内接四边形的外角等于内对角：∠EAD + ∠DAB = 180°，∠DAB + ∠BCD = 180° ⟹ ∠EAD = ∠BCD。 */
+  var CYCQ_EXT = [95, 100, 105, 110, 115, 120, 130, 85];
+  function genCycQuadExt(r) {
+    var D = pick(r, CYCQ_EXT);
+    return {
+      id: 'drill.cycqext', kind: 'cycqext', title: '圆内接四边形·外角',
+      prompt: '四边形 ABCD 内接于 ⊙O，E 在 BA 的延长线上，∠BCD = ' + D + '°。<br><span class="muted small">求外角 ∠EAD，以及 ∠BAD。</span>',
+      fields: [
+        basisField(r, 'cyc', '依据'),
+        { type: 'num', label: '外角 ∠EAD =', ans: D, unit: '°' },
+        { type: 'num', label: '∠BAD =', ans: 180 - D, unit: '°' }
+      ],
+      tip: '外角 = 内对角：∠EAD = ∠BCD。∠BAD 与它邻补，所以是 180° − ∠BCD。',
+      explain: ['因为 E 在 BA 的延长线上，∠EAD 与 ∠DAB 邻补：∠EAD + ∠DAB = 180°。',
+        '四边形 ABCD 内接于 ⊙O，对角互补：∠DAB + ∠BCD = 180°。',
+        '两式相减得 ∠EAD = ∠BCD = ' + D + '°（这就是「圆内接四边形外角等于内对角」）。',
+        '∠BAD = 180° − ' + D + '° = ' + (180 - D) + '°。坑：把外角算成 ∠BAD 的补角反过来，或者把 ∠EAD 和内角 ∠DAB 搞混。'],
+      kp: ['圆的基本性质', '圆内接四边形', '外角等于内对角']
+    };
+  }
+
+  /* ③ 同心圆：大圆的一条弦交小圆于 C、D，垂径定理对大圆、小圆各用一次 ⟹ AC = BD。 */
+  var CONCENTRIC = [[20, 12], [16, 8], [24, 16], [30, 18], [14, 6], [18, 10], [22, 14], [26, 10]];
+  function genConcentric(r) {
+    var p = pick(r, CONCENTRIC), AB = p[0], CD = p[1];
+    var ac = (AB - CD) / 2;
+    return {
+      id: 'drill.concentric', kind: 'concentric', title: '同心圆·一条弦截两圆',
+      prompt: '两个圆的圆心都是 O，大圆的弦 AB 交小圆于 C、D 两点（顺序 A、C、D、B）。AB = ' + AB + '，CD = ' + CD + '。<br><span class="muted small">求 AC 和 BD。</span>',
+      fields: [
+        { type: 'num', label: 'AC =', ans: ac },
+        { type: 'num', label: 'BD =', ans: ac }
+      ],
+      tip: '过 O 作 AB 的垂线，交 AB 于 M：M 同时是大圆中点和 CD 中点，两次垂径定理一减就出结果。',
+      explain: ['作 OM ⊥ AB 于 M。在大圆中，OM 过圆心且垂直于弦，所以 AM = MB = ½ × ' + AB + ' = ' + (AB / 2) + '。',
+        '在小圆中，C、D 在小圆上，OM ⊥ CD，所以 CM = MD = ½ × ' + CD + ' = ' + (CD / 2) + '。',
+        'AC = AM − CM = ' + (AB / 2) + ' − ' + (CD / 2) + ' = ' + ac + '；BD = MB − MD 同样等于 ' + ac + '。',
+        '结论可以直接记：同心圆被一条直线截出 A、C、D、B，必有 AC = BD。坑：把 AC 当成 (AB − CD)，忘了要除 2。'],
+      kp: ['圆的基本性质', '垂径定理', '同心圆']
+    };
+  }
+
+  /* ④ 弓形面积 = 扇形 − 三角形（90° 的情形，数字好算）：S弓 = ¼πr² − ½r²。 */
+  var BOW_R = [4, 6, 8, 10, 12, 16, 20];
+  function genBowArea(r) {
+    var rad = pick(r, BOW_R);
+    var kS = rad * rad / 4, tri = rad * rad / 2;
+    var right = frac(kS) + 'π − ' + tri;
+    var opts = shuffle(r, [right, frac(kS) + 'π + ' + tri, frac(kS) + 'π', frac(kS) + 'π − ' + (2 * tri)]);
+    return {
+      id: 'drill.bowarea', kind: 'bowarea', title: '弓形面积（扇形 − 三角形）',
+      prompt: '在半径为 ' + rad + ' 的 ⊙O 中，圆心角 ∠AOB = 90°，弦 AB 与弧 AB 围成弓形。<br><span class="muted small">先算扇形，再算 △OAB，最后相减。</span>',
+      fields: [
+        { type: 'num', label: '扇形面积 = kπ，k =', ans: kS },
+        { type: 'num', label: '△OAB 面积 =', ans: tri },
+        { type: 'choice', label: '弓形面积 =', options: opts, ans: opts.indexOf(right) }
+      ],
+      tip: '弓形 = 扇形 − 三角形。扇形用 nπr²/360，三角形用 ½r²sin∠AOB（90° 时就是 ½r²）。',
+      explain: ['扇形面积 = 90/360 × π × ' + rad + '² = ' + frac(kS) + 'π。',
+        '△OAB 中 OA = OB = ' + rad + '，∠AOB = 90°，面积 = ½ × ' + rad + ' × ' + rad + ' = ' + tri + '。',
+        '弓形面积 = ' + frac(kS) + 'π − ' + tri + '。',
+        '坑：把弓形当成扇形（漏减三角形）；或者用三角形的斜边 AB 去算面积。'],
+      kp: ['圆的基本性质', '扇形面积', '弓形面积']
+    };
+  }
+
+  /* ⑤ 已知两点和半径：圆心在 AB 的垂直平分线上，到中点距离 h = √(r² − (d/2)²)。
+     h > 0 两个圆、h = 0 一个、无实数解 0 个 —— 等价于比较 2r 与 AB。 */
+  var CIRC_NUM = [[7, 5], [6, 5], [10, 5], [12, 5], [14, 8], [8, 4], [16, 6], [9, 5], [5, 3], [18, 10]];
+  function genCircNum(r) {
+    var p = pick(r, CIRC_NUM), d0 = p[0], rad = p[1];
+    var cnt = 2 * rad > d0 ? 2 : (2 * rad === d0 ? 1 : 0);
+    var opts = ['0 个', '1 个', '2 个', '无数个'];
+    var why = cnt === 2 ? '2r = ' + (2 * rad) + ' > AB = ' + d0 + '，圆心到 AB 中点有两个对称位置'
+      : (cnt === 1 ? '2r = ' + (2 * rad) + ' = AB，圆心正好离 AB 中点 0，只有一个位置'
+        : '2r = ' + (2 * rad) + ' < AB = ' + d0 + '，到 A、B 都是 ' + rad + ' 的点不存在');
+    return {
+      id: 'drill.circnum', kind: 'circnum', title: '确定圆的个数',
+      prompt: '已知线段 AB = ' + d0 + '，经过 A、B 两点且半径为 ' + rad + ' 的圆有几个？',
+      fields: [{ type: 'choice', label: '', options: opts, ans: cnt }],
+      tip: '先看 2r 与 AB：2r > AB 有 2 个，2r = AB 有 1 个，2r < AB 一个也没有。',
+      explain: ['圆心到 A、B 的距离都是 ' + rad + '，所以圆心在 AB 的垂直平分线上。',
+        '设 AB 中点为 M，则圆心到 M 的距离 h 满足 h² = ' + rad + '² − (' + d0 + '/2)² = ' + (rad * rad - d0 * d0 / 4) + '。',
+        why + '，所以有 ' + cnt + ' 个。',
+        '坑：以为「过两点」就能确定一个圆——过两点能作无数个圆，半径给定才有限。'],
+      kp: ['圆的基本概念', '确定圆的条件']
+    };
+  }
+
+  /* ⑥ 尺规作图找圆心：两个条件各对应一条轨迹（角平分线 / 垂直平分线），交点就是圆心。 */
+  var CONSTR_CASES = [
+    { ask: '⊙P 经过 A、B 两点，且圆心 P 到 AB、AC 两边的距离相等',
+      right: '∠BAC 的平分线与 AB 的垂直平分线的交点',
+      why: '到两边距离相等 ⟹ 在角平分线上；到 A、B 距离相等 ⟹ 在 AB 的垂直平分线上。' },
+    { ask: '⊙P 经过 △ABC 的三个顶点',
+      right: 'AB 与 AC 两条边的垂直平分线的交点',
+      why: '到三个顶点距离相等 ⟹ 三边垂直平分线交于一点（外心）。' },
+    { ask: '⊙P 经过 A、B 两点，且圆心 P 在直线 BC 上',
+      right: 'AB 的垂直平分线与直线 BC 的交点',
+      why: '到 A、B 距离相等 ⟹ 在 AB 的垂直平分线上；再落到 BC 上就唯一确定。' },
+    { ask: '⊙P 与 ∠BAC 的两边都相切，且 ⊙P 经过点 A 以外的 BC 边上一点 D',
+      right: '∠BAC 的平分线与 AD 的垂直平分线的交点',
+      why: '与两边相切 ⟹ 圆心在角平分线上；过 D 且半径等于 PA ⟹ 还要 PA = PD，即 P 在 AD 的垂直平分线上。' }
+  ];
+  var CONSTR_BAD = [
+    '∠BAC 的平分线与 BC 的交点',
+    'AB 与 AC 两条边的中线的交点',
+    '过 A 作 BC 的垂线与 BC 的交点',
+    '∠ABC 的平分线与 AB 的垂直平分线的交点',
+    'AB 的中点',
+    '三条高的交点'
+  ];
+  function genConstrCenter(r) {
+    var t = pick(r, CONSTR_CASES);
+    var picked = [t.right], guard = 0;
+    while (picked.length < 4 && guard++ < 80) {
+      var w = pick(r, CONSTR_BAD);
+      if (picked.indexOf(w) < 0) picked.push(w);
+    }
+    var opts = shuffle(r, picked);
+    return {
+      id: 'drill.constrcenter', kind: 'constrcenter', title: '尺规作图·找圆心',
+      prompt: t.ask + '。圆心 P 应该这样作（　）',
+      fields: [{ type: 'choice', label: '', options: opts, ans: opts.indexOf(t.right) }],
+      tip: '每个条件翻成一条轨迹：距离相等→垂直平分线，到两边距离相等→角平分线；两条轨迹的交点就是圆心。',
+      explain: [t.why,
+        '所以圆心 P 是「' + t.right + '」，再以 P 到已知点的距离为半径画圆即可。',
+        '坑：把「到两边距离相等」画成垂直平分线（那是到两点距离相等）；作图题要把两条轨迹都留下痕迹。'],
+      kp: ['圆的基本概念', '尺规作图', '外心']
+    };
+  }
+
   var ENTRY = [
     {
       id: 'entry.21.1', group: '函数与图象', no: '21', title: '21(1) 求交点',
@@ -2602,7 +2760,7 @@ var MT = (function () {
   var MODULES = [
     {
       id: 'drill', name: '基础快练', icon: '⚡',
-      desc: '七个板块、49 个题型，限时一次就对：方程与代数 / 二次函数 / 反比例函数 / 圆 / 直线与圆 / 图形与变换 / 推理与证明。',
+      desc: '九个板块、55 个题型，限时一次就对：方程与代数 / 二次函数 / 反比例函数 / 圆·概念与角 / 圆·弦与垂径 / 圆·弧长面积与应用 / 直线与圆 / 图形与变换 / 推理与证明。',
       kinds: [
         /* group 只决定模块页怎么分组显示；数组顺序 = 「开始一轮」的混抽顺序 = 今日轮换顺序 */
         /* —— 方程与代数 —— */
@@ -2627,18 +2785,18 @@ var MT = (function () {
         { id: 'invprop', name: '反比例·性质', group: '反比例函数', gen: genInvProp },
         { id: 'invarea', name: '反比例·面积', group: '反比例函数', gen: genInvArea },
         /* —— 圆：概念 → 三条辅助线 → 两个易忘推论 → 29.2–29.3 的弧与扇形 —— */
-        { id: 'circledef', name: '圆的基本概念', group: '圆', gen: genCircleDef },
-        { id: 'ptcirc', name: '点与圆的位置关系', group: '圆', gen: genPtCirc },
-        { id: 'circum', name: '直角三角形外接圆', group: '圆', gen: genCircum },
-        { id: 'radiusiso', name: '连半径得等腰', group: '圆', gen: genRadiusIso },
-        { id: 'perpchord', name: '垂径定理', group: '圆', gen: genPerpChord },
-        { id: 'diam90', name: '直径所对圆周角', group: '圆', gen: genDiam90 },
-        { id: 'cycquad', name: '圆内接四边形', group: '圆', gen: genCycQuad },
-        { id: 'circangle', name: '圆周角定理', group: '圆', gen: genCircAngle },
-        { id: 'arcchord', name: '弧、弦、圆心角', group: '圆', gen: genArcChord },
-        { id: 'arclen', name: '弧长', group: '圆', gen: genArcLen },
-        { id: 'sector', name: '扇形面积', group: '圆', gen: genSector },
-        { id: 'cone', name: '圆锥的侧面积', group: '圆', gen: genCone },
+        { id: 'circledef', name: '圆的基本概念', group: '圆·概念与角', gen: genCircleDef },
+        { id: 'ptcirc', name: '点与圆的位置关系', group: '圆·概念与角', gen: genPtCirc },
+        { id: 'circum', name: '直角三角形外接圆', group: '圆·概念与角', gen: genCircum },
+        { id: 'radiusiso', name: '连半径得等腰', group: '圆·弦与垂径', gen: genRadiusIso },
+        { id: 'perpchord', name: '垂径定理', group: '圆·弦与垂径', gen: genPerpChord },
+        { id: 'diam90', name: '直径所对圆周角', group: '圆·概念与角', gen: genDiam90 },
+        { id: 'cycquad', name: '圆内接四边形', group: '圆·概念与角', gen: genCycQuad },
+        { id: 'circangle', name: '圆周角定理', group: '圆·概念与角', gen: genCircAngle },
+        { id: 'arcchord', name: '弧、弦、圆心角', group: '圆·弦与垂径', gen: genArcChord },
+        { id: 'arclen', name: '弧长', group: '圆·弧长面积与应用', gen: genArcLen },
+        { id: 'sector', name: '扇形面积', group: '圆·弧长面积与应用', gen: genSector },
+        { id: 'cone', name: '圆锥的侧面积', group: '圆·弧长面积与应用', gen: genCone },
         /* —— 直线与圆（第 30 章） —— */
         { id: 'linecircle', name: '直线与圆的位置关系', group: '直线与圆', gen: genLineCircle },
         { id: 'tanprop', name: '切线的性质', group: '直线与圆', gen: genTanProp },
@@ -2654,15 +2812,22 @@ var MT = (function () {
         /* —— 推理与证明 —— */
         { id: 'absurd', name: '反证法第一步', group: '推理与证明', gen: genAbsurd },
         /* —— 第 12 周限时练习暴露的四个缺口 —— */
-        { id: 'secperim', name: '扇形周长', group: '圆', gen: genSecPerim },
-        { id: 'paralleldist', name: '平行弦之间的距离', group: '圆', gen: genParallelDist },
-        { id: 'circumcenter', name: '三角形外心', group: '圆', gen: genCircumCenter },
-        { id: 'equiarc', name: '等边三角形外接圆的弧长', group: '圆', gen: genEquiArc },
+        { id: 'secperim', name: '扇形周长', group: '圆·弧长面积与应用', gen: genSecPerim },
+        { id: 'paralleldist', name: '平行弦之间的距离', group: '圆·弦与垂径', gen: genParallelDist },
+        { id: 'circumcenter', name: '三角形外心', group: '圆·弦与垂径', gen: genCircumCenter },
+        { id: 'equiarc', name: '等边三角形外接圆的弧长', group: '圆·弧长面积与应用', gen: genEquiArc },
         /* —— 第 12 周错题补的四个知识点（2026-11-20） —— */
-        { id: 'relatecircle', name: '关联圆（线段与圆）', group: '圆', gen: genRelateCircle },
-        { id: 'archcircle', name: '圆弧形拱桥', group: '圆', gen: genArchCircle },
+        { id: 'relatecircle', name: '关联圆（线段与圆）', group: '圆·弧长面积与应用', gen: genRelateCircle },
+        { id: 'archcircle', name: '圆弧形拱桥', group: '圆·弧长面积与应用', gen: genArchCircle },
         { id: 'isopoint', name: '对称轴上的等腰三角形', group: '二次函数', gen: genIsoPoint },
-        { id: 'rangeopen', name: '开区间取值范围', group: '二次函数', gen: genRangeOpen }
+        { id: 'rangeopen', name: '开区间取值范围', group: '二次函数', gen: genRangeOpen },
+        /* —— 第二十九章《圆》单元测试卷补的六个考点（2026-11-21） —— */
+        { id: 'chordradius', name: '弦等于半径（等边三角形）', group: '圆·弦与垂径', gen: genChordRadius },
+        { id: 'cycqext', name: '圆内接四边形·外角', group: '圆·概念与角', gen: genCycQuadExt },
+        { id: 'concentric', name: '同心圆·一条弦截两圆', group: '圆·弦与垂径', gen: genConcentric },
+        { id: 'bowarea', name: '弓形面积（扇形 − 三角形）', group: '圆·弧长面积与应用', gen: genBowArea },
+        { id: 'circnum', name: '确定圆的个数', group: '圆·概念与角', gen: genCircNum },
+        { id: 'constrcenter', name: '尺规作图·找圆心', group: '圆·弦与垂径', gen: genConstrCenter }
       ]
     },
     {

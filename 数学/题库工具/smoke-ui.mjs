@@ -224,13 +224,23 @@ ok((textOf(app).match(/当前板块随机题练习/g) || []).length >= 7, '基�
   ok(M.S.sess.groupLabel === label && qs.length >= n && qs.length <= 2 * n, '「再来一轮」没重放板块随机规则');
 
   const dm = ctx.MT.moduleById('drill');
-  const grp = dm.kinds.filter((k) => k.group === '圆');
-  M.startGroupRandom('drill', grp);
-  qs = M.S.sess.queue;
-  const gc = {};
-  qs.forEach((x) => { gc[x.kind] = (gc[x.kind] || 0) + 1; });
-  ok(qs.length >= grp.length && qs.length <= 2 * grp.length, '圆板块随机题数超范围：' + qs.length);
-  ok(Object.keys(gc).length === grp.length && Object.values(gc).every((c) => c === 1 || c === 2), '圆板块随机覆盖不全或次数超限');
+  /* 圆拆成三个板块（概念与角 / 弦与垂径 / 弧长面积与应用），每组 ≤ 9 题：
+     板块随机一次能覆盖全组，避免单组题太多导致练不到。 */
+  const circleGroups = [...new Set(dm.kinds.map((k) => k.group))].filter((g) => g.indexOf('圆·') === 0);
+  ok(circleGroups.length === 3, '圆板块数不是 3，是 ' + circleGroups.length);
+  let circleTotal = 0;
+  circleGroups.forEach((g) => {
+    const grp = dm.kinds.filter((k) => k.group === g);
+    circleTotal += grp.length;
+    ok(grp.length <= 9, '圆板块「' + g + '」题型 ' + grp.length + ' 个，超过 9 会覆盖不到');
+    M.startGroupRandom('drill', grp);
+    const qs2 = M.S.sess.queue;
+    const gc = {};
+    qs2.forEach((x) => { gc[x.kind] = (gc[x.kind] || 0) + 1; });
+    ok(qs2.length >= grp.length && qs2.length <= 2 * grp.length, g + ' 板块随机题数超范围：' + qs2.length);
+    ok(Object.keys(gc).length === grp.length && Object.values(gc).every((c) => c === 1 || c === 2), g + ' 板块随机覆盖不全或次数超限');
+  });
+  ok(circleTotal === 24, '圆三个板块题型总数不是 24，是 ' + circleTotal);
 }
 
 /* ---------- 7. 审查后回归（B01/B03/B05/B06/B08） ---------- */
