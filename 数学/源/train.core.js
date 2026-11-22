@@ -536,19 +536,31 @@ var MT = (function () {
     };
   }
 
+  /* 对称点坐标：三种对称各列一张表（名称/答案/规则/知识点同一行），避免平行数组错位。
+     关于 y 轴横坐标要变号（反射轴是 y，x 反号）——这一项最容易写漏。 */
+  var SYM_CASES = [
+    { name: '关于原点中心对称', px: function (x) { return -x; }, py: function (y) { return -y; },
+      rule: '(x, y) → (−x, −y)：横纵坐标都变号', kp: '中心对称' },
+    { name: '关于 x 轴对称', px: function (x) { return x; }, py: function (y) { return -y; },
+      rule: '(x, y) → (x, −y)：只把 y 变号，横坐标不变', kp: '轴对称' },
+    { name: '关于 y 轴对称', px: function (x) { return -x; }, py: function (y) { return y; },
+      rule: '(x, y) → (−x, y)：只把 x 变号，纵坐标不变', kp: '轴对称' }
+  ];
   function genSym(r) {
     var x = ri(r, -5, 5), y = ri(r, -5, 5);
+    var t = pick(r, SYM_CASES);
+    var px = t.px(x), py = t.py(y);
     return {
-      id: 'drill.sym', kind: 'sym', title: '中心对称点',
-      prompt: '点 P(' + d(x) + ', ' + d(y) + ') 关于原点中心对称的点是 P′。',
+      id: 'drill.sym', kind: 'sym', title: '对称点坐标',
+      prompt: '点 P(' + d(x) + ', ' + d(y) + ') ' + t.name + '的点是 P′。',
       fields: [
-        { type: 'num', label: 'P′ 的横坐标 =', ans: -x },
-        { type: 'num', label: 'P′ 的纵坐标 =', ans: -y }
+        { type: 'num', label: 'P′ 的横坐标 =', ans: px },
+        { type: 'num', label: 'P′ 的纵坐标 =', ans: py }
       ],
-      tip: '关于原点对称：横纵坐标都变号。关于 x 轴对称只变 y，关于 y 轴对称只变 x。',
-      explain: ['关于原点对称：(x, y) → (−x, −y)，所以 P′(' + d(-x) + ', ' + d(-y) + ')。'],
-      fig: { type: 'points', dots: [[x, y, 'P'], [-x, -y, 'P′']] },
-      kp: ['图形的变换', '中心对称']
+      tip: '关于原点对称：横纵坐标都变号；关于 x 轴对称：x 不变、y 变号；关于 y 轴对称：y 不变、x 变号。',
+      explain: [t.name + '：' + t.rule + '，所以 P′(' + d(px) + ', ' + d(py) + ')。'],
+      fig: { type: 'points', dots: [[x, y, 'P'], [px, py, 'P′']] },
+      kp: ['图形的变换', t.kp]
     };
   }
 
@@ -2552,7 +2564,7 @@ var MT = (function () {
   var MODULES = [
     {
       id: 'drill', name: '基础快练', icon: '⚡',
-      desc: '九个板块、55 个题型，限时一次就对：方程与代数 / 二次函数 / 反比例函数 / 圆·概念与角 / 圆·弦与垂径 / 圆·弧长面积与应用 / 直线与圆 / 图形与变换 / 推理与证明。',
+      desc: '九个板块、47 个题型，限时一次就对：方程与代数 / 二次函数 / 反比例函数 / 圆·概念与角 / 圆·弦与垂径 / 圆·弧长面积与应用 / 直线与圆 / 图形与变换 / 推理与证明。大题得分点（关联圆、拱桥、等腰存在性、开区间、等边外接圆弧长、平行弦、尺规找圆心、最短路径）归「大题前两步」。',
       kinds: [
         /* group 只决定模块页怎么分组显示；数组顺序 = 「开始一轮」的混抽顺序 = 今日轮换顺序 */
         /* —— 方程与代数 —— */
@@ -2600,26 +2612,17 @@ var MT = (function () {
         { id: 'rot', name: '旋转后坐标', group: '图形与变换', gen: genRot },
         { id: 'sym', name: '中心对称点', group: '图形与变换', gen: genSym },
         { id: 'symshape', name: '对称图形判断', group: '图形与变换', gen: genSymShape },
-        { id: 'path', name: '最短路径', group: '图形与变换', gen: genPath },
         /* —— 推理与证明 —— */
         { id: 'absurd', name: '反证法第一步', group: '推理与证明', gen: genAbsurd },
-        /* —— 第 12 周限时练习暴露的四个缺口 —— */
+        /* —— 保留的一点圆计算基础（其余圆考点归大题前两步） —— */
         { id: 'secperim', name: '扇形周长', group: '圆·弧长面积与应用', gen: genSecPerim },
-        { id: 'paralleldist', name: '平行弦之间的距离', group: '圆·弦与垂径', gen: genParallelDist },
         { id: 'circumcenter', name: '三角形外心', group: '圆·弦与垂径', gen: genCircumCenter },
-        { id: 'equiarc', name: '等边三角形外接圆的弧长', group: '圆·弧长面积与应用', gen: genEquiArc },
-        /* —— 第 12 周错题补的四个知识点（2026-11-20） —— */
-        { id: 'relatecircle', name: '关联圆（线段与圆）', group: '圆·弧长面积与应用', gen: genRelateCircle },
-        { id: 'archcircle', name: '圆弧形拱桥', group: '圆·弧长面积与应用', gen: genArchCircle },
-        { id: 'isopoint', name: '对称轴上的等腰三角形', group: '二次函数', gen: genIsoPoint },
-        { id: 'rangeopen', name: '开区间取值范围', group: '二次函数', gen: genRangeOpen },
-        /* —— 第二十九章《圆》单元测试卷补的六个考点（2026-11-21） —— */
+        /* —— 第二十九章《圆》单元测试卷补的五个基础考点（2026-11-21） —— */
         { id: 'chordradius', name: '弦等于半径（等边三角形）', group: '圆·弦与垂径', gen: genChordRadius },
         { id: 'cycqext', name: '圆内接四边形·外角', group: '圆·概念与角', gen: genCycQuadExt },
         { id: 'concentric', name: '同心圆·一条弦截两圆', group: '圆·弦与垂径', gen: genConcentric },
         { id: 'bowarea', name: '弓形面积（扇形 − 三角形）', group: '圆·弧长面积与应用', gen: genBowArea },
-        { id: 'circnum', name: '确定圆的个数', group: '圆·概念与角', gen: genCircNum },
-        { id: 'constrcenter', name: '尺规作图·找圆心', group: '圆·弦与垂径', gen: genConstrCenter }
+        { id: 'circnum', name: '确定圆的个数', group: '圆·概念与角', gen: genCircNum }
       ]
     },
     {

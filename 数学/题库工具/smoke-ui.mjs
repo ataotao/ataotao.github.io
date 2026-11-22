@@ -240,10 +240,29 @@ ok((textOf(app).match(/当前板块随机题练习/g) || []).length >= 7, '基�
     ok(qs2.length >= grp.length && qs2.length <= 2 * grp.length, g + ' 板块随机题数超范围：' + qs2.length);
     ok(Object.keys(gc).length === grp.length && Object.values(gc).every((c) => c === 1 || c === 2), g + ' 板块随机覆盖不全或次数超限');
   });
-  ok(circleTotal === 24, '圆三个板块题型总数不是 24，是 ' + circleTotal);
+  ok(circleTotal === 19, '圆三个板块题型总数不是 19，是 ' + circleTotal);
 }
 
 /* ---------- 7. 审查后回归（B01/B03/B05/B06/B08） ---------- */
+// 2026-11-22 回归：对称点坐标三种变式的答案必须与规则一致。
+// 重点防「关于 y 轴只改纵坐标」这类坐标变换错位（答案与规则/图自相矛盾）。
+{
+  const seen = {};
+  for (let s = 1; s <= 300 && Object.keys(seen).length < 3; s++) {
+    const q = ctx.MT.gen('drill', 'sym', s * 7919);
+    const m = q.prompt.match(/点 P\(([−-]?\d+), ([−-]?\d+)\) (.+?)的点是/);
+    if (!m) { ok(false, '对称点题干解析失败：' + q.prompt); break; }
+    const x = +m[1].replace('−', '-'), y = +m[2].replace('−', '-'), axis = m[3];
+    const a = q.fields.map((f) => f.ans);
+    const want = axis.indexOf('原点') >= 0 ? [-x, -y]
+      : axis.indexOf('x 轴') >= 0 ? [x, -y] : [-x, y];
+    ok(a[0] === want[0] && a[1] === want[1],
+      '对称点坐标错：' + axis + ' P(' + x + ',' + y + ') → (' + a + ') 应为 (' + want + ')');
+    ok(q.explain[0].indexOf('→') >= 0 && q.kp.length === 2, '对称点解析/知识点缺失');
+    seen[axis] = true;
+  }
+  ok(Object.keys(seen).length === 3, '对称点没覆盖三种对称，只见到：' + Object.keys(seen).join('/'));
+}
 // B01：expr 必须按模板空位顺序判分 —— 把 a/h 互换应判错
 {
   let checked = 0;
@@ -493,11 +512,13 @@ ok((textOf(app).match(/当前板块随机题练习/g) || []).length >= 7, '基�
       ok(ctx.MT.judge(q, q.fields.map((f) => f.ans)).ok, '本周错题正确答案被判错：' + id);
     });
 
-    /* 新补的四个知识点同时要在「基础快练」里：临时项目删掉后，知识点还留着 */
+    /* 这八个大题得分点已迁出基础快练，只在「大题前两步」/「本周错题」里出现：
+       基础快练回归「一条定义一次就对」的定位，不许再混进大题第一步。 */
     const dm = ctx.MT.moduleById('drill');
-    ['relatecircle', 'archcircle', 'isopoint', 'rangeopen', 'missingconst'].forEach((id) => {
-      ok(dm.kinds.some((k) => k.id === id), '基础快练没补进知识点：' + id);
+    ['relatecircle', 'archcircle', 'isopoint', 'rangeopen', 'equiarc', 'paralleldist', 'constrcenter', 'path'].forEach((id) => {
+      ok(!dm.kinds.some((k) => k.id === id), '大题得分点还没从基础快练移出：' + id);
     });
+    ok(dm.kinds.some((k) => k.id === 'missingconst'), '基础快练漏了缺常数项（提公因式）');
 
     /* 每个练习点必须标出「卷面第几题」，并带一张原题裁切图（data URI，离线可用） */
     ok(!!dataSeg, '产物没有 <script id="data"> 段（第 12 周原题裁切图）');
@@ -517,9 +538,12 @@ ok((textOf(app).match(/当前板块随机题练习/g) || []).length >= 7, '基�
       /* 只查 base64 之外的部分：base64 里出现 "NaN" 这类子串是正常的，不能整体扫 */
       const shell = svg.replace(/data:image\/webp;base64,[A-Za-z0-9+/=]+/g, 'IMG');
       ok(!/NaN|undefined/.test(shell), '裁切图 SVG 骨架含 NaN/undefined：' + id);
-      /* 基础快练里的同名题型不贴原卷图：只有临时项目要看「卷面第几题」 */
-      const dq = ctx.MT.gen('drill', id, 2026);
-      ok(!dq.no && !dq.fig, '基础快练被误加了原卷题号/裁切图：' + id);
+      /* 保留在基础快练的同名题型（secperim / missingconst）不贴原卷图：只有临时项目要看「卷面第几题」。
+         其余五个已迁出基础快练，上面的断言已覆盖。 */
+      if (['secperim', 'missingconst'].indexOf(id) >= 0) {
+        const dq = ctx.MT.gen('drill', id, 2026);
+        ok(!dq.no && !dq.fig, '基础快练被误加了原卷题号/裁切图：' + id);
+      }
     });
     /* 练习页确实把题号画出来了（题号 pill 走 q.noLabel） */
     M.startSession('week12', 'isopoint', 1);
