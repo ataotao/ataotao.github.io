@@ -681,10 +681,83 @@ var PT = (function () {
     return s.join('');
   }
 
+  /* ===== 第12周补图：分子、熔化曲线、导线对折（都走内联 SVG，零图片） ===== */
+  function svgParticle(f) {
+    var W = 360, H = 190, mode = (f && f.mode) || 'diffuse';
+    var s = [svgHead(W, H, '分子示意图')];
+    s.push('<rect x="16" y="24" width="' + (W - 32) + '" height="' + (H - 58) + '" rx="8" fill="#fff" stroke="#8aa2bd" stroke-width="1.5"/>');
+    if (mode === 'diffuse') {
+      var hot = !!f.hot, i, x, y;
+      for (i = 0; i < 26; i++) {
+        x = 34 + (i % 6) * 17 + (i % 3) * 3;
+        y = 96 + Math.floor(i / 6) * 14;
+        s.push(circle(x, y, 3.2, '#0f9b8e'));
+      }
+      for (i = 0; i < 14; i++) {
+        x = 190 + (i % 7) * 20;
+        y = 100 + Math.floor(i / 7) * 18;
+        s.push(circle(x, y, 3.2, '#6b7280'));
+      }
+      s.push('<path d="M150 112 L214 112 M206 105 L214 112 L206 119" fill="none" stroke="#d93025" stroke-width="2.4"/>');
+      s.push(txt(180, 40, hot ? '热水：扩散更快' : '滴入红墨水后', 13, '#1b2333', 'middle', 700));
+      if (hot) s.push(txt(180, 60, '温度越高，分子运动越剧烈', 11, '#0f9b8e', 'middle'));
+    } else {
+      var attract = mode === 'attract';
+      s.push(circle(112, 105, 30, '#dbeafe', '#1b2333', 2));
+      s.push(circle(248, 105, 30, '#dbeafe', '#1b2333', 2));
+      if (attract) {
+        s.push('<path d="M150 105 L210 105 M204 98 L210 105 L204 112" fill="none" stroke="#0f9b8e" stroke-width="2.6"/>');
+        s.push(txt(180, 52, '分子间引力', 14, '#0f9b8e', 'middle', 700));
+      } else {
+        s.push('<path d="M152 105 L100 105 M108 98 L100 105 L108 112 M208 105 L260 105 M252 98 L260 105 L252 112" fill="none" stroke="#d93025" stroke-width="2.6"/>');
+        s.push(txt(180, 52, '分子间斥力', 14, '#d93025', 'middle', 700));
+      }
+    }
+    s.push(svgTail());
+    return s.join('');
+  }
+
+  function svgPhaseGraph(f) {
+    var W = 380, H = 250, s = [svgHead(W, H, '温度—时间图像')];
+    var x0 = 46, y0 = 205, x1 = 360, y1 = 24;
+    s.push('<path d="M' + x0 + ' ' + y0 + ' L' + x1 + ' ' + y0 + ' M' + x0 + ' ' + y0 + ' L' + x0 + ' ' + y1 + '" fill="none" stroke="#1b2333" stroke-width="2"/>');
+    s.push(txt(x1 - 4, y0 + 18, '时间', 11, '#1b2333', 'end'));
+    s.push(txt(x0 - 8, y1 - 4, 'T', 12, '#1b2333', 'end'));
+    var flat = f && f.flat === false ? false : true;
+    if (flat) {
+      s.push('<path d="M52 190 L120 96 L204 96 L272 52 L340 52" fill="none" stroke="#0f9b8e" stroke-width="3"/>');
+      s.push(txt(120, 86, 'B', 12, '#1b2333', 'middle', 700));
+      s.push(txt(204, 86, 'C', 12, '#1b2333', 'middle', 700));
+      s.push(txt(272, 42, 'D', 12, '#1b2333', 'middle', 700));
+      s.push(txt(162, 126, '熔化：吸热、温度不变', 11, '#0f9b8e', 'middle'));
+    } else {
+      s.push('<path d="M52 190 L150 140 L250 84 L340 44" fill="none" stroke="#d93025" stroke-width="3"/>');
+      s.push(txt(196, 74, '温度持续升高', 11, '#d93025', 'middle'));
+    }
+    s.push(svgTail());
+    return s.join('');
+  }
+
+  function svgWireFold() {
+    var W = 380, H = 200, s = [svgHead(W, H, '合金导线对折')];
+    s.push('<rect x="30" y="72" width="240" height="22" rx="5" fill="#d9b26a" stroke="#1b2333" stroke-width="1.6"/>');
+    s.push(txt(150, 62, '原长 L、横截面积 S → R₁', 12, '#1b2333', 'middle'));
+    s.push('<path d="M282 83 L318 83 M310 76 L318 83 L310 90" fill="none" stroke="#d93025" stroke-width="2.4"/>');
+    s.push(txt(300, 66, '对折', 11, '#d93025', 'middle'));
+    s.push('<rect x="330" y="72" width="28" height="22" rx="4" fill="#d9b26a" stroke="#1b2333" stroke-width="1.6"/>');
+    s.push('<rect x="330" y="94" width="28" height="22" rx="4" fill="#d9b26a" stroke="#1b2333" stroke-width="1.6"/>');
+    s.push(txt(344, 142, 'L/2、2S → R₂', 12, '#0f9b8e', 'middle'));
+    s.push(svgTail());
+    return s.join('');
+  }
+
   function svgFor(q) {
     var f = q && q.fig;
     if (!f) return '';
     var body = '';
+    if (f.type === 'particle') body = svgParticle(f);
+    else if (f.type === 'phasegraph') body = svgPhaseGraph(f);
+    else if (f.type === 'wirefold') body = svgWireFold();
     if (f.type === 'tension') body = svgTension(f);
     else if (f.type === 'circuit') body = svgCircuit(f);
     else if (f.type === 'battery') body = svgBattery(f);
@@ -1917,11 +1990,283 @@ var PT = (function () {
     };
   }
 
+  /* ================= 第12周补题：作业卷暴露的断点 =================
+     分子动理论 / 图像 / 能量转化 / 电路角色 / 验电器 / 滑动变阻器 /
+     比热容比较 / 导线对折 / 热机效率 / 熔化热 / 功率 / 双量程读数    */
+  function genModelDiffusion(r) {
+    var hot = ri(r, 0, 1) === 1;
+    if (hot) {
+      return {
+        id: 'model.diffusion', kind: 'diffusion', title: '温度越高扩散越快',
+        prompt: '同时向等质量的冷水和热水中各滴一滴红墨水，热水中更快整杯变红。这一现象说明（　）',
+        fields: [choiceField(r, '温度越高，分子无规则运动越剧烈',
+          ['热水分子之间存在斥力', '热水分子的间距比冷水大', '分子只有在热水中才会运动'])],
+        tip: '扩散快慢反映分子运动的剧烈程度；温度越高，分子无规则运动越剧烈。',
+        explain: ['两杯水只有温度不同，是控制变量实验。', '热水扩散更快 → 温度越高，分子无规则运动越剧烈。'],
+        fig: { type: 'particle', mode: 'diffuse', hot: true }, figBefore: true,
+        kp: ['分子动理论', '扩散现象']
+      };
+    }
+    return {
+      id: 'model.diffusion', kind: 'diffusion', title: '扩散说明什么',
+      prompt: '打开榴莲包装后，香味很快充满整个房间。这一现象主要说明（　）',
+      fields: [choiceField(r, '分子在不停地做无规则运动',
+        ['物质只能由分子构成', '分子之间存在引力', '分子之间没有间隙'])],
+      tip: '闻到气味=扩散现象；扩散只说明分子在运动，不能直接说明引力或间隙。',
+      explain: ['香味分子从浓度高处运动到浓度低处，扩散到整个房间。', '这是扩散现象，说明分子在永不停息地做无规则运动。'],
+      fig: { type: 'particle', mode: 'diffuse', hot: false }, figBefore: true,
+      kp: ['分子动理论', '扩散现象']
+    };
+  }
+
+  function genModelInterforce(r) {
+    var repel = ri(r, 0, 1) === 1;
+    if (repel) {
+      return {
+        id: 'model.interforce', kind: 'interforce', title: '液体难压缩',
+        prompt: '注射器里封一定量水，用手推活塞很难把水压缩。这主要是因为（　）',
+        fields: [choiceField(r, '分子间距离变小时表现为斥力',
+          ['分子间有空隙', '分子在不停地运动', '分子间表现为引力'])],
+        tip: '「很难压缩」想斥力；「拉不断、粘得住」想引力。',
+        explain: ['水分子已经靠得很近，再压近时分子间的斥力急剧增大。', '所以液体很难被压缩，而不是因为分子静止或没有空隙。'],
+        fig: { type: 'particle', mode: 'repel' }, figBefore: true,
+        kp: ['分子动理论', '分子间作用力']
+      };
+    }
+    return {
+      id: 'model.interforce', kind: 'interforce', title: '露珠与铅块',
+      prompt: '清晨叶子下方的露珠不易掉落；两个表面磨平的铅块压紧后能吊起重物。这些现象说明（　）',
+      fields: [choiceField(r, '分子间存在引力',
+        ['分子间只有斥力', '分子停止了运动', '分子之间没有空隙'])],
+      tip: '分子间同时存在引力和斥力；距离略大表现为引力，距离很小时表现为斥力。',
+      explain: ['水分子与叶面分子、铅块接触面分子相互吸引。', '所以表现为引力，能把物体「拉住」。'],
+      fig: { type: 'particle', mode: 'attract' }, figBefore: true,
+      kp: ['分子动理论', '分子间作用力']
+    };
+  }
+
+  function genModelPhaseGraph(r) {
+    var crystal = ri(r, 0, 1) === 1;
+    if (crystal) {
+      return {
+        id: 'model.phasegraph', kind: 'phasegraph', title: '晶体熔化曲线',
+        prompt: '如图是某物质加热时温度随时间变化的图像。BC 段温度不变，关于这段过程说法正确的是（　）',
+        fields: [choiceField(r, '物质继续吸热，内能增大',
+          ['物质不吸热，内能不变', '物质已经全部变成气态', '该物质一定是非晶体'])],
+        tip: '晶体熔化：持续吸热、温度不变、内能增大；有固定熔点。',
+        explain: ['BC 段是熔化过程，加热器一直在供热。', '温度不变但内能增大——吸收的热量用来改变分子势能。', '有平台说明有固定熔点，是晶体。'],
+        fig: { type: 'phasegraph', flat: true }, figBefore: true,
+        kp: ['内能', '物态变化']
+      };
+    }
+    return {
+      id: 'model.phasegraph', kind: 'phasegraph', title: '非晶体曲线',
+      prompt: '如图是某物质加热时温度随时间变化的图像：全程没有温度不变的平台。据此可判断（　）',
+        fields: [choiceField(r, '该物质可能是非晶体',
+          ['该物质一定是晶体', '熔化过程中温度保持不变', '该物质一定没有熔化'])],
+        tip: '非晶体没有固定熔点，加热时温度持续升高。',
+        explain: ['图像没有水平段，说明没有固定熔点。', '玻璃、松香、沥青是非晶体；冰、海波、金属是晶体。'],
+        fig: { type: 'phasegraph', flat: false }, figBefore: true,
+        kp: ['内能', '物态变化']
+      };
+  }
+
+  function genModelEnergy(r) {
+    var v = ri(r, 0, 2);
+    if (v === 0) {
+      return {
+        id: 'model.energy', kind: 'energy', title: '充电与供电',
+        prompt: '太阳能电池板给蓄电池充电，蓄电池再给小风扇供电。关于能量转化，正确的是（　）',
+        fields: [choiceField(r, '充电：电能→化学能；供电：化学能→电能',
+          ['充电：化学能→电能；供电：电能→化学能', '充电和供电都是化学能→电能', '太阳能电池板把电能转化为太阳能'])],
+        tip: '蓄电池充电是「存进去」：电能变化学能；放电是「取出来」：反过来。',
+        explain: ['太阳能电池板先把太阳能转化为电能。', '充电时电能转化为化学能储存；供电时化学能转化为电能，风扇再把电能转化为机械能。'],
+        fig: { type: 'battery', n: 2 }, figBefore: true,
+        kp: ['能量守恒', '能量转化']
+      };
+    }
+    if (v === 1) {
+      return {
+        id: 'model.energy', kind: 'energy', title: '热机效率看哪一块',
+        prompt: '燃料完全燃烧释放的能量中，一部分变成有用机械能，其余随废气、散热和摩擦损失。热机效率是（　）',
+        fields: [choiceField(r, '有用机械能 / 燃料完全燃烧放出的总能量',
+          ['废气带走的能量 / 总能量', '总能量 / 有用机械能', '摩擦损失 / 有用机械能'])],
+        tip: 'η = W有用 / Q放，分子是有用的那一份，分母是燃料放出的总能量。',
+        explain: ['效率永远小于 1：损失不可避免。', '废气、散热、摩擦都属于损失，不能放进分子。'],
+        kp: ['热机效率', '能量守恒']
+      };
+    }
+    return {
+      id: 'model.energy', kind: 'energy', title: '元件角色判断',
+      prompt: '室外监控侧方的太阳能电池板为监控系统供电。在电路中，太阳能电池板相当于（　）',
+      fields: [choiceField(r, '电源', ['用电器', '开关', '导线'])],
+      tip: '对外供电的是电源，消耗电能的是用电器；充电中的蓄电池是用电器，放电中的蓄电池是电源。',
+      explain: ['太阳能电池板把太阳能转化为电能并向外供电。', '提供电能的元件就是电源。'],
+      fig: { type: 'battery', n: 1 }, figBefore: true,
+      kp: ['电路', '电源']
+    };
+  }
+
+  function genModelElectroscope(r) {
+    var flow = ri(r, 0, 1) === 1;
+    if (flow) {
+      return {
+        id: 'model.electroscope', kind: 'electroscope', title: '接触瞬间的电子与电流',
+        prompt: '用丝绸摩擦过的玻璃棒（带正电）接触不带电的验电器金属球，金属箔张开。接触瞬间（　）',
+        fields: [choiceField(r, '自由电子向上定向移动，电流方向向下',
+          ['自由电子向下定向移动，电流方向向上', '摩擦过程创造出了新的电荷', '两片金属箔带异种电荷'])],
+        tip: '金属中定向移动的是自由电子；规定电流方向与电子移动方向相反。',
+        explain: ['玻璃棒带正电，接触时验电器中的自由电子向上转移到玻璃棒。',
+                  '自由电子向上，所以电流方向向下；两片金属箔都带正电，同种电荷相斥而张开。'],
+        fig: { type: 'charge', mode: 'touch' }, figBefore: true,
+        kp: ['电荷', '电流方向']
+      };
+    }
+    return {
+      id: 'model.electroscope', kind: 'electroscope', title: '验电器为什么张开',
+      prompt: '验电器的金属箔带电后张开，原因是（　）',
+      fields: [choiceField(r, '两片金属箔带同种电荷，相互排斥',
+        ['两片金属箔带异种电荷，相互排斥', '两片金属箔带异种电荷，相互吸引', '金属箔不带电，被空气吹开'])],
+      tip: '验电器只能检验是否带电；张开说明带电，不能判断带正电还是负电。',
+      explain: ['电荷从金属球经金属杆传到两片金属箔。', '两片金属箔带同种电荷，相互排斥而张开。'],
+      fig: { type: 'charge', mode: 'touch' }, figBefore: true,
+      kp: ['电荷', '相互作用']
+    };
+  }
+
+  function genModelRheostat(r) {
+    return {
+      id: 'model.rheostat', kind: 'rheostat', title: '滑片移动与灯泡亮暗',
+      prompt: '串联电路中，滑动变阻器接入的是「左下接线柱 + 滑片」这一段。滑片向右移动时（　）',
+      fields: [choiceField(r, '接入电阻变大，灯泡变暗',
+          ['接入电阻变小，灯泡变亮', '接入电阻不变，灯泡亮度不变', '灯泡被短路，立即熄灭'])],
+      tip: '滑动变阻器看「下面接了哪个接线柱」：离它越远，接入电阻越大。',
+      explain: ['接左下接线柱时，真正接入电路的是左端到滑片之间的电阻丝。',
+                '滑片向右移动，这段电阻丝变长，接入电阻变大。',
+                '总电阻变大 → 电流变小 → 灯泡变暗。'],
+      kp: ['滑动变阻器', '动态电路']
+    };
+  }
+
+  function genAmountCompare(r) {
+    var dtA = pick(r, [40, 50, 60]), dtB = pick(r, [10, 15, 20, 25, 30]);
+    if (dtA <= dtB) dtA = dtB * 2;
+    var frac = dtA / dtB;
+    var ratio = Math.round(frac * 100) / 100;
+    return {
+      id: 'amount.ccompare', kind: 'ccompare', title: '比热容比较（Q、m 相同）',
+      prompt: '质量相同的 a、b 两种液体吸收相同热量，a 升温 ' + dtA + '℃，b 升温 ' + dtB + '℃。由 Q = cmΔt 可知（　）',
+      fields: [
+        choiceField(r, 'cₐ < cᵦ', ['cₐ > cᵦ', 'cₐ = cᵦ', '无法比较']),
+        { type: 'num', label: 'cᵦ 是 cₐ 的几倍（填数字）', ans: ratio, tol: 0.01 }
+      ],
+      tip: 'Q、m 相同时 c 与 Δt 成反比：升温多的比热容小。',
+      explain: ['c = Q/(mΔt)，Q、m 相同，所以比热容与升温成反比。',
+                'Δtₐ=' + dtA + '℃ > Δtᵦ=' + dtB + '℃，所以 cₐ < cᵦ，cᵦ/cₐ = ' + fmtNum(ratio) + '。'],
+      kp: ['比热容', '控制变量']
+    };
+  }
+
+  function genAmountWireFold(r) {
+    return {
+      id: 'amount.resfold', kind: 'resfold', title: '导线对折后 R 怎么变',
+      prompt: '粗细均匀的合金导线电阻为 R₁；把它对折后接入电路，电阻为 R₂。对折同时改变了哪两个量？',
+      fields: [
+        choiceField(r, '长度减半、横截面积加倍', ['长度加倍、横截面积减半', '长度和横截面积都减半', '长度和横截面积都不变']),
+        choiceField(r, 'R₂ = R₁ / 4', ['R₂ = R₁ / 2', 'R₂ = 2R₁', 'R₂ = R₁'])
+      ],
+      tip: 'R = ρL/S：对折让 L 减半、S 加倍，两个因素都让电阻变小，结果是 1/4。',
+      explain: ['设原导线长 L、横截面积 S，R₁ = ρL/S。', '对折后长度 L/2，两段并联相当于横截面积 2S。',
+                'R₂ = ρ(L/2)/(2S) = R₁/4。'],
+      fig: { type: 'wirefold' }, figBefore: true,
+      kp: ['电阻', '决定因素']
+    };
+  }
+
+  function genCalcHeatEngine(r) {
+    var Q = pick(r, [2e7, 4e7, 5e7, 8e7]);
+    var eta = pick(r, [20, 25, 30, 40]);
+    var W = Q * eta / 100;
+    return {
+      id: 'calc.heatengineeff', kind: 'heatengineeff', title: '热机效率 η = W有用/Q放',
+      prompt: '某热机完全燃烧燃料放出 ' + fmtNum(Q) + ' J 热量，效率为 ' + eta + '%。求对外做的有用功 W。',
+      fields: [
+        choiceField(r, 'η = W有用 / Q放', ['η = Q放 / W有用', 'η = W有用 × Q放', 'η = Q放 − W有用'], '第 1 步 选公式：'),
+        { type: 'num', label: '第 2 步 指认量：Q放 =', ans: Q, tol: 1 },
+        { type: 'num', label: '第 3 步 代入：W有用 =', ans: W, tol: 1 }
+      ],
+      tip: '效率乘总量得有用量：W有用 = ηQ放；算百分数时 η 要除以 100。',
+      explain: ['η = ' + eta + '% = ' + fmtNum(eta / 100) + '。',
+                'W有用 = ηQ放 = ' + fmtNum(eta / 100) + ' × ' + fmtNum(Q) + ' = ' + fmtNum(W) + ' J。'],
+      kp: ['热机效率', '计算']
+    };
+  }
+
+  function genCalcFusion(r) {
+    var P = pick(r, [600, 800, 1000, 1200]);
+    var t = pick(r, [60, 90, 120, 150]);
+    var m = pick(r, [0.01, 0.02, 0.05]);
+    var Q = P * t, lam = Q / m;
+    return {
+      id: 'calc.fusionheat', kind: 'fusionheat', title: '熔化热 λ = Q/m',
+      prompt: '加热器功率 ' + P + ' W，晶体熔化持续 ' + t + ' s，质量 ' + fmtNum(m) + ' kg。求熔化过程吸收的热量和熔化热 λ。',
+      fields: [
+        { type: 'num', label: '第 1 步 熔化吸热 Q = Pt（J）', ans: Q, tol: 1 },
+        { type: 'num', label: '第 2 步 熔化热 λ = Q/m（J/kg）', ans: lam, tol: 1 }
+      ],
+      tip: '加热器稳定工作时 Q = Pt；熔化热是「同温度固→液吸收的热量 / 质量」。',
+      explain: ['Q = Pt = ' + P + '×' + t + ' = ' + fmtNum(Q) + ' J。',
+                'λ = Q/m = ' + fmtNum(Q) + ' ÷ ' + fmtNum(m) + ' = ' + fmtNum(lam) + ' J/kg。'],
+      kp: ['内能', '物态变化', '计算']
+    };
+  }
+
+  function genCalcPowerDrive(r) {
+    var mTon = pick(r, [1.5, 2, 2.5, 3]);
+    var v = pick(r, [20, 25, 30, 36]);
+    var fN = mTon * 1000 * 10 * 0.1;
+    var P = fN * v;
+    return {
+      id: 'calc.powerdrive', kind: 'powerdrive', title: '匀速行驶 P = Fv',
+      prompt: '质量 ' + fmtNum(mTon) + ' t 的电动汽车以 ' + v + ' m/s 匀速行驶，阻力是车重的 0.1 倍（g 取 10 N/kg）。求行驶功率。',
+      fields: [
+        { type: 'num', label: '第 1 步 阻力 f =', ans: fN, unit: 'N', tol: 1 },
+        { type: 'num', label: '第 2 步 匀速牵引力 F =', ans: fN, unit: 'N', tol: 1 },
+        { type: 'num', label: '第 3 步 功率 P = Fv（W）', ans: P, tol: 1 }
+      ],
+      tip: '匀速时牵引力等于阻力；P = W/t = Fs/t = Fv，速度必须用 m/s。',
+      explain: ['G = mg = ' + fmtNum(mTon * 1000) + '×10 = ' + fmtNum(mTon * 10000) + ' N。',
+                'f = 0.1G = ' + fmtNum(fN) + ' N；匀速 → F = f。',
+                'P = Fv = ' + fmtNum(fN) + '×' + v + ' = ' + fmtNum(P) + ' W。'],
+      kp: ['功率', '计算']
+    };
+  }
+
+  function genReadDualRange(r) {
+    var small = pick(r, [0.12, 0.24, 0.36, 0.48]);
+    var big = Math.round(small * 5 * 100) / 100;
+    var volt = ri(r, 0, 1) === 1;
+    return {
+      id: 'read.dualrange', kind: 'dualrange', title: '同一指针，两个量程',
+      prompt: (volt ? '电压表' : '电流表') + '指针位置如图。若按 ' + (volt ? '0~3 V' : '0~0.6 A') + ' 量程读数是 ' + fmtNum(volt ? big / 5 : small) + '，那么按 ' + (volt ? '0~15 V' : '0~3 A') + ' 量程读数是多少？',
+      fields: [
+        { type: 'num', label: '大量程读数', ans: big, unit: volt ? 'V' : 'A', tol: 0.01 },
+        { type: 'num', label: '两个量程读数之比（大 / 小，填数字）', ans: 5, tol: 0.01 }
+      ],
+      tip: '表盘同一指针位置：0~15 V 是 0~3 V 的 5 倍；0~3 A 是 0~0.6 A 的 5 倍。',
+      explain: ['先看接的是哪个量程，再按对应刻度读数。',
+                '大小量程满偏值之比为 5，所以同一指针位置读数也相差 5 倍。'],
+      fig: volt ? { type: 'voltmeter', range: 15, reading: big } : { type: 'ammeter', range: 3, reading: big },
+      figBefore: true,
+      kp: ['电表', '读数']
+    };
+  }
+
   /* ================= 模块注册表：顺序 = 每日顺序 = 页签顺序 ================= */
   var MODULES = [
     {
       id: 'model', name: '认模型', icon: '🧭',
-      desc: '看图认模型：电压与电池组 / 电阻与材料 / 导体绝缘体 / 串并联 / 表位置 / 电压表测哪段 / 测力计张力 / LED / 电荷 / 四冲程 / 滑轮组。',
+      desc: '看图认模型：电压与电池组 / 电阻与材料 / 导体绝缘体 / 串并联 / 表位置 / 电压表测哪段 / 测力计张力 / LED / 电荷 / 四冲程 / 滑轮组；第12周补：扩散、分子力、熔化曲线、能量转化、验电器与电流方向、滑动变阻器。',
       kinds: [
         { id: 'voltage', name: '电压与电池组', gen: genModelVoltage },
         { id: 'resistance', name: '电阻与材料', gen: genModelResistance },
@@ -1933,12 +2278,18 @@ var PT = (function () {
         { id: 'stroke', name: '四冲程识别', gen: genModelStroke },
         { id: 'circuit', name: '串并联与表位置', gen: genModelCircuit },
         { id: 'meter', name: '电压表测哪段/使用', gen: genModelMeter },
-        { id: 'pulley', name: '滑轮组 n 与力臂', gen: genModelPulley }
+        { id: 'pulley', name: '滑轮组 n 与力臂', gen: genModelPulley },
+        { id: 'diffusion', name: '扩散与温度', gen: genModelDiffusion },
+        { id: 'interforce', name: '分子引力与斥力', gen: genModelInterforce },
+        { id: 'phasegraph', name: '熔化/沸腾图像', gen: genModelPhaseGraph },
+        { id: 'energy', name: '能量转化与元件角色', gen: genModelEnergy },
+        { id: 'electroscope', name: '验电器与电流方向', gen: genModelElectroscope },
+        { id: 'rheostat', name: '滑动变阻器动态判断', gen: genModelRheostat }
       ]
     },
     {
       id: 'amount', name: '认量', icon: '🎯',
-      desc: '先认量再动笔：热量题 m/Δt 与「升高了/升高到」、热值题「总−剩」与反求 q、滑轮组 s/h/n 与反求 h、效率题 W有/W总、反求质量 m、串联电流处处相等、并联电压相等。',
+      desc: '先认量再动笔：热量题 m/Δt 与「升高了/升高到」、热值题「总−剩」与反求 q、滑轮组 s/h/n 与反求 h、效率题 W有/W总、反求质量 m、串联电流处处相等、并联电压相等；第12周补：比热容比较、导线对折后 L/S。',
       kinds: [
         { id: 'heatmass', name: '热量题 m/Δt', gen: genAmountHeat },
         { id: 'heatrise', name: '升高了 / 升高到', gen: genAmountHeatRise },
@@ -1949,12 +2300,14 @@ var PT = (function () {
         { id: 'effamount', name: '效率题 W有/W总', gen: genAmountEff },
         { id: 'heatm', name: '反求质量 m', gen: genAmountHeatM },
         { id: 'seriesI', name: '串联电流处处相等', gen: genAmountSeriesI },
-        { id: 'parallelU', name: '并联各支路电压相等', gen: genAmountParallelU }
+        { id: 'parallelU', name: '并联各支路电压相等', gen: genAmountParallelU },
+        { id: 'ccompare', name: '比热容比较（Q、m 相同）', gen: genAmountCompare },
+        { id: 'resfold', name: '导线对折 L/S 变化', gen: genAmountWireFold }
       ]
     },
     {
       id: 'calc', name: '算到底', icon: '🧮',
-      desc: '选公式 → 指认量 → 代入算到底，每步单独判分，专治「写了公式就停」；热学、功与功率、滑轮组、杠杆、欧姆定律、串并联 U/I 关系。',
+      desc: '选公式 → 指认量 → 代入算到底，每步单独判分，专治「写了公式就停」；热学、功与功率、滑轮组、杠杆、欧姆定律、串并联 U/I 关系；第12周补：热机效率、熔化热、匀速行驶功率。',
       kinds: [
         { id: 'qheat', name: 'Q = cmΔt', gen: genCalcHeat },
         { id: 'heatdt', name: '反求 Δt', gen: genCalcHeatDt },
@@ -1967,7 +2320,10 @@ var PT = (function () {
         { id: 'leversolve', name: '杠杆 反求 l₁', gen: genCalcLeverSolve },
         { id: 'ohm', name: '欧姆定律 I=U/R', gen: genCalcOhm },
         { id: 'seriesU', name: '串联分压 U₁+U₂', gen: genCalcSeriesU },
-        { id: 'parallelI', name: '并联分流 I₁+I₂', gen: genCalcParallelI }
+        { id: 'parallelI', name: '并联分流 I₁+I₂', gen: genCalcParallelI },
+        { id: 'heatengineeff', name: '热机效率 W=ηQ放', gen: genCalcHeatEngine },
+        { id: 'fusionheat', name: '熔化热 λ=Q/m', gen: genCalcFusion },
+        { id: 'powerdrive', name: '匀速功率 P=Fv', gen: genCalcPowerDrive }
       ]
     },
     {
@@ -1983,12 +2339,13 @@ var PT = (function () {
     },
     {
       id: 'read', name: '读数', icon: '📏',
-      desc: '量程 / 分度值 / 读数三连：电流表、电压表、温度计、弹簧测力计表盘。',
+      desc: '量程 / 分度值 / 读数三连：电流表、电压表、温度计、弹簧测力计表盘；第12周补：同一指针的双量程读数。',
       kinds: [
         { id: 'ammeter', name: '电流表读数', gen: genReadAmmeter },
         { id: 'voltmeter', name: '电压表读数', gen: genReadVoltmeter },
         { id: 'thermometer', name: '温度计读数', gen: genReadThermometer },
-        { id: 'spring', name: '弹簧测力计读数', gen: genReadSpring }
+        { id: 'spring', name: '弹簧测力计读数', gen: genReadSpring },
+        { id: 'dualrange', name: '同一指针双量程', gen: genReadDualRange }
       ]
     }
   ];

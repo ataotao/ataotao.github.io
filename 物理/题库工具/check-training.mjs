@@ -65,8 +65,8 @@ function runCore() {
     process.exit(1);
   }
 
-  /* 模块注册表：顺序 = model/amount/calc/draw/read，类数 11/10/12/4/4（2026-11-17/18 三轮扩池后的现状） */
-  const want = [['model', 11], ['amount', 10], ['calc', 12], ['draw', 4], ['read', 4]];
+  /* 模块注册表：顺序 = model/amount/calc/draw/read，类数 17/12/15/4/5（2026-11-22 第12周补题后的现状） */
+  const want = [['model', 17], ['amount', 12], ['calc', 15], ['draw', 4], ['read', 5]];
   const got = PT.modules.map((m) => [m.id, (m.kinds || []).length]);
   const bad = want.filter((w, i) => !got[i] || got[i][0] !== w[0] || got[i][1] !== w[1]);
   if (got.length !== want.length || bad.length) {

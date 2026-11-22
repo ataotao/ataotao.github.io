@@ -1,0 +1,658 @@
+{
+  "packId": "pk-w12a",
+  "file": "第12周（A层）.docx",
+  "title": "第12周（A层）",
+  "pages": 4,
+  "meta": {
+    "pageWidth": 595.299987792969,
+    "pageHeight": 841.900024414063,
+    "leftMargin": 54,
+    "rightMargin": 54,
+    "topMargin": 72,
+    "bottomMargin": 72,
+    "headerDistance": 17,
+    "footerDistance": 28.3500003814697,
+    "pages": 4,
+    "paraCount": 116
+  },
+  "anomalies": [
+    "第11题未找到答案段",
+    "第12题未找到答案段",
+    "第13题未找到答案段",
+    "第14题未找到答案段",
+    "第15题未找到答案段",
+    "有 1 个浮动图形未能归到某题（未参与边界扩展）",
+    "第11题没有答案裁图",
+    "第12题没有答案裁图",
+    "第13题没有答案裁图",
+    "第14题没有答案裁图",
+    "第15题没有答案裁图"
+  ],
+  "questions": [
+    {
+      "no": 1,
+      "group": "选择",
+      "isChoice": true,
+      "guessType": "choice",
+      "askText": "1．榴莲因其果肉香甜又富有营养，被称为水果之王。榴莲被切开后，其香味将很快充满整个房间，这一现象主要说明（     ）",
+      "opts": [
+        "物质是由分子构成的",
+        "分子间存在引力",
+        "分子间有间隙",
+        "分子在不停地做无规则运动"
+      ],
+      "answerKey": "D",
+      "answerText": "",
+      "section": "一、单选题",
+      "askImg": [
+        "图片/pk-w12a/q01.png"
+      ],
+      "ansImg": [],
+      "range": {
+        "startPage": 1,
+        "startY": 135,
+        "endPage": 1,
+        "endY": 213,
+        "lastContentPage": 1
+      },
+      "extraRanges": [],
+      "ansRange": null,
+      "hasAnswerBlock": false,
+      "ansInferred": false
+    },
+    {
+      "no": 2,
+      "group": "选择",
+      "isChoice": true,
+      "guessType": "choice",
+      "askText": "2．某款“全液冷超级充电桩”的充电枪内部有电缆和冷却管，冷却管内流动的冷却液可带走充电时电缆产生的大量热量，这一过程中主要利用了冷却液具有较大的（     ）",
+      "opts": [
+        "质量",
+        "比热容",
+        "密度",
+        "内能"
+      ],
+      "answerKey": "B",
+      "answerText": "",
+      "section": "一、单选题",
+      "askImg": [
+        "图片/pk-w12a/q02.png"
+      ],
+      "ansImg": [],
+      "range": {
+        "startPage": 1,
+        "startY": 213,
+        "endPage": 1,
+        "endY": 275.25,
+        "lastContentPage": 1
+      },
+      "extraRanges": [],
+      "ansRange": null,
+      "hasAnswerBlock": false,
+      "ansInferred": false
+    },
+    {
+      "no": 3,
+      "group": "选择",
+      "isChoice": true,
+      "guessType": "choice",
+      "askText": "3．如图，注射器里封有一定量的水，用手推活塞很难将水压缩，主要是因为（     ）",
+      "opts": [
+        "分子间有空隙",
+        "分子在运动",
+        "分子间有引力",
+        "分子间有斥力"
+      ],
+      "answerKey": "D",
+      "answerText": "",
+      "section": "一、单选题",
+      "askImg": [
+        "图片/pk-w12a/q03.png"
+      ],
+      "ansImg": [],
+      "range": {
+        "startPage": 1,
+        "startY": 275.25,
+        "endPage": 1,
+        "endY": 447,
+        "lastContentPage": 1
+      },
+      "extraRanges": [],
+      "ansRange": null,
+      "hasAnswerBlock": false,
+      "ansInferred": false
+    },
+    {
+      "no": 4,
+      "group": "选择",
+      "isChoice": true,
+      "guessType": "choice",
+      "askText": "4．如图所示是冰块温度随加热时间变化的图像，由图像可知（     ）",
+      "opts": [
+        "AB段表示物体温度不变，内能增大",
+        "BC段表示物体正在吸热，内能增大",
+        "CD段表示物体正在从液态变为气态",
+        "从图示可知，冰是非晶体"
+      ],
+      "answerKey": "B",
+      "answerText": "",
+      "section": "一、单选题",
+      "askImg": [
+        "图片/pk-w12a/q04.png"
+      ],
+      "ansImg": [],
+      "range": {
+        "startPage": 1,
+        "startY": 447,
+        "endPage": 1,
+        "endY": 509.25,
+        "lastContentPage": 1
+      },
+      "extraRanges": [],
+      "ansRange": null,
+      "hasAnswerBlock": false,
+      "ansInferred": false
+    },
+    {
+      "no": 5,
+      "group": "选择",
+      "isChoice": true,
+      "guessType": "choice",
+      "askText": "5．随着户外运动的兴起，一种新款太阳能背包成为“户外用电神器”。如图，背包前面的太阳能电池板先给内部蓄电池充电，蓄电池再给手机、小风扇或数码相机等电子产品供电。关于该背包工作过程中的能量转化，下列说法正确的是（     ）",
+      "opts": [
+        "蓄电池供电是将电能转化为化学能",
+        "太阳能电池板将太阳能转化为电能",
+        "小风扇工作将化学能转化为机械能",
+        "给蓄电池充电是将化学能转化为电能"
+      ],
+      "answerKey": "B",
+      "answerText": "",
+      "section": "一、单选题",
+      "askImg": [
+        "图片/pk-w12a/q05.png"
+      ],
+      "ansImg": [],
+      "range": {
+        "startPage": 1,
+        "startY": 509.25,
+        "endPage": 1,
+        "endY": 603,
+        "lastContentPage": 1
+      },
+      "extraRanges": [],
+      "ansRange": null,
+      "hasAnswerBlock": false,
+      "ansInferred": false
+    },
+    {
+      "no": 6,
+      "group": "选择",
+      "isChoice": true,
+      "guessType": "choice",
+      "askText": "6．小智家最近购置了一辆油电混合动力汽车，同时装备了热动力源（传统的汽油机）和电动力源（电池和电动机）。热动力源为四缸四冲程汽油机，如图所示为汽油机工作过程的示意图，其中表示做功冲程的是（     ）",
+      "opts": [
+        "[图]",
+        "[图]",
+        "[图]",
+        "[图]"
+      ],
+      "answerKey": "D",
+      "answerText": "",
+      "section": "一、单选题",
+      "askImg": [
+        "图片/pk-w12a/q06.png"
+      ],
+      "ansImg": [],
+      "range": {
+        "startPage": 1,
+        "startY": 603,
+        "endPage": 2,
+        "endY": 72.75,
+        "lastContentPage": 1
+      },
+      "extraRanges": [],
+      "ansRange": null,
+      "hasAnswerBlock": false,
+      "ansInferred": false
+    },
+    {
+      "no": 7,
+      "group": "选择",
+      "isChoice": true,
+      "guessType": "choice",
+      "askText": "7．如图所示，某热机完全燃烧某种燃料时释放能量的分布图，以下选项中热机效率表示正确的是（     ）\n[图]",
+      "opts": [
+        "[式]",
+        "[式]",
+        "[式]",
+        "[式]"
+      ],
+      "answerKey": "C",
+      "answerText": "",
+      "section": "一、单选题",
+      "askImg": [
+        "图片/pk-w12a/q07.png"
+      ],
+      "ansImg": [],
+      "range": {
+        "startPage": 2,
+        "startY": 72.75,
+        "endPage": 2,
+        "endY": 244.5,
+        "lastContentPage": 2
+      },
+      "extraRanges": [],
+      "ansRange": null,
+      "hasAnswerBlock": false,
+      "ansInferred": false
+    },
+    {
+      "no": 8,
+      "group": "选择",
+      "isChoice": true,
+      "guessType": "choice",
+      "askText": "8．如图所示，将塑料绳一端扎紧，把绳撕成多根细丝，用干燥的手从上向下捋几下，观察到细丝蓬散开来，是因为细丝带上了（     ）",
+      "opts": [
+        "正电荷",
+        "负电荷",
+        "同种电荷",
+        "异种电荷"
+      ],
+      "answerKey": "C",
+      "answerText": "",
+      "section": "一、单选题",
+      "askImg": [
+        "图片/pk-w12a/q08.png"
+      ],
+      "ansImg": [],
+      "range": {
+        "startPage": 2,
+        "startY": 244.5,
+        "endPage": 2,
+        "endY": 416.25,
+        "lastContentPage": 2
+      },
+      "extraRanges": [],
+      "ansRange": null,
+      "hasAnswerBlock": false,
+      "ansInferred": false
+    },
+    {
+      "no": 9,
+      "group": "选择",
+      "isChoice": true,
+      "guessType": "choice",
+      "askText": "9．如图，验电器的金属箔带电后会张开，这是因为金属箔（     ）",
+      "opts": [
+        "带异种电荷相互吸引",
+        "带异种电荷相互排斥",
+        "带同种电荷相互吸引",
+        "带同种电荷相互排斥"
+      ],
+      "answerKey": "D",
+      "answerText": "",
+      "section": "一、单选题",
+      "askImg": [
+        "图片/pk-w12a/q09.png"
+      ],
+      "ansImg": [],
+      "range": {
+        "startPage": 2,
+        "startY": 416.25,
+        "endPage": 2,
+        "endY": 462.75,
+        "lastContentPage": 2
+      },
+      "extraRanges": [],
+      "ansRange": null,
+      "hasAnswerBlock": false,
+      "ansInferred": false
+    },
+    {
+      "no": 10,
+      "group": "选择",
+      "isChoice": true,
+      "guessType": "choice",
+      "askText": "10．如图所示为一款室外监控，它的侧方安装着太阳能电池板，为监控系统供电。太阳能电池板相当于电路中的（     ）",
+      "opts": [
+        "电源",
+        "用电器",
+        "开关",
+        "导线"
+      ],
+      "answerKey": "A",
+      "answerText": "",
+      "section": "一、单选题",
+      "askImg": [
+        "图片/pk-w12a/q10.png"
+      ],
+      "ansImg": [],
+      "range": {
+        "startPage": 2,
+        "startY": 462.75,
+        "endPage": 2,
+        "endY": 525,
+        "lastContentPage": 2
+      },
+      "extraRanges": [],
+      "ansRange": null,
+      "hasAnswerBlock": false,
+      "ansInferred": false
+    },
+    {
+      "no": 11,
+      "group": "选择",
+      "isChoice": false,
+      "guessType": "fill",
+      "askText": "11．在通常情况下，下列物体属于导体的是（     ）",
+      "opts": [
+        "陶瓷杯",
+        "塑料笔杆",
+        "钢尺",
+        "橡胶手套"
+      ],
+      "answerKey": "",
+      "answerText": "",
+      "section": "一、单选题",
+      "askImg": [
+        "图片/pk-w12a/q11.png"
+      ],
+      "ansImg": [],
+      "range": {
+        "startPage": 2,
+        "startY": 525,
+        "endPage": 2,
+        "endY": 556.5,
+        "lastContentPage": 2
+      },
+      "extraRanges": [],
+      "ansRange": null,
+      "hasAnswerBlock": false,
+      "ansInferred": false
+    },
+    {
+      "no": 12,
+      "group": "选择",
+      "isChoice": false,
+      "guessType": "solve",
+      "askText": "12．在科技活动中，小华想设计制作一个既能吹风又能照明的小型手持风扇，要求电动机（吹风）和灯泡（照明）互不影响，且均可单独工作。下列电路图中符合要求的是（     ）",
+      "opts": [
+        "[图]",
+        "[图]",
+        "[图]",
+        "[图]"
+      ],
+      "answerKey": "",
+      "answerText": "",
+      "section": "一、单选题",
+      "askImg": [
+        "图片/pk-w12a/q12.png"
+      ],
+      "ansImg": [],
+      "range": {
+        "startPage": 2,
+        "startY": 556.5,
+        "endPage": 2,
+        "endY": 687.75,
+        "lastContentPage": 2
+      },
+      "extraRanges": [],
+      "ansRange": null,
+      "hasAnswerBlock": false,
+      "ansInferred": false
+    },
+    {
+      "no": 13,
+      "group": "选择",
+      "isChoice": false,
+      "guessType": "fill",
+      "askText": "[图]13．在做连接串联电路的实验中，许多同学闭合开关后，发现[式]比[式]亮则（      ）",
+      "opts": [
+        "通过[式]的电流大",
+        "通过[式]的电流大",
+        "通过两灯的电流一样大",
+        "无法判断两灯电流大小"
+      ],
+      "answerKey": "",
+      "answerText": "",
+      "section": "一、单选题",
+      "askImg": [
+        "图片/pk-w12a/q13.png"
+      ],
+      "ansImg": [],
+      "range": {
+        "startPage": 2,
+        "startY": 687.75,
+        "endPage": 3,
+        "endY": 72.75,
+        "lastContentPage": 2
+      },
+      "extraRanges": [],
+      "ansRange": null,
+      "hasAnswerBlock": false,
+      "ansInferred": false
+    },
+    {
+      "no": 14,
+      "group": "选择",
+      "isChoice": false,
+      "guessType": "fill",
+      "askText": "[图]14．全液冷超充技术能实现“一秒一公里”的极速充电。如图是全液冷超充电桩，下列措施能减小充电桩充电导线电阻的是（     ）",
+      "opts": [
+        "提高充电导线两端的电压",
+        "减小通过充电导线的电流",
+        "增加充电导线的长度",
+        "增大充电导线的横截面积"
+      ],
+      "answerKey": "",
+      "answerText": "",
+      "section": "一、单选题",
+      "askImg": [
+        "图片/pk-w12a/q14.png"
+      ],
+      "ansImg": [],
+      "range": {
+        "startPage": 3,
+        "startY": 72.75,
+        "endPage": 3,
+        "endY": 141,
+        "lastContentPage": 3
+      },
+      "extraRanges": [],
+      "ansRange": null,
+      "hasAnswerBlock": false,
+      "ansInferred": false
+    },
+    {
+      "no": 15,
+      "group": "选择",
+      "isChoice": false,
+      "guessType": "fill",
+      "askText": "15．将一根粗细均匀的合金导线直接接入电路时，其电阻为[式]；将其对折后接入电路时，其电阻为[式]。下列说法正确的是（     ）",
+      "opts": [
+        "[式]",
+        "[式]",
+        "[式]",
+        "合金导线未接入电路时，电阻为零"
+      ],
+      "answerKey": "",
+      "answerText": "",
+      "section": "一、单选题",
+      "askImg": [
+        "图片/pk-w12a/q15.png"
+      ],
+      "ansImg": [],
+      "range": {
+        "startPage": 3,
+        "startY": 141,
+        "endPage": 3,
+        "endY": 228.75,
+        "lastContentPage": 3
+      },
+      "extraRanges": [],
+      "ansRange": null,
+      "hasAnswerBlock": false,
+      "ansInferred": false
+    },
+    {
+      "no": 16,
+      "group": "选择",
+      "isChoice": false,
+      "guessType": "fill",
+      "askText": "16．如图所示的三个实物图，图______________是通路，图_________________是短路。\n[图]",
+      "opts": [],
+      "answerKey": "",
+      "answerText": "甲     丙",
+      "section": "二、非选择题",
+      "askImg": [
+        "图片/pk-w12a/q16.png"
+      ],
+      "ansImg": [
+        "图片/pk-w12a/q16-a.png"
+      ],
+      "range": {
+        "startPage": 3,
+        "startY": 244.5,
+        "endPage": 3,
+        "endY": 338.25,
+        "lastContentPage": 3
+      },
+      "extraRanges": [],
+      "ansRange": {
+        "startPage": 4,
+        "startY": 220.5,
+        "endPage": 4,
+        "endY": 236.25,
+        "lastContentPage": 4
+      },
+      "hasAnswerBlock": true,
+      "ansInferred": false
+    },
+    {
+      "no": 17,
+      "group": "选择",
+      "isChoice": false,
+      "guessType": "fill",
+      "askText": "17．如图甲，博物馆里有些古书非常陈旧，直接翻动书页容易使其破损。有人提出，可以通过给书页带电，使书一页页分开。假设给每页书带电可以实现，每页带______（填“同种”或“异种”）电荷。如图乙，与头发摩擦过的气球可以吸引 细水流，原因是____________________________________________________\n[图]",
+      "opts": [],
+      "answerKey": "",
+      "answerText": "同种     带电体具有吸引轻小物体的性质",
+      "section": "二、非选择题",
+      "askImg": [
+        "图片/pk-w12a/q17.png"
+      ],
+      "ansImg": [
+        "图片/pk-w12a/q17-a.png"
+      ],
+      "range": {
+        "startPage": 3,
+        "startY": 338.25,
+        "endPage": 3,
+        "endY": 494.25,
+        "lastContentPage": 3
+      },
+      "extraRanges": [],
+      "ansRange": {
+        "startPage": 4,
+        "startY": 236.25,
+        "endPage": 4,
+        "endY": 252,
+        "lastContentPage": 4
+      },
+      "hasAnswerBlock": true,
+      "ansInferred": false
+    },
+    {
+      "no": 18,
+      "group": "选择",
+      "isChoice": false,
+      "guessType": "solve",
+      "askText": "18．某家庭需要将质量为50kg、初温为10℃的水加热到50℃，利用煤气灶烧水，需要完全燃烧0.4kg的煤气。[c水=4.2×103J/（kg·℃）q煤气=4.2×107J/kg] 求：\n(1)水吸收的热量；\n(2)煤气完全燃烧放出的热量；\n(3)煤气灶烧水的效率。",
+      "opts": [],
+      "answerKey": "",
+      "answerText": "(1)[式]\n(2)[式]\n(3)50%",
+      "section": "二、非选择题",
+      "askImg": [
+        "图片/pk-w12a/q18.png"
+      ],
+      "ansImg": [
+        "图片/pk-w12a/q18-a.png"
+      ],
+      "range": {
+        "startPage": 3,
+        "startY": 494.25,
+        "endPage": 4,
+        "endY": 72.75,
+        "lastContentPage": 3
+      },
+      "extraRanges": [],
+      "ansRange": {
+        "startPage": 4,
+        "startY": 252,
+        "endPage": null,
+        "endY": null,
+        "lastContentPage": 4
+      },
+      "hasAnswerBlock": true,
+      "ansInferred": false
+    }
+  ],
+  "shapeBoxes": [
+    {
+      "page": 4,
+      "x0": -999942,
+      "y0": 74.8,
+      "x1": -999859.9,
+      "y1": 140,
+      "owner": "",
+      "ownerName": ""
+    },
+    {
+      "page": 2,
+      "x0": 473,
+      "y0": 704.5,
+      "x1": 566.8,
+      "y1": 774.2,
+      "owner": "q13",
+      "ownerName": "第13题"
+    },
+    {
+      "page": 3,
+      "x0": 414,
+      "y0": 54.5,
+      "x1": 516,
+      "y1": 187.8,
+      "owner": "q14",
+      "ownerName": "第14题"
+    }
+  ],
+  "answerBlocks": [
+    {
+      "no": 16,
+      "startIdx": 112,
+      "endIdx": 113
+    },
+    {
+      "no": 17,
+      "startIdx": 113,
+      "endIdx": 114
+    },
+    {
+      "no": 18,
+      "startIdx": 114,
+      "endIdx": 117
+    }
+  ],
+  "answerTable": {
+    "10": "A",
+    "9": "D",
+    "8": "C",
+    "7": "C",
+    "6": "D",
+    "5": "B",
+    "4": "B",
+    "3": "D",
+    "2": "B",
+    "1": "D"
+  }
+}
