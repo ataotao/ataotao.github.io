@@ -267,6 +267,45 @@ function runRegression(PT) {
   const wire3Item = PT.drawItems.filter((x) => x.id === 'draw.wire.3')[0];
   ok('电压表接法题：4 张图、答案甲', !!wire3Item && wire3Item.fields[0].figs.length === 4 && wire3Item.fields[0].ans === 0);
   ok('电压表接法题图非空', !!wire3Item && wire3Item.fields[0].figs.every((fg) => PT.svgFor({ fig: fg }).indexOf('<svg') === 0));
+  /* 14) 第12周补题（2026-11-22 审查修正）：读数落分度、熔化热量级合理、图不泄答 */
+  for (let s = 1; s <= 40; s++) {
+    const q = gen('read', 'dualrange', s * 7919);
+    const volt = /电压表/.test(q.prompt);
+    const mRead = /量程读数是 ([\d.]+)/.exec(q.prompt);
+    const small = mRead ? Number(mRead[1]) : NaN;
+    const big = q.fields[0].ans;
+    ok('双量程：大量程 = 5 倍小量程', Math.abs(big - small * 5) < 1e-9);
+    ok('双量程：小量程落在分度上', volt
+      ? Math.abs(small * 10 - Math.round(small * 10)) < 1e-9
+      : Math.abs(small * 50 - Math.round(small * 50)) < 1e-9);
+    ok('双量程：大量程落在分度上', volt
+      ? Math.abs(big * 2 - Math.round(big * 2)) < 1e-9
+      : Math.abs(big * 10 - Math.round(big * 10)) < 1e-9);
+    ok('双量程：表盘可画', PT.svgFor(q).indexOf('<svg') === 0);
+  }
+  for (let s = 1; s <= 40; s++) {
+    const q = gen('calc', 'fusionheat', s * 7919);
+    const lam = q.fields[1].ans;
+    const mMass = /质量 ([\d.]+) kg/.exec(q.prompt);
+    ok('熔化热 λ 在 2×10⁴~5×10⁵ J/kg', lam >= 2e4 && lam <= 5e5);
+    ok('熔化热 Q = λm 自洽', !!mMass && Math.abs(q.fields[0].ans - lam * Number(mMass[1])) < 1e-6);
+  }
+  let hotCups = 0;
+  for (let s = 1; s <= 40; s++) {
+    const q = gen('model', 'diffusion', s * 7919);
+    if (!/热水/.test(q.prompt)) continue;
+    hotCups++;
+    const svg = PT.svgFor(q);
+    ok('扩散热水分支画两杯', svg.indexOf('>冷水</text>') >= 0 && svg.indexOf('>热水</text>') >= 0);
+  }
+  ok('能抽到热水扩散题', hotCups >= 1);
+  for (let s = 1; s <= 20; s++) {
+    const svg = PT.svgFor(gen('model', 'phasegraph', s * 7919));
+    ok('熔化曲线图不写「吸热、温度不变」', svg.indexOf('吸热、温度不变') < 0);
+  }
+  const wfSvg = PT.svgFor(gen('amount', 'resfold', 1));
+  ok('导线对折图不写 L/2、2S', wfSvg.indexOf('2S') < 0 && wfSvg.indexOf('L/2') < 0);
+
   return { n, fails };
 }
 

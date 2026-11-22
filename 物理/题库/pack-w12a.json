@@ -8,7 +8,7 @@
   "比热容与热值",
   "机械能"
  ],
- "note": "人教版初三第12周 A 层作业卷（分子动理论·内能·比热容·电路基础）。逐题裁图来自原卷 docx；选择题答案取自卷末答案表，非选择题保留参考答案裁图并补可判分字段与解析。",
+ "note": "人教版初三第12周 A 层作业卷（分子动理论·内能·比热容·电路基础）。逐题裁图来自原卷 docx；选择题 1–15 题答案逐题核对卷末答案表（11–15 在答案表第二行），非选择题 16–18 题按原卷答案页核对并补可判分字段与解析。",
  "questions": [
   {
    "id": "w12aq01",
@@ -343,7 +343,6 @@
    "focus": "model",
    "diff": 1,
    "type": "choice",
-   "selfCheck": true,
    "ansText": "C",
    "solution": [
     "钢尺是金属，容易导电，属于导体。",
@@ -375,7 +374,6 @@
    "focus": "model",
    "diff": 1,
    "type": "choice",
-   "selfCheck": true,
    "ansText": "D",
    "solution": [
     "要求电动机和灯泡互不影响、可单独工作，说明两者必须并联。",
@@ -399,7 +397,7 @@
    "askImg": [
     "图片/pk-w12a/q13.png"
    ],
-   "ask": "在做连接串联电路的实验中，许多同学闭合开关后，发现比亮则（ ）",
+   "ask": "在做连接串联电路的实验中，许多同学闭合开关后，发现 L₁ 比 L₂ 亮则（ ）",
    "tags": [
     "电流与电路",
     "串并联电路"
@@ -407,7 +405,6 @@
    "focus": "rule",
    "diff": 1,
    "type": "choice",
-   "selfCheck": true,
    "ansText": "C",
    "solution": [
     "两灯串联，电流只有一条路径。",
@@ -415,8 +412,8 @@
    ],
    "tip": "别被「更亮」带偏：串联 I 相同，亮的那个电阻更大、功率更大。",
    "opts": [
-    "L₁ 中电流大",
-    "L₂ 中电流大",
+    "通过 L₁ 的电流大",
+    "通过 L₂ 的电流大",
     "通过两灯的电流一样大",
     "无法判断两灯电流大小"
    ],
@@ -438,7 +435,6 @@
    "focus": "model",
    "diff": 1,
    "type": "choice",
-   "selfCheck": true,
    "ansText": "D",
    "solution": [
     "导体电阻 R = ρL/S，与材料、长度、横截面积有关（温度也有影响）。",
@@ -467,14 +463,13 @@
    "askImg": [
     "图片/pk-w12a/q15.png"
    ],
-   "ask": "将一根粗细均匀的合金导线直接接入电路时，其电阻为；将其对折后接入电路时，其电阻为。下列说法正确的是（ ）",
+   "ask": "将一根粗细均匀的合金导线直接接入电路时，其电阻为 R₁；将其对折后接入电路时，其电阻为 R₂。下列说法正确的是（ ）",
    "tags": [
     "电流与电路"
    ],
    "focus": "model",
    "diff": 1,
    "type": "choice",
-   "selfCheck": true,
    "ansText": "A",
    "solution": [
     "设原电阻 R₁ = ρL/S。对折后长度变为 L/2，两段并联相当于横截面积变为 2S。",
@@ -511,7 +506,6 @@
    "focus": "cond",
    "diff": 1,
    "type": "fill",
-   "selfCheck": true,
    "ansImg": [
     "图片/pk-w12a/q16-a.png"
    ],
@@ -557,7 +551,6 @@
    "focus": "cond",
    "diff": 1,
    "type": "fill",
-   "selfCheck": true,
    "ansImg": [
     "图片/pk-w12a/q17-a.png"
    ],
@@ -603,7 +596,6 @@
    "focus": "calc",
    "diff": 1,
    "type": "solve",
-   "selfCheck": true,
    "ansImg": [
     "图片/pk-w12a/q18-a.png"
    ],

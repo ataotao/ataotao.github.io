@@ -869,19 +869,37 @@ var PT = (function () {
     s.push('<rect x="16" y="24" width="' + (W - 32) + '" height="' + (H - 58) + '" rx="8" fill="#fff" stroke="#8aa2bd" stroke-width="1.5"/>');
     if (mode === 'diffuse') {
       var hot = !!f.hot, i, x, y;
-      for (i = 0; i < 26; i++) {
-        x = 34 + (i % 6) * 17 + (i % 3) * 3;
-        y = 96 + Math.floor(i / 6) * 14;
-        s.push(circle(x, y, 3.2, '#0f9b8e'));
+      if (hot) {
+        /* 题干是「冷水、热水各一杯」：图必须画两杯，否则图文对不上 */
+        var cups = [
+          { x0: 24, x1: 172, label: '冷水', color: '#6b7280', n: 10 },
+          { x0: 188, x1: 336, label: '热水', color: '#0f9b8e', n: 16 }
+        ];
+        for (var ci = 0; ci < cups.length; ci++) {
+          var cup = cups[ci];
+          s.push('<rect x="' + cup.x0 + '" y="44" width="' + (cup.x1 - cup.x0) + '" height="102" rx="7" fill="#f8fbfd" stroke="#8aa2bd" stroke-width="1.2"/>');
+          s.push(txt((cup.x0 + cup.x1) / 2, 36, cup.label, 12, '#1b2333', 'middle', 700));
+          for (i = 0; i < cup.n; i++) {
+            x = cup.x0 + 14 + (i % 5) * 24;
+            y = 66 + Math.floor(i / 5) * 22;
+            s.push(circle(x, y, 3.2, cup.color));
+          }
+        }
+        s.push(txt(180, 172, '热水中红墨水扩散更快', 11, '#0f9b8e', 'middle'));
+      } else {
+        for (i = 0; i < 26; i++) {
+          x = 34 + (i % 6) * 17 + (i % 3) * 3;
+          y = 96 + Math.floor(i / 6) * 14;
+          s.push(circle(x, y, 3.2, '#0f9b8e'));
+        }
+        for (i = 0; i < 14; i++) {
+          x = 190 + (i % 7) * 20;
+          y = 100 + Math.floor(i / 7) * 18;
+          s.push(circle(x, y, 3.2, '#6b7280'));
+        }
+        s.push('<path d="M150 112 L214 112 M206 105 L214 112 L206 119" fill="none" stroke="#d93025" stroke-width="2.4"/>');
+        s.push(txt(180, 40, '滴入红墨水后', 13, '#1b2333', 'middle', 700));
       }
-      for (i = 0; i < 14; i++) {
-        x = 190 + (i % 7) * 20;
-        y = 100 + Math.floor(i / 7) * 18;
-        s.push(circle(x, y, 3.2, '#6b7280'));
-      }
-      s.push('<path d="M150 112 L214 112 M206 105 L214 112 L206 119" fill="none" stroke="#d93025" stroke-width="2.4"/>');
-      s.push(txt(180, 40, hot ? '热水：扩散更快' : '滴入红墨水后', 13, '#1b2333', 'middle', 700));
-      if (hot) s.push(txt(180, 60, '温度越高，分子运动越剧烈', 11, '#0f9b8e', 'middle'));
     } else {
       var attract = mode === 'attract';
       s.push(circle(112, 105, 30, '#dbeafe', '#1b2333', 2));
@@ -910,7 +928,6 @@ var PT = (function () {
       s.push(txt(120, 86, 'B', 12, '#1b2333', 'middle', 700));
       s.push(txt(204, 86, 'C', 12, '#1b2333', 'middle', 700));
       s.push(txt(272, 42, 'D', 12, '#1b2333', 'middle', 700));
-      s.push(txt(162, 126, '熔化：吸热、温度不变', 11, '#0f9b8e', 'middle'));
     } else {
       s.push('<path d="M52 190 L150 140 L250 84 L340 44" fill="none" stroke="#d93025" stroke-width="3"/>');
       s.push(txt(196, 74, '温度持续升高', 11, '#d93025', 'middle'));
@@ -927,7 +944,6 @@ var PT = (function () {
     s.push(txt(300, 66, '对折', 11, '#d93025', 'middle'));
     s.push('<rect x="330" y="72" width="28" height="22" rx="4" fill="#d9b26a" stroke="#1b2333" stroke-width="1.6"/>');
     s.push('<rect x="330" y="94" width="28" height="22" rx="4" fill="#d9b26a" stroke="#1b2333" stroke-width="1.6"/>');
-    s.push(txt(344, 142, 'L/2、2S → R₂', 12, '#0f9b8e', 'middle'));
     s.push(svgTail());
     return s.join('');
   }
@@ -939,7 +955,7 @@ var PT = (function () {
     if (f.type === 'particle') body = svgParticle(f);
     else if (f.type === 'phasegraph') body = svgPhaseGraph(f);
     else if (f.type === 'wirefold') body = svgWireFold();
-    if (f.type === 'tension') body = svgTension(f);
+    else if (f.type === 'tension') body = svgTension(f);
     else if (f.type === 'circuit') body = svgCircuit(f);
     else if (f.type === 'battery') body = svgBattery(f);
     else if (f.type === 'wiretable') body = svgWireTable(f);
@@ -2384,9 +2400,11 @@ var PT = (function () {
   }
 
   function genCalcFusion(r) {
-    var P = pick(r, [600, 800, 1000, 1200]);
-    var t = pick(r, [60, 90, 120, 150]);
-    var m = pick(r, [0.01, 0.02, 0.05]);
+    /* 参数要让 λ 落在中学教材量级（冰 3.34×10⁵、本卷第13题 7.2×10⁴ J/kg）：
+       300~600 W × 60~120 s × 0.2~0.5 kg → λ = 3.6×10⁴~3.6×10⁵ J/kg */
+    var P = pick(r, [300, 400, 500, 600]);
+    var t = pick(r, [60, 90, 120]);
+    var m = pick(r, [0.2, 0.3, 0.4, 0.5]);
     var Q = P * t, lam = Q / m;
     return {
       id: 'calc.fusionheat', kind: 'fusionheat', title: '熔化热 λ = Q/m',
@@ -2424,12 +2442,14 @@ var PT = (function () {
   }
 
   function genReadDualRange(r) {
-    var small = pick(r, [0.12, 0.24, 0.36, 0.48]);
-    var big = Math.round(small * 5 * 100) / 100;
+    /* 读数必须落在表盘分度上：0~3 V 每格 0.1 V、0~15 V 每格 0.5 V；
+       0~0.6 A 每格 0.02 A、0~3 A 每格 0.1 A（svgMeterDial 共 30 格） */
     var volt = ri(r, 0, 1) === 1;
+    var small = volt ? pick(r, [0.6, 0.9, 1.2, 1.5]) : pick(r, [0.12, 0.24, 0.36, 0.48]);
+    var big = Math.round(small * 5 * 100) / 100;
     return {
       id: 'read.dualrange', kind: 'dualrange', title: '同一指针，两个量程',
-      prompt: (volt ? '电压表' : '电流表') + '指针位置如图。若按 ' + (volt ? '0~3 V' : '0~0.6 A') + ' 量程读数是 ' + fmtNum(volt ? big / 5 : small) + '，那么按 ' + (volt ? '0~15 V' : '0~3 A') + ' 量程读数是多少？',
+      prompt: (volt ? '电压表' : '电流表') + '指针位置如图。若按 ' + (volt ? '0~3 V' : '0~0.6 A') + ' 量程读数是 ' + fmtNum(small) + '，那么按 ' + (volt ? '0~15 V' : '0~3 A') + ' 量程读数是多少？',
       fields: [
         { type: 'num', label: '大量程读数', ans: big, unit: volt ? 'V' : 'A', tol: 0.01 },
         { type: 'num', label: '两个量程读数之比（大 / 小，填数字）', ans: 5, tol: 0.01 }
