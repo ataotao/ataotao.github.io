@@ -1144,17 +1144,25 @@ window.__ltSync = { carrierSnapshot: carrierSnapshot, syncPlan: syncPlan, subjec
   function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
 
   /* ---------- 发音（浏览器 TTS，无音频文件） ---------- */
-  function speak(text, rate) {
+  /* quiet=true 用于提交后自动朗读：不支持 TTS 时静默跳过，别弹窗打断做题 */
+  function speak(text, rate, quiet) {
     if (!text) return;
     try {
       if (typeof speechSynthesis === 'undefined' || typeof SpeechSynthesisUtterance === 'undefined') {
-        alert('这个浏览器不支持朗读。可以只看音标和文字练。'); return;
+        if (!quiet) alert('这个浏览器不支持朗读。可以只看音标和文字练。');
+        return;
       }
       speechSynthesis.cancel();
       var u = new SpeechSynthesisUtterance(text);
       u.lang = 'en-US'; u.rate = rate || 0.82;
       speechSynthesis.speak(u);
     } catch (e) { /* 朗读失败不影响答题 */ }
+  }
+  /* 要读的英文目标词：三方向都取 q.word（中→英的 speak 字段故意留空以防泄题），
+     旧记录/兜底题没有 word 时退回 speak 或英→中的题干。 */
+  function spokenWord(q) {
+    if (!q) return '';
+    return q.word || q.speak || (q.kind === 'e2c' ? q.prompt : '') || '';
   }
 
   /* ---------- 状态 ----------
@@ -1445,7 +1453,14 @@ window.__ltSync = { carrierSnapshot: carrierSnapshot, syncPlan: syncPlan, subjec
     } else {
       var fb = h('div', { class: 'fb ' + (S.res.ok ? 'good' : 'bad') });
       fb.appendChild(h('div', { class: 'ftitle' }, S.res.ok ? '✓ 答对了' : '✗ 答错了'));
-      fb.appendChild(h('div', { class: 'small', style: 'margin-top:4px' }, '正确答案：' + EW.ansText(f)));
+      fb.appendChild(h('div', { class: 'small', style: 'margin-top:4px' },
+        '正确答案：' + EW.ansText(f),
+        spokenWord(q) ? h('button', {
+          class: 'speakbtn',
+          style: 'margin:0 0 0 10px;padding:2px 10px;font-size:12px',
+          onclick: (function (text) { return function () { speak(text); }; })(spokenWord(q))
+        }, '🔊 再听') : null
+      ));
       fb.appendChild(h('div', { class: 'small', style: 'margin-top:4px' }, q.tip || ''));
       // 例句：提交后才显示，避免泄露答案；目标词高亮。来自粤学词词典语料，非课文原文。
       if (q.ex) {
@@ -1482,6 +1497,9 @@ window.__ltSync = { carrierSnapshot: carrierSnapshot, syncPlan: syncPlan, subjec
     });
     reviewAnswer(q, res.ok, qid);   /* 统一错题回炉（ADR-0010）：连对2次+行为约束才算掌握 */
     save(); render();
+    /* 提交后朗读目标词，三个方向都读（含中→英，答案才是英文）；慢速便于熟悉发音。
+       静默降级：浏览器不支持时不弹窗，答题照常进行。 */
+    speak(spokenWord(q), 0.72, true);
   }
   function next() {
     var s = S.sess;

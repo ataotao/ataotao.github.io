@@ -188,9 +188,13 @@ function runUI() {
     },
     Blob: function () {}, FileReader: function () {},
     URL: { createObjectURL() { return 'blob:x'; }, revokeObjectURL() {} },
+    // 语音桩：不出声，但记录朗读文本，用于断言「提交后读目标词」
+    __spoken: [],
+    speechSynthesis: { cancel() {}, speak(u) { ctx.__spoken.push(u.text); } },
+    SpeechSynthesisUtterance: function (text) { this.text = text; },
     __alerts: []
   };
-  // 语法体检用的 speechSynthesis 不注入 → speak() 走 alert 分支，不影响流程
+  // 注入 speechSynthesis 桩：speak() 不再走 alert 分支，且能检查朗读内容
   ctx.window = ctx;
   ctx.window.scrollTo = function () {};
   ctx.window.addEventListener = function () {};
@@ -243,8 +247,11 @@ function runUI() {
     ok('出题 ' + kind, !!q && q.kind === kind && q.fields.length === 1 && q.fields[0].options.length >= 4);
     // 答对
     T.S.choice[0] = q.fields[0].ans;
+    ctx.__spoken.length = 0;   // p2c 出题时会自动读一遍，这里只验提交那一次
     T.submit();
     ok('判对 ' + kind, T.S.res && T.S.res.ok && T.S.sess.done === 0 && T.S.answered === true);
+    ok('提交后朗读目标词 ' + kind, ctx.__spoken.length === 1 && ctx.__spoken[0] === q.word);
+    ok('提交后有再听按钮 ' + kind, textOf(app).indexOf('再听') >= 0);
     ok('答完题号不提前进位 ' + kind, countText() === '1 / 3', textOf(app.children[0]));
     if (q.ex) ok('例句高亮 ' + kind, /hlword/.test(T.EW.highlightExample(q.ex, q.word)));
     T.next();
