@@ -204,7 +204,7 @@ const legacy = {
 };
 store[SUB.key] = JSON.stringify(legacy);
 const reloaded = T.load();
-if (reloaded.recs.length !== 1 || Object.keys(reloaded.wrong).length !== 1) fail('chemflash_v1 旧记录读不出');
+if (reloaded.recs.length !== 1 || Object.keys(reloaded.wrong).length !== 1) fail('旧格式记录读不出（缺 deviceId / qid 的兼容路径）');
 
 /* ④ 合并幂等：同一份记录导入两次，条数不变 */
 const m1 = T.mergeRecords(legacy, legacy);

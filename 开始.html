@@ -179,6 +179,8 @@
       file: '化学思维脚手架.html', quick: '#view=drill', quickText: '错题回炉', wrong: '#view=drill&list=wrong', wrongText: '清错题' },
     { key: 'chemflash', name: '化学闪练',   icon: '⚡',  accent: '#0e7490', href: '化学/化学闪练卡.html', desc: '人教版初三 12 单元 · 随机生成 · 解析讲考点难点',
       file: '化学闪练卡.html', quick: '#view=today', quickText: '全考点闪练', wrong: '#view=wrong', wrongText: '清错题' },
+    { key: 'chemfocus', name: '化学专项',   icon: '🎯',  accent: '#b45309', href: '化学/化学方程式专项.html', desc: '配平四法 + 元素离子符号 + 方程式计算（针对今日弱项）',
+      file: '化学方程式专项.html', quick: '#view=today', quickText: '弱项专项', wrong: '#view=wrong', wrongText: '清错题' },
     { key: 'yuwen',    name: '语文',        icon: '📜', accent: '#3f6b57', href: '语文/语文思维脚手架.html', desc: '期中逐题诊断 + 九板块框架 + 作文逐段批改',
       file: '语文思维脚手架.html', quick: '#view=drill', quickText: '失分点闪练', wrong: '#view=drill&list=wrong', wrongText: '清错题' },
     { key: 'ywrecite', name: '语文背诵',   icon: '📖', accent: '#3f6b57', href: '语文/背诵训练卡.html', desc: '75 篇全覆盖 · 按学期分组 · 考点默写逐字批改+回炉',
@@ -218,7 +220,7 @@
     yuwen: '语文', ywrecite: '语文',
     math: '数学', coord: '数学', train: '数学', firstaid: '数学', wrong: '数学',
     english: '英语', flash: '英语', words: '英语', yuexueci: '英语', wordsflash: '英语',
-    physics: '物理', phystrain: '物理', chem: '化学', chemflash: '化学', history: '历史', politics: '道德与法治',
+    physics: '物理', phystrain: '物理', chem: '化学', chemflash: '化学', chemfocus: '化学', history: '历史', politics: '道德与法治',
     formula: '公式记背'
   };
   var GROUP_ORDER = ['语文', '数学', '英语', '物理', '化学', '历史', '道德与法治', '公式记背'];
@@ -231,6 +233,7 @@
     { key: 'physTrain_v1', subject: 'phystrain' },
     { key: 'chemScaffold.v1', subject: 'chem' },
     { key: 'chemflash_v1', subject: 'chemflash' },
+    { key: 'chemfocus_v1', subject: 'chemfocus' },
     { key: 'ywScaffold.v1', subject: 'yuwen' },
     { key: 'ywRecite.v1', subject: 'ywrecite' },
     { key: 'fn_scaffold_v1', subject: 'math' },
@@ -394,6 +397,22 @@
     (function () {
       var v = readJSON('chemflash_v1'); if (!v) return;
       var s = bump('chemflash');
+      var recs = v.recs || [];
+      s.attempts += recs.length;
+      recs.forEach(function (r) { if (r && r.ok) s.correct += 1; });
+      Object.keys(v.wrong || {}).forEach(function () { s.wrong += 1; });
+      var dates = {};
+      recs.forEach(function (r) {
+        var d = dateFromStamp(r && r.ts);
+        if (d) { if (!s.last || d > s.last) s.last = d; dates[todayKey(d)] = true; }
+      });
+      s.today = dates[todayKey()] ? 1 : 0;
+    })();
+
+    // 化学方程式专项（配平 / 化学用语 / 方程式计算，逐次事件 + 错题库）
+    (function () {
+      var v = readJSON('chemfocus_v1'); if (!v) return;
+      var s = bump('chemfocus');
       var recs = v.recs || [];
       s.attempts += recs.length;
       recs.forEach(function (r) { if (r && r.ok) s.correct += 1; });
@@ -636,7 +655,7 @@
     }
 
     var now = new Date();
-    ['history', 'politics', 'formula', 'physics', 'phystrain', 'chem', 'chemflash', 'yuwen', 'math', 'coord', 'train', 'wrong', 'english', 'wordsflash'].forEach(function (key) {
+    ['history', 'politics', 'formula', 'physics', 'phystrain', 'chem', 'chemflash', 'chemfocus', 'yuwen', 'math', 'coord', 'train', 'wrong', 'english', 'wordsflash'].forEach(function (key) {
       var s = stats[key];
       if (!s) return;
       var gap = s.last ? daysBetween(s.last, now) : 30;
@@ -688,6 +707,7 @@
       { key: 'formula', title: '公式 · 3 分钟今日必背', reason: '每天必背的那几条', hash: '#mode=recite&fs=today' },
       { key: 'chem', title: '化学 · 10 分钟错题回炉', reason: '期中卷的失分点，点选即判', hash: '#view=drill' },
       { key: 'chemflash', title: '化学闪练 · 随机 10 题', reason: '初三全考点，答案解析讲考点难点', hash: '#view=today' },
+      { key: 'chemfocus', title: '化学专项 · 10 分钟补弱项', reason: '先过元素/离子符号，再练配平四法', hash: '#view=today' },
       { key: 'wordsflash', title: '单词闪练 · 5 分钟记 10 词', reason: '按年级单元练英→中/中→英/音→中', hash: '#view=today' },
       { key: 'yuwen', title: '语文 · 10 分钟失分点闪练', reason: '文言翻译与赏析题，先按模板过一遍', hash: '#view=drill' },
       { key: 'ywrecite', title: '语文背诵 · 背《出师表》', reason: '本周要求背诵，跟读→遮罩→考点默写过一遍', hash: '#p=chushibiao&m=read' },

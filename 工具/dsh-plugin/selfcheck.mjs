@@ -313,6 +313,44 @@ try {
   rmSync(backupDir, { recursive: true, force: true })
 }
 
+// 化学专项是训练器闪练卡族：recs 为逐次事件、wrong 为题级错题，备份包要能拆出统计。
+const flashDir = mkdtempSync(join(tmpdir(), 'ltw-flash-backup-'))
+try {
+  mkdirSync(join(flashDir, '学习记录'), { recursive: true })
+  writeFileSync(
+    join(flashDir, '学习记录', '全部记录-2026-11-22.json'),
+    JSON.stringify({
+      schema: 'lt.practice-records/1',
+      kind: 'backup',
+      exportedAt: '2026-11-22T00:00:00.000Z',
+      apps: {
+        chemfocus_v1: {
+          v: 1,
+          recs: [
+            { ts: 1795318024088, ok: false, mod: 'balance', kind: 'lcm' },
+            { ts: 1795318955468, ok: false, mod: 'balance', kind: 'lcm' },
+            { ts: 1795319146946, ok: true, mod: 'balance', kind: 'lcm' },
+          ],
+          wrong: {
+            'balance.lcm|配平': { kindName: '最小公倍数法', title: '化学方程式的配平', n: 2, due: 1795404424088 },
+          },
+          meta: {},
+        },
+      },
+    }),
+    'utf8',
+  )
+  const scanned = scanRecords(flashDir)
+  eq(scanned.subjects.length, 1, '化学专项备份包应拆出 1 科')
+  const chem = scanned.subjects[0]
+  eq(chem.subject, '化学', '化学专项归入化学科')
+  eq(chem.attempts, 3, '化学专项备份包里的作答次数')
+  eq(chem.correct, 1, '化学专项备份包里的答对次数')
+  ok(chem.weak.some((item) => item.label === '最小公倍数法' && item.count === 2), '化学专项弱项应来自错题库')
+} finally {
+  rmSync(flashDir, { recursive: true, force: true })
+}
+
 // ---------------------------------------------------------------- 真实仓库
 const real = scanRecords(repoRoot)
 ok(real && typeof real.exists === 'boolean', '真实记录的 exists 字段不对')

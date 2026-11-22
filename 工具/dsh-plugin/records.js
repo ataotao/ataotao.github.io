@@ -201,6 +201,7 @@ const BACKUP_APPS = {
   'fn_scaffold_v1': { subject: '数学', tool: '函数思维脚手架', kind: 'fn' },
   'jjb-jiuzhong-shang-v1': { subject: '数学', tool: '今晚急救包', kind: 'jiji' },
   'eng9a-practice-v1': { subject: '英语', tool: '九上英语过关练习', kind: 'english' },
+  'chemfocus_v1': { subject: '化学', tool: '化学方程式专项', kind: 'flash' },
 }
 
 function expandBackup(value, meta) {
@@ -228,6 +229,8 @@ function expandBackup(value, meta) {
       record = parseJiji(store)
     } else if (spec.kind === 'english') {
       record = parseEnglish({ subject: spec.subject, tool: spec.tool, data: store })
+    } else if (spec.kind === 'flash') {
+      record = parseFlash(store, spec, at)
     }
     if (record) records.push({ ...record, at: record.at || at })
   }
@@ -595,6 +598,34 @@ function daysFromIso(stamps) {
     subject: '数学',
     tool: '今晚急救包',
     at: null,
+    attempts,
+    correct,
+    weak: topWeak(weak),
+    days: null,
+    last,
+  })
+}
+
+/** 训练器闪练卡族（chemfocus_v1 等）：recs 是逐次事件，wrong 是题级错题库。 */
+function parseFlash(store, spec, at) {
+  const recs = Array.isArray(store.recs) ? store.recs : []
+  let attempts = 0
+  let correct = 0
+  let last = null
+  for (const rec of recs) {
+    attempts += 1
+    if (rec?.ok === true) correct += 1
+    last = later(last, rec?.ts)
+  }
+  const weak = new Map()
+  for (const item of Object.values(store.wrong || {})) {
+    const label = item?.kindName || item?.title || item?.kind || '未分类'
+    weak.set(label, (weak.get(label) || 0) + Math.max(1, number(item?.n)))
+  }
+  return finish({
+    subject: spec.subject,
+    tool: spec.tool,
+    at,
     attempts,
     correct,
     weak: topWeak(weak),

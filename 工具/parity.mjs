@@ -51,6 +51,11 @@ const TARGETS = [
     watch: ['化学/化学闪练卡.html', '工具/trainer/review.js'],
   },
   {
+    name: '化学 · 方程式专项（训练器模板）',
+    cmd: ['node', ['工具/trainer/build.mjs', '化学专项']],
+    watch: ['化学/化学方程式专项.html', '工具/trainer/review.js'],
+  },
+  {
     name: '英语 · 语法闪练',
     cmd: ['node', ['英语/语法闪练/build.mjs']],
     watch: ['英语/语法闪练.html', '英语/语法闪练/data/bundle.js', '英语/语法闪练/考点识别速查表.html'],

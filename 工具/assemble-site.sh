@@ -21,6 +21,7 @@ pub 道德与法治/核心考点训练.html 道德与法治/核心考点训练.h
 pub 公式记背/公式记背.html       公式记背/公式记背.html
 pub 化学/化学思维脚手架.html     化学/化学思维脚手架.html
 pub 化学/化学闪练卡.html         化学/化学闪练卡.html
+pub 化学/化学方程式专项.html     化学/化学方程式专项.html
 pub 历史/核心考点训练.html       历史/核心考点训练.html
 pub 数学/函数思维脚手架.html     数学/函数思维脚手架.html
 pub 数学/今晚急救包.html         数学/今晚急救包.html

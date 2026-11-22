@@ -1,0 +1,1664 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>化学方程式专项 · 配平 + 化学用语 + 计算</title>
+<style>
+:root{
+  --bg:#f5f7fb; --card:#fff; --ink:#1b2333; --muted:#6b7280; --line:#e6e9f2;
+  --brand:#b45309; --brand-soft:#fef3c7; --ok:#0f9d58; --ok-soft:#e8f6ee;
+  --bad:#d93025; --bad-soft:#fdecea; --warn:#c26a00; --warn-soft:#fff4e2;
+  --r:14px; --shadow:0 1px 2px rgba(20,30,60,.05),0 8px 24px rgba(20,30,60,.05);
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font:15px/1.7 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;-webkit-text-size-adjust:100%}
+.wrap{max-width:900px;margin:0 auto;padding:0 16px 64px}
+header.top{position:sticky;top:0;z-index:20;background:rgba(245,247,251,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.top-in{max-width:900px;margin:0 auto;padding:10px 16px 0;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.brand{font-weight:800;font-size:17px;letter-spacing:.2px}
+.ver{font-size:11px;color:var(--muted);font-weight:600;border:1px solid var(--line);border-radius:20px;padding:1px 7px}
+.top-note{font-size:12px;color:var(--muted);margin-left:auto}
+nav.tabs{max-width:900px;margin:0 auto;padding:8px 16px 0;display:flex;gap:6px;overflow-x:auto;scrollbar-width:none}
+nav.tabs::-webkit-scrollbar{display:none}
+nav.tabs button{flex:0 0 auto;border:0;background:transparent;color:var(--muted);font:inherit;font-size:14px;padding:8px 12px;border-radius:10px 10px 0 0;cursor:pointer;border-bottom:2px solid transparent}
+nav.tabs button:hover{color:var(--ink);background:#eef1f8}
+nav.tabs button.active{color:var(--brand);font-weight:700;border-bottom-color:var(--brand)}
+main{padding-top:18px}
+h2{font-size:19px;margin:24px 0 10px}
+h3{font-size:16px;margin:16px 0 8px}
+p{margin:8px 0}
+.muted{color:var(--muted)}.small{font-size:13px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px;box-shadow:var(--shadow)}
+.card+.card{margin-top:12px}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.grow{flex:1}
+.btn{appearance:none;border:1px solid var(--line);background:#fff;color:var(--ink);font:inherit;font-size:14px;font-weight:600;padding:9px 16px;border-radius:11px;cursor:pointer;transition:transform .06s ease,background .12s ease}
+.btn:active{transform:scale(.98)}
+.btn-primary{background:var(--brand);border-color:var(--brand);color:#fff}
+.btn-primary:hover{background:#92400e}
+.btn-ghost{background:transparent;border-color:transparent;color:var(--brand);padding:6px 8px}
+.btn-sm{padding:5px 10px;font-size:13px;border-radius:9px}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.pill{display:inline-block;font-size:12px;font-weight:700;padding:2px 9px;border-radius:20px;background:var(--brand-soft);color:var(--brand)}
+.pill.ok{background:var(--ok-soft);color:var(--ok)}.pill.bad{background:var(--bad-soft);color:var(--bad)}.pill.warn{background:var(--warn-soft);color:var(--warn)}
+.progress{height:6px;background:#eef1f8;border-radius:6px;overflow:hidden}
+.progress i{display:block;height:100%;background:var(--brand);border-radius:6px;transition:width .2s ease}
+.qhead{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.qbody{font-size:16px;font-weight:600;margin:12px 0;line-height:1.8}
+.opt{display:block;width:100%;text-align:left;border:1px solid var(--line);background:#fff;border-radius:11px;padding:10px 14px;margin:7px 0;font:inherit;font-size:15px;cursor:pointer;transition:background .1s,border .1s}
+.opt:hover{background:#f7fafc;border-color:#cbd5e1}
+.opt.sel{border-color:var(--brand);background:var(--brand-soft)}
+.opt.ok{border-color:var(--ok);background:var(--ok-soft);color:#0b6b3a;font-weight:700}
+.opt.bad{border-color:var(--bad);background:var(--bad-soft);color:#a51f17}
+.field{display:flex;gap:8px;align-items:center;margin:10px 0;flex-wrap:wrap}
+.field .lbl{font-size:14px;color:var(--muted);min-width:70px}
+.field .lbl.full{display:block;min-width:0;width:100%;font-weight:600;color:var(--ink)}
+input.txt{font:inherit;font-size:15px;border:1px solid var(--line);border-radius:10px;padding:8px 12px;min-width:170px;flex:1;background:#fff;color:var(--ink)}
+input.txt:focus{outline:none;border-color:var(--brand);box-shadow:0 0 0 3px var(--brand-soft)}
+input.txt.ok{border-color:var(--ok);background:var(--ok-soft)}input.txt.bad{border-color:var(--bad);background:var(--bad-soft)}
+.unit{color:var(--muted);font-size:14px}
+.fb{border-radius:12px;padding:12px 14px;margin-top:14px;font-size:14px}
+.fb.good{background:var(--ok-soft);border:1px solid #bfe6cd}
+.fb.bad{background:var(--bad-soft);border:1px solid #f3c9c4}
+.fb.ftitle{font-weight:800;font-size:15px;margin-bottom:6px}
+.mk{display:inline-block;width:20px;font-weight:800}.mk.ok{color:var(--ok)}.mk.bad{color:var(--bad)}
+.tipbox{background:var(--warn-soft);border:1px solid #f1d9a8;border-radius:10px;padding:10px 12px;margin-top:10px;font-size:14px;color:#8a4b00}
+.kpline{margin-top:8px;font-size:12px;color:var(--muted)}
+.modgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px;margin-top:10px}
+.modcard{background:#fff;border:1px solid var(--line);border-radius:12px;padding:13px 14px;cursor:pointer;transition:transform .06s,border .1s}
+.modcard:hover{border-color:var(--brand);transform:translateY(-1px)}
+.modcard h4{margin:0 0 4px;font-size:15px}
+.modcard .d{font-size:12px;color:var(--muted);line-height:1.5}
+.modcard .m{margin-top:8px;font-size:11px;color:var(--brand);font-weight:700}
+.kindchip{display:inline-block;border:1px solid var(--line);border-radius:20px;padding:5px 12px;margin:4px 5px 0 0;font-size:13px;cursor:pointer;background:#fff}
+.kindchip:hover{border-color:var(--brand);background:var(--brand-soft);color:var(--brand)}
+.statgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px}
+.statbox{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.statbox .k{font-size:12px;color:var(--muted)}.statbox .v{font-size:24px;font-weight:800;color:var(--brand)}
+.wrongitem{border-left:3px solid var(--bad);padding-left:10px;margin:10px 0}
+.due{font-size:11px;color:var(--warn);font-weight:700}
+@media(max-width:560px){.qbody{font-size:15px}.statbox .v{font-size:20px}.top-note{display:none}}
+@media print{nav.tabs,header.top,.btn{display:none!important}body{background:#fff}.card{box-shadow:none}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="top-in"><span class="brand">⚗ 化学专项</span><span class="ver">针对弱项 · 3 模块</span>
+    <span class="top-note">配平四法 · 元素离子 · 方程式计算</span></div>
+  <nav class="tabs" id="tabs"></nav>
+</header>
+<main class="wrap" id="app"></main>
+<script id="core">
+/* ============================================================
+   化学方程式专项 · 核心逻辑（纯数据 + 出题 + 判分，不碰 DOM）
+   ------------------------------------------------------------
+   三模块：① 化学用语地基（元素/离子/周期表）
+           ② 配平四法（最小公倍数 / 奇数配偶 / 观察 / 定一 + 方法选择 + 自检）
+           ③ 写方程式与计算（由反应物推生成物 + 相对质量比计算）
+   由 build.mjs 内联为 core 脚本节点，check-focus.mjs 抽出跑自检。
+   注意：normChem 保留大小写（元素符号 Na ≠ na ≠ NA），与 flash.core.js 不同。
+   ============================================================ */
+var CF = (function () {
+  'use strict';
+  var VERSION = 1, DAY = 86400000;
+
+  /* ---------- 可复现随机 ---------- */
+  function mulberry32(seed) {
+    var a = seed >>> 0;
+    return function () {
+      a |= 0; a = (a + 0x6D2B79F5) | 0;
+      var t = Math.imul(a ^ (a >>> 15), 1 | a);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+  function ri(r, a, b) { return a + Math.floor(r() * (b - a + 1)); }
+  function pick(r, arr) { return arr[Math.floor(r() * arr.length)]; }
+  function shuffled(r, arr) {
+    var a = arr.slice();
+    for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(r() * (i + 1)), t = a[i]; a[i] = a[j]; a[j] = t; }
+    return a;
+  }
+  function pair(r, correct, wrongs) {
+    var opts = [correct].concat(shuffled(r, wrongs).slice(0, 3));
+    opts = shuffled(r, opts);
+    return { type: 'choice', options: opts, ans: opts.indexOf(correct) };
+  }
+
+  /* ---------- 输入归一（保留大小写：元素符号大小写是答案的一部分） ---------- */
+  function parseNum(input) {
+    if (input === null || input === undefined) return NaN;
+    if (typeof input === 'number') return isFinite(input) ? input : NaN;
+    var s = String(input).trim();
+    if (!s) return NaN;
+    s = s.replace(/[０-９]/g, function (c) { return String.fromCharCode(c.charCodeAt(0) - 0xFEE0); })
+      .replace(/[．。]/g, '.').replace(/[−－—–]/g, '-').replace(/[，,\s]/g, '');
+    if (/^[-+]?(?:\d+(?:\.\d*)?|\.\d+)$/.test(s)) return parseFloat(s);
+    var s2 = s.replace(/[A-Za-z\u4e00-\u9fa5%°()（）\/·]+$/g, '');
+    if (s2 && s2 !== s && /^[-+]?(?:\d+(?:\.\d*)?|\.\d+)$/.test(s2)) return parseFloat(s2);
+    return NaN;
+  }
+  var SUP = { '⁰': '0', '¹': '1', '²': '2', '³': '3', '⁴': '4', '⁵': '5', '⁶': '6', '⁷': '7', '⁸': '8', '⁹': '9', '⁺': '+', '⁻': '-' };
+  var SUB = { '₀': '0', '₁': '1', '₂': '2', '₃': '3', '₄': '4', '₅': '5', '₆': '6', '₇': '7', '₈': '8', '₉': '9' };
+  function normChem(s) {
+    s = String(s == null ? '' : s);
+    s = s.replace(/[Ａ-Ｚａ-ｚ０-９]/g, function (c) { return String.fromCharCode(c.charCodeAt(0) - 0xFEE0); });
+    s = s.replace(/[⁰¹²³⁴⁵⁶⁷⁸⁹⁺⁻]/g, function (c) { return SUP[c] || c; });
+    s = s.replace(/[₀₁₂₃₄₅₆₇₈₉]/g, function (c) { return SUB[c] || c; });
+    s = s.replace(/[（）]/g, function (m) { return m === '（' ? '(' : ')'; });
+    s = s.replace(/[＋]/g, '+').replace(/[－]/g, '-');
+    s = s.replace(/\s+/g, '');
+    return s;   // 不转小写：Na / na / NA 是三个不同答案
+  }
+  function fmtNum(x) {
+    if (!isFinite(x)) return '?';
+    return String(Math.round(x * 1000) / 1000).replace('-', '−');
+  }
+
+  /* ---------- 字段与判分 ---------- */
+  function cf(r, correct, wrongs, label) { var f = pair(r, correct, wrongs); f.label = label || ''; return f; }
+  function nf(ans, label, unit, tol) { return { type: 'num', ans: ans, label: label || '', unit: unit || '', tol: tol == null ? 0.01 : tol }; }
+  function tf(ans, label, alts) { return { type: 'text', ans: ans, label: label || '', alts: alts || [] }; }
+  function judge(q, vals) {
+    var res = q.fields.map(function (f, i) {
+      var v = vals[i];
+      if (f.type === 'choice') return { ok: v === f.ans };
+      if (f.type === 'text') {
+        var s = normChem(v);
+        return { ok: s === normChem(f.ans) || (f.alts || []).some(function (a) { return s === normChem(a); }) };
+      }
+      var x = (typeof v === 'number') ? v : parseNum(v);
+      if (!isFinite(x)) return { ok: false };
+      return { ok: Math.abs(x - f.ans) <= (f.tol == null ? 0.01 : f.tol) + 1e-9 };
+    });
+    var got = res.filter(function (x) { return x.ok; }).length;
+    return { ok: got === res.length, got: got, total: res.length, res: res };
+  }
+  function ansText(f) {
+    if (f.type === 'choice') return f.options[f.ans];
+    if (f.type === 'text') return f.ans;
+    return fmtNum(f.ans) + (f.unit || '');
+  }
+  function mk(title, prompt, fields, tip, explain, kp) {
+    return { title: title, prompt: prompt, fields: fields, tip: tip, explain: explain, kp: kp };
+  }
+
+  /* ============================================================
+     数据：前 20 号 + 初中常见元素（z 原子序数 / s 符号 / n 名称 / a 相对原子质量）
+     ============================================================ */
+  var ELEMENTS = [
+    { z: 1, s: 'H', n: '氢', a: 1 }, { z: 2, s: 'He', n: '氦', a: 4 },
+    { z: 3, s: 'Li', n: '锂', a: 7 }, { z: 4, s: 'Be', n: '铍', a: 9 },
+    { z: 5, s: 'B', n: '硼', a: 11 }, { z: 6, s: 'C', n: '碳', a: 12 },
+    { z: 7, s: 'N', n: '氮', a: 14 }, { z: 8, s: 'O', n: '氧', a: 16 },
+    { z: 9, s: 'F', n: '氟', a: 19 }, { z: 10, s: 'Ne', n: '氖', a: 20 },
+    { z: 11, s: 'Na', n: '钠', a: 23 }, { z: 12, s: 'Mg', n: '镁', a: 24 },
+    { z: 13, s: 'Al', n: '铝', a: 27 }, { z: 14, s: 'Si', n: '硅', a: 28 },
+    { z: 15, s: 'P', n: '磷', a: 31 }, { z: 16, s: 'S', n: '硫', a: 32 },
+    { z: 17, s: 'Cl', n: '氯', a: 35.5 }, { z: 18, s: 'Ar', n: '氩', a: 40 },
+    { z: 19, s: 'K', n: '钾', a: 39 }, { z: 20, s: 'Ca', n: '钙', a: 40 },
+    { z: 25, s: 'Mn', n: '锰', a: 55 }, { z: 26, s: 'Fe', n: '铁', a: 56 },
+    { z: 29, s: 'Cu', n: '铜', a: 64 }, { z: 30, s: 'Zn', n: '锌', a: 65 },
+    { z: 35, s: 'Br', n: '溴', a: 80 }, { z: 47, s: 'Ag', n: '银', a: 108 },
+    { z: 53, s: 'I', n: '碘', a: 127 }, { z: 56, s: 'Ba', n: '钡', a: 137 },
+    { z: 78, s: 'Pt', n: '铂', a: 195 }, { z: 79, s: 'Au', n: '金', a: 197 },
+    { z: 80, s: 'Hg', n: '汞', a: 201 }
+  ];
+  function elemBy(s) { for (var i = 0; i < ELEMENTS.length; i++) if (ELEMENTS[i].s === s) return ELEMENTS[i]; return ELEMENTS[0]; }
+  var CONFUSE = {
+    Na: ['钾', '镁', '钙'], K: ['钠', '钙', '镁'], Mg: ['铝', '锰', '钠'],
+    Al: ['镁', '银', '铁'], Fe: ['铜', '锌', '锰'], Cu: ['铁', '锌', '钙'],
+    Zn: ['铁', '铜', '锰'], Mn: ['镁', '铁', '锌'], Ca: ['钾', '钠', '镁'],
+    Cl: ['碳', '硫', '溴'], S: ['硅', '磷', '氯'], P: ['硅', '硫', '硼'],
+    Si: ['硫', '磷', '铝'], O: ['氮', '碳', '氟'], N: ['氧', '碳', '氟'],
+    C: ['氧', '氮', '硼'], Ag: ['铝', '金', '铜'], Au: ['银', '铜', '铁'],
+    Hg: ['银', '铁', '铜'], Ba: ['钙', '镁', '钠'], H: ['氦', '氮', '氧'],
+    Li: ['铝', '钠', '镁'], B: ['硼', '磷', '硅'], F: ['氟', '氯', '溴']
+  };
+  function wrongNames(r, el) {
+    var pool = (CONFUSE[el.s] || []).filter(function (n) { return n !== el.n; });
+    if (pool.length < 3) {
+      ELEMENTS.forEach(function (e) { if (e.n !== el.n && pool.indexOf(e.n) < 0 && e.z <= 20) pool.push(e.n); });
+    }
+    var uniq = [];
+    pool.forEach(function (x) { if (uniq.indexOf(x) < 0) uniq.push(x); });
+    return shuffled(r, uniq).slice(0, 3);
+  }
+
+  /* 常见离子：名称 → 符号（右上角，数字在前、正负号在后，1 省略） */
+  var IONS = [
+    { n: '氢离子', s: 'H⁺', p: 'H+' }, { n: '钠离子', s: 'Na⁺', p: 'Na+' },
+    { n: '钾离子', s: 'K⁺', p: 'K+' }, { n: '镁离子', s: 'Mg²⁺', p: 'Mg2+' },
+    { n: '钙离子', s: 'Ca²⁺', p: 'Ca2+' }, { n: '铝离子', s: 'Al³⁺', p: 'Al3+' },
+    { n: '锌离子', s: 'Zn²⁺', p: 'Zn2+' }, { n: '亚铁离子', s: 'Fe²⁺', p: 'Fe2+' },
+    { n: '铁离子', s: 'Fe³⁺', p: 'Fe3+' }, { n: '铜离子', s: 'Cu²⁺', p: 'Cu2+' },
+    { n: '银离子', s: 'Ag⁺', p: 'Ag+' }, { n: '钡离子', s: 'Ba²⁺', p: 'Ba2+' },
+    { n: '氯离子', s: 'Cl⁻', p: 'Cl-' }, { n: '氧离子', s: 'O²⁻', p: 'O2-' },
+    { n: '硫离子', s: 'S²⁻', p: 'S2-' }, { n: '铵根离子', s: 'NH₄⁺', p: 'NH4+' },
+    { n: '氢氧根离子', s: 'OH⁻', p: 'OH-' }, { n: '硝酸根离子', s: 'NO₃⁻', p: 'NO3-' },
+    { n: '硫酸根离子', s: 'SO₄²⁻', p: 'SO42-' }, { n: '碳酸根离子', s: 'CO₃²⁻', p: 'CO32-' }
+  ];
+
+  var TIP_SYM = '元素符号规则：第一个字母大写，第二个字母小写——钠是 Na（不是 NA、不是 na）。前 20 号顺序：氢氦锂铍硼，碳氮氧氟氖，钠镁铝硅磷，硫氯氩钾钙。';
+  var TIP_ION = '离子符号写在元素符号右上角：数字在前、正负号在后，电荷数是 1 时省略不写。钠离子 Na⁺，铝离子 Al³⁺，硫酸根 SO₄²⁻。化合价则写在正上方、正负号在前数字在后——两者别混。';
+  var TIP_LCM = '最小公倍数法：找左右各出现一次、原子个数不同的元素 → 求两边原子数的最小公倍数 → 公倍数÷各自原子数得系数 → 顺推其它元素 → 最后验算。';
+  var TIP_ODD = '奇数配偶法：找某元素在一边奇数、另一边偶数的「单双矛盾」→ 先给含奇数个原子的物质前配 2，把奇数变偶数 → 顺配其它元素 → 最后回配该元素。';
+  var TIP_OBS = '观察法：从最复杂的生成物入手，用它内部的原子个数比反推反应物系数（如 Fe₃O₄ 里 Fe:O=3:4，就配 3Fe 和 2O₂ 或 4CO）。';
+  var TIP_ONE = '定一法：把最复杂的物质（多是含 C、H、O 的燃料）系数定为 1，依次配 C、H，最后配 O；出现分数时全体同乘分母化整。注意物质本身自带的氧也要算进去。';
+
+  /* ============================================================
+     ① 化学用语地基
+     ============================================================ */
+  function genSymbol(r) {
+    var el = pick(r, ELEMENTS);
+    var f = cf(r, el.n, wrongNames(r, el), '元素名称');
+    return mk('元素符号 → 元素名称', '元素符号 `' + el.s + '` 对应的元素名称是（四选一）', [f],
+      TIP_SYM,
+      [el.s + ' 是' + el.n + '的元素符号，原子序数 ' + el.z + '，相对原子质量约 ' + fmtNum(el.a) + '。',
+       '读符号时第一个字母大写、第二个小写：Na 是钠，Mg 是镁；NA、na 都不是规范写法。'],
+      ['元素符号', '化学用语', '第一/三单元']);
+  }
+  function genName(r) {
+    var el = pick(r, ELEMENTS);
+    return mk('元素名称 → 元素符号', '写出「' + el.n + '」的元素符号（注意大小写）', [tf(el.s, '元素符号')],
+      TIP_SYM,
+      [el.n + '的元素符号是 ' + el.s + '（原子序数 ' + el.z + '）。',
+       '大小写是判分的一部分：写成 ' + el.s.toLowerCase() + ' 或 ' + el.s.toUpperCase() + ' 都算错。'],
+      ['元素符号书写', '化学用语', '大小写易错']);
+  }
+  function genIon(r) {
+    var it = pick(r, IONS);
+    return mk('离子符号书写', '写出「' + it.n + '」的离子符号', [tf(it.s, '离子符号', [it.p])],
+      TIP_ION,
+      [it.n + '写作 ' + it.s + '；右上角数字在前、正负号在后，电荷为 1 时数字省略。',
+       '对比化合价：' + it.n.replace('离子', '元素') + '的化合价写在符号正上方，正负号在前、数字在后，1 不能省——写法方向正好相反。'],
+      ['离子符号', '化学用语', '离子与化合价辨析']);
+  }
+  function genIonRule(r) {
+    var bank = [
+      { q: '铝离子的符号，书写正确的是？', o: ['Al³⁺', 'Al⁺³', 'AL3+', 'Al3'], a: 0,
+        e: ['正确写法是 Al³⁺：数字在前、正负号在后，标在右上角。', 'Al⁺³ 是化合价的写法习惯（正上方、号在前），不能用在离子符号上。'] },
+      { q: '钠离子的符号是？', o: ['Na⁺', 'Na¹⁺', 'NA⁺', 'Na'], a: 0,
+        e: ['钠离子带 1 个单位正电荷，电荷数 1 省略不写，所以是 Na⁺。', 'Na¹⁺ 多写了 1；NA 的大写不对；Na 是钠原子。'] },
+      { q: '硫酸根离子的符号是？', o: ['SO₄²⁻', 'SO4⁻²', 'SO₃²⁻', 'SO₄²⁺'], a: 0,
+        e: ['硫酸根是 SO₄²⁻，带 2 个单位负电荷。', 'SO₃²⁻ 是亚硫酸根，原子团少一个氧、名称就变了。'] },
+      { q: 'Fe²⁺ 的名称是？', o: ['亚铁离子', '铁离子', '氟离子', '镁离子'], a: 0,
+        e: ['Fe²⁺ 是亚铁离子，Fe³⁺ 才是铁离子。', '铁有变价，读名称时「亚」字不能丢，写化学式时也要看清是 FeCl₂ 还是 FeCl₃。'] },
+      { q: '「氢氧根离子」的符号是？', o: ['OH⁻', 'HO⁻', 'OH⁺', 'H⁻'], a: 0,
+        e: ['氢氧根是 OH⁻，是常见的 -1 价原子团。', '顺序不能写成 HO；它和氢氧根 OH⁻ 不是同一个写法。'] }
+    ];
+    var it = pick(r, bank);
+    var f = cf(r, it.o[it.a], it.o.filter(function (x, i) { return i !== it.a; }), '选择');
+    return mk('离子与化合价写法辨析', it.q, [f], TIP_ION, it.e, ['离子符号', '书写规范', '高频易错']);
+  }
+  function genPeriod(r) {
+    var bank = [
+      { q: '某元素原子序数为 11、相对原子质量约 23，它是？', o: ['钠 Na', '镁 Mg', '钾 K', '氖 Ne'], a: 0,
+        e: ['原子序数 11 是钠（Na），相对原子质量约 23。', '周期表一格中：左上数字是原子序数（=质子数），下方小数是相对原子质量；别把 23 当成原子序数。'] },
+      { q: '元素周期表中，原子序数等于下列哪一项？', o: ['质子数', '中子数', '电子层数', '相对原子质量'], a: 0,
+        e: ['原子序数 = 核电荷数 = 质子数 = 核外电子数（原子呈电中性时）。', '相对原子质量近似等于质子数 + 中子数，是另一回事。'] },
+      { q: '相对原子质量约为 16 的元素是？', o: ['氧 O', '氮 N', '碳 C', '硫 S'], a: 0,
+        e: ['氧的相对原子质量约 16，原子序数 8。', '氮 14、碳 12、硫 32——这几个是计算题常用的相对原子质量。'] },
+      { q: '钠元素的原子序数是？', o: ['11', '23', '19', '12'], a: 0,
+        e: ['钠是第 11 号元素，原子序数 11；23 是它的相对原子质量。', '计算题里这两个数各有用处：11 用来认元素，23 用来算质量。'] }
+    ];
+    var it = pick(r, bank);
+    var f = cf(r, it.o[it.a], it.o.filter(function (x, i) { return i !== it.a; }), '选择');
+    return mk('周期表小格判读', it.q, [f],
+      '周期表一格：左上数字是原子序数（=质子数），中间是元素符号和名称，下面是相对原子质量。原子序数用来认元素，相对原子质量用来算质量。',
+      it.e, ['元素周期表', '化学用语', '数形对应']);
+  }
+
+  /* ============================================================
+     ② 配平四法
+     ============================================================ */
+  var LCM = [
+    { eq: 'P ＋ ___O₂ —点燃→ P₂O₅', t: 'O₂', a: 5,
+      s: ['氧：左边 O₂ 有 2 个，右边 P₂O₅ 有 5 个，最小公倍数 10。', 'O₂ 系数 = 10÷2 = 5；P₂O₅ 系数 = 10÷5 = 2。', '顺推磷：右边 2×2 = 4 个 P，左边 P 前配 4。'], f: '4P + 5O₂ —点燃→ 2P₂O₅' },
+    { eq: 'Al ＋ ___O₂ —点燃→ Al₂O₃', t: 'O₂', a: 3,
+      s: ['氧：左 2、右 3，最小公倍数 6。', 'O₂ 系数 = 6÷2 = 3；Al₂O₃ 系数 = 6÷3 = 2。', '顺推铝：右边 2×2 = 4 个 Al，左边 Al 前配 4。'], f: '4Al + 3O₂ —点燃→ 2Al₂O₃' },
+    { eq: '2KClO₃ —MnO₂/Δ→ 2KCl ＋ ___O₂', t: 'O₂', a: 3,
+      s: ['氧：左边 KClO₃ 中 3 个，右边 O₂ 中 2 个，最小公倍数 6。', 'KClO₃ 系数 = 6÷3 = 2；O₂ 系数 = 6÷2 = 3。', '再核对 K、Cl：左右各 2 个，已平。'], f: '2KClO₃ —MnO₂/Δ→ 2KCl + 3O₂↑' },
+    { eq: '___H₂O —通电→ H₂ ＋ O₂', t: 'H₂O', a: 2,
+      s: ['氧：左边 H₂O 中 1 个，右边 O₂ 中 2 个，最小公倍数 2。', 'H₂O 系数 = 2÷1 = 2；O₂ 系数 = 2÷2 = 1（省略不写）。', '顺推氢：左边 2×2 = 4 个 H，H₂ 前配 2。'], f: '2H₂O —通电→ 2H₂↑ + O₂↑' },
+    { eq: 'Mg ＋ O₂ —点燃→ ___MgO', t: 'MgO', a: 2,
+      s: ['氧：左边 2 个，右边 MgO 中 1 个，最小公倍数 2。', 'MgO 系数 = 2÷1 = 2；O₂ 系数 = 2÷2 = 1。', '顺推镁：右边 2 个 Mg，左边 Mg 前配 2。'], f: '2Mg + O₂ —点燃→ 2MgO' },
+    { eq: 'N₂ ＋ ___H₂ —高温高压/催化剂→ NH₃', t: 'H₂', a: 3,
+      s: ['氮：左边 N₂ 有 2 个，右边 NH₃ 有 1 个，最小公倍数 2 → NH₃ 前配 2。', '此时右边氢有 2×3 = 6 个，左边 H₂ 前配 6÷2 = 3。'], f: 'N₂ + 3H₂ —高温高压/催化剂→ 2NH₃' }
+  ];
+  var ODD = [
+    { eq: 'C₂H₂ ＋ ___O₂ —点燃→ CO₂ ＋ H₂O', t: 'O₂', a: 5,
+      s: ['先别碰氧：右边 H₂O 中氧是 1 个（奇数），CO₂ 中是 2 个（偶数），存在单双矛盾。', '给 H₂O 前配 2 变偶数；则 C₂H₂ 前配 2（氢守恒），CO₂ 前配 4（碳守恒）。', '此时右边氧 = 4×2 + 2×1 = 10 个，O₂ 前配 5。'], f: '2C₂H₂ + 5O₂ —点燃→ 4CO₂ + 2H₂O' },
+    { eq: 'FeS₂ ＋ ___O₂ —高温→ Fe₂O₃ ＋ SO₂', t: 'O₂', a: 11,
+      s: ['Fe₂O₃ 中氧是 3 个（奇数），先给它配 2。', '右边共 4 个 Fe，FeS₂ 前配 4；左边硫 4×2 = 8 个，SO₂ 前配 8。', '右边氧 = 2×3 + 8×2 = 22 个，O₂ 前配 11。'], f: '4FeS₂ + 11O₂ —高温→ 2Fe₂O₃ + 8SO₂' },
+    { eq: '___H₂O₂ —MnO₂→ H₂O ＋ O₂', t: 'H₂O₂', a: 2,
+      s: ['右边氧总数 = 1（H₂O）+ 2（O₂）= 3，是奇数；左边 H₂O₂ 中是 2 个，偶数。', '先把 H₂O 前配 2，右边氧变 2+2 = 4 个（偶数）。', '左边 H₂O₂ 前配 2，氢也守恒；O₂ 前配 1 省略。'], f: '2H₂O₂ —MnO₂→ 2H₂O + O₂↑' },
+    { eq: 'Fe₂O₃ ＋ ___HCl → FeCl₃ ＋ H₂O', t: 'HCl', a: 6,
+      s: ['HCl 中氢是 1 个（奇数），H₂O 中是 2 个（偶数），先给 HCl 配 2 的倍数。', '铁：右边 Fe₂O₃ 有 2 个 Fe，FeCl₃ 前配 2。', '此时氯 2×3 = 6 个，HCl 前配 6；氢 6 个，H₂O 前配 3。'], f: 'Fe₂O₃ + 6HCl → 2FeCl₃ + 3H₂O' },
+    { eq: 'Na ＋ H₂O → ___NaOH ＋ H₂', t: 'NaOH', a: 2,
+      s: ['右边氧：NaOH 中 1 个，左边 H₂O 中 1 个；看氢：右 1+2 = 3（奇）、左 2（偶）。', '先给 NaOH 配 2（奇数变偶数），则 H₂O 前配 2，Na 前配 2。', '验算：Na 2=2；O 2=2；H 左 4 = 右 2+2。'], f: '2Na + 2H₂O → 2NaOH + H₂↑' }
+  ];
+  var OBSERVE = [
+    { eq: 'Fe₂O₃ ＋ ___CO —高温→ Fe ＋ CO₂', t: 'CO', a: 3,
+      s: ['盯住最复杂的 Fe₂O₃：它自带 Fe:O = 2:3 的比例。', '3 个氧要由 3 个 CO 各带走 1 个 → CO 前配 3，同时生成 3 个 CO₂。', '铁 2 个，Fe 前配 2。'], f: 'Fe₂O₃ + 3CO —高温→ 2Fe + 3CO₂' },
+    { eq: 'Fe₃O₄ ＋ ___CO —高温→ 3Fe ＋ 4CO₂', t: 'CO', a: 4,
+      s: ['Fe₃O₄ 中 Fe:O = 3:4，题目已写出 3Fe 和 4CO₂。', '每个 CO 只能夺走 1 个氧原子变成 1 个 CO₂；要夺 4 个氧，CO 前配 4。', '验算：Fe 3=3；C 4=4；O 左 4+4=8，右 4×2=8。'], f: 'Fe₃O₄ + 4CO —高温→ 3Fe + 4CO₂' },
+    { eq: 'Cu₂(OH)₂CO₃ —Δ→ ___CuO ＋ CO₂ ＋ H₂O', t: 'CuO', a: 2,
+      s: ['从最复杂的碱式碳酸铜看：它含 2 个 Cu，所以 CuO 前配 2。', '含 1 个 C → CO₂ 前配 1；含 2 个 H → H₂O 前配 1。', '验算氧：左边 OH 中 2 个 + CO₃ 中 3 个 = 5；右边 2+2+1 = 5。'], f: 'Cu₂(OH)₂CO₃ —Δ→ 2CuO + CO₂↑ + H₂O' },
+    { eq: '___CuO ＋ C —高温→ Cu ＋ CO₂', t: 'CuO', a: 2,
+      s: ['右边 CO₂ 有 2 个氧，左边只有 CuO 含氧，所以 CuO 前配 2。', '铜随之 2 个，Cu 前配 2；碳左右各 1 个。'], f: '2CuO + C —高温→ 2Cu + CO₂↑' }
+  ];
+  var SETONE = [
+    { eq: 'C₂H₅OH ＋ ___O₂ —点燃→ CO₂ ＋ H₂O', t: 'O₂', a: 3,
+      s: ['把最复杂的 C₂H₅OH 系数定为 1：碳 2 个 → CO₂ 前配 2；氢 6 个（5+1）→ H₂O 前配 3。', '右边氧 = 2×2 + 3×1 = 7 个；乙醇自带 1 个氧，还差 6 个由 O₂ 提供。', 'O₂ 前配 6÷2 = 3。漏掉「自带氧」会误配成 3.5。'], f: 'C₂H₅OH + 3O₂ —点燃→ 2CO₂ + 3H₂O' },
+    { eq: 'CH₄ ＋ ___O₂ —点燃→ CO₂ ＋ H₂O', t: 'O₂', a: 2,
+      s: ['定 CH₄ 系数为 1：碳 1 个 → CO₂ 前配 1；氢 4 个 → H₂O 前配 2。', '右边氧 = 1×2 + 2×1 = 4 个，O₂ 前配 2。'], f: 'CH₄ + 2O₂ —点燃→ CO₂ + 2H₂O' },
+    { eq: '2CH₃OH ＋ ___O₂ —点燃→ 2CO₂ ＋ 4H₂O', t: 'O₂', a: 3,
+      s: ['先定 CH₃OH 为 1：CO₂ 前配 1，H₂O 前配 2。', '右边氧 = 2 + 2 = 4 个；甲醇自带 1 个氧，还差 3 个 → 需要 3/2 个 O₂。', '出现分数别慌，全体乘 2 化整：2CH₃OH + 3O₂ = 2CO₂ + 4H₂O。'], f: '2CH₃OH + 3O₂ —点燃→ 2CO₂ + 4H₂O' },
+    { eq: 'C₃H₈ ＋ ___O₂ —点燃→ CO₂ ＋ H₂O', t: 'O₂', a: 5,
+      s: ['定 C₃H₈ 为 1：碳 3 个 → CO₂ 前配 3；氢 8 个 → H₂O 前配 4。', '右边氧 = 3×2 + 4×1 = 10 个，O₂ 前配 5。'], f: 'C₃H₈ + 5O₂ —点燃→ 3CO₂ + 4H₂O' }
+  ];
+  function genBalance(r, bank, method, tip, kp) {
+    var it = pick(r, bank);
+    var prompt = '配平（' + method + '）：' + it.eq + '，' + it.t + ' 前的系数是（填数字）';
+    var ex = it.s.concat(['配平结果：' + it.f, '收尾自检：原子数左右相等、系数是最简整数比、条件与 ↑↓ 不漏。']);
+    return mk(method + '配平', prompt, [nf(it.a, '系数')], tip, ex, ['化学方程式的配平', method, '第五单元']);
+  }
+  function genLcm(r) { return genBalance(r, LCM, '最小公倍数法', TIP_LCM, '配平'); }
+  function genOdd(r) { return genBalance(r, ODD, '奇数配偶法', TIP_ODD, '配平'); }
+  function genObserve(r) { return genBalance(r, OBSERVE, '观察法', TIP_OBS, '配平'); }
+  function genSetone(r) { return genBalance(r, SETONE, '定一法', TIP_ONE, '配平'); }
+  function genMethod(r) {
+    var bank = [
+      { q: 'Fe₃O₄ ＋ CO → Fe ＋ CO₂，最顺手的入手方法是？', o: ['观察法', '最小公倍数法', '奇数配偶法', '定一法'], a: 0,
+        e: ['Fe₃O₄ 内部 Fe:O = 3:4 写得很清楚，从它反推 CO 与 CO₂ 的系数最快——观察法。', '用最小公倍数也能配，但绕远；观察法一步到位。'] },
+      { q: '2KClO₃ → 2KCl ＋ O₂ 这类题，优先用哪种方法？', o: ['最小公倍数法', '奇数配偶法', '定一法', '观察法'], a: 0,
+        e: ['氧在左右各出现一次、个数 3 与 2 不同，取最小公倍数 6 即得系数。', '这是初中配平最常见的情形，最小公倍数法优先。'] },
+      { q: 'C₂H₅OH ＋ O₂ → CO₂ ＋ H₂O，最合适的方法是？', o: ['定一法', '观察法', '奇数配偶法', '最小公倍数法'], a: 0,
+        e: ['复杂的有机物燃烧先把燃料系数定为 1，依次配 C、H，最后配 O。', '注意乙醇自带 1 个氧，最后 O₂ 系数是 3 而不是 3.5。'] },
+      { q: 'FeS₂ ＋ O₂ → Fe₂O₃ ＋ SO₂，最合适的方法是？', o: ['奇数配偶法', '定一法', '观察法', '最小公倍数法'], a: 0,
+        e: ['Fe₂O₃ 中氧是 3（奇），另一边 O₂ 是 2（偶），先给 Fe₂O₃ 配 2 把奇数变偶数。', '配完 Fe、S 再回头算氧，得 11 个 O₂。'] },
+      { q: 'P ＋ O₂ → P₂O₅，最合适的方法是？', o: ['最小公倍数法', '定一法', '观察法', '奇数配偶法'], a: 0,
+        e: ['氧左右各出现一次、2 与 5 不同，最小公倍数 10 → O₂ 前 5、P₂O₅ 前 2。', '口诀：找原子，求公倍，算系数，再检查。'] }
+    ];
+    var it = pick(r, bank);
+    var f = cf(r, it.o[it.a], it.o.filter(function (x, i) { return i !== it.a; }), '配平方法');
+    return mk('配平方法选择', it.q, [f],
+      '决策顺序：复杂燃烧用定一法 → 一奇一偶用奇数配偶法 → 同一元素左右各出现一次且个数不同用最小公倍数法 → 简单反推用观察法。',
+      it.e, ['化学方程式的配平', '方法选择', '第五单元']);
+  }
+  function genCheck(r) {
+    var bank = [
+      { q: '4P ＋ 10O₂ = 4P₂O₅ 原子数已经相等了，还差最后一步。差在哪？', o: ['系数没化成最简整数比', '漏写反应条件', '没标气体符号', '化学式写错了'], a: 0,
+        e: ['4:10:4 可同时除以 2，应写成 4P + 5O₂ = 2P₂O₅（条件另说）。', '配平收尾三查：原子守恒、最简整数比、条件与符号。'] },
+      { q: '2KClO₃ = 2KCl ＋ 3O₂ 中，右边氧原子总数是（填数字）', a: 6, n: true,
+        e: ['3 个 O₂ 分子，每个含 2 个氧原子，共 3×2 = 6 个。', '别忘了括号/系数要乘开：2Al₂(SO₄)₃ 中氧是 2×4×3 = 24 个。'] },
+      { q: '配平后 2KMnO₄ = K₂MnO₄ ＋ MnO₂ ＋ O₂↑，左边钾原子数是（填数字）', a: 2, n: true,
+        e: ['2 个 KMnO₄，每个含 1 个 K，共 2 个；右边 K₂MnO₄ 也是 2 个。', '这条方程式正是「加热高锰酸钾制氧气」，计算题常考。'] },
+      { q: '2H₂O₂ = 2H₂O ＋ O₂↑ 中，O₂ 前的系数 1 应该怎么处理？', o: ['省略不写', '写成 1O₂', '写成 O₁₂', '写成 2O₂'], a: 0,
+        e: ['化学方程式中系数是 1 时省略不写，直接写 O₂。', '写成 1O₂ 不规范；写成 O₁₂ 则改变了化学式，是原则性错误。'] },
+      { q: '配平 H₂O → H₂ ＋ O₂ 时，把 H₂O 改成 H₂O₂ 来凑原子数，对吗？', o: ['不对，只能改系数不能改下标', '对，这样更快配平', '不确定，看心情', '只对气体反应成立'], a: 0,
+        e: ['H₂O 是水，H₂O₂ 是过氧化氢——改下标就换了一种物质，是配平第一大忌。', '铁律：只改化学式前面的系数，绝不动右下角的原子个数。'] }
+    ];
+    var it = pick(r, bank);
+    var f = it.n ? nf(it.a, '数量') : cf(r, it.o[it.a], it.o.filter(function (x, i) { return i !== it.a; }), '选择');
+    return mk('配平结果自检', it.q, [f],
+      '配完必数，数完必查四样：每种原子个数、系数最简比、反应条件、气体/沉淀符号。系数是 1 时省略不写。',
+      it.e, ['化学方程式的配平', '自检纠错', '高频扣分点']);
+  }
+
+  /* ============================================================
+     ③ 写方程式与计算
+     ============================================================ */
+  function genWrite(r) {
+    var bank = [
+      { q: '加热分解高锰酸钾制氧气，生成物是？', o: ['K₂MnO₄ ＋ MnO₂ ＋ O₂', 'K₂MnO₄ ＋ O₂', 'KMnO₂ ＋ O₂', 'MnO₂ ＋ O₂'], a: 0,
+        e: ['2KMnO₄ —Δ→ K₂MnO₄ + MnO₂ + O₂↑，三种生成物缺一不可。', '这就是截图里的题：先写对这三种生成物，才能往下算质量。'] },
+      { q: '加热氯酸钾（二氧化锰催化）制氧气，生成物是？', o: ['KCl ＋ O₂', 'KCl ＋ MnO₂ ＋ O₂', 'KClO₂ ＋ O₂', 'K ＋ O₂'], a: 0,
+        e: ['2KClO₃ —MnO₂/Δ→ 2KCl + 3O₂↑；MnO₂ 是催化剂，反应前后质量和化学性质不变，不写进生成物。', '催化剂写在等号上方，不能当反应物或生成物。'] },
+      { q: '过氧化氢在二氧化锰催化下分解，生成物是？', o: ['H₂O ＋ O₂', 'H₂ ＋ O₂', 'H₂O₂ ＋ O₂', 'H₂O ＋ H₂'], a: 0,
+        e: ['2H₂O₂ —MnO₂→ 2H₂O + O₂↑。', '写对本反应是做「68 g 过氧化氢能制多少氧气」计算题的前提。'] },
+      { q: '碳在氧气中充分燃烧，生成物是？', o: ['CO₂', 'CO', 'C₂O', 'CO ＋ CO₂'], a: 0,
+        e: ['氧气充足时 C + O₂ —点燃→ CO₂；氧气不足才生成 CO。', 'CO 有毒、能燃烧还还原性；CO₂ 一般不燃烧也不支持燃烧。'] },
+      { q: '锌与稀硫酸反应，生成的气体是？', o: ['H₂', 'O₂', 'CO₂', 'SO₂'], a: 0,
+        e: ['Zn + H₂SO₄ = ZnSO₄ + H₂↑，这是实验室制氢气的常用反应。', '金属 + 酸 → 盐 + 氢气（氢前金属），气体后标 ↑。'] }
+    ];
+    var it = pick(r, bank);
+    var f = cf(r, it.o[it.a], it.o.filter(function (x, i) { return i !== it.a; }), '生成物');
+    return mk('已知反应物求生成物', it.q, [f],
+      '第一步先默写反应物和生成物的化学式（元素符号大小写、原子团、下标都要对），第二步配平，第三步补条件和 ↑↓，最后才算质量。',
+      it.e, ['化学方程式的书写', '化学用语', '第五单元']);
+  }
+  function genWriteOut(r) {
+    var bank = [
+      { q: '加热高锰酸钾制氧气：写出生成物的化学式', a: 'K₂MnO₄＋MnO₂＋O₂',
+        e: ['2KMnO₄ —Δ→ K₂MnO₄ + MnO₂ + O₂↑，三种生成物缺一不可。', '钾是 K、锰是 Mn、氧是 O——元素符号写不出来，后面配平和计算都无从下手。'] },
+      { q: '加热氯酸钾（二氧化锰催化）制氧气：写出生成物的化学式', a: 'KCl＋O₂',
+        e: ['2KClO₃ —MnO₂/Δ→ 2KCl + 3O₂↑。', 'MnO₂ 是催化剂，不写进生成物。'] },
+      { q: '过氧化氢在二氧化锰催化下分解：写出生成物的化学式', a: 'H₂O＋O₂',
+        e: ['2H₂O₂ —MnO₂→ 2H₂O + O₂↑。', '别把 H₂O 写成 HO 或 H₂O₃——下标错了就是另一种物质。'] },
+      { q: '铁在氧气中点燃：写出生成物的化学式', a: 'Fe₃O₄',
+        e: ['3Fe + 2O₂ —点燃→ Fe₃O₄。', '铁燃烧生成四氧化三铁（Fe₃O₄），不是氧化铁 Fe₂O₃。'] },
+      { q: '锌与稀硫酸反应：写出生成物的化学式', a: 'ZnSO₄＋H₂',
+        e: ['Zn + H₂SO₄ = ZnSO₄ + H₂↑。', '硫酸根是 SO₄（整体当 -2 价原子团），别漏掉右下角的 4。'] },
+      { q: '高温煅烧碳酸钙：写出生成物的化学式', a: 'CaO＋CO₂',
+        e: ['CaCO₃ —高温→ CaO + CO₂↑。', '碳是 C、钙是 Ca、氧是 O；CO₂ 不是 CO。'] },
+      { q: '二氧化碳通入澄清石灰水：写出生成物的化学式', a: 'CaCO₃＋H₂O',
+        e: ['CO₂ + Ca(OH)₂ = CaCO₃↓ + H₂O。', '这是检验二氧化碳的反应；氢氧化钙是 Ca(OH)₂，括号不能丢。'] }
+    ];
+    var it = pick(r, bank);
+    var alts = [it.a.replace(/＋/g, '+'), it.a.replace(/＋/g, ' + '), it.a.split('＋').reverse().join('＋')];
+    return mk('默写生成物化学式', it.q + '（用 ＋ 连接，不写系数和箭头）',
+      [tf(it.a, '生成物', alts)],
+      '先写元素符号（第一个字母大写、第二个小写），再标原子团与下标，最后才配平。钠 Na、钾 K、锰 Mn、钙 Ca、铁 Fe——这些符号必须能直接默写出来。',
+      it.e, ['化学方程式的书写', '化学式默写', '第五单元']);
+  }
+  function genCalc(r) {
+    var bank = [
+      { q: '加热分解 7.9 g 高锰酸钾（2KMnO₄ → K₂MnO₄ ＋ MnO₂ ＋ O₂↑），可得氧气的质量是', a: 0.8, u: 'g',
+        e: ['2KMnO₄ 的相对质量 = 2×(39+55+64) = 316；O₂ = 32。', '316 : 32 = 7.9 : x → x = 0.8 g。', '关键：7.9 g 对应的是 316 份的 KMnO₄，不是 K₂MnO₄ 或 MnO₂，位置不能错位。'] },
+      { q: '加热分解 15.8 g 高锰酸钾（2KMnO₄ → K₂MnO₄ ＋ MnO₂ ＋ O₂↑），可得氧气的质量是', a: 1.6, u: 'g',
+        e: ['相对质量比 316 : 32；15.8 : x = 316 : 32。', 'x = 15.8×32÷316 = 1.6 g。'] },
+      { q: '完全分解 68 g 过氧化氢（2H₂O₂ → 2H₂O ＋ O₂↑），可得氧气的质量是', a: 32, u: 'g',
+        e: ['2H₂O₂ 相对质量 = 2×34 = 68；O₂ = 32。', '68 : 32 = 68 g : x → x = 32 g。这道题今天错过，记住 68 对应的是 2H₂O₂。'] },
+      { q: '完全分解 36 g 水（2H₂O → 2H₂ ＋ O₂↑），理论上可得氧气的质量是', a: 32, u: 'g',
+        e: ['2H₂O 相对质量 = 2×18 = 36；O₂ = 32。', '36 : 32 = 36 g : x → x = 32 g。'] },
+      { q: '高温煅烧 100 g 碳酸钙（CaCO₃ → CaO ＋ CO₂↑），可得二氧化碳的质量是', a: 44, u: 'g',
+        e: ['CaCO₃ 相对质量 = 40+12+48 = 100；CO₂ = 44。', '100 : 44 = 100 g : x → x = 44 g。'] },
+      { q: '6.5 g 锌与足量稀硫酸反应（Zn ＋ H₂SO₄ = ZnSO₄ ＋ H₂↑），可得氢气的质量是', a: 0.2, u: 'g',
+        e: ['Zn 相对质量 65；H₂ = 2。', '65 : 2 = 6.5 g : x → x = 0.2 g。'] }
+    ];
+    var it = pick(r, bank);
+    return mk('根据化学方程式的计算', it.q + '（填数字）', [nf(it.a, '质量', it.u, 0.01)],
+      '六步：设未知 → 写对并配平方程式 → 算相关物质的相对质量 → 列比例（相对质量比 = 实际质量比）→ 求解 → 答。给溶液或不纯物时先乘质量分数/纯度。',
+      it.e, ['根据化学方程式的计算', '相对质量比', '第五单元']);
+  }
+  function genMassrel(r) {
+    var bank = [
+      { q: '2KMnO₄ → K₂MnO₄ ＋ MnO₂ ＋ O₂↑ 中，316 份质量的 KMnO₄ 对应生成多少份质量的 O₂？', a: 32,
+        e: ['2KMnO₄ 相对质量 = 2×158 = 316；O₂ = 32。', '列比例时 316 必须和 O₂ 的 32 对齐——截图强调的「实际质量也要对应好，不能错位」就是这一步。'] },
+      { q: '2H₂O₂ → 2H₂O ＋ O₂↑ 中，68 份质量的 H₂O₂ 对应生成多少份质量的 O₂？', a: 32,
+        e: ['2H₂O₂ = 2×34 = 68；O₂ = 32。', '68 g H₂O₂ 完全分解得 32 g O₂，这是今天错过的基础对应。'] },
+      { q: '2H₂O → 2H₂ ＋ O₂↑ 中，36 份质量的水对应生成多少份质量的 O₂？', a: 32,
+        e: ['2H₂O = 36；O₂ = 32。', '水通电：36 份水 → 4 份氢气 + 32 份氧气，质量守恒。'] },
+      { q: 'CaCO₃ → CaO ＋ CO₂↑ 中，100 份质量的 CaCO₃ 对应生成多少份质量的 CO₂？', a: 44,
+        e: ['CaCO₃ = 100；CO₂ = 44；CaO = 56。', '100 = 56 + 44，正好验证质量守恒。'] }
+    ];
+    var it = pick(r, bank);
+    return mk('相对质量对应关系', it.q + '（填数字）', [nf(it.a, '份')],
+      '相对质量 = 化学计量数 × 相对分子质量。它只用来「对位置」：题目给的实际质量必须和它对应的那种物质写在同一边。',
+      it.e, ['根据化学方程式的计算', '相对质量', '防错位']);
+  }
+
+  /* ============================================================
+     模块注册（顺序 = 页签顺序）
+     ============================================================ */
+  var MODULES = [
+    { id: 'base', icon: '🔤', name: '① 化学用语地基', desc: '元素符号 / 离子符号 / 周期表信息——方程式第一步不再卡住',
+      kinds: [
+        { id: 'symbol', name: '符号→名称', gen: genSymbol },
+        { id: 'name', name: '名称→符号', gen: genName },
+        { id: 'ion', name: '离子符号书写', gen: genIon },
+        { id: 'ionrule', name: '写法辨析', gen: genIonRule },
+        { id: 'period', name: '周期表判读', gen: genPeriod }
+      ] },
+    { id: 'balance', icon: '⚖', name: '② 配平四法', desc: '最小公倍数 · 奇数配偶 · 观察 · 定一，配完还会自检',
+      kinds: [
+        { id: 'lcm', name: '最小公倍数法', gen: genLcm },
+        { id: 'odd', name: '奇数配偶法', gen: genOdd },
+        { id: 'observe', name: '观察法', gen: genObserve },
+        { id: 'setone', name: '定一法', gen: genSetone },
+        { id: 'method', name: '方法选择', gen: genMethod },
+        { id: 'check', name: '配平自检', gen: genCheck }
+      ] },
+    { id: 'apply', icon: '🧮', name: '③ 写方程式与计算', desc: '由反应物推生成物，再按相对质量比算质量',
+      kinds: [
+        { id: 'write', name: '求生成物', gen: genWrite },
+        { id: 'writeout', name: '默写生成物', gen: genWriteOut },
+        { id: 'calc', name: '方程式计算', gen: genCalc },
+        { id: 'massrel', name: '相对质量对应', gen: genMassrel }
+      ] }
+  ];
+  var ALL_KINDS = (function () {
+    var a = [];
+    MODULES.forEach(function (m) { m.kinds.forEach(function (k) { a.push({ mod: m.id, kind: k.id, name: k.name, gen: k.gen }); }); });
+    return a;
+  })();
+  function moduleById(id) { for (var i = 0; i < MODULES.length; i++) if (MODULES[i].id === id) return MODULES[i]; return null; }
+  function gen(modId, kindId, seed) {
+    var r = mulberry32((seed >>> 0) || 1);
+    var k = null;
+    if (modId && kindId) {
+      var m = moduleById(modId);
+      if (m) for (var i = 0; i < m.kinds.length; i++) if (m.kinds[i].id === kindId) { k = m.kinds[i]; break; }
+    }
+    if (!k) k = pick(r, ALL_KINDS);
+    var q = k.gen(r);
+    q.mod = modId || k.mod;
+    q.kind = kindId || k.id;
+    q.kindName = k.name;
+    q.modName = (moduleById(q.mod) || {}).name || '';
+    return q;
+  }
+
+  /* ---------- 自检 ---------- */
+  function selfTest(N) {
+    var fails = [], count = 0;
+    ALL_KINDS.forEach(function (k) {
+      for (var i = 0; i < N; i++) {
+        var seed = ((k.mod.length * 131 + k.kind.length * 17 + i * 2654435761) >>> 0) || 1;
+        var q;
+        try { q = gen(k.mod, k.kind, seed); }
+        catch (e) { fails.push(k.mod + '.' + k.kind + ' 生成器异常: ' + e.message); continue; }
+        count++;
+        var tag = k.mod + '.' + k.kind + '#' + i;
+        if (!q.prompt || /undefined|NaN|\[object/.test(q.prompt)) fails.push(tag + ' 题干异常: ' + q.prompt);
+        /* 配平题的 ___ 必须紧挨所问物质，否则学生照空格填必然填错（审查发现的真实缺陷） */
+        var pm = q.prompt.match(/，(.+?) 前的系数是（填数字）/);
+        if (q.prompt.indexOf('___') >= 0 && pm && q.prompt.indexOf('___' + pm[1]) < 0) {
+          fails.push(tag + ' 空格位置与所问系数不符: ' + q.prompt);
+        }
+        if (!q.fields || !q.fields.length) { fails.push(tag + ' 无字段'); continue; }
+        if (!q.tip || !q.explain || !q.explain.length || !q.kp || !q.kp.length) fails.push(tag + ' 解析/考点缺失');
+        q.fields.forEach(function (f, fi) {
+          if (f.type === 'choice') {
+            if (!f.options || f.options.length < 2) fails.push(tag + ' 选项不足');
+            if (!(f.ans >= 0 && f.ans < f.options.length)) fails.push(tag + ' 正确项下标越界');
+            if (new Set(f.options).size !== f.options.length) fails.push(tag + ' 选项重复: ' + f.options.join('/'));
+          } else if (f.type === 'num') {
+            if (!isFinite(f.ans)) fails.push(tag + ' 数值答案非有限数');
+          } else if (f.type === 'text') {
+            if (!f.ans || !String(f.ans).trim()) fails.push(tag + ' 文本答案为空');
+          } else fails.push(tag + ' 非法字段类型 ' + f.type);
+        });
+        var right = q.fields.map(function (f) { return f.type === 'choice' ? f.ans : ansText(f); });
+        if (!judge(q, right).ok) fails.push(tag + ' 正确解未判对 ' + JSON.stringify(right));
+        var wrong = q.fields.map(function (f) {
+          if (f.type === 'choice') return f.options[(f.ans + 1) % f.options.length];
+          if (f.type === 'num') return '__bad__';
+          return '__zzz_bad__';
+        });
+        if (judge(q, wrong).ok) fails.push(tag + ' 错误解被判对');
+      }
+    });
+    return { count: count, fails: fails, kinds: ALL_KINDS.length, modules: MODULES.length };
+  }
+
+  return {
+    VERSION: VERSION, DAY: DAY, modules: MODULES, allKinds: ALL_KINDS,
+    gen: gen, judge: judge, ansText: ansText, parseNum: parseNum, normChem: normChem,
+    moduleById: moduleById, selfTest: selfTest
+  };
+})();
+</script>
+
+<script id="review">
+/* 共享错题回炉内核（ADR-0010）
+ *
+ * 职责边界：只管错题条目的「调度字段」与状态转移，不碰 DOM、不碰 localStorage、
+ * 不认识任何科目。题目快照（prompt/fields/explain…）、错题键生成、最短用时阈值
+ * 都由各科自己提供，通过参数传进来。
+ *
+ * 调度字段：
+ *   ts        首次入库时间戳
+ *   due       下次到期时间戳（绝对毫秒）
+ *   n         累计答错次数（统计/合并用，不参与间隔计算）
+ *   lvl       回炉档位 1..4 → PLAN[1,3,7,14] 天
+ *   okStreak  到期后连续有效答对次数 0/1/2，到 2 才移出
+ *   lastOkAt  最近一次有效答对时间戳
+ *   lastAt    最近一次作答时间戳（无论对错）
+ *
+ * 规则（任务卡 docs/plans/错题回炉规则统一-2026-11-19.md）：
+ *   答错       → n+1、lvl 回退一档、连对清零、due = now + gap(lvl)*DAY
+ *   有效答对   → 连对 +1；满 2 返回 'mastered'（调用方移出）；否则 lvl 进一档并重排 due
+ *   无效答对   → 连对清零、重排 due；不惩罚 n/lvl
+ *   跳过本次   → due 推到一天后，其余不变
+ *   due 永远由「本次作答时间戳 + 新档位间隔」算出，不用日历天数、不累计欠账。
+ *
+ * 历史复盘：everWrong(recs, wrongMap) 只从作答流水聚合，不看调度状态；
+ *   掌握后删的是 DB.wrong 条目，recs 永久留档，所以整学期「曾经错过的题」查得到。
+ */
+var LT_REVIEW = (function () {
+  var DAY = 86400000;
+  var PLAN = [1, 3, 7, 14];
+  var KEEP = 2;
+
+  function gap(lvl) { return PLAN[Math.min(PLAN.length, Math.max(1, lvl | 0)) - 1]; }
+
+  /* 到期判断：只有due到了才允许计入连对（未到期答对不算，防同日连刷） */
+  function isDue(w, now) {
+    if (!w || typeof w.due !== 'number') return false;
+    return w.due <= (now == null ? Date.now() : now);
+  }
+
+  /* 旧条目迁移：补齐新字段；due 原样保留，不打乱用户已有计划。
+     返回 true 表示有字段被补，调用方据此决定是否保存。 */
+  function migrate(w, now) {
+    if (!w) return false;
+    now = now == null ? Date.now() : now;
+    var changed = false;
+    if (typeof w.n !== 'number' || w.n < 1) { w.n = 1; changed = true; }
+    if (typeof w.lvl !== 'number' || w.lvl < 1 || w.lvl > PLAN.length) {
+      w.lvl = Math.min(PLAN.length, Math.max(1, w.n || 1));
+      changed = true;
+    }
+    if (typeof w.okStreak !== 'number') { w.okStreak = 0; changed = true; }
+    if (typeof w.lastOkAt !== 'number') { w.lastOkAt = 0; changed = true; }
+    if (typeof w.ts !== 'number') { w.ts = now; changed = true; }
+    if (typeof w.lastAt !== 'number') { w.lastAt = w.ts || now; changed = true; }
+    if (typeof w.due !== 'number') { w.due = now + gap(w.lvl) * DAY; changed = true; }
+    return changed;
+  }
+
+  /* 新错题条目的调度字段（各科把它和题目快照合并后存入 DB.wrong[k]） */
+  function newEntry(now) {
+    now = now == null ? Date.now() : now;
+    return {
+      ts: now, due: now + PLAN[0] * DAY, n: 1, lvl: 1,
+      okStreak: 0, lastOkAt: 0, lastAt: now
+    };
+  }
+
+  /* 答错：回退一档、连对清零、按当前时间戳重排到期。就地改 w 并返回它。
+     首次入库的裸条目（各科 new 出的对象没有 n）按 n=1/lvl=1 处理——
+     不能先 migrate 补 n=1 再 +1，否则首次答错就被记成错过 2 次。 */
+  function onWrong(w, now) {
+    now = now == null ? Date.now() : now;
+    var fresh = typeof w.n !== 'number';
+    migrate(w, now);
+    if (fresh) {
+      w.n = 1;
+      w.lvl = 1;
+    } else {
+      w.n = (w.n || 1) + 1;
+      w.lvl = Math.max(1, w.lvl - 1);
+    }
+    w.okStreak = 0;
+    w.lastAt = now;
+    w.due = now + gap(w.lvl) * DAY;
+    return w;
+  }
+
+  /* 答对：由内核自己判定「有效」（不信任调用方的到期结论）。
+     sig = { sec, minSec, hint, fixed }
+       sec    本次作答用时（秒）
+       minSec 本科/本题型的最短有效用时；调用方不传则 0（只看到期与提示）
+       hint   是否看过提示/答案
+       fixed  是否是订正提交
+     返回：
+       'mastered' 连对已满 2 次 → 调用方把该题从 DB.wrong 删除
+       'streak'   有效但未满 2 次 → 连对 +1，已重排 due
+       'invalid'  无效答对 → 连对清零，已重排 due
+       'none'     错题库里没有该题
+  */
+  function onPass(w, sig, now) {
+    if (!w) return 'none';
+    now = now == null ? Date.now() : now;
+    migrate(w, now);
+    sig = sig || {};
+    var sec = Number(sig.sec) || 0;
+    var minSec = Number(sig.minSec) || 0;
+    var valid = isDue(w, now) && sec >= minSec && !sig.hint && !sig.fixed;
+    w.lastAt = now;
+    if (!valid) {
+      w.okStreak = 0;
+      w.due = now + gap(w.lvl) * DAY;
+      return 'invalid';
+    }
+    w.okStreak = (w.okStreak || 0) + 1;
+    w.lastOkAt = now;
+    if (w.okStreak >= KEEP) return 'mastered';
+    w.lvl = Math.min(PLAN.length, w.lvl + 1);
+    w.due = now + gap(w.lvl) * DAY;
+    return 'streak';
+  }
+
+  /* 跳过本次（替代原「已掌握」手动删除）：只把到期推到一天后，其余不变（连对进度保留） */
+  function skip(w, now) {
+    if (!w) return false;
+    now = now == null ? Date.now() : now;
+    migrate(w, now);
+    w.due = now + DAY;
+    return true;
+  }
+
+  /* 取到期题：按 due 升序（最早到期优先），cap 可选 */
+  function dueList(wrongMap, now, cap) {
+    now = now == null ? Date.now() : now;
+    var all = Object.keys(wrongMap || {}).map(function (k) {
+      var w = wrongMap[k];
+      migrate(w, now);
+      return w;
+    }).filter(function (w) { return isDue(w, now); });
+    all.sort(function (a, b) { return a.due - b.due; });
+    return cap ? all.slice(0, cap) : all;
+  }
+
+  /* 历史错题清单（期末复盘用）：从作答流水 recs 聚合「曾经错过」的题。
+     recs 里每笔作答都带 ok/qid/ts，答错事件是永久留档的——连对达标后只删 DB.wrong
+     那一条待复习条目，recs 不动，所以这里能还原整学期的错题史。
+     wrongMap 只用来判「现在还在不在错题本」：新规则下移出错题本的唯一途径是
+     连对 2 次有效答对，所以不在本 = 已真掌握（跳过本次不删，不会误判）。
+     返回按「错次降序、最近错的时间降序」排列，每项：
+       key/label/mod/kind/wrong/firstWrongAt/lastWrongAt/lastOkAt/okCount/inBook */
+  function everWrong(recs, wrongMap) {
+    var book = {};
+    Object.keys(wrongMap || {}).forEach(function (k) {
+      var w = wrongMap[k];
+      if (w && w.qid) book[w.qid] = true;
+    });
+    var map = {};
+    (recs || []).forEach(function (r) {
+      if (!r || (r.ok !== true && r.ok !== false)) return;
+      var k = r.qid || [r.mod || '', r.kind || '', r.kn || r.title || r.prompt || ''].join('|').slice(0, 120);
+      if (!k) return;
+      var e = map[k];
+      if (!e) {
+        e = map[k] = {
+          key: k, label: String(r.kn || r.title || r.prompt || r.kind || k),
+          mod: r.mod || '', kind: r.kind || '',
+          wrong: 0, okCount: 0, firstWrongAt: 0, lastWrongAt: 0, lastOkAt: 0, inBook: false
+        };
+      }
+      var t = Number(r.ts) || 0;
+      if (r.ok === false) {
+        e.wrong++;
+        if (!e.firstWrongAt || t < e.firstWrongAt) e.firstWrongAt = t;
+        if (t > e.lastWrongAt) e.lastWrongAt = t;
+      } else {
+        e.okCount++;
+        if (t > e.lastOkAt) e.lastOkAt = t;
+      }
+    });
+    var out = Object.keys(map).map(function (k) {
+      var e = map[k];
+      e.inBook = !!book[e.key];
+      return e;
+    }).filter(function (e) { return e.wrong > 0; });
+    out.sort(function (a, b) {
+      return (b.wrong - a.wrong) || (b.lastWrongAt - a.lastWrongAt);
+    });
+    return out;
+  }
+
+  /* 统一日期文本 YYYY-MM-DD（本地时区），报告页列表共用 */
+  function dayText(ts) {
+    if (!ts) return '—';
+    var d = new Date(ts);
+    function p(n) { return String(n).padStart(2, '0'); }
+    return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate());
+  }
+
+  /* 文案：错题本/报告页统一显示到期状态与连对进度 */
+  function statusText(w, now) {
+    if (!w) return '';
+    now = now == null ? Date.now() : now;
+    if (isDue(w, now)) {
+      return w.okStreak ? '已到期 · 待确认 ' + w.okStreak + '/' + KEEP : '已到期';
+    }
+    var days = Math.ceil((w.due - now) / DAY);
+    return '还有 ' + days + ' 天';
+  }
+
+  var api = {
+    DAY: DAY, PLAN: PLAN, KEEP: KEEP, gap: gap,
+    isDue: isDue, migrate: migrate, newEntry: newEntry,
+    onWrong: onWrong, onPass: onPass, skip: skip,
+    dueList: dueList, statusText: statusText,
+    everWrong: everWrong, dayText: dayText
+  };
+  if (typeof window !== 'undefined') window.__ltReview = api;
+  if (typeof module !== 'undefined' && module.exports) module.exports = api;
+  return api;
+})();
+</script>
+
+<script id="merge">
+/* 事件并集合并 · 两族共用（化学内核族 / 物理数学脚手架族）
+ * ============================================================
+ * 唯一合并实现：页面导入按钮与云同步都调它，不许另写一套（ADR-0007 决定 4）。
+ *
+ * 去重键 (ts, mod, kind, ident)，ident = prompt[:40] || kn：
+ *   - 化学内核族 recs 写 prompt、无 kn（kernel.js:280）
+ *   - 物理/数学脚手架族与历史导出 recs 写 kn、无 prompt（train.ui.js:790/683）
+ *   取两者中有的那个，避免把脚手架族第 4 维压成空串。
+ *
+ * 合并不求和：并集 + 各自保留；设备态 days/lastRound/dayPlan/sess 不进载体。
+ * 本文件既是 node 可 import 的 ESM，也是 build.mjs 内联进产物的源（去掉 export 行）。
+ */
+
+/** 题目标识：prompt 前 40 字优先，回退 kn，都没有则空串 */
+function pickIdent(r) {
+  if (!r || typeof r !== 'object') return '';
+  var p = String(r.prompt || '').slice(0, 40);
+  if (p) return p;
+  return String(r.kn || '');
+}
+
+/** 去重键：时间戳 + 模块 + 题型 + 题目标识 */
+function recSig(r) {
+  if (!r || typeof r !== 'object') return '';
+  return [r.ts, r.mod, r.kind, pickIdent(r)].join('|');
+}
+
+/** 合并两份 DB：recs 取并集，wrong 字段互补，meta 取 max/最早，丢弃设备态 */
+function mergeRecords(base, incoming) {
+  var out = { v: 1, recs: [], wrong: {}, meta: {} };
+  var seen = Object.create(null);
+  function addRec(r) {
+    if (!r || typeof r !== 'object') return;
+    var k = recSig(r);
+    if (seen[k]) return;
+    seen[k] = 1;
+    out.recs.push(r);
+  }
+  ((base && base.recs) || []).forEach(addRec);
+  ((incoming && incoming.recs) || []).forEach(addRec);
+  out.recs.sort(function (a, b) { return (a.ts || 0) - (b.ts || 0); });
+  /* 不截断 recs：整学期作答是期末复盘（everWrong）的原始依据，砍掉最老记录会丢历史。
+     单条约 200 B，几千条在 localStorage 5 MB 配额内；与 kernel.js 的提交段口径一致。 */
+
+  var bw = (base && base.wrong) || {}, iw = (incoming && incoming.wrong) || {};
+  Object.keys(bw).forEach(function (k) { if (bw[k]) out.wrong[k] = Object.assign({}, bw[k]); });
+  Object.keys(iw).forEach(function (k) {
+    var b = iw[k];
+    if (!b) return;
+    var a = out.wrong[k];
+    if (!a) { out.wrong[k] = Object.assign({}, b); return; }
+    var merged = Object.assign({}, a);
+    Object.keys(b).forEach(function (f) { if (merged[f] == null || merged[f] === '') merged[f] = b[f]; });
+    merged.ts = Math.min(a.ts || Infinity, b.ts || Infinity);
+    merged.due = Math.min(a.due || Infinity, b.due || Infinity);
+    merged.n = Math.max(a.n || 1, b.n || 1);
+    out.wrong[k] = merged;
+  });
+
+  var bm = (base && base.meta) || {}, im = (incoming && incoming.meta) || {};
+  var bc = typeof bm.created === 'number' ? bm.created : Infinity;
+  var ic = typeof im.created === 'number' ? im.created : Infinity;
+  var created = Math.min(bc, ic);
+  out.meta.round = Math.max(bm.round || 0, im.round || 0);
+  out.meta.lastKind = Object.assign({}, bm.lastKind || {}, im.lastKind || {});
+  if (created !== Infinity) out.meta.created = created;
+  return out;
+}
+window.__ltMerge = { pickIdent: pickIdent, recSig: recSig, mergeRecords: mergeRecords };
+</script>
+
+<script id="sync">
+var LT_SUBJECT = "化学专项";
+/* 云同步编排 · 纯函数（网络 I/O 由页面薄适配层负责）
+ * ============================================================
+ * 真源仍是各设备浏览器（GLOSSARY 同步载体）；本模块只决定「拉全部后怎么合、写回什么」。
+ * 网络适配（GitHub Contents API + PAT + sha 乐观锁）不在此处，本机测试覆盖不到，
+ * 由页面侧 sync-adapter 把快照读写接到 fetch，编排保持可测。
+ */
+
+/**
+ * 由本机 DB 生成写进载体的快照：只带 recs/wrong/meta，打上 deviceId，丢弃设备态。
+ */
+function carrierSnapshot(deviceId, db, subject) {
+  var merged = mergeRecords(db, { v: 1, recs: [], wrong: {}, meta: {} });
+  return {
+    v: 1,
+    deviceId: deviceId,
+    subject: subject || subjectFromId(deviceId) || '',
+    recs: merged.recs,
+    wrong: merged.wrong,
+    meta: merged.meta
+    /* days / lastRound / dayPlan / sess 故意不带上 */
+  };
+}
+
+/** 从 deviceId 前缀推断科目（形如「物理|legacy-2026-11-18」）。无前缀返回空串。 */
+function subjectFromId(deviceId) {
+  var s = String(deviceId || '');
+  var i = s.indexOf('|');
+  return i > 0 ? s.slice(0, i) : '';
+}
+
+/** 判断快照是否属于本科：优先看 subject 字段，回退 deviceId 前缀；两者都无则视为本科（兼容最老的裸快照）。 */
+function belongsToSubject(snapshot, deviceId, expected) {
+  if (!expected) return true;                       // 未指定科目：不过滤（老调用方）
+  var tag = snapshot.subject || subjectFromId(snapshot.deviceId || deviceId);
+  return tag ? tag === expected : true;
+}
+
+/**
+ * 同步编排：本机 DB + 全部设备快照 → 合并后的本机 DB + 要写回的快照。
+ * @param local 本机 DB（浏览器里读出的完整结构）
+ * @param allSnapshots { [deviceId]: snapshot } 从载体拉到的全部快照
+ * @param deviceId 本机设备标识
+ * @returns {{ db, snapshot, writeTargets }}
+ */
+function syncPlan(local, allSnapshots, deviceId, subject) {
+  var acc = { v: 1, recs: [], wrong: {}, meta: {} };
+  // 本机先并入（保证本机最新作答不被远端旧快照盖掉）
+  acc = mergeRecords(acc, local);
+  // 再并入本科设备快照（包括自己旧的那份，取并集不会丢）；异科快照一律跳过，防串科
+  var ids = Object.keys(allSnapshots || {}).sort();
+  for (const id of ids) {
+    var s = allSnapshots[id];
+    if (s && typeof s === 'object' && belongsToSubject(s, id, subject)) acc = mergeRecords(acc, s);
+  }
+  // 写回本机：以本机 DB 为基底，只覆盖 recs/wrong/meta，保留 days/sess 等设备态。
+  // （载体快照故意不带设备态；但若写回本机也用干净的 acc，数学页 renderReport 依赖的
+  //   DB.days 会丢失、dayKeys() 抛错 → 报告页渲染中断。这是真机验证发现的 bug。）
+  var db = Object.assign({}, local || {}, { v: 1, recs: acc.recs, wrong: acc.wrong, meta: acc.meta });
+  // 写回云端：只覆盖自己那份，且绝不带设备态
+  var snapshot = carrierSnapshot(deviceId, acc, subject);
+  var writeTargets = {};
+  writeTargets[deviceId] = snapshot;
+  return { db: db, snapshot: snapshot, writeTargets: writeTargets };
+}
+window.__ltSync = { carrierSnapshot: carrierSnapshot, syncPlan: syncPlan, subjectFromId: subjectFromId };
+/* 云同步网络适配层（内联进产物；GitHub Contents API + PAT + sha 乐观锁）
+ * ============================================================
+ * 本机测试覆盖不到真实 fetch，故这里刻意做薄：只负责 I/O 与提示，
+ * 合并编排全部交给 window.__ltSync.syncPlan（已单测）。
+ * 由各族 UI 注入宿主接口后调用：
+ *   window.__ltSyncUI.init({ getDB, setDB, key, notify })
+ *   window.__ltSyncUI.run()  // 点按钮触发
+ * PAT 存本机浏览器；科目由 build 注入的 LT_SUBJECT 常量确定，
+ * deviceId 带科目前缀、快照按科分目录 —— 三科互不污染（本次修复）。
+ * sha 409 冲突时重拉→重并→重写（最多 3 次）。
+ *
+ * 所有请求只发 api.github.com（该域正确处理 CORS 预检 OPTIONS）。读快照正文走
+ * Contents API 的 raw 媒体类型，**不要**用列表返回的 download_url —— 它指向
+ * raw.githubusercontent.com，那个域不响应预检，带 Authorization 的 fetch 会被浏览器拦下
+ * （真机 2026-11-18 报错：Response to preflight request doesn't pass access control check）。
+ */
+(function () {
+  'use strict';
+  var REPO = 'ataotao/ataotao.github.io_learning-records';
+  var API = 'https://api.github.com/repos/' + REPO + '/contents';
+  var HOST = null, BRANCH = null, CONFLICT_RETRY = 3;
+  var PAT_KEY = '__lt_pat_v1';
+
+  var PAT_HELP = '先到 GitHub → 头像 → Settings → Developer settings → Personal access tokens ' +
+    '→ Fine-grained tokens 生成：只选 ' + REPO + ' 这一个仓，权限只开 Contents（读写），' +
+    '把生成的令牌填这里（只显示一次）。它存在本机浏览器，随时可在 GitHub 撤销。';
+
+  function lsGet(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+  function lsSet(k, v) { try { localStorage.setItem(k, v); } catch (e) {} return true; }
+
+  /** 当前科目：build 注入常量优先，宿主 subject 兜底（未注入时退化为不分科的老行为）。 */
+  function subject() {
+    if (typeof LT_SUBJECT !== 'undefined' && LT_SUBJECT) return LT_SUBJECT;
+    return (HOST && HOST.subject) || '';
+  }
+  /** 快照所在子目录（按科隔离）；英文/中文科目名都做路径编码。 */
+  function deviceDir(s) { return '/devices' + (s ? '/' + encodeURIComponent(s) : ''); }
+
+  function deviceId() {
+    var s = subject();
+    var key = '__lt_device_id_v1' + (s ? '_' + s : '');
+    var id = lsGet(key);
+    if (!id) {
+      id = (s ? s + '|' : '') + 'dev-' + Date.now().toString(36) + '-' + Math.floor(Math.random() * 1e6).toString(36);
+      lsSet(key, id);
+    }
+    return id;
+  }
+  /* 请求头：全部发往 api.github.com（该域正确应答 CORS 预检）。
+     accept 缺省 JSON 元数据；读快照正文用 raw，直接拿到文件内容。 */
+  function headers(accept) {
+    return {
+      'Authorization': 'Bearer ' + (lsGet(PAT_KEY) || ''),
+      'Accept': accept || 'application/vnd.github+json',
+      'X-GitHub-Api-Version': '2022-11-28'
+    };
+  }
+  function rawHeaders() { return headers('application/vnd.github.raw'); }
+
+  /* 探测默认分支：失败回退 main，不写死成唯一路径 */
+  async function detectBranch() {
+    if (BRANCH) return BRANCH;
+    try {
+      var r = await fetch('https://api.github.com/repos/' + REPO, { headers: headers() });
+      if (r.ok) { var j = await r.json(); BRANCH = j.default_branch || 'main'; return BRANCH; }
+    } catch (e) {}
+    BRANCH = 'main';
+    return BRANCH;
+  }
+
+  async function pullAll(s) {
+    var dir = deviceDir(s);
+    var r = await fetch(API + dir, { headers: headers() });
+    if (r.status === 404) {
+      // 本科目录还不存在（首次同步），视为空载体（正常情况，不是错误）
+      return { snaps: {}, shas: {} };
+    }
+    if (!r.ok) {
+      var msg = r.status === 401 ? 'PAT 无效或已过期，请重新生成并填入'
+        : r.status === 403 ? 'PAT 没有该仓权限（需 Contents 读写）'
+          : '拉取目录失败 ' + r.status;
+      throw new Error(msg);
+    }
+    var list = await r.json();
+    var out = {}, shas = {}, failed = 0;
+    for (const item of list) {
+      if (!/\.json$/i.test(item.name)) continue;
+      if (item.sha) shas[item.name] = item.sha;      // 目录列表自带 sha：写回时直接用，省一次 GET（否则首次写回必留个 404）
+      /* 正文从 Contents API 取（Accept: raw），与列目录同一个域，不触发跨域预检。
+         不用 item.download_url：它指向 raw.githubusercontent.com，该域不响应 OPTIONS 预检，
+         带 Authorization 的 fetch 必被浏览器拦下（真机 2026-11-18 CORS 报错）。 */
+      var fr = await fetch(API + dir + '/' + encodeURIComponent(item.name), { headers: rawHeaders() });
+      if (!fr.ok) { failed++; continue; }
+      try {
+        var j = JSON.parse(await fr.text());
+        if (!j || !Array.isArray(j.recs)) { failed++; continue; }   // 不是快照（例如元数据 JSON）：跳过，不当设备
+        var key = String(j.deviceId || item.name.replace(/\.json$/, ''));
+        // 双保险：目录已按科分，这里再按 deviceId 前缀过滤一次，拦住误放进来的异科快照
+        var tag = j.subject || (key.indexOf('|') > 0 ? key.slice(0, key.indexOf('|')) : '');
+        if (s && tag && tag !== s) { continue; }   // 明确异科：丢掉
+        if (s && !tag) { j.subject = s; }          // 无标签老快照：按所在目录归科，杜绝裸快照串科
+        out[key] = j;
+      } catch (e) { failed++; }
+    }
+    if (failed) HOST && HOST.notify('有 ' + failed + ' 份快照未能读取，已跳过（下次同步会重试）');
+    return { snaps: out, shas: shas };
+  }
+
+  /** 本机 deviceId 对应的载体文件名（去掉科目前缀）。 */
+  function fileNameOf(id) {
+    return (id.indexOf('|') > 0 ? id.slice(id.indexOf('|') + 1) : id) + '.json';
+  }
+
+  /**
+   * 写回本机那一份。
+   * sha 优先级：目录列表里已经带了这个文件的 sha（最常见，第二次同步起）就直接用，
+   * 不再多发一次 GET —— 那次 GET 对「本机首次写回」必然 404，DevTools 里红得吓人但没有问题。
+   * 只有文件不在列表里时才探测一次（真的不存在 → 404 属正常，PUT 不带 sha 即为新建）。
+   */
+  async function pushOne(id, snapshot, branch, s, knownSha) {
+    var url = API + deviceDir(s) + '/' + encodeURIComponent(fileNameOf(id));
+    var sha = knownSha || null;
+    if (!sha) {
+      var cur = await fetch(url, { headers: headers() });
+      if (cur.ok) { var cj = await cur.json(); sha = cj.sha; }
+    }
+    var body = {
+      message: 'sync ' + id + ' ' + new Date().toISOString(),
+      content: btoa(unescape(encodeURIComponent(JSON.stringify(snapshot, null, 2)))),
+      branch: branch || 'main'
+    };
+    if (sha) body.sha = sha;
+    var r = await fetch(url, { method: 'PUT', headers: Object.assign({ 'Content-Type': 'application/json' }, headers()), body: JSON.stringify(body) });
+    if (r.status === 409) return false;   // 冲突：交给上层重拉重并重写
+    if (!r.ok) {
+      var e = await r.json().catch(function () { return {}; });
+      throw new Error('写回失败 ' + r.status + (e.message ? '：' + e.message : ''));
+    }
+    return true;
+  }
+
+  window.__ltSyncUI = {
+    init: function (host) { HOST = host; },
+    setPAT: function (pat) { return lsSet(PAT_KEY, String(pat || '').trim()); },
+    hasPAT: function () { return !!lsGet(PAT_KEY); },
+    patHelp: PAT_HELP,
+    deviceId: deviceId,
+    subject: subject,
+    run: async function () {
+      if (!HOST) throw new Error('同步未初始化');
+      if (!lsGet(PAT_KEY)) { HOST.notify('请先填入 PAT（个人访问令牌）'); return; }
+      var s = subject();
+      var branch = await detectBranch();
+      for (var attempt = 1; attempt <= CONFLICT_RETRY; attempt++) {
+        HOST.notify('正在同步…' + (attempt > 1 ? '（冲突重试 ' + attempt + '/' + CONFLICT_RETRY + '）' : ''));
+        try {
+          var pulled = await pullAll(s);
+          var id = deviceId();
+          var plan = window.__ltSync.syncPlan(HOST.getDB(), pulled.snaps, id, s);
+          HOST.setDB(plan.db);                   // 合并结果先写回本机：即使云端失败，本机记录也不丢（ADR 决定 6）
+          var known = pulled.shas[fileNameOf(id)] || null;
+          var wrote = await pushOne(id, plan.snapshot, branch, s, known);
+          if (!wrote) continue;                  // 409：重拉→重并→重写（setDB 幂等，安全）
+          HOST.notify('同步完成：' + (s ? s + ' ' : '') + '本机共 ' + plan.db.recs.length + ' 条记录');
+          return;
+        } catch (e) {
+          HOST.notify('同步失败：' + (e && e.message ? e.message : e));
+          return;
+        }
+      }
+      HOST.notify('同步失败：连续 ' + CONFLICT_RETRY + ' 次写回冲突，请稍后再试');
+    }
+  };
+})();
+</script>
+
+<script id="ui">
+(function () {
+  'use strict';
+  var CFG = {"key":"chemfocus_v1","sessionSuffix":"_sess","coreGlobal":"CF","inputPrefix":"chemFocusIn","global":"__chemfocus","plan":[1,3,7,14],"views":[{"k":"today","n":"今日"},{"k":"wrong","n":"错题回炉"},{"k":"report","n":"训练报告"}],"texts":{"scopePill":"全 {units} 模块 · {kinds} 类考点","intro":"先补化学用语地基（元素符号 / 离子 / 周期表），再练配平四法，最后做题图里那种「已知反应物求生成物 + 算质量」。每题随机生成，答错进错题库按 {plan} 天回炉。","unitTitle":"按模块练（先地基，再配平，再计算）","allScope":"全模块","inputPlaceholder":"输入答案","summaryGood":"不错！错的题已进错题库，按 {plan} 天再练一遍就稳了。","summaryLow":"别急，错题已收进错题库。点「错题回炉」优先清到期题——配平题看清每一步，符号题注意大小写和右上角写法。","dueUnit":"天后复习","wrongTimes":"错","wrongIntro":"答错的题自动进本，按 {plan} 天档位回炉；到期后连续 2 次有效答对才算掌握（看提示/秒答不算）。","downloadName":"化学方程式专项记录.json","resetConfirm":"确定清空所有做题记录和错题库？此操作不可撤销。"}};
+  var CH = window[CFG.coreGlobal];
+  var KEY = CFG.key, SKEY = KEY + CFG.sessionSuffix, IP = CFG.inputPrefix;
+  var T = CFG.texts, PLAN = CFG.plan, VIEWS = CFG.views;
+  function fillTpl(s, map) {
+    return String(s == null ? '' : s).replace(/\{(\w+)\}/g, function (m, k) {
+      return map[k] == null ? m : String(map[k]);
+    });
+  }
+  /* 全内核统一一套统计 DOM（statgrid / statbox） */
+  function statBoxes(pairs, style) {
+    return '<div class="statgrid"' + (style ? ' style="' + style + '"' : '') + '>' + pairs.map(function (p) {
+      return '<div class="statbox"><div class="k">' + p[0] + '</div><div class="v">' + p[1] + '</div></div>';
+    }).join('') + '</div>';
+  }
+  var app = document.getElementById('app'), tabsBar = document.getElementById('tabs');
+  var S = { view: 'today', mod: null, kind: null, sess: null, q: null, res: null, answered: false, hint: false, back: null };
+  var DB = load();
+
+  /* ---------- 记录层 ---------- */
+  function devId() { return window.__ltSyncUI ? window.__ltSyncUI.deviceId() : undefined; }
+  function emptyDB() { return { v: 1, deviceId: devId(), recs: [], wrong: {}, meta: { round: 0, lastKind: {} }, sess: null }; }
+  function load() {
+    try {
+      var d = JSON.parse(localStorage.getItem(KEY) || 'null');
+      if (d && d.v === 1 && Array.isArray(d.recs) && d.wrong && typeof d.wrong === 'object') {
+        if (!d.deviceId && window.__ltSyncUI) d.deviceId = window.__ltSyncUI.deviceId();  // 旧记录补 deviceId
+        return d;
+      }
+    } catch (e) {}
+    return emptyDB();
+  }
+  function save() { try { localStorage.setItem(KEY, JSON.stringify(DB)); } catch (e) {} }
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+
+  /* ---------- 合并函数：全局共用（merge.mjs 内联），导入 / 云同步共用同一份 ----------
+     去重键 (ts,mod,kind,prompt[:40]||kn)；不求和；days/lastRound/dayPlan/sess 不进载体。
+     本地薄封装仅为兼容 selfcheck 的 window[global].mergeRecords 钩子。 */
+  function recSig(r) { return window.__ltMerge.recSig(r); }
+  function mergeRecords(a, b) { return window.__ltMerge.mergeRecords(a, b); }
+  function importText(txt) {
+    var d;
+    try { d = JSON.parse(txt); } catch (e) { alert('不是合法的 JSON 文件'); return false; }
+    if (!d || !Array.isArray(d.recs) || !d.wrong || typeof d.wrong !== 'object') {
+      alert('不是本训练器的记录文件（需要 recs / wrong 字段）'); return false;
+    }
+    DB = mergeRecords(DB, d); save(); render();
+    alert('已导入并合并：累计 ' + DB.recs.length + ' 条做题记录 / ' + Object.keys(DB.wrong).length + ' 道错题');
+    return true;
+  }
+
+  /* ---------- 种子 / 去重 / 题型轮换 ---------- */
+  function newSeed() { return (Date.now() ^ (Math.random() * 0xffffffff)) >>> 0; }
+  function sigOf(q) { return q.mod + '.' + q.kind + '|' + String(q.prompt).slice(0, 40); }
+  function lastRoundOf(mod) {
+    var recs = DB.recs.filter(function (x) { return !mod || x.mod === mod; });
+    return recs.slice(-20);
+  }
+  function pickQuestion(mod, kind, seenSigs, forceSeed) {
+    var seed = forceSeed == null ? newSeed() : forceSeed;
+    var q, tries = 0;
+    do { q = CH.gen(mod, kind, (seed + tries * 7919) >>> 0); tries++; }
+    while (seenSigs.indexOf(sigOf(q)) >= 0 && tries < 40);
+    return q;
+  }
+  function modOf(k) { return k.mod; }
+  function kindQueue(mod, n) {
+    var m = CH.moduleById(mod), out = [];
+    var all = m ? m.kinds.map(function (k) { return k.id; }) : CH.allKinds.map(function (k) { return modOf(k) + '/' + k.id; });
+    if (!all.length) all = CH.allKinds.map(function (k) { return k.mod + '/' + k.id; });
+    var last = lastRoundOf(mod), lastKinds = last.map(function (x) { return x.kind; });
+    var fresh = all.filter(function (id) { return lastKinds.indexOf(id.split('/').pop()) < 0; });
+    var ordered = fresh.concat(all.filter(function (id) { return fresh.indexOf(id) < 0; }));
+    for (var i = 0; i < n; i++) out.push(ordered[i % ordered.length]);
+    return out;
+  }
+
+  /* ---------- 会话 ---------- */
+  function startRound(mod, kind, total, mode) {
+    total = total || 10;
+    var queue = [];
+    if (mode === 'wrong' || mode === 'wrongall') {
+      var ws = Object.keys(DB.wrong).map(function (k) { return DB.wrong[k]; })
+        .sort(function (a, b) { return a.due - b.due; });
+      if (mode === 'wrong') ws = window.__ltReview.dueList(DB.wrong);
+      queue = ws.slice(0, total).map(function (w) { return { key: w.key, mod: w.mod, kind: w.kind }; });
+      if (!queue.length) { S.view = 'wrong'; render(); return; }
+      total = queue.length;
+    } else if (!mode || mode === 'normal') {
+      queue = kindQueue(mod, total);
+    }
+    S.sess = { mod: mod || null, kind: kind || null, total: total, done: 0, right: 0,
+      mode: mode || 'normal', queue: queue, sigs: [], seed: newSeed() };
+    S.view = 'quiz'; S.q = null; S.res = null; S.answered = false; S.hint = false;
+    nextQuestion();
+  }
+  function nextQuestion() {
+    var s = S.sess;
+    if (!s) { go('today'); return; }
+    if (s.done >= s.total) { S.view = 'summary'; render(); return; }
+    if (s.mode === 'wrong' || s.mode === 'wrongall') {
+      var entry = s.queue[s.done];
+      if (!entry || !DB.wrong[entry.key]) { s.done++; return nextQuestion(); }
+      var w = DB.wrong[entry.key];
+      S.q = { mod: w.mod, kind: w.kind, kindName: w.kindName, modName: w.modName, title: w.title,
+        prompt: w.prompt, fields: w.fields, tip: w.tip, explain: w.explain, kp: w.kp, _wrongKey: entry.key };
+    } else {
+      var slot = s.queue && s.queue.length ? s.queue[s.done % s.queue.length] : null;
+      var mod = s.mod, kind = s.kind;
+      if (!kind && slot) {
+        if (slot.indexOf('/') >= 0) { var p = slot.split('/'); mod = p[0]; kind = p[1]; }
+        else kind = slot;
+      }
+      S.q = pickQuestion(mod, kind, s.sigs, (s.seed + s.done * 104729) >>> 0);
+      s.sigs.push(sigOf(S.q));
+    }
+    S.res = null; S.answered = false; S.hint = false; S.qAt = Date.now();
+    save(); render();
+  }
+  function submit() {
+    if (S.answered || !S.q) return;
+    var vals = readVals();
+    var filled = vals.some(function (v, i) {
+      var f = S.q.fields[i];
+      if (f.type === 'choice') return v != null;
+      return String(v == null ? '' : v).trim() !== '';
+    });
+    if (!filled) { alert('先作答再提交'); return; }
+    var res = CH.judge(S.q, vals);
+    S.res = res; S.answered = true;
+    var s = S.sess, recMod = (s.mode === 'wrong' || s.mode === 'wrongall') ? (S.q.mod || 'all') : (s.mod || (S.q.mod || 'all'));
+    var qid = recMod + '.' + (S.q.kind || '') + '.' + String(S.q.prompt || '').slice(0, 40);
+    DB.recs.push({ ts: Date.now(), mod: recMod, kind: S.q.kind, kindName: S.q.kindName,
+      title: S.q.title, ok: res.ok, got: res.got, total: res.total,
+      prompt: S.q.prompt, kp: S.q.kp, mode: s.mode,
+      qid: qid });
+    /* 不再截断 recs：整学期作答（含每次答错）是期末复盘的原始依据，见 ADR-0010。
+       单条记录约 200B，一学期几千条约 1MB，localStorage 5MB 配额内。 */
+    if (res.ok) s.right++;
+    reviewAnswer(S.q, res.ok, qid);   /* 统一错题回炉（ADR-0010）：连对2次+行为约束才算掌握 */
+    if (S.q.kind) { DB.meta.lastKind = DB.meta.lastKind || {}; DB.meta.lastKind[recMod] = S.q.kind; }
+    DB.meta.round = (DB.meta.round || 0) + 1;
+    DB.sess = snapshot(); save(); render();
+  }
+  function readVals() {
+    return S.q.fields.map(function (f, i) {
+      if (f.type === 'choice') {
+        var sel = document.querySelector('#app [data-choice="' + i + '"].sel');
+        return sel ? parseInt(sel.getAttribute('data-choice-val'), 10) : null;
+      }
+      var el = document.getElementById(IP + i);
+      return el ? el.value : '';
+    });
+  }
+  function snapshot() { return { view: S.view, q: S.q, res: S.res, answered: S.answered, sess: S.sess, hint: S.hint, vals: S.vals }; }
+  function restore() {
+    try {
+      var x = JSON.parse(localStorage.getItem(SKEY) || 'null');
+      if (x && x.q && x.sess) {
+        S.q = x.q; S.res = x.res; S.answered = !!x.answered; S.sess = x.sess;
+        S.hint = !!x.hint; S.vals = x.vals || null; S.view = 'quiz';
+        return true;
+      }
+    } catch (e) {}
+    return false;
+  }
+  function saveSess() { try { localStorage.setItem(SKEY, JSON.stringify(snapshot())); } catch (e) {} }
+  function clearSess() { try { localStorage.removeItem(SKEY); } catch (e) {} DB.sess = null; save(); }
+
+  /* ---------- 错题库（plan 天回炉，默认 1/3/7/14） ---------- */
+  function wrongKey(q) { return CF.normChem(q.mod + "." + q.kind + "|" + q.prompt).slice(0, 90); }
+  /* 共享回炉内核 ADR-0010：规则只在 工具/trainer/review.js，化学最短有效用时 3 秒 */
+  function reviewAnswer(q, ok, qid) {
+    var R = window.__ltReview, k = q._wrongKey || wrongKey(q), w = DB.wrong[k], now = Date.now();
+    if (R.migrate(w, now)) save();
+    var sec = Math.max(1, Math.round((now - (S.qAt || now)) / 1000));
+    if (!ok) {
+      if (!w) {
+        w = { key: k, qid: qid, mod: q.mod, kind: q.kind, kindName: q.kindName, modName: q.modName,
+          title: q.title, prompt: q.prompt, fields: q.fields, tip: q.tip, explain: q.explain, kp: q.kp };
+        DB.wrong[k] = w;
+      }
+      if (qid && !w.qid) w.qid = qid;   /* 旧条目补 qid，供历史错题清单匹配 */
+      R.onWrong(w, now);
+      return;
+    }
+    var act = R.onPass(w, { sec: sec, minSec: 3, hint: !!S.hint, fixed: false }, now);
+    if (act === 'mastered') delete DB.wrong[k];
+  }
+  function dueWrong() { return window.__ltReview.dueList(DB.wrong); }
+
+  /* ---------- 路由 ---------- */
+  function parseHash() {
+    var h = (location.hash || '').replace(/^#\/?/, ''), p = {};
+    h.split('&').forEach(function (kv) { if (!kv) return; var a = kv.split('='); p[a[0]] = decodeURIComponent(a[1] || ''); });
+    return p;
+  }
+  function go(view, mod, kind) {
+    S.view = view; S.mod = mod || null; S.kind = kind || null;
+    if (view !== 'quiz') { S.q = null; S.res = null; S.answered = false; }
+    var hash = '#view=' + view + (mod ? '&m=' + encodeURIComponent(mod) : '') + (kind ? '&k=' + encodeURIComponent(kind) : '');
+    if (location.hash !== hash) history.replaceState(null, '', hash);
+    render(); window.scrollTo(0, 0);
+  }
+  function boot() {
+    var p = parseHash(), v = p.view || 'today', startKind = null;
+    if (v === 'mod' && p.m) {
+      S.view = 'mod'; S.mod = p.m; S.kind = p.k || null;
+      if (p.k) startKind = p.k;
+    } else if (v === 'wrong') S.view = 'wrong';
+    else if (v === 'report') S.view = 'report';
+    else S.view = 'today';
+    render();
+    if (startKind) startRound(S.mod, startKind, 10);
+  }
+
+  /* ---------- 渲染 ---------- */
+  function render() {
+    renderTabs();
+    var html = '';
+    if (S.view === 'today') html = viewToday();
+    else if (S.view === 'mod') html = viewMod();
+    else if (S.view === 'quiz') html = viewQuiz();
+    else if (S.view === 'summary') html = viewSummary();
+    else if (S.view === 'wrong') html = viewWrong();
+    else if (S.view === 'report') html = viewReport();
+    app.innerHTML = html;
+    bind();
+  }
+  function renderTabs() {
+    tabsBar.innerHTML = VIEWS.map(function (t) {
+      var act = (S.view === t.k || (t.k === 'wrong' && S.view === 'summary')) ? ' active' : '';
+      return '<button data-go="' + t.k + '" class="' + act.trim() + '">' + t.n + '</button>';
+    }).join('');
+  }
+  function stats() {
+    var recs = DB.recs, done = recs.length, right = recs.filter(function (r) { return r.ok; }).length;
+    return { done: done, right: right, rate: done ? Math.round(right / done * 100) : 0,
+      wrong: Object.keys(DB.wrong).length, due: dueWrong().length };
+  }
+  function viewToday() {
+    var st = stats(), resume = '';
+    try {
+      var x = JSON.parse(localStorage.getItem(SKEY) || 'null');
+      if (x && x.sess && x.sess.done < x.sess.total) resume = '<button class="btn" data-act="resume">继续上次练习（第 ' + (x.sess.done + 1) + ' 题）</button>';
+    } catch (e) {}
+    var mods = CH.modules.map(function (m) {
+      var recs = DB.recs.filter(function (r) { return r.mod === m.id; });
+      var ok = recs.filter(function (r) { return r.ok; }).length;
+      var wr = Object.keys(DB.wrong).filter(function (k) { return DB.wrong[k].mod === m.id; }).length;
+      return '<div class="modcard" data-mod="' + m.id + '"><h4>' + m.icon + ' ' + esc(m.name) + '</h4>' +
+        '<div class="d">' + esc(m.desc) + '</div><div class="m">' + m.kinds.length + ' 类题型' +
+        (recs.length ? ' · 已练 ' + recs.length + ' 题（' + Math.round(ok / recs.length * 100) + '%）' : ' · 未练') +
+        (wr ? ' · 错题 ' + wr : '') + '</div></div>';
+    }).join('');
+    var scope = fillTpl(T.scopePill, { units: CH.modules.length, kinds: CH.allKinds.length });
+    var intro = fillTpl(T.intro, { plan: PLAN.join(' / ') });
+    return '<div class="card"><div class="row"><h2 style="margin:0">今日练习</h2><span class="grow"></span>' +
+      '<span class="pill">' + scope + '</span></div>' +
+      '<p class="muted small">' + esc(intro) + '</p>' +
+      statBoxes([['累计做题', st.done], ['正确率', st.rate + '%'], ['错题库', st.wrong], ['今日到期', st.due]], 'margin:12px 0') +
+      '<div class="row"><button class="btn btn-primary" data-act="all">全部考点 · 随机 10 题</button>' +
+      '<button class="btn" data-act="all20">混合 20 题</button>' +
+      (st.due ? '<button class="btn" data-act="wrongdue">复习到期错题（' + st.due + '）</button>' : '') +
+      resume + '</div></div>' +
+      '<h2>' + esc(T.unitTitle) + '</h2><div class="modgrid">' + mods + '</div>';
+  }
+  function viewMod() {
+    var m = CH.moduleById(S.mod);
+    if (!m) return '<div class="card"><h2>未找到单元</h2><button class="btn" data-go="today">回今日</button></div>';
+    var recs = DB.recs.filter(function (r) { return r.mod === m.id; });
+    var ok = recs.filter(function (r) { return r.ok; }).length;
+    var chips = m.kinds.map(function (k) {
+      var wr = Object.keys(DB.wrong).filter(function (x) { return DB.wrong[x].mod === m.id && DB.wrong[x].kind === k.id; }).length;
+      return '<span class="kindchip" data-kind="' + k.id + '">' + esc(k.name) + (wr ? ' · 错题' + wr : '') + '</span>';
+    }).join('');
+    return '<div class="card"><div class="row"><button class="btn btn-ghost btn-sm" data-go="today">← 今日</button>' +
+      '<h2 style="margin:0">' + m.icon + ' ' + esc(m.name) + '</h2></div>' +
+      '<p class="muted small">' + esc(m.desc) + ' 已练 ' + recs.length + ' 题' + (recs.length ? '，正确率 ' + Math.round(ok / recs.length * 100) + '%' : '') + '。</p>' +
+      '<div class="row"><button class="btn btn-primary" data-act="modround">本单元随机 10 题</button>' +
+      '<button class="btn" data-act="modexample">先看一道例题</button></div>' +
+      '<h3>按题型练（点一个题型，只出该类题）</h3><div>' + chips + '</div></div>';
+  }
+  function viewQuiz() {
+    var s = S.sess, q = S.q;
+    if (!s || !q) return '<div class="card"><p>练习已结束。</p><button class="btn" data-go="today">回今日</button></div>';
+    var pct = Math.round(s.done / s.total * 100);
+    var head = '<div class="row"><span class="pill">' + ((s.mode === 'wrong' || s.mode === 'wrongall') ? '错题回炉' : esc(q.modName || T.allScope)) + '</span>' +
+      '<span class="small muted">' + esc(q.title || '') + ' · ' + esc(q.kindName || '') + '</span>' +
+      '<span class="grow"></span><span class="small muted">' + (s.done + 1) + ' / ' + s.total + '</span></div>' +
+      '<div class="progress" style="margin:8px 0 14px"><i style="width:' + pct + '%"></i></div>';
+    var body = '<div class="card"><div class="qhead">' +
+      (q.kp || []).map(function (k) { return '<span class="pill">' + esc(k) + '</span>'; }).join('') + '</div>' +
+      '<div class="qbody">' + esc(q.prompt) + '</div>';
+    q.fields.forEach(function (f, i) {
+      if (f.type === 'choice') {
+        if (f.label) body += '<div class="small muted" style="margin-top:8px;font-weight:600">' + esc(f.label) + '</div>';
+        f.options.forEach(function (opt, oi) {
+          var cls = 'opt';
+          if (S.answered) { if (oi === f.ans) cls += ' ok'; else if (readChoiceState(i) === oi) cls += ' bad'; }
+          else if (readChoiceState(i) === oi) cls += ' sel';
+          body += '<button class="' + cls + '" data-choice="' + i + '" data-choice-val="' + oi + '">' +
+            String.fromCharCode(65 + oi) + '. ' + esc(opt) + '</button>';
+        });
+      } else {
+        var icls = 'txt' + (S.answered ? ' ' + ((S.res && S.res.res[i].ok) ? 'ok' : 'bad') : '');
+        body += '<div class="field">' + (f.label ? '<span class="lbl">' + esc(f.label) + '</span>' : '') +
+          '<input class="' + icls + '" id="' + IP + i + '" autocomplete="off" placeholder="' + esc(T.inputPlaceholder) + '"' +
+          (S.answered ? ' value="' + esc((S.vals || [])[i] || '') + '" readonly' : '') + '>' +
+          (f.unit ? '<span class="unit">' + esc(f.unit) + '</span>' : '') + '</div>';
+      }
+    });
+    if (!S.answered) {
+      body += '<div class="row" style="margin-top:14px">' +
+        '<button class="btn btn-primary" data-act="submit">提交答案</button>' +
+        (q.tip ? '<button class="btn btn-ghost" data-act="hint">' + (S.hint ? '提示已展开' : '看提示') + '</button>' : '') +
+        '<button class="btn btn-ghost" data-act="skip">换一题</button>' +
+        '<span class="grow"></span><span class="small muted">回车提交</span></div>';
+      if (S.hint && q.tip) body += '<div class="tipbox">💡 ' + esc(q.tip) + '</div>';
+    } else {
+      body += feedbackHtml(q, S.res);
+      body += '<div class="row" style="margin-top:14px"><button class="btn btn-primary" data-act="next">' +
+        (s.done + 1 >= s.total ? '查看本轮报告' : '下一题') + '</button>' +
+        '<button class="btn" data-act="again">重做本题</button>' +
+        '<button class="btn btn-ghost" data-act="exit">退出练习</button></div>';
+    }
+    body += '</div>';
+    return head + body;
+  }
+  function readChoiceState(i) {
+    if (S.answered) return (S.vals || [])[i];
+    var el = document.querySelector('#app [data-choice="' + i + '"].sel');
+    return el ? parseInt(el.getAttribute('data-choice-val'), 10) : null;
+  }
+  function feedbackHtml(q, res) {
+    var h = '<div class="fb ' + (res.ok ? 'good' : 'bad') + '">' +
+      '<div class="ftitle">' + (res.ok ? '✓ 全部正确' : '✗ 答错 ' + (res.total - res.got) + ' 处') + '</div>';
+    q.fields.forEach(function (f, i) {
+      h += '<div class="small"><span class="mk ' + (res.res[i].ok ? 'ok' : 'bad') + '">' + (res.res[i].ok ? '✓' : '✗') + '</span>' +
+        (f.label ? esc(f.label) + '：' : '') + '正确答案 <b>' + esc(CH.ansText(f)) + '</b>' +
+        (res.res[i].ok ? '' : '（你答：' + esc((S.vals || [])[i] == null ? '未答' : (S.vals || [])[i]) + '）') + '</div>';
+    });
+    h += '<div class="tipbox" style="margin-top:10px"><b>考点难点：</b>' + esc(q.tip) + '</div>';
+    h += '<div style="margin-top:8px"><b>解析：</b>' + (q.explain || []).map(function (line) {
+      return '<div class="small">· ' + esc(line) + '</div>';
+    }).join('') + '</div>';
+    h += '<div class="kpline">考点标签：' + (q.kp || []).map(function (k) { return '<span class="pill">' + esc(k) + '</span>'; }).join(' ') + '</div>';
+    return h + '</div>';
+  }
+  function viewSummary() {
+    var s = S.sess, rate = s.total ? Math.round(s.right / s.total * 100) : 0;
+    return '<div class="card"><h2>本轮完成</h2>' +
+      statBoxes([['做题', s.done], ['答对', s.right], ['正确率', rate + '%']]) +
+      '<p class="muted small" style="margin-top:12px">' + esc(rate >= 80 ? fillTpl(T.summaryGood, { plan: PLAN.join(' / ') }) : T.summaryLow) + '</p>' +
+      '<div class="row"><button class="btn btn-primary" data-act="again-round">再来一轮（新题）</button>' +
+      '<button class="btn" data-go="wrong">去清错题</button><button class="btn btn-ghost" data-go="today">回今日</button></div></div>';
+  }
+  function viewWrong() {
+    var R = window.__ltReview;
+    var all = Object.keys(DB.wrong).map(function (k) { var w = DB.wrong[k]; R.migrate(w, Date.now()); return w; }).sort(function (a, b) { return a.due - b.due; });
+    var due = R.dueList(DB.wrong);
+    var list = all.map(function (w) {
+      return '<div class="wrongitem"><div class="row"><span class="pill">' + esc(w.kindName || w.kind) + '</span>' +
+        (R.isDue(w) ? '<span class="pill bad">待复习</span>' : '<span class="due">' + esc(R.statusText(w)) + '</span>') +
+        '<span class="grow"></span><span class="small muted">' + T.wrongTimes + ' ' + (w.n || 1) + ' 次' +
+        (w.okStreak ? ' · 已确认 ' + w.okStreak + '/' + R.KEEP : '') + '</span>' +
+        '<button class="btn btn-ghost btn-sm" data-del="' + esc(w.key) + '">跳过本次</button></div>' +
+        '<div class="small">' + esc(w.prompt) + '</div></div>';
+    }).join('');
+    return '<div class="card"><div class="row"><h2 style="margin:0">错题回炉</h2><span class="pill">共 ' + all.length + ' 道</span></div>' +
+      '<p class="muted small">' + esc(fillTpl(T.wrongIntro, { plan: PLAN.join(' / ') })) + '</p>' +
+      '<div class="row">' + (due.length ? '<button class="btn btn-primary" data-act="wrongdue">复习到期题（' + due.length + '）</button>' : '<span class="small muted">今天没有到期错题，明天再来。</span>') +
+      (all.length ? '<button class="btn" data-act="wrongall">全部错题练一遍</button>' : '') + '</div>' +
+      (list || '<p class="muted">错题库是空的，先去做几题吧。</p>') + '</div>';
+  }
+  function viewReport() {
+    var recs = DB.recs, st = stats();
+    var byMod = {};
+    CH.modules.forEach(function (m) { byMod[m.id] = { n: 0, ok: 0, name: m.name }; });
+    recs.forEach(function (r) { var b = byMod[r.mod] || (byMod[r.mod] = { n: 0, ok: 0, name: r.mod }); b.n++; if (r.ok) b.ok++; });
+    var mods = Object.keys(byMod).filter(function (k) { return byMod[k].n; }).map(function (k) {
+      var b = byMod[k], rate = Math.round(b.ok / b.n * 100);
+      return '<div style="margin:8px 0"><div class="row small"><b>' + esc(b.name) + '</b><span class="grow"></span>' +
+        '<span class="muted">' + b.ok + '/' + b.n + ' · ' + rate + '%</span></div>' +
+        '<div class="progress"><i style="width:' + rate + '%;background:' + (rate >= 80 ? 'var(--ok)' : (rate >= 60 ? 'var(--warn)' : 'var(--bad)')) + '"></i></div></div>';
+    }).join('');
+    var kps = {};
+    recs.forEach(function (r) { (r.kp || []).forEach(function (k) { var x = kps[k] || (kps[k] = { n: 0, ok: 0 }); x.n++; if (r.ok) x.ok++; }); });
+    var weak = Object.keys(kps).filter(function (k) { return kps[k].n >= 2; })
+      .map(function (k) { return { k: k, rate: kps[k].ok / kps[k].n, n: kps[k].n }; })
+      .sort(function (a, b) { return a.rate - b.rate; }).slice(0, 8);
+    var weakHtml = weak.length ? weak.map(function (w) {
+      return '<div class="row small"><span>' + esc(w.k) + '</span><span class="grow"></span>' +
+        '<span class="pill ' + (w.rate >= .8 ? 'ok' : (w.rate >= .6 ? 'warn' : 'bad')) + '">' + Math.round(w.rate * 100) + '% (' + w.n + ')</span></div>';
+    }).join('') : '<p class="muted small">做题满 2 次后，这里会显示最需要复习的考点。</p>';
+    /* 历史错题清单：从 recs 聚合整学期曾错过的题（掌握后移出错题本仍留档） */
+    var R = window.__ltReview;
+    var hist = R.everWrong(DB.recs, DB.wrong);
+    var histHtml = hist.length
+      ? '<table class="tb"><tr><th>题目</th><th class="n">错/对</th><th>首错</th><th>末错</th><th>状态</th></tr>' +
+        hist.map(function (e) {
+          return '<tr><td>' + esc(String(e.label).slice(0, 40)) + '</td><td class="n">' + e.wrong + '/' + e.okCount +
+            '</td><td>' + R.dayText(e.firstWrongAt) + '</td><td>' + R.dayText(e.lastWrongAt) +
+            '</td><td>' + (e.inBook ? '在错题本' : '已掌握') + '</td></tr>';
+        }).join('') + '</table>'
+      : '<p class="muted small">还没有答错的记录。</p>';
+    return '<div class="card"><h2>训练报告</h2>' +
+      statBoxes([['累计做题', st.done], ['累计答对', st.right], ['总正确率', st.rate + '%'], ['错题待清', st.wrong]]) +
+      '<h3>各单元正确率</h3>' + (mods || '<p class="muted small">还没有记录。</p>') +
+      '<h3>薄弱考点（正确率最低）</h3>' + weakHtml +
+      '<h3>曾经错过的题（期末复盘 · ' + hist.length + ' 道）</h3>' +
+      '<p class="muted small">按错次排序。移到「已掌握」的题仍留档；错题库已清的浏览器无历史，导出 JSON 可长期保存。</p>' + histHtml +
+      '<div class="row" style="margin-top:16px"><button class="btn" data-act="export">导出记录 JSON</button>' +
+      '<button class="btn" data-act="import">导入记录 JSON</button>' +
+      '<input type="file" id="importFile" accept="application/json,.json" style="display:none">' +
+      '<button class="btn btn-ghost" data-act="reset">清空记录</button></div>' +
+      '<div class="row" style="margin-top:10px"><button class="btn btn-ghost" data-act="sync">云同步（跨设备）</button>' +
+      '<button class="btn btn-ghost" data-act="pathelp" title="PAT 怎么生成">PAT 是什么？</button>' +
+      '<input id="syncPat" type="password" placeholder="GitHub PAT（只填一次，存本机）" style="flex:1;min-width:180px;padding:8px;border:1px solid var(--line);border-radius:8px">' +
+      '<span id="syncMsg" class="small muted"></span></div></div>';
+  }
+
+  /* ---------- 事件绑定 ---------- */
+  function bind() {
+    Array.prototype.forEach.call(tabsBar.querySelectorAll('[data-go]'), function (b) {
+      b.onclick = function () { clearSess(); go(b.getAttribute('data-go')); };
+    });
+    Array.prototype.forEach.call(app.querySelectorAll('[data-go]'), function (b) {
+      b.onclick = function () { clearSess(); go(b.getAttribute('data-go')); };
+    });
+    Array.prototype.forEach.call(app.querySelectorAll('[data-mod]'), function (c) {
+      c.onclick = function () { go('mod', c.getAttribute('data-mod')); };
+    });
+    Array.prototype.forEach.call(app.querySelectorAll('[data-kind]'), function (c) {
+      c.onclick = function () { startRound(S.mod, c.getAttribute('data-kind'), 10); saveSess(); };
+    });
+    Array.prototype.forEach.call(app.querySelectorAll('[data-choice]'), function (b) {
+      b.onclick = function () {
+        if (S.answered) return;
+        var i = parseInt(b.getAttribute('data-choice'), 10);
+        Array.prototype.forEach.call(app.querySelectorAll('[data-choice="' + i + '"]'), function (x) { x.classList.remove('sel'); });
+        b.classList.add('sel');
+        if (S.q) { S.vals = S.vals || []; S.vals[i] = parseInt(b.getAttribute('data-choice-val'), 10); }
+      };
+    });
+    Array.prototype.forEach.call(app.querySelectorAll('[data-del]'), function (b) {
+      b.onclick = function () {
+        var w = DB.wrong[b.getAttribute('data-del')];
+        if (w && confirm('跳过本次：把这道错题推迟到明天再练，仍要连对 2 次才算掌握。确定？')) {
+          window.__ltReview.skip(w); save(); render();
+        }
+      };
+    });
+    Array.prototype.forEach.call(app.querySelectorAll('[data-act]'), function (b) {
+      b.onclick = function () { action(b.getAttribute('data-act')); };
+    });
+    var fileEl = document.getElementById('importFile');
+    if (fileEl) fileEl.onchange = function () {
+      var f = fileEl.files && fileEl.files[0]; if (!f) return;
+      var rd = new FileReader();
+      rd.onload = function () { importText(String(rd.result)); };
+      rd.readAsText(f, 'utf-8');
+      fileEl.value = '';
+    };
+  }
+  function action(a) {
+    if (a === 'all') { startRound(null, null, 10); }
+    else if (a === 'all20') { startRound(null, null, 20); }
+    else if (a === 'modround') { startRound(S.mod, null, 10); }
+    else if (a === 'modexample') {
+      var m = CH.moduleById(S.mod), k = m && m.kinds[0];
+      if (k) { S.back = { view: 'mod', mod: S.mod }; startRound(S.mod, k.id, 1, 'example'); }
+    } else if (a === 'skip') {
+      if (S.sess) { S.sess.total++; S.sess.done++; }
+      nextQuestion(); saveSess(); return;
+    } else if (a === 'submit') {
+      S.vals = readVals(); submit(); saveSess(); return;
+    } else if (a === 'hint') { S.hint = !S.hint; saveSess(); render(); return; }
+    else if (a === 'next') { S.sess.done++; clearSess(); nextQuestion(); saveSess(); return; }
+    else if (a === 'again') { S.answered = false; S.res = null; S.vals = null; saveSess(); render(); return; }
+    else if (a === 'resume') { if (restore()) { render(); return; } }
+    else if (a === 'wrongdue') { startRound(null, null, 20, 'wrong'); }
+    else if (a === 'wrongall') { startRound(null, null, Object.keys(DB.wrong).length, 'wrongall'); }
+    else if (a === 'again-round') { clearSess(); var mm = S.sess && S.sess.mod, kk = S.sess && S.sess.kind; startRound(mm, kk, 10); }
+    else if (a === 'exit') { clearSess(); go('today'); return; }
+    else if (a === 'export') {
+      var blob = new Blob([JSON.stringify(DB, null, 2)], { type: 'application/json' });
+      var u = URL.createObjectURL(blob), a2 = document.createElement('a');
+      a2.href = u; a2.download = T.downloadName; a2.click(); URL.revokeObjectURL(u); return;
+    } else if (a === 'import') {
+      document.getElementById('importFile').click(); return;
+    } else if (a === 'reset') {
+      if (confirm(T.resetConfirm)) { DB = emptyDB(); clearSess(); save(); render(); return; }
+    } else if (a === 'sync') {
+      var patEl = document.getElementById('syncPat');
+      if (patEl && patEl.value) window.__ltSyncUI.setPAT(patEl.value);
+      window.__ltSyncUI.run(); return;   // 异步：内部 setDB → save/render，不在此重复
+    } else if (a === 'pathelp') {
+      alert(window.__ltSyncUI.patHelp); return;
+    }
+    save(); render();
+  }
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter' && S.view === 'quiz') {
+      e.preventDefault();
+      if (S.answered) action('next'); else action('submit');
+    }
+    if (e.key === 'Escape' && S.view === 'quiz') action('exit');
+  });
+  window.addEventListener('hashchange', function () {
+    var p = parseHash(), v = p.view;
+    if (v === 'today') go('today'); else if (v === 'wrong') go('wrong');
+    else if (v === 'report') go('report');
+    else if (v === 'mod' && p.m) go('mod', p.m, p.k || null);
+  });
+
+  /* 段三：云同步适配层注入宿主接口（DB 读写/通知），按钮 data-act="sync" 触发 */
+  if (window.__ltSyncUI) window.__ltSyncUI.init({
+    getDB: function () { return DB; },
+    setDB: function (d) { DB = d; save(); render(); },
+    notify: function (msg) { var el = document.getElementById('syncMsg'); if (el) el.textContent = msg; }
+  });
+
+  /* 启动即读 hash；带 hash 进入不恢复上次位置（契约） */
+  boot();
+  window[CFG.global] = { S: S, DB: DB, CH: CH, go: go, startRound: startRound, action: action,
+    save: save, load: load, render: render, mergeRecords: mergeRecords, importText: importText };
+})();
+</script>
