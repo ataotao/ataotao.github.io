@@ -254,10 +254,10 @@
     );
     if (cm.pool) {
       head.appendChild(h('div', { class: 'cov', style: 'margin-top:4px' },
-        h('span', null, '题目覆盖 ' + cm.done + '/' + cm.pool),
+        h('span', null, '情境覆盖 ' + cm.done + '/' + cm.pool),
         h('div', { class: 'bar' }, h('i', { style: 'width:' + cm.pct + '%' })),
         h('span', null, cm.pct + '%'),
-        (cm.legacy ? h('span', { class: 'muted' }, '· 另有 ' + cm.legacy + ' 条早期记录无题目指纹，未计入覆盖（往后新做的都会算）') : null)));
+        (cm.legacy ? h('span', { class: 'muted' }, '· 另有 ' + cm.legacy + ' 条早期记录无情境指纹，未计入覆盖（往后新做的都会算）') : null)));
     }
     app.appendChild(head);
     /* 分组抽象：kinds（生成器题型）和 items（固定得分点）都按 group 切板块。
@@ -329,27 +329,30 @@
     return { n: rs.length, ok: rs.filter(function (r) { return r.ok; }).length };
   }
 
-  /* ---------- 知识覆盖面（分母 = core 的 POOLS 表）----------
-     分子 = 记录里去重后的题目指纹 sig。老记录没有 sig 的只能按题型名兜底，
-     会把同一题型的多道题算成 1 道 —— 宁可少算，不虚报覆盖。
-     pool > 0 才有百分比；pool = -1（纯数字随机）只报练了几道。
-     「大题前两步」是固定得分点，一个得分点一道题，做过就是 100%。 */
-  function doneSigs(mod, kind) {
+  /* ---------- 知识覆盖面（分母 = core 的 SKELS 情境表）----------
+     分子 = 记录里去重后的「情境」指纹 skel（题干抹平数字后哈希）。
+     数学题库里同一句话平均换 25 次数值（圆周角 244 条题干只有 4 个情境），
+     用题干数当分母会让覆盖率永远涨不动，也看不出真实薄弱点。
+     老记录没有 skel（只有 sig）不知道属于哪个情境 —— 单独计数，不进分子，宁可少算。
+     「大题前两步」一个得分点一道题，情境数 = 1，做过就是 100%。 */
+  function doneSkels(mod, kind) {
     var seen = {}, n = 0, legacy = 0;
     DB.recs.forEach(function (r) {
       if (r.mod !== mod || r.kind !== kind) return;
-      if (!r.sig) { legacy++; return; }   /* 加指纹之前的老记录：不知道是哪道题，单独计数，不进覆盖分子 */
-      if (!seen[r.sig]) { seen[r.sig] = 1; n++; }
+      if (!r.skel) { legacy++; return; }
+      if (!seen[r.skel]) { seen[r.skel] = 1; n++; }
     });
     return { map: seen, n: n, legacy: legacy };
   }
   function coverOf(mod, kind) {
-    var pool = MT.kindPool(mod, kind), d = doneSigs(mod, kind);
+    var pool = MT.kindSkel(mod, kind), d = doneSkels(mod, kind);
+    var variants = MT.kindPool(mod, kind);
     if (pool > 0) {
       var got = Math.min(d.n, pool);
-      return { pool: pool, done: got, pct: Math.min(100, Math.round(got / pool * 100)), open: Math.max(0, pool - d.n), legacy: d.legacy };
+      return { pool: pool, done: got, pct: Math.min(100, Math.round(got / pool * 100)), open: Math.max(0, pool - d.n),
+        legacy: d.legacy, variants: variants > 0 ? variants : 0 };
     }
-    return { pool: 0, done: d.n, pct: null, open: null, legacy: d.legacy };
+    return { pool: 0, done: d.n, pct: null, open: null, legacy: d.legacy, variants: variants > 0 ? variants : 0 };
   }
   /* 模块合计：kinds 型模块按题型累加；大题前两步按得分点累加 */
   function coverOfMod(m) {
@@ -363,27 +366,28 @@
     });
     return { pool: pool, done: done, pct: pool ? Math.min(100, Math.round(done / pool * 100)) : null, open: Math.max(0, pool - done), legacy: legacy };
   }
-  /* 抽一道「本题型没做过」的题：随机起点扫该题型的完整题库（MT.enumerateKind），
-     跳过已做过的和本轮已出的；扫完还没找到 = 这个题型真做完了，返回 null 让调用方换题型。
-     以前是随机试 400 个 seed 去「撞」没做过的题，池里只剩 1 道时有约 1/5 的概率撞空，
-     会被误判成「做完了」—— 页面写着「练未覆盖 1」，点进去却直接收尾，所以改成精确遍历。 */
-  function pickUncovered(mod, kind, seenSigs) {
-    var list = MT.enumerateKind(mod, kind), d = doneSigs(mod, kind), n = list.length;
+  /* 抽一道「本题型没见过情境」的题：随机起点扫完整题库（MT.enumerateKind），
+     跳过已见过情境与本轮已出情境。同一情境的不同数值版本不重复给 ——
+     那是「练 N 题」的活，不是「练未覆盖」。返回 null = 情境都见过了，让调用方换题型。 */
+  function pickUncovered(mod, kind, seenSkels) {
+    var list = MT.enumerateKind(mod, kind), d = doneSkels(mod, kind), n = list.length;
     if (!n) return null;
     var start = n > 1 ? ((Math.random() * n) | 0) : 0;
     for (var i = 0; i < n; i++) {
       var it = list[(start + i) % n];
-      if (!d.map[it.key] && seenSigs.indexOf(it.key) < 0) return it.q;
+      if (!d.map[it.skel] && seenSkels.indexOf(it.skel) < 0) return it.q;
     }
     return null;
   }
   function covLine(c) {
-    if (c.pct == null) return h('div', { class: 'cov' }, h('span', null, '已练 ' + c.done + ' 题'), h('span', { class: 'muted' }, '· 这类题不限量'));
+    if (c.pct == null) return h('div', { class: 'cov' },
+      h('span', null, c.done ? '已练 ' + c.done + ' 个情境' : '还没练'), h('span', { class: 'muted' }, '· 数字随机，无固定情境'));
     return h('div', { class: 'cov' },
-      h('span', null, '覆盖 ' + c.done + '/' + c.pool),
+      h('span', null, '情境 ' + c.done + '/' + c.pool),
       h('div', { class: 'bar' }, h('i', { style: 'width:' + c.pct + '%' })),
       h('span', null, c.pct + '%'),
-      (c.legacy ? h('span', { class: 'muted' }, '· 另有 ' + c.legacy + ' 条早期记录无指纹未计') : null));
+      (c.variants ? h('span', { class: 'muted' }, '· 共 ' + c.variants + ' 道变体') : null),
+      (c.legacy ? h('span', { class: 'muted' }, '· 另有 ' + c.legacy + ' 条早期记录无情境指纹未计') : null));
   }
   /* 模块里所有可覆盖的题型 / 得分点 id */
   function kindIdsOf(m) {
@@ -464,14 +468,14 @@
       queue.push(id); open += c.open;
     });
     if (!queue.length) {
-      alert('这个' + (kind ? '题型' : '模块') + '的题已经全部做过了，去「错题本」或「报告」看看哪里还不稳。');
+      alert('这个' + (kind ? '题型' : '模块') + '的题目情境都已经见过了，去「错题本」或「报告」看看哪里还不稳。');
       return;
     }
     S.mode = 'nocover';
     S.example = false;
     S.back = null;
     S.sess = { mod: mod, kind: kind || null, mode: 'nocover', total: Math.min(8, open), done: 0, right: 0,
-      t0: Date.now(), queue: queue, sigs: [] };
+      t0: Date.now(), queue: queue, sigs: [], skels: [] };
     S.view = 'practice';
     nextQuestion();
   }
@@ -522,13 +526,13 @@
     if (s.mode === 'nocover') {
       var qc = null, left = (s.queue || []).slice();
       while (!qc && left.length) {
-        qc = pickUncovered(s.mod, left[0], s.sigs || []);
+        qc = pickUncovered(s.mod, left[0], s.skels || []);
         if (!qc) left.shift();
       }
       if (!qc) { s.coveredOut = true; S.view = 'summary'; render(); return; }
       S.q = qc;
-      s.sigs = s.sigs || [];
-      s.sigs.push(MT.sigOf(qc));
+      s.skels = s.skels || [];
+      s.skels.push(MT.skelOf(qc));
     } else if (S.mode === 'wrong') {
       S.q = s.queue[s.done];
     } else if (s.queue) {
@@ -947,7 +951,7 @@
     /* qid 要和历史记录兼容：entry 的 kind 现在是得分点 id，拼进去会把老记录拆成两条 */
     var qid = recMod + '.' + (q.mod === 'entry' ? '' : (q.kind || '')) + '.' + String(q.title || '');
     DB.recs.push({ ts: Date.now(), mod: recMod, kind: q.kind, kn: q.title, ok: res.ok, got: res.got, total: res.total, sec: sec, hint: S.hint, mode: S.mode, daily: !!s.daily,
-      qid: qid, sig: MT.sigOf(q) });
+      qid: qid, sig: MT.sigOf(q), skel: MT.skelOf(q) });
     /* 记住这个模块最近练的题型：模块页「先看例题」用它，别随机抽到别的题型 */
     if (q.kind) { DB.meta.lastKind = DB.meta.lastKind || {}; DB.meta.lastKind[recMod] = q.kind; }
     snapAdd(s.mod === 'wrong' ? (S.q.mod || 'drill') : s.mod, q, res, sec);
@@ -1063,7 +1067,7 @@
       statCard('错题本', Object.keys(DB.wrong).length)
     ));
 
-    /* 知识覆盖面：分母 = 每个题型的不重复题干数（core 的 POOLS），按模块汇总 */
+    /* 知识覆盖面：分母 = 每个题型的「不同情境数」（core 的 SKELS），按模块汇总 */
     var covDone = 0, covPool = 0, covLegacy = 0, covRows = h('div');
     MT.modules.forEach(function (m) {
       var c = coverOfMod(m);
@@ -1076,11 +1080,12 @@
           h('i', { style: 'width:' + (c.pct || 0) + '%' }))));
     });
     app.appendChild(h('div', { class: 'card', style: 'margin-top:16px' },
-      h('h3', { style: 'margin-top:0' }, '知识覆盖面（做过多少道不同的题）'),
+      h('h3', { style: 'margin-top:0' }, '知识覆盖面（见过多少个不同情境）'),
       h('p', { class: 'small muted', style: 'margin:0 0 4px' },
-        '全科 ' + covDone + ' / ' + covPool + ' 道（' + pct(covDone, covPool || 1) + '%）。分母是每个题型的固定题库量，' +
-        '同一个题型反复换数字不会涨；纯数字随机的题型（判别式、写解析式各题型）不计百分比。' +
-        (covLegacy ? '另有 ' + covLegacy + ' 条早期记录没有题目指纹，不知道是哪道题，未计入分子。' : '')),
+        '全科 ' + covDone + ' / ' + covPool + ' 个情境（' + pct(covDone, covPool || 1) + '%）。分母是每个题型的「不同情境数」——' +
+        '题干抹平数字后去重：同一句话换十几次数值只算一个情境，所以这个百分比涨得动，也更能看出哪里没见过。' +
+        '纯数字随机的题型（判别式、写解析式各题型）不计百分比。' +
+        (covLegacy ? '另有 ' + covLegacy + ' 条早期记录没有情境指纹，不知道属于哪个情境，未计入分子。' : '')),
       covRows));
 
     /* 按模块 */

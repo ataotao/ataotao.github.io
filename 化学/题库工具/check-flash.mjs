@@ -65,33 +65,42 @@ if (got.length !== UNITS.length || UNITS.some((u, i) => got[i] !== u)) {
    -1 表示不设上限（数字随机/排列组合），只要求它确实超过 200 道，防止把固定小题库误标成不限。 */
 if (args.includes('pools')) {
   const bad = [];
-  let fixed = 0, fixedSum = 0;
+  let fixed = 0, fixedSum = 0, skelSum = 0;
+  /* 骨架：题干抹平数字后哈希/去重，与内核 skelOf 同一把尺子。
+     覆盖率的分母是「情境数」，所以两张表都要校验，缺一张就会让百分比说谎。 */
+  const skelKey = (p) => String(p).replace(/[0-9]+(\.[0-9]+)?/g, '#').replace(/[０-９]+/g, '#').replace(/\s+/g, '');
   for (const k of CH.allKinds) {
-    if (typeof CH.kindPool !== 'function') { console.error('✗ core 没导出 kindPool'); process.exit(1); }
+    if (typeof CH.kindPool !== 'function' || typeof CH.kindSkel !== 'function') { console.error('✗ core 没导出 kindPool / kindSkel'); process.exit(1); }
     const declared = CH.kindPool(k.mod, k.kind);
-    const set = new Set(), kernelSet = new Set();
+    const dSkel = CH.kindSkel(k.mod, k.kind);
+    const set = new Set(), kernelSet = new Set(), skelSet = new Set(), kernelSkel = new Set();
     for (let i = 1; i <= 6000; i++) {
       const q = CH.gen(k.mod, k.kind, i);
       if (!q || !q.prompt) continue;
-      const key = String(q.prompt).slice(0, 40);
-      set.add(key);
-      if (i <= 1200) kernelSet.add(key);   /* 内核 enumerateKind 扫的就是这 1200 个 seed */
+      const key = String(q.prompt).slice(0, 40), sk = skelKey(q.prompt);
+      set.add(key); skelSet.add(sk);
+      if (i <= 1200) { kernelSet.add(key); kernelSkel.add(sk); }   /* 内核 enumerateKind 扫的就是这 1200 个 seed */
     }
-    const u = set.size;
+    const u = set.size, su = skelSet.size;
     if (declared === -1) {
       if (u < 200) bad.push(`${k.mod}.${k.kind} 标为不限但实测只有 ${u} 道，应改成固定池`);
+      if (dSkel !== -1) bad.push(`${k.mod}.${k.kind} 题干标为不限（-1），SKELS 应是 -1，实际 ${dSkel}`);
     } else if (u !== declared) {
-      bad.push(`${k.mod}.${k.kind} 表里 ${declared}，实测 ${u}`);
+      bad.push(`${k.mod}.${k.kind} POOLS 表里 ${declared}，实测 ${u}`);
     } else if (kernelSet.size !== declared) {
-      bad.push(`${k.mod}.${k.kind} 内核只枚举到 ${kernelSet.size} 道，表里 ${declared}`);
-    } else { fixed++; fixedSum += u; }
+      bad.push(`${k.mod}.${k.kind} 内核只枚举到 ${kernelSet.size} 道，POOLS 是 ${declared}`);
+    } else if (dSkel !== su) {
+      bad.push(`${k.mod}.${k.kind} SKELS 表里 ${dSkel} 个情境，实测 ${su}`);
+    } else if (kernelSkel.size !== dSkel) {
+      bad.push(`${k.mod}.${k.kind} 内核只枚举到 ${kernelSkel.size} 个情境，SKELS 是 ${dSkel}`);
+    } else { fixed++; fixedSum += u; skelSum += su; }
   }
   if (bad.length) {
-    console.error(`✗ POOLS 容量表漂移 ${bad.length} 处：`);
+    console.error(`✗ 容量表漂移 ${bad.length} 处（POOLS = 题干数，SKELS = 情境数）：`);
     bad.forEach((b) => console.error('  · ' + b));
     process.exit(1);
   }
-  console.log(`✓ 题库容量表一致：${CH.allKinds.length} 类题型，固定池 ${fixed} 类共 ${fixedSum} 道，其余为不限（-1）`);
+  console.log(`✓ 容量表一致：${CH.allKinds.length} 类题型，固定池 ${fixed} 类 / ${fixedSum} 条题干 / ${skelSum} 个情境，其余为不限（-1）`);
   process.exit(0);
 }
 

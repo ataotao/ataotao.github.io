@@ -500,6 +500,21 @@ var CF = (function () {
     'balance.method': 5, 'balance.check': 5,
     'apply.write': 5, 'apply.writeout': 7, 'apply.calc': 6, 'apply.massrel': 4
   };
+
+  /* ---------- 题目情境数（2026-11-23）----------
+     覆盖率的正确分母：把题干里的数字抹平后去重。物理/数学的题库里同一个情境会换
+     十几次数值（热量计算 270 条题干只有 3 个情境），拿题干数当分母，覆盖率永远
+     涨不动，也看不出真实薄弱点。SKELS = 每个题型的「不同情境数」，由 seed 扫描
+     按同一把尺子得出；-1 = 不设上限，页面只报练过几个情境，不给百分比。
+     改题后跑 `check-*.mjs pools` 会重扫并逐项比对。 */
+  var SKELS = {
+    /* ① 化学用语地基 */
+    'base.symbol': 31, 'base.name': 31, 'base.period': 4, 'base.ion': 20, 'base.ionrule': 5,
+    /* ② 配平四法 */
+    'balance.lcm': 6, 'balance.odd': 5, 'balance.observe': 4, 'balance.setone': 4, 'balance.method': 5, 'balance.check': 5,
+    /* ③ 写方程式与计算 */
+    'apply.write': 5, 'apply.writeout': 7, 'apply.calc': 5, 'apply.massrel': 4
+  };
   MODULES.forEach(function (m) {
     m.kinds.forEach(function (k) {
       var p = POOLS[m.id + '.' + k.id];
@@ -511,6 +526,11 @@ var CF = (function () {
     if (!m) return 0;
     for (var i = 0; i < m.kinds.length; i++) if (m.kinds[i].id === kindId) return m.kinds[i].pool || 0;
     return 0;
+  }
+
+  function kindSkel(modId, kindId) {
+    var s = SKELS[modId + '.' + kindId];
+    return s == null ? 0 : s;
   }
 
   var ALL_KINDS = (function () {
@@ -581,6 +601,6 @@ var CF = (function () {
   return {
     VERSION: VERSION, DAY: DAY, modules: MODULES, allKinds: ALL_KINDS,
     gen: gen, judge: judge, ansText: ansText, parseNum: parseNum, normChem: normChem,
-    moduleById: moduleById, selfTest: selfTest, kindPool: kindPool
+    moduleById: moduleById, selfTest: selfTest, kindPool: kindPool, kindSkel: kindSkel
   };
 })();

@@ -698,11 +698,11 @@ function runUI() {
     if (c.done !== 2 || c.pct !== 100) throw new Error('做完 2 道应 2/2 100%，实际 ' + c.done + '/' + c.pool + ' ' + c.pct + '%');
   });
 
-  step('题型卡显示覆盖比例', () => {
+  step('题型卡显示情境覆盖比例', () => {
     pt.go('draw');
     const txt = textOf(dom.app);
-    if (!/覆盖 \d+\/\d+/.test(txt)) throw new Error('题型卡没有「覆盖 a/b」');
-    if (!/题目覆盖 2\/9/.test(txt)) throw new Error('模块头没有「题目覆盖 2/9」（draw 四类共 2+2+2+3=9 道）');
+    if (!/情境 \d+\/\d+/.test(txt)) throw new Error('题型卡没有「情境 a/b」');
+    if (!/情境覆盖 2\/9/.test(txt)) throw new Error('模块头没有「情境覆盖 2/9」（draw 四类各 2/2/2/3，共 9 个情境）');
   });
 
   step('练未覆盖：只出没做过的题', () => {
@@ -725,29 +725,34 @@ function runUI() {
     if (dom.alerts.length === before) throw new Error('题型全覆盖后没有给出「都做过了」的提示');
   });
 
-  /* 回归（审查后修）：大池题型只剩最后 1 道时，「练未覆盖」必须每次都能抽到它。
-     旧实现是随机试 400 个 seed 去撞，calc.qheat（270 道）剩 1 道时约 1/4 会撞空，
-     于是被判成「做完了」：页面写着「练未覆盖 1」，点进去却直接收尾。
-     这里直接预置 269 条已做记录来构造「只剩 1 道」，旧实现下 30 次里几乎必然失败。
-     小池题型（draw.lever 只有 2 道）撞空概率极低，测不出这个 bug，所以必须用大池。 */
-  step('大池只剩 1 道时未覆盖不漏判', () => {
+  /* 回归：只剩最后 1 个「情境」时，「练未覆盖」必须每次都能抽到它。
+     旧实现按题干随机试 400 个 seed 去撞，calc.qheat（270 条题干 / 3 个情境）
+     剩 1 个情境时约 1/4 会撞空，于是被判成「做完了」。
+     改成按情境算之后，这条同时守住两件事：分母真的是情境数、且 270 条题干
+     不能把「只剩 1 个情境」遮住。 */
+  step('只剩 1 个情境时未覆盖不漏判', () => {
     pt.clearAll();
     const all = pt.PT.enumerateKind('calc', 'qheat');
     if (all.length < 100) throw new Error('calc.qheat 只枚举到 ' + all.length + ' 道，测试前提不成立');
-    const open = all[all.length - 1];
+    const bySkel = new Map();
+    all.forEach((it) => { if (!bySkel.has(it.skel)) bySkel.set(it.skel, it); });
+    const groups = Array.from(bySkel.values());
+    if (groups.length < 2) throw new Error('calc.qheat 只有 ' + groups.length + ' 个情境，测试前提不成立');
+    const last = groups[groups.length - 1];
     const db = pt.db();
-    all.slice(0, all.length - 1).forEach((it) => {
+    groups.slice(0, groups.length - 1).forEach((it) => {
       db.recs.push({ ts: Date.now(), mod: 'calc', kind: 'qheat', kn: '热量计算', ok: true, got: 1, total: 1,
-        sec: 20, hint: false, mode: 'new', steps: 1, qid: 'calc.qheat', sig: it.key });
+        sec: 20, hint: false, mode: 'new', steps: 1, qid: 'calc.qheat', sig: it.key, skel: it.skel });
     });
     const c = pt.cover('calc', 'qheat');
-    if (c.done !== all.length - 1 || c.open !== 1) {
-      throw new Error('预置 ' + (all.length - 1) + ' 条后应只剩 1 道，实际 ' + c.done + '/' + c.pool);
+    if (c.done !== groups.length - 1 || c.open !== 1) {
+      throw new Error('预置 ' + (groups.length - 1) + ' 个情境后应只剩 1 个，实际 ' + c.done + '/' + c.pool);
     }
+    if (c.pool !== groups.length) throw new Error('覆盖率分母 ' + c.pool + ' ≠ 实际情境数 ' + groups.length);
     for (let i = 0; i < 30; i++) {
       pt.startNocover('calc', 'qheat');
-      if (pt.S.view !== 'practice') throw new Error('第 ' + (i + 1) + ' 次「练未覆盖」被判成做完了（其实还剩 1 道）');
-      if (pt.PT.sigOf(pt.S.q) !== open.key) throw new Error('只剩 1 道却抽到了别的题');
+      if (pt.S.view !== 'practice') throw new Error('第 ' + (i + 1) + ' 次「练未覆盖」被判成做完了（其实还剩 1 个情境）');
+      if (pt.PT.skelOf(pt.S.q) !== last.skel) throw new Error('只剩 1 个情境却抽到了别的');
     }
   });
 
@@ -808,32 +813,38 @@ function runPools() {
   const PT = P.PT;
   const SCAN = 3000;
   const fails = [];
-  let fixedKinds = 0, fixedTotal = 0, openKinds = 0;
+  let fixedKinds = 0, fixedTotal = 0, skelTotal = 0, openKinds = 0;
   PT.modules.forEach((m) => {
     (m.kinds || []).forEach((k) => {
-      const seen = new Set();
+      const seen = new Set(), seenSkel = new Set();
       for (let s = 1; s <= SCAN; s++) {
         let q;
         try { q = PT.gen(m.id, k.id, s * 7919 + 13); } catch (e) { continue; }
-        if (q && q.prompt) seen.add(PT.sigOf(q));
+        if (q && q.prompt) { seen.add(PT.sigOf(q)); seenSkel.add(PT.skelOf(q)); }
       }
       const want = PT.kindPool(m.id, k.id), got = seen.size;
+      const wantSkel = PT.kindSkel(m.id, k.id);
       if (want === -1) {
         if (got < 200) fails.push(`${m.id}.${k.id} 表里标 ∞，实测只 ${got} 道（应改成固定数）`);
+        if (wantSkel !== -1) fails.push(`${m.id}.${k.id} 题干标为不限（-1），SKELS 应是 -1，实际 ${wantSkel}`);
         openKinds++;
         return;
       }
       if (!want) { fails.push(`${m.id}.${k.id} 没有登记容量（实测 ${got}）`); return; }
-      if (want !== got) fails.push(`${m.id}.${k.id} 表里 ${want}，实测 ${got}`);
+      if (want !== got) fails.push(`${m.id}.${k.id} POOLS 表里 ${want}，实测 ${got}`);
       /* 页面「练未覆盖」走的是 core 的 enumerateKind，它枚举出的条数必须与 POOLS 相等：
          少了 → 覆盖 a/b 永远到不了 100%，且未覆盖题抽完一遍就提前收尾；多了 → 会出「没登记的题」。 */
       const enumN = PT.enumerateKind(m.id, k.id).length;
       if (enumN !== want) fails.push(`${m.id}.${k.id} 运行时只枚举到 ${enumN} 道，POOLS 是 ${want}`);
-      fixedKinds++; fixedTotal += got;
+      /* 覆盖率的分母是情境数：SKELS 错了，「情境 a/b」就会说谎（百分比涨不动或虚高） */
+      if (wantSkel !== seenSkel.size) fails.push(`${m.id}.${k.id} SKELS 表里 ${wantSkel} 个情境，实测 ${seenSkel.size}`);
+      const enumSkel = new Set(PT.enumerateKind(m.id, k.id).map((it) => it.skel)).size;
+      if (enumSkel !== wantSkel) fails.push(`${m.id}.${k.id} 运行时只枚举到 ${enumSkel} 个情境，SKELS 是 ${wantSkel}`);
+      fixedKinds++; fixedTotal += got; skelTotal += seenSkel.size;
     });
   });
   console.log(`扫描：${PT.modules.length} 模块 · ${fixedKinds + openKinds} 类题型 · 每类 ${SCAN} 个 seed`);
-  console.log(`固定池 ${fixedKinds} 类 / ${fixedTotal} 道；不设上限 ${openKinds} 类`);
+  console.log(`固定池 ${fixedKinds} 类 / ${fixedTotal} 条题干 / ${skelTotal} 个情境；不设上限 ${openKinds} 类`);
   if (fails.length) {
     console.error('✗ 容量表漂移 ' + fails.length + ' 处（按实测数字改 core 里的 POOLS）：');
     fails.slice(0, 40).forEach((f) => console.error('  - ' + f));

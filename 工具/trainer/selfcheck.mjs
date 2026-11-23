@@ -297,46 +297,60 @@ if (name === '化学' || name === '化学专项') {
   }
 }
 
-/* ①b 知识覆盖面 + 专练未覆盖（2026-11-23）
-   注入 1 条该题型的作答记录后：模块页要出现「覆盖 1/池量」和「练未覆盖 剩余」，
-   点进去（startRound mode=nocover）出的题不能是刚做过的那道。 */
+/* ①b 知识覆盖面 + 专练未覆盖（2026-11-23；当晚改为按「情境」算）
+   覆盖率分母 = 情境数（题干抹平数字后去重），不是题干数。核心行为：
+   同一句话换个数字再做一遍，百分比不该上涨 —— 否则分母被数值变体灌水，
+   孩子做 30 道还显示「覆盖 3%」，既失真也挫败。 */
 {
   const mk = name === '化学' ? { mod: 'air', kind: 'comp' } : { mod: 'base', kind: 'period' };
   const pool = T.CH.kindPool(mk.mod, mk.kind);
-  if (!(pool > 1)) fail(`${mk.mod}.${mk.kind} 的池量异常：${pool}`);
+  const nSkel = T.CH.kindSkel(mk.mod, mk.kind);
+  if (!(pool > 1) || !(nSkel > 0)) fail(`${mk.mod}.${mk.kind} 的池量/情境数异常：${pool}/${nSkel}`);
+  const recOf = (q) => ({ ts: Date.now(), mod: mk.mod, kind: mk.kind, kindName: q.kindName, ok: true,
+    got: 1, total: 1, prompt: q.prompt, kp: q.kp, mode: 'normal',
+    qid: mk.mod + '.' + mk.kind + '.' + String(q.prompt).slice(0, 40), skel: T.skelOf(q) });
+
   const q0 = T.CH.gen(mk.mod, mk.kind, 1);
-  const qid = mk.mod + '.' + mk.kind + '.' + String(q0.prompt).slice(0, 40);
-  T.importText(JSON.stringify({
-    v: 1, recs: [{ ts: Date.now(), mod: mk.mod, kind: mk.kind, kindName: q0.kindName, ok: true,
-      got: 1, total: 1, prompt: q0.prompt, kp: q0.kp, mode: 'normal', qid }], wrong: {}, meta: {}
-  }));
+  T.importText(JSON.stringify({ v: 1, recs: [recOf(q0)], wrong: {}, meta: {} }));
   T.go('mod', mk.mod);
-  if (app.innerHTML.indexOf('覆盖 1/' + pool) < 0) fail(`模块页未显示题型覆盖（期望「覆盖 1/${pool}」）`);
-  if (app.innerHTML.indexOf('练未覆盖 ' + (pool - 1)) < 0) fail('模块页缺「练未覆盖」入口或剩余题数不对');
+  if (app.innerHTML.indexOf('情境 1/' + nSkel) < 0) fail(`模块页未显示情境覆盖（期望「情境 1/${nSkel}」）`);
+  if (app.innerHTML.indexOf('练未覆盖 ' + (nSkel - 1)) < 0) fail('模块页缺「练未覆盖」入口或剩余情境数不对');
+
   T.startRound(mk.mod, mk.kind, 10, 'nocover');
   if (T.S.view !== 'quiz' || !T.S.q) fail('未覆盖专练没有进入答题页');
-  if (T.S.q.prompt === q0.prompt) fail('未覆盖专练抽到了已做过的题');
-  T.go('report');
-  if (app.innerHTML.indexOf('知识覆盖面') < 0) fail('报告页缺「知识覆盖面」区块');
+  if (T.skelOf(T.S.q) === T.skelOf(q0)) fail('未覆盖专练又抽了刚做过的情境');
 
-  /* 全覆盖后入口要消失：灌满该题型全部题干，模块页应显示「✓ 已全覆盖」且不再给「练未覆盖」 */
-  T.action('reset');
-  const all = [], seenP = new Set();
-  for (let i = 1; i <= 3000 && seenP.size < pool; i++) {
+  /* 同一情境的第二个数值版本 → 覆盖率必须还是 1 */
+  let q1 = null;
+  for (let i = 2; i <= 3000; i++) {
     const q = T.CH.gen(mk.mod, mk.kind, i);
-    const key = String(q.prompt).slice(0, 40);
-    if (seenP.has(key)) continue;
-    seenP.add(key);
-    all.push({ ts: Date.now(), mod: mk.mod, kind: mk.kind, kindName: q.kindName, ok: true,
-      got: 1, total: 1, prompt: q.prompt, kp: q.kp, mode: 'normal', qid: mk.mod + '.' + mk.kind + '.' + key });
+    if (T.skelOf(q) === T.skelOf(q0) && q.prompt !== q0.prompt) { q1 = q; break; }
   }
-  if (seenP.size !== pool) fail(`枚举 ${mk.mod}.${mk.kind} 只拿到 ${seenP.size}/${pool} 道，题库与容量表不一致`);
+  if (q1) {
+    T.importText(JSON.stringify({ v: 1, recs: [recOf(q0), recOf(q1)], wrong: {}, meta: {} }));
+    T.go('mod', mk.mod);
+    if (app.innerHTML.indexOf('情境 2/' + nSkel) >= 0) fail('同一情境的第二个数值版本被算成了新覆盖');
+    if (app.innerHTML.indexOf('情境 1/' + nSkel) < 0) fail('同情境两题后情境数不是 1');
+  }
+
+  T.action('reset');
+  /* 全覆盖：灌满全部情境（每个情境一条），入口要消失 */
+  const seenSkel = new Set(), all = [];
+  for (let i = 1; i <= 3000 && seenSkel.size < nSkel; i++) {
+    const q = T.CH.gen(mk.mod, mk.kind, i);
+    const sk = T.skelOf(q);
+    if (seenSkel.has(sk)) continue;
+    seenSkel.add(sk);
+    all.push(recOf(q));
+  }
+  if (seenSkel.size !== nSkel) fail(`枚举 ${mk.mod}.${mk.kind} 只拿到 ${seenSkel.size}/${nSkel} 个情境，与容量表不一致`);
   T.importText(JSON.stringify({ v: 1, recs: all, wrong: {}, meta: {} }));
   T.go('mod', mk.mod);
-  /* 只看这一个题型的 chip：同单元其它题型还没练，页面上当然仍有「练未覆盖」 */
-  const chipRe = new RegExp('data-kind="' + mk.kind + '"[\\s\\S]{0,240}?已全覆盖');
+  const chipRe = new RegExp('data-kind="' + mk.kind + '"[\\s\\S]{0,260}?已全覆盖');
   if (!chipRe.test(app.innerHTML)) fail(`题型 ${mk.kind} 全覆盖后未显示「✓ 已全覆盖」`);
-  if (app.innerHTML.indexOf('覆盖 ' + pool + '/' + pool) < 0) fail('全覆盖后未显示满额覆盖数');
+  if (app.innerHTML.indexOf('情境 ' + nSkel + '/' + nSkel) < 0) fail('全覆盖后未显示满额情境数');
+  T.go('report');
+  if (app.innerHTML.indexOf('知识覆盖面') < 0) fail('报告页缺「知识覆盖面」区块');
   T.action('reset');
 }
 

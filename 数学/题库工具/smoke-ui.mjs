@@ -577,44 +577,51 @@ ok((textOf(app).match(/当前板块随机题练习/g) || []).length >= 7, '基�
   const rec = M.db().recs[M.db().recs.length - 1];
   ok(!!rec.sig, '记录里没有题目指纹 sig');
   ok(rec.sig === ctx.MT.sigOf(q1), '记录里的 sig 与 MT.sigOf 不一致');
+  ok(!!rec.skel && rec.skel === ctx.MT.skelOf(q1), '记录里的 skel（情境指纹）与 MT.skelOf 不一致');
 
+  /* 覆盖率分母是「情境数」，不是题干数：同一句话换数字做第 2 遍不该涨 */
   const c1 = M.cover('drill', 'symshape');
-  ok(c1.pool === 3, 'drill.symshape 容量应为 3，实际 ' + c1.pool);
-  ok(c1.done === 1 && c1.open === 2, '做完 1 道应 1/3，实际 ' + c1.done + '/' + c1.pool);
+  ok(c1.pool === ctx.MT.kindSkel('drill', 'symshape'), 'drill.symshape 情境数应为 kindSkel，实际 ' + c1.pool);
+  ok(c1.done === 1 && c1.open === c1.pool - 1, '做完 1 道应 1/' + c1.pool + '，实际 ' + c1.done + '/' + c1.pool);
 
-  /* 模块页：题型卡与模块头都要有覆盖比例 */
+  /* 模块页：题型卡与模块头都要有情境覆盖 */
   M.go('drill');
   const pageTxt = textOf(app);
-  ok(/覆盖 1\/3/.test(pageTxt), '题型卡没显示「覆盖 1/3」');
-  ok(/题目覆盖 1\/\d+/.test(pageTxt), '模块头没显示「题目覆盖 a/b」');
-  ok(/练未覆盖 2/.test(pageTxt), '题型卡没显示「练未覆盖 2」');
+  ok(/情境 1\/\d+/.test(pageTxt), '题型卡没显示「情境 1/b」');
+  ok(/情境覆盖 1\/\d+/.test(pageTxt), '模块头没显示「情境覆盖 a/b」');
+  ok(/练未覆盖 /.test(pageTxt), '题型卡没显示「练未覆盖 N」');
 
-  /* 专练未覆盖：出的必须是没做过的那道 */
+  /* 专练未覆盖：出的必须是没见过情境 */
   M.startNocover('drill', 'symshape');
   ok(M.S.view === 'practice', '专练未覆盖没进入练习（view=' + M.S.view + '）');
   const q2 = M.S.q;
-  ok(q2 && ctx.MT.sigOf(q2) !== ctx.MT.sigOf(q1), '专练未覆盖又出了刚做过的那道');
+  ok(q2 && ctx.MT.skelOf(q2) !== ctx.MT.skelOf(q1), '专练未覆盖又出了刚见过的情境');
   M.S.choice[0] = q2.fields[0].ans;
   M.submit();
-  ok(M.cover('drill', 'symshape').done === 2, '做完两题后覆盖数应为 2');
+  ok(M.cover('drill', 'symshape').done === 2, '见过两个情境后覆盖数应为 2');
 
-  /* 回归（审查后修）：大池题型只剩最后 1 道时，「练未覆盖」必须每次都能抽到它。
-     旧实现随机试 400 个 seed 去撞，drill.circangle（244 道）剩 1 道时约 1/5 会撞空 →
-     被判成「做完了」。小池题型（symshape 只有 3 道）测不出这个 bug，所以用大池 + 预置 243 条记录。 */
+  /* 大池：只剩 1 个情境时，30 次「练未覆盖」必须每次都抽到它。
+     旧实现按题干随机试 400 个 seed 去撞，circangle（244 条题干 / 4 个情境）
+     剩 1 个情境时约 1/5 撞空 → 被判成「做完了」。 */
   const bigAll = ctx.MT.enumerateKind('drill', 'circangle');
   ok(bigAll.length >= 100, 'drill.circangle 只枚举到 ' + bigAll.length + ' 道，测试前提不成立');
-  const bigOpen = bigAll[bigAll.length - 1];
-  bigAll.slice(0, bigAll.length - 1).forEach((it) => {
+  const bySkel = new Map();
+  bigAll.forEach((it) => { if (!bySkel.has(it.skel)) bySkel.set(it.skel, it); });
+  const groups = Array.from(bySkel.values());
+  ok(groups.length >= 2, 'drill.circangle 只有 ' + groups.length + ' 个情境，测试前提不成立');
+  const bigLast = groups[groups.length - 1];
+  groups.slice(0, groups.length - 1).forEach((it) => {
     M.db().recs.push({ ts: Date.now(), mod: 'drill', kind: 'circangle', kn: '圆周角', ok: true, got: 1, total: 1,
-      sec: 20, hint: false, mode: 'new', qid: 'drill.circangle', sig: it.key });
+      sec: 20, hint: false, mode: 'new', qid: 'drill.circangle', sig: it.key, skel: it.skel });
   });
   const cBig = M.cover('drill', 'circangle');
-  ok(cBig.done === bigAll.length - 1 && cBig.open === 1,
-    '预置 ' + (bigAll.length - 1) + ' 条后应只剩 1 道，实际 ' + cBig.done + '/' + cBig.pool);
+  ok(cBig.pool === groups.length, '覆盖率分母 ' + cBig.pool + ' ≠ 实际情境数 ' + groups.length);
+  ok(cBig.done === groups.length - 1 && cBig.open === 1,
+    '预置 ' + (groups.length - 1) + ' 个情境后应只剩 1 个，实际 ' + cBig.done + '/' + cBig.pool);
   for (let i = 0; i < 30; i++) {
     M.startNocover('drill', 'circangle');
-    ok(M.S.view === 'practice', '第 ' + (i + 1) + ' 次「练未覆盖」被判成做完了（其实还剩 1 道）');
-    ok(ctx.MT.sigOf(M.S.q) === bigOpen.key, '只剩 1 道却抽到了别的题');
+    ok(M.S.view === 'practice', '第 ' + (i + 1) + ' 次「练未覆盖」被判成做完了（其实还剩 1 个情境）');
+    ok(ctx.MT.skelOf(M.S.q) === bigLast.skel, '只剩 1 个情境却抽到了别的');
   }
 
   /* 报告页有知识覆盖面 */

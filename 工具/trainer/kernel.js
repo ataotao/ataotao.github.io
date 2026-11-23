@@ -645,20 +645,21 @@ export function uiScript(cfg) {
       try { q = CH.gen(mod, kind, s); } catch (e) { continue; }
       if (!q || !q.prompt) continue;
       var k = sigOf(q);
-      if (!seen[k]) { seen[k] = 1; list.push({ key: k, q: q }); }
+      if (!seen[k]) { seen[k] = 1; list.push({ key: k, skel: skelOf(q), q: q }); }
     }
     POOL_CACHE[ck] = list;
     return list;
   }
-  /* 抽一道「本题型没做过」的题：从随机起点扫题库，跳过已做与本轮已出。
-     返回 null = 这个题型的题都做过了（调用方换题型或收尾）。 */
-  function pickUncovered(mod, kind, seenSigs) {
+  /* 抽一道「本题型没见过的情境」：从随机起点扫题库，跳过已做情境与本轮已出情境。
+     同一情境的不同数值版本不重复给 —— 那是「练 N 题」，不是「练未覆盖」。
+     返回 null = 这个题型的情境都见过了（调用方换题型或收尾）。 */
+  function pickUncovered(mod, kind, seenSkels) {
     var list = enumerateKind(mod, kind), d = doneMap(mod, kind), n = list.length;
     if (!n) return null;
     var start = n > 1 ? (newSeed() % n) : 0;
     for (var i = 0; i < n; i++) {
       var it = list[(start + i) % n];
-      if (!d.map[it.key] && seenSigs.indexOf(it.key) < 0) return it.q;
+      if (!d.map[it.skel] && seenSkels.indexOf(it.skel) < 0) return it.q;
     }
     return null;
   }
@@ -704,7 +705,7 @@ export function uiScript(cfg) {
       if (!queue.length) { S.mod = mod; S.view = 'mod'; render(); return; }
     }
     S.sess = { mod: mod || null, kind: kind || null, total: total, done: 0, right: 0,
-      mode: mode || 'normal', queue: queue, sigs: [], seed: newSeed() };
+      mode: mode || 'normal', queue: queue, sigs: [], skels: [], seed: newSeed() };
     S.view = 'quiz'; S.q = null; S.res = null; S.answered = false; S.hint = false;
     nextQuestion();
   }
@@ -723,12 +724,12 @@ export function uiScript(cfg) {
          全空即提前收尾（summary 会说明“能做的都做过了”，不硬凑满 10 题）。 */
       var qc = null, left = (s.queue || []).slice();
       while (!qc && left.length) {
-        qc = pickUncovered(s.mod, left[0], s.sigs);
+        qc = pickUncovered(s.mod, left[0], s.skels);
         if (!qc) left.shift();
       }
       if (!qc) { s.coveredOut = true; S.view = 'summary'; render(); return; }
       S.q = qc;
-      s.sigs.push(sigOf(qc));
+      s.skels.push(skelOf(qc));
     } else {
       var slot = s.queue && s.queue.length ? s.queue[s.done % s.queue.length] : null;
       var mod = s.mod, kind = s.kind;
@@ -758,7 +759,7 @@ export function uiScript(cfg) {
     DB.recs.push({ ts: Date.now(), mod: recMod, kind: S.q.kind, kindName: S.q.kindName,
       title: S.q.title, ok: res.ok, got: res.got, total: res.total,
       prompt: S.q.prompt, kp: S.q.kp, mode: s.mode,
-      qid: qid });
+      qid: qid, skel: skelOf(S.q) });
     /* 不再截断 recs：整学期作答（含每次答错）是期末复盘的原始依据，见 ADR-0010。
        单条记录约 200B，一学期几千条约 1MB，localStorage 5MB 配额内。 */
     if (res.ok) s.right++;
@@ -873,23 +874,34 @@ export function uiScript(cfg) {
   /* ---------- 知识覆盖面（分母 = core 的 POOLS 表）----------
      keyOf 与作答记录的 qid 同源（mod.kind + 题干前 40 字），所以「做过哪几道题」可去重。
      pool > 0 才有百分比；pool = -1（数字随机 / 排列组合 / 元素组合）只报练了几道。 */
+  /* 情境指纹：题干抹平数字后的哈希。同一句话换数值 = 同一情境；
+     覆盖率按情境算，做第 2 个数值版本不会让百分比上涨。 */
+  function skelOf(q) {
+    var s = String(q.prompt == null ? '' : q.prompt)
+      .replace(/[0-9]+(\.[0-9]+)?/g, '#').replace(/[０-９]+/g, '#').replace(/\s+/g, '');
+    var h = 5381;
+    for (var i = 0; i < s.length; i++) h = ((h << 5) + h + s.charCodeAt(i)) >>> 0;
+    return (q.mod || '') + '.' + (q.kind || '') + '.' + h.toString(36);
+  }
   function keyOf(q) { return q.mod + '.' + q.kind + '.' + String(q.prompt || '').slice(0, 40); }
   function doneMap(mod, kind) {
-    var seen = {}, n = 0;
+    var seen = {}, n = 0, legacy = 0;
     DB.recs.forEach(function (r) {
       if (r.mod !== mod || r.kind !== kind) return;
-      var k = r.qid || (r.mod + '.' + r.kind + '.' + String(r.prompt || '').slice(0, 40));
-      if (!seen[k]) { seen[k] = 1; n++; }
+      if (!r.skel) { legacy++; return; }   /* 老记录没有情境指纹，宁可少算不虚报 */
+      if (!seen[r.skel]) { seen[r.skel] = 1; n++; }
     });
-    return { map: seen, n: n };
+    return { map: seen, n: n, legacy: legacy };
   }
   function coverOf(mod, kind) {
-    var pool = CH.kindPool ? CH.kindPool(mod, kind) : 0, d = doneMap(mod, kind);
+    var pool = CH.kindSkel ? CH.kindSkel(mod, kind) : 0, d = doneMap(mod, kind);
+    var variants = CH.kindPool ? CH.kindPool(mod, kind) : 0;
     if (pool > 0) {
       var got = Math.min(d.n, pool);
-      return { pool: pool, done: got, pct: Math.min(100, Math.round(got / pool * 100)), open: Math.max(0, pool - d.n) };
+      return { pool: pool, done: got, pct: Math.min(100, Math.round(got / pool * 100)),
+        open: Math.max(0, pool - d.n), legacy: d.legacy, variants: variants > 0 ? variants : 0 };
     }
-    return { pool: 0, done: d.n, pct: null, open: null };
+    return { pool: 0, done: d.n, pct: null, open: null, legacy: d.legacy, variants: variants > 0 ? variants : 0 };
   }
   /* 单元合计：只累计有分母的题型；全是不限时返回 pct=null */
   function coverOfMod(m) {
@@ -1005,7 +1017,7 @@ export function uiScript(cfg) {
     var chips = m.kinds.map(function (k) {
       var wr = Object.keys(DB.wrong).filter(function (x) { return DB.wrong[x].mod === m.id && DB.wrong[x].kind === k.id; }).length;
       var c = coverOf(m.id, k.id);
-      var tag = c.pct == null ? ' · 已练 ' + c.done : ' · 覆盖 ' + c.done + '/' + c.pool + '（' + c.pct + '%）';
+      var tag = c.pct == null ? (c.done ? ' · 已练 ' + c.done + ' 个情境' : ' · 无固定情境') : ' · 情境 ' + c.done + '/' + c.pool + '（' + c.pct + '%）';
       var cov = c.pct == null ? ''
         : c.open > 0
           ? '<button class="kindcov" data-kindcov="' + k.id + '">练未覆盖 ' + c.open + '</button>'
@@ -1014,7 +1026,8 @@ export function uiScript(cfg) {
         (wr ? ' · 错题 ' + wr : '') + '</span>' + cov + '</span>' + guideCard(k);
     }).join('');
     var covLine = cm.pct == null ? ''
-      : '，题目覆盖 ' + cm.done + '/' + cm.pool + '（' + cm.pct + '%）' + (cm.pct >= 100 ? '，全部做过' : '');
+      : '，情境覆盖 ' + cm.done + '/' + cm.pool + '（' + cm.pct + '%）' + (cm.pct >= 100 ? '，全部情境见过' : '') +
+        '；分母是情境数，同一句话换数字算同一个情境';
     var openTotal = 0;
     m.kinds.forEach(function (k) { var c = coverOf(m.id, k.id); if (c.open > 0) openTotal += c.open; });
     return '<div class="card"><div class="row"><button class="btn btn-ghost btn-sm" data-go="today">← 今日</button>' +
@@ -1098,7 +1111,7 @@ export function uiScript(cfg) {
     var s = S.sess, base = Math.max(1, s.done), rate = Math.round(s.right / base * 100);
     /* 专练未覆盖会提前结束（可做的题不够 10 道），正确率按实际做了几题算 */
     var outNote = s.coveredOut
-      ? '<p class="muted small" style="margin-top:8px">本单元这类题能做的都做过了，已没有新题可出——接下来靠错题回炉和整卷复盘巩固。</p>'
+      ? '<p class="muted small" style="margin-top:8px">本单元这类题的情境都见过了，没有新情境可出——接下来靠错题回炉和整卷复盘巩固。</p>'
       : '';
     return '<div class="card"><h2>本轮完成</h2>' +
       statBoxes([['做题', s.done], ['答对', s.right], ['正确率', rate + '%']]) +
@@ -1169,12 +1182,13 @@ export function uiScript(cfg) {
     }).join('');
     var covPct = covPool ? Math.round(covDone / covPool * 100) : 0;
     var covHtml = covPool
-      ? '<p class="muted small">全科 ' + covDone + ' / ' + covPool + ' 道（' + covPct + '%）。分母是每个题型实际能出的不重复题干数；' +
-        '数字随机类（质量分数计算、溶液的稀释）和排列组合类（四图操作、结构示意图）不计入分母。</p>' + covRows
+      ? '<p class="muted small">全科 ' + covDone + ' / ' + covPool + ' 个情境（' + covPct + '%）。分母是每个题型的「不同情境数」——' +
+        '题干抹平数字后去重：同一句话换十几次数值只算一个情境，所以这个百分比涨得动，也更能看出哪里没见过。' +
+        '数字随机类（质量分数计算、溶液稀释）与排列组合类（四图操作、结构示意图）不计入分母。</p>' + covRows
       : '<p class="muted small">还没有记录。</p>';
     return '<div class="card"><h2>训练报告</h2>' +
       statBoxes([['累计做题', st.done], ['累计答对', st.right], ['总正确率', st.rate + '%'], ['错题待清', st.wrong]]) +
-      '<h3>知识覆盖面（做过多少道不同的题）</h3>' + covHtml +
+      '<h3>知识覆盖面（见过多少个不同情境）</h3>' + covHtml +
       '<h3>各单元正确率</h3>' + (mods || '<p class="muted small">还没有记录。</p>') +
       '<h3>薄弱考点（正确率最低）</h3>' + weakHtml +
       '<h3>曾经错过的题（期末复盘 · ' + hist.length + ' 道）</h3>' +
@@ -1326,7 +1340,7 @@ export function uiScript(cfg) {
   boot();
   window[CFG.global] = { S: S, DB: DB, CH: CH, go: go, startRound: startRound, action: action,
     save: save, load: load, render: render, mergeRecords: mergeRecords, importText: importText,
-    symkeys: SYMKEYS, insertSym: insertSym };
+    symkeys: SYMKEYS, insertSym: insertSym, skelOf: skelOf };
 })();
 </script>
 `;

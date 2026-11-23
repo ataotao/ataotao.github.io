@@ -54,35 +54,41 @@ if (typeof MT.planForDay !== 'function' || typeof MT.dailyQueue !== 'function') 
 function runPools() {
   const SCAN = 3000;
   const fails = [];
-  let fixedKinds = 0, fixedTotal = 0, openKinds = 0;
+  let fixedKinds = 0, fixedTotal = 0, skelTotal = 0, openKinds = 0;
   MT.modules.forEach((m) => {
     const kinds = m.kinds
       ? m.kinds.map((k) => ({ id: k.id, name: k.name }))
       : Array.from(new Set(m.items.map((it) => it.kind || it.id))).map((id) => ({ id, name: id }));
     kinds.forEach((k) => {
-      const seen = new Set();
+      const seen = new Set(), seenSkel = new Set();
       for (let s = 1; s <= SCAN; s++) {
         let q;
         try { q = MT.gen(m.id, k.id, s * 7919 + 13); } catch (e) { continue; }
-        if (q && q.prompt) seen.add(MT.sigOf(q));
+        if (q && q.prompt) { seen.add(MT.sigOf(q)); seenSkel.add(MT.skelOf(q)); }
       }
       const want = MT.kindPool(m.id, k.id), got = seen.size;
+      const wantSkel = MT.kindSkel(m.id, k.id);
       if (want === -1) {
         if (got < 100) fails.push(`${m.id}.${k.id} 表里标 ∞，实测只 ${got} 道（应改成固定数）`);
+        if (wantSkel !== -1) fails.push(`${m.id}.${k.id} 题干标为不限（-1），SKELS 应是 -1，实际 ${wantSkel}`);
         openKinds++;
         return;
       }
       if (!want) { fails.push(`${m.id}.${k.id} 没有登记容量（实测 ${got}）`); return; }
-      if (want !== got) fails.push(`${m.id}.${k.id} 表里 ${want}，实测 ${got}`);
+      if (want !== got) fails.push(`${m.id}.${k.id} POOLS 表里 ${want}，实测 ${got}`);
       /* 页面「练未覆盖」走的是 core 的 enumerateKind，它枚举出的条数必须与 POOLS 相等：
          少了 → 覆盖 a/b 永远到不了 100%，且未覆盖题抽完一遍就提前收尾；多了 → 会出「没登记的题」。 */
       const enumN = MT.enumerateKind(m.id, k.id).length;
       if (enumN !== want) fails.push(`${m.id}.${k.id} 运行时只枚举到 ${enumN} 道，POOLS 是 ${want}`);
-      fixedKinds++; fixedTotal += got;
+      /* 覆盖率分母是情境数：SKELS 错了「情境 a/b」就会说谎 */
+      if (wantSkel !== seenSkel.size) fails.push(`${m.id}.${k.id} SKELS 表里 ${wantSkel} 个情境，实测 ${seenSkel.size}`);
+      const enumSkel = new Set(MT.enumerateKind(m.id, k.id).map((it) => it.skel)).size;
+      if (enumSkel !== wantSkel) fails.push(`${m.id}.${k.id} 运行时只枚举到 ${enumSkel} 个情境，SKELS 是 ${wantSkel}`);
+      fixedKinds++; fixedTotal += got; skelTotal += seenSkel.size;
     });
   });
   console.log(`扫描：${MT.modules.length} 模块 · ${fixedKinds + openKinds} 类题型 · 每类 ${SCAN} 个 seed`);
-  console.log(`固定池 ${fixedKinds} 类 / ${fixedTotal} 道；不设上限 ${openKinds} 类`);
+  console.log(`固定池 ${fixedKinds} 类 / ${fixedTotal} 条题干 / ${skelTotal} 个情境；不设上限 ${openKinds} 类`);
   if (fails.length) {
     console.error('✗ 容量表漂移 ' + fails.length + ' 处（按实测数字改 core 里的 POOLS）：');
     fails.slice(0, 40).forEach((f) => console.error('  - ' + f));

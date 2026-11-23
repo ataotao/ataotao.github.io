@@ -2709,6 +2709,23 @@ var MT = (function () {
     'week12.secperim': 12, 'week12.paralleldist': 6, 'week12.relatecircle': 5,
     'week12.missingconst': 28, 'week12.archcircle': 5, 'week12.isopoint': 4, 'week12.rangeopen': 5
   };
+
+  /* ---------- 题目情境数（2026-11-23）----------
+     覆盖率的正确分母：把题干里的数字抹平后去重。物理/数学的题库里同一个情境会换
+     十几次数值（热量计算 270 条题干只有 3 个情境），拿题干数当分母，覆盖率永远
+     涨不动，也看不出真实薄弱点。SKELS = 每个题型的「不同情境数」，由 seed 扫描
+     按同一把尺子得出；-1 = 不设上限，页面只报练过几个情境，不给百分比。
+     改题后跑 `check-*.mjs pools` 会重扫并逐项比对。 */
+  var SKELS = {
+    /* 基础快练 */
+    'drill.factor': 6, 'drill.eq': 12, 'drill.complete': 4, 'drill.missingconst': 3, 'drill.eqdef': 1, 'drill.disc': -1, 'drill.vieta': 12, 'drill.growth': 3, 'drill.areaeq': 2, 'drill.vertexprop': -1, 'drill.vertexmax': -1, 'drill.coef': -1, 'drill.plug': -1, 'drill.shift': -1, 'drill.rangemax': -1, 'drill.fxeq': 3, 'drill.invprop': 9, 'drill.invarea': 4, 'drill.circledef': 1, 'drill.ptcirc': 1, 'drill.circum': 1, 'drill.radiusiso': 2, 'drill.perpchord': 3, 'drill.diam90': 1, 'drill.cycquad': -1, 'drill.circangle': 4, 'drill.arcchord': 3, 'drill.arclen': 3, 'drill.sector': 5, 'drill.cone': 3, 'drill.linecircle': 2, 'drill.tanprop': 2, 'drill.tanjudge': 1, 'drill.tanlen': 3, 'drill.incircle': -1, 'drill.regular': 4, 'drill.rot': 12, 'drill.sym': -1, 'drill.symshape': 3, 'drill.absurd': 6, 'drill.secperim': 1, 'drill.circumcenter': 1, 'drill.chordradius': 1, 'drill.cycqext': 1, 'drill.concentric': 1, 'drill.bowarea': 1, 'drill.circnum': 1,
+    /* 写解析式 */
+    'write.vertex': -1, 'write.intercept': -1, 'write.inverse': -1, 'write.profit': -1, 'write.segment': -1, 'write.piece': -1, 'write.arch': 1, 'write.axis': -1,
+    /* 大题前两步 */
+    'entry.entry.21.1': 1, 'entry.entry.21.2': 1, 'entry.entry.21.3': 1, 'entry.entry.22.1': 1, 'entry.entry.22.2': 1, 'entry.entry.23.1': 1, 'entry.entry.23.2': 1, 'entry.entry.20.1': 1, 'entry.entry.20.2': 1, 'entry.entry.24.1': 1, 'entry.entry.25.1': 1, 'entry.entry.25.2': 1, 'entry.entry.13.1': 1, 'entry.entry.13.3': 1, 'entry.entry.13.5': 1, 'entry.entry.14.1': 1, 'entry.entry.15.1': 1, 'entry.entry.16.1': 1, 'entry.entry.16.2': 1, 'entry.entry.17.1': 1, 'entry.entry.t01': 1, 'entry.entry.t02': 1, 'entry.entry.t03': 1, 'entry.entry.t05': 1, 'entry.entry.t06': 1, 'entry.entry.t08': 1, 'entry.entry.t11': 1, 'entry.entry.t12': 1, 'entry.entry.t13': 1, 'entry.entry.t21': 1, 'entry.entry.t22': 1, 'entry.entry.w12q7': 1, 'entry.entry.w12q12': 1, 'entry.entry.w12q16': 1, 'entry.entry.w12q17a': 1, 'entry.entry.w12q17b': 1, 'entry.entry.w12q15': 1,
+    /* 本周错题 */
+    'week12.secperim': 1, 'week12.paralleldist': 1, 'week12.relatecircle': 1, 'week12.missingconst': 3, 'week12.archcircle': 1, 'week12.isopoint': 2, 'week12.rangeopen': 4
+  };
   MODULES.forEach(function (m) {
     (m.kinds || []).forEach(function (k) {
       var p = POOLS[m.id + '.' + k.id];
@@ -2720,6 +2737,11 @@ var MT = (function () {
     return p == null ? 0 : p;
   }
 
+  function kindSkel(modId, kindId) {
+    var s = SKELS[modId + '.' + kindId];
+    return s == null ? 0 : s;
+  }
+
   /* ---------- 题目指纹：覆盖率与「专练没做过的题」都靠它 ----------
      同一道题在不同 seed 下抽到，题干与题图一样 → 指纹一样，所以「做过哪几道」可去重。
      题图一起进哈希：题干相同、只有图不同的题不能合并成一条。
@@ -2728,6 +2750,16 @@ var MT = (function () {
     var s = String(q.prompt == null ? '' : q.prompt);
     if (q.cropKey) s += '#' + q.cropKey;
     else if (q.fig) s += '#' + JSON.stringify(q.fig);
+    var h = 5381;
+    for (var i = 0; i < s.length; i++) h = ((h << 5) + h + s.charCodeAt(i)) >>> 0;
+    return (q.mod || '') + '.' + (q.kind || '') + '.' + h.toString(36);
+  }
+
+  /* 情境指纹：题干抹平数字后的哈希（不含题图）。同一句话换数值 = 同一情境，
+     覆盖率与「练未覆盖」都按它算 —— 做第 2 个数值版本不该让百分比上涨。 */
+  function skelOf(q) {
+    var s = String(q.prompt == null ? '' : q.prompt)
+      .replace(/[0-9]+(\.[0-9]+)?/g, '#').replace(/[０-９]+/g, '#').replace(/\s+/g, '');
     var h = 5381;
     for (var i = 0; i < s.length; i++) h = ((h << 5) + h + s.charCodeAt(i)) >>> 0;
     return (q.mod || '') + '.' + (q.kind || '') + '.' + h.toString(36);
@@ -2749,7 +2781,7 @@ var MT = (function () {
       try { q = gen(modId, kindId, s); } catch (e) { continue; }
       if (!q || !q.prompt) continue;
       var k = sigOf(q);
-      if (!seen[k]) { seen[k] = 1; list.push({ key: k, q: q }); }
+      if (!seen[k]) { seen[k] = 1; list.push({ key: k, skel: skelOf(q), q: q }); }
     }
     POOL_LIST[ck] = list;
     return list;
@@ -3183,7 +3215,7 @@ var MT = (function () {
     modules: MODULES, moduleById: moduleById,
     planForDay: planForDay, dailyQueue: dailyQueue, daySeed: daySeed, kindName: kindName,
     gen: gen, judge: judge, ansText: ansText, svgFor: svgFor, cropFig: cropFig,
-    kindPool: kindPool, sigOf: sigOf, enumerateKind: enumerateKind,
+    kindPool: kindPool, kindSkel: kindSkel, sigOf: sigOf, skelOf: skelOf, enumerateKind: enumerateKind,
     parseNum: parseNum, near: near, frac: frac, nice: nice,
     selfTest: selfTest
   };

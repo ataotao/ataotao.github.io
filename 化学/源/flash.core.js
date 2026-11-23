@@ -1834,6 +1834,37 @@ var CH = (function () {
     'life.nutrient': 4, 'life.healthelem': 4, 'life.organic': 5, 'life.fiber': 5,
     'life.material': 4, 'life.harmful': 5, 'life.fmean': 5
   };
+
+  /* ---------- 题目情境数（2026-11-23）----------
+     覆盖率的正确分母：把题干里的数字抹平后去重。物理/数学的题库里同一个情境会换
+     十几次数值（热量计算 270 条题干只有 3 个情境），拿题干数当分母，覆盖率永远
+     涨不动，也看不出真实薄弱点。SKELS = 每个题型的「不同情境数」，由 seed 扫描
+     按同一把尺子得出；-1 = 不设上限，页面只报练过几个情境，不给百分比。
+     改题后跑 `check-*.mjs pools` 会重扫并逐项比对。 */
+  var SKELS = {
+    /* ① 走进化学世界 */
+    'intro.change': 2, 'intro.property': 2, 'intro.labbasic': 1, 'intro.opfig': -1, 'intro.inquiry': 6, 'intro.accident': 1,
+    /* ② 空气和氧气 */
+    'air.comp': 2, 'air.measure': 1, 'air.o2prop': 4, 'air.o2prep': 4, 'air.breath': 5, 'air.pollution': 1, 'air.aqi': 5,
+    /* ③ 物质构成的奥秘 */
+    'struct.molatom': 4, 'struct.atom': 45, 'struct.symbol': 8, 'struct.ion': 10, 'struct.cons': 4, 'struct.diagram': -1, 'struct.micsvg': 3, 'struct.ptable': 5,
+    /* ④ 自然界的水 */
+    'water.purify': 4, 'water.hardsoft': 6, 'water.electro': 3, 'water.formula': 8, 'water.valence': 8, 'water.mr': 11, 'water.mf': 6,
+    /* ⑤ 化学反应的定量关系 */
+    'eq.conservation': 1, 'eq.balance': 6, 'eq.judge': 1, 'eq.rtype': 6, 'eq.unknown': 5, 'eq.eqcalc': 4, 'eq.impure': 2,
+    /* ⑥ 碳和碳的氧化物 */
+    'carbon.allotrope': 4, 'carbon.creduce': 6, 'carbon.co2': 4, 'carbon.co2dev': 5, 'carbon.co': 3, 'carbon.gasdiff': 5, 'carbon.lowcarbon': 5,
+    /* ⑦ 能源的合理利用与开发 */
+    'fuel.combustion': 4, 'fuel.ignite': 6, 'fuel.explode': 5, 'fuel.slowox': 5, 'fuel.fuel': 4, 'fuel.heat': 3,
+    /* ⑧ 金属和金属材料 */
+    'metal.prop': 4, 'metal.mo2': 4, 'metal.macid': 3, 'metal.msalt': 6, 'metal.activity': 3, 'metal.mdesign': 5, 'metal.filtrate': 5, 'metal.rust': 3, 'metal.derust': 5, 'metal.refine': 3,
+    /* ⑨ 溶液 */
+    'sol.form': 4, 'sol.emulsify': 5, 'sol.sat': 3, 'sol.solub': 4, 'sol.curvediss': 6, 'sol.crystal': 5, 'sol.heatdiss': 6, 'sol.smf': -1, 'sol.config': 1, 'sol.dilute': -1,
+    /* ⑩ 常见的酸、碱、盐 */
+    'ab.indicator': 4, 'ab.acidelec': 5, 'ab.ph': 3, 'ab.acid': 4, 'ab.concacid': 6, 'ab.base': 4, 'ab.deteriorate': 5, 'ab.neutral': 3, 'ab.soil': 6, 'ab.identify': 6, 'ab.common': 4, 'ab.decomp': 3, 'ab.precip': 5, 'ab.carbonate': 5, 'ab.crudesalt': 6, 'ab.fert': 4, 'ab.nh4': 3, 'ab.classify': 9,
+    /* ⑪ 化学与社会 */
+    'life.nutrient': 4, 'life.healthelem': 4, 'life.organic': 5, 'life.fiber': 5, 'life.material': 4, 'life.harmful': 5, 'life.fmean': 5
+  };
   MODULES.forEach(function (m) {
     m.kinds.forEach(function (k) {
       var p = POOLS[m.id + '.' + k.id];
@@ -1845,6 +1876,11 @@ var CH = (function () {
     if (!m) return 0;
     for (var i = 0; i < m.kinds.length; i++) if (m.kinds[i].id === kindId) return m.kinds[i].pool || 0;
     return 0;
+  }
+
+  function kindSkel(modId, kindId) {
+    var s = SKELS[modId + '.' + kindId];
+    return s == null ? 0 : s;
   }
 
   var ALL_KINDS = (function () {
@@ -1924,6 +1960,6 @@ var CH = (function () {
   return {
     VERSION: VERSION, DAY: DAY, modules: MODULES, allKinds: ALL_KINDS,
     gen: gen, judge: judge, ansText: ansText, parseNum: parseNum, normChem: normChem,
-    moduleById: moduleById, selfTest: selfTest, kindPool: kindPool
+    moduleById: moduleById, selfTest: selfTest, kindPool: kindPool, kindSkel: kindSkel
   };
 })();

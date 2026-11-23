@@ -66,29 +66,33 @@ CF.modules.forEach((m) => {
    范围（1..1200）再算一遍，确保「练未覆盖」能把整池枚举出来。 */
 if (args.includes('pools')) {
   const bad = [];
-  let fixedSum = 0;
+  let fixedSum = 0, skelSum = 0;
+  const skelKey = (p) => String(p).replace(/[0-9]+(\.[0-9]+)?/g, '#').replace(/[０-９]+/g, '#').replace(/\s+/g, '');
   for (const k of CF.allKinds) {
-    if (typeof CF.kindPool !== 'function') { console.error('✗ core 没导出 kindPool'); process.exit(1); }
+    if (typeof CF.kindPool !== 'function' || typeof CF.kindSkel !== 'function') { console.error('✗ core 没导出 kindPool / kindSkel'); process.exit(1); }
     const declared = CF.kindPool(k.mod, k.kind);
-    const set = new Set(), kernelSet = new Set();
+    const dSkel = CF.kindSkel(k.mod, k.kind);
+    const set = new Set(), kernelSet = new Set(), skelSet = new Set(), kernelSkel = new Set();
     for (let i = 1; i <= 6000; i++) {
       const q = CF.gen(k.mod, k.kind, i);
       if (!q || !q.prompt) continue;
-      const key = String(q.prompt).slice(0, 40);
-      set.add(key);
-      if (i <= 1200) kernelSet.add(key);
+      const key = String(q.prompt).slice(0, 40), sk = skelKey(q.prompt);
+      set.add(key); skelSet.add(sk);
+      if (i <= 1200) { kernelSet.add(key); kernelSkel.add(sk); }
     }
     if (declared === -1) { if (set.size < 200) bad.push(`${k.mod}.${k.kind} 标为不限但只有 ${set.size} 道`); }
-    else if (set.size !== declared) bad.push(`${k.mod}.${k.kind} 表里 ${declared}，实测 ${set.size}`);
-    else if (kernelSet.size !== declared) bad.push(`${k.mod}.${k.kind} 内核只枚举到 ${kernelSet.size} 道，表里 ${declared}`);
-    else fixedSum += set.size;
+    else if (set.size !== declared) bad.push(`${k.mod}.${k.kind} POOLS 表里 ${declared}，实测 ${set.size}`);
+    else if (kernelSet.size !== declared) bad.push(`${k.mod}.${k.kind} 内核只枚举到 ${kernelSet.size} 道，POOLS 是 ${declared}`);
+    else if (dSkel !== skelSet.size) bad.push(`${k.mod}.${k.kind} SKELS 表里 ${dSkel} 个情境，实测 ${skelSet.size}`);
+    else if (kernelSkel.size !== dSkel) bad.push(`${k.mod}.${k.kind} 内核只枚举到 ${kernelSkel.size} 个情境，SKELS 是 ${dSkel}`);
+    else { fixedSum += set.size; skelSum += skelSet.size; }
   }
   if (bad.length) {
-    console.error(`✗ POOLS 容量表漂移 ${bad.length} 处：`);
+    console.error(`✗ 容量表漂移 ${bad.length} 处（POOLS = 题干数，SKELS = 情境数）：`);
     bad.forEach((b) => console.error('  · ' + b));
     process.exit(1);
   }
-  console.log(`✓ 题库容量表一致：${CF.allKinds.length} 类题型共 ${fixedSum} 道`);
+  console.log(`✓ 容量表一致：${CF.allKinds.length} 类题型 / ${fixedSum} 条题干 / ${skelSum} 个情境`);
   process.exit(0);
 }
 
