@@ -60,6 +60,12 @@ if ((html.match(/<script id="sync">/g) || []).length !== 1) fail('sync 脚本节
 if (syncM[1].indexOf('var LT_SUBJECT = ' + JSON.stringify(name)) < 0) {
   fail('sync 段注入的 LT_SUBJECT 不是本科（' + name + '），按科隔离失效');
 }
+/* 化学两页：条件上/下箭头的富排版必须在产物里（题干 prompt 仍保持稳定键） */
+if (name === '化学' || name === '化学专项') {
+  if (uiM[1].indexOf('function rich(') < 0 || uiM[1].indexOf('⟦') < 0) fail('产物缺少化学方程式富排版 rich()');
+  if (html.indexOf('.cheq{') < 0) fail('产物缺少箭头上下条件样式 .cheq');
+  if (coreM[1].indexOf('display') < 0) fail('core 未生成 display 字段（题干稳定键可能被改坏）');
+}
 
 /* ===== 脚手架族（物理 / 数学）：三源逐字节内联，只校验「产物=源」契约 =====
    渲染引擎用 h() + canvas，DOM 桩覆盖不了；运行时另由 check-training.mjs --ui 守。 */
@@ -187,6 +193,85 @@ if ((app.innerHTML.match(/statgrid/g) || []).length !== (app.innerHTML.match(/cl
 }
 /* tabs 数据驱动 */
 if (!/data-go="today"/.test(tabs.innerHTML) || !/data-go="report"/.test(tabs.innerHTML)) fail('tabs 未从 VIEWS 生成');
+
+/* 化学方程式富排版：display 标记必须在真实渲染层变成「上条件 / 箭头 / 下条件」 */
+if (name === '化学' || name === '化学专项') {
+  const keep = { q: T.S.q, view: T.S.view, sess: T.S.sess, answered: T.S.answered, res: T.S.res };
+  T.S.view = 'quiz'; T.S.sess = { mode: 'normal', done: 0, total: 1 }; T.S.answered = false; T.S.res = null;
+  T.S.q = {
+    mod: 'eq', kind: 'balance', title: '排版冒烟', prompt: '配平：2KClO₃ —MnO₂/Δ→ 2KCl ＋ ___O₂↑',
+    display: '配平：2KClO₃ ⟦MnO₂|Δ⟧ 2KCl ＋ ___O₂↑',
+    fields: [{ type: 'num', ans: 3, label: '系数', tol: 0.01 }], tip: '', explain: [], kp: []
+  };
+  T.render();
+  if (!/class="cheq-svg"/.test(app.innerHTML)) fail('化学方程式未渲染成内联 SVG');
+  if (!/class="cond top"[^>]*>MnO/.test(app.innerHTML) ||
+      !/class="cond bottom"[^>]*>△/.test(app.innerHTML)) fail('SVG 箭头上下条件未在 UI 中渲染');
+  if (!/baseline-shift="sub"/.test(app.innerHTML)) fail('SVG 下标未生效');
+  /* 化学式只能进一次 SVG：修复前 chemRuns() 先把 2KClO₃ 作为纯文本输出，
+     又把它扫进 SVG 左侧再画一遍，造成「2KClO₃ 2KClO₃」重复。 */
+  const kclo3Count = (app.innerHTML.match(/2KClO₃/g) || []).length;
+  if (kclo3Count > 1) fail('化学方程式重复渲染：2KClO₃ 出现 ' + kclo3Count + ' 次');
+  if (/配平：2KClO₃/.test(app.innerHTML)) fail('化学式未被 SVG 完整吸收，前方残留重复的纯文本');
+  if (app.innerHTML.indexOf('⟦') >= 0 || app.innerHTML.indexOf('Δ') >= 0) fail('页面残留 ⟦⟧ 标记或希腊字母 Δ');
+
+  /* 老错题回炉：HEAD 时代的错题只有裸串 prompt、无 display 字段。
+     rich() 会把 —条件→ 兜底转成 SVG，且化学式不得重复。 */
+  T.S.q = {
+    mod: 'eq', kind: 'balance', title: '老错题冒烟',
+    prompt: '配平：2KClO₃ MnO₂/Δ 2KCl ＋ ___O₂，O₂ 前的系数是（填数字）',
+    fields: [{ type: 'num', ans: 3, label: '系数', tol: 0.01 }], tip: '', explain: [], kp: []
+  };
+  T.render();
+  if (!/class="cheq-svg"/.test(app.innerHTML)) fail('老错题回炉未兜底渲染 SVG');
+  if ((app.innerHTML.match(/2KClO₃/g) || []).length > 1) fail('老错题回炉化学式重复');
+  if (app.innerHTML.indexOf('⟦') >= 0 || app.innerHTML.indexOf('Δ') >= 0) fail('老错题回炉残留标记或 Δ');
+  Object.assign(T.S, keep); T.render();
+
+  /* 特殊符号键盘：文本题（离子/元素符号书写）应渲染键盘，且含上标/下标/常用离子；
+     数字题（配平系数）不应挂键盘——否则插入上标会破坏数值判分。 */
+  T.S.view = 'quiz'; T.S.sess = { mode: 'normal', done: 0, total: 1 }; T.S.answered = false; T.S.res = null;
+  T.S.q = {
+    mod: 'struct', kind: 'ion', title: '符号键盘冒烟', prompt: '写出「硫离子」的离子符号：',
+    fields: [{ type: 'text', ans: 'S²⁻', label: '离子符号', alts: ['S2-'] }], tip: '', explain: [], kp: []
+  };
+  T.render();
+  if (/data-symkeys/.test(app.innerHTML) === false) fail('文本题未渲染特殊符号键盘');
+  ['data-sym="²"', 'data-sym="⁻"', 'data-sym="₄"', 'data-sym="S²⁻"', 'data-sym="SO₄²⁻"'].forEach(function (needle) {
+    if (app.innerHTML.indexOf(needle) < 0) fail('符号键盘缺少：' + needle);
+  });
+  T.S.q = {
+    mod: 'eq', kind: 'balance', title: '无键盘冒烟', prompt: '配平：___H₂ ＋ O₂ 点燃 2H₂O',
+    fields: [{ type: 'num', ans: 2, label: '系数', tol: 0.01 }], tip: '', explain: [], kp: []
+  };
+  T.render();
+  if (/data-symkeys/.test(app.innerHTML)) fail('数字题不应挂特殊符号键盘（插入上标会破坏数值判分）');
+
+  /* 真·插入行为：模拟聚焦输入框，点「⁻」「²」，验证光标处插入且判分仍走 normChem */
+  const fakeInput = { value: 'S', readOnly: false, selectionStart: 1, selectionEnd: 1, tagName: 'INPUT',
+    focus() {}, setSelectionRange(a, b) { this.selectionStart = this.selectionEnd = b; } };
+  sandbox.document.activeElement = fakeInput;
+  const mkSymBtn = (s) => ({ getAttribute(k) { return k === 'data-sym' ? s : 'chemIn0'; } });
+  T.insertSym(mkSymBtn('²')); T.insertSym(mkSymBtn('⁻'));
+  if (fakeInput.value !== 'S²⁻') fail('符号键盘插入异常：期望 S²⁻，实际 ' + fakeInput.value);
+  if (!T.CH.judge({ fields: [{ type: 'text', ans: 'S²⁻' }] }, [fakeInput.value]).ok) fail('键盘插入的符号无法被判分识别');
+  sandbox.document.activeElement = null;
+  Object.assign(T.S, keep); T.render();
+
+  /* 配平四法细则卡：仅专项页有 guide。balance 模块页四种方法各渲染一张可展开卡，
+     卡内含操作细则与例题，例题的化学方程式走同一套富排版。 */
+  if (name === '化学专项') {
+    var m = T.CH.moduleById('balance');
+    var guided = m.kinds.filter(function (k) { return k.guide; });
+    if (guided.length !== 4) fail('配平四法方法细则数据缺失：期望 4，实际 ' + guided.length);
+    T.go('mod', 'balance');
+    var gcCount = (app.innerHTML.match(/class="guide-card"/g) || []).length;
+    if (gcCount !== 4) fail('配平四法模块页方法细则卡数异常：期望 4，实际 ' + gcCount);
+    if (app.innerHTML.indexOf('操作细则') < 0 || app.innerHTML.indexOf('例题：') < 0) fail('方法细则卡缺操作细则或例题');
+    if (app.innerHTML.indexOf('⟦') >= 0) fail('方法细则卡例题残留 ⟦⟧ 标记');
+    Object.assign(T.S, keep); T.render();
+  }
+}
 
 /* ② 各视图渲染 */
 for (const [view, needle] of [['wrong', '错题回炉'], ['report', '导入记录 JSON']]) {

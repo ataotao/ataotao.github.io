@@ -88,8 +88,10 @@ var CF = (function () {
     if (f.type === 'text') return f.ans;
     return fmtNum(f.ans) + (f.unit || '');
   }
-  function mk(title, prompt, fields, tip, explain, kp) {
-    return { title: title, prompt: prompt, fields: fields, tip: tip, explain: explain, kp: kp };
+  function mk(title, prompt, fields, tip, explain, kp, display) {
+    var q = { title: title, prompt: prompt, fields: fields, tip: tip, explain: explain, kp: kp };
+    if (display) q.display = display;   /* prompt 保持稳定（错题键/锚点依赖它），display 只供显示层富排版 */
+    return q;
   }
 
   /* ============================================================
@@ -154,6 +156,43 @@ var CF = (function () {
   var TIP_ODD = '奇数配偶法：找某元素在一边奇数、另一边偶数的「单双矛盾」→ 先给含奇数个原子的物质前配 2，把奇数变偶数 → 顺配其它元素 → 最后回配该元素。';
   var TIP_OBS = '观察法：从最复杂的生成物入手，用它内部的原子个数比反推反应物系数（如 Fe₃O₄ 里 Fe:O=3:4，就配 3Fe 和 2O₂ 或 4CO）。';
   var TIP_ONE = '定一法：把最复杂的物质（多是含 C、H、O 的燃料）系数定为 1，依次配 C、H，最后配 O；出现分数时全体同乘分母化整。注意物质本身自带的氧也要算进去。';
+
+  /* 配平四法·方法细则卡（挂在题型 guide 字段，内核在模块页渲染）：
+     steps = 操作步骤；example = 一道完整例题（题干 + 分步 + 结果）。素材取自上方 TIP 与各题库首题，保证学科一致。 */
+  var GUIDES = {
+    lcm: {
+      steps: ['找：左右各出现一次、原子个数不同的元素（常选氧）。', '求：算两边该原子数的最小公倍数。', '配：公倍数 ÷ 各自原子数 = 系数。', '顺：把定好的系数顺推到其它元素。', '查：核对左右原子数相等、系数为最简整数比。'],
+      example: {
+        q: '配平：P ＋ O₂ —点燃→ P₂O₅',
+        steps: ['氧：左边 O₂ 有 2 个，右边 P₂O₅ 有 5 个，最小公倍数 10。', 'O₂ 系数 = 10÷2 = 5；P₂O₅ 系数 = 10÷5 = 2。', '顺推磷：右边 2×2 = 4 个 P，左边 P 前配 4。'],
+        a: '4P + 5O₂ —点燃→ 2P₂O₅'
+      }
+    },
+    odd: {
+      steps: ['找：某元素一边奇数、另一边偶数的「单双矛盾」。', '配 2：先给含奇数个原子的物质前配 2，把奇数变偶数。', '顺：按原子守恒顺配其它物质。', '回：最后回配一开始那个元素，再验算。'],
+      example: {
+        q: '配平：C₂H₂ ＋ O₂ —点燃→ CO₂ ＋ H₂O',
+        steps: ['右边 H₂O 中氧 1 个（奇），CO₂ 中氧 2 个（偶），有单双矛盾。', '给 H₂O 前配 2 变偶数，则 C₂H₂ 前配 2、CO₂ 前配 4。', '此时右边氧 = 4×2 + 2×1 = 10 个，O₂ 前配 5。'],
+        a: '2C₂H₂ + 5O₂ —点燃→ 4CO₂ + 2H₂O'
+      }
+    },
+    observe: {
+      steps: ['盯：找出最复杂的物质（原子个数比写得很清楚的那个）。', '推：用它内部的原子个数比反推反应物系数。', '验：核对左右各元素原子数是否相等。'],
+      example: {
+        q: '配平：Fe₂O₃ ＋ CO —高温→ Fe ＋ CO₂',
+        steps: ['盯住 Fe₂O₃：自带 Fe:O = 2:3。', '3 个氧要由 3 个 CO 各带走 1 个 → CO 前配 3，生成 3 个 CO₂。', '铁 2 个，Fe 前配 2。'],
+        a: 'Fe₂O₃ + 3CO —高温→ 2Fe + 3CO₂'
+      }
+    },
+    setone: {
+      steps: ['定：把最复杂的物质（多是含 C、H、O 的燃料）系数定为 1。', '先配碳氢：依次配 C、H 的系数。', '后配氧：最后配 O，别漏算物质自带的氧。', '化整：出现分数就全体同乘分母，再验算。'],
+      example: {
+        q: '配平：C₂H₅OH ＋ O₂ —点燃→ CO₂ ＋ H₂O',
+        steps: ['把 C₂H₅OH 定为 1：碳 2 个 → CO₂ 前配 2；氢 6 个 → H₂O 前配 3。', '右边氧 = 2×2 + 3×1 = 7 个；乙醇自带 1 个氧，还差 6 个由 O₂ 提供。', 'O₂ 前配 6÷2 = 3。漏掉「自带氧」会误配成 3.5。'],
+        a: 'C₂H₅OH + 3O₂ —点燃→ 2CO₂ + 3H₂O'
+      }
+    }
+  };
 
   /* ============================================================
      ① 化学用语地基
@@ -270,8 +309,12 @@ var CF = (function () {
   function genBalance(r, bank, method, tip, kp) {
     var it = pick(r, bank);
     var prompt = '配平（' + method + '）：' + it.eq + '，' + it.t + ' 前的系数是（填数字）';
+    var display = prompt.replace(/—([^→]+)→/g, function (m, c) {
+      var p = c.split('/');
+      return '⟦' + p[0] + (p.length > 1 ? '|' + p[1] : '') + '⟧';
+    });
     var ex = it.s.concat(['配平结果：' + it.f, '收尾自检：原子数左右相等、系数是最简整数比、条件与 ↑↓ 不漏。']);
-    return mk(method + '配平', prompt, [nf(it.a, '系数')], tip, ex, ['化学方程式的配平', method, '第五单元']);
+    return mk(method + '配平', prompt, [nf(it.a, '系数')], tip, ex, ['化学方程式的配平', method, '第五单元'], display);
   }
   function genLcm(r) { return genBalance(r, LCM, '最小公倍数法', TIP_LCM, '配平'); }
   function genOdd(r) { return genBalance(r, ODD, '奇数配偶法', TIP_ODD, '配平'); }
@@ -413,10 +456,10 @@ var CF = (function () {
       ] },
     { id: 'balance', icon: '⚖', name: '② 配平四法', desc: '最小公倍数 · 奇数配偶 · 观察 · 定一，配完还会自检',
       kinds: [
-        { id: 'lcm', name: '最小公倍数法', gen: genLcm },
-        { id: 'odd', name: '奇数配偶法', gen: genOdd },
-        { id: 'observe', name: '观察法', gen: genObserve },
-        { id: 'setone', name: '定一法', gen: genSetone },
+        { id: 'lcm', name: '最小公倍数法', gen: genLcm, guide: GUIDES.lcm },
+        { id: 'odd', name: '奇数配偶法', gen: genOdd, guide: GUIDES.odd },
+        { id: 'observe', name: '观察法', gen: genObserve, guide: GUIDES.observe },
+        { id: 'setone', name: '定一法', gen: genSetone, guide: GUIDES.setone },
         { id: 'method', name: '方法选择', gen: genMethod },
         { id: 'check', name: '配平自检', gen: genCheck }
       ] },

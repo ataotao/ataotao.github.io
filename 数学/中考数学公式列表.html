@@ -1,0 +1,332 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>中考数学公式列表 · 速查表</title>
+<style>
+:root{
+  --bg:#f5f7fb; --card:#fff; --ink:#1b2333; --muted:#6b7280; --line:#e6e9f2;
+  --brand:#3b6fe0; --brand-soft:#eaf0fe; --hot:#d9480f; --hot-soft:#fff1e8;
+  --r:14px; --shadow:0 1px 2px rgba(20,30,60,.05),0 8px 24px rgba(20,30,60,.05);
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font:15px/1.7 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;-webkit-text-size-adjust:100%}
+.wrap{max-width:1000px;margin:0 auto;padding:0 16px 56px}
+header.top{position:sticky;top:0;z-index:20;background:rgba(245,247,251,.94);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.top-in{max-width:1000px;margin:0 auto;padding:12px 16px;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.brand{font-weight:800;font-size:18px;letter-spacing:.2px}
+.ver{font-size:11px;color:var(--muted);font-weight:700;border:1px solid var(--line);border-radius:20px;padding:1px 8px}
+.top-note{font-size:12px;color:var(--muted)}
+.top-links{margin-left:auto;display:flex;gap:12px;font-size:13px}
+a{color:var(--brand)}
+.intro{margin:20px 0 14px}
+.intro h1{font-size:22px;margin:0 0 4px}
+.intro p{margin:4px 0;font-size:13px;color:var(--muted)}
+.tools{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:14px 0 8px}
+input[type=search]{flex:1;min-width:200px;font:inherit;font-size:14px;padding:9px 12px;border:1px solid var(--line);border-radius:11px;background:#fff;color:var(--ink)}
+input[type=search]:focus{outline:none;border-color:var(--brand);box-shadow:0 0 0 3px var(--brand-soft)}
+button.print{font:inherit;font-size:13px;font-weight:700;padding:9px 14px;border:1px solid var(--line);border-radius:11px;background:#fff;color:var(--ink);cursor:pointer}
+button.print:hover{border-color:var(--brand);color:var(--brand)}
+.chips{display:flex;flex-wrap:wrap;gap:7px;margin:8px 0 18px}
+.chip{border:1px solid var(--line);background:#fff;color:var(--muted);font:inherit;font-size:13px;padding:5px 12px;border-radius:20px;cursor:pointer}
+.chip:hover{border-color:var(--brand);color:var(--brand)}
+.chip.on{background:var(--brand);border-color:var(--brand);color:#fff;font-weight:700}
+.chip.hot-filter{border-color:#f2c4a9;color:var(--hot)}
+.chip.hot-filter:hover{border-color:var(--hot);color:var(--hot)}
+.chip.hot-filter.on{background:var(--hot);border-color:var(--hot);color:#fff;font-weight:700}
+.chip-sep{width:1px;height:20px;background:var(--line);margin:0 3px;align-self:center}
+.count{font-size:12px;color:var(--muted);margin:0 0 10px}
+section.group{margin:24px 0 0}
+section.group>h2{font-size:17px;margin:0 0 10px;padding:7px 12px;border-left:4px solid var(--brand);background:var(--brand-soft);border-radius:0 10px 10px 0}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:12px}
+.item{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px;box-shadow:var(--shadow);break-inside:avoid}
+.item h3{font-size:14px;margin:0 0 8px;display:flex;align-items:center;gap:7px}
+.hot{font-size:11px;font-weight:800;color:var(--hot);background:var(--hot-soft);border-radius:6px;padding:1px 6px}
+.fx{margin:0 0 10px;padding:12px 8px;background:#fbfcff;border:1px solid var(--line);border-radius:10px;text-align:center;overflow-x:auto;
+  font-family:"Cambria Math",Cambria,"Times New Roman",Georgia,serif;font-size:19px;line-height:2;color:#17211f}
+.fx i.v{font-style:italic;font-family:"Times New Roman",Cambria,Georgia,serif}
+.fx .tx{font-family:"Noto Sans SC","PingFang SC","Microsoft YaHei",sans-serif;font-size:.72em;font-style:normal;color:#33302c;white-space:nowrap;margin:0 .12em}
+.fx sub,.fx sup{font-size:.62em;line-height:0}
+.fx .bar{display:inline-block;border-top:1px solid currentColor;padding:0 .1em;line-height:1.1}
+.fr{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;margin:0 .2em;font-size:.96em}
+.fr>.fn{padding:0 .22em .08em;line-height:1.35;text-align:center}
+.fr>.fd{padding:.08em .22em 0;border-top:1.5px solid currentColor;line-height:1.35;text-align:center}
+.rt{display:inline-flex;align-items:flex-start;margin:0 .08em}
+.rt>.rs{font-size:1.12em;line-height:.95;transform:translateY(.1em)}
+.rt>.rd{border-top:1.5px solid currentColor;padding:.06em .07em 0 .05em;margin-left:-.04em}
+.note{font-size:12.5px;color:var(--muted);line-height:1.7;margin:0}
+.empty{text-align:center;color:var(--muted);padding:46px 10px;font-size:15px}
+.footer{margin-top:36px;text-align:center;font-size:12px;color:#9aa3b5}
+@media(max-width:560px){.top-links{margin-left:0;width:100%}.grid{grid-template-columns:1fr}.fx{font-size:17px}}
+@media print{
+  body{background:#fff}
+  header.top,.tools,.chips,.footer{display:none!important}
+  .wrap{max-width:none;padding:0}
+  .intro{margin:0 0 10px}
+  section.group>h2{background:#fff;border-color:#333}
+  .item{box-shadow:none;border-color:#bbb;padding:8px 10px}
+  .grid{display:block;columns:2;column-gap:12px}
+}
+</style>
+</head>
+<body>
+<header class="top"><div class="top-in">
+  <span class="brand">∑ 中考数学公式列表</span><span class="ver">速查 · 离线可用</span>
+  <span class="top-note">按板块查公式，可一键只看「高频」常考点</span>
+  <span class="top-links"><a href="../开始.html">← 开始页</a><a href="数学闪练卡.html">数学闪练卡</a></span>
+</div></header>
+<div class="wrap">
+  <div class="intro">
+    <h1>中考数学公式速查表</h1>
+    <p>覆盖数与式、方程与不等式、函数、三角形、四边形与圆、统计与概率及常用方法；手机上可搜，电脑上可打印。（公式里的字母按常规定义，条件写在备注里。）</p>
+  </div>
+  <div class="tools">
+    <input type="search" id="q" placeholder="搜公式名 / 字母 / 备注，如：判别式、顶点、方差" autocomplete="off">
+    <button class="print" id="print">打印本页 / 存 PDF</button>
+  </div>
+  <div class="chips" id="chips"></div>
+  <p class="count" id="count"></p>
+  <div id="list"></div>
+  <div class="footer">单文件离线可用 · 数据与页面同体 · 不需要联网</div>
+</div>
+<script>
+/* 迷你公式排版：支持 \frac \sqrt ^ _ \text \bar 和常用符号；不联网、不依赖 KaTeX */
+var SYM={
+  '\\pm':'±','\\mp':'∓','\\times':'×','\\div':'÷','\\cdot':'·','\\cdots':'⋯',
+  '\\le':'≤','\\leq':'≤','\\ge':'≥','\\geq':'≥','\\ne':'≠','\\neq':'≠','\\approx':'≈',
+  '\\Rightarrow':'⇒','\\Leftrightarrow':'⇔','\\rightarrow':'→','\\to':'→','\\circ':'°',
+  '\\because':'∵','\\therefore':'∴','\\infty':'∞','\\angle':'∠','\\triangle':'△','\\sum':'∑',
+  '\\Delta':'Δ','\\alpha':'α','\\beta':'β','\\gamma':'γ','\\theta':'θ','\\pi':'π',
+  '\\sin':'sin','\\cos':'cos','\\tan':'tan',
+  '\\quad':'　','\\qquad':'　　','\\,':' ','\\;':' ','\\:':' ','\\!':'','\\ ':' ',
+  '\\left':'','\\right':''
+};
+function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(m){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m];});}
+function parseTex(src){
+  var i=0;
+  function skip(){while(i<src.length&&/\s/.test(src[i]))i++;}
+  function rawArg(){
+    skip();
+    if(src[i]==='{'){i++;var s='',deep=1;
+      while(i<src.length){var c=src[i];
+        if(c==='\\'){s+=c+src[i+1];i+=2;continue;}
+        if(c==='{')deep++;
+        if(c==='}'){deep--;if(!deep){i++;break;}}
+        s+=c;i++;
+      }return s;
+    }
+    return src[i++]||'';
+  }
+  function atom(){
+    skip();
+    if(i>=src.length)return null;
+    var c=src[i],node;
+    if(c==='{'){i++;node={t:'grp',c:seq()};}
+    else if(c==='}'){return null;}
+    else if(c==='\\'){
+      i++;var name='';
+      if(/[a-zA-Z]/.test(src[i]||'')){while(i<src.length&&/[a-zA-Z]/.test(src[i]))name+=src[i++];}
+      else{name=src[i++]||'';}
+      if(name==='frac'){node={t:'frac',a:arg(),b:arg()};}
+      else if(name==='sqrt'){node={t:'sqrt',a:arg()};}
+      else if(name==='text'){node={t:'text',v:rawArg()};}
+      else if(name==='bar'){node={t:'bar',a:arg()};}
+      else if(Object.prototype.hasOwnProperty.call(SYM,'\\'+name)){node={t:'chr',v:SYM['\\'+name]};}
+      else{node={t:'chr',v:name};}
+    }
+    else{i++;node={t:'chr',v:c};}
+    for(;;){
+      skip();var d=src[i];
+      if(d!=='^'&&d!=='_')break;
+      i++;var a=arg();
+      node=d==='^'?{t:'sup',b:node,a:a}:{t:'sub',b:node,a:a};
+    }
+    return node;
+  }
+  function arg(){
+    skip();
+    if(src[i]==='{'){i++;return seq();}
+    var a=atom();return a?[a]:[];
+  }
+  function seq(){
+    var out=[];
+    for(;;){
+      skip();
+      if(i>=src.length)break;
+      if(src[i]==='}'){i++;break;}
+      var a=atom();
+      if(!a){i++;continue;}
+      out.push(a);
+    }
+    return out;
+  }
+  return seq();
+}
+function texHTML(nodes){
+  return nodes.map(function(n){
+    switch(n.t){
+      case 'chr':
+        if(n.v==='')return '';
+        if(/^[a-zA-Z]$/.test(n.v))return '<i class="v">'+n.v+'</i>';
+        return esc(n.v);
+      case 'grp':return texHTML(n.c);
+      case 'frac':return '<span class="fr"><span class="fn">'+texHTML(n.a)+'</span><span class="fd">'+texHTML(n.b)+'</span></span>';
+      case 'sqrt':return '<span class="rt"><span class="rs">√</span><span class="rd">'+texHTML(n.a)+'</span></span>';
+      case 'bar':return '<span class="bar">'+texHTML(n.a)+'</span>';
+      case 'sup':return texHTML([n.b])+'<sup>'+texHTML(n.a)+'</sup>';
+      case 'sub':return texHTML([n.b])+'<sub>'+texHTML(n.a)+'</sub>';
+      case 'text':return '<span class="tx">'+esc(n.v)+'</span>';
+      default:return '';
+    }
+  }).join('');
+}
+function tex(s){return texHTML(parseTex(String(s||'')));}
+
+var GROUPS=['数与式','方程与不等式','函数','三角形','四边形与圆','统计与概率','常用方法'];
+var DATA=[
+  /* ---------- 数与式 ---------- */
+  {g:'数与式',n:'绝对值',t:'|a|=a\;(a\\ge 0),\quad |a|=-a\;(a<0)',note:'几何意义：数轴上表示 a 的点到原点的距离；|a|≥0。',hot:1},
+  {g:'数与式',n:'相反数与倒数',t:'a+(-a)=0,\quad a\\cdot\\frac{1}{a}=1\;(a\\ne 0)',note:'0 没有倒数；相反数是自身的是 0，倒数是自身的是 ±1。'},
+  {g:'数与式',n:'同底数幂相乘',t:'a^m\\cdot a^n=a^{m+n}',note:'底数不变，指数相加；m、n 为正整数（后续可推广到整数）。',hot:1},
+  {g:'数与式',n:'幂的乘方与积的乘方',t:'(a^m)^n=a^{mn},\quad (ab)^n=a^nb^n',note:'幂的乘方指数相乘；积的乘方要把每个因式分别乘方。',hot:1},
+  {g:'数与式',n:'同底数幂相除 · 零指数 · 负指数',t:'a^m\\div a^n=a^{m-n},\quad a^0=1,\quad a^{-p}=\\frac{1}{a^p}\;(a\\ne 0)',note:'零指数与负指数的底数都不能为 0，这是最容易漏的条件。'},
+  {g:'数与式',n:'平方差公式',t:'(a+b)(a-b)=a^2-b^2',note:'只有「一项相同、一项互为相反数」才能直接用。',hot:1},
+  {g:'数与式',n:'完全平方公式',t:'(a\\pm b)^2=a^2\\pm 2ab+b^2',note:'中间项是 ±2ab，不是 ±ab；a²+b²=(a+b)²−2ab。',hot:1},
+  {g:'数与式',n:'因式分解常用式',t:'ma+mb+mc=m(a+b+c),\quad a^2-b^2=(a+b)(a-b)',note:'先提公因式，再看公式法；分解到每个因式都不能再分为止。'},
+  {g:'数与式',n:'分式的基本性质',t:'\\frac{a}{b}=\\frac{a\\cdot m}{b\\cdot m}\;(b\\ne 0,\\;m\\ne 0)',note:'分子分母同乘（除）同一个不为 0 的整式，分式值不变。'},
+  {g:'数与式',n:'二次根式性质',t:'\\sqrt{a^2}=|a|,\quad \\sqrt{ab}=\\sqrt{a}\\sqrt{b}\;(a\\ge 0,\\;b\\ge 0)',note:'√a 本身要求 a≥0；化简 √a² 必须带绝对值，除非已知 a≥0。',hot:1},
+  {g:'数与式',n:'二次根式除法',t:'\\frac{\\sqrt{a}}{\\sqrt{b}}=\\sqrt{\\frac{a}{b}}\;(a\\ge 0,\\;b>0)',note:'分母不能为 0；结果要化成最简二次根式（被开方数不含分母、不含能开方的因数）。'},
+
+  /* ---------- 方程与不等式 ---------- */
+  {g:'方程与不等式',n:'一元一次方程',t:'ax+b=0\;(a\\ne 0)\\;\\Rightarrow\\;x=-\\frac{b}{a}',note:'解法：去分母 → 去括号 → 移项 → 合并 → 系数化为 1。'},
+  {g:'方程与不等式',n:'一元二次方程一般式',t:'ax^2+bx+c=0\;(a\\ne 0)',note:'先整理成一般式再判断 a、b、c；b、c 可以是 0，a 不能是 0。',hot:1},
+  {g:'方程与不等式',n:'求根公式',t:'x=\\frac{-b\\pm\\sqrt{b^2-4ac}}{2a}\;(a\\ne 0,\\;\\Delta\\ge 0)',note:'分母是 2a；根号里是 b²−4ac；负号和 ± 都不能丢。',hot:1},
+  {g:'方程与不等式',n:'根的判别式',t:'\\Delta=b^2-4ac',note:'Δ>0 两个不相等实根；Δ=0 两个相等实根；Δ<0 没有实根。',hot:1},
+  {g:'方程与不等式',n:'韦达定理',t:'x_1+x_2=-\\frac{b}{a},\quad x_1x_2=\\frac{c}{a}',note:'使用前必须确认 a≠0 且 Δ≥0；「和」有负号，「积」没有。',hot:1},
+  {g:'方程与不等式',n:'两根的常用变形',t:'x_1^2+x_2^2=(x_1+x_2)^2-2x_1x_2,\quad |x_1-x_2|=\\frac{\\sqrt{\\Delta}}{|a|}',note:'平方和减 2 倍积；差的平方减 4 倍积。含参题求出参数后要回代检验 Δ。'},
+  {g:'方程与不等式',n:'分式方程验根',t:'\\text{去分母}\\;\\Rightarrow\\;\\text{整式方程}\\;\\Rightarrow\\;\\text{必须验根}',note:'使最简公分母为 0 的根是增根，必须舍去——分式方程不验根直接扣分。',hot:1},
+  {g:'方程与不等式',n:'不等式两边同乘一个数',t:'a>b,\\;c>0\\;\\Rightarrow\\;ac>bc;\quad a>b,\\;c<0\\;\\Rightarrow\\;ac<bc',note:'乘（除）负数时不等号方向必须改变，这是最高频的错点。',hot:1},
+  {g:'方程与不等式',n:'一元一次不等式组解集口诀',t:'\\text{同大取大，同小取小；大小小大中间找，大大小小无解}',note:'先在数轴上画每条不等式的解集，再取公共部分最稳。'},
+
+  /* ---------- 函数 ---------- */
+  {g:'函数',n:'一次函数',t:'y=kx+b\;(k\\ne 0)',note:'k>0 时 y 随 x 增大而增大；k<0 时减小。b 是与 y 轴交点的纵坐标。',hot:1},
+  {g:'函数',n:'一次函数与坐标轴交点',t:'\\text{与 }y\\text{ 轴：}(0,b),\quad \\text{与 }x\\text{ 轴：}\\left(-\\frac{b}{k},0\\right)',note:'求与 x 轴交点就是令 y=0 解方程；k 在分母，k≠0。'},
+  {g:'函数',n:'正比例函数',t:'y=kx\;(k\\ne 0)',note:'图象是过原点的直线；k 是斜率，也是 y 与 x 的比值。'},
+  {g:'函数',n:'反比例函数',t:'y=\\frac{k}{x}\;(k\\ne 0)',note:'k>0 图象在第一、三象限；k<0 在第二、四象限。x≠0，图象不与坐标轴相交。',hot:1},
+  {g:'函数',n:'反比例函数 k 的几何意义',t:'S_{\\text{矩形}}=|xy|=|k|',note:'双曲线上一点向两坐标轴作垂线，与原点围成的矩形面积恒为 |k|。',hot:1},
+  {g:'函数',n:'二次函数三种形式',t:'y=ax^2+bx+c=a(x-h)^2+k=a(x-x_1)(x-x_2)\;(a\\ne 0)',note:'一般式看系数，顶点式看顶点，交点式看与 x 轴交点；换形式时 a 不变。'},
+  {g:'函数',n:'顶点式与顶点',t:'y=a(x-h)^2+k,\\quad \\text{顶点 }(h,k),\\;\\text{对称轴 }x=h',note:'括号里是 x−h，所以 y=a(x−2)²+3 的顶点是 (2,3)，不是 (−2,3)。',hot:1},
+  {g:'函数',n:'交点式与对称轴',t:'y=a(x-x_1)(x-x_2),\\quad x=\\frac{x_1+x_2}{2}',note:'x₁、x₂ 是与 x 轴交点的横坐标；交点坐标写作 (x₁,0)、(x₂,0)。'},
+  {g:'函数',n:'抛物线对称轴',t:'x=-\\frac{b}{2a}',note:'是直线 x=… 不是一个数；负号不能丢。用交点式算出的中点应与此一致。',hot:1},
+  {g:'函数',n:'抛物线顶点坐标',t:'\\left(-\\frac{b}{2a},\\;\\frac{4ac-b^2}{4a}\\right)',note:'纵坐标分子是 4ac−b²（与 Δ 符号相反），分母是 4a；横坐标分母是 2a，别写串。',hot:1},
+  {g:'函数',n:'抛物线与 x 轴的交点与 Δ',t:'\\Delta>0\\;\\Rightarrow\\;\\text{两个交点};\quad \\Delta=0\\;\\Rightarrow\\;\\text{一个交点};\quad \\Delta<0\\;\\Rightarrow\\;\\text{无交点}',note:'交点个数就是方程 ax²+bx+c=0 的实数根个数。'},
+  {g:'函数',n:'图象平移',t:'\\text{左加右减（括号里），上加下减（括号外）}',note:'右移 m：y=a(x−h−m)²+k，顶点横坐标变成 h+m；a 不变，形状不变。',hot:1},
+  {g:'函数',n:'函数图象的交点',t:'\\text{两图象交点坐标}=\\text{联立两解析式方程组的解}',note:'交点横坐标是方程的解，纵坐标要再代回解析式求。'},
+
+  /* ---------- 三角形 ---------- */
+  {g:'三角形',n:'三角形内角和与外角',t:'\\angle A+\\angle B+\\angle C=180^\\circ,\quad \\text{外角}=\\text{不相邻两内角之和}',note:'外角和是 360°；一个外角大于任何一个与它不相邻的内角。',hot:1},
+  {g:'三角形',n:'三角形三边关系',t:'|a-b|<c<a+b',note:'任意两边之和大于第三边；判断能否组成三角形，只需检验「较小两边之和 > 最大边」。'},
+  {g:'三角形',n:'三角形面积',t:'S=\\frac{1}{2}ah',note:'a 是底，h 是这条底上的高；等底等高的三角形面积相等。',hot:1},
+  {g:'三角形',n:'三角形中位线',t:'DE\\parallel BC,\quad DE=\\frac{1}{2}BC',note:'连接两边中点的线段叫中位线；一个三角形有三条中位线。',hot:1},
+  {g:'三角形',n:'勾股定理及逆定理',t:'a^2+b^2=c^2\\;(c\\text{ 为斜边})',note:'逆定理：若三边满足 a²+b²=c²，则该三角形是直角三角形。常用数：3-4-5、5-12-13、6-8-10。',hot:1},
+  {g:'三角形',n:'直角三角形斜边中线',t:'\\text{斜边上的中线}=\\frac{1}{2}\\text{斜边}',note:'斜边中点到三个顶点距离相等（它也是外接圆圆心）。'},
+  {g:'三角形',n:'30° 角所对直角边',t:'\\text{直角三角形中 }30^\\circ\\text{ 角所对直角边}=\\frac{1}{2}\\text{斜边}',note:'反过来也成立：直角边等于斜边一半，则它所对的角是 30°。'},
+  {g:'三角形',n:'全等三角形判定',t:'SSS,\\;SAS,\\;ASA,\\;AAS,\\;\\text{直角三角形 }HL',note:'SSA 和 AAA 不能判定全等；找条件时优先找公共边、公共角、平行线带来的等角。'},
+  {g:'三角形',n:'相似三角形性质',t:'\\frac{a\'}{a}=\\frac{b\'}{b}=\\frac{c\'}{c}=k,\\quad \\frac{S\'}{S}=k^2',note:'对应边比 = 相似比 k；周长比 = k；面积比 = k²（最容易漏平方）。',hot:1},
+  {g:'三角形',n:'相似三角形判定',t:'AA:\\;\\text{两角对应相等};\quad SAS:\\;\\text{两边成比例且夹角相等};\quad SSS:\\;\\text{三边成比例}',note:'平行于三角形一边的直线截出的三角形与原三角形相似（A 型、X 型）。'},
+  {g:'三角形',n:'角平分线与垂直平分线',t:'\\text{角平分线上的点到角两边距离相等};\quad \\text{垂直平分线上的点到线段两端距离相等}',note:'这两个性质常用来做「最少 payoff」的辅助线：往两边作垂线、或连两端点。'},
+  {g:'三角形',n:'锐角三角函数',t:'\\sin A=\\frac{a}{c},\quad \\cos A=\\frac{b}{c},\quad \\tan A=\\frac{a}{b}',note:'在直角三角形中，a 是 ∠A 的对边，b 是邻边，c 是斜边。',hot:1},
+  {g:'三角形',n:'三角函数基本关系',t:'\\sin^2 A+\\cos^2 A=1,\quad \\tan A=\\frac{\\sin A}{\\cos A}',note:'∠A 越大，sinA、tanA 越大，cosA 越小；特殊值：30°、45°、60° 必背。'},
+  {g:'三角形',n:'解直角三角形边角关系',t:'a=c\\sin A,\quad b=c\\cos A,\quad a=b\\tan A',note:'已知一边一角（或两边）就能解；应用题先画直角三角形，标出仰角、俯角、坡角。'},
+
+  /* ---------- 四边形与圆 ---------- */
+  {g:'四边形与圆',n:'多边形内角和',t:'(n-2)\\cdot 180^\\circ,\quad \\text{外角和}=360^\\circ',note:'任意多边形外角和都是 360°；正 n 边形每个外角是 360°/n。',hot:1},
+  {g:'四边形与圆',n:'平行四边形',t:'\\text{对边平行且相等，对角相等，对角线互相平分}',note:'判定：两组对边分别平行 / 分别相等 / 一组对边平行且相等 / 对角线互相平分。'},
+  {g:'四边形与圆',n:'矩形 · 菱形 · 正方形',t:'\\text{矩形：四个角都是直角，对角线相等};\quad \\text{菱形：四边相等，对角线垂直平分}',note:'正方形同时具备矩形和菱形的一切性质；对角线相等且垂直平分的是正方形。'},
+  {g:'四边形与圆',n:'梯形中位线',t:'l=\\frac{1}{2}(a+b)',note:'a、b 是上、下底；梯形面积 S=(a+b)h/2=中位线×高。'},
+  {g:'四边形与圆',n:'圆的周长与面积',t:'C=2\\pi r,\\quad S=\\pi r^2',note:'半径 r、直径 d=2r；圆周率 π≈3.14，结果按要求保留 π 或取近似。',hot:1},
+  {g:'四边形与圆',n:'弧长公式',t:'l=\\frac{n\\pi r}{180}',note:'n 是圆心角的度数（不带 ° 直接代入）；弧长是圆周长的一部分。',hot:1},
+  {g:'四边形与圆',n:'扇形面积',t:'S=\\frac{n\\pi r^2}{360}=\\frac{1}{2}lr',note:'l 是该扇形的弧长；第二个公式在已知弧长时最快。',hot:1},
+  {g:'四边形与圆',n:'圆锥侧面积与全面积',t:'S_{\\text{侧}}=\\pi rl,\\quad S_{\\text{全}}=\\pi rl+\\pi r^2',note:'r 是底面半径，l 是母线长（不是圆锥的高）；侧面展开是扇形。',hot:1},
+  {g:'四边形与圆',n:'垂径定理',t:'\\text{垂直于弦的直径平分这条弦，并且平分弦所对的两条弧}',note:'常作辅助线：过圆心作弦的垂线，再用勾股定理求半径或弦长。'},
+  {g:'四边形与圆',n:'圆周角定理',t:'\\text{同弧所对圆周角}=\\frac{1}{2}\\text{圆心角};\quad \\text{直径所对圆周角}=90^\\circ',note:'同弧所对的圆周角相等；圆内接四边形对角互补。',hot:1},
+  {g:'四边形与圆',n:'切线性质',t:'\\text{切线}\\perp\\text{过切点的半径}',note:'证明切线常用两种思路：连半径证垂直；已知垂直则证半径。'},
+  {g:'四边形与圆',n:'点与圆、圆与圆的位置关系',t:'d>r\\;\\Leftrightarrow\\;\\text{点在圆外};\quad d=r\\;\\Leftrightarrow\\;\\text{点在圆上};\quad d<r\\;\\Leftrightarrow\\;\\text{点在圆内}',note:'两圆位置关系用圆心距 d 与 R±r 比较；外切 d=R+r，内切 d=|R−r|。'},
+
+  /* ---------- 统计与概率 ---------- */
+  {g:'统计与概率',n:'平均数',t:'\\bar{x}=\\frac{x_1+x_2+\\cdots+x_n}{n}',note:'反映平均水平，容易受极端值影响；每个数据都要算进去。',hot:1},
+  {g:'统计与概率',n:'加权平均数',t:'\\bar{x}=\\frac{x_1f_1+x_2f_2+\\cdots+x_kf_k}{n},\\;n=f_1+\\cdots+f_k',note:'fᵢ 是权数（出现次数或比例）；权数之和必须等于总次数。'},
+  {g:'统计与概率',n:'中位数与众数',t:'\\text{中位数：排序后中间的数（偶数个取中间两数平均）}',note:'众数是出现次数最多的数据，可能不止一个；找中位数必须先排序。',hot:1},
+  {g:'统计与概率',n:'方差',t:'s^2=\\frac{1}{n}\\left[(x_1-\\bar{x})^2+\\cdots+(x_n-\\bar{x})^2\\right]',note:'方差越小，数据波动越小、越稳定；先求平均数再代入。',hot:1},
+  {g:'统计与概率',n:'标准差',t:'s=\\sqrt{\\frac{1}{n}\\left[(x_1-\\bar{x})^2+\\cdots+(x_n-\\bar{x})^2\\right]}',note:'标准差是方差的算术平方根，单位与原数据相同。'},
+  {g:'统计与概率',n:'极差',t:'\\text{极差}=\\text{最大值}-\\text{最小值}',note:'计算最简便，但只用到两个极端数据。'},
+  {g:'统计与概率',n:'频数与频率',t:'\\text{频率}=\\frac{\\text{频数}}{\\text{总数}},\quad \\sum \\text{频率}=1',note:'各小组频数之和 = 数据总数；频率之和 = 1。'},
+  {g:'统计与概率',n:'古典概型概率',t:'P(A)=\\frac{m}{n}\;(0\\le P(A)\\le 1)',note:'n 是等可能结果总数，m 是事件 A 包含的结果数；"等可能"是前提。',hot:1},
+  {g:'统计与概率',n:'两步概率',t:'P(\\text{两步都发生})=P(\\text{第一步})\\cdot P(\\text{第二步})',note:'用树状图或列表法不重不漏；「放回」与「不放回」会改变第二步的概率。'},
+
+  /* ---------- 常用方法 ---------- */
+  {g:'常用方法',n:'数轴上的距离与中点',t:'AB=|a-b|,\quad \\text{中点}=\\frac{a+b}{2}',note:'绝对值保证距离非负；两点的中点就是两数的算术平均数。'},
+  {g:'常用方法',n:'平面内两点距离',t:'d=\\sqrt{(x_2-x_1)^2+(y_2-y_1)^2}',note:'本质是勾股定理；特殊地，点在坐标轴上时其中一个差为 0。'},
+  {g:'常用方法',n:'线段中点坐标',t:'\\left(\\frac{x_1+x_2}{2},\\;\\frac{y_1+y_2}{2}\\right)',note:'横、纵坐标分别取平均；与数轴中点公式是同一件事。'},
+  {g:'常用方法',n:'一次函数与方程（组）、不等式',t:'kx+b=0\\;\\Leftrightarrow\\;\\text{与 }x\\text{ 轴交点};\quad kx+b>0\\;\\Leftrightarrow\\;\\text{图象在 }x\\text{ 轴上方}',note:'两个一次函数图象的交点坐标就是对应二元一次方程组的解；看图象比代数运算更快。',hot:1},
+  {g:'常用方法',n:'面积法',t:'S=\\frac{1}{2}ah=\\frac{1}{2}ab\\sin C',note:'同一个图形用两种方式表示面积，可以建立等量关系求高、求比值。'},
+  {g:'常用方法',n:'三种数学思想',t:'\\text{数形结合}\\;\\cdot\\;\\text{分类讨论}\\;\\cdot\\;\\text{转化与化归}',note:'含参数、动点、绝对值题要分类；解析式看不出来的关系，画图 often 一眼就清楚。'}
+];
+
+var $=function(s,r){return (r||document).querySelector(s);};
+var list=$('#list'),chips=$('#chips'),q=$('#q'),count=$('#count');
+var active='全部', onlyHot=false;
+function norm(s){return String(s||'').toLowerCase().replace(/\s+/g,'');}
+function render(){
+  var kw=norm(q.value);
+  var hit=DATA.filter(function(d){
+    if(active!=='全部'&&d.g!==active)return false;
+    if(onlyHot&&!d.hot)return false;
+    if(!kw)return true;
+    return norm(d.n+d.t+d.note+d.g).indexOf(kw)>=0;
+  });
+  count.textContent='当前显示 '+hit.length+' / '+DATA.length+' 条公式'+(active==='全部'?'':'（'+active+'）')+(onlyHot?' · 仅高频':'');
+  if(!hit.length){list.innerHTML='<div class="empty">没有匹配的公式，换个关键词试试。</div>';return;}
+  var html='';
+  GROUPS.forEach(function(g){
+    var rows=hit.filter(function(d){return d.g===g;});
+    if(!rows.length)return;
+    html+='<section class="group"><h2>'+esc(g)+' · '+rows.length+' 条</h2><div class="grid">';
+    rows.forEach(function(d){
+      html+='<article class="item"><h3>'+esc(d.n)+(d.hot?'<span class="hot">高频</span>':'')+'</h3>'+
+        '<div class="fx">'+tex(d.t)+'</div><p class="note">'+esc(d.note)+'</p></article>';
+    });
+    html+='</div></section>';
+  });
+  list.innerHTML=html;
+}
+function syncChips(){
+  Array.prototype.forEach.call(chips.children,function(x){
+    var kind=x.getAttribute('data-kind');
+    if(kind==='hot')x.className='chip hot-filter'+(onlyHot?' on':'');
+    else if(kind==='group')x.className='chip'+(x.textContent===active?' on':'');
+  });
+}
+['全部'].concat(GROUPS).forEach(function(g){
+  var b=document.createElement('button');
+  b.className='chip'+(g==='全部'?' on':'');b.textContent=g;
+  b.setAttribute('data-kind','group');
+  b.onclick=function(){active=g;syncChips();render();};
+  chips.appendChild(b);
+});
+var sep=document.createElement('span');
+sep.className='chip-sep';sep.setAttribute('data-kind','sep');
+chips.appendChild(sep);
+var hotBtn=document.createElement('button');
+hotBtn.className='chip hot-filter';hotBtn.textContent='★ 只看高频';
+hotBtn.setAttribute('data-kind','hot');
+hotBtn.onclick=function(){onlyHot=!onlyHot;syncChips();render();};
+chips.appendChild(hotBtn);
+q.addEventListener('input',render);
+$('#print').onclick=function(){window.print();};
+render();
+</script>
+</body>
+</html>

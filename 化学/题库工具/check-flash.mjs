@@ -64,6 +64,59 @@ if (r.fails.length) {
   process.exit(1);
 }
 
+/* 配平题：prompt 是与 HEAD 历史错题键一致的稳定基线（裸串条件、无 —→/↑/⟦⟧），
+   display 承担富排版（⟦上|下⟧ + ↑）。wrongKey 用 normChem(prompt)[:90]、qid 用 prompt[:40]，
+   prompt 改一个字就会让老错题失配，故把 6 条原始 prompt 冻结在这里防漂移。 */
+const FROZEN_PROMPTS = [
+  '配平：___H₂ ＋ O₂ 点燃 2H₂O，H₂ 前的系数是（填数字）',
+  '配平：2KClO₃ MnO₂/Δ 2KCl ＋ ___O₂，O₂ 前的系数是（填数字）',
+  '配平：Fe₃O₄ ＋ ___CO 高温 3Fe ＋ 4CO₂，CO 前的系数是（填数字）',
+  '配平：2KMnO₄ Δ K₂MnO₄ ＋ MnO₂ ＋ ___O₂，O₂ 前的系数是（填数字）',
+  '配平：C₂H₅OH ＋ ___O₂ 点燃 2CO₂ ＋ 3H₂O，O₂ 前的系数是（填数字）',
+  '配平：___Al ＋ 3CuSO₄ Al₂(SO₄)₃ ＋ 3Cu，Al 前的系数是（填数字）'
+];
+const balanceQs = new Map();
+for (let i = 1; i <= 600; i++) {
+  const q = CH.gen('eq', 'balance', i);
+  if (q && q.id === 'eq.balance') balanceQs.set(q.prompt, q.display);
+}
+if (balanceQs.size !== FROZEN_PROMPTS.length) {
+  console.error(`✗ 配平题模板数异常：期望 ${FROZEN_PROMPTS.length}，实际 ${balanceQs.size}`);
+  process.exit(1);
+}
+for (const p of FROZEN_PROMPTS) {
+  if (!balanceQs.has(p)) {
+    console.error('✗ 配平题稳定键漂移（老错题会失配）：' + p);
+    process.exit(1);
+  }
+}
+let marked = 0;
+for (const [p, d] of balanceQs) {
+  if (/—[^→]+→|⟦|⟧/.test(p)) { console.error('✗ prompt 混入了显示标记：' + p); process.exit(1); }
+  if (p.indexOf('↑') >= 0) { console.error('✗ prompt 混入了显示用 ↑：' + p); process.exit(1); }
+  if (d && d.indexOf('⟦') >= 0) marked++;
+}
+const kclo3Display = balanceQs.get(FROZEN_PROMPTS[1]) || '';
+if (marked !== 5 || kclo3Display.indexOf('⟦MnO₂|△⟧') < 0 || kclo3Display.indexOf('O₂↑') < 0) {
+  console.error('✗ 配平题富排版 display 异常：期望 5 道带标记、KClO₃ 上 MnO₂ 下 △ 且标 ↑');
+  process.exit(1);
+}
+/* KMnO₄ 题答案为 1：配平填空「系数是几」答 1 是人教 P122 T6 配套习题口径，不是出题错误；
+   display 已按书写规范省略系数 1（写 O₂↑ 而非 1O₂↑）。冻结此断言防将来误改。 */
+{
+  let found = false;
+  for (let i = 1; i <= 600; i++) {
+    const q = CH.gen('eq', 'balance', i);
+    if (q && q.prompt === FROZEN_PROMPTS[3]) {
+      const a = q.fields[0].ans;
+      if (a !== 1) { console.error('✗ KMnO₄ 题系数应为 1，实际 ' + a); process.exit(1); }
+      if (q.display.indexOf('1O₂') >= 0) { console.error('✗ display 不应出现 1O₂'); process.exit(1); }
+      found = true; break;
+    }
+  }
+  if (!found) { console.error('✗ 未找到 KMnO₄ 配平题'); process.exit(1); }
+}
+
 /* 归一化边界用例 */
 const cases = [
   ['Mg²⁺', 'Mg2+', true], ['Mg²⁺', 'Ｍｇ２＋', true],

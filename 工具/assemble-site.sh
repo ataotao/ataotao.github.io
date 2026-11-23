@@ -27,6 +27,7 @@ pub 数学/函数思维脚手架.html     数学/函数思维脚手架.html
 pub 数学/今晚急救包.html         数学/今晚急救包.html
 pub 数学/坐标图象训练.html       数学/坐标图象训练.html
 pub 数学/数学闪练卡.html         数学/数学闪练卡.html
+pub 数学/中考数学公式列表.html   数学/中考数学公式列表.html
 pub 数学/错题本.html             数学/错题本.html
 pub 物理/物理思维脚手架.html     物理/物理思维脚手架.html
 pub 物理/物理闪练卡.html         物理/物理闪练卡.html

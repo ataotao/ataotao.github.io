@@ -12,12 +12,15 @@
  *   源/train.core.js  → <script id="core">（暴露 PT / MT，check-training 抽取）
  *   源/train.ui.js    → <script id="ui">（h() 引擎 + 记录/回炉/导入）
  *
+ * tabs[] 支持 {go,n}（内部视图按钮）与 {href,n}（外链，如公式表）两种条目。
  * 科目配置需提供：key, family:'scaffold', coreGlobal(PT/MT), head, tabs[],
  *   cssFile/coreFile/uiFile/outFile, contract, plan
  */
 export function shell(cfg) {
   const h = cfg.head;
-  const tabs = cfg.tabs.map((t) => '    <button data-go="' + t.go + '">' + t.n + '</button>').join('\n');
+  const tabs = cfg.tabs.map((t) => t.href
+    ? '    <a class="tablink" href="' + t.href + '">' + t.n + '</a>'
+    : '    <button data-go="' + t.go + '">' + t.n + '</button>').join('\n');
   return `<!doctype html>
 <html lang="zh-CN">
 <head>

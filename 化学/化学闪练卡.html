@@ -47,6 +47,13 @@ p{margin:8px 0}
 .progress i{display:block;height:100%;background:var(--brand);border-radius:6px;transition:width .2s ease}
 .qhead{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .qbody{font-size:16px;font-weight:600;margin:12px 0;line-height:1.8}
+/* 化学方程式：条件写在箭头上下（⟦上|下⟧ 由 rich() 转成这个结构） */
+.cheq{display:inline-flex;flex-direction:column;align-items:center;justify-content:center;vertical-align:middle;margin:0 .35em;line-height:1.1;white-space:nowrap}
+.cheq .cond{font-size:.62em;color:var(--muted);font-weight:600;padding:0 2px}
+.cheq .cond.top{margin-bottom:1px}
+.cheq .cond.bottom{margin-top:1px}
+.cheq .arw{font-size:1.15em;color:var(--ink);letter-spacing:.08em}
+.cheq-svg{display:inline-block;vertical-align:middle;margin:0 .12em;max-width:100%}
 .opt{display:block;width:100%;text-align:left;border:1px solid var(--line);background:#fff;border-radius:11px;padding:10px 14px;margin:7px 0;font:inherit;font-size:15px;cursor:pointer;transition:background .1s,border .1s}
 .opt:hover{background:#f7fafc;border-color:#cbd5e1}
 .opt.sel{border-color:var(--brand);background:var(--brand-soft)}
@@ -74,6 +81,22 @@ input.txt.ok{border-color:var(--ok);background:var(--ok-soft)}input.txt.bad{bord
 .modcard .m{margin-top:8px;font-size:11px;color:var(--brand);font-weight:700}
 .kindchip{display:inline-block;border:1px solid var(--line);border-radius:20px;padding:5px 12px;margin:4px 5px 0 0;font-size:13px;cursor:pointer;background:#fff}
 .kindchip:hover{border-color:var(--brand);background:var(--brand-soft);color:var(--brand)}
+/* 化学特殊符号键盘：点击即插入到当前输入框 */
+.symkeys{margin-top:10px;border-top:1px dashed var(--line);padding-top:8px}
+.symkeys .sk-title{font-size:12px;color:var(--muted);margin-bottom:6px}
+.symkeys .sk-row{display:flex;flex-wrap:wrap;gap:5px;margin:4px 0}
+.symkeys .sk-label{font-size:11px;color:var(--muted);min-width:46px;align-self:center}
+.symkeys button{font:inherit;font-size:15px;min-width:30px;height:30px;border:1px solid var(--line);border-radius:7px;background:#fff;color:var(--ink);cursor:pointer;padding:0 5px;line-height:1}
+.symkeys button:hover{border-color:var(--brand);background:var(--brand-soft)}
+.symkeys button:active{transform:scale(.92)}
+/* 配平方法细则卡（数据驱动：kind.guide） */
+.guide-card{border:1px solid var(--line);border-left:3px solid var(--brand);border-radius:10px;padding:10px 12px;margin:10px 0;background:#fff}
+.guide-card .gc-h{font-weight:700;color:var(--brand);font-size:14px;margin-bottom:6px}
+.guide-card .gc-sec{font-size:12px;font-weight:700;color:var(--ink);margin:8px 0 3px}
+.guide-card ol,.guide-card ul{margin:2px 0;padding-left:20px}
+.guide-card li{font-size:13px;line-height:1.75}
+.guide-card .gc-ex{border:1px dashed var(--line);border-radius:8px;padding:7px 10px;margin-top:6px;background:#fafbfc}
+.guide-card .gc-ex .gc-q{font-size:13px;line-height:1.9;margin-bottom:4px}
 .statgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px}
 .statbox{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px 14px}
 .statbox .k{font-size:12px;color:var(--muted)}.statbox .v{font-size:24px;font-weight:800;color:var(--brand)}
@@ -326,9 +349,9 @@ var CH = (function () {
     if (v === 1) return {
       id: 'air.o2prep', kind: 'o2prep', title: '实验室制氧气（方程式）',
       prompt: '实验室用过氧化氢溶液和二氧化锰制氧气，反应的化学方程式是（　）',
-      fields: [cf(r, '2H₂O₂ —MnO₂→ 2H₂O＋O₂↑', ['H₂O₂ → H₂O＋O₂', '2H₂O —通电→ 2H₂↑＋O₂↑', '2KMnO₄ —Δ→ K₂MnO₄＋MnO₂＋O₂↑'])],
-      tip: '写方程式三查：化学式对不对、配平没有、条件与 ↑↓ 标没标。MnO₂ 写在箭头上作催化剂。',
-      explain: ['过氧化氢分解生成水和氧气，MnO₂ 作催化剂写在箭头上，配平后为 2H₂O₂ = 2H₂O + O₂↑。', '注意氧气是气体生成物，要标 ↑；催化剂不是反应物，不能写进等号左边。'],
+      fields: [cf(r, '2H₂O₂ ⟦MnO₂⟧ 2H₂O＋O₂↑', ['H₂O₂ → H₂O＋O₂', '2H₂O ⟦通电⟧ 2H₂↑＋O₂↑', '2KMnO₄ ⟦Δ⟧ K₂MnO₄＋MnO₂＋O₂↑'])],
+      tip: '写方程式三查：化学式对不对、配平没有、条件与 ↑↓ 标没标。MnO₂ 写在箭头上方作催化剂。',
+      explain: ['过氧化氢分解生成水和氧气，MnO₂ 作催化剂写在箭头上方，配平后为 2H₂O₂ ⟦MnO₂⟧ 2H₂O + O₂↑。', '注意氧气是气体生成物，要标 ↑；催化剂不是反应物，不能写进等号左边。'],
       kp: ['实验室制取氧气', '化学方程式书写', '第二单元']
     };
     if (v === 2) return {
@@ -576,26 +599,35 @@ var CH = (function () {
     };
   }
   function genBalance(r) {
+    /* prompt 与 HEAD 历史错题键逐字一致（裸串条件，无 —→、无 ↑）：
+       wrongKey 用 normChem(prompt)[:90]、qid 用 prompt[:40]，改一个字就会让老错题失配。
+       display 只用于显示层：条件排在箭头上下、补上教材要求的 ↑。 */
     var bank = [
-      { q: '配平：___H₂ ＋ O₂ 点燃 2H₂O，H₂ 前的系数是', a: 2 },
-      { q: '配平：2KClO₃ MnO₂/Δ 2KCl ＋ ___O₂，O₂ 前的系数是', a: 3 },
-      { q: '配平：Fe₃O₄ ＋ ___CO 高温 3Fe ＋ 4CO₂，CO 前的系数是', a: 4 },
-      { q: '配平：2KMnO₄ Δ K₂MnO₄ ＋ MnO₂ ＋ ___O₂，O₂ 前的系数是', a: 1 },
-      { q: '配平：C₂H₅OH ＋ ___O₂ 点燃 2CO₂ ＋ 3H₂O，O₂ 前的系数是', a: 3 },
-      { q: '配平：___Al ＋ 3CuSO₄ Al₂(SO₄)₃ ＋ 3Cu，Al 前的系数是', a: 2 }
+      { q: '配平：___H₂ ＋ O₂ 点燃 2H₂O，H₂ 前的系数是',
+        d: '配平：___H₂ ＋ O₂ ⟦点燃⟧ 2H₂O，H₂ 前的系数是', a: 2 },
+      { q: '配平：2KClO₃ MnO₂/Δ 2KCl ＋ ___O₂，O₂ 前的系数是',
+        d: '配平：2KClO₃ ⟦MnO₂|△⟧ 2KCl ＋ ___O₂↑，O₂ 前的系数是', a: 3 },
+      { q: '配平：Fe₃O₄ ＋ ___CO 高温 3Fe ＋ 4CO₂，CO 前的系数是',
+        d: '配平：Fe₃O₄ ＋ ___CO ⟦高温⟧ 3Fe ＋ 4CO₂，CO 前的系数是', a: 4 },
+      { q: '配平：2KMnO₄ Δ K₂MnO₄ ＋ MnO₂ ＋ ___O₂，O₂ 前的系数是',
+        d: '配平：2KMnO₄ ⟦|△⟧ K₂MnO₄ ＋ MnO₂ ＋ ___O₂↑，O₂ 前的系数是', a: 1 },
+      { q: '配平：C₂H₅OH ＋ ___O₂ 点燃 2CO₂ ＋ 3H₂O，O₂ 前的系数是',
+        d: '配平：C₂H₅OH ＋ ___O₂ ⟦点燃⟧ 2CO₂ ＋ 3H₂O，O₂ 前的系数是', a: 3 },
+      { q: '配平：___Al ＋ 3CuSO₄ Al₂(SO₄)₃ ＋ 3Cu，Al 前的系数是',
+        d: '配平：___Al ＋ 3CuSO₄ = Al₂(SO₄)₃ ＋ 3Cu，Al 前的系数是', a: 2 }
     ];
     var it = pick(r, bank);
     return {
       id: 'eq.balance', kind: 'balance', title: '化学方程式的配平',
-      prompt: it.q + '（填数字）', fields: [nf(it.a, '系数', '', 0.01)],
-      tip: '配平方法：观察法、最小公倍数法、奇数配偶法。原则是反应前后各元素原子个数相等，只改系数不改化学式下标。',
-      explain: ['根据质量守恒，逐个元素配平后系数为 ' + it.a + '。', '切记：配平只能改化学式前面的系数，绝不能改化学式右下角的原子个数。'],
+      prompt: it.q + '（填数字）', display: it.d + '（填数字）', fields: [nf(it.a, '系数', '', 0.01)],
+      tip: '书写格式：反应物在左、生成物在右，条件写在箭头上方（催化剂）和下方（加热 △）；纸上写等号时，条件同样标在等号上／下。配平用观察法、最小公倍数法、奇数配偶法：只改系数不改下标；反应物无气体时，生成的气体才标 ↑。',
+      explain: ['根据质量守恒，逐个元素配平后系数为 ' + it.a + '。', '切记：配平只能改化学式前面的系数，绝不能改化学式右下角的原子个数。', '问「系数是几」就填数字 1；完整书写方程式时才省略系数 1——两个场景不矛盾（人教 P122 T6 配套习题同样要求「1 也要填上」）。'],
       kp: ['化学方程式的配平', '第五单元', '系数与下标']
     };
   }
   function genEquationJudge(r) {
     var bank = [
-      { ok: '2Mg ＋ O₂ 点燃 2MgO，化学式、配平、条件均正确', bad: ['Mg ＋ O₂ = MgO₂', '2Mg ＋ O₂ = 2MgO（未写反应条件）', 'Mg ＋ O₂ 点燃 MgO（未配平）'] },
+      { ok: '2Mg ＋ O₂ ⟦点燃⟧ 2MgO，化学式、配平、条件均正确', bad: ['Mg ＋ O₂ = MgO₂', '2Mg ＋ O₂ = 2MgO（未写反应条件）', 'Mg ＋ O₂ ⟦点燃⟧ MgO（未配平）'] },
       { ok: '实验室制二氧化碳：CaCO₃ ＋ 2HCl = CaCl₂ ＋ H₂O ＋ CO₂↑', bad: ['CaCO₃ ＋ HCl = CaCl ＋ H₂O ＋ CO₂', 'Na₂CO₃ ＋ 2HCl = 2NaCl ＋ H₂O ＋ CO₂↑（不用粉末状碳酸钠）', 'CaCO₃ ＋ H₂SO₄ = CaSO₄ ＋ H₂O ＋ CO₂↑'] },
       { ok: '铁与硫酸铜溶液反应：Fe ＋ CuSO₄ = FeSO₄ ＋ Cu', bad: ['2Fe ＋ 3CuSO₄ = Fe₂(SO₄)₃ ＋ 3Cu', 'Fe ＋ CuSO₄ = FeSO₄ ＋ Cu↓', 'Fe ＋ CuSO₄ = Fe₂(SO₄)₃ ＋ Cu'] }
     ];
@@ -827,7 +859,7 @@ var CH = (function () {
   }
   function genRefining(r) {
     var bank = [
-      { q: '工业炼铁的主要反应原理是', a: 'Fe₂O₃ + 3CO 高温 2Fe + 3CO₂', w: ['Fe₂O₃ + 3C 高温 2Fe + 3CO↑', '2Fe₂O₃ 高温 4Fe + 3O₂↑', 'Fe₂O₃ + 3H₂ 高温 2Fe + 3H₂O'] },
+      { q: '工业炼铁的主要反应原理是', a: 'Fe₂O₃ + 3CO ⟦高温⟧ 2Fe + 3CO₂', w: ['Fe₂O₃ + 3C ⟦高温⟧ 2Fe + 3CO↑', '2Fe₂O₃ ⟦高温⟧ 4Fe + 3O₂↑', 'Fe₂O₃ + 3H₂ ⟦高温⟧ 2Fe + 3H₂O'] },
       { q: '炼铁高炉中，焦炭的主要作用是', a: '提供热量并生成还原剂一氧化碳', w: ['只提供热量', '提供氧气', '作催化剂'] },
       { q: '炼铁的主要原料不包括', a: '氢氧化钠', w: ['铁矿石', '焦炭', '石灰石'] }
     ];
@@ -1838,6 +1870,115 @@ window.__ltSync = { carrierSnapshot: carrierSnapshot, syncPlan: syncPlan, subjec
   }
   function save() { try { localStorage.setItem(KEY, JSON.stringify(DB)); } catch (e) {} }
   function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+  /* 化学方程式 → 内联 SVG（斜体元素符号 / 真下标 / 条件上下 / 矢量长箭头）。
+     只在显示层转换：prompt、display、错题键、判分一律不动。 */
+  var SUBC = { '₀':'0','₁':'1','₂':'2','₃':'3','₄':'4','₅':'5','₆':'6','₇':'7','₈':'8','₉':'9' };
+  var SUPC = { '⁰':'0','¹':'1','²':'2','³':'3','⁴':'4','⁵':'5','⁶':'6','⁷':'7','⁸':'8','⁹':'9' };
+  var CHEMCH = /[A-Za-z0-9_ 	＋+=↑↓△()/]/;
+  function isChem(c) { return CHEMCH.test(c) || !!SUBC[c] || !!SUPC[c] || c === '⟦' || c === '⟧'; }
+  function chemSVG(seg) {
+    var at = seg.indexOf('⟦'), stop = seg.indexOf('⟧');
+    var left = seg.slice(0, at).trim(), right = seg.slice(stop + 1).trim();
+    var parts = seg.slice(at + 1, stop).split('|'), top = parts[0] || '', bottom = parts[1] || '';
+    var F = 26, H = 84, ay = 44, ly = 51, ty = 24, by = 78;
+    function t(s) {
+      var h = '';
+      for (var i = 0; i < s.length; i++) {
+        var c = s.charAt(i);
+        if (SUBC[c]) h += '<tspan baseline-shift="sub" font-size="0.62em">' + SUBC[c] + '</tspan>';
+        else if (SUPC[c]) h += '<tspan baseline-shift="super" font-size="0.62em">' + SUPC[c] + '</tspan>';
+        else h += c.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      }
+      return h;
+    }
+    function w(s) {
+      var n = 0;
+      for (var i = 0; i < s.length; i++) {
+        var c = s.charAt(i);
+        if (SUBC[c] || SUPC[c]) n += 0.44;
+        else if (c === ' ') n += 0.34;
+        else if (c === '_') n += 0.62;
+        else if (/[A-Za-z0-9]/.test(c)) n += 0.60;
+        else n += 0.92;
+      }
+      return n * F;
+    }
+    var lw = w(left), rw = w(right);
+    var aw = Math.max(2.8 * F, Math.max(w(top), w(bottom)) + 0.9 * F);
+    var W = lw + aw + rw + 14, rx = lw + 10 + aw + 4;
+    return '<svg class="cheq-svg" viewBox="0 0 ' + W.toFixed(0) + ' ' + H + '" style="height:2.9em" ' +
+      'xmlns="http://www.w3.org/2000/svg" role="img" aria-label="' + left + ' ' + top + ' ' + bottom + ' ' + right + '">' +
+      '<g font-family="Times New Roman,Georgia,serif" font-size="' + F + '" fill="currentColor">' +
+      '<text x="4" y="' + ly + '" font-style="italic">' + t(left) + '</text>' +
+      '<g transform="translate(' + (lw + 8).toFixed(0) + ',0)">' +
+      (top ? '<text class="cond top" x="' + (aw / 2).toFixed(0) + '" y="' + ty + '" text-anchor="middle" font-size="0.74em">' + t(top) + '</text>' : '') +
+      '<path d="M2,' + ay + ' H' + (aw - 10).toFixed(0) + ' M' + (aw - 10).toFixed(0) + ',' + (ay - 5) + ' L' + (aw - 2).toFixed(0) + ',' + ay + ' L' + (aw - 10).toFixed(0) + ',' + (ay + 5) + '" fill="none" stroke="currentColor" stroke-width="1.8"/>' +
+      (bottom ? '<text class="cond bottom" x="' + (aw / 2).toFixed(0) + '" y="' + by + '" text-anchor="middle" font-size="0.74em">' + t(bottom) + '</text>' : '') +
+      '</g>' +
+      '<text x="' + rx.toFixed(0) + '" y="' + ly + '" font-style="italic">' + t(right) + '</text>' +
+      '</g></svg>';
+  }
+  function chemRuns(s) {
+    var out = '', i = 0, at, stop, a, b;
+    while ((at = s.indexOf('⟦', i)) >= 0) {
+      stop = s.indexOf('⟧', at + 1);
+      if (stop < 0) { out += s.slice(i); return out; }
+      a = at; b = stop + 1;
+      /* 向左/右扩展，把整段化学式纳入同一个 SVG；
+         注意纯文本只能输出到 a（扩展后的起点），不能输出到 at，
+         否则 a..at 这段会被纯文本和 SVG 各渲染一次（重复化学式）。 */
+      while (a > i && isChem(s.charAt(a - 1))) a--;
+      while (b < s.length && isChem(s.charAt(b))) b++;
+      out += s.slice(i, a) + chemSVG(s.slice(a, b));
+      i = b;
+    }
+    return out + s.slice(i);
+  }
+  function rich(s) {
+    var out = esc(s).replace(/Δ/g, '△');
+    out = out.replace(/—([^→]+)→/g, function (m, c) { return '⟦' + c.replace('/', '|') + '⟧'; });
+    /* HEAD 时代的老错题只存了裸串 prompt（无 display 字段）：「2KClO₃ MnO₂/Δ 2KCl…」，
+       条件夹在化学式之间。仅对配平题（含「配平：」）兜底：把「空格+条件词+空格」补成 ⟦⟧，
+       让老错题回炉也走同一套 SVG 富排版。限定配平题前缀 + 完整 token，避免误伤
+       其它科目题干里出现的 △（数学判别式）或「点燃」等普通字词。 */
+    if (out.indexOf('配平：') >= 0) {
+      out = out.replace(/ (点燃|高温|MnO₂[/]△|△|高温高压[/]催化剂|通电) /g, function (m, c) {
+        var p = c.split('/');
+        return ' ⟦' + p[0] + (p.length > 1 ? '|' + p[1] : '') + '⟧ ';
+      });
+    }
+    return chemRuns(out);
+  }
+
+  /* ---------- 化学特殊符号键盘 ----------
+     点按钮把符号插入到当前聚焦的输入框光标处；若焦点不在输入框，插到本字段对应的 input。
+     符号用真实 Unicode（上标 ²⁺⁻、下标 ₄ 等），normChem 会归一成 2+- / 4，判分不变。 */
+  var SYMKEYS = [
+    { label: '上标', keys: ['⁺', '⁻', '⁰', '¹', '²', '³', '⁴', '⁵', '⁶', '⁷', '⁸', '⁹'] },
+    { label: '下标', keys: ['₀', '₁', '₂', '₃', '₄', '₅', '₆', '₇', '₈', '₉'] },
+    { label: '符号', keys: ['↑', '↓', '△', '→', '＋', '－', '＝'] },
+    { label: '常用离子', keys: ['S²⁻', 'O²⁻', 'Cl⁻', 'Mg²⁺', 'Ca²⁺', 'Al³⁺', 'Na⁺', 'NH₄⁺', 'OH⁻', 'SO₄²⁻', 'CO₃²⁻', 'NO₃⁻'] }
+  ];
+  function symkeysHtml(inputId) {
+    var rows = SYMKEYS.map(function (grp) {
+      var btns = grp.keys.map(function (k) {
+        return '<button type="button" data-sym="' + esc(k) + '" data-sym-target="' + esc(inputId) + '" title="插入 ' + esc(k) + '">' + esc(k) + '</button>';
+      }).join('');
+      return '<div class="sk-row"><span class="sk-label">' + esc(grp.label) + '</span>' + btns + '</div>';
+    }).join('');
+    return '<div class="symkeys" data-symkeys><div class="sk-title">⌨ 特殊符号（点一下插入光标处）</div>' + rows + '</div>';
+  }
+  function insertSym(btn) {
+    var sym = btn.getAttribute('data-sym');
+    var el = document.activeElement;
+    if (!el || el.tagName !== 'INPUT' || el.readOnly) el = document.getElementById(btn.getAttribute('data-sym-target'));
+    if (!el || el.readOnly || sym == null) return;
+    var v = el.value || '';
+    var s = typeof el.selectionStart === 'number' ? el.selectionStart : v.length;
+    var e = typeof el.selectionEnd === 'number' ? el.selectionEnd : v.length;
+    el.value = v.slice(0, s) + sym + v.slice(e);
+    try { el.focus(); el.setSelectionRange(s + sym.length, s + sym.length); } catch (x) {}
+  }
 
   /* ---------- 合并函数：全局共用（merge.mjs 内联），导入 / 云同步共用同一份 ----------
      去重键 (ts,mod,kind,prompt[:40]||kn)；不求和；days/lastRound/dayPlan/sess 不进载体。
@@ -1909,7 +2050,7 @@ window.__ltSync = { carrierSnapshot: carrierSnapshot, syncPlan: syncPlan, subjec
       if (!entry || !DB.wrong[entry.key]) { s.done++; return nextQuestion(); }
       var w = DB.wrong[entry.key];
       S.q = { mod: w.mod, kind: w.kind, kindName: w.kindName, modName: w.modName, title: w.title,
-        prompt: w.prompt, fields: w.fields, tip: w.tip, explain: w.explain, kp: w.kp, _wrongKey: entry.key };
+        prompt: w.prompt, display: w.display, fields: w.fields, tip: w.tip, explain: w.explain, kp: w.kp, _wrongKey: entry.key };
     } else {
       var slot = s.queue && s.queue.length ? s.queue[s.done % s.queue.length] : null;
       var mod = s.mod, kind = s.kind;
@@ -1983,7 +2124,7 @@ window.__ltSync = { carrierSnapshot: carrierSnapshot, syncPlan: syncPlan, subjec
     if (!ok) {
       if (!w) {
         w = { key: k, qid: qid, mod: q.mod, kind: q.kind, kindName: q.kindName, modName: q.modName,
-          title: q.title, prompt: q.prompt, fields: q.fields, tip: q.tip, explain: q.explain, kp: q.kp };
+          title: q.title, prompt: q.prompt, display: q.display, fields: q.fields, tip: q.tip, explain: q.explain, kp: q.kp };
         DB.wrong[k] = w;
       }
       if (qid && !w.qid) w.qid = qid;   /* 旧条目补 qid，供历史错题清单匹配 */
@@ -2071,6 +2212,24 @@ window.__ltSync = { carrierSnapshot: carrierSnapshot, syncPlan: syncPlan, subjec
       resume + '</div></div>' +
       '<h2>' + esc(T.unitTitle) + '</h2><div class="modgrid">' + mods + '</div>';
   }
+  /* 配平方法细则卡：题型带 guide 字段时，在题型 chip 下方渲染可展开的「细则 + 例题」 */
+  function guideCard(k) {
+    var g = k.guide;
+    if (!g) return '';
+    var steps = (g.steps || []).map(function (s) { return '<li>' + rich(s) + '</li>'; }).join('');
+    var ex = g.example, exHtml = '';
+    if (ex) {
+      var exSteps = (ex.steps || []).map(function (s) { return '<li>' + rich(s) + '</li>'; }).join('');
+      exHtml = '<div class="gc-ex"><div class="gc-q">📌 例题：' + rich(ex.q) + '</div>' +
+        (exSteps ? '<ol>' + exSteps + '</ol>' : '') +
+        '<div style="margin-top:6px"><b>配平结果：</b>' + rich(ex.a) + '</div></div>';
+    }
+    return '<details class="gc-wrap"><summary style="cursor:pointer;font-size:13px;color:var(--brand);margin:6px 0 2px">📖 ' +
+      esc(k.name) + ' · 看方法与例题</summary><div class="guide-card">' +
+      '<div class="gc-h">' + esc(k.name) + '</div>' +
+      '<div class="gc-sec">操作细则</div><ol>' + steps + '</ol>' + exHtml +
+      '</div></details>';
+  }
   function viewMod() {
     var m = CH.moduleById(S.mod);
     if (!m) return '<div class="card"><h2>未找到单元</h2><button class="btn" data-go="today">回今日</button></div>';
@@ -2078,7 +2237,7 @@ window.__ltSync = { carrierSnapshot: carrierSnapshot, syncPlan: syncPlan, subjec
     var ok = recs.filter(function (r) { return r.ok; }).length;
     var chips = m.kinds.map(function (k) {
       var wr = Object.keys(DB.wrong).filter(function (x) { return DB.wrong[x].mod === m.id && DB.wrong[x].kind === k.id; }).length;
-      return '<span class="kindchip" data-kind="' + k.id + '">' + esc(k.name) + (wr ? ' · 错题' + wr : '') + '</span>';
+      return '<span class="kindchip" data-kind="' + k.id + '">' + esc(k.name) + (wr ? ' · 错题' + wr : '') + '</span>' + guideCard(k);
     }).join('');
     return '<div class="card"><div class="row"><button class="btn btn-ghost btn-sm" data-go="today">← 今日</button>' +
       '<h2 style="margin:0">' + m.icon + ' ' + esc(m.name) + '</h2></div>' +
@@ -2097,7 +2256,7 @@ window.__ltSync = { carrierSnapshot: carrierSnapshot, syncPlan: syncPlan, subjec
       '<div class="progress" style="margin:8px 0 14px"><i style="width:' + pct + '%"></i></div>';
     var body = '<div class="card"><div class="qhead">' +
       (q.kp || []).map(function (k) { return '<span class="pill">' + esc(k) + '</span>'; }).join('') + '</div>' +
-      '<div class="qbody">' + esc(q.prompt) + '</div>';
+      '<div class="qbody">' + rich(q.display || q.prompt) + '</div>';
     q.fields.forEach(function (f, i) {
       if (f.type === 'choice') {
         if (f.label) body += '<div class="small muted" style="margin-top:8px;font-weight:600">' + esc(f.label) + '</div>';
@@ -2106,7 +2265,7 @@ window.__ltSync = { carrierSnapshot: carrierSnapshot, syncPlan: syncPlan, subjec
           if (S.answered) { if (oi === f.ans) cls += ' ok'; else if (readChoiceState(i) === oi) cls += ' bad'; }
           else if (readChoiceState(i) === oi) cls += ' sel';
           body += '<button class="' + cls + '" data-choice="' + i + '" data-choice-val="' + oi + '">' +
-            String.fromCharCode(65 + oi) + '. ' + esc(opt) + '</button>';
+            String.fromCharCode(65 + oi) + '. ' + rich(opt) + '</button>';
         });
       } else {
         var icls = 'txt' + (S.answered ? ' ' + ((S.res && S.res.res[i].ok) ? 'ok' : 'bad') : '');
@@ -2114,6 +2273,8 @@ window.__ltSync = { carrierSnapshot: carrierSnapshot, syncPlan: syncPlan, subjec
           '<input class="' + icls + '" id="' + IP + i + '" autocomplete="off" placeholder="' + esc(T.inputPlaceholder) + '"' +
           (S.answered ? ' value="' + esc((S.vals || [])[i] || '') + '" readonly' : '') + '>' +
           (f.unit ? '<span class="unit">' + esc(f.unit) + '</span>' : '') + '</div>';
+        /* 化学特殊符号键盘：仅文本输入题显示（离子/元素符号书写），数字题不显示 */
+        if (f.type === 'text' && !S.answered) body += symkeysHtml(IP + i);
       }
     });
     if (!S.answered) {
@@ -2122,7 +2283,7 @@ window.__ltSync = { carrierSnapshot: carrierSnapshot, syncPlan: syncPlan, subjec
         (q.tip ? '<button class="btn btn-ghost" data-act="hint">' + (S.hint ? '提示已展开' : '看提示') + '</button>' : '') +
         '<button class="btn btn-ghost" data-act="skip">换一题</button>' +
         '<span class="grow"></span><span class="small muted">回车提交</span></div>';
-      if (S.hint && q.tip) body += '<div class="tipbox">💡 ' + esc(q.tip) + '</div>';
+      if (S.hint && q.tip) body += '<div class="tipbox">💡 ' + rich(q.tip) + '</div>';
     } else {
       body += feedbackHtml(q, S.res);
       body += '<div class="row" style="margin-top:14px"><button class="btn btn-primary" data-act="next">' +
@@ -2143,12 +2304,12 @@ window.__ltSync = { carrierSnapshot: carrierSnapshot, syncPlan: syncPlan, subjec
       '<div class="ftitle">' + (res.ok ? '✓ 全部正确' : '✗ 答错 ' + (res.total - res.got) + ' 处') + '</div>';
     q.fields.forEach(function (f, i) {
       h += '<div class="small"><span class="mk ' + (res.res[i].ok ? 'ok' : 'bad') + '">' + (res.res[i].ok ? '✓' : '✗') + '</span>' +
-        (f.label ? esc(f.label) + '：' : '') + '正确答案 <b>' + esc(CH.ansText(f)) + '</b>' +
+        (f.label ? esc(f.label) + '：' : '') + '正确答案 <b>' + rich(CH.ansText(f)) + '</b>' +
         (res.res[i].ok ? '' : '（你答：' + esc((S.vals || [])[i] == null ? '未答' : (S.vals || [])[i]) + '）') + '</div>';
     });
-    h += '<div class="tipbox" style="margin-top:10px"><b>考点难点：</b>' + esc(q.tip) + '</div>';
+    h += '<div class="tipbox" style="margin-top:10px"><b>考点难点：</b>' + rich(q.tip) + '</div>';
     h += '<div style="margin-top:8px"><b>解析：</b>' + (q.explain || []).map(function (line) {
-      return '<div class="small">· ' + esc(line) + '</div>';
+      return '<div class="small">· ' + rich(line) + '</div>';
     }).join('') + '</div>';
     h += '<div class="kpline">考点标签：' + (q.kp || []).map(function (k) { return '<span class="pill">' + esc(k) + '</span>'; }).join(' ') + '</div>';
     return h + '</div>';
@@ -2171,7 +2332,7 @@ window.__ltSync = { carrierSnapshot: carrierSnapshot, syncPlan: syncPlan, subjec
         '<span class="grow"></span><span class="small muted">' + T.wrongTimes + ' ' + (w.n || 1) + ' 次' +
         (w.okStreak ? ' · 已确认 ' + w.okStreak + '/' + R.KEEP : '') + '</span>' +
         '<button class="btn btn-ghost btn-sm" data-del="' + esc(w.key) + '">跳过本次</button></div>' +
-        '<div class="small">' + esc(w.prompt) + '</div></div>';
+        '<div class="small">' + rich(w.display || w.prompt) + '</div></div>';
     }).join('');
     return '<div class="card"><div class="row"><h2 style="margin:0">错题回炉</h2><span class="pill">共 ' + all.length + ' 道</span></div>' +
       '<p class="muted small">' + esc(fillTpl(T.wrongIntro, { plan: PLAN.join(' / ') })) + '</p>' +
@@ -2248,6 +2409,9 @@ window.__ltSync = { carrierSnapshot: carrierSnapshot, syncPlan: syncPlan, subjec
         b.classList.add('sel');
         if (S.q) { S.vals = S.vals || []; S.vals[i] = parseInt(b.getAttribute('data-choice-val'), 10); }
       };
+    });
+    Array.prototype.forEach.call(app.querySelectorAll('[data-sym]'), function (b) {
+      b.onclick = function () { insertSym(b); };
     });
     Array.prototype.forEach.call(app.querySelectorAll('[data-del]'), function (b) {
       b.onclick = function () {
@@ -2330,6 +2494,7 @@ window.__ltSync = { carrierSnapshot: carrierSnapshot, syncPlan: syncPlan, subjec
   /* 启动即读 hash；带 hash 进入不恢复上次位置（契约） */
   boot();
   window[CFG.global] = { S: S, DB: DB, CH: CH, go: go, startRound: startRound, action: action,
-    save: save, load: load, render: render, mergeRecords: mergeRecords, importText: importText };
+    save: save, load: load, render: render, mergeRecords: mergeRecords, importText: importText,
+    symkeys: SYMKEYS, insertSym: insertSym };
 })();
 </script>

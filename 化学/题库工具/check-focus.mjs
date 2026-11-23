@@ -114,5 +114,60 @@ anchor('完全分解 68 g 过氧化氢', '32g', '68g H₂O₂ → O₂');
 anchor('完全分解 36 g 水', '32g', '36g 水 → O₂');
 anchor('加热高锰酸钾制氧气：写出生成物的化学式', 'K₂MnO₄＋MnO₂＋O₂', '默写高锰酸钾分解生成物');
 
+/* 配平题：prompt 保持稳定；有 —条件→ 的题，display 用 ⟦上|下⟧ 把条件排到箭头上下 */
+let focusDisplayMissing = 0, focusShouldMark = 0, focusMarked = 0;
+for (const kind of ['lcm', 'odd', 'observe', 'setone']) {
+  for (let i = 1; i <= 200; i++) {
+    const q = CF.gen('balance', kind, i);
+    const hasCond = !!q && q.prompt.indexOf('—') >= 0;
+    if (hasCond) focusShouldMark++;
+    if (!q || q.prompt.indexOf('⟦') >= 0 || !q.display) { focusDisplayMissing++; continue; }
+    if (hasCond !== (q.display.indexOf('⟦') >= 0)) focusDisplayMissing++;
+    if (q.display.indexOf('⟦') >= 0) focusMarked++;
+  }
+}
+if (focusDisplayMissing || focusMarked !== focusShouldMark) {
+  console.error(`✗ 配平题富排版 display 异常：缺 ${focusDisplayMissing}，标记 ${focusMarked}/${focusShouldMark}`);
+  process.exit(1);
+}
+
+/* 配平四法·方法细则卡：四种方法都要有操作步骤与例题，例题的配平结果必须原子守恒
+   （给孩子看的方法示范，学科错误比出题错误更误导，故做逐元素验算护栏）。
+   只核对已展示的 4 道固定例题原文，避免引入通用化学式解析器。 */
+const balanceMod = CF.modules.find((m) => m.id === 'balance');
+const guidedKinds = balanceMod.kinds.filter((k) => k.guide);
+if (guidedKinds.length !== 4) {
+  console.error(`✗ 配平四法方法细则缺失：期望 4 种，实际 ${guidedKinds.length}`);
+  process.exit(1);
+}
+/* 四道示范例题的配平结果原文已逐元素人工验算（见下方 atoms 注释），
+   这里把结果原文冻结成护栏：一旦被改动就必须重新验算，防止错误示范误导孩子。
+     P+5O₂→2P₂O₅：P 4=4、O 10=10
+     2C₂H₂+5O₂→4CO₂+2H₂O：C 4=4、H 4=4、O 10=8+2
+     Fe₂O₃+3CO→2Fe+3CO₂：Fe 2=2、C 3=3、O 6=6
+     C₂H₅OH+3O₂→2CO₂+3H₂O：C 2=2、H 6=6、O 7=4+3                         */
+const guideExamples = {
+  '最小公倍数法': '4P + 5O₂ —点燃→ 2P₂O₅',
+  '奇数配偶法': '2C₂H₂ + 5O₂ —点燃→ 4CO₂ + 2H₂O',
+  '观察法': 'Fe₂O₃ + 3CO —高温→ 2Fe + 3CO₂',
+  '定一法': 'C₂H₅OH + 3O₂ —点燃→ 2CO₂ + 3H₂O'
+};
+let guideSeen = 0;
+for (const k of guidedKinds) {
+  const g = k.guide;
+  if (!g.steps || g.steps.length < 3 || !g.example || !g.example.q || !g.example.steps || !g.example.steps.length || !g.example.a) {
+    console.error(`✗ ${k.name} 方法细则不完整（步骤/例题缺失）`);
+    process.exit(1);
+  }
+  const want = guideExamples[k.name];
+  if (!want || g.example.a !== want) {
+    console.error(`✗ ${k.name} 示范例题配平结果变更，需重新逐元素验算：${g.example.a}`);
+    process.exit(1);
+  }
+  guideSeen++;
+}
+if (guideSeen !== 4) { console.error('✗ 示范例题覆盖不全'); process.exit(1); }
+
 console.log(`✓ 化学专项自检通过：${r.modules} 个模块 / ${r.kinds} 类题型，每类 ${N} 题共 ${r.count} 题`);
+console.log('  配平四法方法细则 4 种齐全，示范例题配平结果已冻结验算');
 console.log('  出题 / 题干 / 答案 / 判分 / 解析 / 大小写敏感 / 今日错题锚点全部通过');

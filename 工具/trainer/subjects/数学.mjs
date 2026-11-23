@@ -31,7 +31,8 @@ export default {
   plan: [1, 3, 7, 14],
   tabs: [
     { go: 'today', n: '今日' }, { go: 'drill', n: '基础快练' }, { go: 'write', n: '写解析式' },
-    { go: 'entry', n: '大题前两步' }, { go: 'week12', n: '本周错题' }, { go: 'report', n: '报告' }
+    { go: 'entry', n: '大题前两步' }, { go: 'week12', n: '本周错题' }, { go: 'report', n: '报告' },
+    { href: '中考数学公式列表.html', n: '公式表' }
   ],
   head: {
     title: '数学闪练卡', brandName: '数学闪练卡', ver: 'v1',
