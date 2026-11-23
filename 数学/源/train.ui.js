@@ -208,10 +208,12 @@
 
     var mods = h('div', { class: 'grid', style: 'margin-top:16px' });
     MT.modules.forEach(function (m) {
+      var cm = coverOfMod(m);
       var card = h('div', { class: 'module' },
         h('div', { class: 'mh' }, h('span', null, m.icon), h('b', null, m.name)),
         h('div', { class: 'desc' }, m.desc),
         h('div', { class: 'kinds' }, (m.kinds || m.items.map(function (x) { return { name: x.title }; })).slice(0, 5).map(function (k) { return h('span', { class: 'kind' }, k.name); })),
+        (cm.pool ? covLine(cm) : null),
         h('div', { class: 'row', style: 'margin-top:auto' },
           h('button', { class: 'btn btn-primary btn-sm', onclick: function () { startSession(m.id, null, m.id === 'entry' ? 3 : 8); } }, '开始'),
           h('button', { class: 'btn btn-sm', onclick: function () { startExample(m.id, lastKindOf(m.id)); } }, '看例题')
@@ -241,10 +243,22 @@
   function renderModule() {
     var m = MT.moduleById(S.view);
     if (!m) { go('today'); return; }
+    var recs = DB.recs.filter(function (r) { return r.mod === m.id; });
+    var okN = recs.filter(function (r) { return r.ok; }).length;
+    var cm = coverOfMod(m);
     var head = h('div', { class: 'card' },
       h('div', { class: 'row' }, h('h2', { style: 'margin:0;font-size:19px' }, m.icon + ' ' + m.name)),
-      h('p', { class: 'muted small', style: 'margin:6px 0 0' }, m.desc)
+      h('p', { class: 'muted small', style: 'margin:6px 0 0' }, m.desc),
+      h('p', { class: 'small' + (recs.length ? '' : ' muted'), style: 'margin:6px 0 0' },
+        recs.length ? '已练 ' + recs.length + ' 题 · 正确率 ' + pct(okN, recs.length) + '%' : '还没开始练')
     );
+    if (cm.pool) {
+      head.appendChild(h('div', { class: 'cov', style: 'margin-top:4px' },
+        h('span', null, '题目覆盖 ' + cm.done + '/' + cm.pool),
+        h('div', { class: 'bar' }, h('i', { style: 'width:' + cm.pct + '%' })),
+        h('span', null, cm.pct + '%'),
+        (cm.legacy ? h('span', { class: 'muted' }, '· 另有 ' + cm.legacy + ' 条早期记录无题目指纹，未计入覆盖（往后新做的都会算）') : null)));
+    }
     app.appendChild(head);
     /* 分组抽象：kinds（生成器题型）和 items（固定得分点）都按 group 切板块。
        这样大题前两步也能看到全部题型、单独练某一题、按板块随机练。 */
@@ -265,7 +279,9 @@
     head.appendChild(h('div', { class: 'row', style: 'margin-top:12px' },
       h('button', { class: 'btn btn-primary', onclick: function () { startSession(m.id, null, m.id === 'entry' ? 3 : 8); } }, '开始一轮'),
       h('button', { class: 'btn', onclick: function () { startExample(m.id, lastKindOf(m.id)); } }, '先看例题'),
-      (!showGroupHead) ? randomBtn(cards) : null
+      (!showGroupHead) ? randomBtn(cards) : null,
+      (cm.open > 0 ? h('button', { class: 'btn', onclick: function () { startNocover(m.id, null); } },
+        '练未覆盖的题（' + cm.open + '）') : null)
     ));
     head.appendChild(h('div', { class: 'small muted', style: 'margin-top:8px' },
       isItems
@@ -283,13 +299,18 @@
       ));
       var grid = h('div', { class: 'grid' });
       byGroup[g].forEach(function (k) {
-        var st = kindStat('new', m.id, k.id);
+        var st = kindStat(m.id, k.id);
+        var c = coverOf(m.id, k.id);
         grid.appendChild(h('div', { class: 'module' },
-          h('div', { class: 'mh' }, h('b', null, k.name)),
+          h('div', { class: 'mh' }, h('b', null, k.name), h('span', { class: 'grow' }),
+            h('button', { class: 'btn btn-ghost btn-sm', onclick: function () { startExample(m.id, k.id); } }, '例题')),
           h('div', { class: 'desc small muted' }, st.n ? '练过 ' + st.n + ' 题 · 正确率 ' + pct(st.ok, st.n) + '%' : '还没练过'),
+          covLine(c),
           h('div', { class: 'row', style: 'margin-top:auto' },
             h('button', { class: 'btn btn-primary btn-sm', onclick: function () { startSession(m.id, k.id, isItems ? 1 : 3); } }, isItems ? '练这个得分点' : '专项 3 题'),
-            h('button', { class: 'btn btn-sm', onclick: function () { startExample(m.id, k.id); } }, '看例题')
+            /* 得分点只有一道题：「练这个得分点」出的就是那道没做过的，不用再单开「练未覆盖」入口 */
+            (!isItems && c.open > 0 ? h('button', { class: 'btn btn-sm', onclick: function () { startNocover(m.id, k.id); } }, '练未覆盖 ' + c.open) : null),
+            (c.pct === 100 ? h('span', { class: 'small', style: 'color:var(--ok);font-weight:600' }, '✓ 已全覆盖') : null)
           )
         ));
       });
@@ -302,9 +323,72 @@
     var lk = DB.meta && DB.meta.lastKind;
     return (lk && lk[mod]) || null;
   }
-  function kindStat(mode, mod, kind) {
-    var rs = DB.recs.filter(function (r) { return r.mode === mode && r.mod === mod && r.kind === kind; });
+  /* 练过几题 / 正确率：不含错题回炉（回炉是复习旧题，不该重复算进「练过」）。 */
+  function kindStat(mod, kind) {
+    var rs = DB.recs.filter(function (r) { return r.mode !== 'wrong' && r.mod === mod && r.kind === kind; });
     return { n: rs.length, ok: rs.filter(function (r) { return r.ok; }).length };
+  }
+
+  /* ---------- 知识覆盖面（分母 = core 的 POOLS 表）----------
+     分子 = 记录里去重后的题目指纹 sig。老记录没有 sig 的只能按题型名兜底，
+     会把同一题型的多道题算成 1 道 —— 宁可少算，不虚报覆盖。
+     pool > 0 才有百分比；pool = -1（纯数字随机）只报练了几道。
+     「大题前两步」是固定得分点，一个得分点一道题，做过就是 100%。 */
+  function doneSigs(mod, kind) {
+    var seen = {}, n = 0, legacy = 0;
+    DB.recs.forEach(function (r) {
+      if (r.mod !== mod || r.kind !== kind) return;
+      if (!r.sig) { legacy++; return; }   /* 加指纹之前的老记录：不知道是哪道题，单独计数，不进覆盖分子 */
+      if (!seen[r.sig]) { seen[r.sig] = 1; n++; }
+    });
+    return { map: seen, n: n, legacy: legacy };
+  }
+  function coverOf(mod, kind) {
+    var pool = MT.kindPool(mod, kind), d = doneSigs(mod, kind);
+    if (pool > 0) {
+      var got = Math.min(d.n, pool);
+      return { pool: pool, done: got, pct: Math.min(100, Math.round(got / pool * 100)), open: Math.max(0, pool - d.n), legacy: d.legacy };
+    }
+    return { pool: 0, done: d.n, pct: null, open: null, legacy: d.legacy };
+  }
+  /* 模块合计：kinds 型模块按题型累加；大题前两步按得分点累加 */
+  function coverOfMod(m) {
+    var ids = m.kinds ? m.kinds.map(function (k) { return k.id; })
+      : Array.from(new Set(m.items.map(function (it) { return it.kind || it.id; })));
+    var pool = 0, done = 0, legacy = 0;
+    ids.forEach(function (id) {
+      var c = coverOf(m.id, id);
+      legacy += c.legacy || 0;
+      if (c.pool > 0) { pool += c.pool; done += c.done; }
+    });
+    return { pool: pool, done: done, pct: pool ? Math.min(100, Math.round(done / pool * 100)) : null, open: Math.max(0, pool - done), legacy: legacy };
+  }
+  /* 抽一道「本题型没做过」的题：随机起点扫该题型的完整题库（MT.enumerateKind），
+     跳过已做过的和本轮已出的；扫完还没找到 = 这个题型真做完了，返回 null 让调用方换题型。
+     以前是随机试 400 个 seed 去「撞」没做过的题，池里只剩 1 道时有约 1/5 的概率撞空，
+     会被误判成「做完了」—— 页面写着「练未覆盖 1」，点进去却直接收尾，所以改成精确遍历。 */
+  function pickUncovered(mod, kind, seenSigs) {
+    var list = MT.enumerateKind(mod, kind), d = doneSigs(mod, kind), n = list.length;
+    if (!n) return null;
+    var start = n > 1 ? ((Math.random() * n) | 0) : 0;
+    for (var i = 0; i < n; i++) {
+      var it = list[(start + i) % n];
+      if (!d.map[it.key] && seenSigs.indexOf(it.key) < 0) return it.q;
+    }
+    return null;
+  }
+  function covLine(c) {
+    if (c.pct == null) return h('div', { class: 'cov' }, h('span', null, '已练 ' + c.done + ' 题'), h('span', { class: 'muted' }, '· 这类题不限量'));
+    return h('div', { class: 'cov' },
+      h('span', null, '覆盖 ' + c.done + '/' + c.pool),
+      h('div', { class: 'bar' }, h('i', { style: 'width:' + c.pct + '%' })),
+      h('span', null, c.pct + '%'),
+      (c.legacy ? h('span', { class: 'muted' }, '· 另有 ' + c.legacy + ' 条早期记录无指纹未计') : null));
+  }
+  /* 模块里所有可覆盖的题型 / 得分点 id */
+  function kindIdsOf(m) {
+    return m.kinds ? m.kinds.map(function (k) { return k.id; })
+      : Array.from(new Set(m.items.map(function (it) { return it.kind || it.id; })));
   }
 
   /* ---------- 练习 ---------- */
@@ -351,7 +435,7 @@
       var q, key, tries = 0;
       do {
         q = MT.gen(mod, id, (Math.random() * 1e9) | 0);
-        key = id + '|' + String(q.prompt);
+        key = MT.sigOf(q);   /* 同一把指纹尺子：去重、覆盖、未覆盖都认它 */
         tries++;
       } while (seen[key] && tries < 6);   /* 同题型出两遍时，尽量不撞同一题干 */
       seen[key] = true;
@@ -364,6 +448,30 @@
       queue: qs, groupLabel: '本板块 ' + kinds.length + (isItems ? ' 个得分点 · 各 1 题' : ' 个题型 · 每种 1~2 题') };
     sess.replay = function () { startGroupRandom(mod, kinds); };
     S.sess = sess;
+    S.view = 'practice';
+    nextQuestion();
+  }
+  /* 专练未覆盖的题：按题型（得分点）排队，一题一抽；某类抽空就换下一个，全空提前收尾。
+     题量按「还没做过的题数」封顶，不为了凑满 8 题重复出旧题。 */
+  function startNocover(mod, kind) {
+    var m = MT.moduleById(mod);
+    if (!m) return;
+    var queue = [], open = 0;
+    kindIdsOf(m).forEach(function (id) {
+      if (kind && id !== kind) return;
+      var c = coverOf(m.id, id);
+      if (c.pct == null || c.open <= 0) return;
+      queue.push(id); open += c.open;
+    });
+    if (!queue.length) {
+      alert('这个' + (kind ? '题型' : '模块') + '的题已经全部做过了，去「错题本」或「报告」看看哪里还不稳。');
+      return;
+    }
+    S.mode = 'nocover';
+    S.example = false;
+    S.back = null;
+    S.sess = { mod: mod, kind: kind || null, mode: 'nocover', total: Math.min(8, open), done: 0, right: 0,
+      t0: Date.now(), queue: queue, sigs: [] };
     S.view = 'practice';
     nextQuestion();
   }
@@ -411,7 +519,17 @@
   function nextQuestion() {
     var s = S.sess;
     if (s.done >= s.total) { S.view = 'summary'; render(); return; }
-    if (S.mode === 'wrong') {
+    if (s.mode === 'nocover') {
+      var qc = null, left = (s.queue || []).slice();
+      while (!qc && left.length) {
+        qc = pickUncovered(s.mod, left[0], s.sigs || []);
+        if (!qc) left.shift();
+      }
+      if (!qc) { s.coveredOut = true; S.view = 'summary'; render(); return; }
+      S.q = qc;
+      s.sigs = s.sigs || [];
+      s.sigs.push(MT.sigOf(qc));
+    } else if (S.mode === 'wrong') {
       S.q = s.queue[s.done];
     } else if (s.queue) {
       S.q = s.queue[s.done];
@@ -829,7 +947,7 @@
     /* qid 要和历史记录兼容：entry 的 kind 现在是得分点 id，拼进去会把老记录拆成两条 */
     var qid = recMod + '.' + (q.mod === 'entry' ? '' : (q.kind || '')) + '.' + String(q.title || '');
     DB.recs.push({ ts: Date.now(), mod: recMod, kind: q.kind, kn: q.title, ok: res.ok, got: res.got, total: res.total, sec: sec, hint: S.hint, mode: S.mode, daily: !!s.daily,
-      qid: qid });
+      qid: qid, sig: MT.sigOf(q) });
     /* 记住这个模块最近练的题型：模块页「先看例题」用它，别随机抽到别的题型 */
     if (q.kind) { DB.meta.lastKind = DB.meta.lastKind || {}; DB.meta.lastKind[recMod] = q.kind; }
     snapAdd(s.mod === 'wrong' ? (S.q.mod || 'drill') : s.mod, q, res, sec);
@@ -905,16 +1023,20 @@
   function renderSummary() {
     var s = S.sess;
     var mins = Math.max(1, Math.round((Date.now() - s.t0) / 60000));
+    /* 专练未覆盖会提前收尾：分母按实际做了几题算，别显示 5/8 好像欠了 3 题 */
+    var total = s.coveredOut ? s.done : s.total;
     /* 跳过的不算分母：否则跳过一题会把正确率拉低，孩子会以为自己做错了 */
-    var answered = Math.max(0, s.total - (s.skipped || 0));
+    var answered = Math.max(0, total - (s.skipped || 0));
     app.appendChild(h('div', { class: 'card', style: 'text-align:center;padding:28px 18px' },
-      h('div', { style: 'font-size:44px;line-height:1.1' }, s.right === s.total ? '🎉' : (s.right / s.total >= .6 ? '👍' : '💪')),
-      h('h2', { style: 'margin:8px 0 4px' }, s.right + ' / ' + s.total + ' 全对'),
-      h('p', { class: 'muted' }, '用时约 ' + mins + ' 分钟 · 正确率 ' + pct(s.right, answered || s.total) + '%' +
-        (s.skipped ? ' · 跳过 ' + s.skipped + ' 题（明天再来）' : '')),
+      h('div', { style: 'font-size:44px;line-height:1.1' }, s.right === total ? '🎉' : (s.right / (total || 1) >= .6 ? '👍' : '💪')),
+      h('h2', { style: 'margin:8px 0 4px' }, s.right + ' / ' + total + ' 全对'),
+      h('p', { class: 'muted' }, '用时约 ' + mins + ' 分钟 · 正确率 ' + pct(s.right, answered || total || 1) + '%' +
+        (s.skipped ? ' · 跳过 ' + s.skipped + ' 题（明天再来）' : '') +
+        (s.coveredOut ? ' · 这个范围里没做过的题已经做完了' : '')),
       h('div', { class: 'row', style: 'justify-content:center;margin-top:16px' },
         h('button', { class: 'btn btn-primary', onclick: function () {
-          if (s.replay) s.replay();
+          if (s.mode === 'nocover') startNocover(s.mod, s.kind);
+          else if (s.replay) s.replay();
           else if (s.mod === 'wrong') startWrong();
           else if (s.daily) startDaily(s.mod);
           else startSession(s.mod, s.kind, s.total);
@@ -923,9 +1045,9 @@
       )
     ));
     var tips = [];
-    if (s.right / s.total < .6) tips.push('正确率偏低：先点「看提示」把例题看懂，再独立做一遍。');
-    if (s.mod === 'write' && s.right / s.total < .8) tips.push('写解析式的目标是一次就对：设 → 代 → 求，三步各写一行。');
-    if (s.mod === 'entry' && s.right / s.total < .7) tips.push('前两步的关键是「先落笔」：写出设、列出式子，比算完更重要。');
+    if (s.right / (total || 1) < .6) tips.push('正确率偏低：先点「看提示」把例题看懂，再独立做一遍。');
+    if (s.mod === 'write' && s.right / (total || 1) < .8) tips.push('写解析式的目标是一次就对：设 → 代 → 求，三步各写一行。');
+    if (s.mod === 'entry' && s.right / (total || 1) < .7) tips.push('前两步的关键是「先落笔」：写出设、列出式子，比算完更重要。');
     if (tips.length) app.appendChild(h('div', { class: 'card' }, h('b', null, '下一步'), tips.map(function (t) { return h('p', { class: 'small' }, '· ' + t); })));
   }
 
@@ -940,6 +1062,26 @@
       statCard('累计用时', recs.length ? fmtSec(secs) : '—'),
       statCard('错题本', Object.keys(DB.wrong).length)
     ));
+
+    /* 知识覆盖面：分母 = 每个题型的不重复题干数（core 的 POOLS），按模块汇总 */
+    var covDone = 0, covPool = 0, covLegacy = 0, covRows = h('div');
+    MT.modules.forEach(function (m) {
+      var c = coverOfMod(m);
+      covLegacy += c.legacy || 0;
+      if (c.pool) { covDone += c.done; covPool += c.pool; }
+      covRows.appendChild(h('div', { style: 'margin-top:10px' },
+        h('div', { class: 'row' }, h('b', { class: 'small' }, m.icon + ' ' + m.name), h('span', { class: 'grow' }),
+          h('span', { class: 'small muted' }, c.pct == null ? '不限量 · 已练 ' + c.done : c.done + ' / ' + c.pool + ' · ' + c.pct + '%')),
+        h('div', { class: 'bar', style: 'margin-top:4px' },
+          h('i', { style: 'width:' + (c.pct || 0) + '%' }))));
+    });
+    app.appendChild(h('div', { class: 'card', style: 'margin-top:16px' },
+      h('h3', { style: 'margin-top:0' }, '知识覆盖面（做过多少道不同的题）'),
+      h('p', { class: 'small muted', style: 'margin:0 0 4px' },
+        '全科 ' + covDone + ' / ' + covPool + ' 道（' + pct(covDone, covPool || 1) + '%）。分母是每个题型的固定题库量，' +
+        '同一个题型反复换数字不会涨；纯数字随机的题型（判别式、写解析式各题型）不计百分比。' +
+        (covLegacy ? '另有 ' + covLegacy + ' 条早期记录没有题目指纹，不知道是哪道题，未计入分子。' : '')),
+      covRows));
 
     /* 按模块 */
     var byMod = {};
@@ -1168,7 +1310,8 @@
     S: S, db: function () { return DB; },
     fracify: fracify, escLt: escLt, normalizeDB: normalizeDB,
     startSession: startSession, startWrong: startWrong, startDaily: startDaily, startExample: startExample,
-    startGroupRandom: startGroupRandom,
+    startGroupRandom: startGroupRandom, startNocover: startNocover,
+    cover: coverOf, coverMod: coverOfMod,
     plan: function () { return dayPlan(); },
     submit: submit, submitFix: submitFix, next: next, go: go, render: render
   };

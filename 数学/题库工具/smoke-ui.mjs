@@ -565,6 +565,65 @@ ok((textOf(app).match(/当前板块随机题练习/g) || []).length >= 7, '基�
   }
 }
 
+/* ---------- 知识覆盖面 + 专练没做过的题（2026-11-23） ---------- */
+{
+  M.db().recs.length = 0;
+  M.startSession('drill', 'symshape', 1);   /* 对称图形判断：固定 3 道、单选 */
+  const q1 = M.S.q;
+  ok(q1.fields[0].type === 'choice', '对称图形判断第一空不是单选');
+  M.S.choice[0] = q1.fields[0].ans;
+  M.submit();
+  ok(M.S.res && M.S.res.ok, '对称图形判断正确解被判错');
+  const rec = M.db().recs[M.db().recs.length - 1];
+  ok(!!rec.sig, '记录里没有题目指纹 sig');
+  ok(rec.sig === ctx.MT.sigOf(q1), '记录里的 sig 与 MT.sigOf 不一致');
+
+  const c1 = M.cover('drill', 'symshape');
+  ok(c1.pool === 3, 'drill.symshape 容量应为 3，实际 ' + c1.pool);
+  ok(c1.done === 1 && c1.open === 2, '做完 1 道应 1/3，实际 ' + c1.done + '/' + c1.pool);
+
+  /* 模块页：题型卡与模块头都要有覆盖比例 */
+  M.go('drill');
+  const pageTxt = textOf(app);
+  ok(/覆盖 1\/3/.test(pageTxt), '题型卡没显示「覆盖 1/3」');
+  ok(/题目覆盖 1\/\d+/.test(pageTxt), '模块头没显示「题目覆盖 a/b」');
+  ok(/练未覆盖 2/.test(pageTxt), '题型卡没显示「练未覆盖 2」');
+
+  /* 专练未覆盖：出的必须是没做过的那道 */
+  M.startNocover('drill', 'symshape');
+  ok(M.S.view === 'practice', '专练未覆盖没进入练习（view=' + M.S.view + '）');
+  const q2 = M.S.q;
+  ok(q2 && ctx.MT.sigOf(q2) !== ctx.MT.sigOf(q1), '专练未覆盖又出了刚做过的那道');
+  M.S.choice[0] = q2.fields[0].ans;
+  M.submit();
+  ok(M.cover('drill', 'symshape').done === 2, '做完两题后覆盖数应为 2');
+
+  /* 回归（审查后修）：大池题型只剩最后 1 道时，「练未覆盖」必须每次都能抽到它。
+     旧实现随机试 400 个 seed 去撞，drill.circangle（244 道）剩 1 道时约 1/5 会撞空 →
+     被判成「做完了」。小池题型（symshape 只有 3 道）测不出这个 bug，所以用大池 + 预置 243 条记录。 */
+  const bigAll = ctx.MT.enumerateKind('drill', 'circangle');
+  ok(bigAll.length >= 100, 'drill.circangle 只枚举到 ' + bigAll.length + ' 道，测试前提不成立');
+  const bigOpen = bigAll[bigAll.length - 1];
+  bigAll.slice(0, bigAll.length - 1).forEach((it) => {
+    M.db().recs.push({ ts: Date.now(), mod: 'drill', kind: 'circangle', kn: '圆周角', ok: true, got: 1, total: 1,
+      sec: 20, hint: false, mode: 'new', qid: 'drill.circangle', sig: it.key });
+  });
+  const cBig = M.cover('drill', 'circangle');
+  ok(cBig.done === bigAll.length - 1 && cBig.open === 1,
+    '预置 ' + (bigAll.length - 1) + ' 条后应只剩 1 道，实际 ' + cBig.done + '/' + cBig.pool);
+  for (let i = 0; i < 30; i++) {
+    M.startNocover('drill', 'circangle');
+    ok(M.S.view === 'practice', '第 ' + (i + 1) + ' 次「练未覆盖」被判成做完了（其实还剩 1 道）');
+    ok(ctx.MT.sigOf(M.S.q) === bigOpen.key, '只剩 1 道却抽到了别的题');
+  }
+
+  /* 报告页有知识覆盖面 */
+  M.go('report');
+  const repTxt = textOf(app);
+  ok(repTxt.includes('知识覆盖面'), '报告页没有「知识覆盖面」');
+  ok(/全科 \d+ \/ \d+/.test(repTxt), '报告页没有全科合计');
+}
+
 if (fails.length) {
   console.error('✗ UI 冒烟失败 ' + fails.length + ' 处：');
   fails.forEach((f) => console.error('  - ' + f));

@@ -106,6 +106,19 @@ input.txt.ok{border-color:var(--ok);background:var(--ok-soft)}input.txt.bad{bord
 .modcard .m{margin-top:8px;font-size:11px;color:var(--brand);font-weight:700}
 .kindchip{display:inline-block;border:1px solid var(--line);border-radius:20px;padding:5px 12px;margin:4px 5px 0 0;font-size:13px;cursor:pointer;background:#fff}
 .kindchip:hover{border-color:var(--brand);background:var(--brand-soft);color:var(--brand)}
+/* 题型 chip 右侧的「练未覆盖」小按钮（覆盖 a/b 由 core 的 POOLS 分母算） */
+.kindrow{display:inline-flex;align-items:center;gap:5px;margin:4px 5px 0 0}
+.kindrow .kindchip{margin:0}
+.kindcov{font:inherit;font-size:12px;border:1px dashed var(--brand);color:var(--brand);background:#fff;border-radius:20px;padding:4px 10px;cursor:pointer;white-space:nowrap}
+.kindcov:hover{background:var(--brand-soft)}
+.kindcov.done{border-style:solid;border-color:var(--line);color:var(--muted);cursor:default;background:#f7f7f7}
+.kindcov.done:hover{background:#f7f7f7}
+/* 知识覆盖面：报告页单元行 */
+.covrow{display:flex;align-items:center;gap:8px;margin:6px 0;font-size:13px}
+.covrow .nm{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.covrow .bg{flex:0 0 46%;height:8px;background:var(--line);border-radius:5px;overflow:hidden}
+.covrow .bg i{display:block;height:100%;background:var(--brand)}
+.covrow .num{flex:0 0 74px;text-align:right;color:var(--muted);font-size:12px}
 /* 化学特殊符号键盘：点击即插入到当前输入框 */
 .symkeys{margin-top:10px;border-top:1px dashed var(--line);padding-top:8px}
 .symkeys .sk-title{font-size:12px;color:var(--muted);margin-bottom:6px}
@@ -604,7 +617,9 @@ export function uiScript(cfg) {
 
   /* ---------- 种子 / 去重 / 题型轮换 ---------- */
   function newSeed() { return (Date.now() ^ (Math.random() * 0xffffffff)) >>> 0; }
-  function sigOf(q) { return q.mod + '.' + q.kind + '|' + String(q.prompt).slice(0, 40); }
+  /* 同一道题的稳定键：与作答记录 qid 完全同源（mod.kind + 题干前 40 字）。
+     改这里会让「已做过」判定与历史记录失配，别动格式。 */
+  function sigOf(q) { return q.mod + '.' + q.kind + '.' + String(q.prompt).slice(0, 40); }
   function lastRoundOf(mod) {
     var recs = DB.recs.filter(function (x) { return !mod || x.mod === mod; });
     return recs.slice(-20);
@@ -615,6 +630,49 @@ export function uiScript(cfg) {
     do { q = CH.gen(mod, kind, (seed + tries * 7919) >>> 0); tries++; }
     while (seenSigs.indexOf(sigOf(q)) >= 0 && tries < 40);
     return q;
+  }
+  /* ---------- 题库枚举（专练未覆盖用）----------
+     题型是 seed 驱动的确定性生成器，扫 1..1200 个 seed 即可拿到该题型的完整题库
+     （POOLS 里最大的固定池是 sol.config 64 道，1200 足够饱和）。
+     pool = -1 的题型没有“覆盖完”的概念，不进这里。结果按题型缓存，题库随页面版本变。 */
+  var POOL_CACHE = {};
+  function enumerateKind(mod, kind) {
+    var ck = mod + '.' + kind;
+    if (POOL_CACHE[ck]) return POOL_CACHE[ck];
+    var list = [], seen = {};
+    for (var s = 1; s <= 1200; s++) {
+      var q;
+      try { q = CH.gen(mod, kind, s); } catch (e) { continue; }
+      if (!q || !q.prompt) continue;
+      var k = sigOf(q);
+      if (!seen[k]) { seen[k] = 1; list.push({ key: k, q: q }); }
+    }
+    POOL_CACHE[ck] = list;
+    return list;
+  }
+  /* 抽一道「本题型没做过」的题：从随机起点扫题库，跳过已做与本轮已出。
+     返回 null = 这个题型的题都做过了（调用方换题型或收尾）。 */
+  function pickUncovered(mod, kind, seenSigs) {
+    var list = enumerateKind(mod, kind), d = doneMap(mod, kind), n = list.length;
+    if (!n) return null;
+    var start = n > 1 ? (newSeed() % n) : 0;
+    for (var i = 0; i < n; i++) {
+      var it = list[(start + i) % n];
+      if (!d.map[it.key] && seenSigs.indexOf(it.key) < 0) return it.q;
+    }
+    return null;
+  }
+  /* 未覆盖题型的队列：只有登记了池量的题型才有“未覆盖”这回事 */
+  function nocoverQueue(mod, kind) {
+    var m = CH.moduleById(mod), out = [];
+    if (!m) return out;
+    m.kinds.forEach(function (k) {
+      if (kind && k.id !== kind) return;
+      var c = coverOf(m.id, k.id);
+      if (c.pct == null || c.open <= 0) return;
+      out.push(k.id);
+    });
+    return out;
   }
   function modOf(k) { return k.mod; }
   function kindQueue(mod, n) {
@@ -641,6 +699,9 @@ export function uiScript(cfg) {
       total = queue.length;
     } else if (!mode || mode === 'normal') {
       queue = kindQueue(mod, total);
+    } else if (mode === 'nocover') {
+      queue = nocoverQueue(mod, kind);
+      if (!queue.length) { S.mod = mod; S.view = 'mod'; render(); return; }
     }
     S.sess = { mod: mod || null, kind: kind || null, total: total, done: 0, right: 0,
       mode: mode || 'normal', queue: queue, sigs: [], seed: newSeed() };
@@ -657,6 +718,17 @@ export function uiScript(cfg) {
       var w = DB.wrong[entry.key];
       S.q = { mod: w.mod, kind: w.kind, kindName: w.kindName, modName: w.modName, title: w.title,
         prompt: w.prompt, display: w.display, fields: w.fields, tip: w.tip, explain: w.explain, kp: w.kp, _wrongKey: entry.key };
+    } else if (s.mode === 'nocover') {
+      /* 专练未覆盖：按队列里的题型逐个抽“没做过”的题；某题型抽空就换下一个，
+         全空即提前收尾（summary 会说明“能做的都做过了”，不硬凑满 10 题）。 */
+      var qc = null, left = (s.queue || []).slice();
+      while (!qc && left.length) {
+        qc = pickUncovered(s.mod, left[0], s.sigs);
+        if (!qc) left.shift();
+      }
+      if (!qc) { s.coveredOut = true; S.view = 'summary'; render(); return; }
+      S.q = qc;
+      s.sigs.push(sigOf(qc));
     } else {
       var slot = s.queue && s.queue.length ? s.queue[s.done % s.queue.length] : null;
       var mod = s.mod, kind = s.kind;
@@ -791,6 +863,43 @@ export function uiScript(cfg) {
     return { done: done, right: right, rate: done ? Math.round(right / done * 100) : 0,
       wrong: Object.keys(DB.wrong).length, due: dueWrong().length };
   }
+  /* 该单元已练到的题型数。只认登记过的 kind（老记录缺 kind 字段的不算），
+     避免因为脏记录把「覆盖 3/7」虚报成 7/7。 */
+  function kindSeen(recs, m) {
+    var ids = {};
+    recs.forEach(function (r) { if (r.kind) ids[r.kind] = 1; });
+    return m.kinds.filter(function (k) { return ids[k.id]; }).length;
+  }
+  /* ---------- 知识覆盖面（分母 = core 的 POOLS 表）----------
+     keyOf 与作答记录的 qid 同源（mod.kind + 题干前 40 字），所以「做过哪几道题」可去重。
+     pool > 0 才有百分比；pool = -1（数字随机 / 排列组合 / 元素组合）只报练了几道。 */
+  function keyOf(q) { return q.mod + '.' + q.kind + '.' + String(q.prompt || '').slice(0, 40); }
+  function doneMap(mod, kind) {
+    var seen = {}, n = 0;
+    DB.recs.forEach(function (r) {
+      if (r.mod !== mod || r.kind !== kind) return;
+      var k = r.qid || (r.mod + '.' + r.kind + '.' + String(r.prompt || '').slice(0, 40));
+      if (!seen[k]) { seen[k] = 1; n++; }
+    });
+    return { map: seen, n: n };
+  }
+  function coverOf(mod, kind) {
+    var pool = CH.kindPool ? CH.kindPool(mod, kind) : 0, d = doneMap(mod, kind);
+    if (pool > 0) {
+      var got = Math.min(d.n, pool);
+      return { pool: pool, done: got, pct: Math.min(100, Math.round(got / pool * 100)), open: Math.max(0, pool - d.n) };
+    }
+    return { pool: 0, done: d.n, pct: null, open: null };
+  }
+  /* 单元合计：只累计有分母的题型；全是不限时返回 pct=null */
+  function coverOfMod(m) {
+    var pool = 0, done = 0;
+    m.kinds.forEach(function (k) {
+      var c = coverOf(m.id, k.id);
+      if (c.pool > 0) { pool += c.pool; done += c.done; }
+    });
+    return { pool: pool, done: done, pct: pool ? Math.min(100, Math.round(done / pool * 100)) : null };
+  }
   function viewToday() {
     var st = stats(), resume = '';
     try {
@@ -800,10 +909,16 @@ export function uiScript(cfg) {
     var mods = CH.modules.map(function (m) {
       var recs = DB.recs.filter(function (r) { return r.mod === m.id; });
       var ok = recs.filter(function (r) { return r.ok; }).length;
+      var seen = kindSeen(recs, m);
       var wr = Object.keys(DB.wrong).filter(function (k) { return DB.wrong[k].mod === m.id; }).length;
+      /* 文案口径（2026-11-23）：括号里的百分号是「正确率」不是进度，故明写；
+         另补「题型 a/b」= 该单元已练到的题型数 / 题型总数（真·覆盖率）。 */
       return '<div class="modcard" data-mod="' + m.id + '"><h4>' + m.icon + ' ' + esc(m.name) + '</h4>' +
         '<div class="d">' + esc(m.desc) + '</div><div class="m">' + m.kinds.length + ' 类题型' +
-        (recs.length ? ' · 已练 ' + recs.length + ' 题（' + Math.round(ok / recs.length * 100) + '%）' : ' · 未练') +
+        (recs.length
+          ? ' · 已练 ' + recs.length + ' 题 · 正确率 ' + Math.round(ok / recs.length * 100) + '%' +
+            ' · 题型 ' + seen + '/' + m.kinds.length
+          : ' · 未练') +
         (wr ? ' · 错题 ' + wr : '') + '</div></div>';
     }).join('');
     var scope = fillTpl(T.scopePill, { units: CH.modules.length, kinds: CH.allKinds.length });
@@ -884,16 +999,32 @@ export function uiScript(cfg) {
     if (!m) return '<div class="card"><h2>未找到单元</h2><button class="btn" data-go="today">回今日</button></div>';
     var recs = DB.recs.filter(function (r) { return r.mod === m.id; });
     var ok = recs.filter(function (r) { return r.ok; }).length;
+    var cm = coverOfMod(m);
+    /* 题型 chip：左边点进去 = 随机练该题型；右边小按钮 = 只练这题型没做过的题（分母来自 POOLS）。
+       pool = -1 的题型（数字随机/排列组合）没有“未覆盖”概念，只显示已练几道。 */
     var chips = m.kinds.map(function (k) {
       var wr = Object.keys(DB.wrong).filter(function (x) { return DB.wrong[x].mod === m.id && DB.wrong[x].kind === k.id; }).length;
-      return '<span class="kindchip" data-kind="' + k.id + '">' + esc(k.name) + (wr ? ' · 错题' + wr : '') + '</span>' + guideCard(k);
+      var c = coverOf(m.id, k.id);
+      var tag = c.pct == null ? ' · 已练 ' + c.done : ' · 覆盖 ' + c.done + '/' + c.pool + '（' + c.pct + '%）';
+      var cov = c.pct == null ? ''
+        : c.open > 0
+          ? '<button class="kindcov" data-kindcov="' + k.id + '">练未覆盖 ' + c.open + '</button>'
+          : '<span class="kindcov done">✓ 已全覆盖</span>';
+      return '<span class="kindrow"><span class="kindchip" data-kind="' + k.id + '">' + esc(k.name) + tag +
+        (wr ? ' · 错题 ' + wr : '') + '</span>' + cov + '</span>' + guideCard(k);
     }).join('');
+    var covLine = cm.pct == null ? ''
+      : '，题目覆盖 ' + cm.done + '/' + cm.pool + '（' + cm.pct + '%）' + (cm.pct >= 100 ? '，全部做过' : '');
+    var openTotal = 0;
+    m.kinds.forEach(function (k) { var c = coverOf(m.id, k.id); if (c.open > 0) openTotal += c.open; });
     return '<div class="card"><div class="row"><button class="btn btn-ghost btn-sm" data-go="today">← 今日</button>' +
       '<h2 style="margin:0">' + m.icon + ' ' + esc(m.name) + '</h2></div>' +
-      '<p class="muted small">' + esc(m.desc) + ' 已练 ' + recs.length + ' 题' + (recs.length ? '，正确率 ' + Math.round(ok / recs.length * 100) + '%' : '') + '。</p>' +
+      '<p class="muted small">' + esc(m.desc) + ' 已练 ' + recs.length + ' 题' +
+      (recs.length ? '，正确率 ' + Math.round(ok / recs.length * 100) + '%，练过 ' + kindSeen(recs, m) + '/' + m.kinds.length + ' 类题型' + covLine : '，还没开始练') + '。</p>' +
       '<div class="row"><button class="btn btn-primary" data-act="modround">本单元随机 10 题</button>' +
+      (openTotal ? '<button class="btn" data-act="modnocover">练未覆盖的题（' + openTotal + '）</button>' : '') +
       '<button class="btn" data-act="modexample">先看一道例题</button></div>' +
-      '<h3>按题型练（点一个题型，只出该类题）</h3><div>' + chips + '</div></div>';
+      '<h3>按题型练（点题型随机练，点右侧只练没做过的）</h3><div>' + chips + '</div></div>';
   }
   function viewQuiz() {
     var s = S.sess, q = S.q;
@@ -964,10 +1095,15 @@ export function uiScript(cfg) {
     return h + '</div>';
   }
   function viewSummary() {
-    var s = S.sess, rate = s.total ? Math.round(s.right / s.total * 100) : 0;
+    var s = S.sess, base = Math.max(1, s.done), rate = Math.round(s.right / base * 100);
+    /* 专练未覆盖会提前结束（可做的题不够 10 道），正确率按实际做了几题算 */
+    var outNote = s.coveredOut
+      ? '<p class="muted small" style="margin-top:8px">本单元这类题能做的都做过了，已没有新题可出——接下来靠错题回炉和整卷复盘巩固。</p>'
+      : '';
     return '<div class="card"><h2>本轮完成</h2>' +
       statBoxes([['做题', s.done], ['答对', s.right], ['正确率', rate + '%']]) +
       '<p class="muted small" style="margin-top:12px">' + esc(rate >= 80 ? fillTpl(T.summaryGood, { plan: PLAN.join(' / ') }) : T.summaryLow) + '</p>' +
+      outNote +
       '<div class="row"><button class="btn btn-primary" data-act="again-round">再来一轮（新题）</button>' +
       '<button class="btn" data-go="wrong">去清错题</button><button class="btn btn-ghost" data-go="today">回今日</button></div></div>';
   }
@@ -1020,8 +1156,25 @@ export function uiScript(cfg) {
             '</td><td>' + (e.inBook ? '在错题本' : '已掌握') + '</td></tr>';
         }).join('') + '</table>'
       : '<p class="muted small">还没有答错的记录。</p>';
+    /* 知识覆盖面：分母 = 每个题型的不重复题干数（core 的 POOLS），按单元汇总。
+       数字随机 / 排列组合类题型（-1）不计入分母，只算“做过几道”，避免永远到不了 100%。 */
+    var covPool = 0, covDone = 0;
+    var covRows = CH.modules.map(function (m) {
+      var c = coverOfMod(m);
+      if (!c.pool) return '';
+      covPool += c.pool; covDone += c.done;
+      return '<div class="covrow"><span class="nm">' + esc(m.icon + ' ' + m.name) + '</span>' +
+        '<span class="bg"><i style="width:' + c.pct + '%"></i></span>' +
+        '<span class="num">' + c.done + '/' + c.pool + ' · ' + c.pct + '%</span></div>';
+    }).join('');
+    var covPct = covPool ? Math.round(covDone / covPool * 100) : 0;
+    var covHtml = covPool
+      ? '<p class="muted small">全科 ' + covDone + ' / ' + covPool + ' 道（' + covPct + '%）。分母是每个题型实际能出的不重复题干数；' +
+        '数字随机类（质量分数计算、溶液的稀释）和排列组合类（四图操作、结构示意图）不计入分母。</p>' + covRows
+      : '<p class="muted small">还没有记录。</p>';
     return '<div class="card"><h2>训练报告</h2>' +
       statBoxes([['累计做题', st.done], ['累计答对', st.right], ['总正确率', st.rate + '%'], ['错题待清', st.wrong]]) +
+      '<h3>知识覆盖面（做过多少道不同的题）</h3>' + covHtml +
       '<h3>各单元正确率</h3>' + (mods || '<p class="muted small">还没有记录。</p>') +
       '<h3>薄弱考点（正确率最低）</h3>' + weakHtml +
       '<h3>曾经错过的题（期末复盘 · ' + hist.length + ' 道）</h3>' +
@@ -1049,6 +1202,16 @@ export function uiScript(cfg) {
     });
     Array.prototype.forEach.call(app.querySelectorAll('[data-kind]'), function (c) {
       c.onclick = function () { startRound(S.mod, c.getAttribute('data-kind'), 10); saveSess(); };
+    });
+    /* 「练未覆盖」：只出该题型没做过的题；队列空说明已全覆盖，给个明确反馈 */
+    Array.prototype.forEach.call(app.querySelectorAll('[data-kindcov]'), function (c) {
+      c.onclick = function (e) {
+        if (e && e.stopPropagation) e.stopPropagation();
+        var kd = c.getAttribute('data-kindcov');
+        var q = nocoverQueue(S.mod, kd);
+        if (!q.length) { alert('这个题型的题已经全部做过了，可以先清错题或做本单元随机。'); return; }
+        startRound(S.mod, kd, 10, 'nocover'); saveSess();
+      };
     });
     Array.prototype.forEach.call(app.querySelectorAll('[data-choice]'), function (b) {
       b.onclick = function () {
@@ -1110,7 +1273,16 @@ export function uiScript(cfg) {
     else if (a === 'resume') { if (restore()) { render(); return; } }
     else if (a === 'wrongdue') { startRound(null, null, 20, 'wrong'); }
     else if (a === 'wrongall') { startRound(null, null, Object.keys(DB.wrong).length, 'wrongall'); }
-    else if (a === 'again-round') { clearSess(); var mm = S.sess && S.sess.mod, kk = S.sess && S.sess.kind; startRound(mm, kk, 10); }
+    else if (a === 'again-round') {
+      /* 保留本轮入口（单元 / 题型 / 模式）：未覆盖专练再来一轮仍是未覆盖专练 */
+      var ss = S.sess || {}, mo = ss.mode;
+      clearSess();
+      startRound(ss.mod, ss.kind, 10, mo === 'nocover' ? 'nocover' : undefined);
+    }
+    else if (a === 'modnocover') {
+      if (!nocoverQueue(S.mod, null).length) { alert('这个单元的题已经全部做过了，可以先清错题或整卷复盘。'); return; }
+      startRound(S.mod, null, 10, 'nocover');
+    }
     else if (a === 'exit') { clearSess(); go('today'); return; }
     else if (a === 'export') {
       var blob = new Blob([JSON.stringify(DB, null, 2)], { type: 'application/json' });

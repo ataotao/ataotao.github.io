@@ -60,6 +60,38 @@ CF.modules.forEach((m) => {
   }
 });
 
+/* pools 模式：重扫题库，校验 core 的 POOLS 容量表没漂移（页面「覆盖 a/b」的分母）
+     node 化学/题库工具/check-focus.mjs pools
+   口径 = 题干前 40 字去重，与内核 sigOf 同一把尺子；另按内核 enumerateKind 的 seed
+   范围（1..1200）再算一遍，确保「练未覆盖」能把整池枚举出来。 */
+if (args.includes('pools')) {
+  const bad = [];
+  let fixedSum = 0;
+  for (const k of CF.allKinds) {
+    if (typeof CF.kindPool !== 'function') { console.error('✗ core 没导出 kindPool'); process.exit(1); }
+    const declared = CF.kindPool(k.mod, k.kind);
+    const set = new Set(), kernelSet = new Set();
+    for (let i = 1; i <= 6000; i++) {
+      const q = CF.gen(k.mod, k.kind, i);
+      if (!q || !q.prompt) continue;
+      const key = String(q.prompt).slice(0, 40);
+      set.add(key);
+      if (i <= 1200) kernelSet.add(key);
+    }
+    if (declared === -1) { if (set.size < 200) bad.push(`${k.mod}.${k.kind} 标为不限但只有 ${set.size} 道`); }
+    else if (set.size !== declared) bad.push(`${k.mod}.${k.kind} 表里 ${declared}，实测 ${set.size}`);
+    else if (kernelSet.size !== declared) bad.push(`${k.mod}.${k.kind} 内核只枚举到 ${kernelSet.size} 道，表里 ${declared}`);
+    else fixedSum += set.size;
+  }
+  if (bad.length) {
+    console.error(`✗ POOLS 容量表漂移 ${bad.length} 处：`);
+    bad.forEach((b) => console.error('  · ' + b));
+    process.exit(1);
+  }
+  console.log(`✓ 题库容量表一致：${CF.allKinds.length} 类题型共 ${fixedSum} 道`);
+  process.exit(0);
+}
+
 const r = CF.selfTest(N);
 if (r.fails.length) {
   console.error(`✗ ${r.fails.length} 个问题（共生成 ${r.count} 题）：`);

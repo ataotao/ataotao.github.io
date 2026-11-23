@@ -50,6 +50,49 @@ if (typeof MT.planForDay !== 'function' || typeof MT.dailyQueue !== 'function') 
   process.exit(1);
 }
 
+/* ---------- pools 模式：重扫题库容量，和 core 里 POOLS 表逐项比对 ---------- */
+function runPools() {
+  const SCAN = 3000;
+  const fails = [];
+  let fixedKinds = 0, fixedTotal = 0, openKinds = 0;
+  MT.modules.forEach((m) => {
+    const kinds = m.kinds
+      ? m.kinds.map((k) => ({ id: k.id, name: k.name }))
+      : Array.from(new Set(m.items.map((it) => it.kind || it.id))).map((id) => ({ id, name: id }));
+    kinds.forEach((k) => {
+      const seen = new Set();
+      for (let s = 1; s <= SCAN; s++) {
+        let q;
+        try { q = MT.gen(m.id, k.id, s * 7919 + 13); } catch (e) { continue; }
+        if (q && q.prompt) seen.add(MT.sigOf(q));
+      }
+      const want = MT.kindPool(m.id, k.id), got = seen.size;
+      if (want === -1) {
+        if (got < 100) fails.push(`${m.id}.${k.id} 表里标 ∞，实测只 ${got} 道（应改成固定数）`);
+        openKinds++;
+        return;
+      }
+      if (!want) { fails.push(`${m.id}.${k.id} 没有登记容量（实测 ${got}）`); return; }
+      if (want !== got) fails.push(`${m.id}.${k.id} 表里 ${want}，实测 ${got}`);
+      /* 页面「练未覆盖」走的是 core 的 enumerateKind，它枚举出的条数必须与 POOLS 相等：
+         少了 → 覆盖 a/b 永远到不了 100%，且未覆盖题抽完一遍就提前收尾；多了 → 会出「没登记的题」。 */
+      const enumN = MT.enumerateKind(m.id, k.id).length;
+      if (enumN !== want) fails.push(`${m.id}.${k.id} 运行时只枚举到 ${enumN} 道，POOLS 是 ${want}`);
+      fixedKinds++; fixedTotal += got;
+    });
+  });
+  console.log(`扫描：${MT.modules.length} 模块 · ${fixedKinds + openKinds} 类题型 · 每类 ${SCAN} 个 seed`);
+  console.log(`固定池 ${fixedKinds} 类 / ${fixedTotal} 道；不设上限 ${openKinds} 类`);
+  if (fails.length) {
+    console.error('✗ 容量表漂移 ' + fails.length + ' 处（按实测数字改 core 里的 POOLS）：');
+    fails.slice(0, 40).forEach((f) => console.error('  - ' + f));
+    process.exit(1);
+  }
+  console.log('✓ 容量表与实测一致');
+}
+
+if (process.argv.includes('pools')) { runPools(); process.exit(0); }
+
 /* ---------- A. 生成器 / 判分 ---------- */
 const t0 = Date.now();
 const r = MT.selfTest(N);

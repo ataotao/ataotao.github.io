@@ -2370,6 +2370,76 @@ var PT = (function () {
     }
   ];
 
+  /* ---------- 题库容量（2026-11-23）----------
+     每个题型的「不重复题干数」，口径 = sigOf（mod.kind + 题干与题图的哈希），
+     由 seed 扫描 1..3000 饱和得出；页面据此算「做过 a / 总 b」的覆盖比例。
+     -1 = 不设上限（纯数字随机，如电阻与材料），只统计练了几道，不给百分比，
+          否则永远到不了 100%。改题 / 加题后这张表会漂移：
+          `node 物理/题库工具/check-training.mjs pools` 会重扫并逐项比对，
+          不一致时按打印出的新数字改这里，不要手估。 */
+  var POOLS = {
+    'model.voltage': 5, 'model.resistance': -1, 'model.conductor': 3, 'model.connection': 4,
+    'model.tension': 19, 'model.led': 2, 'model.charge': 2, 'model.stroke': 8,
+    'model.circuit': 3, 'model.meter': 3, 'model.pulley': 3, 'model.diffusion': 2,
+    'model.interforce': 2, 'model.phasegraph': 2, 'model.energy': 3, 'model.electroscope': 2,
+    'model.rheostat': 1,
+    'amount.heatmass': 48, 'amount.heatrise': 96, 'amount.fuelmass': 32, 'amount.fuelq': 12,
+    'amount.pulleyamount': 8, 'amount.pulleyh': 8, 'amount.effamount': 72, 'amount.heatm': 16,
+    'amount.seriesI': 4, 'amount.parallelU': 4, 'amount.ccompare': 15, 'amount.resfold': 1,
+    'calc.qheat': 270, 'calc.heatdt': 48, 'calc.qfuel': 21, 'calc.qeff': 36, 'calc.workpower': 64,
+    'calc.pulleycalc': 40, 'calc.effforce': 40, 'calc.lever': 78, 'calc.leversolve': 86,
+    'calc.ohm': 117, 'calc.seriesU': 16, 'calc.parallelI': 16, 'calc.heatengineeff': 16,
+    'calc.fusionheat': 48, 'calc.powerdrive': 16,
+    'draw.lever': 2, 'draw.armdraw': 2, 'draw.rope': 2, 'draw.wire': 3,
+    'read.ammeter': 52, 'read.voltmeter': 52, 'read.thermometer': 117, 'read.spring': 23,
+    'read.dualrange': 8
+  };
+  MODULES.forEach(function (m) {
+    m.kinds.forEach(function (k) {
+      var p = POOLS[m.id + '.' + k.id];
+      k.pool = (p == null ? 0 : p);   /* 0 = 未登记，页面按「不限」处理，别静默当 0 题 */
+    });
+  });
+  function kindPool(modId, kindId) {
+    var p = POOLS[modId + '.' + kindId];
+    return p == null ? 0 : p;
+  }
+
+  /* ---------- 题目指纹：覆盖率与「专练没做过的题」都靠它 ----------
+     同一道题在不同 seed 下抽到，题干与题图一样 → 指纹一样，所以「做过哪几道」可去重。
+     题图一起进哈希：作图判断题的题干相同、选项图不同，只看题干会被合成一条。
+     第 12 周裁切图（数学）只哈希 cropKey，别把几十 KB 的 base64 拖进来。 */
+  function sigOf(q) {
+    var s = String(q.prompt == null ? '' : q.prompt);
+    if (q.cropKey) s += '#' + q.cropKey;
+    else if (q.fig) s += '#' + JSON.stringify(q.fig);
+    var h = 5381;
+    for (var i = 0; i < s.length; i++) h = ((h << 5) + h + s.charCodeAt(i)) >>> 0;
+    return (q.mod || '') + '.' + (q.kind || '') + '.' + h.toString(36);
+  }
+
+  /* ---------- 题库枚举：「专练没做过的题」靠它，不做概率猜测 ----------
+     题型是 seed 驱动的确定性生成器，扫一串 seed 就拿到该题型的完整题库，按 sigOf 去重。
+     口径必须与 POOLS 表同源：POOLS 是用同样的 3000 个 seed 扫出来的（check-training.mjs pools
+     会断言「枚举条数 == POOLS」），所以「覆盖 a/b」的分母和「还剩几道」的分子是同一把尺子。
+     结果按题型缓存，最慢的题型（calc.qheat 270 道）扫一遍约 30 ms。 */
+  var POOL_SEEDS = 3000;
+  var POOL_LIST = {};
+  function enumerateKind(modId, kindId) {
+    var ck = modId + '.' + kindId;
+    if (POOL_LIST[ck]) return POOL_LIST[ck];
+    var list = [], seen = {};
+    for (var s = 1; s <= POOL_SEEDS; s++) {
+      var q;
+      try { q = gen(modId, kindId, s); } catch (e) { continue; }
+      if (!q || !q.prompt) continue;
+      var k = sigOf(q);
+      if (!seen[k]) { seen[k] = 1; list.push({ key: k, q: q }); }
+    }
+    POOL_LIST[ck] = list;
+    return list;
+  }
+
   function moduleById(id) {
     for (var i = 0; i < MODULES.length; i++) if (MODULES[i].id === id) return MODULES[i];
     return null;
@@ -2543,6 +2613,7 @@ var PT = (function () {
     VERSION: VERSION, DAY: DAY,
     modules: MODULES, moduleById: moduleById,
     gen: gen, judge: judge, ansText: ansText, svgFor: svgFor,
+    kindPool: kindPool, sigOf: sigOf, enumerateKind: enumerateKind,
     parseNum: parseNum, fmtNum: fmtNum, near: near, relTol: relTol,
     selfTest: selfTest, drawItems: DRAW,
     armFocusQueue: armFocusQueue,

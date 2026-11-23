@@ -62,6 +62,7 @@ p{margin:8px 0}
   display:flex;flex-direction:column;gap:6px;box-shadow:var(--shadow);
 }
 .module .mh{display:flex;align-items:center;gap:8px}
+.module .mh .btn{white-space:nowrap}   /* 长标题会把「例题」压成竖排两个字 */
 .module .mh b{font-size:16px}
 .module .desc{font-size:13px;color:var(--muted);min-height:40px}
 .module .kinds{display:flex;flex-wrap:wrap;gap:6px;margin:2px 0 6px}
@@ -75,6 +76,10 @@ p{margin:8px 0}
 .task .tt span{font-size:12px;color:var(--muted)}
 .bar{height:6px;background:#eef1f8;border-radius:6px;overflow:hidden}
 .bar>i{display:block;height:100%;background:var(--brand);border-radius:6px;transition:width .25s ease}
+/* 覆盖面一行：数字 + 细进度条 + 百分比（模块卡、题型卡、报告页共用） */
+.cov{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin-top:6px}
+.cov .bar{flex:1;min-width:48px;height:6px}
+.cov span{white-space:nowrap}
 .qhead{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:6px}
 .qbody{font-size:17px;line-height:1.85}
 .qbody .hl{background:linear-gradient(transparent 62%,#ffe9a8 62%);padding:0 1px}

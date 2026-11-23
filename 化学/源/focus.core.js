@@ -488,9 +488,34 @@ var CF = (function () {
         { id: 'massrel', name: '相对质量对应', gen: genMassrel }
       ] }
   ];
+  /* ---------- 题库容量（2026-11-23）----------
+     每题型「不重复题干数」，口径 = kernel.js 的 sigOf（kind + 题干前 40 字），
+     与作答记录 qid 同一把尺子 —— 分母和分子必须是同一个口径，否则覆盖率永远到不了 100%。
+     seed 1..6000 饱和得出；页面据此算「覆盖 a/b」。本页 15 类全是固定小题库（合计 142 道），
+     没有数字随机题型，所以不需要 -1 标记。
+     改题后跑 `node 化学/题库工具/check-focus.mjs pools` 重扫比对，按打印结果改这里。 */
+  var POOLS = {
+    'base.symbol': 31, 'base.name': 31, 'base.period': 4, 'base.ion': 20, 'base.ionrule': 5,
+    'balance.lcm': 6, 'balance.odd': 5, 'balance.observe': 4, 'balance.setone': 4,
+    'balance.method': 5, 'balance.check': 5,
+    'apply.write': 5, 'apply.writeout': 7, 'apply.calc': 6, 'apply.massrel': 4
+  };
+  MODULES.forEach(function (m) {
+    m.kinds.forEach(function (k) {
+      var p = POOLS[m.id + '.' + k.id];
+      k.pool = (p == null ? 0 : p);
+    });
+  });
+  function kindPool(modId, kindId) {
+    var m = moduleById(modId);
+    if (!m) return 0;
+    for (var i = 0; i < m.kinds.length; i++) if (m.kinds[i].id === kindId) return m.kinds[i].pool || 0;
+    return 0;
+  }
+
   var ALL_KINDS = (function () {
     var a = [];
-    MODULES.forEach(function (m) { m.kinds.forEach(function (k) { a.push({ mod: m.id, kind: k.id, name: k.name, gen: k.gen }); }); });
+    MODULES.forEach(function (m) { m.kinds.forEach(function (k) { a.push({ mod: m.id, kind: k.id, name: k.name, gen: k.gen, pool: k.pool }); }); });
     return a;
   })();
   function moduleById(id) { for (var i = 0; i < MODULES.length; i++) if (MODULES[i].id === id) return MODULES[i]; return null; }
@@ -556,6 +581,6 @@ var CF = (function () {
   return {
     VERSION: VERSION, DAY: DAY, modules: MODULES, allKinds: ALL_KINDS,
     gen: gen, judge: judge, ansText: ansText, parseNum: parseNum, normChem: normChem,
-    moduleById: moduleById, selfTest: selfTest
+    moduleById: moduleById, selfTest: selfTest, kindPool: kindPool
   };
 })();

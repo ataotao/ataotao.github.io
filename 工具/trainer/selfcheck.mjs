@@ -297,6 +297,49 @@ if (name === '化学' || name === '化学专项') {
   }
 }
 
+/* ①b 知识覆盖面 + 专练未覆盖（2026-11-23）
+   注入 1 条该题型的作答记录后：模块页要出现「覆盖 1/池量」和「练未覆盖 剩余」，
+   点进去（startRound mode=nocover）出的题不能是刚做过的那道。 */
+{
+  const mk = name === '化学' ? { mod: 'air', kind: 'comp' } : { mod: 'base', kind: 'period' };
+  const pool = T.CH.kindPool(mk.mod, mk.kind);
+  if (!(pool > 1)) fail(`${mk.mod}.${mk.kind} 的池量异常：${pool}`);
+  const q0 = T.CH.gen(mk.mod, mk.kind, 1);
+  const qid = mk.mod + '.' + mk.kind + '.' + String(q0.prompt).slice(0, 40);
+  T.importText(JSON.stringify({
+    v: 1, recs: [{ ts: Date.now(), mod: mk.mod, kind: mk.kind, kindName: q0.kindName, ok: true,
+      got: 1, total: 1, prompt: q0.prompt, kp: q0.kp, mode: 'normal', qid }], wrong: {}, meta: {}
+  }));
+  T.go('mod', mk.mod);
+  if (app.innerHTML.indexOf('覆盖 1/' + pool) < 0) fail(`模块页未显示题型覆盖（期望「覆盖 1/${pool}」）`);
+  if (app.innerHTML.indexOf('练未覆盖 ' + (pool - 1)) < 0) fail('模块页缺「练未覆盖」入口或剩余题数不对');
+  T.startRound(mk.mod, mk.kind, 10, 'nocover');
+  if (T.S.view !== 'quiz' || !T.S.q) fail('未覆盖专练没有进入答题页');
+  if (T.S.q.prompt === q0.prompt) fail('未覆盖专练抽到了已做过的题');
+  T.go('report');
+  if (app.innerHTML.indexOf('知识覆盖面') < 0) fail('报告页缺「知识覆盖面」区块');
+
+  /* 全覆盖后入口要消失：灌满该题型全部题干，模块页应显示「✓ 已全覆盖」且不再给「练未覆盖」 */
+  T.action('reset');
+  const all = [], seenP = new Set();
+  for (let i = 1; i <= 3000 && seenP.size < pool; i++) {
+    const q = T.CH.gen(mk.mod, mk.kind, i);
+    const key = String(q.prompt).slice(0, 40);
+    if (seenP.has(key)) continue;
+    seenP.add(key);
+    all.push({ ts: Date.now(), mod: mk.mod, kind: mk.kind, kindName: q.kindName, ok: true,
+      got: 1, total: 1, prompt: q.prompt, kp: q.kp, mode: 'normal', qid: mk.mod + '.' + mk.kind + '.' + key });
+  }
+  if (seenP.size !== pool) fail(`枚举 ${mk.mod}.${mk.kind} 只拿到 ${seenP.size}/${pool} 道，题库与容量表不一致`);
+  T.importText(JSON.stringify({ v: 1, recs: all, wrong: {}, meta: {} }));
+  T.go('mod', mk.mod);
+  /* 只看这一个题型的 chip：同单元其它题型还没练，页面上当然仍有「练未覆盖」 */
+  const chipRe = new RegExp('data-kind="' + mk.kind + '"[\\s\\S]{0,240}?已全覆盖');
+  if (!chipRe.test(app.innerHTML)) fail(`题型 ${mk.kind} 全覆盖后未显示「✓ 已全覆盖」`);
+  if (app.innerHTML.indexOf('覆盖 ' + pool + '/' + pool) < 0) fail('全覆盖后未显示满额覆盖数');
+  T.action('reset');
+}
+
 /* ② 各视图渲染 */
 for (const [view, needle] of [['wrong', '错题回炉'], ['report', '导入记录 JSON']]) {
   T.go(view);
@@ -328,4 +371,4 @@ const union = T.mergeRecords(mk(0), mk(10));
 if (union.recs.length !== 6) fail('事件并集错误：期望 6 得到 ' + union.recs.length);
 
 console.log(`✓ ${name} 训练器内核自检通过`);
-console.log('  启动/各视图渲染 · 单套统计 DOM · tabs 数据驱动 · 导入幂等 · 旧记录可读 · 事件并集');
+console.log('  启动/各视图渲染 · 单套统计 DOM · tabs 数据驱动 · 导入幂等 · 旧记录可读 · 事件并集 · 覆盖面/未覆盖专练');

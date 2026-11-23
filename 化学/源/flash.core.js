@@ -1793,9 +1793,63 @@ var CH = (function () {
       { id: 'fmean', name: '化学式意义/质量分数', gen: genFMean }
     ] }
   ];
+  /* ---------- 题库容量（2026-11-23）----------
+     每个题型的「不重复题干数」，口径 = kernel.js 的 sigOf（kind + 题干前 40 字），
+     与作答记录 qid 同一把尺子 —— 分母和分子必须是同一个口径，否则覆盖率永远到不了 100%。
+     由 seed 扫描 1..6000 饱和得出；页面据此算「已做 a / 总 b」的覆盖比例。
+     -1 = 不设上限，三类：纯数字随机（sol.smf 质量分数计算 / sol.dilute 稀释）、
+     排列组合（intro.opfig 四图顺序）、元素×问法组合（struct.diagram 结构示意图）——
+     这类只统计练了几道，不给覆盖百分比，否则永远到不了 100%。
+     改题/加题后这张表会漂移：`node 化学/题库工具/check-flash.mjs pools` 会重扫并比对，
+     不一致时按打印出的新数字改这里，不要手估。 */
+  var POOLS = {
+    /* ① 走进化学世界 */
+    'intro.change': 2, 'intro.property': 2, 'intro.labbasic': 1, 'intro.opfig': -1, 'intro.inquiry': 6, 'intro.accident': 1,
+    /* ② 空气和氧气 */
+    'air.comp': 3, 'air.measure': 1, 'air.o2prop': 4, 'air.o2prep': 4, 'air.breath': 5, 'air.pollution': 1, 'air.aqi': 5,
+    /* ③ 物质构成的奥秘 */
+    'struct.molatom': 4, 'struct.atom': 45, 'struct.symbol': 8, 'struct.ion': 10, 'struct.cons': 4,
+    'struct.diagram': -1, 'struct.micsvg': 3, 'struct.ptable': 5,
+    /* ④ 自然界的水 */
+    'water.purify': 4, 'water.hardsoft': 6, 'water.electro': 3, 'water.formula': 8,
+    'water.valence': 8, 'water.mr': 11, 'water.mf': 6,
+    /* ⑤ 化学反应的定量关系 */
+    'eq.conservation': 1, 'eq.balance': 6, 'eq.judge': 1, 'eq.rtype': 6, 'eq.unknown': 5, 'eq.eqcalc': 4, 'eq.impure': 16,
+    /* ⑥ 碳和碳的氧化物 */
+    'carbon.allotrope': 4, 'carbon.creduce': 6, 'carbon.co2': 4, 'carbon.co2dev': 5,
+    'carbon.co': 3, 'carbon.gasdiff': 5, 'carbon.lowcarbon': 5,
+    /* ⑦ 能源的合理利用与开发 */
+    'fuel.combustion': 4, 'fuel.ignite': 6, 'fuel.explode': 5, 'fuel.slowox': 5, 'fuel.fuel': 4, 'fuel.heat': 3,
+    /* ⑧ 金属和金属材料 */
+    'metal.prop': 4, 'metal.mo2': 4, 'metal.macid': 3, 'metal.msalt': 6, 'metal.activity': 3,
+    'metal.mdesign': 5, 'metal.filtrate': 5, 'metal.rust': 3, 'metal.derust': 5, 'metal.refine': 3,
+    /* ⑨ 溶液 */
+    'sol.form': 4, 'sol.emulsify': 5, 'sol.sat': 3, 'sol.solub': 4, 'sol.curvediss': 6,
+    'sol.crystal': 5, 'sol.heatdiss': 6, 'sol.smf': -1, 'sol.config': 64, 'sol.dilute': -1,
+    /* ⑩ 常见的酸、碱、盐 */
+    'ab.indicator': 4, 'ab.acidelec': 5, 'ab.ph': 3, 'ab.acid': 4, 'ab.concacid': 6, 'ab.base': 4,
+    'ab.deteriorate': 5, 'ab.neutral': 3, 'ab.soil': 6, 'ab.identify': 6, 'ab.common': 4,
+    'ab.decomp': 3, 'ab.precip': 5, 'ab.carbonate': 5, 'ab.crudesalt': 6, 'ab.fert': 4, 'ab.nh4': 3, 'ab.classify': 9,
+    /* ⑪ 化学与社会 */
+    'life.nutrient': 4, 'life.healthelem': 4, 'life.organic': 5, 'life.fiber': 5,
+    'life.material': 4, 'life.harmful': 5, 'life.fmean': 5
+  };
+  MODULES.forEach(function (m) {
+    m.kinds.forEach(function (k) {
+      var p = POOLS[m.id + '.' + k.id];
+      k.pool = (p == null ? 0 : p);   /* 0 = 未登记（页面按“不限”处理，别静默当 0 题） */
+    });
+  });
+  function kindPool(modId, kindId) {
+    var m = moduleById(modId);
+    if (!m) return 0;
+    for (var i = 0; i < m.kinds.length; i++) if (m.kinds[i].id === kindId) return m.kinds[i].pool || 0;
+    return 0;
+  }
+
   var ALL_KINDS = (function () {
     var a = [];
-    MODULES.forEach(function (m) { m.kinds.forEach(function (k) { a.push({ mod: m.id, kind: k.id, name: k.name, gen: k.gen }); }); });
+    MODULES.forEach(function (m) { m.kinds.forEach(function (k) { a.push({ mod: m.id, kind: k.id, name: k.name, gen: k.gen, pool: k.pool }); }); });
     return a;
   })();
 
@@ -1870,6 +1924,6 @@ var CH = (function () {
   return {
     VERSION: VERSION, DAY: DAY, modules: MODULES, allKinds: ALL_KINDS,
     gen: gen, judge: judge, ansText: ansText, parseNum: parseNum, normChem: normChem,
-    moduleById: moduleById, selfTest: selfTest
+    moduleById: moduleById, selfTest: selfTest, kindPool: kindPool
   };
 })();

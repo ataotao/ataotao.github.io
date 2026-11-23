@@ -56,6 +56,45 @@ if (got.length !== UNITS.length || UNITS.some((u, i) => got[i] !== u)) {
   process.exit(1);
 }
 
+/* pools 模式：重扫题库，校验 core 里的 POOLS 容量表没漂移。
+   分母用于页面「覆盖 a/b」，表错了会直接误导“知识覆盖面”，所以改题/加题后必跑：
+     node 化学/题库工具/check-flash.mjs pools
+   口径 = 题干前 40 字去重 —— 必须与内核 sigOf（kernel.js）同一把尺子，否则分母按 60 字、
+   分子按 40 字，覆盖率永远到不了 100%。另按内核 enumerateKind 的 seed 范围（1..1200）
+   再算一遍，确保页面「练未覆盖」真的能把整池枚举出来。
+   -1 表示不设上限（数字随机/排列组合），只要求它确实超过 200 道，防止把固定小题库误标成不限。 */
+if (args.includes('pools')) {
+  const bad = [];
+  let fixed = 0, fixedSum = 0;
+  for (const k of CH.allKinds) {
+    if (typeof CH.kindPool !== 'function') { console.error('✗ core 没导出 kindPool'); process.exit(1); }
+    const declared = CH.kindPool(k.mod, k.kind);
+    const set = new Set(), kernelSet = new Set();
+    for (let i = 1; i <= 6000; i++) {
+      const q = CH.gen(k.mod, k.kind, i);
+      if (!q || !q.prompt) continue;
+      const key = String(q.prompt).slice(0, 40);
+      set.add(key);
+      if (i <= 1200) kernelSet.add(key);   /* 内核 enumerateKind 扫的就是这 1200 个 seed */
+    }
+    const u = set.size;
+    if (declared === -1) {
+      if (u < 200) bad.push(`${k.mod}.${k.kind} 标为不限但实测只有 ${u} 道，应改成固定池`);
+    } else if (u !== declared) {
+      bad.push(`${k.mod}.${k.kind} 表里 ${declared}，实测 ${u}`);
+    } else if (kernelSet.size !== declared) {
+      bad.push(`${k.mod}.${k.kind} 内核只枚举到 ${kernelSet.size} 道，表里 ${declared}`);
+    } else { fixed++; fixedSum += u; }
+  }
+  if (bad.length) {
+    console.error(`✗ POOLS 容量表漂移 ${bad.length} 处：`);
+    bad.forEach((b) => console.error('  · ' + b));
+    process.exit(1);
+  }
+  console.log(`✓ 题库容量表一致：${CH.allKinds.length} 类题型，固定池 ${fixed} 类共 ${fixedSum} 道，其余为不限（-1）`);
+  process.exit(0);
+}
+
 const r = CH.selfTest(N);
 if (r.fails.length) {
   console.error(`✗ ${r.fails.length} 个问题（共生成 ${r.count} 题）：`);

@@ -18,6 +18,9 @@
   内核 `工具/trainer/kernel.js` + 配置 `工具/trainer/subjects/化学.mjs` + core `化学/源/flash.core.js`
   → `node 工具/trainer/build.mjs 化学` 生成；改出题/判分改 core、改壳改内核/配置，**产物不手改**。
   验收：`node 化学/题库工具/check-flash.mjs`（出题）+ `node 工具/trainer/selfcheck.mjs 化学`（UI 运行层）；
+  **题库是固定小题库不是无限池**：core 的 `POOLS` 表登记每题型不重复题干数（89 类共 513 道，4 类数字随机/排列组合标 -1），
+  页面据此显示「覆盖 a/b」并提供「练未覆盖」入口（kernel 的 `nocover` 模式，按 seed 枚举题库后跳过已做）；
+  **改题后必须跑 `node 化学/题库工具/check-flash.mjs pools`**，表错了会让报告页的「知识覆盖面」直接说谎；
   记录键 `chemflash_v1`，见 `docs/plans/单仓发布与记录同步-2026-11-18.md` 段二）；
   `语文/` 是单文件 B 类：`语文思维脚手架.html` 引擎与数据同体，无构建脚本；
   `物理闪练卡.html`、`数学闪练卡.html` 已迁入训练器模板第二族 `scaffold`：
@@ -25,6 +28,10 @@
   `node 工具/trainer/build.mjs 物理|数学` 生成；产物与迁移前逐字节相同，改三源后重建，
   验收 `node 物理|数学/题库工具/check-training.mjs` + `node 工具/trainer/selfcheck.mjs 物理|数学`；
   数学另有 UI 桩冒烟 `node 数学/题库工具/smoke-ui.mjs`（题干转义、坏记录自愈、选项打散、题图几何）。
+  **题库容量表（2026-11-23）**：`物理/源/train.core.js` / `数学/源/train.core.js` 各有一张 `POOLS`
+  （seed 扫描去重实测，物理 1553 道 / 数学 2076 道；纯换数字的题型记 -1 = 不限量），
+  页面用它算「覆盖 a/b」与「练未覆盖」。改题 / 加题后必须跑 `node 物理|数学/题库工具/check-training.mjs pools`
+  校验漂移；作答记录新增 `sig`（题干+题图指纹），覆盖率与去重都靠它，老记录无 sig 会单独标注、不虚报。
   （两族：闪练卡族 `kernel.js` 壳/统计/记录全共用；脚手架族 `scaffold.js` 只共用壳，
   渲染引擎 h()/SVG/分数独立，因数学无 UI 桩测试不强合并。）
   `数学/` 四份：`函数思维脚手架.html`（B 类，`qb.py` 自动 `.bak`；**主包只有引擎约 300 KB，

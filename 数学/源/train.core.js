@@ -2671,6 +2671,90 @@ var MT = (function () {
     }
   ];
 
+  /* ---------- 题库容量（2026-11-23）----------
+     每个题型的「不重复题干数」，口径 = sigOf（mod.kind + 题干与题图的哈希），
+     由 seed 扫描 1..3000 饱和得出；页面据此算「做过 a / 总 b」的覆盖比例。
+     -1 = 不设上限（纯数字随机，如判别式 / 写解析式各题型），只统计练了几道，
+          不给百分比，否则永远到不了 100%。
+     「大题前两步」是固定得分点，一个得分点 1 道题，所以分母都是 1 —— 做过就 100%。
+     改题 / 加题后这张表会漂移：`node 数学/题库工具/check-training.mjs pools`
+     会重扫并逐项比对，不一致时按打印出的新数字改这里，不要手估。 */
+  var POOLS = {
+    'drill.factor': 62, 'drill.eq': 169, 'drill.complete': 96, 'drill.missingconst': 28,
+    'drill.eqdef': 1, 'drill.disc': -1, 'drill.vieta': 91, 'drill.growth': 17, 'drill.areaeq': 12,
+    'drill.vertexprop': -1, 'drill.vertexmax': -1, 'drill.coef': -1, 'drill.plug': -1,
+    'drill.shift': -1, 'drill.rangemax': -1, 'drill.fxeq': 18, 'drill.invprop': 97,
+    'drill.invarea': 68, 'drill.circledef': 1, 'drill.ptcirc': 84, 'drill.circum': 20,
+    'drill.radiusiso': 82, 'drill.perpchord': 18, 'drill.diam90': 41, 'drill.cycquad': -1,
+    'drill.circangle': 244, 'drill.arcchord': 68, 'drill.arclen': 68, 'drill.sector': 87,
+    'drill.cone': 42, 'drill.linecircle': 84, 'drill.tanprop': 61, 'drill.tanjudge': 10,
+    'drill.tanlen': 39, 'drill.incircle': -1, 'drill.regular': 25, 'drill.rot': 240,
+    'drill.sym': -1, 'drill.symshape': 3, 'drill.absurd': 6, 'drill.secperim': 12,
+    'drill.circumcenter': 5, 'drill.chordradius': 9, 'drill.cycqext': 8, 'drill.concentric': 8,
+    'drill.bowarea': 7, 'drill.circnum': 10,
+    'write.vertex': -1, 'write.intercept': -1, 'write.inverse': -1, 'write.profit': -1,
+    'write.segment': -1, 'write.piece': -1, 'write.arch': 33, 'write.axis': -1,
+    /* 大题前两步：固定得分点，一个得分点一道题 */
+    'entry.entry.21.1': 1, 'entry.entry.21.2': 1, 'entry.entry.21.3': 1, 'entry.entry.22.1': 1,
+    'entry.entry.22.2': 1, 'entry.entry.23.1': 1, 'entry.entry.23.2': 1, 'entry.entry.20.1': 1,
+    'entry.entry.20.2': 1, 'entry.entry.24.1': 1, 'entry.entry.25.1': 1, 'entry.entry.25.2': 1,
+    'entry.entry.13.1': 1, 'entry.entry.13.3': 1, 'entry.entry.13.5': 1, 'entry.entry.14.1': 1,
+    'entry.entry.15.1': 1, 'entry.entry.16.1': 1, 'entry.entry.16.2': 1, 'entry.entry.17.1': 1,
+    'entry.entry.t01': 1, 'entry.entry.t02': 1, 'entry.entry.t03': 1, 'entry.entry.t05': 1,
+    'entry.entry.t06': 1, 'entry.entry.t08': 1, 'entry.entry.t11': 1, 'entry.entry.t12': 1,
+    'entry.entry.t13': 1, 'entry.entry.t21': 1, 'entry.entry.t22': 1, 'entry.entry.w12q7': 1,
+    'entry.entry.w12q12': 1, 'entry.entry.w12q16': 1, 'entry.entry.w12q17a': 1,
+    'entry.entry.w12q17b': 1, 'entry.entry.w12q15': 1,
+    /* 本周错题（临时项目，一周一换） */
+    'week12.secperim': 12, 'week12.paralleldist': 6, 'week12.relatecircle': 5,
+    'week12.missingconst': 28, 'week12.archcircle': 5, 'week12.isopoint': 4, 'week12.rangeopen': 5
+  };
+  MODULES.forEach(function (m) {
+    (m.kinds || []).forEach(function (k) {
+      var p = POOLS[m.id + '.' + k.id];
+      k.pool = (p == null ? 0 : p);   /* 0 = 未登记，页面按「不限」处理，别静默当 0 题 */
+    });
+  });
+  function kindPool(modId, kindId) {
+    var p = POOLS[modId + '.' + kindId];
+    return p == null ? 0 : p;
+  }
+
+  /* ---------- 题目指纹：覆盖率与「专练没做过的题」都靠它 ----------
+     同一道题在不同 seed 下抽到，题干与题图一样 → 指纹一样，所以「做过哪几道」可去重。
+     题图一起进哈希：题干相同、只有图不同的题不能合并成一条。
+     本周错题的裁切图只哈希 cropKey，别把几十 KB 的 base64 拖进来。 */
+  function sigOf(q) {
+    var s = String(q.prompt == null ? '' : q.prompt);
+    if (q.cropKey) s += '#' + q.cropKey;
+    else if (q.fig) s += '#' + JSON.stringify(q.fig);
+    var h = 5381;
+    for (var i = 0; i < s.length; i++) h = ((h << 5) + h + s.charCodeAt(i)) >>> 0;
+    return (q.mod || '') + '.' + (q.kind || '') + '.' + h.toString(36);
+  }
+
+  /* ---------- 题库枚举：「专练没做过的题」靠它，不做概率猜测 ----------
+     题型是 seed 驱动的确定性生成器，扫一串 seed 就拿到该题型的完整题库，按 sigOf 去重。
+     口径必须与 POOLS 表同源：POOLS 是用同样的 3000 个 seed 扫出来的（check-training.mjs pools
+     会断言「枚举条数 == POOLS」），所以「覆盖 a/b」的分母和「还剩几道」的分子是同一把尺子。
+     结果按题型缓存，最慢的题型（drill.circangle 244 道）扫一遍约 30 ms。 */
+  var POOL_SEEDS = 3000;
+  var POOL_LIST = {};
+  function enumerateKind(modId, kindId) {
+    var ck = modId + '.' + kindId;
+    if (POOL_LIST[ck]) return POOL_LIST[ck];
+    var list = [], seen = {};
+    for (var s = 1; s <= POOL_SEEDS; s++) {
+      var q;
+      try { q = gen(modId, kindId, s); } catch (e) { continue; }
+      if (!q || !q.prompt) continue;
+      var k = sigOf(q);
+      if (!seen[k]) { seen[k] = 1; list.push({ key: k, q: q }); }
+    }
+    POOL_LIST[ck] = list;
+    return list;
+  }
+
   function moduleById(id) { for (var i = 0; i < MODULES.length; i++) if (MODULES[i].id === id) return MODULES[i]; return null; }
 
   /* ---------- 出题 ---------- */
@@ -3099,6 +3183,7 @@ var MT = (function () {
     modules: MODULES, moduleById: moduleById,
     planForDay: planForDay, dailyQueue: dailyQueue, daySeed: daySeed, kindName: kindName,
     gen: gen, judge: judge, ansText: ansText, svgFor: svgFor, cropFig: cropFig,
+    kindPool: kindPool, sigOf: sigOf, enumerateKind: enumerateKind,
     parseNum: parseNum, near: near, frac: frac, nice: nice,
     selfTest: selfTest
   };
