@@ -1,0 +1,512 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>化学每日五写 · 手写输出</title>
+<style>
+:root{
+  --acc:#0e7490; --acc2:#0b5c73; --acc-soft:#e6f4f8;
+  --bg:#fbfaf7; --card:#fff; --line:#e6e2da; --ink:#26211c; --mut:#6f665a;
+  --ok:#1a7f4b; --ok-soft:#e8f6ee; --bad:#c0392b; --bad-soft:#fdeceb;
+  --warn:#b07b12; --warn-soft:#fdf4e3; --r:14px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font:15px/1.72 -apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei","Segoe UI",sans-serif;-webkit-font-smoothing:antialiased}
+.wrap{max-width:820px;margin:0 auto;padding:26px 18px 90px}
+header.top{display:flex;align-items:flex-end;gap:14px;flex-wrap:wrap;margin-bottom:14px}
+header.top h1{font-size:24px;margin:0;letter-spacing:.5px}
+header.top .sub{color:var(--mut);font-size:13px;margin-top:3px}
+header.top .sub b{color:var(--acc2)}
+.timer{margin-left:auto;display:flex;align-items:center;gap:8px}
+.clk{font:700 22px/1 ui-monospace,Menlo,Consolas,monospace;color:var(--acc2);letter-spacing:1px;min-width:74px;text-align:right}
+.clk.warn{color:var(--bad)}
+.clk.done{color:var(--mut)}
+.btn{appearance:none;border:1px solid var(--line);background:#fff;color:var(--ink);font:inherit;font-size:13.5px;font-weight:600;padding:7px 13px;border-radius:10px;cursor:pointer}
+.btn:hover{border-color:var(--acc);color:var(--acc2)}
+.btn.primary{background:var(--acc);border-color:var(--acc);color:#fff}
+.btn.primary:hover{background:var(--acc2);color:#fff}
+.btn.sm{padding:5px 10px;font-size:12.5px;border-radius:8px}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+
+.bar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:11px 14px;margin-bottom:16px}
+.bar .tip{font-size:13.5px;color:var(--mut);flex:1;min-width:220px}
+.bar .tip b{color:var(--ink)}
+.bar .acts{display:flex;gap:7px;flex-wrap:wrap}
+
+.scope{display:flex;align-items:center;gap:8px;flex-wrap:wrap;width:100%;padding-bottom:10px;margin-bottom:2px;border-bottom:1px dashed var(--line)}
+.scope .lb{font-size:13px;color:var(--mut)}
+.scope select{appearance:none;font:inherit;font-size:13.5px;font-weight:600;color:var(--acc2);background:var(--acc-soft);border:1px solid #cfe6ed;border-radius:9px;padding:5px 26px 5px 10px;cursor:pointer;background-image:linear-gradient(45deg,transparent 50%,#0b5c73 50%),linear-gradient(135deg,#0b5c73 50%,transparent 50%);background-position:calc(100% - 13px) 12px,calc(100% - 9px) 12px;background-size:4px 4px,4px 4px;background-repeat:no-repeat}
+.scope .st{font-size:12.5px;color:var(--mut)}
+.scope .st b{color:var(--acc2)}
+.scope .st .warn{color:var(--bad);font-weight:600}
+
+.ub{display:inline-flex;align-items:center;justify-content:center;min-width:17px;height:17px;padding:0 3px;border-radius:5px;font:700 10.5px/1 ui-monospace,Menlo,monospace;flex:none;margin-left:-2px}
+.ub.sh{background:var(--acc-soft);color:var(--acc2)}
+.ub.xa{background:#f0ebf9;color:#5b3fa8}
+.empty{border:1px dashed var(--line);border-radius:11px;padding:13px 15px;font-size:13.5px;color:var(--mut);background:#fcfbf8}
+.empty b{color:var(--ink)}
+
+.sec{margin-bottom:8px}
+.sech{display:flex;align-items:center;gap:9px;margin:22px 0 8px;padding-bottom:6px;border-bottom:1px solid var(--line)}
+.sech h2{margin:0;font-size:16px;color:var(--acc2);letter-spacing:.5px}
+.sech .cnt{font-size:12px;color:var(--mut)}
+.sech .kn{margin-left:auto;font-size:12px;color:var(--mut)}
+
+.item{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px;margin-bottom:10px}
+.item.ok{border-color:#bfe6cd;background:#fbfefc}
+.item.no{border-color:#f3c9c4;background:#fffbfb}
+.ih{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:7px}
+.no{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:7px;background:var(--acc-soft);color:var(--acc2);font:700 12.5px/1 ui-monospace,monospace;flex:none}
+.tag{font-size:11.5px;color:var(--acc2);background:var(--acc-soft);border-radius:20px;padding:1px 9px}
+.src{font-size:11px;color:var(--warn);background:var(--warn-soft);border-radius:20px;padding:1px 8px}
+.q{font-size:16.5px;line-height:1.75;font-weight:600}
+.lines{margin:10px 0 4px}
+.ln{height:31px;border-bottom:1px dashed #ddd6c9}
+.ln:last-child{border-bottom-color:#c9c1b1}
+.ans{display:none;margin-top:10px;border-top:1px dashed var(--line);padding-top:10px}
+.ans.on{display:block}
+.ans .aline{font-size:15px}
+.ans .aline b{color:var(--ok);font-size:16px}
+.ans .pt-h{font-size:12px;color:var(--mut);margin:9px 0 3px}
+.ans ul{margin:0;padding-left:19px}
+.ans li{font-size:13.5px;line-height:1.7}
+.ans .badline{margin-top:8px;font-size:13px;color:#8a4b00;background:var(--warn-soft);border-radius:8px;padding:7px 10px}
+.ans .badline b{color:#7a3d00}
+.mark{display:flex;gap:7px;margin-top:9px;flex-wrap:wrap}
+.mark button{font:inherit;font-size:12.5px;font-weight:600;padding:4px 11px;border-radius:8px;border:1px solid var(--line);background:#fff;cursor:pointer;color:var(--mut)}
+.mark button.on-ok{border-color:var(--ok);color:var(--ok);background:var(--ok-soft)}
+.mark button.on-no{border-color:var(--bad);color:var(--bad);background:var(--bad-soft)}
+
+.sum{position:sticky;bottom:0;margin-top:18px;background:rgba(251,250,247,.96);backdrop-filter:blur(6px);border-top:1px solid var(--line);padding:10px 0 6px}
+.sum .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;font-size:13.5px}
+.sum .big{font:800 17px/1 ui-monospace,monospace;color:var(--acc2)}
+.sum .hint{color:var(--mut);font-size:12.5px}
+.sum .hint b{color:var(--ink)}
+footer.foot{margin-top:26px;color:var(--mut);font-size:12.5px;line-height:1.8}
+footer.foot b{color:var(--ink)}
+details.how{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:10px 14px;margin-bottom:14px}
+details.how summary{cursor:pointer;font-size:13.5px;font-weight:600;color:var(--acc2);list-style:none}
+details.how summary::-webkit-details-marker{display:none}
+details.how summary::before{content:'▸ ';color:var(--acc)}
+details.how[open] summary::before{content:'▾ '}
+details.how ol{margin:8px 0 2px;padding-left:20px;font-size:13.5px;color:var(--ink)}
+details.how li{margin:3px 0}
+details.how .m{color:var(--mut);font-size:12.5px}
+
+@media(max-width:560px){
+  .wrap{padding:18px 12px 80px}
+  header.top h1{font-size:20px}
+  .q{font-size:15.5px}
+  .bar .tip{display:block;flex:1 0 100%;order:2;min-width:0;margin-top:1px}
+  .bar .acts{order:3}
+  .timer{margin-left:0}
+  .sech{flex-wrap:wrap}
+  .sech .kn{margin-left:0;flex:1 0 100%;order:3;margin-top:1px}
+}
+@media print{
+  @page{margin:13mm 12mm}
+  body{background:#fff;font-size:11.5pt}
+  .wrap{max-width:none;padding:0 2mm}
+  .bar,details.how,.mark,.btn,.timer,footer.foot .noprint{display:none!important}
+  .sum{display:none!important}
+  .item{border:0;border-bottom:1px solid #bbb;border-radius:0;padding:6px 0 2px;margin:0 0 4px;break-inside:avoid;page-break-inside:avoid}
+  .item.ok,.item.no{background:#fff;border-color:#bbb}
+  .q{font-size:11.5pt}
+  .lines{margin:6px 0 2px}
+  .ln{height:26px;border-bottom:1px solid #bbb}
+  .sech{margin:12px 0 4px;break-after:avoid}
+  body.pa .ans{display:block!important;border-top:0}
+  body.pa .lines{display:none}
+  body.pq .ans{display:none!important}
+  body.pa .item{break-inside:avoid}
+  .ans .aline b{color:#000}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div>
+      <h1>化学每日五写</h1>
+      <div class="sub"><span id="dt"></span> · 开学第 <b id="dno">1</b> 天 · <span id="scopeSub">九上全部</span> · <span id="planSub">按已学单元出题</span></div>
+    </div>
+    <div class="timer">
+      <span class="clk" id="clk">12:00</span>
+      <button class="btn" id="tstart">开始计时</button>
+    </div>
+  </header>
+
+  <details class="how">
+    <summary>怎么用（第一次先看这里，30 秒）</summary>
+    <ol>
+      <li><b>写在纸上</b>，不在电脑上打字——漏金属、少括号、方程式不配平这些错，只有手写才会暴露。</li>
+      <li>点「开始计时」，<b>12 分钟写完</b>。写不出来的空着，别翻书，别问。</li>
+      <li>写完才点每项的「对答案」，先自己勾「这空必须写到」的几条，<b>没写到的就是这一空扣的分</b>。</li>
+      <li>每条标「写对 / 写错」，底部会统计。错的题第二天重写一遍，不用再找题。</li>
+      <li><b>范围跟着进度走</b>：顶部「学到第…」选到学校已经讲到的单元，只出已学单元的题。学到新单元就往后调一格，题目自动加进来。<b>题号后面的 ①…⑪</b> 就是这道题的知识点单元，上册青色、下册紫色。</li>
+      <li>要打印就点右上「打印题目」，纸上一人一份；答案另点「打印答案」，别和题目印在一起。</li>
+    </ol>
+    <div class="m">题目按广州中考与本校真题的问法出；标「期中卷」的，就是他这次写错的原题。</div>
+  </details>
+
+  <div class="bar">
+    <div class="scope">
+      <span class="lb">学到第</span>
+      <select id="lv" aria-label="已学到的单元"></select>
+      <span class="st" id="scopeTip"></span>
+    </div>
+    <div class="tip" id="planTip"></div>
+    <div class="acts">
+      <button class="btn" id="shuffle">换一组</button>
+      <button class="btn" id="pq">打印题目</button>
+      <button class="btn" id="pa">打印答案</button>
+    </div>
+  </div>
+
+  <div id="sheet"></div>
+
+  <div class="sum">
+    <div class="row">
+      <span>今日写对 <span class="big" id="cnt">0 / 12</span></span>
+      <span class="hint" id="brk">还没开始标对错</span>
+      <span class="hint" style="margin-left:auto">连续 <b id="streak">0</b> 天</span>
+    </div>
+  </div>
+
+  <footer class="foot">
+    <div><b>判分口径</b>（广州中考阅卷）：化学方程式四项全对才给分——化学式、配平、条件、↑↓；任何一项错，<b>整问 0 分</b>。所以写方程式要一次写完整，不要先写一半再补。</div>
+    <div class="noprint" style="margin-top:6px">现象题忌写结论（「生成四氧化三铁」不是现象）；原因题忌只写半句（「因为…」后面必须有「所以…」）。</div>
+  </footer>
+</div>
+
+<script>
+(function () {
+  'use strict';
+  var DATA = /*__DATA__*/;
+  var KEY = 'chemWuxie.v2';
+  var OLDKEY = 'chemWuxie.v1';
+  var UNITS = DATA.units || [];
+  var UMAX = UNITS.length || 11;
+  var NUM = ['', '①', '②', '③', '④', '⑤', '⑥', '⑦', '⑧', '⑨', '⑩', '⑪'];
+  /* 默认范围 = 九上最后一个单元（学到哪就练到哪，不碰没学过的知识点） */
+  var DEF_LV = (function () { var d = UMAX; UNITS.forEach(function (u) { if (u.book === '上') d = u.i; }); return d; })();
+  function unitOf(u) { for (var i = 0; i < UNITS.length; i++) if (UNITS[i].i === u) return UNITS[i]; return null; }
+  function bookName(b) { return b === '上' ? '九上' : '九下'; }
+  var CHEMT = [];
+  DATA.chem.forEach(function (x) { if (CHEMT.indexOf(x.t) < 0) CHEMT.push(x.t); });
+  var PHENK = ['固体', '气体', '溶液'];
+  /* 化学式没有逐条 pts（答案就是一个式子），按问法给通用自检项：勾不齐说明这一步没做 */
+  var CHEMPTS = {
+    '名称→化学式': ['正价元素/原子团在前，负价在后', '原子团个数不是 1 时加括号', '正负化合价代数和为 0（脚标对不对）'],
+    '化合价/原子团→化学式': ['先交叉，再约成最简整数比', '原子团个数不是 1 时加括号', '检查金属或铵根有没有漏写'],
+    '信息→化学式': ['脚标抄的是原子个数，不是化合价', '一个分子还是多个分子（3O 与 O₃ 不同）', '分子写化学式，离子要带电荷'],
+    '标化合价': ['答案带「＋」或「−」号', '按代数和为 0 列式，别口算', '同一元素有两个价时，看清问哪一个'],
+    '改错': ['先说错在哪（漏金属/漏括号/价态错）', '写出改后的完整化学式', '改完再验一遍代数和为 0']
+  };
+
+  function pad(n) { return n < 10 ? '0' + n : '' + n; }
+  function ymd(d) { return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()); }
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+
+  /* ---------- 存储 ---------- */
+  function load() {
+    var d = null, old = null;
+    try { d = JSON.parse(localStorage.getItem(KEY) || 'null'); } catch (e) {}
+    try { old = JSON.parse(localStorage.getItem(OLDKEY) || 'null'); } catch (e) {}
+    if (!d || !d.days) d = (old && old.days) ? old : null;
+    if (d && d.days) { d.v = 2; return d; }
+    return { v: 2, days: {}, shift: 0, lv: DEF_LV };
+  }
+  function save() { try { localStorage.setItem(KEY, JSON.stringify(ST)); } catch (e) {} }
+  var ST = load();
+  var today = new Date();
+  var dayKey = ymd(today);
+  var dayNo = Math.floor((new Date(today.getFullYear(), today.getMonth(), today.getDate()) - new Date(2026, 8, 1)) / 864e5) + 1;
+  if (dayNo < 1) dayNo = 1;
+  ST.days[dayKey] = ST.days[dayKey] || {};
+  var LV = (ST.lv >= 1 && ST.lv <= UMAX) ? ST.lv : DEF_LV;
+  /* 每天、每个范围各存一份对错：切范围不会把标记错位到别的题上 */
+  function recFor(lv) {
+    var d = ST.days[dayKey];
+    d.byLv = d.byLv || {};
+    if (d.ok && !d.byLv[DEF_LV]) {
+      d.byLv[DEF_LV] = { ok: d.ok, no: d.no || {}, rev: d.rev || {} };
+      delete d.ok; delete d.no; delete d.rev;
+    }
+    if (!d.byLv[lv]) d.byLv[lv] = { ok: {}, no: {}, rev: {} };
+    return d.byLv[lv];
+  }
+  var REC = recFor(LV);
+
+  /* ---------- 选题：先按「学到第几单元」筛池子，再抽；同一天刷新不变，跨天自动换 ---------- */
+  /* SEED 必须每次抽题时重算：点「换一组」改的是 ST.shift，写成一次性快照就会抽到同一批题 */
+  var SEED = 0;
+  function reseed() { SEED = (dayNo - 1) + (ST.shift || 0); }
+  reseed();
+  function inScope(x) { return (x.u || UMAX) <= LV; }
+  function scopeOf(arr) { return arr.filter(inScope); }
+  function pickN(arr, n, step) {
+    var p = scopeOf(arr), out = [], used = {};
+    if (!p.length) return out;
+    var idx = ((SEED * 2 + LV * 3) % p.length + p.length) % p.length;
+    for (var i = 0; i < n; i++) {
+      var guard = 0;
+      while (used[idx] && guard < p.length) { idx = (idx + step) % p.length; guard++; }
+      if (used[idx]) break;
+      used[idx] = 1; out.push(p[idx]);
+      idx = (idx + step) % p.length;
+    }
+    return out;
+  }
+  function pickChem() {
+    return CHEMT.map(function (t, i) {
+      var pool = DATA.chem.filter(function (x) { return x.t === t && inScope(x); });
+      if (!pool.length) return null;
+      return pool[((SEED + i * 7 + LV) % pool.length + pool.length) % pool.length];
+    }).filter(Boolean);
+  }
+  function pickPhen() {
+    return PHENK.map(function (kind, i) {
+      var pool = DATA.phen.filter(function (x) { return x.kind === kind && inScope(x); });
+      if (!pool.length) return null;
+      return pool[((SEED + i * 5 + LV) % pool.length + pool.length) % pool.length];
+    }).filter(Boolean);
+  }
+
+  var ITEMS = [];
+  var SECS = [];
+
+  function push(sec, it, tag) {
+    ITEMS.push({ sec: sec, it: it, tag: tag, i: ITEMS.length });
+    return ITEMS[ITEMS.length - 1].i;
+  }
+
+  function build() {
+    reseed();
+    ITEMS = []; SECS = [];
+    var chem = pickChem(), eq = pickN(DATA.eq, 2, 11), phen = pickPhen(), reason = pickN(DATA.reason, 2, 13);
+    var a = { n: '化学式', items: [], k: 'chem' }, b = { n: '化学方程式', items: [], k: 'eq' }, c = { n: '现象句', items: [], k: 'phen' }, d = { n: '原因句', items: [], k: 'reason' };
+    chem.forEach(function (x) { a.items.push({ it: x, tag: x.t }); });
+    eq.forEach(function (x) { b.items.push({ it: x, tag: '四件套' }); });
+    phen.forEach(function (x) { c.items.push({ it: x, tag: x.kind }); });
+    reason.forEach(function (x) { d.items.push({ it: x, tag: x.t }); });
+    SECS = [a, b, c, d];
+    SECS.forEach(function (s) {
+      s.items.forEach(function (o) { o.i = ITEMS.length; ITEMS.push(o); });
+    });
+  }
+
+  function linesFor(kind) {
+    return kind === 'chem' ? 1 : (kind === 'eq' ? 1 : 2);
+  }
+
+  function uBadge(u) {
+    var m = unitOf(u);
+    if (!m) return '';
+    return '<span class="ub ' + (m.book === '上' ? 'sh' : 'xa') + '" title="' +
+      esc(bookName(m.book) + ' ' + NUM[m.i] + ' ' + m.n) + '">' + NUM[m.i] + '</span>';
+  }
+  function nextUnitHint(arr) {
+    var min = null;
+    arr.forEach(function (x) { if (x.u > LV && (min === null || x.u < min)) min = x.u; });
+    if (min === null) return '';
+    var m = unitOf(min);
+    return '最早在' + bookName(m.book) + NUM[m.i] + '「' + m.n + '」出现';
+  }
+
+  function renderSec(sec, kind, note, srcArr) {
+    var h = '<div class="sec"><div class="sech"><h2>' + esc(sec.n) + '</h2>' +
+      '<span class="cnt">' + (sec.items.length ? sec.items.length + ' 项' : '本范围暂无') + '</span>' +
+      '<span class="kn">' + esc(sec.items.length ? note : nextUnitHint(srcArr)) + '</span></div>';
+    if (!sec.items.length) {
+      return h + '<div class="empty">这一组的知识点还没学到，先不练——<b>不会把没学过的内容混进来</b>。</div></div>';
+    }
+    sec.items.forEach(function (o) {
+      var it = o.it, i = o.i;
+      var pts = (it.pts && it.pts.length) ? it.pts : (CHEMPTS[o.tag] || []);
+      var isAns = REC.rev[i] ? ' on' : '';
+      var cls = REC.ok[i] ? ' ok' : (REC.no[i] ? ' no' : '');
+      h += '<div class="item' + cls + '" data-i="' + i + '">' +
+        '<div class="ih"><span class="no">' + (i + 1) + '</span>' +
+        '<span class="tag">' + esc(o.tag) + '</span>' + uBadge(it.u) +
+        (it.src ? '<span class="src">' + esc(it.src) + '</span>' : '') + '</div>' +
+        '<div class="q">' + esc(it.q) + '</div>' +
+        '<div class="lines">' + new Array(linesFor(kind) + 1).join('<div class="ln"></div>') + '</div>' +
+        '<button class="btn sm" data-rev="' + i + '">' + (REC.rev[i] ? '收起答案' : (pts.length ? '对答案 · 勾要素' : '对答案')) + '</button>' +
+        '<div class="ans' + isAns + '" data-ans="' + i + '">' +
+        '<div class="aline">答案：<b>' + esc(it.a) + '</b></div>' +
+        (pts.length ? '<div class="pt-h">这题必须写到（逐条对，没写到的就是扣的分）</div><ul>' +
+          pts.map(function (p) { return '<li>' + esc(p) + '</li>'; }).join('') + '</ul>' : '') +
+        (it.bad ? '<div class="badline"><b>易错</b>：' + esc(it.bad) + '</div>' : '') +
+        '<div class="mark"><button data-mk="ok" data-i="' + i + '" class="' + (REC.ok[i] ? 'on-ok' : '') + '">✓ 写对了</button>' +
+        '<button data-mk="no" data-i="' + i + '" class="' + (REC.no[i] ? 'on-no' : '') + '">✗ 写错了</button></div>' +
+        '</div></div>';
+    });
+    return h + '</div>';
+  }
+
+  function scopeText() {
+    var m = unitOf(LV);
+    if (!m) return '';
+    if (LV > DEF_LV) return '①–' + NUM[LV];
+    var f = UNITS.filter(function (u) { return u.book === '上'; })[0];
+    return '九上 ' + (f && f.i < LV ? NUM[f.i] + '–' + NUM[LV] : NUM[LV]);
+  }
+
+  function render() {
+    build();
+    var h = '';
+    h += renderSec(SECS[0], 'chem', '5 类问法各 1 个：名称 / 原子团 / 信息 / 标价 / 改错', DATA.chem);
+    h += renderSec(SECS[1], 'eq', '四项全对才给分', DATA.eq);
+    h += renderSec(SECS[2], 'phen', '写看到的，不写结论', DATA.phen);
+    h += renderSec(SECS[3], 'reason', '「因为…所以…」两段都要有', DATA.reason);
+    document.getElementById('sheet').innerHTML = h;
+    document.getElementById('dt').textContent = (today.getMonth() + 1) + ' 月 ' + today.getDate() + ' 日';
+    document.getElementById('dno').textContent = dayNo;
+
+    var m = unitOf(LV);
+    document.getElementById('scopeSub').textContent = '范围 ' + scopeText();
+    document.getElementById('planSub').textContent = ITEMS.length + ' 项 / 约 ' + Math.max(4, Math.round(ITEMS.length * 0.9)) + ' 分钟';
+    document.getElementById('planTip').innerHTML = '今天这 <b>' + ITEMS.length + '</b> 项：' +
+      SECS.filter(function (s) { return s.items.length; }).map(function (s) { return s.items.length + ' ' + s.n; }).join(' · ');
+    var miss = SECS.filter(function (s) { return !s.items.length; }).map(function (s) { return s.n; });
+    document.getElementById('scopeTip').innerHTML = m
+      ? ('只出 <b>' + esc(scopeText()) + '</b> 的内容' +
+        (LV > DEF_LV ? '（九上全 + 九下' + esc(UNITS.filter(function (u) { return u.book === '下' && u.i <= LV; }).map(function (u) { return NUM[u.i]; }).join('')) + '）' : '') +
+        (miss.length ? '，<span class="warn">' + esc(miss.join('、')) + '还没学到，先空着</span>' : '，不会练到后面单元'))
+      : '';
+    updateSum();
+  }
+
+  /* 重渲染会重建整个 sheet —— 先把滚动位置记住，否则点一下「对答案」页面弹回顶部 */
+  function redraw() {
+    var y = window.scrollY;
+    render();
+    window.scrollTo(0, y);
+  }
+
+  function hasMark(r) {
+    return Object.keys((r && r.ok) || {}).length > 0 || Object.keys((r && r.no) || {}).length > 0;
+  }
+
+  function updateSum() {
+    var ok = 0, no = 0, tot = ITEMS.length;
+    Object.keys(REC.ok).forEach(function (k) { if (REC.ok[k]) ok++; });
+    Object.keys(REC.no).forEach(function (k) { if (REC.no[k]) no++; });
+    document.getElementById('cnt').textContent = ok + ' / ' + tot;
+    var brk = document.getElementById('brk');
+    if (!ok && !no) brk.textContent = '还没开始标对错';
+    else {
+      var bySec = SECS.map(function (s) {
+        var o = 0, n = 0;
+        s.items.forEach(function (x) { if (REC.ok[x.i]) o++; if (REC.no[x.i]) n++; });
+        return { n: s.n, o: o, t: s.items.length, bad: n };
+      });
+      var txt = bySec.filter(function (x) { return x.o + x.bad; }).map(function (x) {
+        return x.n + ' ' + x.o + '/' + x.t;
+      }).join(' · ');
+      var worst = bySec.slice().sort(function (p, q) { return q.bad - p.bad; })[0];
+      brk.innerHTML = (no ? '写错 <b>' + no + '</b> 项　' : '') + esc(txt) +
+        (worst.bad ? '　→ <b>' + esc(worst.n) + '错 ' + worst.bad + ' 项，明天先重写这几项</b>' : '');
+    }
+    var days = Object.keys(ST.days).filter(function (d) {
+      var r = ST.days[d];
+      if (hasMark(r)) return true;
+      return Object.keys(r.byLv || {}).some(function (k) { return hasMark(r.byLv[k]); });
+    }).sort();
+    var streak = 0, cur = new Date(today);
+    for (var g = 0; g < 400; g++) {
+      var k = ymd(cur);
+      if (days.indexOf(k) >= 0) { streak++; cur.setDate(cur.getDate() - 1); } else break;
+    }
+    document.getElementById('streak').textContent = streak;
+  }
+
+  document.addEventListener('click', function (e) {
+    var t = e.target;
+    if (t.dataset && t.dataset.rev != null) {
+      var i = +t.dataset.rev;
+      REC.rev[i] = !REC.rev[i];
+      save(); redraw();
+      return;
+    }
+    if (t.dataset && t.dataset.mk) {
+      var j = +t.dataset.i, k = t.dataset.mk;
+      if (k === 'ok') { REC.ok[j] = !REC.ok[j]; if (REC.ok[j]) delete REC.no[j]; }
+      else { REC.no[j] = !REC.no[j]; if (REC.no[j]) delete REC.ok[j]; }
+      save(); redraw();
+    }
+  });
+
+  document.getElementById('shuffle').onclick = function () {
+    ST.shift = (ST.shift || 0) + 1;
+    var d = ST.days[dayKey];
+    /* shift 是全局的：所有范围的题都会换，所以全部范围的对错记录一起清，不然标记会落到别的题上 */
+    d.byLv = {};
+    d.byLv[LV] = { ok: {}, no: {}, rev: {} };
+    REC = d.byLv[LV];
+    save(); render();
+  };
+
+  function doPrint(cls) {
+    document.body.classList.add(cls);
+    window.print();
+    setTimeout(function () { document.body.classList.remove(cls); }, 300);
+  }
+  document.getElementById('pq').onclick = function () { doPrint('pq'); };
+  document.getElementById('pa').onclick = function () { doPrint('pa'); };
+
+  /* ---------- 计时 ---------- */
+  var left = 12 * 60, tid = null, running = false;
+  var clk = document.getElementById('clk'), tb = document.getElementById('tstart');
+  function paint() {
+    var m = Math.floor(left / 60), s = left % 60;
+    clk.textContent = pad(m) + ':' + pad(s);
+    clk.className = 'clk' + (left <= 0 ? ' done' : (left <= 60 ? ' warn' : ''));
+  }
+  tb.onclick = function () {
+    if (running) { running = false; clearInterval(tid); tb.textContent = '继续'; return; }
+    if (left <= 0) left = 12 * 60;
+    running = true; tb.textContent = '暂停'; paint();
+    tid = setInterval(function () {
+      left--;
+      if (left <= 0) {
+        left = 0; paint();
+        clearInterval(tid); running = false; tb.textContent = '重来';
+        return;
+      }
+      paint();
+    }, 1000);
+  };
+  /* ---------- 范围选择：跟着学校进度走，只出已学单元 ---------- */
+  (function initScope() {
+    var sel = document.getElementById('lv');
+    var up = [], dn = [];
+    UNITS.forEach(function (u) {
+      (u.book === '上' ? up : dn).push('<option value="' + u.i + '">' + NUM[u.i] + ' ' + esc(u.n) + '</option>');
+    });
+    sel.innerHTML = '<optgroup label="九上">' + up.join('') + '</optgroup>' +
+      '<optgroup label="九下">' + dn.join('') + '</optgroup>';
+    sel.value = String(LV);
+    sel.onchange = function () {
+      LV = +sel.value;
+      ST.lv = LV;
+      REC = recFor(LV);
+      save();
+      render();
+      window.scrollTo(0, 0);
+    };
+  })();
+
+  paint();
+  render();
+})();
+</script>
+</body>
+</html>

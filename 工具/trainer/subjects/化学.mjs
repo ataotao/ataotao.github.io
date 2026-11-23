@@ -43,7 +43,7 @@ const SUBJECT = {
 
   // 出题四件套登记（真身在 coreFile 内；build.mjs 仅把 MODULES/gen/judge 写进构建日志，其余供人阅读）
   contract: {
-    MODULES: 'CH.modules',      // 12 单元注册表
+    MODULES: 'CH.modules',      // 11 单元注册表（2024 新版教材）
     gen: 'CH.gen',              // 出题
     judge: 'CH.judge',          // 判分
     wrongKey: 'wrongKey()',     // 错题去重键（内核内，引用 CH.normChem）
@@ -54,7 +54,8 @@ const SUBJECT = {
 
   head: {
     icon: '⚗', name: '化学闪练卡', title: '化学闪练卡 · 人教版初三全考点',
-    ver: '人教版初三 · 全考点', note: '随机出题 · 答案解析讲考点难点 · 反复练'
+    ver: '人教版初三 · 全考点', note: '随机出题 · 答案解析讲考点难点 · 反复练',
+    link: { href: '化学每日五写.html', text: '每日五写（手写）↗' }
   },
 
   // 错题去重键表达式（在内核 UI 作用域内求值，CH 为 core 全局别名）

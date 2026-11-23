@@ -201,6 +201,45 @@ hr.sep{border:0;border-top:1px dashed var(--line);margin:18px 0}
 .verdict.bad{background:var(--bad-soft);color:var(--bad)}
 .verdict.self{background:var(--warn-soft);color:var(--warn)}
 .ansbox{margin-top:8px;padding:10px 12px;background:#f7f5f0;border:1px solid var(--line);border-radius:9px;font-size:13.5px}
+
+/* 采分点自检 */
+.ptbox{margin-top:10px;background:var(--warn-soft);border:1px solid #efdca9;border-radius:9px;padding:10px 12px}
+.pthd{font-size:13px;font-weight:700;color:var(--warn);margin-bottom:7px}
+.ptgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(232px,1fr));gap:5px}
+.ptitem{display:flex;gap:7px;align-items:flex-start;font-size:13px;line-height:1.5;padding:5px 9px;border-radius:7px;background:#fff;border:1px solid #f0e3c8;cursor:pointer}
+.blankrow .ptbox .ptitem input[type=checkbox]{width:14px;height:14px;flex:none;margin:3px 0 0}
+.ptitem span{flex:1;min-width:0}
+.ptitem.on{background:var(--ok-soft);border-color:#bfe3cd;color:var(--ok)}
+.ptitem.miss{background:var(--bad-soft);border-color:#f2c9c4;color:var(--bad)}
+.ptsum{margin-top:8px;font-size:12.5px;color:var(--mut)}
+.ptsum b{color:var(--warn)}
+
+/* 答题要素 + 错空复盘 */
+.wtab td,.wtab th{vertical-align:top}
+.wtab .qcol{width:96px;font-weight:700;color:var(--acc2);font-size:13px}
+.wcard{border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-bottom:8px;background:#fcfbf9}
+.wcard .wt{font-size:12.5px;color:var(--acc2);font-weight:700;margin-bottom:5px}
+.wcard .wt .k{background:var(--acc-soft);border-radius:5px;padding:1px 6px;margin-right:6px;color:var(--acc2)}
+.wcard .wl{font-size:13.5px;margin:3px 0}
+.wcard .wl .lab{color:var(--mut);font-size:12.5px;margin-right:4px}
+.wcard .wl .bad{color:var(--bad);font-weight:600}
+.wcard .wl .good{color:var(--ok);font-weight:600}
+.errow{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
+.errow button{font:inherit;font-size:12px;padding:3px 9px;border-radius:999px;border:1px solid var(--line);background:#fff;color:var(--mut);cursor:pointer}
+.errow button.on{background:var(--acc);border-color:var(--acc);color:#fff;font-weight:600}
+.errbar{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 12px}
+.errbar .eb{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:6px 12px;font-size:13px}
+.errbar .eb b{color:var(--acc2);font-size:16px;margin-left:4px}
+.errbar .eb.top{border-color:var(--acc);background:var(--acc-soft)}
+@media(max-width:640px){
+  .wtab thead{display:none}
+  .wtab,.wtab tbody,.wtab tr,.wtab td{display:block;width:auto}
+  .wtab tr{border:1px solid var(--line);border-radius:10px;padding:9px 12px;margin-bottom:8px;background:#fcfbf9}
+  .wtab td{border:0;padding:3px 0;font-size:13px}
+  .wtab td.qcol{font-size:14.5px;font-weight:700;margin-bottom:3px}
+  .wtab td[data-l]:before{content:attr(data-l);display:inline-block;min-width:66px;color:var(--mut);font-size:12px}
+  .errbar .eb{padding:5px 10px;font-size:12.5px}
+}
 #print-area{display:none}
 @media print{
   body *{visibility:hidden!important}
@@ -350,6 +389,10 @@ hr.sep{border:0;border-top:1px dashed var(--line);margin:18px 0}
     var v = p.get('view');
     if (v) go(v);
     if (p.get('list') === 'wrong') drillList = 'wrong';
+    if (p.get('no')) {
+      curNo = parseInt(p.get('no'), 10) || 1;
+      if (curPaper) { PS[curPaper.id] = PS[curPaper.id] || { cur: 1, ans: {} }; renderPractice(); }
+    }
   }
 
   // ---------- ① 诊断 ----------
@@ -616,15 +659,105 @@ hr.sep{border:0;border-top:1px dashed var(--line);margin:18px 0}
     }
   ];
 
+  // 十条答题要素：问法 → 必写什么 → 他的原答 → 该有的样子
+  var TPLW = [
+    ['原因类', '两段式「因为…（条件／原理），所以…（结果）」，缺一段就扣', '「分子在运动」', '「燃烧放热 → 温度升高 → 气体膨胀，所以压强增大」'],
+    ['作用类', '写全 2–3 件事：吸收什么、防止什么、帮助什么', '「分子在不停降温」', '「吸收 P₂O₅ 白烟、防止污染空气、降温助冷」'],
+    ['微观解释', '必须点到「分子／原子」，并指明「间隔／运动／种类／构成」哪一项变了', '「物理变化」', '「分子间隔变大，分子本身没有变」'],
+    ['名称类', '只写名称（仪器／操作／方法），不写用途、不写变化类型', '「通过分液漏斗控制」', '「量筒」'],
+    ['趋势描述', '按时间分段，用「先…后…再…」，每段带方向', '「增大走势」', '「先升高、后下降、再回升」'],
+    ['化学式', '正价在前 + 酸根在后 + 交叉配平 + 查脚标', '「PO₄」', '「Na₃PO₄」'],
+    ['化学方程式', '四件套：配平、条件、↑↓、化学式正确', '「H₂O₂ H₂O₂」', '「2H₂O₂ —MnO₂→ 2H₂O + O₂↑」'],
+    ['控制变量与条件', '先说「只变了什么」，答案填「变的那一项」；问条件要写全（谁＋多少）', '「催化剂」', '「过氧化氢溶液的浓度」'],
+    ['判断 + 理由', '两问问两答：先给标号，再给判据（元素守恒／活动性／有无新物质）', '选 C，理由写「二氧化锰」', '「D，反应物里没有碳元素」'],
+    ['画图（微观）', '先数原子总数，再画分子，只画题目要求的那一侧', '已画，但看不出对不对', '「反应前画 3 个 O₂，每个 2 个氧原子」']
+  ];
+
+  // 错因归类（本地保存，不进训练统计）
+  var ERRS = ['不知道', '术语不准', '答非所问', '漏要素', '写法错', '读题漏条件'];
+  var ERRK = 'chemScaffold.err.v1';
+  function errAll() { try { return JSON.parse(localStorage.getItem(ERRK) || '{}') || {}; } catch (e) { return {}; } }
+  function errPut(o) { try { localStorage.setItem(ERRK, JSON.stringify(o)); } catch (e) {} }
+
+  function renderErrors() {
+    var box = document.getElementById('errbox');
+    if (!box) return;
+    var map = errAll(), rows = [];
+    FILLS.forEach(function (q) {
+      (q.blanks || []).forEach(function (b) {
+        if (b.ok) return;
+        rows.push({ id: q.no + '|' + b.k, no: q.no, k: b.k, ask: b.ask, mine: b.mine || '', ans: b.ans, qt: b.qt || '' });
+      });
+    });
+    var counts = {}, marked = 0;
+    ERRS.forEach(function (e) { counts[e] = 0; });
+    rows.forEach(function (r) { var e = map[r.id]; if (e) { counts[e] = (counts[e] || 0) + 1; marked++; } });
+
+    var bar = '<div class="errbar">';
+    ERRS.forEach(function (e) { bar += '<div class="eb"><span>' + e + '</span><b>' + counts[e] + '</b></div>'; });
+    bar += '</div>';
+
+    var top = ERRS.slice().sort(function (a, b) { return counts[b] - counts[a]; })[0];
+    var note;
+    if (marked < 5) {
+      note = '<p class="mut small">已标记 ' + marked + ' / ' + rows.length + ' 个错空。标到 5 个以上，这里会自动给结论。</p>';
+    } else if (top === '不知道') {
+      note = '<p class="small"><b>最大错因：' + top + '（' + counts[top] + ' 个）</b>——这是真知识缺口，回闪练卡按单元补，补完回来重标。</p>';
+    } else {
+      note = '<p class="small"><b>最大错因：' + top + '（' + counts[top] + ' 个，占 ' +
+        Math.round(counts[top] / marked * 100) + '%）</b>——这不是知识缺口，别再加大刷题量；照上面的要素表练写法。</p>';
+    }
+
+    var cards = rows.map(function (r) {
+      var cur = map[r.id] || '';
+      return '<div class="wcard">' +
+        '<div class="wt"><span class="k">第 ' + r.no + ' 题 ' + esc(r.k) + '</span>' + esc(r.qt || '短空') + '</div>' +
+        '<div class="wl"><span class="lab">问</span>' + esc(r.ask) + '</div>' +
+        '<div class="wl"><span class="lab">你写</span><span class="bad">' + esc(r.mine || '（空白）') + '</span></div>' +
+        '<div class="wl"><span class="lab">该写</span><span class="good">' + esc(r.ans) + '</span></div>' +
+        '<div class="errow">' + ERRS.map(function (e) {
+          return '<button data-err="' + esc(r.id) + '" data-lab="' + e + '"' + (cur === e ? ' class="on"' : '') + '>' + e + '</button>';
+        }).join('') + '</div></div>';
+    }).join('');
+
+    box.innerHTML = bar + note + cards;
+
+    Array.prototype.forEach.call(box.querySelectorAll('[data-err]'), function (btn) {
+      btn.onclick = function () {
+        var m = errAll(), id = btn.dataset.err, lab = btn.dataset.lab;
+        if (m[id] === lab) delete m[id]; else m[id] = lab;
+        errPut(m);
+        renderErrors();
+      };
+    });
+  }
+
   function renderMethod() {
     var el = document.getElementById('v-method');
-    var html = '<div class="lead"><p><b>五套模板</b>。做题时先认题型，再套步骤；卡住时回来对一下第几步断了。</p></div>';
+    var html = '<div class="lead"><p><b>五套解题模板 + 十条答题要素</b>。先认题型、套步骤；写答案时用要素表管住「该写哪几个字」。' +
+      '最下面是你这次每个错空的复盘——标一个错因，标完自动统计。</p></div>';
+
     TPLS.forEach(function (t) {
       html += '<div class="tpl"><h4>' + t.t + '</h4><ol class="steps">';
       t.steps.forEach(function (s) { html += '<li>' + s + '</li>'; });
       html += '</ol><p class="mut small" style="margin-top:10px">' + t.tip + '</p></div>';
     });
+
+    html += '<div class="card"><h3>十条答题要素（主观题 36 分就靠这张表）</h3>' +
+      '<p class="mut small">左两列是「怎么答」，右两列是「你这次怎么错的」。写完答案逐条对「必须写到」，缺一条就是一个扣分点。</p>' +
+      '<table class="wtab"><thead><tr><th class="qcol">问法</th><th>必须写到</th><th>你的原答</th><th>该有的样子</th></tr></thead><tbody>' +
+      TPLW.map(function (r) {
+        return '<tr><td class="qcol">' + r[0] + '</td><td class="small" data-l="必须写到">' + r[1] + '</td>' +
+          '<td class="small" data-l="你的原答" style="color:var(--bad)">' + r[2] + '</td>' +
+          '<td class="small" data-l="该有的样子" style="color:var(--ok)">' + r[3] + '</td></tr>';
+      }).join('') + '</tbody></table></div>';
+
+    html += '<div class="card"><h3>错空复盘：给每个错空标一个错因</h3>' +
+      '<p class="mut small">若最大类不是「不知道」，说明问题不在知识，接下来该练写法而不是加题量。</p>' +
+      '<div id="errbox"></div></div>';
+
     el.innerHTML = html;
+    renderErrors();
   }
 
   // ---------- ④ 错题回炉 ----------
@@ -875,13 +1008,15 @@ hr.sep{border:0;border-top:1px dashed var(--line);margin:18px 0}
   function qState(no) {
     var pid = curPaper.id;
     PS[pid] = PS[pid] || { cur: 1, ans: {} };
-    PS[pid].ans[no] = PS[pid].ans[no] || { pick: '', inputs: {}, checks: {}, reveal: {}, self: {} };
-    return PS[pid].ans[no];
+    PS[pid].ans[no] = PS[pid].ans[no] || emptyAns();
+    var st = PS[pid].ans[no];
+    st.pts = st.pts || {};
+    return st;
   }
-  function emptyAns() { return { pick: '', inputs: {}, checks: {}, reveal: {}, self: {} }; }
+  function emptyAns() { return { pick: '', inputs: {}, checks: {}, reveal: {}, self: {}, pts: {} }; }
   function qStatus(q, st) {
     st = st || emptyAns();
-    st.checks = st.checks || {}; st.reveal = st.reveal || {}; st.self = st.self || {}; st.inputs = st.inputs || {};
+    st.checks = st.checks || {}; st.reveal = st.reveal || {}; st.self = st.self || {}; st.inputs = st.inputs || {}; st.pts = st.pts || {};
     if (q.type === 'choice') return st.pick ? (st.pick === q.ans ? 'right' : 'wrong') : '';
     var blanks = q.blanks || [], n = 0, done = 0, bad = 0, self = 0;
     blanks.forEach(function (b, i) {
@@ -905,7 +1040,7 @@ hr.sep{border:0;border-top:1px dashed var(--line);margin:18px 0}
     var st = qState(curNo);
     PS[curPaper.id].cur = curNo; psave(PS);
 
-    var doneN = qs.filter(function (q) { var s = qStatus(q, PS[curPaper.id].ans[q.no] || { pick: '', inputs: {}, checks: {}, reveal: {}, self: {} }); return s && s !== 'doing'; }).length;
+    var doneN = qs.filter(function (q) { var s = qStatus(q, PS[curPaper.id].ans[q.no] || emptyAns()); return s && s !== 'doing'; }).length;
     var nav = qs.map(function (q) {
       var s = qStatus(q, PS[curPaper.id].ans[q.no] || {});
       return '<button data-goto="' + q.no + '" class="' + (q.no === curNo ? 'cur' : (s || '')) + '" title="第 ' + q.no + ' 题">' + q.no + '</button>';
@@ -933,16 +1068,32 @@ hr.sep{border:0;border-top:1px dashed var(--line);margin:18px 0}
           '<div class="ansbox"><b>为什么</b>：' + esc(q.why || '') + '</div>';
       }
     } else {
-      body += '<div class="mut small">短空直接核对；长填空/简答写完点「看答案」，自己判断对错。</div>';
+      body += '<div class="mut small">短空直接核对；长填空先逐条勾「必须写到的要素」，再点看答案——不勾就看不到自己漏了什么。</div>';
       (q.blanks || []).forEach(function (b, i) {
         var essay = blankIsEssay(b), v = st.inputs[i] || '', ck = st.checks[i], rev = st.reveal[i];
+        var plist = b.pts || [], ppick = st.pts[i] || {}, pcnt = 0;
+        plist.forEach(function (_, j) { if (ppick[j]) pcnt++; });
+        var ptHtml = '';
+        if (essay && plist.length) {
+          ptHtml = '<div class="ptbox"><div class="pthd">写完先自检 · 这空必须写到（逐条勾）</div><div class="ptgrid">' +
+            plist.map(function (t, j) {
+              return '<label class="ptitem' + (ppick[j] ? ' on' : (rev ? ' miss' : '')) + '">' +
+                '<input type="checkbox" data-pt="' + i + ':' + j + '"' + (ppick[j] ? ' checked' : '') + '>' +
+                '<span>' + esc(t) + '</span></label>';
+            }).join('') + '</div>' +
+            '<div class="ptsum">已勾 ' + pcnt + ' / ' + plist.length +
+            (pcnt < plist.length ? '　<b>还差 ' + (plist.length - pcnt) + ' 条，先在答案里补上再对</b>' : '　✓ 要素齐了') +
+            '</div></div>';
+        }
         body += '<div class="blankrow"><div class="ask"><b>' + esc(b.k) + '</b>　' + esc(b.ask) + '</div>' +
           (essay
             ? '<textarea data-input="' + i + '" placeholder="在此写出你的答案">' + esc(v) + '</textarea>'
             : '<input data-input="' + i + '" value="' + esc(v) + '" placeholder="填入答案">') +
+          ptHtml +
           '<div style="margin-top:8px">' +
           (essay
-            ? '<button class="btn ghost" data-reveal="' + i + '" style="padding:5px 10px">' + (rev ? '收起答案' : '看答案自评') + '</button>'
+            ? '<button class="btn ghost" data-reveal="' + i + '" style="padding:5px 10px">' +
+              (rev ? '收起答案' : '看答案自评' + (plist.length ? '（要素 ' + pcnt + '/' + plist.length + '）' : '')) + '</button>'
             : '<button class="btn" data-check="' + i + '" style="padding:5px 10px">核对这一空</button>') +
           (ck ? '<span class="' + (ck ? 'tag-ok' : 'tag-bad') + '" style="margin-left:10px">' + (ck ? '✓ 正确' : '✗ 再看答案') + '</span>' : '') +
           '</div>';
@@ -986,6 +1137,15 @@ hr.sep{border:0;border-top:1px dashed var(--line);margin:18px 0}
     });
     Array.prototype.forEach.call(el.querySelectorAll('[data-reveal]'), function (b) {
       b.onclick = function () { var i = b.dataset.reveal; st.reveal[i] = !st.reveal[i]; psave(PS); renderPractice(); };
+    });
+    Array.prototype.forEach.call(el.querySelectorAll('[data-pt]'), function (cb) {
+      cb.onchange = function () {
+        var p = cb.dataset.pt.split(':'), i = p[0], j = p[1];
+        st.pts[i] = st.pts[i] || {};
+        st.pts[i][j] = cb.checked;
+        psave(PS);
+        renderPractice();
+      };
     });
     Array.prototype.forEach.call(el.querySelectorAll('[data-self]'), function (b) {
       b.onclick = function () { var p = b.dataset.self.split(':'); st.self[p[0]] = p[1]; psave(PS); renderPractice(); };

@@ -40,6 +40,9 @@ header.top{position:sticky;top:0;z-index:20;background:rgba(245,247,251,.92);bac
 .brand{font-weight:800;font-size:17px;letter-spacing:.2px}
 .ver{font-size:11px;color:var(--muted);font-weight:600;border:1px solid var(--line);border-radius:20px;padding:1px 7px}
 .top-note{font-size:12px;color:var(--muted);margin-left:auto}
+/* 科外页面入口（head.link：如「每日五写」），只有配置了的科目才出现 */
+.extlink{flex:none;font-size:12px;font-weight:700;color:var(--brand);background:var(--brand-soft);border:1px solid transparent;border-radius:20px;padding:2px 10px;text-decoration:none;white-space:nowrap}
+.extlink:hover{border-color:var(--brand)}
 nav.tabs{max-width:900px;margin:0 auto;padding:8px 16px 0;display:flex;gap:6px;overflow-x:auto;scrollbar-width:none}
 nav.tabs::-webkit-scrollbar{display:none}
 nav.tabs button{flex:0 0 auto;border:0;background:transparent;color:var(--muted);font:inherit;font-size:14px;padding:8px 12px;border-radius:10px 10px 0 0;cursor:pointer;border-bottom:2px solid transparent}
@@ -74,6 +77,8 @@ p{margin:8px 0}
 .cheq .cond.bottom{margin-top:1px}
 .cheq .arw{font-size:1.15em;color:var(--ink);letter-spacing:.08em}
 .cheq-svg{display:inline-block;vertical-align:middle;margin:0 .12em;max-width:100%}
+.cur-svg,.mic-svg{display:block;margin:8px 0;max-width:100%}
+.op-svg,.dev-svg{max-width:100%}
 .opt{display:block;width:100%;text-align:left;border:1px solid var(--line);background:#fff;border-radius:11px;padding:10px 14px;margin:7px 0;font:inherit;font-size:15px;cursor:pointer;transition:background .1s,border .1s}
 .opt:hover{background:#f7fafc;border-color:#cbd5e1}
 .opt.sel{border-color:var(--brand);background:var(--brand-soft)}
@@ -143,7 +148,7 @@ input.txt.ok{border-color:var(--ok);background:var(--ok-soft)}input.txt.bad{bord
 <body>
 <header class="top">
   <div class="top-in"><span class="brand">${h.icon} ${h.name}</span><span class="ver">${h.ver}</span>
-    <span class="top-note">${h.note}</span></div>
+    <span class="top-note">${h.note}</span>${h.link ? `<a class="extlink" href="${h.link.href}">${h.link.text}</a>` : ''}</div>
   <nav class="tabs" id="tabs"></nav>
 </header>
 <main class="wrap" id="app"></main>
@@ -254,8 +259,287 @@ export function uiScript(cfg) {
     }
     return out + s.slice(i);
   }
+  /* 微粒结构示意图 → 内联 SVG：标记 ⟦sd:17|2,8,7⟧（核电荷数 | 各层电子数）。
+     画法与教材一致：圆圈内写核电荷数，右侧逐层半圆弧，弧的右端标该层电子数。
+     与 chemSVG 同样只在显示层转换：prompt / display / 错题键 / 判分一律不动。 */
+  function sdSVG(spec) {
+    var sp = String(spec).split('|');
+    var z = String(sp[0] || '').replace(/[^0-9]/g, '');
+    var sh = String(sp[1] || '').split(/[,\s]+/).filter(function (x) { return x !== ''; });
+    /* 1:1 像素渲染（viewBox 单位 = px）：若按 em 缩放，字号会被压到 3~4px 看不清。 */
+    var r0 = 13, step = 11, R = r0 + sh.length * step;
+    var W = 2 * R + 28, H = 2 * R + 12, cx = R + 9, cy = H / 2;
+    var s = '<svg class="sd-svg" width="' + W + '" height="' + H + '" viewBox="0 0 ' + W + ' ' + H + '" ' +
+      'style="vertical-align:middle;height:auto" xmlns="http://www.w3.org/2000/svg" role="img" ' +
+      'aria-label="结构示意图：核电荷数 ' + z + '，各层电子 ' + sh.join('、') + '">' +
+      '<g fill="none" stroke="currentColor" stroke-width="1">' +
+      '<circle cx="' + cx + '" cy="' + cy + '" r="' + r0 + '"/>';
+    for (var i = 1; i <= sh.length; i++) {
+      var r = r0 + i * step;
+      s += '<path d="M' + cx + ',' + (cy - r) + ' A' + r + ',' + r + ' 0 0 1 ' + cx + ',' + (cy + r) + '"/>';
+    }
+    s += '</g><g fill="currentColor" font-family="Times New Roman,Georgia,serif">' +
+      '<text x="' + cx + '" y="' + (cy + 3) + '" text-anchor="middle" font-size="10.5">＋' + z + '</text>';
+    for (var j = 1; j <= sh.length; j++) {
+      s += '<text x="' + (cx + r0 + j * step + 3.5) + '" y="' + (cy + 3.4) + '" font-size="10">' + sh[j - 1] + '</text>';
+    }
+    return s + '</g></svg>';
+  }
+  /* ============================================================
+     图形层：实验操作图 / 气体制取装置图 / 微观粒子图 / 溶解度曲线
+     四者与结构示意图同一套机制——prompt 存纯文本，display 存 ⟦op:…⟧ 等标记，
+     rich() 渲染成内联 SVG；错题键 / 判分 / 记录一律用 prompt，不受影响。
+     全部 1:1 像素渲染（viewBox 单位 = px），避免 em 缩放把字号压到看不清。
+     ============================================================ */
+  var S_LINE = 'fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round" stroke-linecap="round"';
+  var S_FILL = 'fill="currentColor" stroke="none"';
+  var S_TXT = 'fill="currentColor" font-family="system-ui,Microsoft YaHei,sans-serif"';
+
+  function svgWrap(cls, W, H, label, inner) {
+    return '<svg class="' + cls + '" width="' + W + '" height="' + H + '" viewBox="0 0 ' + W + ' ' + H + '"' +
+      ' style="vertical-align:middle;height:auto" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="' + label + '">' +
+      inner + '</svg>';
+  }
+
+  /* ---------- ① 实验操作图：⟦op:read-ok⟧ / pour-bad / heat-ok / drop-bad / filter-ok ---------- */
+  function opSVG(spec) {
+    var a = String(spec).split('-'), op = a[0], ok = a[1] !== 'bad';
+    var W = 104, H = 82, s = '';
+    if (op === 'read') {
+      s += '<g ' + S_LINE + '><path d="M36,14 L36,60 A9,5 0 0 0 54,60 L54,14"/>' +
+        '<path d="M32,66 L58,66"/><path d="M36,14 L54,14"/></g>';
+      s += '<path d="M36,44 L54,44 L54,64 A9,5 0 0 1 36,64 Z" fill="currentColor" opacity=".12" stroke="none"/>';
+      for (var i = 0; i < 4; i++) s += '<path d="M36,' + (20 + i * 6) + ' L41,' + (20 + i * 6) + '" ' + S_LINE + '/>';
+      var ey = ok ? 44 : 24;
+      s += '<circle cx="86" cy="' + ey + '" r="4.5" ' + S_LINE + '/><circle cx="86" cy="' + ey + '" r="1.4" ' + S_FILL + '/>';
+      s += '<path d="M81,' + ey + ' L55,44" stroke="currentColor" stroke-width="1" stroke-dasharray="3 2" fill="none"/>';
+    } else if (op === 'pour') {
+      /* 试管（左，口朝右上） */
+      s += '<g transform="translate(30,72) rotate(22)" ' + S_LINE + '><path d="M-7,-40 L-7,0 A7,7 0 0 0 7,0 L7,-40"/></g>';
+      s += '<path d="M23,38 L37,28 L39,50 Z" fill="currentColor" opacity=".12" stroke="none"/>';
+      /* 试剂瓶（右，倒置倾倒，瓶口对准管口） */
+      s += '<g transform="translate(78,30) rotate(118)">';
+      s += '<rect x="-11" y="-13" width="22" height="26" rx="2" ' + S_LINE + '/>';
+      s += '<rect x="-4" y="-19" width="8" height="6" ' + S_LINE + '/>';
+      /* 标签：规范时朝上（手心），不规范时朝下 */
+      if (ok) s += '<rect x="-9" y="-10" width="18" height="8" fill="currentColor" opacity=".55" stroke="none"/>';
+      else s += '<rect x="-9" y="2" width="18" height="8" fill="currentColor" opacity=".55" stroke="none"/>';
+      s += '</g>';
+      /* 瓶塞：规范=倒放桌面，不规范=正放桌面 */
+      if (ok) s += '<g transform="translate(88,74) rotate(90)"><rect x="-5" y="-7" width="10" height="14" rx="1.5" ' + S_LINE + '/></g>';
+      else s += '<g transform="translate(88,70)"><rect x="-5" y="-7" width="10" height="14" rx="1.5" ' + S_LINE + '/><rect x="-5" y="-7" width="10" height="3" ' + S_FILL + '/></g>';
+    } else if (op === 'heat') {
+      /* 酒精灯 */
+      s += '<g ' + S_LINE + '><path d="M40,70 L44,56 L60,56 L64,70 Z"/><path d="M50,56 L54,56"/>' +
+        '<path d="M52,56 C46,48 48,40 52,36 C56,40 58,48 52,56 Z"/></g>';
+      if (ok) {
+        /* 规范：试管与桌面约 45°，外焰加热液体部位，液体不超过 1/3 */
+        s += '<g transform="translate(52,44) rotate(-45)" ' + S_LINE + '>' +
+          '<path d="M-7,-34 L-7,0 A7,7 0 0 0 7,0 L7,-34"/></g>';
+        s += '<path d="M40,26 L44,22" ' + S_LINE + '/>';
+        s += '<g transform="translate(52,34) rotate(-45)"><path d="M-9,-3 L9,-3 L9,3 L-9,3 Z" fill="currentColor" opacity=".25" stroke="none"/></g>';
+      } else {
+        /* 不规范：试管竖直，管底直接压在灯芯（内焰）上 */
+        s += '<g ' + S_LINE + '><path d="M44,8 L44,38" /><path d="M60,8 L60,38"/><path d="M44,38 A8,6 0 0 0 60,38"/></g>';
+        s += '<path d="M46,26 L58,26 L58,40 L46,40 Z" fill="currentColor" opacity=".18" stroke="none"/>';
+      }
+      s += '<path d="M8,76 L96,76" stroke="currentColor" stroke-width="1" stroke-dasharray="2 3" fill="none"/>';
+    } else if (op === 'drop') {
+      /* 试管：管口在 40，液面 50，底部 68 */
+      s += '<g ' + S_LINE + '><path d="M38,40 L38,62 A9,6 0 0 0 56,62 L56,40"/><path d="M34,68 L60,68"/></g>';
+      s += '<path d="M38,50 L56,50 L56,64 A9,6 0 0 1 38,64 Z" fill="currentColor" opacity=".12" stroke="none"/>';
+      /* 规范：垂直悬空在管口上方；不规范：伸入管内、管口以下 */
+      var g = ok ? '<g ' + S_LINE + '><ellipse cx="47" cy="8" rx="6" ry="5"/><rect x="44" y="12" width="6" height="16" rx="1"/>' +
+        '<path d="M47,28 L47,34"/></g>'
+        : '<g ' + S_LINE + '><ellipse cx="47" cy="8" rx="6" ry="5"/><rect x="44" y="12" width="6" height="42" rx="1"/>' +
+        '<path d="M47,54 L47,60"/></g>';
+      s += g;
+    } else if (op === 'filter') {
+      /* 漏斗 + 烧杯 + 玻璃棒 */
+      s += '<g ' + S_LINE + '><path d="M30,16 L66,16 L52,38 L44,38 Z"/>' +
+        '<path d="M' + (ok ? 62 : 48) + ',38 L' + (ok ? 62 : 48) + ',72"/></g>';
+      s += '<g ' + S_LINE + '><path d="M30,44 L30,74 L74,74 L74,44"/><path d="M74,44 L80,42"/></g>';
+      if (ok) s += '<path d="M84,14 L60,32" ' + S_LINE + '/>';
+      s += '<path d="M30,58 L74,58 L74,74 L30,74 Z" fill="currentColor" opacity=".1" stroke="none"/>';
+    }
+    return svgWrap('op-svg', W, H, '实验操作示意图', s);
+  }
+
+  /* ---------- ② 气体制取 / 收集装置图：⟦dev:heat⟧ / room / room2 / up / down / water ---------- */
+  function devSVG(spec) {
+    var t = String(spec), W = 120, H = 96, s = '';
+    if (t === 'heat') {
+      /* 铁架台 + 试管（口向右，略向下倾斜）+ 单孔塞导管 + 酒精灯 */
+      s += '<g ' + S_LINE + '><path d="M8,90 L54,90"/><path d="M14,90 L14,16"/><path d="M14,34 L32,34"/></g>';
+      s += '<g ' + S_LINE + '><path d="M32,24 L84,24 L84,44 L40,44 A8,8 0 0 1 32,36 Z"/></g>';
+      s += '<path d="M40,28 L78,28 L78,40 L40,40 Z" fill="currentColor" opacity=".1" stroke="none"/>';
+      s += '<rect x="84" y="24" width="7" height="20" rx="1" ' + S_LINE + '/>';
+      s += '<path d="M91,34 L112,34 L112,14" ' + S_LINE + '/>';
+      s += '<g ' + S_LINE + '><path d="M46,88 L50,68 L70,68 L74,88 Z"/><path d="M58,68 L62,68"/>' +
+        '<path d="M60,68 C54,60 56,52 60,48 C64,52 66,60 60,68 Z"/></g>';
+    } else if (t === 'room' || t === 'room2') {
+      if (t === 'room') {
+        /* 锥形瓶 + 双孔塞 + 长颈漏斗 + 导管 */
+        s += '<g ' + S_LINE + '><path d="M28,88 L36,56 L36,46 L50,46 L50,56 L58,88 Z"/></g>';
+        s += '<path d="M30,74 L56,74 L58,88 L28,88 Z" fill="currentColor" opacity=".12" stroke="none"/>';
+        s += '<rect x="32" y="38" width="22" height="8" rx="1" ' + S_LINE + '/>';
+        s += '<g ' + S_LINE + '><path d="M30,8 L52,8 L45,24 L37,24 Z"/><path d="M41,24 L41,80"/></g>';
+        s += '<path d="M46,38 L46,28 L86,28 L86,12" ' + S_LINE + '/>';
+      } else {
+        /* 试管 + 双孔塞 + 分液漏斗 + 导管 */
+        s += '<g ' + S_LINE + '><path d="M30,40 L30,74 A7,6 0 0 0 44,74 L44,40"/><path d="M26,80 L48,80"/></g>';
+        s += '<path d="M30,56 L44,56 L44,76 A7,6 0 0 1 30,76 Z" fill="currentColor" opacity=".12" stroke="none"/>';
+        s += '<rect x="27" y="32" width="20" height="8" rx="1" ' + S_LINE + '/>';
+        s += '<g ' + S_LINE + '><path d="M62,6 L86,6 L79,22 L69,22 Z"/><path d="M74,22 L74,26"/>' +
+          '<circle cx="74" cy="28" r="2.5"/><path d="M74,30 L74,36 L46,36"/></g>';
+        s += '<path d="M37,32 L37,18 L92,18" ' + S_LINE + '/>';
+      }
+    } else if (t === 'up') {
+      s += '<g ' + S_LINE + '><path d="M46,24 L46,80 L82,80 L82,24"/><path d="M40,24 L88,24"/></g>';
+      s += '<path d="M46,44 L82,44 L82,79 L46,79 Z" fill="currentColor" opacity=".07" stroke="none"/>';
+      s += '<path d="M20,12 L20,72 L46,72" ' + S_LINE + '/>';
+    } else if (t === 'down') {
+      s += '<g ' + S_LINE + '><path d="M46,56 L46,20 L82,20 L82,56"/><path d="M40,56 L88,56"/></g>';
+      s += '<path d="M46,21 L82,21 L82,44 L46,44 Z" fill="currentColor" opacity=".07" stroke="none"/>';
+      s += '<path d="M20,84 L20,30 L46,30" ' + S_LINE + '/>';
+    } else if (t === 'water') {
+      s += '<g ' + S_LINE + '><path d="M24,52 L24,86 L96,86 L96,52"/></g>';
+      s += '<path d="M24,58 L96,58 L96,86 L24,86 Z" fill="currentColor" opacity=".16" stroke="none"/>';
+      s += '<g ' + S_LINE + '><path d="M44,26 L44,74"/><path d="M74,26 L74,74"/><path d="M44,26 L74,26"/></g>';
+      s += '<g ' + S_LINE + '><circle cx="52" cy="66" r="2.2"/><circle cx="59" cy="58" r="1.6"/><circle cx="65" cy="50" r="1.2"/></g>';
+      s += '<path d="M8,20 L8,44 Q8,50 16,50 L44,50" ' + S_LINE + '/>';
+    }
+    return svgWrap('dev-svg', W, H, '气体制取与收集装置图', s);
+  }
+
+  /* ---------- ③ 微观粒子示意图：⟦mic:H2~2,O2~1⟧ 或 ⟦mic:H2~2,O2~1>H2O~2⟧ ---------- */
+  var MIC_ATOMS = {
+    O2: [[0, 0, 'O', 8], [15, 0, 'O', 8]],
+    N2: [[0, 0, 'N', 8], [15, 0, 'N', 8]],
+    H2: [[0, 0, 'H', 6], [13, 0, 'H', 6]],
+    CO: [[0, 0, 'C', 8], [15, 0, 'O', 8]],
+    CO2: [[0, 0, 'C', 8], [-15, 0, 'O', 8], [15, 0, 'O', 8]],
+    H2O: [[0, 0, 'O', 9], [-10, -10, 'H', 6], [10, -10, 'H', 6]],
+    C: [[0, 0, 'C', 8]],
+    O: [[0, 0, 'O', 8]],
+    H: [[0, 0, 'H', 6]],
+    CuO: [[0, 0, 'Cu', 9], [17, 0, 'O', 8]]
+  };
+  function micMol(type, x, y) {
+    var at = MIC_ATOMS[type] || MIC_ATOMS.O;
+    var s = '<g transform="translate(' + x + ',' + y + ')">';
+    for (var i = 0; i < at.length; i++) {
+      s += '<circle cx="' + at[i][0] + '" cy="' + at[i][1] + '" r="' + at[i][3] + '" fill="none" stroke="currentColor" stroke-width="1.1"/>' +
+        '<text x="' + at[i][0] + '" y="' + (at[i][1] + 3.2) + '" ' + S_TXT + ' text-anchor="middle" font-size="' + (at[i][2].length > 1 ? 7.5 : 9) + '">' + at[i][2] + '</text>';
+    }
+    return s + '</g>';
+  }
+  function micExt(type) {
+    var at = MIC_ATOMS[type] || MIC_ATOMS.O, mn = 1e9, mx = -1e9;
+    for (var i = 0; i < at.length; i++) {
+      var l = at[i][0] - at[i][3], r2 = at[i][0] + at[i][3];
+      if (l < mn) mn = l;
+      if (r2 > mx) mx = r2;
+    }
+    return { min: mn, w: mx - mn };
+  }
+  function micSVG(spec) {
+    var groups = String(spec).split('>'), pad = 12, gapMol = 18, gapArrow = 30, cy = 28;
+    var plan = [], W = pad, i, j;
+    for (i = 0; i < groups.length; i++) {
+      var items = groups[i].split(',').filter(function (z) { return z !== ''; }), list = [];
+      for (j = 0; j < items.length; j++) {
+        var p = items[j].split('~'), n = parseInt(p[1] || '1', 10);
+        for (var k = 0; k < n; k++) list.push(p[0]);
+      }
+      plan.push(list);
+      for (j = 0; j < list.length; j++) W += micExt(list[j]).w + (j ? gapMol : 0);
+      if (i < groups.length - 1) W += gapArrow;
+    }
+    W += pad;
+    var x = pad, s = '';
+    for (i = 0; i < plan.length; i++) {
+      for (j = 0; j < plan[i].length; j++) {
+        var e = micExt(plan[i][j]);
+        s += micMol(plan[i][j], x - e.min, cy);
+        x += e.w + gapMol;
+      }
+      x -= gapMol;
+      if (i < plan.length - 1) {
+        s += '<path d="M' + (x + 8) + ',' + cy + ' L' + (x + 24) + ',' + cy + '" stroke="currentColor" stroke-width="1.3" fill="none"/>' +
+          '<path d="M' + (x + 24) + ',' + cy + ' L' + (x + 19) + ',' + (cy - 3) + ' M' + (x + 24) + ',' + cy + ' L' + (x + 19) + ',' + (cy + 3) +
+          '" stroke="currentColor" stroke-width="1.3" fill="none"/>';
+        x += gapArrow;
+      }
+    }
+    return svgWrap('mic-svg', W, cy * 2, '微观粒子示意图', s);
+  }
+
+  /* ---------- ④ 溶解度曲线：⟦cur:NH4Cl,NaCl⟧ ---------- */
+  var CUR_DATA = {
+    NH4Cl: [29.4, 37.2, 45.8, 55.2, 65.6, 77.3],
+    NaCl: [35.7, 36.0, 36.6, 37.3, 38.4, 39.8],
+    KNO3: [13.3, 31.6, 63.9, 110, 169, 246],
+    CaOH2: [0.185, 0.165, 0.121, 0.116, 0.094, 0.074]
+  };
+  var CUR_NAME = { NH4Cl: 'NH₄Cl', NaCl: 'NaCl', KNO3: 'KNO₃', CaOH2: 'Ca(OH)₂' };
+  function curSVG(spec) {
+    var names = String(spec).split(',').filter(function (z) { return z !== ''; });
+    var W = 200, H = 134, x0 = 34, y0 = 92, x1 = 128, y1 = 18;
+    var tmax = 100, mx = 1;
+    for (var i = 0; i < names.length; i++) {
+      var d = CUR_DATA[names[i]] || CUR_DATA.NaCl;
+      for (var j = 0; j < d.length; j++) if (d[j] > mx) mx = d[j];
+    }
+    /* 纵轴取"整刻度"：先按 5 等分估一个步长再取整（1/2/2.5/5/10 × 10^n），
+       避免出现 73、218 这类不教材的刻度值。 */
+    function niceStep(x) {
+      var pw = Math.pow(10, Math.floor(Math.log(x) / Math.LN10)), n = x / pw;
+      var m = n <= 1 ? 1 : n <= 2 ? 2 : n <= 2.5 ? 2.5 : n <= 5 ? 5 : 10;
+      return m * pw;
+    }
+    var SEG = 5, stepY = niceStep(mx / SEG), ymax = stepY * SEG;
+    var s = '<g ' + S_LINE + '><path d="M' + x0 + ',' + y1 + ' L' + x0 + ',' + y0 + ' L' + x1 + ',' + y0 + '"/></g>';
+    s += '<text x="' + (x0 + 2) + '" y="' + (y1 - 7) + '" ' + S_TXT + ' font-size="9" text-anchor="start">溶解度/g</text>';
+    s += '<text x="' + ((x0 + x1) / 2) + '" y="' + (y0 + 24) + '" ' + S_TXT + ' text-anchor="middle" font-size="9">温度/℃</text>';
+    for (var ty = 0; ty <= SEG; ty++) {
+      var yy = y0 - (y0 - y1) * ty / SEG, val = ymax * ty / SEG;
+      s += '<path d="M' + x0 + ',' + yy + ' L' + (x0 - 3) + ',' + yy + '" ' + S_LINE + '/>';
+      s += '<text x="' + (x0 - 5) + '" y="' + (yy + 3) + '" ' + S_TXT + ' font-size="8" text-anchor="end">' +
+        (stepY < 0.1 ? String(Math.round(val * 1000) / 1000) : String(Math.round(val))) + '</text>';
+      s += '<path d="M' + x0 + ',' + yy + ' L' + x1 + ',' + yy + '" stroke="currentColor" stroke-width="0.4" stroke-dasharray="2 3" fill="none" opacity=".45"/>';
+    }
+    for (var tx = 0; tx <= 4; tx++) {
+      var xx = x0 + (x1 - x0) * tx / 4;
+      s += '<text x="' + xx + '" y="' + (y0 + 11) + '" ' + S_TXT + ' text-anchor="middle" font-size="8">' + (tmax * tx / 4) + '</text>';
+    }
+    for (var n = 0; n < names.length; n++) {
+      var dd = CUR_DATA[names[n]] || CUR_DATA.NaCl, pts = [];
+      for (var q = 0; q < dd.length; q++) {
+        pts.push((x0 + (x1 - x0) * (q * 20) / tmax).toFixed(1) + ',' + (y0 - (y0 - y1) * dd[q] / ymax).toFixed(1));
+      }
+      s += '<path d="M' + pts.join(' L') + '" fill="none" stroke="currentColor" stroke-width="' + (n === 0 ? 1.6 : 1.1) +
+        '" ' + (n === 1 ? 'stroke-dasharray="5 3"' : '') + '/>';
+      var ex = x1, ey = y0 - (y0 - y1) * dd[dd.length - 1] / ymax;
+      s += '<text x="' + (ex + 7) + '" y="' + (ey + 4) + '" ' + S_TXT + ' font-size="9" text-anchor="start">' + CUR_NAME[names[n]] + '</text>';
+    }
+    return svgWrap('cur-svg', W, H, '溶解度曲线', s);
+  }
+
   function rich(s) {
     var out = esc(s).replace(/Δ/g, '△');
+    /* 结构示意图先换成占位符再拼回：chemRuns 会把化学字符连续段整体吞成化学式，
+       示意图一旦留在原位就会被误吞；占位符用控制字符（不属化学字符），最后按序拼回。
+       不用正则替换——源码里的转义在多层内联后容易失真。 */
+    var SD_MK = String.fromCharCode(1), sds = [];
+    out = out.replace(/⟦(sd|op|dev|mic|cur):([^⟧]+)⟧/g, function (m, kind, spec) {
+      /* display 先被 esc() 转义过（> 变 &gt;），微观图的反应箭头会因此丢失，这里还原 */
+      spec = spec.replace(/&gt;/g, '>').replace(/&lt;/g, '<').replace(/&amp;/g, '&');
+      var svg = kind === 'sd' ? sdSVG(spec) : kind === 'op' ? opSVG(spec) :
+        kind === 'dev' ? devSVG(spec) : kind === 'mic' ? micSVG(spec) : curSVG(spec);
+      sds.push(svg);
+      return SD_MK + (sds.length - 1) + SD_MK;
+    });
     out = out.replace(/—([^→]+)→/g, function (m, c) { return '⟦' + c.replace('/', '|') + '⟧'; });
     /* HEAD 时代的老错题只存了裸串 prompt（无 display 字段）：「2KClO₃ MnO₂/Δ 2KCl…」，
        条件夹在化学式之间。仅对配平题（含「配平：」）兜底：把「空格+条件词+空格」补成 ⟦⟧，
@@ -267,7 +551,9 @@ export function uiScript(cfg) {
         return ' ⟦' + p[0] + (p.length > 1 ? '|' + p[1] : '') + '⟧ ';
       });
     }
-    return chemRuns(out);
+    var joined = chemRuns(out);
+    for (var si = 0; si < sds.length; si++) joined = joined.split(SD_MK + si + SD_MK).join(sds[si]);
+    return joined;
   }
 
   /* ---------- 化学特殊符号键盘 ----------

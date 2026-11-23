@@ -8,7 +8,7 @@
 // 从 化学/化学闪练卡.html 抽出 <script id="core">（纯逻辑层，不碰 DOM），在 node vm 里跑：
 //   ① 每个生成器各出 N 题，题干无 undefined/NaN；② 字段合法、选项不重复；
 //   ③ 解析 / 考点齐全；④ 正确解判对、错误解判错；
-//   ⑤ 12 个单元、全部题型都被覆盖；⑥ 归一化边界（全角 / 下标 / 正负号）。
+//   ⑤ 11 个单元、全部题型都被覆盖（2024 新版教材：原⑩酸和碱+⑪盐化肥已合并）；⑥ 归一化边界。
 import { readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -48,8 +48,8 @@ if (!CH || typeof CH.selfTest !== 'function') {
   process.exit(1);
 }
 
-/* 期望的 12 单元（人教版初三全考点） */
-const UNITS = ['intro', 'air', 'struct', 'water', 'eq', 'carbon', 'fuel', 'metal', 'sol', 'ab', 'salt', 'life'];
+/* 期望的 11 单元（人教版 2024 新版：上册 7 + 下册 4） */
+const UNITS = ['intro', 'air', 'struct', 'water', 'eq', 'carbon', 'fuel', 'metal', 'sol', 'ab', 'life'];
 const got = CH.modules.map((m) => m.id);
 if (got.length !== UNITS.length || UNITS.some((u, i) => got[i] !== u)) {
   console.error('✗ 单元注册表不对：期望 ' + UNITS.join('/') + '，实际 ' + got.join('/'));
@@ -115,6 +115,28 @@ if (marked !== 5 || kclo3Display.indexOf('⟦MnO₂|△⟧') < 0 || kclo3Display
     }
   }
   if (!found) { console.error('✗ 未找到 KMnO₄ 配平题'); process.exit(1); }
+}
+
+/* 微粒结构示意图（struct.diagram，2026-11-23 补）：
+   prompt 必须保持纯文本（错题键 = normChem(prompt)[:90]，混入 ⟦⟧ 会让老错题失配且题干难读），
+   display 必须带 ⟦sd:z|e,e⟧ 标记交给 rich() 画 SVG，且不能残留纯文本示意图。 */
+{
+  const seen = new Set();
+  for (let i = 1; i <= 800; i++) {
+    const q = CH.gen('struct', 'diagram', i * 7919);
+    if (!q || q.id !== 'struct.diagram') { console.error('✗ struct.diagram 没有出题'); process.exit(1); }
+    if (/⟦|⟧/.test(q.prompt)) { console.error('✗ 结构示意图 prompt 混入显示标记：' + q.prompt); process.exit(1); }
+    if (!q.display || q.display.indexOf('⟦sd:') < 0) {
+      console.error('✗ 结构示意图 display 缺 ⟦sd:z|e,e⟧ 标记：' + q.prompt);
+      process.exit(1);
+    }
+    if (/（＋\d+）/.test(q.display)) { console.error('✗ display 仍残留纯文本示意图：' + q.prompt); process.exit(1); }
+    seen.add(q.prompt.slice(0, 12));
+  }
+  if (seen.size < 5) {
+    console.error(`✗ 结构示意图问法只有 ${seen.size} 种，期望 5 种（元素种类/粒子种类/周期/得失电子/写符号）`);
+    process.exit(1);
+  }
 }
 
 /* 归一化边界用例 */

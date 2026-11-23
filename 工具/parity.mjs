@@ -46,6 +46,11 @@ const TARGETS = [
     watch: ['化学/化学思维脚手架.html'],
   },
   {
+    name: '化学 · 每日五写',
+    cmd: ['node', ['化学/工具/build-wuxie.mjs']],
+    watch: ['化学/化学每日五写.html'],
+  },
+  {
     name: '化学 · 闪练卡（训练器模板）',
     cmd: ['node', ['工具/trainer/build.mjs', '化学']],
     watch: ['化学/化学闪练卡.html', '工具/trainer/review.js'],
