@@ -589,7 +589,7 @@ ok((textOf(app).match(/当前板块随机题练习/g) || []).length >= 7, '基�
   const pageTxt = textOf(app);
   ok(/情境 1\/\d+/.test(pageTxt), '题型卡没显示「情境 1/b」');
   ok(/情境覆盖 1\/\d+/.test(pageTxt), '模块头没显示「情境覆盖 a/b」');
-  ok(/练未覆盖 /.test(pageTxt), '题型卡没显示「练未覆盖 N」');
+  ok(/练没见过的情境 /.test(pageTxt), '题型卡没显示「练没见过的情境 N」');
 
   /* 专练未覆盖：出的必须是没见过情境 */
   M.startNocover('drill', 'symshape');
@@ -676,6 +676,26 @@ ok((textOf(app).match(/当前板块随机题练习/g) || []).length >= 7, '基�
   const repTxt = textOf(app);
   ok(repTxt.includes('知识覆盖面'), '报告页没有「知识覆盖面」');
   ok(/全科 \d+ \/ \d+/.test(repTxt), '报告页没有全科合计');
+
+  /* 模块头「练没练过的题型」按题型口径（2026-11-23）：
+     复现截图场景——写解析式只有顶点式 8 条无 skel 老记录，应报 7 个未练题型；
+     情境口径的题型卡按钮仍只在拱桥建模出现，顶点式卡要把 legacy 显示出来。 */
+  const wrecs = M.db().recs;
+  for (let i = wrecs.length - 1; i >= 0; i--) if (wrecs[i].mod === 'write') wrecs.splice(i, 1);
+  for (let i = 0; i < 8; i++) wrecs.push({ ts: Date.now() + i, mod: 'write', kind: 'vertex', kn: '顶点式求 a',
+    ok: true, got: 1, total: 1, sec: 10, hint: false, mode: 'new' });
+  M.go('write');
+  const wTxt = textOf(app);
+  ok(/练没练过的题型（7）/.test(wTxt), '模块头未练题型数应为 7，实际 ' + ((wTxt.match(/练没练过的题型（\d+）/) || ['无'])[0]));
+  ok(!/练未覆盖的题/.test(wTxt), '模块头还留着旧的「练未覆盖的题」文案');
+  ok(!/练未覆盖 /.test(wTxt), '题型卡还留着旧的「练未覆盖 N」文案');
+  ok(/练过 8 题/.test(wTxt), '顶点式卡没显示练过 8 题');
+  ok(/暂无情境记录/.test(wTxt) && /老记录无情境指纹未计/.test(wTxt), '顶点式卡没显示老记录未计入的提示');
+  ok(/练没见过的情境 1/.test(wTxt), '拱桥建模应有且只有 1 个未见过情境');
+  M.startFreshKinds('write');
+  ok(M.S.view === 'practice' && M.S.sess.queue.length === 7, '未练题型按钮应出 7 题');
+  ok(M.S.sess.queue.every((q) => q.kind !== 'vertex'), '未练题型按钮混进了练过的 vertex');
+  ok(new Set(M.S.sess.queue.map((q) => q.kind)).size === 7, '未练题型应每个题型各 1 题');
 }
 
 if (fails.length) {

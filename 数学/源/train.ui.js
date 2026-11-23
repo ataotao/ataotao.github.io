@@ -276,17 +276,21 @@
     function randomBtn(arr) {
       return h('button', { class: 'btn btn-sm btn-random', onclick: function () { startGroupRandom(m.id, arr); } }, '当前板块随机题练习');
     }
+    /* 模块头按「题型」统计未练数：判据是 kindStat 的非回炉记录数，不是情境覆盖。
+       纯数字随机题型（SKELS -1）没有情境池，老记录也没有 skel，用 done 会把练过的误判成没练。 */
+    var freshN = kindIdsOf(m).filter(function (id) { return kindStat(m.id, id).n === 0; }).length;
     head.appendChild(h('div', { class: 'row', style: 'margin-top:12px' },
       h('button', { class: 'btn btn-primary', onclick: function () { startSession(m.id, null, m.id === 'entry' ? 3 : 8); } }, '开始一轮'),
       h('button', { class: 'btn', onclick: function () { startExample(m.id, lastKindOf(m.id)); } }, '先看例题'),
       (!showGroupHead) ? randomBtn(cards) : null,
-      (cm.open > 0 ? h('button', { class: 'btn', onclick: function () { startNocover(m.id, null); } },
-        '练未覆盖的题（' + cm.open + '）') : null)
+      (freshN > 0 ? h('button', { class: 'btn', onclick: function () { startFreshKinds(m.id); } },
+        '练没练过的题型（' + freshN + '）') : null)
     ));
     head.appendChild(h('div', { class: 'small muted', style: 'margin-top:8px' },
       isItems
-        ? '「开始一轮」从全部得分点混抽 3 个；每个得分点可单独练 1 题；板块标题右侧按该板块每个得分点各出 1 题。'
+        ? '「开始一轮」从全部得分点混抽 3 个；每个得分点可单独练 1 题；板块标题右侧按该板块每个得分点各出 1 题。「练没练过的题型」专挑还没练过的得分点。'
         : ('「开始一轮」按题型混抽（每次不同）；每个题型可以单独连做 3 题（专项）。' +
+           '「练没练过的题型」从还没练过的题型里各抽 1 题；题型卡的「练没见过的情境」只出固定情境题型里没见过的情境。' +
            (showGroupHead ? '板块标题右侧「当前板块随机题练习」按该板块题型各出 1~2 题。' : '「当前板块随机题练习」按本页题型各出 1~2 题。'))
     ));
     var list = h('div', { style: 'margin-top:4px' });
@@ -309,7 +313,7 @@
           h('div', { class: 'row', style: 'margin-top:auto' },
             h('button', { class: 'btn btn-primary btn-sm', onclick: function () { startSession(m.id, k.id, isItems ? 1 : 3); } }, isItems ? '练这个得分点' : '专项 3 题'),
             /* 得分点只有一道题：「练这个得分点」出的就是那道没做过的，不用再单开「练未覆盖」入口 */
-            (!isItems && c.open > 0 ? h('button', { class: 'btn btn-sm', onclick: function () { startNocover(m.id, k.id); } }, '练未覆盖 ' + c.open) : null),
+            (!isItems && c.open > 0 ? h('button', { class: 'btn btn-sm', onclick: function () { startNocover(m.id, k.id); } }, '练没见过的情境 ' + c.open) : null),
             (c.pct === 100 ? h('span', { class: 'small', style: 'color:var(--ok);font-weight:600' }, '✓ 已全覆盖') : null)
           )
         ));
@@ -417,7 +421,9 @@
   }
   function covLine(c) {
     if (c.pct == null) return h('div', { class: 'cov' },
-      h('span', null, c.done ? '已练 ' + c.done + ' 个情境' : '还没练'), h('span', { class: 'muted' }, '· 数字随机，无固定情境'));
+      h('span', null, c.done ? '已练 ' + c.done + ' 个情境' : (c.legacy ? '暂无情境记录' : '还没练')),
+      h('span', { class: 'muted' }, '· 数字随机，无固定情境'),
+      (c.legacy ? h('span', { class: 'muted' }, '· ' + c.legacy + ' 条老记录无情境指纹未计') : null));
     return h('div', { class: 'cov' },
       h('span', null, '情境 ' + c.done + '/' + c.pool),
       h('div', { class: 'bar' }, h('i', { style: 'width:' + c.pct + '%' })),
@@ -512,6 +518,25 @@
     S.back = null;
     S.sess = { mod: mod, kind: kind || null, mode: 'nocover', total: Math.min(8, open), done: 0, right: 0,
       t0: Date.now(), queue: queue, sigs: [], skels: [] };
+    S.view = 'practice';
+    nextQuestion();
+  }
+  /* 练没练过的题型：模块头按钮用。每个题型抽 1 题，最多 8 题；都练过就退化为全场随机一轮。
+     判据走 kindStat（非回炉记录数），不走情境覆盖：老记录没有 skel，数字随机题型没有情境池，
+     用 done 判会把「顶点式练过 8 题」误报成没练。队列现场生成，复用普通作答链路。 */
+  function startFreshKinds(mod) {
+    var m = MT.moduleById(mod);
+    if (!m) return;
+    var ids = kindIdsOf(m).filter(function (id) { return kindStat(mod, id).n === 0; });
+    if (!ids.length) { startSession(mod, null, mod === 'entry' ? 3 : 8); return; }
+    var qs = ids.slice(0, 8).map(function (id) { return MT.gen(mod, id, (Math.random() * 1e9) | 0); });
+    S.mode = 'new';
+    S.example = false;
+    S.back = null;
+    var sess = { mod: mod, kind: null, total: qs.length, done: 0, right: 0, t0: Date.now(),
+      queue: qs, groupLabel: '没练过的题型 · ' + qs.length + ' 个' };
+    sess.replay = function () { startFreshKinds(mod); };
+    S.sess = sess;
     S.view = 'practice';
     nextQuestion();
   }
@@ -1358,7 +1383,7 @@
     S: S, db: function () { return DB; },
     fracify: fracify, escLt: escLt, normalizeDB: normalizeDB,
     startSession: startSession, startWrong: startWrong, startDaily: startDaily, startExample: startExample,
-    startGroupRandom: startGroupRandom, startNocover: startNocover,
+    startGroupRandom: startGroupRandom, startNocover: startNocover, startFreshKinds: startFreshKinds,
     cover: coverOf, coverMod: coverOfMod,
     plan: function () { return dayPlan(); },
     submit: submit, submitFix: submitFix, next: next, go: go, render: render
