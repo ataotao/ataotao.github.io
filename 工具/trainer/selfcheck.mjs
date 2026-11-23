@@ -269,6 +269,30 @@ if (name === '化学' || name === '化学专项') {
     if (gcCount !== 4) fail('配平四法模块页方法细则卡数异常：期望 4，实际 ' + gcCount);
     if (app.innerHTML.indexOf('操作细则') < 0 || app.innerHTML.indexOf('例题：') < 0) fail('方法细则卡缺操作细则或例题');
     if (app.innerHTML.indexOf('⟦') >= 0) fail('方法细则卡例题残留 ⟦⟧ 标记');
+    /* 引导式例题：最小公倍数法的 5 步须「问题在 summary、思路在折叠区」，
+       另有 1 张即时练手卡；完整步骤默认折叠，不直接泄题。 */
+    var walkHtml = (app.innerHTML.match(/class="gc-walk"/g) || []).length;
+    if (walkHtml !== 5) fail('引导式例题步数渲染异常：期望 5，实际 ' + walkHtml);
+    if (app.innerHTML.indexOf('先自己想一想每步该怎么做') < 0) fail('引导例题缺「先想再看」提示');
+    if (app.innerHTML.indexOf('class="gc-re"') < 0 || app.innerHTML.indexOf('<b>思路：</b>') < 0) fail('引导例题的思路区未渲染');
+    if (app.innerHTML.indexOf('class="gc-try"') < 0 || app.innerHTML.indexOf('自己试一道') < 0) fail('即时练手卡未渲染');
+    if (app.innerHTML.indexOf('看完整步骤与结果') < 0) fail('完整答案未折叠（会直接泄题）');
+
+    /* 入口可达性：孩子进入配平题（任何途径）都应在答题页看到内联方法卡，
+       否则像用户那样只看到题干+输入框，会以为功能不存在。 */
+    var recsBeforeGuide = T.DB.recs.length;
+    T.go('mod', 'balance');
+    T.action('modexample');
+    if (T.S.view !== 'mod') fail('「先看一道例题」应打开模块页方法卡，而不是进入假答题（mode=example 会判分/进错题库）');
+    if (app.innerHTML.indexOf('guide-card') < 0) fail('「先看一道例题」未展示方法卡内容');
+    /* 答题页内联：直接进入 lcm 题型，页内应含引导例题的 5 个问题、练手卡与折叠答案 */
+    T.startRound('balance', 'lcm', 1);
+    var qh = app.innerHTML;
+    if (qh.indexOf('看方法与引导例题') < 0) fail('配平答题页缺内联方法卡入口');
+    if ((qh.match(/class="gc-walk"/g) || []).length !== 5) fail('答题页内联引导例题步数异常');
+    if (qh.indexOf('class="gc-try"') < 0 || qh.indexOf('看完整步骤与结果') < 0) fail('答题页内联练手卡/折叠答案缺失');
+    /* 内联卡只展示不计分：进入答题不应产生任何作答记录 */
+    if (T.DB.recs.length !== recsBeforeGuide) fail('仅查看引导例题不应写入作答记录');
     Object.assign(T.S, keep); T.render();
   }
 }

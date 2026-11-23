@@ -97,6 +97,20 @@ input.txt.ok{border-color:var(--ok);background:var(--ok-soft)}input.txt.bad{bord
 .guide-card li{font-size:13px;line-height:1.75}
 .guide-card .gc-ex{border:1px dashed var(--line);border-radius:8px;padding:7px 10px;margin-top:6px;background:#fafbfc}
 .guide-card .gc-ex .gc-q{font-size:13px;line-height:1.9;margin-bottom:4px}
+.guide-card .gc-walk{margin:6px 0;border:1px solid var(--line);border-radius:8px;background:#fff;overflow:hidden}
+.guide-card .gc-walk summary{cursor:pointer;font-size:13px;line-height:1.7;padding:7px 10px;color:var(--ink);list-style:none}
+.guide-card .gc-walk summary::-webkit-details-marker{display:none}
+.guide-card .gc-walk summary::before{content:'▸ ';color:var(--brand);font-weight:700}
+.guide-card .gc-walk[open] summary::before{content:'▾ '}
+.guide-card .gc-walk summary:hover{background:var(--brand-soft)}
+.guide-card .gc-walk[open] summary{background:var(--brand-soft);border-bottom:1px solid var(--line)}
+.guide-card .gc-walk .gc-re{font-size:13px;line-height:1.8;padding:8px 10px;color:var(--ink)}
+.guide-card .gc-walk .gc-re b{color:var(--brand)}
+.guide-card .gc-try{border:1px solid var(--brand);border-radius:8px;padding:8px 10px;margin-top:8px;background:var(--brand-soft)}
+.guide-card .gc-try .gc-tq{font-size:13px;line-height:1.8;color:var(--ink);margin-bottom:2px}
+.guide-card .gc-full{margin-top:8px;font-size:12px}
+.guide-card .gc-full summary{cursor:pointer;color:var(--muted)}
+.guide-card .gc-full summary:hover{color:var(--brand)}
 .statgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px}
 .statbox{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px 14px}
 .statbox .k{font-size:12px;color:var(--muted)}.statbox .v{font-size:24px;font-weight:800;color:var(--brand)}
@@ -281,7 +295,22 @@ var CF = (function () {
       example: {
         q: '配平：P ＋ O₂ —点燃→ P₂O₅',
         steps: ['氧：左边 O₂ 有 2 个，右边 P₂O₅ 有 5 个，最小公倍数 10。', 'O₂ 系数 = 10÷2 = 5；P₂O₅ 系数 = 10÷5 = 2。', '顺推磷：右边 2×2 = 4 个 P，左边 P 前配 4。'],
-        a: '4P + 5O₂ —点燃→ 2P₂O₅'
+        a: '4P + 5O₂ —点燃→ 2P₂O₅',
+        /* 引导式例题：每步先抛一个有判断的问题，孩子先自己想，再点开看推理。
+           不判分、不进错题库，只是把「为什么」摊开给孩子看。 */
+        walk: [
+          { ask: '① 先找起点（这个元素左右各出现一次）：这道题该盯住哪个元素？', reveal: '盯氧。左边 O₂ 里 2 个氧，右边 P₂O₅ 里 5 个氧——个数不同，正好从它入手。' },
+          { ask: '② 2 和 5 的最小公倍数是几？', reveal: '10。要让左右氧原子数一样，就把两边都凑成 10 个。' },
+          { ask: '③ 用 10 ÷ 各自个数，O₂ 前和 P₂O₅ 前各填几？', reveal: 'O₂：10÷2 = 5；P₂O₅：10÷5 = 2。先写成 5O₂ 和 2P₂O₅。' },
+          { ask: '④ 右边的磷现在有几个？左边 P 前该填几？', reveal: '右边 2 个 P₂O₅，一共 2×2 = 4 个磷，所以左边 P 前填 4。' },
+          { ask: '⑤ 最后查一查：左右原子数相等吗？系数还能约分吗？', reveal: 'P 左 4 右 4；O 左 5×2 = 10、右 2×5 = 10，相等。系数 4、5、2 没有公约数，已经最简。' }
+        ],
+        /* 紧跟一道相近题（教研证据：示范后立刻练一道同结构的题，效果最好） */
+        try: {
+          q: '配平：Al ＋ O₂ —点燃→ Al₂O₃（自己用同样的方法走一遍）',
+          steps: ['氧：左 2、右 3，最小公倍数 6。', 'O₂ 前 6÷2 = 3；Al₂O₃ 前 6÷3 = 2。', '顺推铝：右边 2×2 = 4 个 Al，左边 Al 前配 4。'],
+          a: '4Al + 3O₂ —点燃→ 2Al₂O₃'
+        }
       }
     },
     odd: {
@@ -563,12 +592,14 @@ var CF = (function () {
      ============================================================ */
   var MODULES = [
     { id: 'base', icon: '🔤', name: '① 化学用语地基', desc: '元素符号 / 离子符号 / 周期表信息——方程式第一步不再卡住',
+      /* 练习顺序 = 认知坡度：先认元素符号 → 再写元素符号 → 周期表判读（认元素身份 + 相对原子质量，为计算铺路）→ 离子符号书写 → 离子/化合价写法辨析。
+         注意 kind id 与 prompt 均未变，错题键和已有做题记录不受影响。 */
       kinds: [
         { id: 'symbol', name: '符号→名称', gen: genSymbol },
         { id: 'name', name: '名称→符号', gen: genName },
+        { id: 'period', name: '周期表判读', gen: genPeriod },
         { id: 'ion', name: '离子符号书写', gen: genIon },
-        { id: 'ionrule', name: '写法辨析', gen: genIonRule },
-        { id: 'period', name: '周期表判读', gen: genPeriod }
+        { id: 'ionrule', name: '写法辨析', gen: genIonRule }
       ] },
     { id: 'balance', icon: '⚖', name: '② 配平四法', desc: '最小公倍数 · 奇数配偶 · 观察 · 定一，配完还会自检',
       kinds: [
@@ -1577,21 +1608,64 @@ window.__ltSync = { carrierSnapshot: carrierSnapshot, syncPlan: syncPlan, subjec
   }
   /* 配平方法细则卡：题型带 guide 字段时，在题型 chip 下方渲染可展开的「细则 + 例题」 */
   function guideCard(k) {
+    return (k && k.guide) ? '<details class="gc-wrap"><summary style="cursor:pointer;font-size:13px;color:var(--brand);margin:6px 0 2px">📖 ' +
+      esc(k.name) + ' · 看方法与例题</summary>' + guideInner(k) + '</details>' : '';
+  }
+  /* guide 在模块页是一张可展开卡；在答题页也内联一份当前题型的，
+     这样从「按题型练 / 本单元随机 / 先看一道例题 / 深链」任一入口进来都能看到。
+     例题内容纯展示：不判分、不写 DB.recs、不进错题库。 */
+  function guideFor(q) {
+    if (!q || !q.mod || !q.kind) return null;
+    var m = CH.moduleById(q.mod);
+    if (!m) return null;
+    for (var i = 0; i < m.kinds.length; i++) if (m.kinds[i].id === q.kind) return m.kinds[i].guide || null;
+    return null;
+  }
+  function guideInner(k) {
     var g = k.guide;
-    if (!g) return '';
     var steps = (g.steps || []).map(function (s) { return '<li>' + rich(s) + '</li>'; }).join('');
     var ex = g.example, exHtml = '';
     if (ex) {
       var exSteps = (ex.steps || []).map(function (s) { return '<li>' + rich(s) + '</li>'; }).join('');
-      exHtml = '<div class="gc-ex"><div class="gc-q">📌 例题：' + rich(ex.q) + '</div>' +
-        (exSteps ? '<ol>' + exSteps + '</ol>' : '') +
-        '<div style="margin-top:6px"><b>配平结果：</b>' + rich(ex.a) + '</div></div>';
+      var walk = ex.walk || [];
+      if (walk.length) {
+        /* 引导式例题：先给问题让孩子自己想，点开才看推理；完整步骤折叠作对照 */
+        var walkHtml = walk.map(function (w) {
+          return '<details class="gc-walk"><summary>' + rich(w.ask) + '</summary>' +
+            '<div class="gc-re"><b>思路：</b>' + rich(w.reveal) + '</div></details>';
+        }).join('');
+        exHtml = '<div class="gc-ex"><div class="gc-q">📌 例题：' + rich(ex.q) +
+          '<div class="small" style="color:var(--muted)">先自己想一想每步该怎么做，点开再看思路。</div></div>' +
+          walkHtml +
+          '<details class="gc-full"><summary>看完整步骤与结果</summary>' +
+          (exSteps ? '<ol>' + exSteps + '</ol>' : '') +
+          '<div><b>配平结果：</b>' + rich(ex.a) + '</div></details></div>';
+        var tryIt = ex.try;
+        if (tryIt) {
+          var tSteps = (tryIt.steps || []).map(function (s) { return '<li>' + rich(s) + '</li>'; }).join('');
+          exHtml += '<div class="gc-try"><div class="gc-tq">✏️ 自己试一道：' + rich(tryIt.q) + '</div>' +
+            '<details class="gc-full"><summary>做完点开对答案</summary>' +
+            (tSteps ? '<ol>' + tSteps + '</ol>' : '') +
+            '<div><b>配平结果：</b>' + rich(tryIt.a) + '</div></details></div>';
+        }
+      } else {
+        exHtml = '<div class="gc-ex"><div class="gc-q">📌 例题：' + rich(ex.q) + '</div>' +
+          (exSteps ? '<ol>' + exSteps + '</ol>' : '') +
+          '<div style="margin-top:6px"><b>配平结果：</b>' + rich(ex.a) + '</div></div>';
+      }
     }
-    return '<details class="gc-wrap"><summary style="cursor:pointer;font-size:13px;color:var(--brand);margin:6px 0 2px">📖 ' +
-      esc(k.name) + ' · 看方法与例题</summary><div class="guide-card">' +
+    return '<div class="guide-card">' +
       '<div class="gc-h">' + esc(k.name) + '</div>' +
       '<div class="gc-sec">操作细则</div><ol>' + steps + '</ol>' + exHtml +
-      '</div></details>';
+      '</div>';
+  }
+  /* 答题页内联方法卡：默认收起，点开才看；gc-walk/gc-full 内部仍各自折叠防泄题 */
+  function guideQuizHtml(q) {
+    var g = guideFor(q);
+    if (!g) return '';
+    var k = { name: q.kindName || (CH.moduleById(q.mod) || {}).name || '本题型', guide: g };
+    return '<details class="gc-wrap" style="margin-bottom:10px"><summary style="cursor:pointer;font-size:13px;color:var(--brand)">📖 ' +
+      esc(k.name) + ' · 看方法与引导例题（不计分）</summary>' + guideInner(k) + '</details>';
   }
   function viewMod() {
     var m = CH.moduleById(S.mod);
@@ -1617,7 +1691,7 @@ window.__ltSync = { carrierSnapshot: carrierSnapshot, syncPlan: syncPlan, subjec
       '<span class="small muted">' + esc(q.title || '') + ' · ' + esc(q.kindName || '') + '</span>' +
       '<span class="grow"></span><span class="small muted">' + (s.done + 1) + ' / ' + s.total + '</span></div>' +
       '<div class="progress" style="margin:8px 0 14px"><i style="width:' + pct + '%"></i></div>';
-    var body = '<div class="card"><div class="qhead">' +
+    var body = '<div class="card">' + guideQuizHtml(q) + '<div class="qhead">' +
       (q.kp || []).map(function (k) { return '<span class="pill">' + esc(k) + '</span>'; }).join('') + '</div>' +
       '<div class="qbody">' + rich(q.display || q.prompt) + '</div>';
     q.fields.forEach(function (f, i) {
@@ -1801,7 +1875,17 @@ window.__ltSync = { carrierSnapshot: carrierSnapshot, syncPlan: syncPlan, subjec
     else if (a === 'all20') { startRound(null, null, 20); }
     else if (a === 'modround') { startRound(S.mod, null, 10); }
     else if (a === 'modexample') {
-      var m = CH.moduleById(S.mod), k = m && m.kinds[0];
+      var m = CH.moduleById(S.mod);
+      var guided = m && m.kinds.filter(function (k) { return k.guide; });
+      if (guided && guided.length) {
+        /* 有方法卡的模块（配平四法）：打开模块页并展开第一张方法卡，真正展示引导例题。
+           旧实现走 startRound(...,'example')，但 example 模式无特殊处理，会照常判分/进错题库，是假例题。 */
+        go('mod', S.mod);
+        var gc = app.querySelector('.gc-wrap');
+        if (gc) { gc.open = true; if (gc.scrollIntoView) gc.scrollIntoView({ block: 'start' }); }
+        return;
+      }
+      var k = m && m.kinds[0];
       if (k) { S.back = { view: 'mod', mod: S.mod }; startRound(S.mod, k.id, 1, 'example'); }
     } else if (a === 'skip') {
       if (S.sess) { S.sess.total++; S.sess.done++; }

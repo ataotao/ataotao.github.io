@@ -47,7 +47,7 @@ if (got.join(',') !== MODULES.join(',')) {
   process.exit(1);
 }
 const KINDS = {
-  base: ['symbol', 'name', 'ion', 'ionrule', 'period'],
+  base: ['symbol', 'name', 'period', 'ion', 'ionrule'],
   balance: ['lcm', 'odd', 'observe', 'setone', 'method', 'check'],
   apply: ['write', 'writeout', 'calc', 'massrel']
 };
@@ -168,6 +168,27 @@ for (const k of guidedKinds) {
 }
 if (guideSeen !== 4) { console.error('✗ 示范例题覆盖不全'); process.exit(1); }
 
+/* 最小公倍数法·引导式例题：每步先问后答、题数合理；即时练手题配平结果冻结验算
+   （4Al+3O₂→2Al₂O₃：Al 4=4、O 6=6）。这是给孩子照着走的示范，错一步就带偏。 */
+const lcmGuide = guidedKinds.find((k) => k.id === 'lcm').guide;
+const walk = lcmGuide.example.walk || [];
+if (walk.length !== 5) {
+  console.error(`✗ 引导式例题步数异常：期望 5，实际 ${walk.length}`);
+  process.exit(1);
+}
+for (const [i, w] of walk.entries()) {
+  if (!w.ask || !w.reveal || !/[？?]$/.test(w.ask)) {
+    console.error(`✗ 引导式例题第 ${i + 1} 步缺少问题或思路（问题须以问号结尾）`);
+    process.exit(1);
+  }
+}
+const tryIt = lcmGuide.example.try;
+if (!tryIt || !tryIt.q || !tryIt.steps || !tryIt.steps.length || tryIt.a !== '4Al + 3O₂ —点燃→ 2Al₂O₃') {
+  console.error(`✗ 即时练手题缺失或配平结果变更：${tryIt && tryIt.a}`);
+  process.exit(1);
+}
+
 console.log(`✓ 化学专项自检通过：${r.modules} 个模块 / ${r.kinds} 类题型，每类 ${N} 题共 ${r.count} 题`);
 console.log('  配平四法方法细则 4 种齐全，示范例题配平结果已冻结验算');
+console.log('  引导式例题 5 步先问后答 + 1 道即时练手，配平结果已冻结验算');
 console.log('  出题 / 题干 / 答案 / 判分 / 解析 / 大小写敏感 / 今日错题锚点全部通过');
