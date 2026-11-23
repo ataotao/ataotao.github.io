@@ -366,18 +366,54 @@
     });
     return { pool: pool, done: done, pct: pool ? Math.min(100, Math.round(done / pool * 100)) : null, open: Math.max(0, pool - done), legacy: legacy };
   }
-  /* 抽一道「本题型没见过情境」的题：随机起点扫完整题库（MT.enumerateKind），
+  /* 抽一道「本题型没见过情境」的题：从起点扫完整题库（MT.enumerateKind），
      跳过已见过情境与本轮已出情境。同一情境的不同数值版本不重复给 ——
-     那是「练 N 题」的活，不是「练未覆盖」。返回 null = 情境都见过了，让调用方换题型。 */
-  function pickUncovered(mod, kind, seenSkels) {
+     那是「练 N 题」的活，不是「练未覆盖」。返回 null = 情境都见过了，让调用方换题型。
+     seed 可选：传了就当作扫描起点（今日任务用日期种子），不传就随机起点（「练未覆盖」每次换着看）。 */
+  function pickUncovered(mod, kind, seenSkels, seed) {
     var list = MT.enumerateKind(mod, kind), d = doneSkels(mod, kind), n = list.length;
     if (!n) return null;
-    var start = n > 1 ? ((Math.random() * n) | 0) : 0;
+    var start = n > 1 ? (seed == null ? ((Math.random() * n) | 0) : ((seed >>> 0) % n)) : 0;
     for (var i = 0; i < n; i++) {
       var it = list[(start + i) % n];
       if (!d.map[it.skel] && seenSkels.indexOf(it.skel) < 0) return it.q;
     }
     return null;
+  }
+  /* 首题让给未覆盖：题量、配比、难度顺序都不动，只把第 1 题换成该题型没见过的情境。
+     返回 null 的三种情况，调用方一律保持原题：
+       ① 题型没有情境表（SKELS -1，页面标「数字随机」）或固定得分点（没有 kind）；
+       ② 该题型情境已经全见过；
+       ③ 今天这一项已经选过首题了 —— 见下面的冻结。
+     为什么要冻结：同一天答完首题后覆盖集就变了，不冻结的话再点「开始」会换题，
+     而页面写的是「同一天打开几次都是同一套」。所以当天选定的**具体题目**（sig）
+     记进 DB.meta.firstSeen，之后答题、刷新、重开都按它取，换天才重新选。 */
+  function firstUncovered(mod, kind, seed, day) {
+    if (!kind) return null;
+    /* 先看当天有没有冻结：答完首题后这个题型可能已经全覆盖（open=0），
+       这时若先查 open 就会退回原题，同一天的第 1 题就换了 —— 所以冻结的判断必须在前面。 */
+    var memo = DB.meta.firstSeen = DB.meta.firstSeen || {};
+    /* 只留当天：不然一天 3 条、一年上千条，白占 localStorage。换天自然失效。 */
+    if (day) Object.keys(memo).forEach(function (k) { if (k.indexOf(day + '|') !== 0) delete memo[k]; });
+    var key = (day || '') + '|' + mod + '|' + kind;
+    var rec = memo[key];
+    if (rec) {
+      /* 按 sig（具体题目）而不是 skel（情境）取回：一个情境底下有十几道换数值的变体，
+         只记 skel 的话，同一天第二次点「开始」会拿到同情境的另一个数值版本 —— 题面就变了。 */
+      if (!rec.sig) return null;
+      var list = MT.enumerateKind(mod, kind);
+      for (var i = 0; i < list.length; i++) if (list[i].key === rec.sig) return list[i].q;
+    }
+    var c = coverOf(mod, kind);
+    if (c.pct == null || !c.open) return null;
+    var q = pickUncovered(mod, kind, [], seed);
+    memo[key] = { sig: q ? MT.sigOf(q) : null, skel: q ? MT.skelOf(q) : null };
+    save();
+    return q;
+  }
+  /* 同一套里题干+选项完全相同就算重复（core 的 qKey 没导出，这里按同样的口径比） */
+  function sameQ(a, b) {
+    return a.prompt === b.prompt && JSON.stringify(a.fields) === JSON.stringify(b.fields);
   }
   function covLine(c) {
     if (c.pct == null) return h('div', { class: 'cov' },
@@ -484,6 +520,13 @@
     S.back = null;
     var plan = dayPlan();
     var qs = MT.dailyQueue(modId, plan);
+    /* 今日任务第 1 题让给未覆盖：同题型换成没见过的情境，题量配比与难度顺序都不动。
+       同一天的首题在 firstUncovered 里冻结，答完题再点「开始」也还是这一道（「一天一套」）。
+       替换后还要跟同一套后面的题比一次：撞题就放弃替换，守住「同一套内题干不重复」。 */
+    if (qs.length) {
+      var q1 = firstUncovered(modId, qs[0].kind, plan.seed, plan.day);
+      if (q1 && !qs.slice(1).some(function (q) { return sameQ(q, q1); })) qs[0] = q1;
+    }
     S.mode = 'new';
     S.example = false;
     S.sess = { mod: modId, kind: null, total: qs.length, done: 0, right: 0, t0: Date.now(), queue: qs, daily: true };

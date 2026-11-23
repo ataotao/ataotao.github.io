@@ -624,6 +624,53 @@ ok((textOf(app).match(/当前板块随机题练习/g) || []).length >= 7, '基�
     ok(ctx.MT.skelOf(M.S.q) === bigLast.skel, '只剩 1 个情境却抽到了别的');
   }
 
+  /* 今日任务第 1 题让给未覆盖（2026-11-23）：同题型换情境，题量与配比不动；
+     同一天两次必须还是同一道（起点用日期种子，「一天一套」不破）。
+     写解析式的顶点式标的是「数字随机、无固定情境」（SKELS -1），按口径不参与。 */
+  const fAll = ctx.MT.enumerateKind('drill', 'factor');
+  const fSkel = new Map();
+  fAll.forEach((it) => { if (!fSkel.has(it.skel)) fSkel.set(it.skel, it); });
+  const fGroups = Array.from(fSkel.values());
+  ok(fGroups.length >= 2, 'drill.factor 只有 ' + fGroups.length + ' 个情境，测试前提不成立');
+  const fLast = fGroups[fGroups.length - 1];
+  const recN = M.db().recs.length;
+  /* 退回旧实现时，今日热身首题是 dailyQueue 按 seed 固定的那道；它若恰好就是 fLast，
+     这条断言永远通过 —— 先确认不是，否则测不出回归。 */
+  const q0 = ctx.MT.dailyQueue('drill', M.plan())[0];
+  ok(ctx.MT.skelOf(q0) !== fLast.skel, '今日热身第 1 题恰好就是最后一个未覆盖情境，测试前提不成立');
+  fGroups.slice(0, -1).forEach((it) => {
+    M.db().recs.push({ ts: Date.now(), mod: 'drill', kind: 'factor', ok: true, mode: 'new',
+      qid: 'drill.factor', sig: it.key, skel: it.skel });
+  });
+  /* 第一次「开始」选定并冻结；记下这道题的 sig 与题面，后面 9 次 + 答题后再开都必须逐字一致 */
+  M.startDaily('drill');
+  const firstSig = ctx.MT.sigOf(M.S.q);
+  const firstPrompt = M.S.q.prompt;
+  const firstSkel = ctx.MT.skelOf(M.S.q);
+  for (let i = 0; i < 9; i++) {
+    M.startDaily('drill');
+    ok(M.S.q.kind === 'factor', '第 ' + (i + 1) + ' 次今日热身首题题型被换掉了：' + M.S.q.kind);
+    ok(ctx.MT.skelOf(M.S.q) === fLast.skel, '第 ' + (i + 1) + ' 次今日热身首题没用上剩下的那个未覆盖情境');
+    ok(ctx.MT.sigOf(M.S.q) === firstSig, '第 ' + (i + 1) + ' 次今日热身首题换成了同情境的另一个数值版本（冻结必须记到具体题目）');
+    ok(M.S.sess.queue.length === 6, '首题替换后今日热身题量不是 6 了');
+  }
+  /* 答完这道首题（该情境变成已覆盖）后再点「开始」：同一天必须还是同一道题、同一段题面。
+     只比「没答题连点两次」测不出这条 —— 那时覆盖集没变，怎么实现都一样；
+     只比 skel 也测不出 —— 那只能证明情境没变，证明不了数字没变。 */
+  M.db().recs.push({ ts: Date.now(), mod: 'drill', kind: 'factor', ok: true, mode: 'new',
+    qid: 'drill.factor', sig: 'answered', skel: firstSkel });
+  M.startDaily('drill');
+  ok(M.S.q.prompt === firstPrompt, '答完首题后再开，同一天的首题换了题面（「一天一套」被破坏）');
+  /* 白盒：冻结记录必须存到具体题目（sig）。行为断言被当天的种子掩护 —— 只有当
+     环扫先命中的变体恰好不是 list 第一条时，只记 skel 的实现才会换题面，平时测不出；
+     记 sig 是确定性正确的，这里直接查。 */
+  const fsMemo = M.db().meta.firstSeen || {};
+  const fsKey = Object.keys(fsMemo)[0];
+  ok(fsKey && fsMemo[fsKey] && fsMemo[fsKey].sig === firstSig,
+    '冻结记录里没有存题目指纹 sig（只记情境的话，同一天可能换成同情境的另一个数值版本）');
+  M.db().recs.length = recN;
+  delete M.db().meta.firstSeen;
+
   /* 报告页有知识覆盖面 */
   M.go('report');
   const repTxt = textOf(app);

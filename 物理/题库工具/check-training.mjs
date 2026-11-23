@@ -795,8 +795,43 @@ function runUI() {
     pt.go('today');
   });
 
+  /* 首题让给未覆盖（2026-11-23）：今日任务每项的第 1 题，同题型换成没见过的情境。
+     只换第 1 题：题型、题量、后面的轮换都不许动；非今日任务入口不许换。 */
+  step('首题让给未覆盖', () => {
+    const PT = pt.PT, DB = pt.db();
+    DB.recs.length = 0;
+    const list = PT.enumerateKind('calc', 'qheat');
+    const skels = Array.from(new Map(list.map((it) => [it.skel, it])).values());
+    if (skels.length < 2) throw new Error('calc.qheat 情境太少（' + skels.length + '），测试前提不成立');
+    const keep = skels[skels.length - 1];
+    skels.slice(0, -1).forEach((it) => {
+      DB.recs.push({ mod: 'calc', kind: 'qheat', ok: true, ts: Date.now(), skel: it.skel, sig: it.key });
+    });
+    /* 连开 10 次：剩下 1 个未覆盖情境时，每次都必须抽到它。
+       只试 1 次的话，退回旧实现有 1/3 概率恰好蒙对，测不出回归。 */
+    for (let i = 0; i < 10; i++) {
+      pt.startSession('calc', 'qheat', 1, true);
+      if (pt.S.q.kind !== 'qheat') throw new Error('首题题型被换掉了：' + pt.S.q.kind);
+      if (PT.skelOf(pt.S.q) !== keep.skel) throw new Error('第 ' + (i + 1) + ' 次首题没用上剩下的那个未覆盖情境');
+      if (pt.S.sess.total !== 1) throw new Error('首题替换改到了题量：' + pt.S.sess.total);
+    }
+    /* 非今日任务入口不许换题：模块页「开始」和「再来一轮」走同一个 startSession，不带第 4 参。
+       这里查会话标记而不是靠随机抽样 —— 抽样断言既会偶发假红，也可能假绿。 */
+    pt.startSession('calc', 'qheat', 1);
+    if (pt.S.sess.coverFirst) throw new Error('普通开一轮也开了首题未覆盖，改动扩散出了今日任务');
+
+    /* 全覆盖之后：静默退化，不弹窗、不空轮，题型照旧 */
+    DB.recs.length = 0;
+    skels.forEach((it) => {
+      DB.recs.push({ mod: 'calc', kind: 'qheat', ok: true, ts: Date.now(), skel: it.skel, sig: it.key });
+    });
+    pt.startSession('calc', 'qheat', 1, true);
+    if (pt.S.view !== 'practice' || pt.S.q.kind !== 'qheat') throw new Error('全覆盖后首题降级失败');
+    pt.go('today');
+  });
+
   const okN = steps.filter(Boolean).length;
-  if (okN !== steps.length || steps.length !== 22) {
+  if (okN !== steps.length || steps.length !== 23) {
     console.error('✗ --ui ' + okN + '/' + steps.length + ' 项通过');
     process.exit(1);
   }

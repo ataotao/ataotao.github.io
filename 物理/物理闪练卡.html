@@ -3518,7 +3518,7 @@ window.__ltSync = { carrierSnapshot: carrierSnapshot, syncPlan: syncPlan, subjec
         h('div', { class: 'tt' }, h('b', null, p.label), h('span', null, p.sub)),
         h('button', {
           class: 'btn btn-sm ' + (isDone ? '' : 'btn-primary'), onclick: function () {
-            if (p.go === 'wrong') startWrong(); else startSession(p.go, null, p.n);
+            if (p.go === 'wrong') startWrong(); else startSession(p.go, null, p.n, true);
           }
         }, isDone ? '再来' : '开始')
       ));
@@ -3676,6 +3676,18 @@ window.__ltSync = { carrierSnapshot: carrierSnapshot, syncPlan: syncPlan, subjec
     }
     return null;
   }
+  /* 首题让给未覆盖：题量、顺序、题型都不动，只把这一轮的第 1 题换成该题型没见过的情境。
+     返回 null 的几种情况，调用方一律保持原题：题型没有情境表（SKELS -1）或情境已全见过。
+     这里不需要再传本轮/上一轮的 sig 集合：未覆盖情境意味着这个情境从来没做过，
+     它底下的题面自然也从未出现过；seenSkels 只用于「本轮内不重复出同一情境」。
+     注意这跟 startNocover 不是一回事：那个整轮都出没做过的。
+     数学同名函数多一个「当天首题冻结」，因为数学承诺「一天一套」；物理每次开始本来就换一批。 */
+  function firstUncovered(mod, kind) {
+    if (!kind) return null;
+    var c = coverOf(mod, kind);
+    if (c.pct == null || !c.open) return null;
+    return pickUncovered(mod, kind, []);
+  }
   /* 覆盖面一行：有分母给进度条，没分母只说练了几道。
      加指纹之前的老记录不知道是哪道题，单独提示一句，别让「练过 30 题 / 覆盖 1」看起来像 bug。 */
   function covLine(c) {
@@ -3767,7 +3779,7 @@ window.__ltSync = { carrierSnapshot: carrierSnapshot, syncPlan: syncPlan, subjec
     if (m.items) return Math.max(1, Math.min(m.items.length, byKind));
     return byKind;
   }
-  function startSession(mod, kind, count) {
+  function startSession(mod, kind, count, coverFirst) {
     if (mod === 'wrong') { startWrong(); return; }   /* 兜底：回炉走回炉入口 */
     S.mode = 'new'; S.example = false; S.back = null;
     var n = Math.max(1, Math.min(count || 6, poolSize(mod, kind)));
@@ -3775,7 +3787,8 @@ window.__ltSync = { carrierSnapshot: carrierSnapshot, syncPlan: syncPlan, subjec
     var rnd = beginRound(mod);                     /* 再开启本轮记录（旧记录已被读走） */
     S.sess = {
       mod: mod, kind: kind, total: n, done: 0, right: 0, t0: Date.now(),
-      prevSigs: rnd.prev.sigs, round: rnd.rec, kindQueue: queue
+      prevSigs: rnd.prev.sigs, round: rnd.rec, kindQueue: queue,
+      coverFirst: !!coverFirst                   /* 只有今日任务传 true：第 1 题让给未覆盖 */
     };
     S.view = 'practice';
     nextQuestion();
@@ -3856,6 +3869,12 @@ window.__ltSync = { carrierSnapshot: carrierSnapshot, syncPlan: syncPlan, subjec
       var kindId = s.kindQueue ? s.kindQueue[s.done] : s.kind;
       var seen = (s.prevSigs || []).concat(s.round ? s.round.sigs : []);
       S.q = pickQuestion(s.mod, kindId, seen);
+      /* 今日任务第 1 题：同题型换成没见过的情境。只有今日任务入口（coverFirst）才换，
+         「开始一轮 / 专项练 / 再来一轮」保持原来的取题方式；未覆盖练完了就静默退化。 */
+      if (s.done === 0 && s.coverFirst) {
+        var q1 = firstUncovered(s.mod, S.q.kind || kindId);
+        if (q1) S.q = q1;
+      }
       recordQuestion(s.round, S.q, kindId);
     }
     S.res = null; S.answered = false; S.choice = {}; S.draw = {}; S.hint = false;
