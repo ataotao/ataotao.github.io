@@ -4656,6 +4656,9 @@ window.__ltSync = { carrierSnapshot: carrierSnapshot, syncPlan: syncPlan, subjec
   });
   document.addEventListener('keydown', function (e) {
     if (e.key !== 'Enter' || S.view !== 'practice' || S.example) return;
+    /* 焦点在按钮上（选项/提交/下一题）时回车属于按钮自己：浏览器会派发 click。
+       抢先 preventDefault + submit 会吃掉选项的 click，出现「选了却判空」（2026-11-26 修）。 */
+    if (e.target && String(e.target.tagName || '').toUpperCase() === 'BUTTON') return;
     e.preventDefault();
     if (!S.answered) { submit(); return; }
     if (S.fix && !S.fix.ok) { submitFix(); return; }

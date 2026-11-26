@@ -2435,7 +2435,10 @@ window.__ltSync = { carrierSnapshot: carrierSnapshot, syncPlan: syncPlan, subjec
     save(); render();
   }
   document.addEventListener('keydown', function (e) {
-    if (e.key === 'Enter' && S.view === 'quiz') {
+    /* 焦点在按钮上时回车属于按钮自己（选项的 click 会被 preventDefault 吃掉，
+       出现「选了却判空」）；输入框/页面空白处仍保留回车提交（2026-11-26 修）。 */
+    var onBtn = e.target && String(e.target.tagName || '').toUpperCase() === 'BUTTON';
+    if (e.key === 'Enter' && S.view === 'quiz' && !onBtn) {
       e.preventDefault();
       if (S.answered) action('next'); else action('submit');
     }

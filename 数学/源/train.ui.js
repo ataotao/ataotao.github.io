@@ -951,7 +951,12 @@
   function readDraft() {
     var out = [];
     S.q.fields.forEach(function (f, i) {
-      if (f.type === 'choice') { out.push(''); return; }
+      /* 选择也算草稿的一部分：重渲染/存草稿时别把已选的选项抹掉，
+         提交时只读这一份，避免 S.choice 与 S.draft 各说各话（2026-11-26 修） */
+      if (f.type === 'choice') {
+        var c = S.choice[i] != null ? S.choice[i] : (S.draft && typeof S.draft[i] === 'number' ? S.draft[i] : '');
+        out.push(c); return;
+      }
       if (f.type === 'set' || f.type === 'expr') {
         var arr = [];
         for (var j = 0; j < nSlots(f); j++) arr.push(readFracObj('in' + i + '_' + j));
@@ -962,7 +967,10 @@
   }
   function rawAns(i) {
     var f = S.q.fields[i], v = (S.lastVals || [])[i];
-    if (f.type === 'choice') return S.choice[i] == null ? '空' : String.fromCharCode(65 + S.choice[i]);
+    if (f.type === 'choice') {
+      var c = S.choice[i] != null ? S.choice[i] : (v != null ? v : '');
+      return (typeof c === 'number' && c >= 0) ? String.fromCharCode(65 + c) : '未选';
+    }
     if (f.type === 'set' || f.type === 'expr') {
       return (v || []).map(function (o) { return o ? String(o) : '空'; }).join('、');
     }
@@ -990,15 +998,25 @@
     if (S.answered || S.example) return;
     var q = S.q;
     var draft = readDraft();
-    /* 一个空都没填（含选择题未选）时不判分、不记记录、不进错题本 */
-    var anyFilled = q.fields.some(function (f, i) {
-      if (f.type === 'choice') return S.choice[i] != null;
+    /* 有任何一个空没填就不判分、不记记录、不进错题本。
+       以前只在「全空」时才拦，漏选一个依据照样判分：页面报「2/3 个空对」、
+       题目被塞进错题本，孩子以为自己填对了却被判错（2026-11-26 修）。
+       选择题的值统一从 draft 读（readDraft 已把 S.choice 并进去），不再两处状态来源。 */
+    function emptyField(f, i) {
       var d = draft[i];
-      return Array.isArray(d) ? d.some(function (x) { return String(x).trim() !== ''; }) : String(d == null ? '' : d).trim() !== '';
-    });
-    if (!anyFilled) { alert('先填答案再提交'); return; }
+      if (f.type === 'choice') return !(typeof d === 'number' && d >= 0);
+      if (Array.isArray(d)) return !d.some(function (x) { return String(x == null ? '' : x).trim() !== ''; });
+      return String(d == null ? '' : d).trim() === '';
+    }
+    var missing = [];
+    q.fields.forEach(function (f, i) { if (emptyField(f, i)) missing.push(i); });
+    if (missing.length) {
+      var names = missing.map(function (i) { return q.fields[i].label || ('第 ' + (i + 1) + ' 空'); });
+      alert('还没填完：' + names.join('、') + '。选择题要先点一下选项。');
+      return;
+    }
     var vals = q.fields.map(function (f, i) {
-      if (f.type === 'choice') return S.choice[i] == null ? null : S.choice[i];
+      if (f.type === 'choice') return draft[i];
       if (f.type === 'set' || f.type === 'expr') return draft[i].map(fracVal);
       return fracVal(draft[i]);
     });
@@ -1359,6 +1377,10 @@
   });
   document.addEventListener('keydown', function (e) {
     if (e.key !== 'Enter' || S.view !== 'practice' || S.example) return;
+    /* 焦点在按钮上（尤其是「依据」选项、提交/下一题）时，回车属于这个按钮本身：
+       浏览器会派发 click。这里若抢先 preventDefault + submit，选项的 click 就被吃掉，
+       出现「点了 B、填空也对，却按 2/3 判错」（回炉三字段题最容易踩，2026-11-26 修）。 */
+    if (e.target && String(e.target.tagName || '').toUpperCase() === 'BUTTON') return;
     e.preventDefault();
     if (!S.answered) { submit(); return; }
     if (S.fix && !S.fix.ok) { submitFix(); return; }

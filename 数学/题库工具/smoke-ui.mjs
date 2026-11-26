@@ -38,7 +38,8 @@ function El(tag) {
     removeChild(c) { const i = this.children.indexOf(c); if (i >= 0) this.children.splice(i, 1); return c; },
     setAttribute(k, v) { if (k === 'style') { this.styleText = v; } else { this[k] = v; if (k === 'id') byId[v] = this; } },
     getAttribute(k) { return this[k]; },
-    addEventListener() {}, focus() {},
+    _ls: {},
+    addEventListener(t, fn) { (this._ls[t] || (this._ls[t] = [])).push(fn); }, focus() {},
     querySelector() { return null; }, querySelectorAll() { return []; },
     getBoundingClientRect() { return { left: 0, top: 0, width: 100, height: 100 }; },
     classList: { add() {}, remove() {}, toggle() {}, contains() { return false; } },
@@ -49,12 +50,13 @@ function El(tag) {
 }
 const app = El('main'), tabs = El('nav');
 byId.app = app; byId.tabs = tabs;
+const docListeners = {};
 const doc = {
   createElement: (t) => El(t),
   createTextNode: (t) => ({ nodeValue: String(t) }),
   getElementById: (id) => byId[id] || null,
   querySelector: () => null, querySelectorAll: () => [],
-  addEventListener: () => {},
+  addEventListener: (t, fn) => { (docListeners[t] || (docListeners[t] = [])).push(fn); },
 };
 const store = {};
 const localStorage = {
@@ -292,6 +294,77 @@ ok((textOf(app).match(/当前板块随机题练习/g) || []).length >= 7, '基�
   M.submit();
   ok(M.db().recs.length === n, '空提交写入了记录（B05 回归）');
   ok(Object.keys(M.db().wrong).length === w, '空提交进了错题本（B05 回归）');
+}
+
+// B11（2026-11-26）：依据选择题漏选时不误判、不进错题本；选项状态并入草稿，重渲染不丢
+{
+  const db = M.db();
+  const q = ctx.MT.gen('drill', 'diam90', 12345);
+  const k = q.id + '|' + String(q.prompt).slice(0, 60);
+  const now = Date.now();
+  db.wrong[k] = { id: q.id, qid: 'drill.diam90.x', mod: q.mod, kind: q.kind, title: q.title, prompt: q.prompt,
+    fields: q.fields, explain: q.explain, tip: q.tip, ts: now - 9e8, due: now - 1000,
+    n: 1, lvl: 1, okStreak: 0, lastOkAt: 0, lastAt: now - 9e8 };
+  M.startWrong();
+  ok(M.S.q && M.S.q.kind === 'diam90', '错题回炉没取到 diam90（B11 回归）');
+
+  // 只填数字、不点依据：必须拦住，不能报「2/3 个空对」塞错题本
+  const nRec = db.recs.length;
+  byId.in1_n.value = String(M.S.q.fields[1].ans);
+  byId.in2_n.value = String(M.S.q.fields[2].ans);
+  M.submit();
+  ok(db.recs.length === nRec && !M.S.answered, '漏选依据仍被判分/写入记录（B11 回归）');
+
+  // 点真正的选项按钮（走 UI 的 click 链路），再触发一次重渲染，选择必须还在
+  const ansIdx = M.S.q.fields[0].ans;
+  const letter = String.fromCharCode(65 + ansIdx);
+  const buttons = [];
+  (function walk(e) { if (!e || !e.children) return; if (e.tagName === 'button') buttons.push(e); e.children.forEach(walk); })(app);
+  const opt = buttons.find((b) => textOf(b).trim().startsWith(letter + '.'));
+  ok(!!opt, '没找到依据选项按钮（B11 回归）');
+  if (opt) (opt._ls.click || []).forEach((fn) => fn.call(opt, { currentTarget: opt }));
+  ok(M.S.choice[0] === ansIdx, '点击选项没记进 S.choice（B11 回归）');
+  M.render();
+  ok(M.S.choice[0] === ansIdx, '重渲染后选择丢了（B11 回归）');
+  byId.in1_n.value = String(M.S.q.fields[1].ans);
+  byId.in2_n.value = String(M.S.q.fields[2].ans);
+  M.submit();
+  ok(M.S.res && M.S.res.ok, '依据选对 + 填空对仍被判错（B11 回归）');
+  delete db.wrong[k];
+}
+
+// B12（2026-11-26）：焦点在选项按钮上按回车 —— 选中选项，不能抢先提交（回炉三字段题实测 bug）
+{
+  const db = M.db();
+  const q = ctx.MT.gen('drill', 'diam90', 54321);
+  const k = q.id + '|' + String(q.prompt).slice(0, 60);
+  const now = Date.now();
+  db.wrong[k] = { id: q.id, qid: 'drill.diam90.enter', mod: q.mod, kind: q.kind, title: q.title, prompt: q.prompt,
+    fields: q.fields, explain: q.explain, tip: q.tip, ts: now - 9e8, due: now - 1000,
+    n: 1, lvl: 1, okStreak: 0, lastOkAt: 0, lastAt: now - 9e8 };
+  M.startWrong();
+  const ansIdx = M.S.q.fields[0].ans;
+  const letter = String.fromCharCode(65 + ansIdx);
+  const buttons = [];
+  (function walk(e) { if (!e || !e.children) return; if (e.tagName === 'button') buttons.push(e); e.children.forEach(walk); })(app);
+  const opt = buttons.find((b) => textOf(b).trim().startsWith(letter + '.'));
+  ok(!!opt, '没找到依据选项按钮（B12 回归）');
+  let prevented = false, selected = false;
+  if (opt) (opt._ls.click || []).forEach((fn) => fn.call(opt, { currentTarget: opt, preventDefault() { prevented = true; } }));
+  selected = M.S.choice[0] === ansIdx;
+  // 模拟浏览器：焦点在按钮上时，回车先到 document 的 keydown 处理器
+  const keydowns = docListeners.keydown || [];
+  const nRec = db.recs.length;
+  keydowns.forEach((fn) => fn.call(doc, { key: 'Enter', target: opt, preventDefault() { prevented = true; } }));
+  ok(!prevented, '焦点在选项按钮上按回车被 preventDefault，选项 click 会被吃掉（B12 回归）');
+  ok(selected && M.S.choice[0] === ansIdx, '回车后选项状态丢了（B12 回归）');
+  ok(db.recs.length === nRec && !M.S.answered, '焦点在选项上按回车被当成提交（B12 回归）');
+  // 焦点不在按钮上（如填空输入框）时，回车仍要提交
+  byId.in1_n.value = String(M.S.q.fields[1].ans);
+  byId.in2_n.value = String(M.S.q.fields[2].ans);
+  keydowns.forEach((fn) => fn.call(doc, { key: 'Enter', target: { tagName: 'INPUT' }, preventDefault() { } }));
+  ok(M.S.answered, '焦点在输入框按回车没提交（B12 回归）');
+  delete db.wrong[k];
 }
 
 // B06：当天题单固化 —— 中途答错不换题
@@ -703,5 +776,5 @@ if (fails.length) {
   fails.forEach((f) => console.error('  - ' + f));
   process.exit(1);
 }
-console.log('✓ UI 冒烟通过（今日渲染 / 题单一致 / expr 判分 / 报告 / 专项 3 题 / 大题前两步分组、配图与专项 / 板块随机覆盖与重来 / 本周错题临时项目（不进今日、7 题型、判分、卷面题号与原题裁切图）/ 回归：expr 顺序、例题提交、空提交、当天题单、配比文案、题干转义、坏记录自愈、选项打散、手绘题图几何自洽）');
+console.log('✓ UI 冒烟通过（今日渲染 / 题单一致 / expr 判分 / 报告 / 专项 3 题 / 大题前两步分组、配图与专项 / 板块随机覆盖与重来 / 本周错题临时项目（不进今日、7 题型、判分、卷面题号与原题裁切图）/ 回归：expr 顺序、例题提交、空提交、依据漏选拦截、选择草稿不丢、当天题单、配比文案、题干转义、坏记录自愈、选项打散、手绘题图几何自洽）');
 
