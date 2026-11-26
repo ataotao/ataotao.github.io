@@ -144,5 +144,43 @@ const T = 1700000000000; // 固定基准时间
   ok(R.dayText(0) === '—', 'dayText：无时间戳显示破折号');
 }
 
+// 12. 补位题 practice：答对不加连对、不清连对、不动 due/lvl；答错照答错
+{
+  const w = R.newEntry(T);
+  w.okStreak = 1; w.lvl = 2; w.due = T + 3 * DAY;
+  const before = { due: w.due, lvl: w.lvl, streak: w.okStreak, n: w.n };
+  const a = R.practice(w, true, T + 1000);
+  ok(a === 'early-ok', 'practice：答对返回 early-ok');
+  ok(w.okStreak === before.streak && w.lvl === before.lvl && w.due === before.due && w.n === before.n,
+    'practice：答对不动连对/档位/due/错次（跳过难题后补的一道不该伤已有进度）');
+  ok(w.lastAt === T + 1000, 'practice：答对只更新 lastAt');
+  // 答错：走答错规则
+  const w2 = R.newEntry(T);
+  w2.okStreak = 1; w2.lvl = 3; w2.due = T + 7 * DAY;
+  const b = R.practice(w2, false, T + 2000);
+  ok(b === 'early-wrong' && w2.n === 2 && w2.lvl === 2 && w2.okStreak === 0,
+    'practice：答错照答错处理（n+1/回退/清零）');
+  ok(w2.due === (T + 2000) + 3 * DAY, 'practice：答错按当前时间戳重排 due');
+  ok(R.practice(null, true, T) === 'none', 'practice：没有条目返回 none');
+}
+
+// 13. pickExtra 顺补：本轮没排过的里挑最近到期的，坏条目跳过，全用光返回 null
+{
+  const mk = (due, extra) => Object.assign(R.newEntry(T), { fields: [{ type: 'num' }], due }, extra || {});
+  const map = {
+    'a': mk(T - 5 * DAY),                 // 已到期（本轮用掉了）
+    'b': mk(T + 2 * DAY),                 // 最近到期
+    'c': mk(T + 9 * DAY),
+    'd': Object.assign(R.newEntry(T), { due: T + 1 * DAY }),   // 坏条目：没有 fields
+    'e': mk(T + 2 * DAY, { n: 4 })        // 与 b 同到期，错得多 → 优先
+  };
+  const picked = R.pickExtra(map, { a: 1 }, T);
+  ok(picked && picked.key === 'e', 'pickExtra：同到期取错次多的（' + (picked && picked.key) + '）');
+  ok(picked && picked.w.fields && picked.w.fields.length === 1, 'pickExtra：返回条目本身，坏条目不补');
+  const picked2 = R.pickExtra(map, ['a', 'e', 'b', 'c'], T);
+  ok(picked2 === null, 'pickExtra：本轮都排过时返回 null（不再硬凑）');
+  ok(R.pickExtra({}, {}, T) === null, 'pickExtra：空错题本返回 null');
+}
+
 console.log(`错题回炉内核：${pass} 通过 / ${fail} 失败`);
 process.exit(fail ? 1 : 0);

@@ -719,7 +719,11 @@ export function uiScript(cfg) {
       var w = DB.wrong[entry.key];
       S.q = { mod: w.mod, kind: w.kind, kindName: w.kindName, modName: w.modName, title: w.title,
         prompt: w.prompt, display: w.display, fields: w.fields, tip: w.tip, explain: w.explain, kp: w.kp, _wrongKey: entry.key };
+      /* 补位题（跳过难题后顺补的、还没到期的错题）：答对不能算有效确认 → reviewAnswer 走 practice。
+         标记存在队列条目上（fill），会话进 localStorage 快照也不丢。 */
+      s.earlyQ = !!(entry.fill && !window.__ltReview.isDue(w, Date.now()));
     } else if (s.mode === 'nocover') {
+      s.earlyQ = false;
       /* 专练未覆盖：按队列里的题型逐个抽“没做过”的题；某题型抽空就换下一个，
          全空即提前收尾（summary 会说明“能做的都做过了”，不硬凑满 10 题）。 */
       var qc = null, left = (s.queue || []).slice();
@@ -731,6 +735,7 @@ export function uiScript(cfg) {
       S.q = qc;
       s.skels.push(skelOf(qc));
     } else {
+      s.earlyQ = false;
       var slot = s.queue && s.queue.length ? s.queue[s.done % s.queue.length] : null;
       var mod = s.mod, kind = s.kind;
       if (!kind && slot) {
@@ -810,6 +815,9 @@ export function uiScript(cfg) {
       R.onWrong(w, now);
       return;
     }
+    /* 补位题（跳过难题后顺补的、还没到期的错题）：答对只记一下时间，
+       不加连对也不清零、不重排 due（未到期本来就不算有效确认） */
+    if (S.sess && S.sess.earlyQ) { R.practice(w, true, now); return; }
     var act = R.onPass(w, { sec: sec, minSec: 3, hint: !!S.hint, fixed: false }, now);
     if (act === 'mastered') delete DB.wrong[k];
   }
@@ -1074,7 +1082,8 @@ export function uiScript(cfg) {
       body += '<div class="row" style="margin-top:14px">' +
         '<button class="btn btn-primary" data-act="submit">提交答案</button>' +
         (q.tip ? '<button class="btn btn-ghost" data-act="hint">' + (S.hint ? '提示已展开' : '看提示') + '</button>' : '') +
-        '<button class="btn btn-ghost" data-act="skip">换一题</button>' +
+        '<button class="btn btn-ghost" data-act="skip">' +
+          ((s.mode === 'wrong' || s.mode === 'wrongall') ? '跳过本题（换一道）' : '换一题') + '</button>' +
         '<span class="grow"></span><span class="small muted">回车提交</span></div>';
       if (S.hint && q.tip) body += '<div class="tipbox">💡 ' + rich(q.tip) + '</div>';
     } else {
@@ -1108,15 +1117,22 @@ export function uiScript(cfg) {
     return h + '</div>';
   }
   function viewSummary() {
-    var s = S.sess, base = Math.max(1, s.done), rate = Math.round(s.right / base * 100);
+    var s = S.sess;
+    /* 跳过的不进分母（跳过不是答错，「换一题/跳过本题」都不该拉低正确率） */
+    var ans = Math.max(0, s.done - (s.skipped || 0));
+    var base = Math.max(1, ans), rate = Math.round(s.right / base * 100);
     /* 专练未覆盖会提前结束（可做的题不够 10 道），正确率按实际做了几题算 */
     var outNote = s.coveredOut
       ? '<p class="muted small" style="margin-top:8px">本单元这类题的情境都见过了，没有新情境可出——接下来靠错题回炉和整卷复盘巩固。</p>'
       : '';
+    var skipNote = s.skipped
+      ? '<p class="muted small" style="margin-top:8px">跳过 ' + s.skipped + ' 题（明天再来' +
+        (s.supplemented ? '，已顺补 ' + s.supplemented + ' 题' : '') + '）。</p>'
+      : '';
     return '<div class="card"><h2>本轮完成</h2>' +
-      statBoxes([['做题', s.done], ['答对', s.right], ['正确率', rate + '%']]) +
+      statBoxes([['做题', ans], ['答对', s.right], ['正确率', rate + '%']]) +
       '<p class="muted small" style="margin-top:12px">' + esc(rate >= 80 ? fillTpl(T.summaryGood, { plan: PLAN.join(' / ') }) : T.summaryLow) + '</p>' +
-      outNote +
+      skipNote + outNote +
       '<div class="row"><button class="btn btn-primary" data-act="again-round">再来一轮（新题）</button>' +
       '<button class="btn" data-go="wrong">去清错题</button><button class="btn btn-ghost" data-go="today">回今日</button></div></div>';
   }
@@ -1277,7 +1293,27 @@ export function uiScript(cfg) {
       var k = m && m.kinds[0];
       if (k) { S.back = { view: 'mod', mod: S.mod }; startRound(S.mod, k.id, 1, 'example'); }
     } else if (a === 'skip') {
-      if (S.sess) { S.sess.total++; S.sess.done++; }
+      /* 回炉轮：跳过这道（due 推到明天、连对进度保留），再从错题本里顺补一道本轮还没排过的
+         （最近到期的先补），做题量不缩水——难题不会做也不至于整轮白练。
+         普通轮维持原逻辑：换一题，做题总量 +1。 */
+      var s0 = S.sess;
+      if (s0 && (s0.mode === 'wrong' || s0.mode === 'wrongall') && S.q && S.q._wrongKey) {
+        var R0 = window.__ltReview, n0 = Date.now();
+        var w0 = DB.wrong[S.q._wrongKey];
+        if (w0) R0.skip(w0, n0);
+        var used0 = {};
+        (s0.queue || []).forEach(function (e) { if (e && e.key) used0[e.key] = 1; });
+        var extra0 = R0.pickExtra(DB.wrong, used0, n0);
+        if (extra0) {
+          s0.queue.push({ key: extra0.key, mod: extra0.w.mod, kind: extra0.w.kind, fill: 1 });
+          s0.total++;
+          s0.supplemented = (s0.supplemented || 0) + 1;
+        }
+        s0.skipped = (s0.skipped || 0) + 1;
+        s0.done++;
+      } else if (s0) {
+        s0.total++; s0.done++; s0.skipped = (s0.skipped || 0) + 1;
+      }
       nextQuestion(); saveSess(); return;
     } else if (a === 'submit') {
       S.vals = readVals(); submit(); saveSess(); return;
@@ -1343,6 +1379,7 @@ export function uiScript(cfg) {
   boot();
   window[CFG.global] = { S: S, DB: DB, CH: CH, go: go, startRound: startRound, action: action,
     save: save, load: load, render: render, mergeRecords: mergeRecords, importText: importText,
+    submit: submit, db: function () { return DB; },   /* 只给自检脚本用（不参与界面） */
     symkeys: SYMKEYS, insertSym: insertSym, skelOf: skelOf };
 })();
 </script>

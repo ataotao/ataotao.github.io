@@ -399,7 +399,58 @@ ok((textOf(app).match(/当前板块随机题练习/g) || []).length >= 7, '基�
   delete db.wrong[k];
 }
 
-// B06：当天题单固化 —— 中途答错不换题
+// B13（2026-11-26）：回炉遇到难题可以跳过 —— 顺补一道还没回炉的错题，做题量不缩水；
+// 补位题是「还没到期」的那种，答对不能把已有连对清零（review.js practice）
+{
+  const db = M.db();
+  const saved = db.wrong;
+  db.wrong = {};
+  const now = Date.now();
+  const put = (q, due, streak, lvl, tag) => {
+    const k = q.id + '|' + String(q.prompt).slice(0, 60);
+    db.wrong[k] = { id: q.id, qid: 'B13.' + tag, mod: q.mod, kind: q.kind, title: q.title, prompt: q.prompt,
+      fields: q.fields, explain: q.explain, tip: q.tip, ts: now - 9e8, due: due, n: 1,
+      lvl: lvl || 1, okStreak: streak || 0, lastOkAt: 0, lastAt: now - 9e8 };
+    return k;
+  };
+  const hard = [put(ctx.MT.gen('write', 'vertex', 11), now - 3000), put(ctx.MT.gen('write', 'vertex', 12), now - 2000),
+    put(ctx.MT.gen('write', 'vertex', 13), now - 1000)];
+  /* 还没到期、已经连对 1 次的那道：跳过时从它补位，答对也不能把连对清零 */
+  const laterQ = ctx.MT.gen('write', 'vertex', 14);
+  const laterKey = put(laterQ, now + 3 * 86400e3, 1, 2, 'later');
+
+  M.startWrong();
+  ok(M.S.sess.total === 3 && M.S.sess.queue.length === 3, '回炉轮应只取 3 道到期题');
+  const skippedKey = M.S.sess.queue[0] && (M.S.sess.queue[0].id + '|' + String(M.S.sess.queue[0].prompt).slice(0, 60));
+  const laterBefore = Object.assign({}, db.wrong[laterKey]);
+  M.skipWrong();
+  ok(db.wrong[skippedKey], '跳过本题把错题删了（只能把 due 推到明天）');
+  ok(db.wrong[skippedKey] && db.wrong[skippedKey].due > now, '跳过本题没把 due 推到明天');
+  ok(M.S.sess.total === 4 && M.S.sess.queue.length === 4, '跳过后没有顺补（total/queue 应各 +1）');
+  ok(M.S.sess.skipped === 1 && M.S.sess.supplemented === 1, '跳过/顺补计数不对');
+  const fillerKey = M.S.sess.queue[3] && (M.S.sess.queue[3].id + '|' + String(M.S.sess.queue[3].prompt).slice(0, 60));
+  ok(fillerKey === laterKey, '顺补的不是那道还没到期的错题：' + fillerKey);
+  ok(db.wrong[laterKey].due === laterBefore.due && db.wrong[laterKey].okStreak === 1,
+    '顺补把补位题的 due/连对动了（只该补进队列，不该改题）');
+
+  /* 走到补位题：答对 → 只记流水，连对/档位/due 都不动 */
+  M.S.sess.done = 3;
+  M.next();
+  ok(M.S.q && M.S.early === true, '补位题没被标成 early（答对会把连对清零）');
+  const recs0 = db.recs.length;
+  const f0 = M.S.q.fields;
+  f0[0].ans.forEach((v, j) => { byId['in0_' + j + '_n'].value = String(v); });
+  byId.in1_n.value = String(f0[1].ans);
+  M.submit();
+  ok(db.recs.length === recs0 + 1, '补位题作答没写作答流水');
+  const laterAfter = db.wrong[laterKey];
+  ok(laterAfter, '答对补位题把错题删了（还没到期，不能算掌握）');
+  ok(laterAfter && laterAfter.okStreak === 1 && laterAfter.lvl === 2 && laterAfter.due === laterBefore.due,
+    '答对补位题动了连对/档位/due');
+  db.wrong = saved;
+}
+
+
 {
   const p1 = JSON.stringify(M.plan());
   M.db().recs.push({ ts: Date.now(), mod: 'write', kind: 'profit', ok: false, got: 0, total: 1, sec: 1 });
@@ -808,5 +859,6 @@ if (fails.length) {
   fails.forEach((f) => console.error('  - ' + f));
   process.exit(1);
 }
-console.log('✓ UI 冒烟通过（今日渲染 / 题单一致 / expr 判分 / 系数位「−」= −1 / 报告 / 专项 3 题 / 大题前两步分组、配图与专项 / 板块随机覆盖与重来 / 本周错题临时项目（不进今日、7 题型、判分、卷面题号与原题裁切图）/ 回归：expr 顺序、例题提交、空提交、依据漏选拦截、选择草稿不丢、当天题单、配比文案、题干转义、坏记录自愈、选项打散、手绘题图几何自洽）');
+console.log('✓ UI 冒烟通过（今日渲染 / 题单一致 / expr 判分 / 系数位「−」= −1 / 回炉跳过顺补 / 报告 / 专项 3 题 / 大题前两步分组、配图与专项 / 板块随机覆盖与重来 / 本周错题临时项目（不进今日、7 题型、判分、卷面题号与原题裁切图）/ 回归：expr 顺序、例题提交、空提交、依据漏选拦截、选择草稿不丢、当天题单、配比文案、题干转义、坏记录自愈、选项打散、手绘题图几何自洽）');
+
 

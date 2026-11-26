@@ -450,7 +450,8 @@
       return;
     }
     S.mode = 'wrong';
-    S.sess = { mod: 'wrong', kind: null, total: Math.min(due.length, 5), done: 0, right: 0, t0: Date.now(), queue: due };
+    /* 队列只放本轮真的要做的几道：跳过时顺补的那道才排得进同一个下标序列 */
+    S.sess = { mod: 'wrong', kind: null, total: Math.min(due.length, 5), done: 0, right: 0, skipped: 0, supplemented: 0, t0: Date.now(), queue: due.slice(0, Math.min(due.length, 5)) };
     S.view = 'practice';
     nextQuestion();
   }
@@ -458,8 +459,26 @@
     S.example = false;
     S.back = null;
     S.mode = 'wrong';
-    S.sess = { mod: 'wrong', kind: null, total: 1, done: 0, right: 0, t0: Date.now(), queue: [w] };
+    /* single：重做一道不进顺补（跳过就是放弃这一道，别顺手再拉一道进来） */
+    S.sess = { mod: 'wrong', kind: null, single: true, total: 1, done: 0, right: 0, skipped: 0, supplemented: 0, t0: Date.now(), queue: [w] };
     S.view = 'practice';
+    nextQuestion();
+  }
+  /* 回炉轮跳过：难题不硬扛——把这道推到明天（连对进度保留），再从错题本里顺补一道
+     本轮还没排过的（最近到期的先补），做题量不缩水。补位题按「练习」判（见 reviewAnswer）。 */
+  function skipWrong() {
+    var s = S.sess, R = window.__ltReview, now = Date.now();
+    var w = DB.wrong[wrongKey(S.q)];
+    if (w) R.skip(w, now);
+    if (!s.single) {
+      var used = {};
+      Object.keys(DB.wrong).forEach(function (k) { if (s.queue.indexOf(DB.wrong[k]) >= 0) used[k] = 1; });
+      var extra = R.pickExtra(DB.wrong, used, now);
+      if (extra) { s.queue.push(extra.w); s.total++; s.supplemented = (s.supplemented || 0) + 1; }
+    }
+    s.skipped = (s.skipped || 0) + 1;
+    s.done++;
+    save();
     nextQuestion();
   }
   function nextQuestion() {
@@ -477,7 +496,10 @@
       s.skels.push(PT.skelOf(qc));
     } else if (s.queue) {
       S.q = s.queue[s.done];                 /* 错题回炉：刻意重复，不参与去重 */
+      /* 补位题：还没到期的错题，答对不能算有效确认（reviewAnswer 里走 practice） */
+      S.early = S.mode === 'wrong' && !!S.q && !window.__ltReview.isDue(S.q, Date.now());
     } else {
+      S.early = false;
       var kindId = s.kindQueue ? s.kindQueue[s.done] : s.kind;
       var seen = (s.prevSigs || []).concat(s.round ? s.round.sigs : []);
       S.q = pickQuestion(s.mod, kindId, seen);
@@ -798,7 +820,8 @@
           var kind = (S.q && S.q.kind) || S.sess.kind || null;
           S.back = { q: S.q, sess: S.sess, draft: readDraft(), choice: S.choice, draw: S.draw, hint: S.hint };
           startExample(mod, kind);
-        } }, '例题')
+        } }, '例题'),
+        S.mode === 'wrong' ? h('button', { class: 'btn btn-ghost btn-sm', onclick: skipWrong }, '跳过本题（换一道）') : null
       ));
       card.appendChild(h('div', { class: 'small muted' }, '直接打字：整数、小数、1.428e6、1.428×10^6、21% 都认；单位不用打；回车提交。'));
       if (S.scratch) card.appendChild(scratchPad());
@@ -1005,6 +1028,8 @@
       R.onWrong(w, now);
       return;
     }
+    /* 补位题（还没到期）：答对只记一下时间，不加连对也不清零、不重排 due */
+    if (S.early) { R.practice(w, true, now); return; }
     var sig = { sec: sec, minSec: minSecOf(q), hint: !!S.hint, fixed: false };
     var act = R.onPass(w, sig, now);
     if (act === 'mastered') delete DB.wrong[k];
@@ -1038,12 +1063,15 @@
   function renderSummary() {
     var s = S.sess;
     var mins = Math.max(1, Math.round((Date.now() - s.t0) / 60000));
-    /* 专练未覆盖会提前收尾：分母按实际做了几题算，别显示 7/10 好像欠了 3 题 */
+    /* 专练未覆盖会提前收尾：分母按实际做了几题算，别显示 7/10 好像欠了 3 题；
+       跳过的也不进分母（跳过不是答错） */
     var total = s.coveredOut ? s.done : s.total;
+    var answered = Math.max(0, total - (s.skipped || 0));
     app.appendChild(h('div', { class: 'card', style: 'text-align:center;padding:28px 18px' },
       h('div', { style: 'font-size:44px;line-height:1.1' }, s.right === total ? '🎉' : (s.right / (total || 1) >= .6 ? '👍' : '💪')),
-      h('h2', { style: 'margin:8px 0 4px' }, s.right + ' / ' + total + ' 全对'),
-      h('p', { class: 'muted' }, '用时约 ' + mins + ' 分钟 · 正确率 ' + pct(s.right, total || 1) + '%' +
+      h('h2', { style: 'margin:8px 0 4px' }, s.right + ' / ' + (answered || total) + ' 全对'),
+      h('p', { class: 'muted' }, '用时约 ' + mins + ' 分钟 · 正确率 ' + pct(s.right, Math.max(1, answered || total)) + '%' +
+        (s.skipped ? ' · 跳过 ' + s.skipped + ' 题（明天再来' + (s.supplemented ? '，已顺补 ' + s.supplemented + ' 题' : '') + '）' : '') +
         (s.coveredOut ? ' · 这个范围里没做过的题已经做完了' : '')),
       h('div', { class: 'row', style: 'justify-content:center;margin-top:16px' },
         h('button', { class: 'btn btn-primary', onclick: function () {
@@ -1294,6 +1322,7 @@
   window.__pt = {
     S: S, db: function () { return DB; }, MT: PT, PT: PT,
     startSession: startSession, startWrong: startWrong, startOneWrong: startOneWrong, startExample: startExample,
+    skipWrong: skipWrong,
     startArmFocus: startArmFocus, startNocover: startNocover,
     cover: coverOf, coverMod: coverOfMod,
     importJSON: importJSON, clearAll: clearAll,

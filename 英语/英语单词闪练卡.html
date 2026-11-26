@@ -568,6 +568,7 @@ var EW = (function () {
  *   有效答对   → 连对 +1；满 2 返回 'mastered'（调用方移出）；否则 lvl 进一档并重排 due
  *   无效答对   → 连对清零、重排 due；不惩罚 n/lvl
  *   跳过本次   → due 推到一天后，其余不变
+ *   补位题     → 跳过难题后顺补的「还没到期」的错题，practice()：答对只记 lastAt（不加连对、也不清零），答错照答错
  *   due 永远由「本次作答时间戳 + 新档位间隔」算出，不用日历天数、不累计欠账。
  *
  * 历史复盘：everWrong(recs, wrongMap) 只从作答流水聚合，不看调度状态；
@@ -677,6 +678,45 @@ var LT_REVIEW = (function () {
     return true;
   }
 
+  /* 补位题（跳过难题后顺补进来的、还没到期的错题）：按「练习」处理，不能伤已有连对进度。
+     答对 → 只更新 lastAt：没到期本来就不算有效确认（1.5），但也不该把之前攒的连对清零——
+            那不是「同日连刷蒙对」，是真在做题；
+     答错 → 照答错处理（1.3「任何模式」），n+1、回退一档、due 重排，因为它确实还没掌握。
+     返回 'early-ok' / 'early-wrong' / 'none' */
+  function practice(w, ok, now) {
+    if (!w) return 'none';
+    now = now == null ? Date.now() : now;
+    migrate(w, now);
+    if (ok) {
+      w.lastAt = now;
+      return 'early-ok';
+    }
+    onWrong(w, now);
+    return 'early-wrong';
+  }
+
+  /* 顺补一道：错题本里本轮还没排过的题，挑最近到期的一道（跳过难题后补位用）。
+     usedKeys = 本轮队列里已有的错题键（对象或数组都可），这些不再补。
+     坏条目（缺题目快照）跳过，免得补进来渲染就崩。
+     返回 { key, w }；没有可补的返回 null。 */
+  function pickExtra(wrongMap, usedKeys, now) {
+    now = now == null ? Date.now() : now;
+    var used = {};
+    var list = Array.isArray(usedKeys) ? usedKeys : Object.keys(usedKeys || {});
+    list.forEach(function (k) { used[k] = 1; });
+    var best = null, bestKey = null;
+    Object.keys(wrongMap || {}).forEach(function (k) {
+      var w = wrongMap[k];
+      if (!w || used[k]) return;
+      if (!Array.isArray(w.fields) || !w.fields.length) return;
+      migrate(w, now);
+      if (!best || w.due < best.due || (w.due === best.due && (w.n || 0) > (best.n || 0))) {
+        best = w; bestKey = k;
+      }
+    });
+    return best ? { key: bestKey, w: best } : null;
+  }
+
   /* 取到期题：按 due 升序（最早到期优先），cap 可选 */
   function dueList(wrongMap, now, cap) {
     now = now == null ? Date.now() : now;
@@ -758,7 +798,7 @@ var LT_REVIEW = (function () {
   var api = {
     DAY: DAY, PLAN: PLAN, KEEP: KEEP, gap: gap,
     isDue: isDue, migrate: migrate, newEntry: newEntry,
-    onWrong: onWrong, onPass: onPass, skip: skip,
+    onWrong: onWrong, onPass: onPass, skip: skip, practice: practice, pickExtra: pickExtra,
     dueList: dueList, statusText: statusText,
     everWrong: everWrong, dayText: dayText
   };

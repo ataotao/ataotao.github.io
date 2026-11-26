@@ -354,6 +354,74 @@ if (name === '化学' || name === '化学专项') {
   T.action('reset');
 }
 
+/* ⑤ 回炉「跳过本题」顺补（2026-11-26）：难题不硬扛——跳过这道（due 推到明天、
+   连对进度保留），顺补一道本轮还没排过的错题，做题量不缩水；补位题答对不清连对。 */
+{
+  T.action('reset');
+  const now = Date.now();
+  const entry = (key, due, n) => ({
+    key, due, n, lvl: 1, okStreak: n === 2 ? 1 : 0, lastOkAt: 0, lastAt: now, ts: now,
+    mod: 'air', kind: 'comp', kindName: '空气', modName: '空气', title: key, prompt: key,
+    fields: [{ type: 'num', ans: 1, label: '答案' }]
+  });
+  const dueKeys = ['w-due-1', 'w-due-2', 'w-due-3'];
+  const laterKey = 'w-later-1';       /* 还没到期 → 跳过时的补位来源 */
+  const wrong = {};
+  dueKeys.forEach((k, i) => { wrong[k] = entry(k, now - (i + 1) * 3600e3, 1); });
+  wrong[laterKey] = entry(laterKey, now + 3 * 86400e3, 2);
+  T.importText(JSON.stringify({ v: 1, recs: [], wrong, meta: {} }));
+  /* importText 会把 DB 换成合并后的新对象，T.DB 是旧引用 —— 一律走 T.db() 取当前库 */
+  const dbNow = () => T.db();
+
+  T.startRound(null, null, 20, 'wrong');
+  const s = T.S.sess;
+  if (s.queue.length !== 3 || s.total !== 3) fail('回炉轮应只取 3 道到期题，实际 ' + s.queue.length);
+
+  const skippedKey = s.queue[0].key;
+  const skippedEntry = dbNow().wrong[skippedKey];
+  if (!skippedEntry) fail('导入的错题不见了：' + skippedKey);
+  T.action('skip');   /* 跳过第一道 */
+  if (!dbNow().wrong[skippedKey]) fail('跳过本次把错题删了（只能推迟，不能删除）');
+  if (dbNow().wrong[skippedKey].due <= now) fail('跳过本次没把 due 推到明天');
+  if (T.S.sess.queue.length !== 4 || T.S.sess.total !== 4) {
+    fail('跳过后没有顺补：queue ' + T.S.sess.queue.length + ' / total ' + T.S.sess.total + '（应各 +1）');
+  }
+  const filler = T.S.sess.queue[3];
+  if (filler.key !== laterKey || !filler.fill) fail('顺补的不是那道还没回炉的错题：' + filler.key);
+  if (T.S.sess.skipped !== 1) fail('跳过计数不对：' + T.S.sess.skipped);
+
+  /* 抽到补位题时 earlyQ 必须置位（reviewAnswer 靠它走 practice） */
+  T.S.sess.done = T.S.sess.queue.length - 2;
+  T.action('next');   /* 走到最后一道（补位题） */
+  if (!T.S.q || T.S.q._wrongKey !== laterKey) fail('最后一道不是补位题：' + (T.S.q && T.S.q._wrongKey));
+  if (!T.S.sess.earlyQ) fail('补位题没标 earlyQ（答对会误把连对清零）');
+
+  /* 答对补位题：连对/档位/due 都不能动 */
+  const before = Object.assign({}, dbNow().wrong[laterKey]);
+  sandbox.document.getElementById(SUB.inputPrefix + '0').value = '1';
+  T.submit();
+  const after = dbNow().wrong[laterKey];
+  if (!after) fail('答对补位题把错题删了（未到期不能算有效确认）');
+  if (after.okStreak !== before.okStreak || after.lvl !== before.lvl || after.due !== before.due) {
+    fail('答对补位题动了连对/档位/due：' + JSON.stringify({ was: before.okStreak, now: after.okStreak }));
+  }
+  if (!dbNow().recs.length) fail('补位题作答没有写作答流水（recs 必须留档）');
+
+  /* 补位题答错仍按答错处理：n+1、回退一档 */
+  T.startRound(null, null, 20, 'wrong');
+  T.action('skip');
+  T.S.sess.done = T.S.sess.queue.length - 2;
+  T.action('next');
+  const fillKey2 = T.S.q && T.S.q._wrongKey;
+  if (!fillKey2 || !T.S.sess.earlyQ) fail('第二轮没抽到补位题');
+  const before2 = Object.assign({}, dbNow().wrong[fillKey2]);
+  sandbox.document.getElementById(SUB.inputPrefix + '0').value = '999';
+  T.submit();
+  const after2 = dbNow().wrong[fillKey2];
+  if (!after2 || after2.n !== before2.n + 1) fail('补位题答错没有记错次：' + before2.n + ' → ' + (after2 && after2.n));
+  T.action('reset');
+}
+
 /* ② 各视图渲染 */
 for (const [view, needle] of [['wrong', '错题回炉'], ['report', '导入记录 JSON']]) {
   T.go(view);
@@ -385,4 +453,6 @@ const union = T.mergeRecords(mk(0), mk(10));
 if (union.recs.length !== 6) fail('事件并集错误：期望 6 得到 ' + union.recs.length);
 
 console.log(`✓ ${name} 训练器内核自检通过`);
-console.log('  启动/各视图渲染 · 单套统计 DOM · tabs 数据驱动 · 导入幂等 · 旧记录可读 · 事件并集 · 覆盖面/未覆盖专练');
+console.log('  启动/各视图渲染 · 单套统计 DOM · tabs 数据驱动 · 导入幂等 · 旧记录可读 · 事件并集 · 覆盖面/未覆盖专练 · 回炉跳过顺补（补位题答对不清连对）');
+
+

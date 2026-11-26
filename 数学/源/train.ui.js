@@ -584,8 +584,24 @@
       return;
     }
     S.mode = 'wrong';
-    S.sess = { mod: 'wrong', kind: null, total: Math.min(due.length, 5), done: 0, right: 0, skipped: 0, t0: Date.now(), queue: due };
+    /* 队列只放本轮真的要做的几道：跳过时顺补的那道才排得进同一个下标序列 */
+    S.sess = { mod: 'wrong', kind: null, total: Math.min(due.length, 5), done: 0, right: 0, skipped: 0, supplemented: 0, t0: Date.now(), queue: due.slice(0, Math.min(due.length, 5)) };
     S.view = 'practice';
+    nextQuestion();
+  }
+  /* 回炉轮跳过：难题不硬扛——把这道推到明天（连对进度保留），再从错题本里顺补一道
+     本轮还没排过的（最近到期的先补），做题量不缩水。补位题按「练习」判（见 reviewAnswer）。 */
+  function skipWrong() {
+    var s = S.sess, R = window.__ltReview, now = Date.now();
+    var w = DB.wrong[wrongKey(S.q)];
+    if (w) R.skip(w, now);
+    var used = {};
+    Object.keys(DB.wrong).forEach(function (k) { if (s.queue.indexOf(DB.wrong[k]) >= 0) used[k] = 1; });
+    var extra = R.pickExtra(DB.wrong, used, now);
+    if (extra) { s.queue.push(extra.w); s.total++; s.supplemented = (s.supplemented || 0) + 1; }
+    s.skipped = (s.skipped || 0) + 1;
+    s.done++;
+    save();
     nextQuestion();
   }
   function nextQuestion() {
@@ -603,10 +619,14 @@
       s.skels.push(MT.skelOf(qc));
     } else if (S.mode === 'wrong') {
       S.q = s.queue[s.done];
+      /* 补位题：还没到期的错题，答对不能算有效确认（会在 reviewAnswer 里走 practice） */
+      S.early = !!S.q && !window.__ltReview.isDue(S.q, Date.now());
     } else if (s.queue) {
       S.q = s.queue[s.done];
+      S.early = false;
     } else {
       S.q = MT.gen(s.mod, s.kind, (Math.random() * 1e9) | 0);
+      S.early = false;
     }
     S.res = null; S.answered = false; S.choice = {}; S.hint = false; S.draft = null; S.lastVals = null; S.t0 = Date.now();
     S.scratch = false;
@@ -755,15 +775,7 @@
           S.back = { q: S.q, sess: S.sess, draft: readDraft(), choice: S.choice, hint: S.hint };
           startExample(mod, kind);
         } }, '例题'),
-        S.mode === 'wrong' ? h('button', { class: 'btn btn-ghost btn-sm', onclick: function () {
-          /* 跳过本次：只把 due 推到明天，档位和连对都不动（规则见 工具/trainer/review.js）
-             不计作答、不写记录，所以 s.right 不变，只把进度往前推一格 */
-          window.__ltReview.skip(S.q, Date.now());
-          save();
-          S.sess.done++;
-          S.sess.skipped = (S.sess.skipped || 0) + 1;
-          nextQuestion();
-        } }, '跳过本次') : null
+        S.mode === 'wrong' ? h('button', { class: 'btn btn-ghost btn-sm', onclick: skipWrong }, '跳过本题（换一道）') : null
       ));
       card.appendChild(h('div', { class: 'small muted' }, '负号写哪儿都算对；系数位只写一个「−」也算 −1；回车提交。'));
       if (S.scratch) card.appendChild(scratchPad());
@@ -1102,6 +1114,8 @@
       R.onWrong(w, now);
       return;
     }
+    /* 补位题（还没到期）：答对只记一下时间，不加连对也不清零、不重排 due */
+    if (S.early) { R.practice(w, true, now); return; }
     var sig = { sec: sec, minSec: minSecOf(q), hint: !!S.hint, fixed: false };
     var act = R.onPass(w, sig, now);
     if (act === 'mastered') delete DB.wrong[k];
@@ -1117,9 +1131,9 @@
     var answered = Math.max(0, total - (s.skipped || 0));
     app.appendChild(h('div', { class: 'card', style: 'text-align:center;padding:28px 18px' },
       h('div', { style: 'font-size:44px;line-height:1.1' }, s.right === total ? '🎉' : (s.right / (total || 1) >= .6 ? '👍' : '💪')),
-      h('h2', { style: 'margin:8px 0 4px' }, s.right + ' / ' + total + ' 全对'),
+      h('h2', { style: 'margin:8px 0 4px' }, s.right + ' / ' + (answered || total) + ' 全对'),
       h('p', { class: 'muted' }, '用时约 ' + mins + ' 分钟 · 正确率 ' + pct(s.right, answered || total || 1) + '%' +
-        (s.skipped ? ' · 跳过 ' + s.skipped + ' 题（明天再来）' : '') +
+        (s.skipped ? ' · 跳过 ' + s.skipped + ' 题（明天再来' + (s.supplemented ? '，已顺补 ' + s.supplemented + ' 题' : '') + '）' : '') +
         (s.coveredOut ? ' · 这个范围里没做过的题已经做完了' : '')),
       h('div', { class: 'row', style: 'justify-content:center;margin-top:16px' },
         h('button', { class: 'btn btn-primary', onclick: function () {
@@ -1406,6 +1420,7 @@
     startGroupRandom: startGroupRandom, startNocover: startNocover, startFreshKinds: startFreshKinds,
     cover: coverOf, coverMod: coverOfMod,
     plan: function () { return dayPlan(); },
-    submit: submit, submitFix: submitFix, next: next, go: go, render: render
+    submit: submit, submitFix: submitFix, next: next, go: go, render: render,
+    skipWrong: skipWrong
   };
 })();

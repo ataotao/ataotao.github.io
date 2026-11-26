@@ -4,7 +4,7 @@
 // 用法：
 //   node 物理/题库工具/check-training.mjs           每类 200 题，跑 PT.selfTest
 //   node 物理/题库工具/check-training.mjs 500       每类 500 题
-//   node 物理/题库工具/check-training.mjs --ui      最小 DOM 桩驱动 window.__pt（17 项冒烟）
+//   node 物理/题库工具/check-training.mjs --ui      最小 DOM 桩驱动 window.__pt（24 项冒烟）
 //
 // 默认模式从 HTML 里抽出 <script id="core">（纯逻辑层，不碰 DOM），在 node vm 里跑
 // PT.selfTest：每个生成器各出 N 题，断言
@@ -795,6 +795,67 @@ function runUI() {
     pt.go('today');
   });
 
+  /* 回炉「跳过本题」顺补（2026-11-26）：难题跳过 → due 推到明天、连对保留，
+     顺补一道本轮还没排过的错题，做题量不缩水；补位题答对不清连对。 */
+  step('回炉跳过顺补', () => {
+    const DB = pt.db();
+    DB.wrong = {};
+    pt.clearAll && 0;   /* 不清库：只清错题本，保留 recs */
+    /* 先真答错 4 道，拿到内核自己认的错题键（wrongKey 含题图指纹，手搓条目会对不上） */
+    for (let i = 0; i < 4; i++) {
+      pt.startSession('calc', null, 1);
+      const q = pt.S.q;
+      q.fields.forEach((f, j) => {
+        if (f.type === 'choice') { pt.S.choice[j] = (f.ans + 1) % f.options.length; return; }
+        if (f.type === 'drawline') { pt.S.draw[j] = f.ans; return; }
+        dom.doc.getElementById('in' + j + '_n').value = String(f.ans * 3 + 1);
+      });
+      pt.submit();
+    }
+    const keys = Object.keys(DB.wrong);
+    if (keys.length !== 4) throw new Error('答错 4 道后错题本应有 4 条，实际 ' + keys.length);
+    const now = Date.now();
+    keys.slice(0, 3).forEach((k) => { DB.wrong[k].due = now - 1000; });   /* 3 道到期 */
+    const laterKey = keys[3];                                            /* 1 道还没到期 → 补位来源 */
+    const laterBefore = Object.assign({}, DB.wrong[laterKey]);
+
+    pt.startWrong();
+    if (pt.S.sess.total !== 3 || pt.S.sess.queue.length !== 3) {
+      throw new Error('回炉轮应只取 3 道到期题，实际 ' + pt.S.sess.queue.length);
+    }
+    const curKey = Object.keys(DB.wrong).find((k) => DB.wrong[k] === pt.S.q);
+    if (!curKey) throw new Error('当前回炉题在错题本里找不到对应键');
+    pt.skipWrong();
+    if (!DB.wrong[curKey]) throw new Error('跳过本题把错题删了（只能推 due）');
+    if (!(DB.wrong[curKey].due > now)) throw new Error('跳过本题没把 due 推到明天');
+    if (pt.S.sess.total !== 4 || pt.S.sess.queue.length !== 4) {
+      throw new Error('跳过后没有顺补（total/queue 应各 +1，实际 ' + pt.S.sess.total + '/' + pt.S.sess.queue.length + '）');
+    }
+    if (pt.S.sess.skipped !== 1 || pt.S.sess.supplemented !== 1) throw new Error('跳过/顺补计数不对');
+    const filler = pt.S.sess.queue[3];
+    const fillerKey = Object.keys(DB.wrong).find((k) => DB.wrong[k] === filler);
+    if (fillerKey !== laterKey) throw new Error('顺补的不是那道还没到期的错题：' + fillerKey);
+    if (DB.wrong[laterKey].due !== laterBefore.due || DB.wrong[laterKey].okStreak !== laterBefore.okStreak) {
+      throw new Error('顺补改动了补位题本身');
+    }
+
+    /* 走到补位题：答对 → 只记流水，连对/档位/due 都不动 */
+    pt.S.sess.done = 3;
+    pt.next();
+    if (!pt.S.q || pt.S.early !== true) throw new Error('补位题没标 early（答对会把连对清零）');
+    const n0 = DB.recs.length;
+    fillCorrect(pt, dom.doc, pt.S.q);
+    pt.submit();
+    if (DB.recs.length !== n0 + 1) throw new Error('补位题作答没写作答流水');
+    const laterAfter = DB.wrong[laterKey];
+    if (!laterAfter) throw new Error('答对补位题把错题删了（没到期不能算掌握）');
+    if (laterAfter.okStreak !== laterBefore.okStreak || laterAfter.lvl !== laterBefore.lvl || laterAfter.due !== laterBefore.due) {
+      throw new Error('答对补位题动了连对/档位/due');
+    }
+    DB.wrong = {};
+    pt.go('today');
+  });
+
   /* 首题让给未覆盖（2026-11-23）：今日任务每项的第 1 题，同题型换成没见过的情境。
      只换第 1 题：题型、题量、后面的轮换都不许动；非今日任务入口不许换。 */
   step('首题让给未覆盖', () => {
@@ -831,7 +892,7 @@ function runUI() {
   });
 
   const okN = steps.filter(Boolean).length;
-  if (okN !== steps.length || steps.length !== 23) {
+  if (okN !== steps.length || steps.length !== 24) {
     console.error('✗ --ui ' + okN + '/' + steps.length + ' 项通过');
     process.exit(1);
   }
@@ -891,3 +952,4 @@ function runPools() {
 if (UI_MODE) runUI();
 else if (args.includes('pools')) runPools();
 else runCore();
+
