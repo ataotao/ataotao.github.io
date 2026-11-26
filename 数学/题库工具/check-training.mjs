@@ -184,4 +184,54 @@ if (pf.length) {
   process.exit(1);
 }
 
+/* ---------- C. 系数位只写一个「−」= −1 ----------
+   2026-11-26 截图场景：顶点式 y = □(x − □)² + □，孩子按课本写法只敲了一个「−」（y = −(x − 3)²），
+   被判错。模板里系数空紧挨着 x / x² / (x，省掉 1 是整个数学习惯，必须按 −1 判；
+   反过来 h、k、常数项那些空位省掉数字就没意义，单写「−」仍要判错。 */
+const cf = [];
+const sample = [];
+MT.modules.forEach((m) => {
+  if (m.items) { m.items.forEach((it) => { try { sample.push(MT.gen(m.id, it.id, 1)); } catch (e) {} }); return; }
+  (m.kinds || []).forEach((k) => {
+    for (let s = 1; s <= 40; s++) {
+      try { const q = MT.gen(m.id, k.id, s * 31 + 7); if (q) sample.push(q); } catch (e) {}
+    }
+  });
+});
+let coefSlots = 0, otherSlots = 0, minusOneCases = 0;
+sample.forEach((q) => {
+  const tag = (q.id || '') + ' ' + String(q.prompt || '').slice(0, 24);
+  (q.fields || []).forEach((f, fi) => {
+    if (f.type !== 'expr') return;
+    /* 判分前的原始输入一律走 fieldVals：表格里「你填的是 −」就是从这里出去的 */
+    f.ans.forEach((w, j) => {
+      const isCoef = MT.isCoefSlot(f, j);
+      ['-', '−', '－'].forEach((ch) => {
+        const v = MT.slotVal(f, j, ch);
+        if (isCoef) {
+          if (v !== -1) cf.push(tag + ' 第 ' + (j + 1) + ' 空是系数位，「' + ch + '」判成 ' + v + '（应为 −1）');
+        } else if (!Number.isNaN(v)) {
+          cf.push(tag + ' 第 ' + (j + 1) + ' 空不是系数位，却把「' + ch + '」当成了数 ' + v);
+        }
+      });
+      if (isCoef) coefSlots++; else otherSlots++;
+      /* 整题：系数确实是 −1 时，只写「−」其余照答案填，必须全对（截图那道题就是这一种） */
+      if (w === -1 && isCoef) {
+        minusOneCases++;
+        const vals = q.fields.map((ff, vi) => (ff.type === 'choice' ? ff.ans
+          : MT.fieldVals(ff, vi === fi ? ff.ans.map((x, xi) => (xi === j ? '−' : String(x))) : ff.ans)));
+        if (!MT.judge(q, vals).ok) cf.push(tag + ' 系数 −1 只写「−」被判错');
+      }
+    });
+  });
+});
+if (!coefSlots || !otherSlots) cf.push('系数位/非系数位的样本都没扫到（模板或生成器被改坏了）');
+if (!minusOneCases) cf.push('没抽到 a = −1 的题，截图场景没被覆盖');
+if (cf.length) {
+  console.error('✗ 系数位判分 ' + cf.length + ' 处失败：');
+  cf.slice(0, 20).forEach((f) => console.error('  - ' + f));
+  process.exit(1);
+}
+console.log('系数位：' + coefSlots + ' 个空（「−」按 −1 判）· 其它空位 ' + otherSlots + ' 个 · a = −1 整题 ' + minusOneCases + ' 例');
+
 console.log('✓ 全部通过');

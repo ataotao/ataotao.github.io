@@ -121,6 +121,38 @@ fill('in0_0_n', a[0]); fill('in0_1_n', a[1]); fill('in0_2_n', a[2]); fill('in1_n
 M.submit();
 ok(M.S.res && M.S.res.ok === true, 'expr 正确答案被判错');
 
+/* 4b. 系数位只写一个「−」= −1（2026-11-26 截图：y = −(x − 3)² + 0 被判错）
+   —— 走真实提交路径，防止 core 判对了、UI 还在别处解析（漏改 submit 就会红） */
+{
+  let vq = null;
+  for (let s = 1; s <= 600 && !vq; s++) {
+    const t = ctx.MT.gen('write', 'vertex', s);
+    if (t && t.fields[0].type === 'expr' && t.fields[0].ans[0] === -1) vq = t;
+  }
+  ok(!!vq, '600 个 seed 里没有 a = −1 的顶点式题');
+  M.startSession('write', 'vertex', 1);
+  M.S.q = vq; M.S.answered = false; M.S.res = null; M.S.fix = null;
+  M.S.draft = null; M.S.choice = {}; M.S.lastVals = null; M.S.hint = false; M.S.t0 = Date.now();
+  M.render();
+  const va = vq.fields[0].ans;
+  fill('in0_0_n', '−'); fill('in0_1_n', va[1]); fill('in0_2_n', va[2]); fill('in1_n', vq.fields[1].ans);
+  M.submit();
+  ok(M.S.res && M.S.res.ok === true, '系数位只填一个「−」被判错（应等于 −1）');
+
+  /* 订正那一排输入框走的是另一段代码（submitFix），同一把尺子：订正时写「−」也要算对，
+     否则孩子照着解析订正反而被卡住、出不了「下一题」 */
+  M.startSession('write', 'vertex', 1);
+  M.S.q = vq; M.S.answered = false; M.S.res = null; M.S.fix = null;
+  M.S.draft = null; M.S.choice = {}; M.S.lastVals = null; M.S.hint = false; M.S.t0 = Date.now();
+  M.render();
+  fill('in0_0_n', '2'); fill('in0_1_n', va[1]); fill('in0_2_n', va[2]); fill('in1_n', vq.fields[1].ans);
+  M.submit();
+  ok(M.S.res.ok === false && M.S.fix && M.S.fix.fields.join(',') === '0', '系数填错后没进订正流程');
+  fill('fx0_0', '−'); fill('fx0_1', va[1]); fill('fx0_2', va[2]);
+  M.submitFix();
+  ok(M.S.fix.ok === true, '订正时系数位只写「−」被判错');
+}
+
 /* 5. 当日题单快照：做完一题就落进 DB.days */
 const db = M.db();
 const dk = Object.keys(db.days || {}).sort().reverse()[0];
@@ -776,5 +808,5 @@ if (fails.length) {
   fails.forEach((f) => console.error('  - ' + f));
   process.exit(1);
 }
-console.log('✓ UI 冒烟通过（今日渲染 / 题单一致 / expr 判分 / 报告 / 专项 3 题 / 大题前两步分组、配图与专项 / 板块随机覆盖与重来 / 本周错题临时项目（不进今日、7 题型、判分、卷面题号与原题裁切图）/ 回归：expr 顺序、例题提交、空提交、依据漏选拦截、选择草稿不丢、当天题单、配比文案、题干转义、坏记录自愈、选项打散、手绘题图几何自洽）');
+console.log('✓ UI 冒烟通过（今日渲染 / 题单一致 / expr 判分 / 系数位「−」= −1 / 报告 / 专项 3 题 / 大题前两步分组、配图与专项 / 板块随机覆盖与重来 / 本周错题临时项目（不进今日、7 题型、判分、卷面题号与原题裁切图）/ 回归：expr 顺序、例题提交、空提交、依据漏选拦截、选择草稿不丢、当天题单、配比文案、题干转义、坏记录自愈、选项打散、手绘题图几何自洽）');
 

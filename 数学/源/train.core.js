@@ -83,6 +83,26 @@ var MT = (function () {
     if (m) return parseFloat(m[1]) / parseFloat(m[2]);
     return NaN;
   }
+  /* 系数位只写一个「−」= −1：模板里这个空紧挨着 x / x² / (x（如 y = {}(x − {})² + {}），
+     所以 y = −(x − 3)² 和 y = −1(x − 3)² 是同一个式子，孩子照课本那样敲一个负号不能判错。
+     其它空位（h、k、常数项）不享受这条：那里省掉数字，「−」就没有系数可代表，该判错。
+     判定不靠题型白名单，靠模板里紧跟这个空的那个字符——以后新加 expr 题型自动适用。 */
+  function isCoefSlot(f, j) {
+    if (!f || f.type !== 'expr' || !f.tpl) return false;
+    var after = String(f.tpl).split('{}')[j + 1];
+    return !!after && /^[x(]/.test(after.replace(/^\s+/, ''));
+  }
+  /* 一个空的原始输入 → 判分用的数。提交、订正、自检都走这里，不许各自 parseNum。 */
+  function slotVal(f, j, raw) {
+    var s = String(raw == null ? '' : raw).replace(/\s+/g, '');
+    if (/^[-−－—–﹣]$/.test(s) && isCoefSlot(f, j)) return -1;
+    return parseNum(s);
+  }
+  function fieldVals(f, raw) {
+    if (f.type === 'expr') return (raw || []).map(function (o, j) { return slotVal(f, j, o); });
+    if (f.type === 'set') return (raw || []).map(parseNum);
+    return parseNum(raw);
+  }
   function poly2(a, b, c) {
     var s = a === 1 ? 'x²' : (a === -1 ? '−x²' : d(a) + 'x²');
     if (b) s += (b > 0 ? ' + ' : ' − ') + (Math.abs(b) === 1 ? '' : Math.abs(b)) + 'x';
@@ -3217,6 +3237,7 @@ var MT = (function () {
     gen: gen, judge: judge, ansText: ansText, svgFor: svgFor, cropFig: cropFig,
     kindPool: kindPool, kindSkel: kindSkel, sigOf: sigOf, skelOf: skelOf, enumerateKind: enumerateKind,
     parseNum: parseNum, near: near, frac: frac, nice: nice,
+    fieldVals: fieldVals, slotVal: slotVal, isCoefSlot: isCoefSlot,
     selfTest: selfTest
   };
 })();

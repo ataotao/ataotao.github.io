@@ -765,7 +765,7 @@
           nextQuestion();
         } }, '跳过本次') : null
       ));
-      card.appendChild(h('div', { class: 'small muted' }, '负号写哪儿都算对；回车提交。'));
+      card.appendChild(h('div', { class: 'small muted' }, '负号写哪儿都算对；系数位只写一个「−」也算 −1；回车提交。'));
       if (S.scratch) card.appendChild(scratchPad());
     }
 
@@ -925,9 +925,6 @@
     var el = document.getElementById(base + '_n');
     return el ? String(el.value || '') : '';
   }
-  function fracVal(o) {
-    return MT.parseNum(o);
-  }
   /* 题干/解析走 innerHTML，但数学里的 `0<x<5`、`a<b` 会被浏览器当成标签起始，
      一路吞到下一个 `>`（`<x<5 …</span>` 整段消失，孩子看到的就是半截话）。
      这里只放行白名单标签，其余 `<` 一律转义。先把合法标签换成占位符，避免误伤。 */
@@ -1017,8 +1014,8 @@
     }
     var vals = q.fields.map(function (f, i) {
       if (f.type === 'choice') return draft[i];
-      if (f.type === 'set' || f.type === 'expr') return draft[i].map(fracVal);
-      return fracVal(draft[i]);
+      /* 原始输入 → 判分数值统一走 core.fieldVals：系数位只写一个「−」按 −1 判（2026-11-26） */
+      return MT.fieldVals(f, draft[i]);
     });
     var res = MT.judge(q, vals);
     S.lastVals = draft;
@@ -1049,19 +1046,20 @@
     if (!S.fix || S.fix.ok) return;
     var q = S.q, fields = [], vals = [];
     S.fix.fields.forEach(function (i) {
-      var f = q.fields[i];
+      var f = q.fields[i], raw;
       fields.push(f);
       if (f.type === 'set' || f.type === 'expr') {
-        var arr = [];
+        raw = [];
         for (var j = 0; j < nSlots(f); j++) {
           var el = document.getElementById('fx' + i + '_' + j);
-          arr.push(MT.parseNum(el ? el.value : ''));
+          raw.push(el ? el.value : '');
         }
-        vals.push(arr);
       } else {
         var el2 = document.getElementById('fx' + i);
-        vals.push(MT.parseNum(el2 ? el2.value : ''));
+        raw = el2 ? el2.value : '';
       }
+      /* 订正与提交同一把尺子：系数位写「−」也算 −1，否则孩子订正时照样被判错 */
+      vals.push(MT.fieldVals(f, raw));
     });
     var r = MT.judge({ fields: fields }, vals);
     if (r.ok) {
