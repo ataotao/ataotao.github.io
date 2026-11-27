@@ -90,6 +90,16 @@ function textOf(e) {
 }
 const fails = [];
 const ok = (cond, msg) => { if (!cond) fails.push(msg); };
+/* 按文字找按钮：DOM 桩没有选择器，自己递归（「不会，看详解」这类按钮要用） */
+function findBtn(frag) {
+  const walk = (e) => {
+    if (!e) return null;
+    if (e.tagName === 'button' && textOf(e).indexOf(frag) >= 0) return e;
+    for (const c of e.children || []) { const r = walk(c); if (r) return r; }
+    return null;
+  };
+  return walk(app);
+}
 
 const M = ctx.__mt;
 ok(!!M, '没拿到 window.__mt 调试钩子');
@@ -635,89 +645,106 @@ ok((textOf(app).match(/当前板块随机题练习/g) || []).length >= 7, '基�
   }
 }
 
-/* 7. 本周错题（临时项目 week12）：注册表、不进今日任务、模块页、判分、知识点归属 */
+/* 7. 小测错题（quiz，2026-11-27 起两周合并）：注册表、基础/进阶分组、learn 详解、
+      11.25 原题裁切图、练习页「不会」按钮、错题本只存 cropKey */
 {
-  const wm = ctx.MT.moduleById('week12');
-  ok(!!wm, '没有「本周错题」临时模块');
+  const wm = ctx.MT.moduleById('quiz');
+  ok(!!wm, '没有「小测错题」模块');
+  ok(!ctx.MT.moduleById('week12'), '旧的「本周错题」week12 模块还在（应改名为 quiz）');
   if (wm) {
-    ok(wm.daily === false, '本周错题被算进今日任务（应 daily:false）');
-    ok(wm.kinds && wm.kinds.length === 7, '本周错题题型数不是 7，是 ' + (wm.kinds ? wm.kinds.length : 0));
-    const want = ['secperim', 'paralleldist', 'relatecircle', 'missingconst', 'archcircle', 'isopoint', 'rangeopen'];
-    ok(want.every((id) => wm.kinds.some((k) => k.id === id)), '本周错题漏了错题对应的题型');
-    ok(wm.kinds.every((k) => typeof k.gen === 'function'), '本周错题有题型没有生成器');
+    ok(wm.name === '小测错题', '模块名不是「小测错题」，是 ' + wm.name);
+    ok(wm.daily === false, '小测错题被算进今日任务（应 daily:false）');
+    ok(wm.kinds && wm.kinds.length === 17, '小测错题题型数不是 17，是 ' + (wm.kinds ? wm.kinds.length : 0));
+    const basic = wm.kinds.filter((k) => String(k.group || '').indexOf('基础') === 0);
+    const adv = wm.kinds.filter((k) => String(k.group || '').indexOf('进阶') === 0);
+    ok(basic.length === 7, '基础题不是 7 个，是 ' + basic.length);
+    ok(adv.length === 10, '进阶题不是 10 个，是 ' + adv.length);
+    ok(wm.kinds.every((k) => typeof k.gen === 'function'), '小测错题有题型没有生成器');
+    /* 每题必须有完整 learn：考点 / 错因 / 分步解法 / 易错步骤 / 公式模型 —— 这是「不会」按钮的内容源 */
+    const badLearn = wm.kinds.filter((k) => !k.learn || !k.learn.kp || !k.learn.why ||
+      !Array.isArray(k.learn.steps) || !k.learn.steps.length ||
+      !Array.isArray(k.learn.traps) || !k.learn.traps.length || !k.learn.model).map((k) => k.id);
+    ok(badLearn.length === 0, '这些题型缺 learn 详解字段：' + badLearn.join('、'));
 
-    /* 今日页：模块卡在（可点进去），但 4 个今日任务的结构与文案不变 */
+    /* 今日页：模块卡在（可点进去），但今日任务的结构与文案不变 */
     M.go('today');
     const tt = textOf(app);
-    ok(tt.includes('本周错题'), '今日页没显示本周错题模块卡');
+    ok(tt.includes('小测错题'), '今日页没显示小测错题模块卡');
     ok(tt.includes('顺序：热身 → 写式 → 入口 → 错题'), '今日任务的顺序文案被改动了');
 
-    /* 模块页：6 个题型 + 每个都有「专项 3 题」 */
-    M.go('week12');
+    /* 模块页：17 个题型、两个分组标题、每个都有「专项 3 题」 */
+    M.go('quiz');
     const wt = textOf(app);
-    want.forEach((id) => {
-      const nm = wm.kinds.find((k) => k.id === id).name;
-      ok(wt.includes(nm), '本周错题模块页缺题型：' + nm);
-    });
-    ok((wt.match(/专项 3 题/g) || []).length === 7, '本周错题模块页「专项 3 题」不是 7 个');
+    ok(wt.includes('基础题'), '模块页没有「基础题」分组标题');
+    ok(wt.includes('进阶题'), '模块页没有「进阶题」分组标题');
+    wm.kinds.forEach((k) => ok(wt.includes(k.name), '小测错题模块页缺题型：' + k.name));
+    ok((wt.match(/专项 3 题/g) || []).length === 17, '小测错题模块页「专项 3 题」不是 17 个');
 
     /* 出题 + 判分：mod/kind 必须对得上（否则专项统计与错题归集会串） */
-    want.forEach((id) => {
-      const q = ctx.MT.gen('week12', id, 12345);
-      ok(q.mod === 'week12' && q.kind === id, '本周错题出题 mod/kind 不对：' + id + ' → ' + q.mod + '/' + q.kind);
-      ok(ctx.MT.judge(q, q.fields.map((f) => f.ans)).ok, '本周错题正确答案被判错：' + id);
+    wm.kinds.forEach((k) => {
+      const kq = ctx.MT.gen('quiz', k.id, 12345);
+      ok(kq.mod === 'quiz' && kq.kind === k.id, '小测错题出题 mod/kind 不对：' + k.id + ' → ' + kq.mod + '/' + kq.kind);
+      ok(ctx.MT.judge(kq, kq.fields.map((f) => f.ans)).ok, '小测错题正确答案被判错：' + k.id);
+      ok(!!kq.learn && kq.learn.kp === k.learn.kp, '小测错题出题没带 learn：' + k.id);
     });
 
-    /* 这八个大题得分点已迁出基础快练，只在「大题前两步」/「本周错题」里出现：
-       基础快练回归「一条定义一次就对」的定位，不许再混进大题第一步。 */
+    /* 基础快练不许再混进大题第一步（保持「一条定义一次就对」的定位） */
     const dm = ctx.MT.moduleById('drill');
     ['relatecircle', 'archcircle', 'isopoint', 'rangeopen', 'equiarc', 'paralleldist', 'constrcenter', 'path'].forEach((id) => {
       ok(!dm.kinds.some((k) => k.id === id), '大题得分点还没从基础快练移出：' + id);
     });
     ok(dm.kinds.some((k) => k.id === 'missingconst'), '基础快练漏了缺常数项（提公因式）');
 
-    /* 每个练习点必须标出「卷面第几题」，并带一张原题裁切图（data URI，离线可用） */
-    ok(!!dataSeg, '产物没有 <script id="data"> 段（第 12 周原题裁切图）');
-    const refs = {
-      secperim: ['10', '第 10 题'], paralleldist: ['11', '第 11 题'], relatecircle: ['12', '第 12 题'],
-      archcircle: ['16', '第 16 题'], isopoint: ['17', '第 17 题 (2)'], rangeopen: ['17', '第 17 题 (3)'],
-      missingconst: ['13', '第 13 题 (1)'],
-    };
-    Object.keys(refs).forEach((id) => {
-      const q = ctx.MT.gen('week12', id, 2026);
-      ok(q.no === refs[id][0] && q.noLabel === refs[id][1],
-        '本周错题没标卷面题号：' + id + ' → ' + q.no + ' / ' + q.noLabel);
-      ok(q.fig && q.fig.need && q.fig.cap && q.fig.cap.indexOf('第 ' + q.no) >= 0,
-        '本周错题缺原题裁切图或图注：' + id);
-      const svg = ctx.MT.svgFor(q);
-      ok(svg.indexOf('data:image/webp;base64,') > 0, '裁切图没内联成 data URI：' + id);
+    /* 每题都要有「卷面第几题」+ 原题裁切图（data URI，离线可用）；11.25 的图走 w13- 前缀，别串到 11.18 的图 */
+    ok(!!dataSeg, '产物没有 <script id="data"> 段（两周原题裁切图）');
+    wm.kinds.forEach((k) => {
+      const kq = ctx.MT.gen('quiz', k.id, 2026);
+      ok(kq.no && kq.noLabel, '小测错题没标卷面题号：' + k.id);
+      ok(kq.fig && kq.fig.need && kq.fig.cap && kq.fig.cap.indexOf('题') >= 0, '小测错题缺原题裁切图或图注：' + k.id);
+      ok(/^w13-|^q\d+$/.test(kq.cropKey || ''), '裁切图 key 前缀不对：' + k.id + ' → ' + kq.cropKey);
+      const svg = ctx.MT.svgFor(kq);
+      ok(svg.indexOf('data:image/webp;base64,') > 0, '裁切图没内联成 data URI：' + k.id);
       /* 只查 base64 之外的部分：base64 里出现 "NaN" 这类子串是正常的，不能整体扫 */
       const shell = svg.replace(/data:image\/webp;base64,[A-Za-z0-9+/=]+/g, 'IMG');
-      ok(!/NaN|undefined/.test(shell), '裁切图 SVG 骨架含 NaN/undefined：' + id);
-      /* 保留在基础快练的同名题型（secperim / missingconst）不贴原卷图：只有临时项目要看「卷面第几题」。
-         其余五个已迁出基础快练，上面的断言已覆盖。 */
-      if (['secperim', 'missingconst'].indexOf(id) >= 0) {
-        const dq = ctx.MT.gen('drill', id, 2026);
-        ok(!dq.no && !dq.fig, '基础快练被误加了原卷题号/裁切图：' + id);
-      }
+      ok(!/NaN|undefined/.test(shell), '裁切图 SVG 骨架含 NaN/undefined：' + k.id);
     });
-    /* 练习页确实把题号画出来了（题号 pill 走 q.noLabel） */
-    M.startSession('week12', 'isopoint', 1);
-    ok(textOf(app).includes('第 17 题 (2)'), '练习页没显示「卷面第几题」');
+    /* 11.25 的题读 w13 命名空间；11.18 的题还读旧的 q* 命名空间 */
+    const q25 = ctx.MT.gen('quiz', 'b11', 2026);
+    ok(q25.cropKey === 'w13-q11', '11.25 第 11 题的裁切图 key 不是 w13-q11：' + q25.cropKey);
+    const q18 = ctx.MT.gen('quiz', 'bsec', 2026);
+    ok(q18.cropKey === 'q10', '11.18 第 10 题的裁切图 key 不是 q10：' + q18.cropKey);
+    ok(ctx.MT.cropFig({ key: 'w13-q3' }).svg.indexOf('data:image/webp') > 0,
+      'cropFig 不能按 w13- 前缀重建 11.25 的裁切图（回炉时会没图）');
+
+    /* 练习页：「不会」按钮要点得开，展开的是考点 + 分步解法 + 公式模型，并记为看过详解 */
+    M.startSession('quiz', 'b3', 1);
+    const bq = M.S.q;
+    ok(!!bq.learn, '小测错题出题没带 learn（不会面板会空）');
+    ok(textOf(app).includes('不会，看详解'), '练习页没有「不会，看详解」按钮');
+    const dkBtn = findBtn('不会，看详解');
+    ok(!!dkBtn, '练习页找不到「不会，看详解」按钮');
+    if (dkBtn) (dkBtn._ls.click || []).forEach((fn) => fn.call(dkBtn, { currentTarget: dkBtn }));
+    const dt = textOf(app);
+    ok(dt.includes('考点：'), '点「不会」后没显示考点');
+    ok(dt.includes('这次错在哪'), '点「不会」后没显示错因');
+    ok(dt.includes('正确解法'), '点「不会」后没显示分步解法');
+    ok(dt.includes('最容易翻车的地方'), '点「不会」后没显示易错步骤');
+    ok(dt.includes('公式 / 模型与使用条件'), '点「不会」后没显示公式模型');
+    ok(M.S.hint === true, '点「不会」没记为看过详解（回炉会误算有效答对）');
+    /* 看懂后照样能提交：按钮不锁答题 */
+    ok(!!byId['in1_n'] || !!byId['in0_0_n'], '点「不会」后输入框消失了（应还能自己写一遍）');
 
     /* 错题本不存裁切图（base64 会撑大 localStorage）：只存 cropKey/noLabel，回炉时按 key 重建 */
-    M.startSession('week12', 'secperim', 1);
+    M.startSession('quiz', 'b12', 1);
     const wq = M.S.q;
-    ok(wq.cropKey === 'q10', '本周错题出题没带 cropKey：' + wq.cropKey);
-    M.S.choice[0] = (wq.fields[0].ans + 1) % wq.fields[0].options.length;
-    fill('in1_n', 999); fill('in2_n', 999);
+    ok(wq.cropKey === 'w13-q12', '小测错题出题没带 cropKey：' + wq.cropKey);
+    if (wq.fields[0].type === 'choice') M.S.choice[0] = (wq.fields[0].ans + 1) % wq.fields[0].options.length;
+    fill('in1_n', 999); fill('in2_n', 999); fill('in3_n', 999);
     M.submit();
-    const wRec = Object.keys(M.db().wrong).map((k) => M.db().wrong[k]).filter((w) => w.cropKey === 'q10').pop();
-    ok(!!wRec, '本周错题答错后没进错题本');
+    const wRec = Object.keys(M.db().wrong).map((k) => M.db().wrong[k]).filter((w) => w.cropKey === 'w13-q12').pop();
+    ok(!!wRec, '小测错题答错后没进错题本');
     ok(!!wRec && !wRec.fig, '错题本存了整张裁切图（base64 会撑大 localStorage）');
-    ok(!!wRec && wRec.noLabel === '第 10 题', '错题条目丢了卷面题号');
-    ok(!!ctx.MT.cropFig && ctx.MT.cropFig({ key: 'q10' }).svg.indexOf('data:image/webp') > 0,
-      'cropFig 不能按 key 重建裁切图（回炉时会没图）');
+    ok(!!wRec && wRec.noLabel === '11.25 第 12 题', '错题条目丢了卷面题号：' + (wRec && wRec.noLabel));
   }
 }
 
@@ -788,13 +815,16 @@ ok((textOf(app).match(/当前板块随机题练习/g) || []).length >= 7, '基�
   fAll.forEach((it) => { if (!fSkel.has(it.skel)) fSkel.set(it.skel, it); });
   const fGroups = Array.from(fSkel.values());
   ok(fGroups.length >= 2, 'drill.factor 只有 ' + fGroups.length + ' 个情境，测试前提不成立');
-  const fLast = fGroups[fGroups.length - 1];
   const recN = M.db().recs.length;
-  /* 退回旧实现时，今日热身首题是 dailyQueue 按 seed 固定的那道；它若恰好就是 fLast，
-     这条断言永远通过 —— 先确认不是，否则测不出回归。 */
+  /* 退回旧实现时，今日热身首题是 dailyQueue 按 seed 固定的那道。要让「首题让给未覆盖」可测，
+     剩下的那个未覆盖情境必须 ≠ 今日 q0 的情境；但 q0 随日期种子变（跨零点会换），
+     所以不写死「最后一个情境」，而是挑一个不是 q0 的情境当唯一未覆盖项。 */
   const q0 = ctx.MT.dailyQueue('drill', M.plan())[0];
-  ok(ctx.MT.skelOf(q0) !== fLast.skel, '今日热身第 1 题恰好就是最后一个未覆盖情境，测试前提不成立');
-  fGroups.slice(0, -1).forEach((it) => {
+  const q0skel = ctx.MT.skelOf(q0);
+  const fLast = fGroups.filter((it) => it.skel !== q0skel).pop();
+  ok(!!fLast, 'drill.factor 除今日首题情境外没有别的未覆盖情境，测试前提不成立');
+  fGroups.forEach((it) => {
+    if (it.skel === fLast.skel) return;
     M.db().recs.push({ ts: Date.now(), mod: 'drill', kind: 'factor', ok: true, mode: 'new',
       qid: 'drill.factor', sig: it.key, skel: it.skel });
   });
@@ -859,6 +889,6 @@ if (fails.length) {
   fails.forEach((f) => console.error('  - ' + f));
   process.exit(1);
 }
-console.log('✓ UI 冒烟通过（今日渲染 / 题单一致 / expr 判分 / 系数位「−」= −1 / 回炉跳过顺补 / 报告 / 专项 3 题 / 大题前两步分组、配图与专项 / 板块随机覆盖与重来 / 本周错题临时项目（不进今日、7 题型、判分、卷面题号与原题裁切图）/ 回归：expr 顺序、例题提交、空提交、依据漏选拦截、选择草稿不丢、当天题单、配比文案、题干转义、坏记录自愈、选项打散、手绘题图几何自洽）');
+console.log('✓ UI 冒烟通过（今日渲染 / 题单一致 / expr 判分 / 系数位「−」= −1 / 回炉跳过顺补 / 报告 / 专项 3 题 / 大题前两步分组、配图与专项 / 板块随机覆盖与重来 / 小测错题（两周合并、基础/进阶分组、17 题型、learn 详解、11.25 与 11.18 两套裁切图、「不会」按钮展开考点与解法、错题本只存 cropKey）/ 回归：expr 顺序、例题提交、空提交、依据漏选拦截、选择草稿不丢、当天题单、配比文案、题干转义、坏记录自愈、选项打散、手绘题图几何自洽）');
 
 

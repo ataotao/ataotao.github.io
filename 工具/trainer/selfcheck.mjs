@@ -76,7 +76,9 @@ if (SUB.family === 'scaffold') {
     ['core', coreM[1], SUB.coreFile],
     ['ui', uiM[1], SUB.uiFile]
   ];
-  if (SUB.dataFile) {
+  /* 数据段：dataFiles（多份按顺序拼）或 dataFile（单份）。数学同时内联两周的裁切图。 */
+  const dataFiles = SUB.dataFiles || (SUB.dataFile ? [SUB.dataFile] : []);
+  if (dataFiles.length) {
     if (SUB.dataOutFile) {
       // ADR-0009：数据外置成同目录 JS，HTML 只留 <script src>；产物与真源逐字节一致
       const ref = SUB.dataRef || path.basename(SUB.dataOutFile);
@@ -85,19 +87,20 @@ if (SUB.family === 'scaffold') {
       if (dataM) fail('数据已外置，产物不应再内联 <script id="data">');
       const outPath = path.join(ROOT, SUB.dataOutFile);
       if (!fs.existsSync(outPath)) fail(`外置词库产物不存在：${SUB.dataOutFile}`);
-      seg.push(['data(外置)', fs.readFileSync(outPath, 'utf8'), SUB.dataFile]);
+      seg.push(['data(外置)', fs.readFileSync(outPath, 'utf8'), dataFiles[0]]);
     } else if (dataM) {
-      seg.push(['data', dataM[1], SUB.dataFile]);
+      // 多份数据源在产物里是一段拼接后的 <script id="data">，按同样的顺序与分隔符比对
+      seg.push(['data', dataM[1], dataFiles, dataFiles.map((f) => fs.readFileSync(path.join(ROOT, f), 'utf8').trimEnd()).join('\n')]);
     } else {
-      fail(`科目配置了 dataFile=${SUB.dataFile}，但产物缺少 <script id="data"> 段`);
+      fail(`科目配置了 dataFiles=${dataFiles.join(', ')}，但产物缺少 <script id="data"> 段`);
     }
   } else if (dataM) {
-    fail('产物有 data 段但科目配置没有 dataFile');
+    fail('产物有 data 段但科目配置没有 dataFile/dataFiles');
   }
-  for (const [label, inHtml, srcFile] of seg) {
+  for (const [label, inHtml, srcFile, joined] of seg) {
     if (inHtml == null) fail(`产物缺少 ${label} 段`);
-    const src = fs.readFileSync(path.join(ROOT, srcFile), 'utf8');
-    if (n(inHtml) !== n(src)) fail(`${label} 段与真源 ${srcFile} 不一致（改了源忘重建？）`);
+    const src = joined != null ? joined : fs.readFileSync(path.join(ROOT, srcFile), 'utf8');
+    if (n(inHtml) !== n(src)) fail(`${label} 段与真源 ${Array.isArray(srcFile) ? srcFile.join(' + ') : srcFile} 不一致（改了源忘重建？）`);
   }
   // core 暴露的全局名与配置一致
   if (!new RegExp('var\\s+' + SUB.coreGlobal + '\\s*=\\s*\\(function').test(coreM[1])) {

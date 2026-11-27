@@ -91,7 +91,11 @@ for (const name of names) {
   // 语法体检：core / merge / sync / ui（及可选 data）都不能有语法错（适配层用 async/顶层 IIFE，vm 可解析）
   const syntaxSegs = [['core', core], ['review', r('工具/trainer/review.js')], ['merge', mergeSrc],
     ['sync', syncCore + '\n' + r('工具/trainer/sync-adapter.mjs')], ['ui', uiSrc]];
-  if (SUBJECT.dataFile) syntaxSegs.push(['data', r(SUBJECT.dataFile)]);
+  /* 数据段：dataFiles（多份，按顺序拼）或 dataFile（单份）。数学要同时内联
+     第 12 周与 11.25 两批原题裁切图，各是一个 var 声明，拼在一起即可。 */
+  const dataSources = SUBJECT.dataFiles || (SUBJECT.dataFile ? [SUBJECT.dataFile] : []);
+  const dataRaw = dataSources.map((f) => r(f).trimEnd()).join('\n');
+  if (dataSources.length) syntaxSegs.push(['data', dataRaw]);
   for (const [label, src] of syntaxSegs) {
     try { new vm.Script(src, { filename: name + '.' + label + '.js' }); }
     catch (e) { console.error(`✗ ${name} ${label} 语法错误：${e.message}`); process.exit(1); }
@@ -101,7 +105,7 @@ for (const name of names) {
   if (isScaffold) {
     const shellHtml = scaffoldShell(SUBJECT).replace('/*__CSS__*/', r(SUBJECT.cssFile).trimEnd());
     // 数据段（ADR-0009）：默认内联；科目配了 dataOutFile 则外置成同目录 JS，HTML 只留 <script src>。
-    const dataSrc = SUBJECT.dataFile ? r(SUBJECT.dataFile).trimEnd() : '';
+    const dataSrc = dataRaw;
     const dataSeg = !dataSrc ? ''
       : SUBJECT.dataOutFile
         ? '<script src="' + (SUBJECT.dataRef || path.basename(SUBJECT.dataOutFile)) + '"></script>\n\n'
@@ -136,10 +140,10 @@ for (const name of names) {
   console.log(`✓ ${SUBJECT.outFile}  ${kb} KB  [${isScaffold ? 'scaffold' : 'flash'}]`);
   // 可选外置词库（ADR-0009）：配置 dataOutFile 时把 data 源复制成同目录 JS，HTML 用 <script src> 加载。
   // 经典脚本在 file:// 下可加载同目录文件（fetch 会被 CORS 拦），保持离线可用。
-  if (SUBJECT.dataFile && SUBJECT.dataOutFile) {
+  if (SUBJECT.dataOutFile && dataSources.length) {
     const dataDest = path.join(ROOT, SUBJECT.dataOutFile);
     fs.mkdirSync(path.dirname(dataDest), { recursive: true });
-    fs.writeFileSync(dataDest, r(SUBJECT.dataFile).trimEnd() + '\n', 'utf8');
+    fs.writeFileSync(dataDest, dataRaw + '\n', 'utf8');
     const dkb = (Buffer.byteLength(fs.readFileSync(dataDest)) / 1024).toFixed(1);
     console.log(`  ↳ 外置词库 ${SUBJECT.dataOutFile}  ${dkb} KB  ← <script src="${SUBJECT.dataRef || path.basename(SUBJECT.dataOutFile)}">`);
   }

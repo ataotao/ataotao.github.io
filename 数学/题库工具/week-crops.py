@@ -1,8 +1,8 @@
-"""数学闪练卡「本周错题」的原题裁切图 → 数学/源/week12-img.js
+"""数学闪练卡「小测错题」第 12 周（11.18）卷的原题裁切图 → 数学/源/week12-img.js
 
-用途：给「本周错题」临时项目的每个练习点配一张**卷面原题裁切图**，孩子一眼知道对应卷子第几题。
+用途：给「小测错题」里 11.18 卷的错题配一张**卷面原题裁切图**（本周 11.25 卷的图由 week13-crops.py 生成）。
 产物：`数学/源/week12-img.js`（`var W12_IMG = { q10: {w,h,uri}, ... }`，data URI）。
-      构建 `node 工具/trainer/build.mjs 数学` 会把它内联成 `<script id="data">`，产物仍是单文件。
+      构建 `node 工具/trainer/build.mjs 数学` 会按 dataFiles 依次内联成 `<script id="data">`。
 
 用法（仓库根执行，需要 PyMuPDF：`pip install pymupdf`）：
 
