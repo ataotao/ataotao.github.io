@@ -268,10 +268,12 @@ ok((textOf(app).match(/当前板块随机题练习/g) || []).length >= 7, '基�
   ok(M.S.sess.groupLabel === label && qs.length >= n && qs.length <= 2 * n, '「再来一轮」没重放板块随机规则');
 
   const dm = ctx.MT.moduleById('drill');
-  /* 圆拆成三个板块（概念与角 / 弦与垂径 / 弧长面积与应用），每组 ≤ 9 题：
-     板块随机一次能覆盖全组，避免单组题太多导致练不到。 */
+  /* 圆拆成四个板块（概念与角 / 圆周角与张角 / 弦与垂径 / 弧长面积与应用），每组 ≤ 9 题：
+     板块随机一次能覆盖全组，避免单组题太多导致练不到。
+     2026-11-27 按 11.25 小测补了 5 类（两解、直径+角平分线、网格定圆、射门角、等弦等弧），
+     圆周角相关的 5 类从「概念与角」拆出成「圆周角与张角」。 */
   const circleGroups = [...new Set(dm.kinds.map((k) => k.group))].filter((g) => g.indexOf('圆·') === 0);
-  ok(circleGroups.length === 3, '圆板块数不是 3，是 ' + circleGroups.length);
+  ok(circleGroups.length === 4, '圆板块数不是 4，是 ' + circleGroups.length);
   let circleTotal = 0;
   circleGroups.forEach((g) => {
     const grp = dm.kinds.filter((k) => k.group === g);
@@ -284,7 +286,15 @@ ok((textOf(app).match(/当前板块随机题练习/g) || []).length >= 7, '基�
     ok(qs2.length >= grp.length && qs2.length <= 2 * grp.length, g + ' 板块随机题数超范围：' + qs2.length);
     ok(Object.keys(gc).length === grp.length && Object.values(gc).every((c) => c === 1 || c === 2), g + ' 板块随机覆盖不全或次数超限');
   });
-  ok(circleTotal === 19, '圆三个板块题型总数不是 19，是 ' + circleTotal);
+  ok(circleTotal === 24, '圆四个板块题型总数不是 24，是 ' + circleTotal);
+  /* 11.25 小测补的 5 类必须在基础快练里（换数字也练得会），不能只留在「小测错题」 */
+  ['twoans', 'diam45', 'gridcircle', 'shoot', 'eqarc'].forEach((id) => {
+    ok(dm.kinds.some((k) => k.id === id), '11.25 的考点没补进基础快练：' + id);
+  });
+  const em = ctx.MT.moduleById('entry');
+  ['entry.w13q16', 'entry.w13q17', 'entry.w13q18'].forEach((id) => {
+    ok(em.items.some((it) => it.id === id), '11.25 的大题第一步没进「大题前两步」：' + id);
+  });
 }
 
 /* ---------- 7. 审查后回归（B01/B03/B05/B06/B08） ---------- */
@@ -678,7 +688,14 @@ ok((textOf(app).match(/当前板块随机题练习/g) || []).length >= 7, '基�
     ok(wt.includes('基础题'), '模块页没有「基础题」分组标题');
     ok(wt.includes('进阶题'), '模块页没有「进阶题」分组标题');
     wm.kinds.forEach((k) => ok(wt.includes(k.name), '小测错题模块页缺题型：' + k.name));
-    ok((wt.match(/专项 3 题/g) || []).length === 17, '小测错题模块页「专项 3 题」不是 17 个');
+    /* 小测错题卡分两种：有变式的给「专项 3 题」，只有一道原题的给「原题重做 1 题」
+       （否则同一道题连做三遍，孩子背答案）。当前 10 + 7。 */
+    const n3 = (wt.match(/专项 3 题/g) || []).length;
+    const nRedo = (wt.match(/原题重做 1 题/g) || []).length;
+    ok(n3 + nRedo === 17, '小测错题模块页题型按钮总数不是 17：专项 ' + n3 + ' + 重做 ' + nRedo);
+    const staticQuiz = wm.kinds.filter((k) => ctx.MT.kindPool('quiz', k.id) === 1).length;
+    ok(nRedo === staticQuiz, '静态原题卡应全部显示「原题重做 1 题」：' + nRedo + ' ≠ ' + staticQuiz);
+    ok(n3 === 17 - staticQuiz, '有变式的卡才给「专项 3 题」：' + n3 + ' ≠ ' + (17 - staticQuiz));
 
     /* 出题 + 判分：mod/kind 必须对得上（否则专项统计与错题归集会串） */
     wm.kinds.forEach((k) => {
@@ -746,6 +763,43 @@ ok((textOf(app).match(/当前板块随机题练习/g) || []).length >= 7, '基�
     ok(!!wRec && !wRec.fig, '错题本存了整张裁切图（base64 会撑大 localStorage）');
     ok(!!wRec && wRec.noLabel === '11.25 第 12 题', '错题条目丢了卷面题号：' + (wRec && wRec.noLabel));
   }
+}
+
+/* 7b. 题设图与详解在「回炉」时不能丢（2026-11-28 code-review 修复）
+   - 原题截图 = cropKey 重建；变式网格图 fig2 是题设图，随快照存（小 SVG，不含 base64）
+   - learn 不进快照，回炉时按 MT.learnOf(mod, kind) 反查，否则「不会」面板只剩 tip */
+{
+  ok(typeof ctx.MT.learnOf === 'function', 'core 没导出 MT.learnOf（回炉详解会退化成只有 tip）');
+  ok(!!ctx.MT.learnOf('quiz', 'b10'), 'MT.learnOf 取不到 quiz.b10 的详解');
+  ok(!ctx.MT.learnOf('quiz', 'no-such-kind'), 'MT.learnOf 对未知题型应返回 null');
+
+  M.startSession('quiz', 'b10', 1);
+  const gq = M.S.q;
+  ok(!!(gq.fig && gq.fig.need === 1), 'b10 的卷面原题不是题设图（need 应为 1）');
+  ok(!!(gq.fig2 && gq.fig2.svg && gq.fig2.need === 1), 'b10 没有变式网格题设图（fig2）');
+  const beforeTxt = textOf(app);
+  ok(beforeTxt.includes('卷面原题'), '答题前没显示卷面原题截图');
+  ok(beforeTxt.includes('变式网格'), '答题前没显示变式网格图');
+
+  /* 答错 → 进错题本：大图只存 key，变式图存 SVG */
+  fill('in0_n', 999);
+  M.submit();
+  const gRec = Object.keys(M.db().wrong).map((k) => M.db().wrong[k]).filter((w) => w.kind === 'b10').pop();
+  ok(!!gRec, 'b10 答错后没进错题本');
+  ok(!!gRec && !!(gRec.fig2 && gRec.fig2.svg), '回炉快照丢了变式图 fig2（回炉时题设图会消失）');
+  ok(!!gRec && !gRec.fig, '回炉快照又存了大图（应只存 cropKey）');
+
+  /* 把快照当题渲染（模拟回炉）：详解靠 learnOf 反查，变式图仍在 */
+  M.S.q = gRec;
+  M.S.sess = { mod: 'quiz', kind: 'b10', total: 1, done: 0, right: 0, t0: Date.now() };
+  M.S.answered = false; M.S.choice = {}; M.S.dontKnow = true; M.S.hint = true;
+  M.S.view = 'practice';
+  M.render();
+  const redoTxt = textOf(app);
+  ok(redoTxt.includes('不会就先看这一页'), '回炉点「不会」没有详解面板（learn 丢了）');
+  ok(redoTxt.includes('公式 / 模型与使用条件'), '回炉详解里没有公式/模型段（learn 丢了）');
+  ok(redoTxt.includes('变式网格'), '回炉练习页没显示变式网格图');
+  M.S.dontKnow = false; M.S.hint = false;
 }
 
 /* ---------- 知识覆盖面 + 专练没做过的题（2026-11-23） ---------- */

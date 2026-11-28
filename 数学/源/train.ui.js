@@ -315,6 +315,10 @@
       byGroup[g].forEach(function (k) {
         var st = kindStat(m.id, k.id);
         var c = coverOf(m.id, k.id);
+        /* 小测错题里「只有一道原题」的题型（大体、概念辨析等）：专项 3 题会把同一题做三遍，
+           改成「原题重做 1 题」；有变式的题型（情境/题干会换）才给 3 题。 */
+        var redoOnly = (m.daily === false) && MT.kindPool(m.id, k.id) === 1;
+        var runN = isItems ? 1 : (redoOnly ? 1 : 3);
         grid.appendChild(h('div', { class: 'module' },
           h('div', { class: 'mh' }, h('b', null, k.name), h('span', { class: 'grow' }),
             h('button', { class: 'btn btn-ghost btn-sm', onclick: function () { startExample(m.id, k.id); } }, '例题')),
@@ -323,7 +327,8 @@
           h('div', { class: 'desc small muted' }, st.n ? '练过 ' + st.n + ' 题 · 正确率 ' + pct(st.ok, st.n) + '%' : '还没练过'),
           covLine(c),
           h('div', { class: 'row', style: 'margin-top:auto' },
-            h('button', { class: 'btn btn-primary btn-sm', onclick: function () { startSession(m.id, k.id, isItems ? 1 : 3); } }, isItems ? '练这个得分点' : '专项 3 题'),
+            h('button', { class: 'btn btn-primary btn-sm', onclick: function () { startSession(m.id, k.id, runN); } },
+              isItems ? '练这个得分点' : (redoOnly ? '原题重做 1 题' : '专项 3 题')),
             /* 得分点只有一道题：「练这个得分点」出的就是那道没做过的，不用再单开「练未覆盖」入口 */
             (!isItems && c.open > 0 ? h('button', { class: 'btn btn-sm', onclick: function () { startNocover(m.id, k.id); } }, '练没见过的情境 ' + c.open) : null),
             (c.pct === 100 ? h('span', { class: 'small', style: 'color:var(--ok);font-weight:600' }, '✓ 已全覆盖') : null)
@@ -674,6 +679,11 @@
       card.appendChild(h('div', { class: 'figcap' }, figEx.cap || '题图（答题时看这张）'));
       card.appendChild(h('div', { class: 'figbox' + (q.cropKey ? ' wide' : ''), html: MT.svgFor({ fig: figEx }) }));
     }
+    /* 变式图也是「题设图」：放在答案之前，和原题截图一起先看 */
+    if (q.fig2) {
+      card.appendChild(h('div', { class: 'figcap' }, q.fig2.cap || '变式图（练习用）'));
+      card.appendChild(h('div', { class: 'figbox', html: MT.svgFor({ fig: q.fig2 }) }));
+    }
     var ansBox = h('div', { class: 'fb good', style: 'margin-top:14px' });
     ansBox.appendChild(h('div', { class: 'ftitle' }, '答案'));
     var ul = h('ul');
@@ -686,7 +696,7 @@
     exBox.appendChild(h('div', { class: 'ftitle' }, '怎么想'));
     (q.explain || []).forEach(function (line) { exBox.appendChild(h('div', { class: 'small', html: fracify(line) })); });
     card.appendChild(exBox);
-    if (q.learn) card.appendChild(learnPanel(q, true));
+    if (q.learn || MT.learnOf(q.mod, q.kind)) card.appendChild(learnPanel(q, true));
     if (figEx && !figEx.need) {
       card.appendChild(h('div', { class: 'figcap' }, figEx.cap || '图象'));
       card.appendChild(h('div', { class: 'figbox' + (q.cropKey ? ' wide' : ''), html: MT.svgFor({ fig: figEx }) }));
@@ -714,7 +724,8 @@
      没有 learn 的题型退化成 tip，不编造解析。原题截图在题目上方（fig.need = 1）。
      after=true：答完/例题里用，末行改成「照着订正」，不再是「看完再写」。 */
   function learnPanel(q, after) {
-    var L = q.learn || {};
+    /* 回炉时拿到的是错题快照（不存 learn 原文），按 mod/kind 从注册表反查 */
+    var L = q.learn || MT.learnOf(q.mod, q.kind) || {};
     var box = h('div', { class: 'fb', style: 'margin-top:12px;background:#fbf7ee;border-color:#e6d9bd' });
     box.appendChild(h('div', { class: 'ftitle' }, after ? '详解：这题的思路与考点' : '不会就先看这一页：思路 → 考点 → 易错点'));
     if (L.kp) box.appendChild(h('div', { class: 'small' }, h('b', null, '考点：'), h('span', { html: fracify(L.kp) })));
@@ -756,13 +767,22 @@
     var card = h('div', { class: 'card', style: 'margin-top:12px' });
     card.appendChild(h('div', { class: 'qhead' },
       h('span', { class: 'pill' }, q.noLabel ? q.noLabel : (q.no ? qnoLabel(q.no) : (q.mod === 'entry' ? '得分点' : '新题'))),
-      q.kp ? h('span', { class: 'small muted' }, q.kp.join(' · ')) : null
+      /* 回炉快照里没有 kp 时，用题型详解里的考点兜底 */
+      (function () {
+        var kp = q.kp || (MT.learnOf(q.mod, q.kind) || {}).kp;
+        return kp ? h('span', { class: 'small muted' }, Array.isArray(kp) ? kp.join(' · ') : kp) : null;
+      })()
     ));
     card.appendChild(h('div', { class: 'qbody', html: fracify(q.prompt) }));
     var figP = figOf(q);
     if (figP && figP.need) {
       card.appendChild(h('div', { class: 'figcap' }, figP.cap || '题图（答题时看这张）'));
       card.appendChild(h('div', { class: 'figbox' + (q.cropKey ? ' wide' : ''), html: MT.svgFor({ fig: figP }) }));
+    }
+    /* 小测错题：上面是卷面原题截图（fig），下面再挂一张「变式图」（fig2，如换点位的网格） */
+    if (q.fig2) {
+      card.appendChild(h('div', { class: 'figcap' }, q.fig2.cap || '变式图（练习用）'));
+      card.appendChild(h('div', { class: 'figbox', html: MT.svgFor({ fig: q.fig2 }) }));
     }
 
     q.fields.forEach(function (f, i) {
@@ -862,7 +882,7 @@
       }
       card.appendChild(fb);
       /* 错题（带 learn 的题型）：答完把「考点/错因/分步/易错/模型」再摊开一遍，订正前先看懂 */
-      if (!S.res.ok && q.learn) card.appendChild(learnPanel(q, true));
+      if (!S.res.ok && (q.learn || MT.learnOf(q.mod, q.kind))) card.appendChild(learnPanel(q, true));
 
       /* 答错必须订正：把正确答案重新填一遍，对了才出现「下一题」 */
       if (S.fix && !S.fix.ok) {
@@ -1162,8 +1182,10 @@
     if (!ok) {
       if (!w) {
         w = { id: q.id, qid: qid, mod: q.mod || S.sess.mod, kind: q.kind, title: q.title, prompt: q.prompt,
-          fields: q.fields, explain: q.explain, tip: q.tip, no: q.no, noLabel: q.noLabel,
-          cropKey: q.cropKey, cropCap: q.cropCap, fig: q.cropKey ? null : q.fig };
+          fields: q.fields, explain: q.explain, tip: q.tip, kp: q.kp, no: q.no, noLabel: q.noLabel,
+          cropKey: q.cropKey, cropCap: q.cropCap, fig: q.cropKey ? null : q.fig,
+          /* fig2 是生成的小 SVG（几 KB，不含 base64），存下来回炉时才不会丢题设图；裁切大图仍只存 cropKey */
+          fig2: q.fig2 || null };
         DB.wrong[k] = w;
       }
       if (qid && !w.qid) w.qid = qid;   /* 旧条目补 qid，供历史错题清单匹配 */

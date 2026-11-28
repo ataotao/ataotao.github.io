@@ -2826,6 +2826,61 @@ var MT = (function () {
         '在 Rt△BOD 中，OB = BD/sin60° = 3√3 ÷ (√3/2) = 6，即外接圆半径 R = 6。',
         '下一步：弧 AB = 120π×6/180 = 4π；别把圆心角写成 60°（那是圆周角 ∠C）。'],
       kp: ['圆的基本性质', '三角形外接圆', '弧长']
+    },
+    /* —— 11.25 圆2 周三练习卷的三道解答题：各取前 1–2 个得分点（2026-11-27） —— */
+    {
+      id: 'entry.w13q16', group: '圆与扇形', no: '16', title: '16 平行四边形 + 圆 · 等弧与半径',
+      prompt: '以平行四边形 ABCD 的顶点 A 为圆心、AB 为半径作圆，分别交 AD、BC 于点 E、F，延长 BA 交 ⊙A 于点 G。' +
+        '<br>四边形 ABFE 是菱形，BG = 8。<span class="muted small">第一步：证 弧GE = 弧EF 靠哪两个角？半径是多少？</span>',
+      fields: [
+        {
+          type: 'choice', label: '证 弧GE = 弧EF，关键是证', ans: 0,
+          options: ['∠GAE = ∠EAF', 'GA = AF', '∠AGE = ∠AFE', 'AE ⊥ BF']
+        },
+        { type: 'num', label: '半径 AB =', ans: 4 }
+      ],
+      tip: '弧等要靠圆心角等：AB = AF ⟹ 等腰；AD ∥ BC ⟹ 内错角/同位角；菱形 + BG = 8 ⟹ BG = 2AB。',
+      explain: ['AB = AF（同圆半径）⟹ ∠ABF = ∠AFB；AD ∥ BC ⟹ ∠GAE = ∠ABF、∠EAF = ∠AFB。',
+        '所以 ∠GAE = ∠EAF ⟹ 弧GE = 弧EF。',
+        '菱形 ABFE ⟹ AB = AF = BF；G、A、B 共线且 AG = AB，BG = 2AB = 8 ⟹ 半径 4。'],
+      kp: ['弧、弦、圆心角', '平行四边形与菱形', '等腰三角形']
+    },
+    {
+      id: 'entry.w13q17', group: '圆与扇形', no: '17', title: '17 BC 为直径 · 90° 与 30°',
+      prompt: '△ABC 中 ∠A = 60°，以 BC 为直径的 ⊙O 交边 AB、AC 于 D、E。' +
+        '<br><span class="muted small">第一步：连 CD，先把直径给出的直角和 30° 写出来。</span>',
+      fields: [
+        { type: 'num', label: '∠ADC =', ans: 90, unit: '°' },
+        { type: 'num', label: '∠ACD =', ans: 30, unit: '°' },
+        {
+          type: 'choice', label: '圆心角 ∠DOE =', ans: 0,
+          options: ['60°（= 2∠DCE）', '30°（= ∠DCE）', '120°', '90°']
+        }
+      ],
+      tip: '见直径先连出 90°：∠BDC = 90° ⟹ ∠ADC = 90°；再用 ∠A = 60° 得 30°；圆心角是同弧圆周角的两倍。',
+      explain: ['BC 是直径 ⟹ ∠BDC = 90°，所以 ∠ADC = 90°。',
+        'Rt△ADC 中 ∠A = 60° ⟹ ∠ACD = 30°。',
+        '同弧 DE：∠DOE = 2∠DCE = 2∠ACD = 60° ⟹ △ODE 等边。'],
+      kp: ['直径所对的圆周角', '圆心角与圆周角', '三角形内角和']
+    },
+    {
+      id: 'entry.w13q18', group: '圆与扇形', no: '18', title: '附加题 18 · 直角与 45°',
+      prompt: 'AB 是 ⊙O 的直径，点 C 在 ⊙O 上（不与 A、B 重合），CD 平分 ∠ACB 交 ⊙O 于 D。' +
+        '<br><span class="muted small">第一步：直径给 90°、角平分线给 45°，再定 AD 与 BD 的关系——这是附加题白送的 4 分。</span>',
+      fields: [
+        { type: 'num', label: '∠ACB =', ans: 90, unit: '°' },
+        { type: 'num', label: '∠ACD =', ans: 45, unit: '°' },
+        {
+          type: 'choice', label: 'AD 与 BD 的关系是', ans: 0,
+          options: ['AD = BD', 'AD = 2BD', 'BD = 2AD', '不能确定']
+        }
+      ],
+      tip: 'AB 是直径 ⟹ ∠ACB = 90°；CD 平分 ⟹ 两个 45°；同弧（或等角对等弦）得 AD = BD。',
+      explain: ['AB 是直径 ⟹ ∠ACB = 90°（直径所对的圆周角是直角）。',
+        'CD 平分 ∠ACB ⟹ ∠ACD = ∠BCD = 45°。',
+        '等角对等弦（或同弧所对的弦相等）⟹ AD = BD。',
+        '顺带：∠ADB = 90°，所以 △ADB 是等腰直角三角形，AB = √2·AD。'],
+      kp: ['直径所对的圆周角', '角平分线', '等角对等弦']
     }
   ];
 
@@ -2849,52 +2904,105 @@ var MT = (function () {
     return { type: 'choice', label: label, options: opts, ans: opts.indexOf(right) };
   }
 
-  /* ---- 基础 1：垂径定理（弦垂直平分半径）11.25 第 3 题 ---- */
+  /* ---- 基础 1：垂径定理（弦垂直平分半径）11.25 第 3 题 ----
+     原卷是符号选择题。同考点出 5 种变式，避免「三题一模一样背下来」：
+       ① 半径 mR，问弦长；② 问半弦；③ 问弦心距；④ 给半弦求半径；⑤ 给弦心距求弦长。
+     注意别出成「半径 r，弦长 = k√3，求 k」——那样 k 正好等于题干给的 r，孩子抄数字就能对。
+     这里数值题的问数一律不等于已知数（给半弦 k√3 求半径 = 2k；给弦心距 d 求 k = 2d）。 */
+  function qzSqrt3R(k) {                     /* k√3R 的写法：k=1 写 √3R，k=½ 写 √3R/2 */
+    if (k === 1) return '√3R';
+    if (k === 0.5) return '√3R/2';
+    return k + '√3R';
+  }
+  function qzRTxt(k) { return k === 1 ? 'R' : k + 'R'; }
   function genQuizPerpChord(r) {
-    var R = pick(r, [2, 3, 4, 6, 8, 9, 10, 12]);
+    var m = pick(r, [2, 4, 8]);              /* 半径 = mR；m/2、m/4 都是整数或 ½ */
+    var ask = pick(r, [0, 1, 2, 3, 4]);
+    var prompt, fields, explain;
+    if (ask === 0) {
+      prompt = '在半径为 ' + m + 'R 的圆中，垂直平分半径的弦长等于（　）';
+      var right0 = qzSqrt3R(m);
+      /* 三个选项与原卷同构：正确 = m√3R，另两项分别是它的 ½（半弦）与 ¼ */
+      var opts0 = shuffle(r, [right0, qzSqrt3R(m / 2), qzSqrt3R(m / 4)]);
+      fields = [{ type: 'choice', label: '', options: opts0, ans: opts0.indexOf(right0) }];
+      explain = ['弦垂直平分半径 ⟹ 弦心距 OM = ½ × ' + m + 'R = ' + qzRTxt(m / 2) + '。',
+        '连半径 OA：AM = √((' + m + 'R)² − (' + qzRTxt(m / 2) + ')²) = ' + qzSqrt3R(m / 2) + '（这是半弦）。',
+        '弦长 = 2AM = ' + right0 + '。（' + qzSqrt3R(m / 2) + ' 是半弦——漏乘 2；' + qzSqrt3R(m / 4) + ' 是半弦再除以 2。）'];
+    } else if (ask === 1) {
+      prompt = '在半径为 ' + m + 'R 的圆中，一条弦垂直平分半径。这条弦的半弦长等于（　）';
+      var right1 = qzSqrt3R(m / 2);
+      var opts1 = shuffle(r, [right1, qzSqrt3R(m), qzSqrt3R(m / 4)]);
+      fields = [{ type: 'choice', label: '', options: opts1, ans: opts1.indexOf(right1) }];
+      explain = ['弦心距 OM = ' + qzRTxt(m / 2) + '，半径 OA = ' + m + 'R。',
+        '半弦 AM = √(OA² − OM²) = √(' + (m * m) + 'R² − ' + (m * m / 4) + 'R²) = ' + right1 + '。',
+        '（' + qzSqrt3R(m) + ' 是整条弦，' + qzSqrt3R(m / 4) + ' 是多除了一次 2。）'];
+    } else if (ask === 2) {
+      prompt = '在半径为 ' + m + 'R 的圆中，一条弦垂直平分这条半径。圆心到这条弦的距离等于（　）';
+      var right2 = qzRTxt(m / 2);
+      var opts2 = shuffle(r, [right2, qzRTxt(m), qzSqrt3R(m / 2)]);
+      fields = [{ type: 'choice', label: '', options: opts2, ans: opts2.indexOf(right2) }];
+      explain = ['「弦垂直平分半径」= 弦经过半径的中点且垂直于它，所以弦心距 = 半径的一半 = ' + right2 + '。',
+        '（' + qzRTxt(m) + ' 是整个半径；' + qzSqrt3R(m / 2) + ' 是半弦，都是典型错项。）'];
+    } else if (ask === 3) {
+      var k = pick(r, [2, 3, 4]);
+      prompt = '⊙O 中，一条弦垂直平分半径，这条弦的半弦长为 ' + k + '√3。⊙O 的半径是多少？';
+      fields = [{ type: 'num', label: '半径 =', ans: 2 * k }];
+      explain = ['设半径为 r，则弦心距 = r/2，半弦 = √(r² − (r/2)²) = (√3/2)r。',
+        '(√3/2)r = ' + k + '√3 ⟹ r = 2 × ' + k + ' = ' + (2 * k) + '。',
+        '（半弦是「半径 × √3/2」，反过来半径 = 半弦系数 × 2。）'];
+    } else {
+      var d = pick(r, [2, 3, 4]);
+      prompt = '⊙O 中，一条弦垂直平分半径，圆心到这条弦的距离为 ' + d + '。这条弦的长为 k√3，求 k。';
+      fields = [{ type: 'num', label: 'k =', ans: 2 * d }];
+      explain = ['弦心距 = 半径的一半 ⟹ 半径 r = 2 × ' + d + ' = ' + (2 * d) + '。',
+        '弦长 = √3 × r = ' + (2 * d) + '√3，所以 k = ' + (2 * d) + '。',
+        '（注意 k 不是弦心距 ' + d + '：弦长 = √3 × 半径 = 2√3 × 弦心距。）'];
+    }
     return {
       id: 'quiz.b3', kind: 'b3', title: '垂径定理：弦垂直平分半径',
-      prompt: '⊙O 的半径为 ' + R + '，一条弦垂直平分这条半径。这条弦的长为 k√3，求 k。',
-      fields: [
-        basisField(r, 'perp', '依据'),
-        { type: 'num', label: 'k =', ans: R }
-      ],
-      tip: '弦「垂直平分半径」⟹ 弦心距 = 半径的一半；半弦、弦心距、半径凑成直角三角形。',
-      explain: ['弦垂直平分半径 ⟹ 圆心到弦的距离 OM = ' + R + '/2。',
-        '连半径 OA：Rt△OAM 中 AM = √(' + R + '² − (' + R + '/2)²) = (√3/2) × ' + R + '。',
-        '弦长 AB = 2AM = √3 × ' + R + '，所以 k = ' + R + '。'],
+      prompt: prompt,
+      fields: fields,
+      tip: '弦「垂直平分半径」⟹ 弦心距 = 半径的一半；半弦、弦心距、半径凑成直角三角形（三边比 1 : √3 : 2 的变形）。',
+      explain: explain,
       kp: ['垂径定理', '勾股定理']
     };
   }
   QZ.b3 = {
-    tryIt: '「基础快练」→ 垂径定理（专项 3 题，弦长/弦心距/半径知二求一）',
+    tryIt: '「基础快练」→ 垂径定理（弦长/弦心距/半径知二求一），再回来看符号题',
     kp: '垂径定理 + 勾股：弦长、弦心距、半径三个量知二求一',
-    why: '把「弦垂直平分半径」当成「弦心距 = 半径」，算出 2R 一档的答案；或只算了半弦，忘了乘 2。',
-    steps: ['先把条件翻成距离：弦过半径的中点且垂直于它 ⟹ 弦心距 d = r/2。',
-      '连半径 OA，在 Rt△OAM 里用勾股：半弦 = √(r² − d²) = √3r/2。',
-      '弦长 = 2 × 半弦 = √3 r；题问「k√3」，所以 k = r。'],
-    traps: ['半弦算完一定要乘 2——原卷错项 √3R/2 就是「忘了乘 2」的那个半弦。',
-      '半径是题目给的 r；原卷写的是 2R，别把 r 再翻倍。'],
+    why: '把「弦垂直平分半径」当成「弦心距 = 半径」，于是算出 4R 一档；或只算了半弦 √3R，忘了乘 2。',
+    steps: ['先把条件翻成距离：弦过半径的中点且垂直于它 ⟹ 弦心距 d = 半径的一半。',
+      '连半径 OA，在 Rt△OAM 里用勾股：半弦 = √(r² − d²) = (√3/2)r。',
+      '弦长 = 2 × 半弦 = √3 r；反过来，半径 = 半弦 ÷ (√3/2)，弦心距 = r/2。'],
+    traps: ['半弦算完一定要乘 2——√3R 是半弦，不是弦。',
+      '弦心距是「半径的一半」，不是整个半径。',
+      '逆问题里 k 不是弦心距：弦长 = 2√3 × 弦心距。'],
     model: '垂径定理：垂直于弦的直径平分弦，并且平分弦所对的两条弧。常用勾股式 r² = d² + (弦长/2)²，条件：d 是圆心到弦的距离（弦心距）。'
   };
 
-  /* ---- 基础 2：圆的概念辨析 11.25 第 5 题 ---- */
+  /* ---- 基础 2：圆的概念辨析 11.25 第 5 题 ----
+     变式：从 13 条正确判断 + 16 条错误判断里抽 1 正 3 误（问「正确的是」）或 3 正 1 误（问「错误的是」），
+     选项打散。原卷四句话仍在库里（问「正确的是」时大概率抽到），但不再固定一问一答背答案。 */
+  var QZ_CONCEPT_RIGHT = CIRCLE_RIGHT.concat([
+    { s: '三角形的外心到三角形三个顶点的距离相等', why: '外心是三边垂直平分线的交点，OA = OB = OC' }
+  ]);
   function genQuizConcept(r) {
-    var right = '三角形的外心到三角形三个顶点的距离相等';
-    var opts = shuffle(r, [right,
-      '平分弦的直径垂直于弦，并且平分弦所对的两条弧',
-      '长度相等的弧是等弧',
-      '三个点确定一个圆']);
+    var askRight = r() < 0.65;
+    var picks = [], guard = 0, pool = askRight ? CIRCLE_WRONG : QZ_CONCEPT_RIGHT;
+    var main = pick(r, askRight ? QZ_CONCEPT_RIGHT : CIRCLE_WRONG);
+    picks.push(main);
+    while (picks.length < 4 && guard++ < 200) {
+      var w = pick(r, pool);
+      if (!picks.some(function (x) { return x.s === w.s; })) picks.push(w);
+    }
+    var opts = shuffle(r, picks.map(function (x) { return x.s; }));
     return {
       id: 'quiz.b5', kind: 'b5', title: '圆的概念辨析',
-      prompt: '下列说法正确的是（　）',
-      fields: [{ type: 'choice', label: '', options: opts, ans: opts.indexOf(right) }],
-      tip: '逐条补条件：平分弦的直径要「弦不是直径」；等弧要「同圆或等圆」；三点定圆要「不共线」。',
-      explain: ['「平分弦的直径垂直于弦」错：当这条弦本身是直径时，两条直径互相平分但不垂直。',
-        '「长度相等的弧是等弧」错：弧相等要「在同圆或等圆中能完全重合」，长度相等但弯曲程度不同不是等弧。',
-        '「三个点确定一个圆」错：必须是不共线的三点；三点共线时没有圆过这三点。',
-        '「三角形的外心到三个顶点距离相等」对：外心是三边垂直平分线的交点，OA = OB = OC。'],
-      kp: ['圆的基本概念', '确定圆的条件', '外心']
+      prompt: '下列说法' + (askRight ? '正确' : '错误') + '的是（　）',
+      fields: [{ type: 'choice', label: '', options: opts, ans: opts.indexOf(main.s) }],
+      tip: '逐条补条件：平分弦的直径要「弦不是直径」；等弧要「同圆或等圆」；三点定圆要「不共线」；外心到三顶点距离相等（内心才到三边等距）。',
+      explain: picks.map(function (x) { return x.s + '：' + x.why + '。'; }),
+      kp: ['圆的基本概念', '确定圆的条件', '等弧与垂径定理的条件']
     };
   }
   QZ.b5 = {
@@ -2912,31 +3020,13 @@ var MT = (function () {
   };
 
   /* ---- 基础 3：弦对圆周角的两解 11.25 第 11 题 ---- */
-  var QUIZ_TWO_SOL = [
-    { f: 1, txt: '', a: 30, b: 150, why: 'BC = R，半个圆心角 30°' },
-    { f: Math.SQRT2, txt: '√2', a: 45, b: 135, why: 'BC = √2R，半个圆心角 45°' },
-    { f: Math.sqrt(3), txt: '√3', a: 60, b: 120, why: 'BC = √3R，半个圆心角 60°' }
-  ];
+  /* 两解题的两张数据表已合并到 drill 的 TWO_SOL（genQuizTwoAns 直接复用 genTwoAns） */
   function genQuizTwoAns(r) {
-    var t = pick(r, QUIZ_TWO_SOL), R = pick(r, [2, 3, 4, 5, 6, 8]);
-    /* 写成「R√2」而不是「√2R」：数字在前不会被读成 √(2R)，也方便 skelOf 抹平 */
-    var bcTxt = t.txt ? R + t.txt : String(R);
-    return {
-      id: 'quiz.b11', kind: 'b11', title: '已知弦和半径求圆周角（两解）',
-      prompt: '已知 △ABC 的边 BC = ' + bcTxt + '，且 △ABC 内接于半径为 ' + R + ' 的 ⊙O，则 ∠A 的度数为多少？' +
-        '<br><span class="muted small">点 A 可能在优弧上，也可能在劣弧上——两个答案都要写。</span>',
-      fields: [
-        { type: 'set', n: 2, label: '∠A =', names: ['∠A₁', '∠A₂'], ans: [t.a, t.b], unit: '°' },
-        qzPick(r, '漏解的原因', '点 A 在优弧、劣弧上各有一种情况',
-          ['圆心可能在三角形外', '弦 BC 可能不是直径', '∠A 可能是钝角，所以无解'])
-      ],
-      tip: '先由弦长求圆心角：sin(∠BOC/2) = BC/(2R)；圆周角是它的一半，但 A 在两段弧上，另一个答案是 180° 减它。',
-      explain: ['连 OB、OC，作 OD ⊥ BC：BD = BC/2，sin∠BOD = BD/OB。',
-        t.why + '，所以 ∠BOC = ' + (2 * t.a) + '°。',
-        'A 在优弧 BC 上：∠A = ½∠BOC = ' + t.a + '°；A 在劣弧 BC 上：∠A = 180° − ' + t.a + '° = ' + t.b + '°。',
-        '两解都来自「A 在哪段弧上」，图上只画一种就会漏。'],
-      kp: ['圆周角定理', '分类讨论', '圆内接四边形对角互补']
-    };
+    /* 复用「基础快练」的 genTwoAns：同一生成器、两个模块各有自己的 id/title，
+       题干与判分只有一处，避免两边各写一份、改一处忘另一处 */
+    var q = genTwoAns(r);
+    q.id = 'quiz.b11'; q.kind = 'b11'; q.title = '已知弦和半径求圆周角（两解）';
+    return q;
   }
   QZ.b11 = {
     tryIt: '「基础快练」→ 圆周角定理（专项 3 题；再自己画一次 A 在劣弧的图）',
@@ -2988,20 +3078,14 @@ var MT = (function () {
     model: '直径所对的圆周角是直角；同弧所对的圆周角相等；等腰直角三角形斜边 = 直角边 × √2；结论 BC + AC = √2 CD（第 18(2) 可证）。'
   };
 
-  /* ---- 基础 5：网格里三点定圆 11.25 第 10 题 ---- */
+  /* ---- 基础 5：网格里三点定圆 11.25 第 10 题 ----
+     复用「基础快练」的 genGridCircle（点位、题图、判分同一份），这里只换 id/title/图注；
+     卷面原题截图仍由 quiz 模块的 crop 提供，生成器自带的网格图会被 gen() 挪到 q.fig2。 */
   function genQuizGrid(r) {
-    return {
-      id: 'quiz.b10', kind: 'b10', title: '网格中三点定圆求半径',
-      prompt: '网格中每个小正方形的边长都是 1，一条圆弧经过 A、B、C 三点（见截图）。' +
-        '<br><span class="muted small">这条圆弧所在圆的半径长为 √k，求 k。</span>',
-      fields: [{ type: 'num', label: 'k =', ans: 5 }],
-      tip: '三点定圆：圆心在 AB、BC 的中垂线交点上。把网格当坐标系，算出圆心到 A 的横、纵差。',
-      explain: ['以网格线为坐标轴写出 A、B、C 的坐标（格点）。',
-        '圆心 O 到 A、B 距离相等 ⟹ O 在 AB 的中垂线上；同理在 BC 的中垂线上。两条中垂线的交点就是圆心。',
-        '从图上看 OA 的「横差 1、纵差 2」，所以 r² = 1² + 2² = 5，r = √5，k = 5。',
-        '校验：OB² = 2² + 1² = 5，OC² 也是 5 —— 三点到 O 距离相等才算对。'],
-      kp: ['三点定圆', '垂径定理', '勾股定理']
-    };
+    var q = genGridCircle(r);
+    q.id = 'quiz.b10'; q.kind = 'b10'; q.title = '网格中三点定圆求半径';
+    if (q.fig) q.fig.cap = '变式网格（每小格边长 1）';
+    return q;
   }
   QZ.b10 = {
     tryIt: '「基础快练」→ 垂径定理（弦心距与半弦的勾股）',
@@ -3016,23 +3100,12 @@ var MT = (function () {
     model: '不共线三点确定一个圆，圆心是任意两条弦的垂直平分线交点；网格题把长度换成坐标差再用勾股。'
   };
 
-  /* ---- 进阶 1：射门角度最大 11.25 第 8 题 ---- */
+  /* ---- 进阶 1：射门角度比较 11.25 第 8 题 ----
+     复用「基础快练」的 genShoot（问最大或最小，同一套外角论证），只换 id/title。 */
   function genQuizGoal(r) {
-    return {
-      id: 'quiz.a8', kind: 'a8', title: '射门角度最大（圆周角比较）',
-      prompt: '足球比赛中，从 A、B、C、D 四个位置向球门 PQ 射门，其中 P、Q、B、C 在 ⊙O 上，点 A 在 ⊙O 外，点 D 在 ⊙O 内。' +
-        '射门角度是射门位置与 P、Q 连线的夹角，则射门角度最大的位置是（　）',
-      fields: [{
-        type: 'choice', label: '', ans: 3,
-        options: ['点 A 处', '点 B 处', '点 C 处', '点 D 处']
-      }],
-      tip: '同弧上的圆周角都相等（B、C 一样大）；圆内点张角更大、圆外点更小——用外角定理证。',
-      explain: ['B、C 都在 ⊙O 上，对着同一段弧 PQ，所以 ∠PBQ = ∠PCQ（同弧所对的圆周角相等）。',
-        '延长 PD 交 ⊙O 于 M，连 QM：△DMQ 中 ∠PDQ 是顶点 D 处的外角，∠PDQ = ∠PMQ + ∠MQD > ∠PMQ；而 M、B 都在圆上，∠PMQ = ∠PBQ。',
-        '设 QA 交 ⊙O 于 N，连 PN：A 在圆外，从 A 看 PQ 的张角比从圆上的 N 看更小（把 A 沿 QA 推到圆上，张角变大），所以 ∠PAQ < ∠PNQ = ∠PBQ。',
-        '所以 ∠PAQ < ∠PBQ = ∠PCQ < ∠PDQ，射门角度最大的是点 D。'],
-      kp: ['圆周角定理', '三角形外角', '点与圆的位置关系']
-    };
+    var q = genShoot(r);
+    q.id = 'quiz.a8'; q.kind = 'a8'; q.title = '射门角度比较（圆周角比较）';
+    return q;
   }
   QZ.a8 = {
     tryIt: '「基础快练」→ 圆周角定理（把「圆内 > 圆上 > 圆外」的图自己画一遍）',
@@ -3198,6 +3271,119 @@ var MT = (function () {
     model: '直径所对的圆周角是直角；圆内接四边形对角互补（外角 = 内对角）；SAS 全等；三角形中位线平行且等于第三边的一半。'
   };
 
+  /* =====================================================================
+     11.25 卷暴露的考点缺口（2026-11-27）→ 补进「基础快练」
+     上一轮（11.20）的规矩：小测错题模块只放「这次做错的题」，可复用的考点还要
+     单独进基础快练，否则换个数字又不会。这里补 5 个：
+       ① 两条ans  已知弦长与半径求圆周角（两解）——11 题漏解
+       ② diam45   直径 + 角平分线求 BD/CD —— 12 题
+       ③ gridcircle 网格三点定圆 —— 10 题
+       ④ shoot    射门角度比较（圆内/圆上/圆外）—— 8 题
+       ⑤ eqarc    等弦→等弧→等弦的依据 —— 15 题
+     16/17/18 是解答题，第一两步归「大题前两步」（见 ENTRY 里 entry.w13q*）。
+     ===================================================================== */
+  var TWO_SOL = [
+    { txt: '', a: 30, b: 150 },
+    { txt: '√2', a: 45, b: 135 },
+    { txt: '√3', a: 60, b: 120 }
+  ];
+  /* ① 弦 BC 与半径 R 定圆心角，A 在优弧/劣弧上各得一个圆周角 */
+  function genTwoAns(r) {
+    var t = pick(r, TWO_SOL), R = pick(r, [2, 3, 4, 5, 6, 8]);
+    var bcTxt = t.txt ? R + t.txt : String(R);
+    return {
+      id: 'drill.twoans', kind: 'twoans', title: '弦与半径求圆周角（两解）',
+      prompt: '已知 △ABC 的边 BC = ' + bcTxt + '，△ABC 内接于半径为 ' + R + ' 的 ⊙O。∠A 的度数是多少？' +
+        '<br><span class="muted small">点 A 可能在优弧上，也可能在劣弧上——两个答案都写。</span>',
+      fields: [
+        { type: 'set', n: 2, label: '∠A =', names: ['∠A₁', '∠A₂'], ans: [t.a, t.b] },
+        { type: 'choice', label: '为什么有两个答案', ans: 0,
+          options: ['点 A 在优弧、劣弧上各有一种情况', '圆心可能在三角形外部', '弦 BC 可能不是直径', '∠A 可能是钝角'] }
+      ],
+      tip: '先由弦长求圆心角：sin(∠BOC/2) = BC/(2R)；圆周角是一半，A 在另一段弧上时补成 180° 减它。',
+      explain: ['连 OB、OC，作 OD ⊥ BC：BD = BC/2，sin∠BOD = BD/OB。',
+        '∠BOC = ' + (2 * t.a) + '°。',
+        'A 在优弧 BC 上：∠A = ½∠BOC = ' + t.a + '°。',
+        'A 在劣弧 BC 上：∠A = 180° − ' + t.a + '° = ' + t.b + '°。'],
+      kp: ['圆周角定理', '分类讨论']
+    };
+  }
+  /* ② 直径 + 角平分线：45° 等腰直角，BD = AB/√2，CD = (AC+BC)/√2 */
+  function genDiam45(r) {
+    var q = genQuizDiamBisector(r);
+    q.id = 'drill.diam45'; q.kind = 'diam45'; q.title = '直径 + 角平分线求弦';
+    return q;
+  }
+  /* ③ 网格三点定圆：给三个格点坐标，求 √k 里的 k（圆的半径平方） */
+  var GRID_TRIPLE = [[1, 2], [1, 3], [2, 3], [3, 4], [2, 5], [1, 4]];
+  /* 网格题设图：按点的最大坐标自动定格数（10 格装不下 11 格的点），只画格线与点，不画圆 */
+  function gridFigSvg(pts) {
+    var maxX = 0, maxY = 0;
+    pts.forEach(function (p) { if (p[0] > maxX) maxX = p[0]; if (p[1] > maxY) maxY = p[1]; });
+    var n = Math.max(6, Math.min(14, Math.max(maxX, maxY) + 1));
+    var pad = 22, side = 320, U = side / n;
+    function gx(x) { return pad + x * U; }
+    function gy(y) { return pad + (n - y) * U; }
+    var lg = [];
+    for (var i = 0; i <= n; i++) {
+      lg.push('<line x1="' + gx(i) + '" y1="' + gy(0) + '" x2="' + gx(i) + '" y2="' + gy(n) + '" stroke="#cfd6e3" stroke-width="1" stroke-dasharray="3 3"/>');
+      lg.push('<line x1="' + gx(0) + '" y1="' + gy(i) + '" x2="' + gx(n) + '" y2="' + gy(i) + '" stroke="#cfd6e3" stroke-width="1" stroke-dasharray="3 3"/>');
+    }
+    pts.forEach(function (p) {
+      var lx = gx(p[0]), ly = gy(p[1]);
+      lg.push('<circle cx="' + lx + '" cy="' + ly + '" r="3.4" fill="#e37400"/>');
+      /* 标签往「离边框远」的一侧放，右边界的点不要把字母顶出图外 */
+      var tx = lx + (p[0] >= n - 1 ? -20 : 6), ty = ly - 6;
+      lg.push('<text x="' + tx + '" y="' + ty + '" font-size="13" font-family="serif">' + p[2] + '</text>');
+    });
+    return { w: side + pad * 2, h: side + pad * 2, svg: lg.join('') };
+  }
+  function genGridCircle(r) {
+    var t = pick(r, GRID_TRIPLE), a = t[0], b = t[1], k = a * a + b * b;
+    var cx = b + 1, cy = a + 1;               /* 圆心移到正坐标区，点不越界 */
+    function pt(dx, dy) { return '(' + (cx + dx) + ', ' + (cy + dy) + ')'; }
+    var pA = [cx + a, cy + b, 'A'], pB = [cx + b, cy - a, 'B'], pC = [cx - b, cy + a, 'C'];
+    var A = pt(a, b), B = pt(b, -a), C = pt(-b, a);
+    var g = gridFigSvg([pA, pB, pC]);
+    return {
+      id: 'drill.gridcircle', kind: 'gridcircle', title: '网格里三点定圆',
+      prompt: '网格中每个小正方形的边长都是 1，一条圆弧经过格点 A' + A + '、B' + B + '、C' + C + '。' +
+        '<br>这条圆弧所在圆的半径长为 √k，求 k。',
+      fields: [{ type: 'num', label: 'k =', ans: k }],
+      fig: { w: g.w, h: g.h, need: 1, cap: '网格图（每小格边长 1）', svg: g.svg },
+      tip: '三点定圆：圆心在 AB、BC 的中垂线交点上；也可以设圆心 (x, y)，用「到三点距离相等」列两个方程。',
+      explain: ['设圆心 O(x, y)。由 OA² = OB² = OC² 列出两个方程，解得圆心坐标。',
+        '圆心到 A 的横向、纵向差分别是 ' + a + ' 和 ' + b + '（交换次序也一样）。',
+        'r² = ' + a + '² + ' + b + '² = ' + k + '，所以 r = √' + k + '，k = ' + k + '。'],
+      kp: ['三点定圆', '勾股定理']
+    };
+  }
+  /* ④ 射门角度：圆内 > 圆上（相等）> 圆外；问最大或最小都要会说 */
+  function genShoot(r) {
+    var askMax = r() < 0.6;
+    return {
+      id: 'drill.shoot', kind: 'shoot', title: '射门角度比较（圆内/圆上/圆外）',
+      prompt: '足球比赛中，从 A、B、C、D 四个位置向球门 PQ 射门，其中 P、Q、B、C 在 ⊙O 上，点 A 在 ⊙O 外，点 D 在 ⊙O 内。' +
+        '射门角度是射门位置与球门两端 P、Q 所连线段的夹角。射门角度' + (askMax ? '最大' : '最小') + '的位置是（　）',
+      fields: [{
+        type: 'choice', label: '', ans: askMax ? 3 : 0,
+        options: ['点 A 处', '点 B 处', '点 C 处', '点 D 处']
+      }],
+      tip: '同弧上的圆周角相等（B、C 一样大）；圆内点张角更大、圆外点更小——用外角定理比。',
+      explain: ['B、C 都在圆上对着同一段弧 PQ ⟹ ∠PBQ = ∠PCQ。',
+        'D 在圆内：延长 PD 交圆于 M，∠PDQ 是 △DMQ 的外角 ⟹ ∠PDQ > ∠PMQ = ∠PBQ。',
+        'A 在圆外：QA 交圆于 N，∠PAQ < ∠PNQ = ∠PBQ。',
+        '所以 圆外 < 圆上（相等）< 圆内：' + (askMax ? '最大在 D，最小在 A。' : '最小在 A，最大在 D。')],
+      kp: ['圆周角定理', '点与圆的位置关系']
+    };
+  }
+  /* ⑤ 等弦→等弧→等弦（依据） */
+  function genEqArc(r) {
+    var q = genQuizEqArc(r);
+    q.id = 'drill.eqarc'; q.kind = 'eqarc'; q.title = '等弦→等弧→等弦';
+    return q;
+  }
+
   /* ---- 上周（11.18）七题的「不会」详解，与已有生成器配套 ---- */
   QZ.bsec = {
     tryIt: '「基础快练」→ 扇形周长（专项 3 题，别只算弧长）',
@@ -3263,7 +3449,9 @@ var MT = (function () {
   var MODULES = [
     {
       id: 'drill', name: '基础快练', icon: '⚡',
-      desc: '九个板块、47 个题型，限时一次就对：方程与代数 / 二次函数 / 反比例函数 / 圆·概念与角 / 圆·弦与垂径 / 圆·弧长面积与应用 / 直线与圆 / 图形与变换 / 推理与证明。大题得分点（关联圆、拱桥、等腰存在性、开区间、等边外接圆弧长、平行弦、尺规找圆心、最短路径）归「大题前两步」。',
+      desc: '九个板块、52 个题型，限时一次就对：方程与代数 / 二次函数 / 反比例函数 / 圆·概念与角 / 圆·圆周角与张角 / 圆·弦与垂径 / 圆·弧长面积与应用 / 直线与圆 / 图形与变换 / 推理与证明。' +
+        '（2026-11-27 按 11.25 圆2 小测补了 5 类：弦与半径求圆周角两解、直径+角平分线求弦、网格里三点定圆、射门角度比较、等弦→等弧→等弦。）' +
+        '大题得分点（关联圆、拱桥、等腰存在性、开区间、等边外接圆弧长、平行弦、尺规找圆心、最短路径、11.25 的 16/17/18 前两步）归「大题前两步」。',
       kinds: [
         /* group 只决定模块页怎么分组显示；数组顺序 = 「开始一轮」的混抽顺序 = 今日轮换顺序 */
         /* —— 方程与代数 —— */
@@ -3293,10 +3481,15 @@ var MT = (function () {
         { id: 'circum', name: '直角三角形外接圆', group: '圆·概念与角', gen: genCircum },
         { id: 'radiusiso', name: '连半径得等腰', group: '圆·弦与垂径', gen: genRadiusIso },
         { id: 'perpchord', name: '垂径定理', group: '圆·弦与垂径', gen: genPerpChord },
-        { id: 'diam90', name: '直径所对圆周角', group: '圆·概念与角', gen: genDiam90 },
+        { id: 'gridcircle', name: '网格里三点定圆', group: '圆·弦与垂径', gen: genGridCircle },
+        { id: 'diam90', name: '直径所对圆周角', group: '圆·圆周角与张角', gen: genDiam90 },
+        { id: 'diam45', name: '直径 + 角平分线求弦', group: '圆·圆周角与张角', gen: genDiam45 },
         { id: 'cycquad', name: '圆内接四边形', group: '圆·概念与角', gen: genCycQuad },
-        { id: 'circangle', name: '圆周角定理', group: '圆·概念与角', gen: genCircAngle },
+        { id: 'circangle', name: '圆周角定理', group: '圆·圆周角与张角', gen: genCircAngle },
+        { id: 'twoans', name: '弦与半径求圆周角（两解）', group: '圆·圆周角与张角', gen: genTwoAns },
+        { id: 'shoot', name: '射门角度比较', group: '圆·圆周角与张角', gen: genShoot },
         { id: 'arcchord', name: '弧、弦、圆心角', group: '圆·弦与垂径', gen: genArcChord },
+        { id: 'eqarc', name: '等弦→等弧→等弦', group: '圆·弦与垂径', gen: genEqArc },
         { id: 'arclen', name: '弧长', group: '圆·弧长面积与应用', gen: genArcLen },
         { id: 'sector', name: '扇形面积', group: '圆·弧长面积与应用', gen: genSector },
         { id: 'cone', name: '圆锥的侧面积', group: '圆·弧长面积与应用', gen: genCone },
@@ -3367,10 +3560,10 @@ var MT = (function () {
         /* —— 基础题 —— */
         { id: 'b3', name: '第 3 题 · 垂径定理求弦长（11.25）', group: '基础题 · 该拿的分',
           ref: '3', refLabel: '11.25 第 3 题', learn: QZ.b3,
-          crop: { key: 'w13-q3', cap: '卷面原题：11.25 圆2 周三练习卷 第 3 题（变式：数字会换，做法同一套）' }, gen: genQuizPerpChord },
+          crop: { key: 'w13-q3', cap: '卷面原题：11.25 圆2 周三练习卷 第 3 题（变式：半径倍数与问法都会换，做法同一套）' }, gen: genQuizPerpChord },
         { id: 'b5', name: '第 5 题 · 圆的概念辨析（11.25）', group: '基础题 · 该拿的分',
           ref: '5', refLabel: '11.25 第 5 题', learn: QZ.b5,
-          crop: { key: 'w13-q5', cap: '卷面原题：11.25 圆2 周三练习卷 第 5 题' }, gen: genQuizConcept },
+          crop: { key: 'w13-q5', cap: '卷面原题：11.25 圆2 周三练习卷 第 5 题（变式：选项与问法会换）' }, gen: genQuizConcept },
         { id: 'b11', name: '第 11 题 · 弦与半径求圆周角（两解）（11.25）', group: '基础题 · 该拿的分',
           ref: '11', refLabel: '11.25 第 11 题', learn: QZ.b11,
           crop: { key: 'w13-q11', cap: '卷面原题：11.25 圆2 周三练习卷 第 11 题（变式：数字会换，做法同一套）' }, gen: genQuizTwoAns },
@@ -3379,7 +3572,7 @@ var MT = (function () {
           crop: { key: 'w13-q12', cap: '卷面原题：11.25 圆2 周三练习卷 第 12 题（变式：数字会换，做法同一套）' }, gen: genQuizDiamBisector },
         { id: 'b10', name: '第 10 题 · 网格里三点定圆（11.25）', group: '基础题 · 该拿的分',
           ref: '10', refLabel: '11.25 第 10 题', learn: QZ.b10,
-          crop: { key: 'w13-q10', cap: '卷面原题：11.25 圆2 周三练习卷 第 10 题' }, gen: genQuizGrid },
+          crop: { key: 'w13-q10', cap: '卷面原题：11.25 圆2 周三练习卷 第 10 题（变式：下面这张图的三点会换）' }, gen: genQuizGrid },
         { id: 'bsec', name: '第 10 题 · 扇形周长（11.18）', group: '基础题 · 该拿的分',
           ref: '10', refLabel: '11.18 第 10 题', learn: QZ.bsec,
           crop: { key: 'q10', cap: '卷面原题：第 12 周限时练习（11.18）第 10 题（变式：数字会换，做法同一套）' }, gen: genSecPerim },
@@ -3388,7 +3581,7 @@ var MT = (function () {
           crop: { key: 'q13', cap: '卷面原题：第 12 周限时练习（11.18）第 13 题（第 2 小题已会，不重复；变式：数字会换，做法同一套）' }, gen: genMissingConst },
 
         /* —— 进阶题 —— */
-        { id: 'a8', name: '第 8 题 · 射门角最大（圆周角比较）（11.25）', group: '进阶题 · 拉分',
+        { id: 'a8', name: '第 8 题 · 射门角度比较（11.25）', group: '进阶题 · 拉分',
           ref: '8', refLabel: '11.25 第 8 题', learn: QZ.a8,
           crop: { key: 'w13-q8', cap: '卷面原题：11.25 圆2 周三练习卷 第 8 题' }, gen: genQuizGoal },
         { id: 'a15', name: '第 15 题 · 等弦→等弧→等弦（11.25）', group: '进阶题 · 拉分',
@@ -3456,9 +3649,12 @@ var MT = (function () {
     'entry.entry.t13': 1, 'entry.entry.t21': 1, 'entry.entry.t22': 1, 'entry.entry.w12q7': 1,
     'entry.entry.w12q12': 1, 'entry.entry.w12q16': 1, 'entry.entry.w12q17a': 1,
     'entry.entry.w12q17b': 1, 'entry.entry.w12q15': 1,
+    'entry.entry.w13q16': 1, 'entry.entry.w13q17': 1, 'entry.entry.w13q18': 1,
     /* 小测错题（两周合并，2026-11-27）：静态题 1 道，参数化题型按实测 */
-    'quiz.b3': 8, 'quiz.b5': 1, 'quiz.b11': 18, 'quiz.b12': 6, 'quiz.b10': 1,
-    'quiz.a8': 1, 'quiz.a15': 1, 'quiz.a16': 1, 'quiz.a17': 1, 'quiz.a18': 1,
+    'quiz.b3': 15, 'quiz.b5': 2, 'quiz.b11': 18, 'quiz.b12': 6, 'quiz.b10': 6,
+    'quiz.a8': 2, 'quiz.a15': 1, 'quiz.a16': 1, 'quiz.a17': 1, 'quiz.a18': 1,
+    /* 11.25 考点缺口补进基础快练的 5 类（2026-11-27） */
+    'drill.twoans': 18, 'drill.diam45': 6, 'drill.gridcircle': 6, 'drill.shoot': 2, 'drill.eqarc': 1,
     'quiz.bsec': 12, 'quiz.bmiss': 28, 'quiz.apar': 6, 'quiz.arel': 5, 'quiz.aarch': 5,
     'quiz.aiso': 4, 'quiz.arange': 5
   };
@@ -3471,15 +3667,15 @@ var MT = (function () {
      改题后跑 `check-*.mjs pools` 会重扫并逐项比对。 */
   var SKELS = {
     /* 基础快练 */
-    'drill.factor': 6, 'drill.eq': 12, 'drill.complete': 4, 'drill.missingconst': 3, 'drill.eqdef': 1, 'drill.disc': -1, 'drill.vieta': 12, 'drill.growth': 3, 'drill.areaeq': 2, 'drill.vertexprop': -1, 'drill.vertexmax': -1, 'drill.coef': -1, 'drill.plug': -1, 'drill.shift': -1, 'drill.rangemax': -1, 'drill.fxeq': 3, 'drill.invprop': 9, 'drill.invarea': 4, 'drill.circledef': 1, 'drill.ptcirc': 1, 'drill.circum': 1, 'drill.radiusiso': 2, 'drill.perpchord': 3, 'drill.diam90': 1, 'drill.cycquad': -1, 'drill.circangle': 4, 'drill.arcchord': 3, 'drill.arclen': 3, 'drill.sector': 5, 'drill.cone': 3, 'drill.linecircle': 2, 'drill.tanprop': 2, 'drill.tanjudge': 1, 'drill.tanlen': 3, 'drill.incircle': -1, 'drill.regular': 4, 'drill.rot': 12, 'drill.sym': -1, 'drill.symshape': 3, 'drill.absurd': 6, 'drill.secperim': 1, 'drill.circumcenter': 1, 'drill.chordradius': 1, 'drill.cycqext': 1, 'drill.concentric': 1, 'drill.bowarea': 1, 'drill.circnum': 1,
+    'drill.factor': 6, 'drill.eq': 12, 'drill.complete': 4, 'drill.missingconst': 3, 'drill.eqdef': 1, 'drill.disc': -1, 'drill.vieta': 12, 'drill.growth': 3, 'drill.areaeq': 2, 'drill.vertexprop': -1, 'drill.vertexmax': -1, 'drill.coef': -1, 'drill.plug': -1, 'drill.shift': -1, 'drill.rangemax': -1, 'drill.fxeq': 3, 'drill.invprop': 9, 'drill.invarea': 4, 'drill.circledef': 1, 'drill.ptcirc': 1, 'drill.circum': 1, 'drill.radiusiso': 2, 'drill.perpchord': 3, 'drill.diam90': 1, 'drill.cycquad': -1, 'drill.circangle': 4, 'drill.arcchord': 3, 'drill.arclen': 3, 'drill.sector': 5, 'drill.cone': 3, 'drill.linecircle': 2, 'drill.tanprop': 2, 'drill.tanjudge': 1, 'drill.tanlen': 3, 'drill.incircle': -1, 'drill.regular': 4, 'drill.rot': 12, 'drill.sym': -1, 'drill.symshape': 3, 'drill.absurd': 6, 'drill.secperim': 1, 'drill.circumcenter': 1, 'drill.chordradius': 1, 'drill.cycqext': 1, 'drill.concentric': 1, 'drill.bowarea': 1, 'drill.circnum': 1, 'drill.twoans': 2, 'drill.diam45': 1, 'drill.gridcircle': 1, 'drill.shoot': 2, 'drill.eqarc': 1,
     /* 写解析式 */
     'write.vertex': -1, 'write.intercept': -1, 'write.inverse': -1, 'write.profit': -1, 'write.segment': -1, 'write.piece': -1, 'write.arch': 1, 'write.axis': -1,
     /* 大题前两步 */
-    'entry.entry.21.1': 1, 'entry.entry.21.2': 1, 'entry.entry.21.3': 1, 'entry.entry.22.1': 1, 'entry.entry.22.2': 1, 'entry.entry.23.1': 1, 'entry.entry.23.2': 1, 'entry.entry.20.1': 1, 'entry.entry.20.2': 1, 'entry.entry.24.1': 1, 'entry.entry.25.1': 1, 'entry.entry.25.2': 1, 'entry.entry.13.1': 1, 'entry.entry.13.3': 1, 'entry.entry.13.5': 1, 'entry.entry.14.1': 1, 'entry.entry.15.1': 1, 'entry.entry.16.1': 1, 'entry.entry.16.2': 1, 'entry.entry.17.1': 1, 'entry.entry.t01': 1, 'entry.entry.t02': 1, 'entry.entry.t03': 1, 'entry.entry.t05': 1, 'entry.entry.t06': 1, 'entry.entry.t08': 1, 'entry.entry.t11': 1, 'entry.entry.t12': 1, 'entry.entry.t13': 1, 'entry.entry.t21': 1, 'entry.entry.t22': 1, 'entry.entry.w12q7': 1, 'entry.entry.w12q12': 1, 'entry.entry.w12q16': 1, 'entry.entry.w12q17a': 1, 'entry.entry.w12q17b': 1, 'entry.entry.w12q15': 1,
+    'entry.entry.21.1': 1, 'entry.entry.21.2': 1, 'entry.entry.21.3': 1, 'entry.entry.22.1': 1, 'entry.entry.22.2': 1, 'entry.entry.23.1': 1, 'entry.entry.23.2': 1, 'entry.entry.20.1': 1, 'entry.entry.20.2': 1, 'entry.entry.24.1': 1, 'entry.entry.25.1': 1, 'entry.entry.25.2': 1, 'entry.entry.13.1': 1, 'entry.entry.13.3': 1, 'entry.entry.13.5': 1, 'entry.entry.14.1': 1, 'entry.entry.15.1': 1, 'entry.entry.16.1': 1, 'entry.entry.16.2': 1, 'entry.entry.17.1': 1, 'entry.entry.t01': 1, 'entry.entry.t02': 1, 'entry.entry.t03': 1, 'entry.entry.t05': 1, 'entry.entry.t06': 1, 'entry.entry.t08': 1, 'entry.entry.t11': 1, 'entry.entry.t12': 1, 'entry.entry.t13': 1, 'entry.entry.t21': 1, 'entry.entry.t22': 1, 'entry.entry.w12q7': 1, 'entry.entry.w12q12': 1, 'entry.entry.w12q16': 1, 'entry.entry.w12q17a': 1, 'entry.entry.w12q17b': 1, 'entry.entry.w12q15': 1, 'entry.entry.w13q16': 1, 'entry.entry.w13q17': 1, 'entry.entry.w13q18': 1,
     /* 小测错题 */
     /* 小测错题（两周合并，2026-11-27） */
-    'quiz.b3': 1, 'quiz.b5': 1, 'quiz.b11': 2, 'quiz.b12': 1, 'quiz.b10': 1,
-    'quiz.a8': 1, 'quiz.a15': 1, 'quiz.a16': 1, 'quiz.a17': 1, 'quiz.a18': 1,
+    'quiz.b3': 5, 'quiz.b5': 2, 'quiz.b11': 2, 'quiz.b12': 1, 'quiz.b10': 1,
+    'quiz.a8': 2, 'quiz.a15': 1, 'quiz.a16': 1, 'quiz.a17': 1, 'quiz.a18': 1,
     'quiz.bsec': 1, 'quiz.bmiss': 3, 'quiz.apar': 1, 'quiz.arel': 1, 'quiz.aarch': 1,
     'quiz.aiso': 2, 'quiz.arange': 4
   };
@@ -3545,6 +3741,14 @@ var MT = (function () {
   }
 
   function moduleById(id) { for (var i = 0; i < MODULES.length; i++) if (MODULES[i].id === id) return MODULES[i]; return null; }
+  /* 按「模块 + 题型」取详解：错题回炉时拿的是错题快照（不含 learn 原文），
+     靠 mod/kind 从注册表反查，避免把几百字解析写进 localStorage。 */
+  function learnOf(modId, kindId) {
+    var m = moduleById(modId);
+    if (!m || !m.kinds) return null;
+    for (var i = 0; i < m.kinds.length; i++) if (m.kinds[i].id === kindId) return m.kinds[i].learn || null;
+    return null;
+  }
 
   /* ---------- 出题 ---------- */
   function gen(modId, kindId, seed) {
@@ -3577,7 +3781,10 @@ var MT = (function () {
     if (k.crop) {
       /* cropKey/cropCap 写进题目：错题本只存这两个短字段，渲染时再按 key 重建大图（base64 不进 localStorage） */
       q.cropKey = k.crop.key; q.cropCap = k.crop.cap;
+      /* 生成器自己带图（如网格变式）时：原题截图挂 fig，变式图挂 fig2，两张都看得到 */
+      var ownFig = q.fig;
       var cf = cropFig(k.crop); if (cf) q.fig = cf;
+      if (ownFig) q.fig2 = ownFig;
     }
     if (k.learn) q.learn = k.learn;
     return q;
@@ -3976,7 +4183,7 @@ var MT = (function () {
     VERSION: VERSION, DAY: DAY,
     modules: MODULES, moduleById: moduleById,
     planForDay: planForDay, dailyQueue: dailyQueue, daySeed: daySeed, kindName: kindName,
-    gen: gen, judge: judge, ansText: ansText, svgFor: svgFor, cropFig: cropFig,
+    gen: gen, judge: judge, ansText: ansText, svgFor: svgFor, cropFig: cropFig, learnOf: learnOf,
     kindPool: kindPool, kindSkel: kindSkel, sigOf: sigOf, skelOf: skelOf, enumerateKind: enumerateKind,
     parseNum: parseNum, near: near, frac: frac, nice: nice,
     fieldVals: fieldVals, slotVal: slotVal, isCoefSlot: isCoefSlot,
@@ -4879,6 +5086,10 @@ window.__ltSync = { carrierSnapshot: carrierSnapshot, syncPlan: syncPlan, subjec
       byGroup[g].forEach(function (k) {
         var st = kindStat(m.id, k.id);
         var c = coverOf(m.id, k.id);
+        /* 小测错题里「只有一道原题」的题型（大体、概念辨析等）：专项 3 题会把同一题做三遍，
+           改成「原题重做 1 题」；有变式的题型（情境/题干会换）才给 3 题。 */
+        var redoOnly = (m.daily === false) && MT.kindPool(m.id, k.id) === 1;
+        var runN = isItems ? 1 : (redoOnly ? 1 : 3);
         grid.appendChild(h('div', { class: 'module' },
           h('div', { class: 'mh' }, h('b', null, k.name), h('span', { class: 'grow' }),
             h('button', { class: 'btn btn-ghost btn-sm', onclick: function () { startExample(m.id, k.id); } }, '例题')),
@@ -4887,7 +5098,8 @@ window.__ltSync = { carrierSnapshot: carrierSnapshot, syncPlan: syncPlan, subjec
           h('div', { class: 'desc small muted' }, st.n ? '练过 ' + st.n + ' 题 · 正确率 ' + pct(st.ok, st.n) + '%' : '还没练过'),
           covLine(c),
           h('div', { class: 'row', style: 'margin-top:auto' },
-            h('button', { class: 'btn btn-primary btn-sm', onclick: function () { startSession(m.id, k.id, isItems ? 1 : 3); } }, isItems ? '练这个得分点' : '专项 3 题'),
+            h('button', { class: 'btn btn-primary btn-sm', onclick: function () { startSession(m.id, k.id, runN); } },
+              isItems ? '练这个得分点' : (redoOnly ? '原题重做 1 题' : '专项 3 题')),
             /* 得分点只有一道题：「练这个得分点」出的就是那道没做过的，不用再单开「练未覆盖」入口 */
             (!isItems && c.open > 0 ? h('button', { class: 'btn btn-sm', onclick: function () { startNocover(m.id, k.id); } }, '练没见过的情境 ' + c.open) : null),
             (c.pct === 100 ? h('span', { class: 'small', style: 'color:var(--ok);font-weight:600' }, '✓ 已全覆盖') : null)
@@ -5238,6 +5450,11 @@ window.__ltSync = { carrierSnapshot: carrierSnapshot, syncPlan: syncPlan, subjec
       card.appendChild(h('div', { class: 'figcap' }, figEx.cap || '题图（答题时看这张）'));
       card.appendChild(h('div', { class: 'figbox' + (q.cropKey ? ' wide' : ''), html: MT.svgFor({ fig: figEx }) }));
     }
+    /* 变式图也是「题设图」：放在答案之前，和原题截图一起先看 */
+    if (q.fig2) {
+      card.appendChild(h('div', { class: 'figcap' }, q.fig2.cap || '变式图（练习用）'));
+      card.appendChild(h('div', { class: 'figbox', html: MT.svgFor({ fig: q.fig2 }) }));
+    }
     var ansBox = h('div', { class: 'fb good', style: 'margin-top:14px' });
     ansBox.appendChild(h('div', { class: 'ftitle' }, '答案'));
     var ul = h('ul');
@@ -5250,7 +5467,7 @@ window.__ltSync = { carrierSnapshot: carrierSnapshot, syncPlan: syncPlan, subjec
     exBox.appendChild(h('div', { class: 'ftitle' }, '怎么想'));
     (q.explain || []).forEach(function (line) { exBox.appendChild(h('div', { class: 'small', html: fracify(line) })); });
     card.appendChild(exBox);
-    if (q.learn) card.appendChild(learnPanel(q, true));
+    if (q.learn || MT.learnOf(q.mod, q.kind)) card.appendChild(learnPanel(q, true));
     if (figEx && !figEx.need) {
       card.appendChild(h('div', { class: 'figcap' }, figEx.cap || '图象'));
       card.appendChild(h('div', { class: 'figbox' + (q.cropKey ? ' wide' : ''), html: MT.svgFor({ fig: figEx }) }));
@@ -5278,7 +5495,8 @@ window.__ltSync = { carrierSnapshot: carrierSnapshot, syncPlan: syncPlan, subjec
      没有 learn 的题型退化成 tip，不编造解析。原题截图在题目上方（fig.need = 1）。
      after=true：答完/例题里用，末行改成「照着订正」，不再是「看完再写」。 */
   function learnPanel(q, after) {
-    var L = q.learn || {};
+    /* 回炉时拿到的是错题快照（不存 learn 原文），按 mod/kind 从注册表反查 */
+    var L = q.learn || MT.learnOf(q.mod, q.kind) || {};
     var box = h('div', { class: 'fb', style: 'margin-top:12px;background:#fbf7ee;border-color:#e6d9bd' });
     box.appendChild(h('div', { class: 'ftitle' }, after ? '详解：这题的思路与考点' : '不会就先看这一页：思路 → 考点 → 易错点'));
     if (L.kp) box.appendChild(h('div', { class: 'small' }, h('b', null, '考点：'), h('span', { html: fracify(L.kp) })));
@@ -5320,13 +5538,22 @@ window.__ltSync = { carrierSnapshot: carrierSnapshot, syncPlan: syncPlan, subjec
     var card = h('div', { class: 'card', style: 'margin-top:12px' });
     card.appendChild(h('div', { class: 'qhead' },
       h('span', { class: 'pill' }, q.noLabel ? q.noLabel : (q.no ? qnoLabel(q.no) : (q.mod === 'entry' ? '得分点' : '新题'))),
-      q.kp ? h('span', { class: 'small muted' }, q.kp.join(' · ')) : null
+      /* 回炉快照里没有 kp 时，用题型详解里的考点兜底 */
+      (function () {
+        var kp = q.kp || (MT.learnOf(q.mod, q.kind) || {}).kp;
+        return kp ? h('span', { class: 'small muted' }, Array.isArray(kp) ? kp.join(' · ') : kp) : null;
+      })()
     ));
     card.appendChild(h('div', { class: 'qbody', html: fracify(q.prompt) }));
     var figP = figOf(q);
     if (figP && figP.need) {
       card.appendChild(h('div', { class: 'figcap' }, figP.cap || '题图（答题时看这张）'));
       card.appendChild(h('div', { class: 'figbox' + (q.cropKey ? ' wide' : ''), html: MT.svgFor({ fig: figP }) }));
+    }
+    /* 小测错题：上面是卷面原题截图（fig），下面再挂一张「变式图」（fig2，如换点位的网格） */
+    if (q.fig2) {
+      card.appendChild(h('div', { class: 'figcap' }, q.fig2.cap || '变式图（练习用）'));
+      card.appendChild(h('div', { class: 'figbox', html: MT.svgFor({ fig: q.fig2 }) }));
     }
 
     q.fields.forEach(function (f, i) {
@@ -5426,7 +5653,7 @@ window.__ltSync = { carrierSnapshot: carrierSnapshot, syncPlan: syncPlan, subjec
       }
       card.appendChild(fb);
       /* 错题（带 learn 的题型）：答完把「考点/错因/分步/易错/模型」再摊开一遍，订正前先看懂 */
-      if (!S.res.ok && q.learn) card.appendChild(learnPanel(q, true));
+      if (!S.res.ok && (q.learn || MT.learnOf(q.mod, q.kind))) card.appendChild(learnPanel(q, true));
 
       /* 答错必须订正：把正确答案重新填一遍，对了才出现「下一题」 */
       if (S.fix && !S.fix.ok) {
@@ -5726,8 +5953,10 @@ window.__ltSync = { carrierSnapshot: carrierSnapshot, syncPlan: syncPlan, subjec
     if (!ok) {
       if (!w) {
         w = { id: q.id, qid: qid, mod: q.mod || S.sess.mod, kind: q.kind, title: q.title, prompt: q.prompt,
-          fields: q.fields, explain: q.explain, tip: q.tip, no: q.no, noLabel: q.noLabel,
-          cropKey: q.cropKey, cropCap: q.cropCap, fig: q.cropKey ? null : q.fig };
+          fields: q.fields, explain: q.explain, tip: q.tip, kp: q.kp, no: q.no, noLabel: q.noLabel,
+          cropKey: q.cropKey, cropCap: q.cropCap, fig: q.cropKey ? null : q.fig,
+          /* fig2 是生成的小 SVG（几 KB，不含 base64），存下来回炉时才不会丢题设图；裁切大图仍只存 cropKey */
+          fig2: q.fig2 || null };
         DB.wrong[k] = w;
       }
       if (qid && !w.qid) w.qid = qid;   /* 旧条目补 qid，供历史错题清单匹配 */
